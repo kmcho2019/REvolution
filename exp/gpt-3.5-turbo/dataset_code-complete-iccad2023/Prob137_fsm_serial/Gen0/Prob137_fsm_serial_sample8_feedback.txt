@@ -1,0 +1,5 @@
+The main issue in the code is that the 'done' signal is declared as an output wire in the module declaration but is mistakenly being assigned a value inside the always block where combinational logic is implemented. The error messages from the simulation log clearly indicate this problem by stating that 'done' is not a valid l-value, i.e., it cannot be assigned a value inside the always block. To resolve this issue, 'done' should be declared as a reg instead of an output wire.
+
+Another observation is that the module doesn't have a default assignment for 'next_state' in the state machine implementation. It's good practice to assign a default value for 'next_state' in the state machine design to ensure that all possible conditions are covered.
+
+Overall, these issues are causing the simulation failures reported in the log.

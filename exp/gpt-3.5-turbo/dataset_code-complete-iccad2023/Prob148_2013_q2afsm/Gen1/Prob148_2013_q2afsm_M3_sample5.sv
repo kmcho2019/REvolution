@@ -1,0 +1,49 @@
+module TopModule (
+  input clk,
+  input resetn,
+  input [3:1] r,
+  output [3:1] g
+);
+
+  // Declare state signals
+  reg [1:0] state, next_state;
+
+  // State encoding
+  parameter A = 2'b00, B = 2'b01, C = 2'b10, D = 2'b11;
+
+  // Output assignment based on the state
+  assign g[1] = (state == B);
+  assign g[2] = (state == C);
+  assign g[3] = (state == D);
+
+  // State transition and logic
+  always @(posedge clk or negedge resetn) begin
+    if (~resetn) begin
+      state <= A;
+    end else begin
+      state <= next_state;
+    end
+  end
+
+  // State logic based on the state diagram
+  always @(*) begin
+    case(state)
+      A: begin
+        if (r[1] & !r[2] & !r[3]) next_state = B;
+        else if (!r[1] & r[2]) next_state = C;
+        else if (!(r[1] | r[2] | r[3])) next_state = A;
+        else next_state = D;
+      end
+      B: begin
+        if (r[1]) next_state = B;
+        else next_state = A;
+      end
+      C: begin
+        if (r[2]) next_state = C;
+        else next_state = A;
+      end
+      default: next_state = A;
+    endcase
+  end
+
+endmodule

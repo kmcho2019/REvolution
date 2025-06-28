@@ -1,0 +1,7 @@
+The first issue is in the state transitions from state 'A'. In state 'A', the FSM should transition to state 'B' if r[1] is high, to state 'C' if r[2] is high, and to state 'D' if r[3] is high. However, the code incorrectly transitions to state 'D' if r[3] is high, when it should stay in state 'A'. This can cause unexpected behavior in the FSM.
+
+Another issue is in the state transitions from state 'D'. In state 'D', the FSM should stay in state 'D' as long as there are no requests. However, the code incorrectly transitions to state 'A' even if there are no requests. This can potentially lead to incorrect grant outputs.
+
+Furthermore, the grant outputs are not updated correctly. For example, in state 'C' when r[2] is high, the FSM should set g[2] to 1, but the code also sets g[1] to 1, which is incorrect. This will cause mismatches in the output signals.
+
+Overall, these issues in state transitions and grant assignments are causing the mismatches in the simulation output.

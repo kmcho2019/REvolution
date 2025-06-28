@@ -1,0 +1,9 @@
+1. The warnings indicate that there are issues with part selects causing out-of-bounds selection in the code. These warnings show that the code is trying to access data bits beyond their defined range, which can lead to unexpected behavior during simulation.
+
+2. In the FSM, the handling of data bits in the `START_BIT` and `DATA_BITS` states seems incorrect. Both states are updating the `data` register in the same way, without distinguishing between the start bit and data bits. This can lead to an incorrect accumulation of bits in the `data` register.
+
+3. The FSM logic for transitioning between states and updating the `count` register might not be correctly capturing the protocol's sequence of start bit, data bits, and stop bit. This could result in the FSM not properly recognizing and processing the incoming serial data stream.
+
+4. The simulation log shows that there are 38 mismatches in 905 samples for the `done` output, indicating that the FSM is not transitioning correctly through its states and identifying the stop bit consistently.
+
+Overall, the code needs to be revised to ensure correct handling of data bits, address the warnings related to out-of-bounds part selects, and verify the FSM transitions align with the expected serial communication protocol.

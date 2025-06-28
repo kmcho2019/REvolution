@@ -1,0 +1,7 @@
+1. The warning about the port size mismatch indicates that the `out` port is defined as a 4-bit vector in the module, whereas it is being assigned only reg_data[0], which is a single bit. This causes the high bits to be padded with zeroes, leading to incorrect behavior.
+
+2. Looking at the always block, in the reset condition where `~resetn` is checked, the reset is active-low, so this condition should be modified to just `resetn` being low. Not handling this correctly may lead to improper reset behavior.
+
+3. In the non-reset condition, the shifting of data should happen correctly. But since `reg_data` is updated before shifting, there's a mistake in the shift order. It should shift the existing values first and then include the input `in` in the LSB position.
+
+4. The simulation log mentions 14 mismatches in the output waveform, indicating that the shifting or reset behavior is not working as intended in the module.

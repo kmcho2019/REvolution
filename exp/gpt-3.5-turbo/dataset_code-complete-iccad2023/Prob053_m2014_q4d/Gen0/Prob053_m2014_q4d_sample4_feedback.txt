@@ -1,0 +1,5 @@
+The code has two main issues:
+1. In the always block for the D flip-flop (`d_ff <= xor2(in, out);`), the output `out` of the flip-flop is being used as an input to the XOR gate. This introduces a feedback loop that is not correctly representing the design intent of taking the output of the flip-flop and the input 'in' as inputs to the XOR gate. This incorrect connection can lead to incorrect behavior and simulation mismatches.
+2. The XOR gate is implemented using a function, which is fine logically, but it should be noted that the function `xor2` is not declared as a `static` function and might have issues with accessibility or proper instantiation when used within the always block of the flip-flop.
+
+These issues are causing the simulation mismatches observed in the log.

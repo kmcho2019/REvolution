@@ -1,0 +1,11 @@
+The issue in the code lies in the shifting logic of the `ShiftRegister` module. There are problems in the way the shifting operations are being performed, which results in mismatches in the output signal `q`.
+
+1. In the case where amount is `2'b10` (right shift by 1 bit):
+   - The shifting operation `{q[63], q[63:1]}` is incorrect for an arithmetic right shift. It should preserve the sign bit by shifting in a copy of `q[63]` into the MSB (Most Significant Bit) position after shifting right by 1.
+   
+2. In the case where amount is `2'b11` (right shift by 8 bits):
+   - The shifting operation `{q[7:0], q[63:8]}` is also incorrect for an arithmetic right shift by 8 bits. It should correctly shift the bits to the right by 8 positions, preserving the sign bit.
+
+These incorrect shifting operations lead to the observed mismatches in the simulation results when compared to the expected output of the arithmetic shift register.
+
+Overall, the code needs correction in the shifting logic to ensure the correct arithmetic shifting behavior based on the specified requirements.

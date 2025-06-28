@@ -1,0 +1,2 @@
+The issue in the code lies in the transition between the RECEIVING state and STOP_CHECK state. When transitioning from RECEIVING to STOP_CHECK, the code immediately checks for the stop bit. However, it should first wait until all 8 data bits have been received before verifying the stop bit.
+Additionally, the implementation does not account for the serial protocol sending the least significant bit first. The line `data_bits <= {in, data_bits[3:1]};` should shift in the received bit in the correct order as per the protocol.

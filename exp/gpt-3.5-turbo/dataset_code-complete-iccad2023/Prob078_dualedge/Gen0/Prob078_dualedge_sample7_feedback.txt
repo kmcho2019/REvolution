@@ -1,0 +1,7 @@
+The code attempted to create a dual-edge triggered flip-flop behavior using two separate always blocks sensitive to different clock edges. However, the implementation is incorrect. 
+
+The issue lies in how q_temp is being updated in the always block sensitive to the posedge of the clock. The assignment `q_temp <= d;` does not capture the dual-edge triggering behavior intended for a flip-flop. This implementation essentially combines a regular D flip-flop with a latch-like behavior since q_temp is assigned without regard to the clock edge.
+
+Due to this incorrect behavior, q_temp is getting updated for every posedge of the clock, leading to multiple updates within a single clock cycle and resulting in incorrect behavior. This explains the numerous data mismatches observed in the simulation log.
+
+To create a flip-flop that behaves like a dual-edge triggered flip-flop, the implementation should be revised to capture the intended dual-edge triggering behavior correctly.

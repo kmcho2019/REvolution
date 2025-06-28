@@ -1,0 +1,9 @@
+1. The `timer` value is not effectively decremented in the `COUNT` state. This leads to inaccurate timing, causing the circuit to count incorrectly.
+
+2. In the `COUNT` state, the logic for updating the `delay` based on the timer value reaching multiples of 1000 cycles is flawed. This causes misalignment in decrementing `delay` and updating `count`.
+
+3. The state transition conditions and logic are not implement accurately, leading to issues like not entering the `COUNT` state correctly after reading the delay.
+
+4. The reset handling is insufficient; the circuit should reset to the initial state of searching for the start sequence, but it is not properly achieving this behavior after the `ack` signal is received in the `DONE` state.
+
+5. From the simulation log, it's clear that the circuit fails to count for the correct number of cycles, resulting in significant mismatches in the `count`, `counting`, and `done` outputs.

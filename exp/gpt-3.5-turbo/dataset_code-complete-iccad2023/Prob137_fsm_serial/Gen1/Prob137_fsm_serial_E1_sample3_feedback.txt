@@ -1,0 +1,7 @@
+1. The primary issue lies in the logic related to detecting the stop bit in the `STOP_BIT` state. The code checks if `in` is equal to `1'b1` to identify the stop bit. However, in asynchronous serial communication, the stop bit should be checked based on its position in the `shift_reg`. This approach leads to incorrect detection of the stop bit, causing mismatches in the `done` signal.
+
+2. Another issue is in the state transition logic. In the `START_BIT` state, if the LSB of `shift_reg` is detected as `0`, it transitions to the `DATA_BITS` state. However, this transition should only happen after the full 8 bits are received in the `DATA_BITS` state.
+
+3. There is no explicit handling for the case when the received byte has an incorrect start bit. This oversight can lead to synchronization issues and affect the proper detection of subsequent bits.
+
+These issues are critical as they directly impact the correct functioning of the finite state machine designed for serial byte reception, leading to mismatches in the simulation results.

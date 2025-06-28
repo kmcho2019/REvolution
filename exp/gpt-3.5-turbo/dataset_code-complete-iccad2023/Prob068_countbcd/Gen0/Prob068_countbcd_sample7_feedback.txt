@@ -1,0 +1,7 @@
+1. The reset functionality is not correctly implemented in the code. The reset condition within the always block sets the individual digit registers to 4'b0000, but the output 'q' is derived from these specific registers directly, which doesn't provide a proper reset behavior. This leads to incorrect initialization behavior and fails to reset the counter properly.
+
+2. The logic for incrementing each digit based on the corresponding enable signal is flawed. The code increments the digits unconditionally inside the else block, leading to incorrect counting behavior. The digits should only be incremented when the respective 'en' signal is active.
+
+3. The output 'ena' is missing an initialization condition. As a result, the initial values of 'ena' are unknown or uninitialized, leading to mismatches in the simulation results.
+
+These issues combined result in significant mismatches between the expected and actual simulation results, causing the design to fail.

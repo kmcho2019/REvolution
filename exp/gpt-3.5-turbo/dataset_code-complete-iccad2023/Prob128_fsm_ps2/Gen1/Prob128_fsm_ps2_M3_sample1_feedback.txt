@@ -1,0 +1,3 @@
+The issue in the code lies within the FSM logic. The problem description states that the FSM should signal `done` in the cycle immediately after the third byte of each message was successfully received. However, in the current design, the `done` signal is dependent on the `state` being in the `DONE` state, which is only reached if the third byte has `in[3]=1`. This design does not align with the requirement that `done` should be asserted immediately after the third byte reception, leading to 110 mismatches reported in the simulation log.
+
+To fix the issue, the FSM logic should be adjusted to correctly handle the signaling of `done` based on the reception of the three bytes, as defined in the problem description.

@@ -1,0 +1,5 @@
+The issue in the code stems from the state transitions logic. The state machine transitions are designed such that it searches for the sequence 1101 in the input bit stream. However, there is a problem in the transition between STATE_2 and FOUND states. This transition should occur when the correct sequence ('1101') is detected, but the code transitions to the FOUND state whenever 'data' is high in STATE_2, regardless of the complete sequence match.
+
+This premature transition leads to the incorrect behavior of the state machine, causing mismatches in the simulation output. To resolve this issue, the logic for transitioning to the FOUND state needs to be modified to ensure that the state machine correctly identifies the complete sequence before transitioning to the final state.
+
+Additionally, the mechanism for the asynchronous reset seems to be missing in the code, but this does not directly contribute to the simulation mismatches observed.

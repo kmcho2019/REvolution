@@ -1,0 +1,5 @@
+The issue in the code lies in the update of the `next_state` based on the `state_reg` and input conditions within the `always` block. In this Moore state machine, the next state should solely depend on the current state and input. 
+
+The problem arises because the initial assignment of `next_state` is missing before entering the case statement after the reset condition. This can cause unintended behavior due to the uncertainty of the `next_state` value. Additionally, the ordering of state transitions in the case statement is incorrect for state `B`. When in state `B` and with input `0`, it should transition to state `A`, not stay in state `B`.
+
+These issues will result in incorrect state transitions, leading to the observed output mismatches during simulation.

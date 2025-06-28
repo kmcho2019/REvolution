@@ -1,0 +1,5 @@
+The main issue in the code is with the condition for detecting the stop bit in the `DATA_BITS_0to7` state. The comparison `if (data == 8'b00000001)` is incorrect because it checks the entire byte instead of checking the stop bit (LSB) alone. This incorrect comparison leads to premature detection of the stop bit within the data bits, causing synchronization issues with the incoming stream of bits.
+
+Additionally, in the `STOP_BIT` state, the transition back to the `DATA_BITS_0to7` state should only happen when the stop bit is incorrect (in == 1'b1). However, the code incorrectly transitions back to the `DATA_BITS_0to7` state regardless of the stop bit value, which can further disrupt the byte reception process.
+
+These issues prevent proper synchronization between the FSM state transitions and the actual byte being received, resulting in mismatches during simulation as the FSM fails to correctly identify and verify the stop bit of each byte.

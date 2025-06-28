@@ -1,0 +1,7 @@
+1. In the `always @(*)` block for the next state logic and outputs, the assignment for `shift_ena` inside the `STATE_DELAY` case should not be accumulating a count. The shift_ena should be controlled based on clock cycles, not incremented continuously within the case block.
+
+2. The `counting` signal is never set to 1 in any state of the state machine, even when it should be activated according to the problem description. This issue results in mismatches for the `counting` output signal.
+
+3. The implementation related to the `done` signal is incorrect. In the `STATE_DONE` case, the `done` signal should be set to 1 immediately when transitioning to the `STATE_DONE` state. However, in the code, `done` is set when `ack` is high, causing incorrect behavior and mismatches in the simulation.
+
+These issues impact the functionality of the finite-state machine, leading to the observed mismatches in the simulation results.

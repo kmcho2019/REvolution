@@ -1,0 +1,9 @@
+1. The FSM does not correctly handle the transition from state C to state D. This transition should occur when x equals 0, but the code mistakenly transitions to state C instead of D.
+
+2. In state E, the condition to transition to state F is incorrect. Instead of transitioning to state F when x equals 1 and y equals 1, the code transitions to state C when x equals 1 again.
+
+3. The transition from state E to state A is incorrect. It should transition to state A after two clock cycles if y does not become 1, but the code transitions to state A immediately if y is not 1.
+
+4. The output logic in state E to determine the value of g is incorrect. It should maintain g = 1 if the FSM is in state F or if y becomes 1 within two clock cycles. However, the code incorrectly sets g to 0 when y is not 1 within two clock cycles.
+
+These issues cause the FSM to deviate significantly from the specified behavior, leading to a large number of output mismatches during simulation.

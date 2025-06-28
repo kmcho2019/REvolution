@@ -1,0 +1,8 @@
+The main issue in the code is with the state transitions and handling of input bytes:
+1. In the WAIT state, the condition to transition to RECEIVE_BYTE1 is checking for in[3]==1, but it should actually check for the falling edge of in[3] to detect the start of a new byte.
+2. The RECEIVE_BYTE1 state is not properly implemented. It should wait for the falling edge of in[3] to safely latch the first byte when it starts.
+3. RECEIVE_BYTE2 state transition occurs unconditionally, which is incorrect. It should also wait for the falling edge of in[3].
+4. The OUTPUT_MESSAGE state is correct to output the message, but the transition back to the WAIT state should happen only after the message has been output and not immediately after setting done to 1.
+5. The reset condition resets the whole module correctly, but it also needs to consider resetting the byte variables in the WAIT state.
+
+These issues collectively lead to incorrect processing of the input bytes and incorrect state transitions in the FSM, resulting in the mismatches observed in the simulation log.

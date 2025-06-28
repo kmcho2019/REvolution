@@ -1,0 +1,7 @@
+1. The first issue lies in the if-else conditions inside the always block. The condition for toggling 'q' is solely dependent on the input 'a', which leads to an incorrect behavior. The design intent seems to be toggling 'q' only when 'a' transitions from 0 to 1, but the implementation toggles 'q' whenever 'a' is high regardless of its previous state.
+
+2. The second issue is in the handling of the 'state' signal. The assignment of 'state' based on the value of 'b' is faulty. The design likely intends to set 'state' to 1 when 'b' transitions from 0 to 1, but the code changes the state whenever 'b' is high, leading to incorrect behavior.
+
+3. Additionally, the usage of non-blocking assignments ('<=') inside the always block can cause confusion and is not recommended in sequential logic. The code should use blocking assignments ('=') for sequential logic to avoid unintended behavior.
+
+These issues result in incorrect toggling of signals 'q' and 'state,' causing the substantial number of mismatches observed during simulation.

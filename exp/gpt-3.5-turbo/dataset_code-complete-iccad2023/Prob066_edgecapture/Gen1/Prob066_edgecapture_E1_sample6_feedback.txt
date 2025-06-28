@@ -1,0 +1,6 @@
+The main issue in the code lies in the `EdgeDetection` module. 
+1. The `EdgeDetection` module is outputting `rising_edge` which is a 32-bit vector, but the declaration in the module is not matching the design intent which is a single bit output for each bit in a 32-bit vector. This will not capture the rising edge information accurately.
+2. The for-loop iterating over all the bits is not synthesizable due to the incorrect use of `int` for loop iteration. The correct keyword should be `integer` for the loop to be synthesizable.
+3. The logic to capture rising edges is flawed. It only checks for the condition when the current bit is 1 and the delayed bit is 0 to detect a rising edge. This logic doesn't cover all rising edge scenarios accurately.
+
+The simulation log shows that the testbench detected 97 mismatches in the output signal `out`. This mismatch is a direct consequence of the incorrect implementation in the `EdgeDetection` module, leading to inaccurate detection of rising edges.

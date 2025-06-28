@@ -1,0 +1,5 @@
+1. The primary issue lies in the `DETECT_START` state. The condition for transitioning from `DETECT_START` to `COLLECT_DATA` is incorrect. The count should be checked for equality to 8 (to represent the complete start bit including the last bit as 0), not less than 9 as the code currently checks.
+   
+2. In the `VERIFY_STOP` state, the count is being incorrectly used to decide when to transition. However, the current code doesn't wait for all 8 data bits to be collected before checking the stop bit. This premature increment of count affects the correct verification of the stop bit.
+
+These issues lead to the incorrect identification of the start bit and stop bit, causing mismatches in the simulation results. By fixing these two sections, the FSM should be able to correctly identify and verify the bytes in the serial stream.

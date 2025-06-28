@@ -1,0 +1,7 @@
+1. The state transition when the sequence "1101" is detected has a logic flaw. When the state transitions to `4'b1101` upon detecting the sequence, the next state logic is incorrect. Instead of setting `state <= 4'b1101`, it should go to the next state `4'b0000` after the sequence is detected.
+
+2. The condition for shifting the `start_shifting` flag should not be based on the state `4'b1101`, which is the detected state. Instead, it should be set to 1 once the sequence is detected and then stay at 1 until a reset occurs. This logic is missing in the current implementation.
+
+3. The FSM does not reset the `start_shifting` flag to 0 when it is not detecting the sequence again after a reset.
+
+These issues are leading to incorrect behavior and causing mismatches during simulation.

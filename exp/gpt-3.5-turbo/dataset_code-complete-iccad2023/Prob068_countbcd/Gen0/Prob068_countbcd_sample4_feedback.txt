@@ -1,0 +1,7 @@
+1. The primary issue causing the simulation failures is the incorrect usage of array elements. In module `TopModule`, the declaration of `q_temp` as an array of registers should be modified. The incorrect declaration leads to errors when trying to access array elements and update them in the sequential block.
+
+2. Another issue is the improper assignment in the `always` block for `TopModule`. It is trying to assign `ena_temp` directly from `ena`, which is not allowed due to different bit sizes. This causes the simulation to fail.
+
+3. Additionally, the use of `posedge reset` in the sensitivity list of the `always` block in `BCD_Digit` module is incorrect. Only synchronous reset logic should be present in a sequential block with `posedge clk`.
+
+Overall, these issues need to be addressed to correct the functionality of the BCD counter design.

@@ -1,0 +1,3 @@
+The Verilog code attempts to simulate a dual-edge triggered flip-flop using two separate always blocks. However, the issue lies in the implementation of the flip-flop. The behavior intended is not accurately replicated due to the feedback loop formed by assigning q2 to q1 inside the always block sensitive to the negedge of the clock.
+
+Since Verilog executes always blocks sequentially, the q2 value may not be updated in the same simulation cycle when q1 changes, leading to the inconsistencies in the output signal q. This discrepancy causes the 113 mismatches seen in the simulation log, with the problem arising from the delay in updating q2 based on q1's change, ultimately failing to mimic the behavior of a true dual-edge triggered flip-flop.

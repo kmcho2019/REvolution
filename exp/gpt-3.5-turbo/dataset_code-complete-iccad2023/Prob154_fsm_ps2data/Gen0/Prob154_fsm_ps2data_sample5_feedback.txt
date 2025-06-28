@@ -1,0 +1,3 @@
+The simulation error is due to a mismatch in the declaration of the `out_bytes` signal. In the module declaration, `out_bytes` is defined as an output wire, but in the main logic of the module, it is being assigned as a register (`out_bytes <= {byte1, byte2, byte3};`). Verilog does not allow direct assignment to wires, hence the error message mentioning that `out_bytes` is not a valid l-value.
+
+To resolve this issue, the declaration of `out_bytes` in the module should be changed from `output [23:0] out_bytes` to `output reg [23:0] out_bytes`.

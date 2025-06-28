@@ -1,0 +1,7 @@
+1. The `always @(*)` blocks for determining `Y0` and `z` use the concatenation of `{y, x}` as the case expression. However, the concatenation is done in the wrong order. The provided state-assigned table indicates the format as `Present state input y[2:0] | Next state Y[2:0] when x=0, Next state Y[2:0] when x=1`. This means `x` should be the most significant bit, followed by `y`. Therefore, the concatenation in case statements should be `{x, y}` for correct mapping.
+
+2. In the `Y0` logic determination, several cases have incorrect assignments. For example, for the case `3'b0101`, the assignment should be `Y0 = 1'b0;`, but the code has `Y0 = 1'b1;`. These discrepancies lead to incorrect next-state assignments for `Y0`.
+
+3. Similarly, in the `z` logic determination, the case `3'b0110` should set `z` to `1'b1`, but the provided code does not have this case, leading to mismatches in the simulation output.
+
+4. The warnings displayed during compilation about extra digits given for sized binary constants and numeric constants truncated to 3 bits could indicate discrepancies in the binary constant values used in the code, potentially contributing to the mismatches observed in the simulation.

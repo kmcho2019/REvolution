@@ -1,0 +1,5 @@
+1. The main issue in the code is in the state transitions logic. In the `case` statement, there are errors in transitioning back to IDLE state after invalid conditions. This causes the FSM to enter incorrect states and affect the signaling of "done".
+
+2. The FSM transitions to `IDLE` state only if `in[3]` is zero in `FIRST_BYTE` and `SECOND_BYTE` states. This transition should be to the `IDLE` state only when the first byte of the message is invalid. There is a similar issue in transitioning to the `IDLE` state from `SECOND_BYTE`.
+
+3. Another issue is that the `done` signal is not handled properly, leading to incorrect signaling of message reception completion. These issues together lead to mismatches in the simulation results.

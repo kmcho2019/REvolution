@@ -1,0 +1,7 @@
+1. In the `BYTE2` state, the condition to transition to state `DONE` is incorrect. It should check for `(in[3] == 1)` rather than checking `(in[3] == 1) && (state == BYTE1)`. This incorrect condition is causing the FSM to not transition to the `DONE` state when the third byte with `in[3] = 1` is received.
+
+2. The FSM implementation lacks a proper handling mechanism for transitioning between states. Due to the order of the `always` blocks and the lack of explicit state assignment at the end of each state block, the next state might not be set correctly in all conditions.
+
+3. There might also be an issue with the way the `done` signal is being set in each state. The `done` signal should be driven directly when the `DONE` state is active, but in other states, it should remain 0 until the final cycle of the `DONE` state.
+
+These issues lead to incorrect state transitions and mismatches in the simulation output, explaining the failing simulation results.

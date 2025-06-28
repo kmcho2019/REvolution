@@ -1,0 +1,5 @@
+The issue in the code lies in the incorrect implementation of the Galois LFSR logic. In the else block of the always block, the shifting logic using XOR operations is not correctly aligned with taps at bit positions 5 and 3.
+
+The line `{q[4] ^ q[0], q[4] ^ q[2], q[4:1]}` does not represent the correct taps at positions 5 and 3. The XOR operations should involve q[4] XOR q[2] for the tap at bit 3, and q[4] XOR q[1] for the tap at bit 5, in order to create a maximal-length Galois LFSR.
+
+Due to this incorrect logic, the LFSR is not cycling through the expected sequence of states, leading to numerous mismatches in the simulation output compared to the expected output.

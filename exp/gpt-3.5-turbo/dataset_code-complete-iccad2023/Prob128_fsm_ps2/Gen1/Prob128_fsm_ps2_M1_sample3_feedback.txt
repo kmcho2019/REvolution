@@ -1,0 +1,8 @@
+The simulation log indicates that the output signal 'done' has 92 mismatches out of 400 samples, which means the FSM is not functioning as intended. The issue likely lies in the transition conditions between states within the FSM. Specifically, the problem seems to be related to the transition from the SECOND_BYTE state to other states.
+
+Upon reviewing the code:
+1. In the SECOND_BYTE state, the transition condition to go back to the IDLE state is incorrect. The condition should ensure that if the next byte is not the start of a new message, the state machine should transition back to the IDLE state to look for the start of a new message. This incorrect transition could be causing the FSM to get stuck or transition inappropriately, leading to the observed mismatches in the simulation results.
+
+2. Additionally, when moving from the FIRST_BYTE state to the SECOND_BYTE state, the condition that checks for the start of the second byte of the message is correct; however, more thorough testing is needed to ensure that all combinations of the PS/2 input data are correctly handled.
+
+Overall, the code implementation of the FSM structure is in line with the problem description, but the transition conditions between states need thorough review and testing to ensure correct operation.

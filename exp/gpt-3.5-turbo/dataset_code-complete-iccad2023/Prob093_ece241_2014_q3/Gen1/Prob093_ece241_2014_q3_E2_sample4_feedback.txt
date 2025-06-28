@@ -1,0 +1,7 @@
+1. The code is using non-blocking assignments for updating the `mux_in` value inside the `always` block. While this is generally used for sequential logic, in this case, the `always @*` block is meant for combinational logic. Changing the assignments to blocking (`=`) may help resolve some issues.
+
+2. The case statement conditions are incorrectly assigned. The outputs for `2'b00` and `2'b10` are both set to `4'b1001`, which does not match the Karnaugh map provided. This incorrect mapping is likely causing the majority of the mismatches observed during simulation.
+
+3. The `default` case assignment to `4'b1001` may cause unintended behavior. It should be used cautiously based on the design requirements.
+
+Overall, the incorrect mappings in the case statement and the usage of non-blocking assignments for combinational logic are the main reasons for the simulation failures.

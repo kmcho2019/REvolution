@@ -1,0 +1,11 @@
+1. The output signals `aaah` and `digging` are not updated correctly in the state transition and output assignment logic. This results in incorrect behavior and mismatches in the simulation.
+
+2. The state transition conditions are not properly implemented for all states. For example, when the Lemming is in the `DIGGING` state, the condition to transition to the `FALLING` state is incorrectly stated as `!ground` instead of `ground`. This leads to incorrect state transitions and mismatches in the simulation results.
+
+3. The logic for handling transitions when the Lemming is falling (`FALLING` state) is missing the condition to check if the Lemming hits the ground, and the direction of walking after falling is not correctly updated based on the previous state.
+
+4. The priority of actions (falling > digging > switching directions) as described in the problem statement is not properly reflected in the code. This can lead to incorrect behavior when multiple conditions are met simultaneously.
+
+5. There is no initial state assignment upon reset, which can lead to undefined behavior until the first clock edge triggers a state update.
+
+Overall, these issues contribute to the mismatched simulation results, indicating that the code does not correctly implement the desired Lemming behavior based on the given problem description.

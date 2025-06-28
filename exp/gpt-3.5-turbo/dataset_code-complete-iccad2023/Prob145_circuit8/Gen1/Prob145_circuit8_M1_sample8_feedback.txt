@@ -1,0 +1,3 @@
+1. The first issue lies in the sensitivity list of the always block that assigns values to signal `p`. The condition `if (!a && q_next)` is used to update `p`, but the sensitivity list only includes the `posedge clock`. This results in `p` being updated incorrectly and causing mismatches.
+
+2. The second issue is related to the logic for updating the `q` signal. The `q_next` signal is updated in the combinational always block. However, the assignment of `q_next` to `q` is done in a separate always block sensitive to the `posedge clock`. This can cause synchronization issues between `q` and `q_next`, leading to mismatched results in the simulation.

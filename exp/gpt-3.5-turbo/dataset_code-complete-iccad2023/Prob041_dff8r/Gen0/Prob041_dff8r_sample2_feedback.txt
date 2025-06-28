@@ -1,0 +1,7 @@
+1. The issue causing the high number of mismatches lies in the logic of updating the q_reg. The q_reg is being updated directly from d_reg without considering the reset condition properly, leading to incorrect outputs.
+
+2. The reset functionality is not correctly implemented:
+- The reset_reg is not being updated at the positive edge of the clock which affects the reset signal detection.
+- The way reset is being handled in the first always block is incorrect. It sets q_reg to 0 when reset_reg is high, but the reset condition is not properly synchronized with the clock.
+
+Both issues need to be addressed to rectify the discrepancies observed during simulation.

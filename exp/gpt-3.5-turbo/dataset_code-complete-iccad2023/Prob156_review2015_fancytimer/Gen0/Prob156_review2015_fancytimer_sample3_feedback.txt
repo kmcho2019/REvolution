@@ -1,0 +1,5 @@
+1. The error "count is not a valid l-value in tb.top_module1": The issue here is that the output 'count' is declared as a wire in the module declaration but is being assigned as a value in the always_comb block. It should be declared as a reg to be assigned within the always block.
+
+2. The error "constant selects in always_* processes are not currently supported": This error is due to trying to set 'count' in the always_comb block based on conditions of 'state'. Constant selection (delay + 1) inside the always block is causing the error as it tries to select only some bits based on a condition.
+
+3. The warnings about non-blocking assignments in the always_comb block: The code mixes non-blocking assignments with blocking assignments in the always_comb block, which can lead to unexpected behavior. It's best to use only blocking assignments in an always_comb block for combinational logic.

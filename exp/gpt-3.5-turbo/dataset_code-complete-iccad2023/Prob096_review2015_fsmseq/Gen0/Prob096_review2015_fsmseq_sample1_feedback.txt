@@ -1,0 +1,3 @@
+The issue in the code lies in the DETECTED state logic. When the FSM detects the sequence '1101', it transitions to the DETECTED state and sets `start_shifting` to 1. However, in the DETECTED state logic, the next state should remain as DETECTED to continue outputting 1 until a reset signal is encountered. This incorrect state transition leads to the FSM not behaving as expected.
+
+Furthermore, the FSM does not reset `start_shifting` back to 0 eventually, which could be another issue causing mismatches in the simulation. This lack of proper handling for resetting the state after detecting the sequence could lead to the `start_shifting` output staying high indefinitely, contrary to the design intent outlined in the problem description.

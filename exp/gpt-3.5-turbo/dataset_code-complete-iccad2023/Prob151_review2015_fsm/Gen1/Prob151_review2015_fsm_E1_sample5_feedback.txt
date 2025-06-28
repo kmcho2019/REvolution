@@ -1,0 +1,7 @@
+1. The first issue is in the DETECTED state. The condition for transitioning out of the DETECTED state is incorrect. The counter for shift_ena is not being properly incremented, leading to incorrect behavior and the shift_ena signal not being de-asserted after the required 4 clock cycles.
+
+2. Another issue is in the DETECTED state related to the done_counting input. The condition `if (shift_ena == 4 && done_counting)` is incorrect. It should be based on the number of clock cycles elapsed rather than comparing directly to the shift_ena signal.
+
+3. There is a discrepancy in transitioning back to the IDLE state from the TIMED_OUT state. The reset condition to return to the IDLE state once the acknowledgment is received is not implemented correctly, causing the state machine to remain stuck in certain states.
+
+4. Overall, the state transitions and conditions within the state machine need to be revised to align with the specified behavior outlined in the problem description.

@@ -1,0 +1,7 @@
+1. The main issue lies in the way the delay is processed in the READ_DELAY state. The delay value is shifted in by concatenating the new data with the existing delay. This implementation does not capture the correct behavior where the most significant bit should be the latest received data. This causes incorrect timing calculations later.
+
+2. In the COUNTING state, the condition for incrementing the counter `(counter < (delay + 1) * 1000)` does not follow the desired counting logic. The counter should count for exactly `(delay[3:0] + 1) * 1000` cycles, but the current implementation doesn't reflect this behavior.
+
+3. The assignment for the `count` output is incorrect. It is supposed to show the remaining time (decreasing from the original delay) while counting. However, the current logic uses `counter[11:8]` which is not suitable for this purpose, leading to mismatches in the count output.
+
+4. The FSM transitions and state handling seem to be appropriate, but the core issue lies in the misunderstanding and incorrect implementation of delay and counting logic in the design.

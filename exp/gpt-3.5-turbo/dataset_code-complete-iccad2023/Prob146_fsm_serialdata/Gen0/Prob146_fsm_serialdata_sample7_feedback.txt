@@ -1,0 +1,6 @@
+The issues in the code are leading to incorrect byte detection and timing problems. Here are the identified problems:
+1. The FSM transitions are not handling all scenarios correctly. When transitioning to the DATA state, the counter should increment only if the input is 1 (start bit) and not when moving from DATA to STOP_BIT. This leads to incorrect byte formation.
+2. The transition from the STOP_BIT state back to IDLE is immediate when a stop bit is received, which may not align with the expected protocol's timing.
+3. The FSM is not re-syncing correctly with the incoming data stream after a byte is received. This might result in missing or incorrectly detecting subsequent bytes.
+
+These issues cause incorrect byte detection and mismatches in the outputs, leading to a failed simulation.

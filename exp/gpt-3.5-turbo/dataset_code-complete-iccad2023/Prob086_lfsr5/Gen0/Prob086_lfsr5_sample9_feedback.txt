@@ -1,0 +1,8 @@
+The issues in the code are:
+1. The order of bit assignments in the `next_q` register is incorrect. The feedback mechanism in a Galois LFSR should capture the values of the lower bits before updating them. However, in this code, bit positions `[4]` and `[0]` are updated based on the XOR operation before storing the previous values of these bits. This results in incorrect feedback and hence disrupts the LFSR sequence.
+
+2. The feedback logic for bit position 4 is incorrect. Bit position 4 should have tap from bit position 3 only, but the code incorrectly uses XOR from bit 4 as well, disrupting the feedback mechanism.
+
+3. The reset condition initializes `q` to 1 but does not maintain the taps (5 and 3) setup required for a Galois LFSR. A proper reset should initialize the LFSR in a state that respects the taps configuration.
+
+These issues combined result in the LFSR not cycling through the maximum-length sequence as expected, leading to mismatches in the simulation output.

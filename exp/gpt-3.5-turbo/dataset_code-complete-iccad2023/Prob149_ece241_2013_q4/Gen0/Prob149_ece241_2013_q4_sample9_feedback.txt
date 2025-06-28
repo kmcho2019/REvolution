@@ -1,0 +1,12 @@
+1. The initial state of the state machine is set to IDLE. However, during the simulation, when the reset signal is asserted, the state should be reset to a state equivalent to when the water level has been low for a long time (no sensors asserted). This discrepancy leads to issues in subsequent state transitions.
+
+2. In the state machine transitions, the logic doesn't fully align with the problem description. For example:
+   - The condition for transitioning from HIGH to MEDIUM state is incorrect. It should consider the state of s[2], not s[3].
+   - The transition from MEDIUM to LOW state is missing the condition to increase the flow rate when the previous level was lower than the current level, by opening the Supplemental flow valve (controlled by dfr).
+
+3. The output generation logic within each state is not completely accurate:
+   - In the HIGH state, the flow rates should be set to 0, which is missing in the code.
+   - In the MEDIUM state, the conditions to set fr1 and fr2 are not properly implemented based on sensor conditions.
+   - In the LOW state, the conditions to set fr1, fr2, and fr3 are not accurately implemented. There's also an incorrect condition to set dfr based on the previous state and sensor conditions.
+
+These inconsistencies with the problem description and inaccurate implementation of state transitions and output generation logic lead to the mismatches observed in the simulation results.

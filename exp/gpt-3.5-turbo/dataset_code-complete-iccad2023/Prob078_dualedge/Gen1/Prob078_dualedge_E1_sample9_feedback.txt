@@ -1,0 +1,5 @@
+The code attempts to mimic the behavior of a dual-edge triggered flip-flop by using two separate flip-flops triggered on positive and negative edges of the clock. The issue causing the simulation failure lies in the logic of the second flip-flop.
+
+During the negative edge of the clock, `q_ff2` is assigned the value of `q_ff1`. However, `q_ff1` is only updated on the positive edge, resulting in `q_ff1` holding the new data introduced on the positive edge. This leads to a timing mismatch and causes incorrect output on the negative edge.
+
+To resolve this issue, the design needs to consider a way to properly capture and synchronize the input data across the two flip-flops during both clock edges.

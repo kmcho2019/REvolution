@@ -1,0 +1,10 @@
+1. The code fails to accurately model the Lemmings' behavior as defined in the problem description:
+   - The condition for changing state when bumped is incorrect. In the `WALK_LEFT` state, the logic for transitioning to the `WALK_RIGHT` state is incorrect. It incorrectly checks for `bump_left` OR `(ground && aaah)` instead of correctly checking for `bump_right`.
+   - In the `WALK_RIGHT` state, the logic for transitioning to the `WALK_LEFT` state is incorrect. It incorrectly checks for `bump_right` OR `(ground && aaah)` instead of correctly checking for `bump_left`.
+   - Additionally, the logic for setting the `aaah` output when Lemming falls (ground=0) is not correctly implemented. The `aaah` is set incorrectly in both states.
+
+2. The code does not handle certain scenarios described in the problem statement:
+   - The Lemming should not change direction when bumped during a fall (ground=0). This behavior is not accounted for in the code.
+   - The Lemming should resume walking in the same direction after the ground reappears (ground=1). This behavior is not correctly implemented.
+
+3. The overall state transition and output logic in the code does not faithfully represent the finite state machine behavior required for the Lemmings' game, leading to the observed mismatches in simulation outputs.

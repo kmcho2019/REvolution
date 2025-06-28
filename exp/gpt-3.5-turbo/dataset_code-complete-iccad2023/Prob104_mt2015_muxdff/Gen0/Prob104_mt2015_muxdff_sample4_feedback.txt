@@ -1,0 +1,5 @@
+The issue in the code lies in the assignment of the output signal `Q`. The current implementation uses a ternary operator to assign `Q_temp` or `r_in` to `Q` based on the value of `L`, but this does not match the behavior of the original module. 
+
+In the original design intent (full_module), when `L` is 1, the input `r` is loaded into the output `q`, otherwise, a logic function is performed on the existing `q` values. However, in the `TopModule` submodule, the assignment of `Q` does not follow this pattern. Instead, it directly selects between `Q_temp` and `r_in` based on the value of `L`, which leads to incorrect behavior during simulation.
+
+This discrepancy in behavior results in 57 mismatches during simulation, as observed in the simulation log. To resolve this issue, the assignment of `Q` in the `TopModule` submodule needs to be modified to reflect the intended behavior described in the original design.

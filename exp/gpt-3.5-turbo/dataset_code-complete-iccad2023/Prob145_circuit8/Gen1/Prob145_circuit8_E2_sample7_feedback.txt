@@ -1,0 +1,5 @@
+1. The first issue lies in the way the `q` signal is being updated. The condition for updating `q` inside the first `always` block is incorrect. The logic for `q` should depend on the previous value of `q_delay`, not the current value. This incorrect condition results in incorrect behavior for signal `q`.
+
+2. The second issue is related to the initialization of the `q_delay` register. Since this register does not have an initial value assignment, its initial value is unknown. This unknown state could be causing further discrepancies in the simulation results.
+
+3. The design intent of the circuit is to have `p` and `q` change based on specific conditions involving `a`, `p`, and `q_delay`. The code fails to implement this logic correctly, leading to mismatches in the simulation waveform as evidenced by the high number of mismatches and the specific time instances mentioned in the simulation log.

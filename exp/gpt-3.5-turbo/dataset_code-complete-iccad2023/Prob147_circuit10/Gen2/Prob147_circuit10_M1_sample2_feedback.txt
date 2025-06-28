@@ -1,0 +1,6 @@
+The code is attempting to implement a Gray code generator using two D flip-flops. The issue lies in the incorrect implementation of the Gray code logic. In the provided code:
+1. The assignment to `gray_next[0]` is incorrect. It should be `gray_next[0] <= a ^ (b ^ gray_next[1])` to correctly compute the Gray code.
+2. The assignment to `gray_next[1]` is incorrect as well. It should be `gray_next[1] <= a ^ gray_next[0]` to align with Gray code generation.
+3. Inside the combinational block, `gray_curr` should be assigned the value of `gray_next` synchronously with respect to the clock, not combinatorially.
+
+These errors in the Gray code logic implementation are causing the observed output mismatches during simulation.

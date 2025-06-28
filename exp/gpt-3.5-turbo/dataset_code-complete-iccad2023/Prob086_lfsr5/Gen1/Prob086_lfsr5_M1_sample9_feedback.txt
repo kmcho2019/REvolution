@@ -1,0 +1,5 @@
+The issue lies in the LFSR logic within the `always` block. In the line `q <= {q[4], q[4] ^ q[2], q[4:1]};`, the shifting logic is not correctly implemented for a Galois LFSR with taps at bit positions 5 and 3. 
+
+In a Galois LFSR, when a tap exists at a particular bit position, that tapped bit should be XORed with the LSB bit `q[0]` to generate the next state, while other bits should be shifted right without any change. In this case, the XOR should be between `q[2]` and `q[4]`, but the code incorrectly XORs `q[2]` with `q[4]`. This mistake disrupts the intended feedback mechanism of the LFSR, leading to multiple mismatches in the simulation waveform output.
+
+Therefore, due to the incorrect logic in implementing the Galois LFSR shifting mechanism, the code fails to create the expected LFSR behavior as defined in the problem description, resulting in a considerable number of mismatches during simulation.

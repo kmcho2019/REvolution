@@ -1,0 +1,5 @@
+1. The main issue in the code lies in how `q_lower` and `q_upper` registers are updated. Both `q_lower` and `q_upper` should be updated in parallel based on `byteena` signals, but the current implementation updates them sequentially. This can result in incorrect values being latched in the registers, hence causing mismatches in the output `q`.
+
+2. The asynchronous reset implementation using `~resetn` is causing problems in the simulation. Since it's not synchronous to the clock, it can lead to unpredictable behavior and ultimately mismatched output samples.
+
+To improve the code, the update of `q_lower` and `q_upper` should be synchronized by combining them in a single concurrent assignment, and the reset signal should be synchronized to the clock to avoid potential race conditions and mismatches in the output.

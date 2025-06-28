@@ -1,0 +1,7 @@
+1. The code logic for state transitions is incorrect, leading to the disc, flag, and err outputs not behaving as expected. 
+2. In state 0, the transition to state 1 is done based on the current input 'in' being high, but it should actually depend on the last bit of the shift register being '0' rather than 'in'.
+3. State 1 should transition to state 0 when the current input 'in' is low to reset the consecutive ones counter correctly.
+4. State 2 transitions back to state 0 immediately after setting the flag signal, which is incorrect. It should transition to a different state to wait for the end of the flag sequence.
+5. State 3 is not reachable in the code due to no condition directly leading to this state.
+6. The 'default' case inside the case statement does not serve any useful purpose in this implementation.
+7. Overall, the incorrect state transitions and missing conditions for error detection cause the mismatches observed in the simulation log.

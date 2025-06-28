@@ -1,0 +1,3 @@
+The main issue in the code is in the counting of data bits in the `RECEIVE` state. The condition `count < 3'b111` should be changed to `count < 3'b110` to correctly count all 8 data bits. This discrepancy in counting causes incorrect state transitions and failure to detect the stop bit accurately.
+
+Additionally, in the `WAIT` state, the handling of the `done` signal is problematic. The `done` signal is set high when `in == 1'b1`, but this should only happen when the stop bit is expected. The current implementation does not ensure that the stop bit is correctly placed in the byte sequence, leading to incorrect behavior and simulation mismatches.

@@ -1,0 +1,9 @@
+The design uses a 2-bit state variable to implement a simple finite state machine with three states. The state transitions are controlled based on the input signal 'a' and the clock signal. 
+
+One issue in the code is that the default case inside the `case` statement is reached when the state is neither 2'b00, 2'b01, nor 2'b10, but the default behavior resets the state to 2'b00 unconditionally, which may not be the intended behavior.
+
+The main problem causing mismatches in the outputs 'p' and 'q' seems to stem from the state transitions and output assignments within each state. Specifically, the transitions and output assignments in State 0 and State 1 should be reviewed since the mismatches start early in the simulation, indicating a problem in these states. The discrepancy could be due to incorrect sequencing of state changes and output assignments causing the outputs to deviate from the expected waveform.
+
+Additionally, the timing of state transitions might need adjustment to match the expected behavior. The transition conditions and output assignments should be carefully examined to ensure correct behavior at every clock cycle.
+
+Overall, to address the mismatch issue, a detailed analysis of the state transitions, output assignments, and timing within each state is necessary to identify and correct the specific logic causing the deviation from the expected waveform.

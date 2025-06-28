@@ -1,0 +1,9 @@
+1. The state transition logic seems to have issues:
+   - In the `WALK_RIGHT` case, when bumped on the left (`bump_left`), the next state should be `WALK_LEFT` instead of `WALK_RIGHT`.
+   - There is a missing state transition in the `DIGGING` case when `dig` is no longer asserted but `ground` is still 0. The state should transition to `FALLING`.
+   - The `FALL_THEN_WALK` state transitions should handle cases when Lemming is no longer falling (when `ground` becomes 1). However, the condition is written to change direction immediately (`WALK_RIGHT` to `WALK_LEFT` or vice versa) without considering if Lemming has hit the ground after falling.
+
+2. The output assignment might need adjustments:
+   - The `FALL_THEN_WALK` state's `walk_left` and `walk_right` assignments are flipped. If the Lemming fell while walking right (`state == WALK_RIGHT`), it should walk left afterward and vice versa.
+
+These issues in the state transitions and output assignments are causing the mismatches observed in the simulation log.

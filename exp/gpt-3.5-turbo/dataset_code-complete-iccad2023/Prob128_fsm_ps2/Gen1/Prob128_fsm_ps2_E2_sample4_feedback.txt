@@ -1,0 +1,7 @@
+The issue in the provided Verilog code lies in the state transitions logic. The FSM is not properly detecting the boundaries of the three-byte PS/2 messages. The code correctly transitions to BYTE1 state when in[3] is 1 in the IDLE state; however, the transition to the next states BYTE2 and DONE depend on incorrect conditions. This causes the FSM to behave incorrectly when processing subsequent bytes in the message stream.
+
+In the BYTE1 state, the transition to BYTE2 should occur when in[3] is 1, not 0. Similarly, in the BYTE2 state, the transition to DONE should occur when in[3] is 1, not 0. These incorrect conditions prevent the FSM from correctly identifying the end of a message and transitioning back to the IDLE state after receiving three valid bytes.
+
+The 'done' signal is set correctly in the DONE state, but due to the incorrect state transitions, this state is not reached as expected. As a result, the 'done' signal is not being asserted at the correct time.
+
+This misalignment between the expected byte conditions for state transitions and the actual implementation leads to the FSM failing to correctly identify the boundaries of the PS/2 messages, resulting in the large number of mismatches observed during simulation.

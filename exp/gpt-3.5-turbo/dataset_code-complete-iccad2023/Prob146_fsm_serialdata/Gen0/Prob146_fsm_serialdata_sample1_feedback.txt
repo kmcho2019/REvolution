@@ -1,0 +1,6 @@
+1. **Start Bit Detection**: The condition to detect the start bit (in == 0) in the IDLE state is incorrect. It should consider the transition from idle (high) to start bit (low).
+2. **Data Bit Collection**: The shifting of bits to collect the data bits is correct, but there's an issue with checking for the stop bit. The check for the stop bit should utilize the incoming bit 'in' rather than the entire 'out_byte_reg'.
+3. **Stop Bit Verification**: The condition to check for the stop bit is flawed. It's checking the entire content of 'out_byte_reg' rather than the last received bit. This causes premature transitions and incorrect behavior.
+4. **Output Handling**: The logic for outputting the 'out_byte' and asserting 'done' signals seems correct based on the FSM states.
+
+Overall, these issues lead to incorrect byte reception and verification, resulting in mismatches in 'out_byte' and 'done' signals during the simulation.

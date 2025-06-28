@@ -1,0 +1,7 @@
+The primary issue in the code lies in the state transition logic of the finite state machine. In the `IDLE` state, the transition to `BYTE1` should occur when `in[3]` is detected as 1, which is correctly implemented. However, the transition from `BYTE1` to `BYTE2` should only occur when `in[3]` is 0. This condition is missing in the code, leading to incorrect state transitions.
+
+Due to this missing condition, the state machine transitions to `BYTE2` immediately after setting `shift_reg[1]`, without waiting for the next byte input. This premature transition causes incorrect byte assignments and ultimately wrong message extraction. As a result, the `out_bytes` data and `done` signal are asserted incorrectly, leading to the large number of mismatches observed during simulation.
+
+To resolve this issue and ensure correct message boundary detection, the state transition from `BYTE1` to `BYTE2` should depend on `in[3]` being 0, indicating that the byte is not the final byte of the message.
+
+This critical logic flaw significantly impacts the functionality of the FSM and needs to be addressed to achieve the intended message extraction behavior.

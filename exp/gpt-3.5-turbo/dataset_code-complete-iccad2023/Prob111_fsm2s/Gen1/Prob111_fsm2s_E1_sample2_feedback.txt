@@ -1,0 +1,5 @@
+1. The primary issue in the code is the asynchronous nature of updating `next_state` and `next_out` in the combinational block (`always @*`). This can lead to synchronization issues between state and output, causing mismatches in the simulation.
+
+2. The reset implementation is incomplete since the `state` register is reset properly, but the `out` output signal is not properly reset along with `next_state` and `next_out`. This results in incorrect behavior during reset conditions, which is indicated by the hint that the reset doesn't seem to be working.
+
+To improve the design, the update of `next_state` and `next_out` should also be synchronized with the clock edge in the same always block where `state` is updated to prevent timing issues. Additionally, ensure that the reset is properly implemented for all the necessary registers and outputs.

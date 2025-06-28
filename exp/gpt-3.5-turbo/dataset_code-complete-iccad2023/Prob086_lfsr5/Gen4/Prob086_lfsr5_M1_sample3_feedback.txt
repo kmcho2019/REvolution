@@ -1,0 +1,5 @@
+The primary issue in the code lies in the shifting logic of the LFSR. The line `q <= {q[4] ^ q[2], q[4:1]};` is attempting to represent the XOR feedback mechanism of the Galois LFSR with taps at bit positions 5 and 3. However, the indexing and concatenation used here are incorrect.
+
+In a Galois LFSR, the XOR feedback should be applied to the specific tap positions (in this case, bits 5 and 3) and not just random bit positions. The expression `{q[4] ^ q[2], q[4:1]}` incorrectly XORs bits at positions 4 and 2 instead of 5 and 3. This incorrect feedback mechanism disrupts the expected behavior of the LFSR, leading to the large number of output mismatches observed during simulation.
+
+To align the code with the design intent of a maximal-length Galois LFSR with taps at bit positions 5 and 3, the shifting logic needs to be adjusted to correctly perform the XOR feedback with the appropriate tap positions.

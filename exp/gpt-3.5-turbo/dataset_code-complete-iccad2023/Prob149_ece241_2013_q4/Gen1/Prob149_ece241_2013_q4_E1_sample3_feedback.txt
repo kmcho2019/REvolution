@@ -1,0 +1,11 @@
+1. The warning about an implicit wire 's_priority' indicates that the variable `s_priority` is not explicitly declared in the code, which might lead to unexpected behavior.
+
+2. The main issue lies in the state machine transitions. The transitions in the state machine logic do not align with the problem requirements. For example:
+   - The transition from `HIGH` state to `MEDIUM` state when `s[3]` is low is missing the logic to handle the case when `s_priority` changes from 1 to 2.
+   - The transition from `MEDIUM` state to `LOW` state does not consider the case when `s_priority` changes from 2 to 1.
+
+3. In the output logic, the handling of water level priorities in determining the flow rates is not correct:
+   - The case for `s_priority` 2 (water level between s[3] and s[2]) should set `fr1 = 1`, but this is not reflected in the code.
+   - The condition for opening the Supplemental flow valve (`dfr`) when the water level changes at the second sensor is incorrect and may not cover all necessary scenarios.
+
+These issues lead to mismatches in the simulation output and indicate that the code does not correctly implement the requirements specified in the problem description.

@@ -1,0 +1,7 @@
+The code has several issues:
+1. The loop variable in the `for` loop should be declared using `integer`, not `int`.
+2. In the condition `if (prev_in[i] && !in[i] && !edge_detected[i])` to detect rising edges, the logic for edge detection is incorrect. The condition is checking if the current signal is 0 and the previous signal was 1, which is opposite to the intended rising edge detection.
+3. The assignment `edge_detected[i] <= prev_in[i] && !in[i];` does not appropriately capture the rising edge condition. It should involve the current value of `edge_detected[i]` as it depends on the previous and current input values.
+4. Additionally, the code does not consider when a rising edge is detected and the reset signal is high. This could lead to incorrect behavior when the reset is active.
+
+These issues collectively lead to the detected mismatches in the simulation log.

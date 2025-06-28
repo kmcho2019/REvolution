@@ -1,0 +1,6 @@
+1. The 'start_detected' signal is initialized to 0 but is never appropriately updated after the start bit is detected. This leads to incorrect handling of the start bit detection logic and causes synchronization issues with the other parts of the FSM.
+2. The condition for verifying the stop bit (`bit_counter == 9`) is flawed. Since the `bit_counter` is counting from 0 to 8 for the data bits, the condition to check the stop bit should be modified to `bit_counter == 8` to properly validate the stop bit.
+3. The shifting logic for collecting data bits in the `out_byte` register is incorrect. The bit ordering during concatenation is not properly aligned, resulting in incorrect storage of the received byte.
+4. The FSM lacks a mechanism to handle cases where the stop bit is missing or incorrect. It should wait for the correct stop bit before attempting to receive the next byte, making sure the FSM is in the right state for the next data byte reception.
+
+These issues collectively lead to incorrect output values for both 'out_byte' and 'done', resulting in simulation mismatches.

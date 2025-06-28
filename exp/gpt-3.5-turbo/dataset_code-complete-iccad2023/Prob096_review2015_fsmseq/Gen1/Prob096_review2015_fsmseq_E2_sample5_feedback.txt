@@ -1,0 +1,3 @@
+The issue lies in how the "start_shifting" signal is updated in the code. The signal should only be set to `1` when the sequence `1101` is found in the `shift_reg`, indicating that the sequence `1101` has been detected. However, the current implementation sets the "start_shifting" signal to `1` as soon as the sequence `1101` is found, which is incorrect. The signal should remain `1` until a reset signal is received.
+
+Additionally, the code is missing cases for handling the transition of the state machine when the sequence is not detected, which could lead to incorrect behavior. These missing cases might be contributing to the 17 mismatches observed in the simulation results.

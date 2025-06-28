@@ -1,0 +1,7 @@
+1. Synchronization Issue:
+The simulation log hints at a synchronization problem with the reset signal. The reset condition is not properly synchronous to the clock edge, which can lead to potential meta-stability issues or improper reset behavior.
+
+2. Byte Enable Issue:
+In the for loop within the always block, the conditions `byteena[1] && i >= 8` and `byteena[0] && i < 8` are used to control the updates of the flip-flops based on the upper and lower bytes, respectively. However, this implementation causes overlapping conditions for the flip-flops at index 8. This issue can lead to unexpected behavior in updating the flip-flops based on the byte enable inputs.
+
+These issues can cause incorrect behavior in the flip-flop updates, resulting in mismatches observed during simulation.

@@ -1,0 +1,7 @@
+1. The `SHIFT_DELAY` state should transition to `IDLE` after 4 clock cycles, but the code does not include this functionality. This leads to incorrect behavior in the simulation when checking for `shift_ena` output.
+
+2. In the `WAIT_COUNTING_DONE` state, updating the `next_state` based on `(done && ack)` condition is incorrect as it does not follow the design intent. This incorrect logic affects the behavior of the `done` output.
+
+3. The `counting` output is not correctly implemented in the code. The assignment in the `always @*` block only considers the `WAIT_COUNTING_DONE` state, but it should also include the `DETECT_PATTERN` state.
+
+Overall, the FSM's incorrect state transitions and output assignments lead to significant mismatches in the simulation results, indicating flawed functionality.

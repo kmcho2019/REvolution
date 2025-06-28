@@ -1,0 +1,4 @@
+1. The main issue lies in the initialization and usage of the `current_state` and `next_state` variables. The `current_state` is a 2-bit variable, but in the case statements in both the combinational and sequential blocks, only one bit (LSB) is being compared and assigned. This results in unexpected state transitions and incorrect behavior.
+2. In the combinational block, when setting the `next_state`, a value of `2` is assigned, but since the variable is 2-bit, it should be assigned as 2'b10. Similarly, the default state assignment should also consider a 2-bit value.
+3. Due to these issues with state encoding and assignment, the outputs `q` and `state` are not following the correct sequence of values as per the provided problem description, leading to mismatches in the simulation results.
+4. The code lacks clear comments and organization, making it harder to follow the intended functionality and state transitions accurately.

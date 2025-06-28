@@ -1,0 +1,9 @@
+1. The issue lies in the clocked always block where the output 'out_always_ff' is being updated using two separate always blocks. This approach creates a race condition between the two always blocks, leading to unpredictable behavior and incorrect output.
+
+2. In the clocked always block, 'out_ff' is assigned using a non-blocking assignment (<=) inside the first always block triggered by the posedge of the clock. However, the 'out_always_ff' is assigned its value inside another always block also triggered by the posedge of the clock. This setup creates a conflict as the values may not synchronize properly causing intermittent mismatches.
+
+3. The delayed assignment of 'out_always_ff' compared to 'out_ff' in the clocked always block is the root cause of the failures seen in the simulation log. The output is not updated synchronously with the clock edge, leading to unpredictable behavior and mismatches.
+
+4. To align the behavior with the design intent, the clocked always block should be modified to have a single always block updating both 'out_ff' and 'out_always_ff' in a synchronous manner to ensure correct operation of the XOR gate with the delayed output.
+
+Overall, the critical issue in the clocked always block significantly impacts the functionality of the design, resulting in mismatches in the simulation output for 'out_always_ff'.

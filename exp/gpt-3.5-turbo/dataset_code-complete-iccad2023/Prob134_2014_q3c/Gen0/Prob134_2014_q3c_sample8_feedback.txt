@@ -1,0 +1,9 @@
+The issue lies in the way the `Y0` output is being calculated for all states in the `always @(*)` block. The problem stems from incorrect assignments for the `Y0` output based on the conditions inside the `case` statement.
+
+1. In the case for `3'b000`, the condition `Y0 = (x) ? 0 : 0` results in `Y0` always being assigned 0, regardless of the value of `x`. This doesn't match the expected next state of `Y0`.
+
+2. Similarly, for `3'b010` and `3'b011`, the conditions `Y0 = (x) ? 0 : 1` result in incorrect assignments, leading to a mismatch.
+
+3. The condition `3'b100` also suffers from a similar issue where `Y0` is wrongly assigned as `1` regardless of the value of `x`.
+
+To address the mismatch in `Y0`, the logic for assigning the values of `Y0` based on the next state transitions needs to be corrected within the respective `case` blocks.

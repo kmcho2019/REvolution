@@ -1,0 +1,5 @@
+The main issue in the code is in the comparison logic to detect the sequence "1101". When checking if `shift_register` is equal to `4'b1101`, it is comparing the entire 4-bit register with the 4-bit value. However, the sequence "1101" should be searched for in a sliding window manner as the input data shifts into the register. This comparison is incorrect because it compares the entire content of the register with "1101" instead of checking for the sequence within the sliding window. This results in incorrect behavior and many mismatches in the simulation log.
+
+Additionally, the code sets `start_shifting` directly based on the current content of `shift_register`. This is incorrect because it should keep the last valid detection until a reset signal is received. The current implementation changes `start_shifting` with each clock cycle, resetting it even if the sequence was detected in the previous clock cycle.
+
+These issues lead to incorrect behavior and cause mismatches in the simulation log, where the `start_shifting` signal does not behave as expected.

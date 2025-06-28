@@ -1,0 +1,7 @@
+The simulation log shows errors related to assigning values to the outputs `next_state`, `out1`, and `out2`. These errors arise because these signals are declared as outputs in the module but are being assigned within the `always` block, which is not allowed.
+
+The Verilog code attempts to assign values to `next_state` using `next_state = 10'b0;`. This is not allowed because `next_state` is declared as an output. Instead, outputs can only be assigned within `assign` statements or directly in the `always` block without the blocking assignment.
+
+Similarly, the attempts to assign values to `out1` and `out2` within the `always` block result in errors because they are also declared as module outputs.
+
+To resolve these issues, the assignments to `next_state`, `out1`, and `out2` should be moved out of the `always` block and modified appropriately to match the rules of assigning to outputs in Verilog.

@@ -1,0 +1,6 @@
+The issue in the code lies in how the `byte_count` variable is being updated within each state. 
+1. In the `BYTE1` state, the condition for transitioning to `BYTE2` state is incorrect. The check `if(byte_count == 2'b10)` should actually be `if(byte_count == 2'b01)` because `byte_count` should go from 01 to 10 (binary) before transitioning to the next state.
+2. Similar issue exists in the `BYTE2` state. The condition for transitioning to `BYTE3` state should be `if(byte_count == 2'b10)` instead of `if(byte_count == 2'b11)`.
+3. In the `BYTE3` state, the condition `if(byte_count == 2'b00)` for transitioning back to `IDLE` state is incorrect. It should actually be `if(byte_count == 2'b11)` because we need to reach the count of 11 before going back to the `IDLE` state.
+
+These incorrect condition checks for `byte_count` updates and state transitions are causing incorrect behavior in the FSM, leading to failure in simulating till the completion within the given time limit.

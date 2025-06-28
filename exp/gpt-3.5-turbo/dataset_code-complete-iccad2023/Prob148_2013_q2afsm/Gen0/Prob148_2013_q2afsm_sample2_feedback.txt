@@ -1,0 +1,8 @@
+1. In the state table logic, there is inconsistency in transition conditions for state A:
+   - When in state A, if a request from device 1 is made, the next state should be B, but this condition is incorrectly followed by transitions for devices 2 and 3 instead of staying in state A.
+2. The FSM outputs are incorrectly assigned based on the current state of the FSM. This incorrect assignment leads to mismatches in the output signals compared to the expected behavior of the FSM.
+3. There is no explicit handling in the state table logic to prevent multiple devices from getting granted access simultaneously. This violates the priority system mentioned in the problem description.
+4. The FSM state `D` does not match any valid transition conditions since there are no inputs triggering a transition from state `D`.
+5. The reset implementation is asynchronous, which could lead to potential issues during reset assertion or deassertion.
+
+These issues are causing the FSM to not behave according to the provided state diagram, resulting in numerous mismatches in the output signals during simulation.

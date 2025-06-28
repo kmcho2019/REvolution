@@ -1,0 +1,3 @@
+The issue in the code lies within the LFSR shifting logic implementation. The line `q <= {q[4] ^ q[2], q[4:1]};` is trying to calculate the next state of the LFSR based on XOR operations at tap positions 5 and 3. However, this line is incorrect in terms of properly cascading the bits for a Galois LFSR architecture. Due to this flawed logic, the output 'q' is not transitioning correctly, resulting in a large number of mismatches during simulation.
+
+To achieve the intended Galois LFSR behavior, the shifting logic needs to be revised to correctly incorporate the taps at bit positions 5 and 3 to produce the next state as per the design requirements.

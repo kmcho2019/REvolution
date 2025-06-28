@@ -1,0 +1,5 @@
+1. The state transitions in the code logic are incorrect, leading to failures in recognizing the sequence "1101" properly. Specifically, the transition from state S_1 to S_11 should be based on the input data being '0' and not '1'.
+2. The sensitivity list of the always_comb block for next state logic generation is missing, causing the next_state variable not to update correctly based on state_reg changes.
+3. The condition to set start_shifting to 1 in the always_ff block is dependent only on state_reg being equal to S_MATCH. However, it should also consider the current input data to maintain this output until the reset is applied.
+
+These issues result in the finite-state machine not progressing correctly through the states to detect the sequence "1101" and failing to set start_shifting as expected. This leads to mismatches in simulation results.

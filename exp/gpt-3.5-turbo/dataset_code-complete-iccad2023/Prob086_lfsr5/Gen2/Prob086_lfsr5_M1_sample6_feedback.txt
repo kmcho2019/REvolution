@@ -1,0 +1,3 @@
+The issue lies in the LFSR shifting logic implementation within the always block. The XOR operation in the line `q <= {q[4] ^ (q[2] ^ q[0]), q[4:1]};` does not correctly represent the taps at positions 5 and 3. The current logic combines all taps in a single XOR expression, which is incorrect for a Galois LFSR. In a Galois LFSR, each tap bit should individually XOR with the LSB output bit (q[0]) to produce the next state.
+
+Due to this incorrect logic, the shifting pattern of the LFSR is not following the expected behavior of a Galois LFSR with taps at bit positions 5 and 3, leading to numerous mismatches in the simulation results.

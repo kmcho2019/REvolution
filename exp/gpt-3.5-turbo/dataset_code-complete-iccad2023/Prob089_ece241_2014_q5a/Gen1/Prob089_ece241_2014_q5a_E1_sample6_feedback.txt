@@ -1,0 +1,7 @@
+1. The reset condition in the always block sets the output 'z' to 1'b0, which is incorrect since 'z' should represent the 2's complement of the input 'x'. The initial value for 'z' should not be hard-coded but should be based on the accumulator value.
+
+2. In the WAIT state, when checking for a change in input 'x' to transition to the NEGATE state, only the case where x is 0 is considered (`~x`). This condition should be reversed to detect a bit being 1 in 'x'.
+
+3. Inside the NEGATE state, the calculation for the next 'z' output and the update of the accumulator seem to be intertwined. This simultaneous update may lead to incorrect results. The sequencing of operations should be reviewed to ensure the correct 2's complement calculation.
+
+4. Additionally, the definition of WAIT and NEGATE states using 2-bit values (2'b00 and 2'b01) is unnecessary since only one bit is sufficient for this state machine design. This doesn't impact functionality but adds complexity without a clear benefit.

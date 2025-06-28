@@ -1,0 +1,11 @@
+1. The main issue in the code is with the handling of the `err_reg`. The `err_reg` is being set when detecting 7 or more consecutive 1s in state `GOT_011`. However, after setting `err_reg`, the state machine transitions back to `IDLE` before outputting the error signal. This results in erroneous behavior.
+
+2. Additionally, the `flag_reg` is set correctly when detecting the flag pattern, but the flag signal is not asserted for a complete cycle beginning on the clock cycle after the condition occurs. Due to this, there are mismatches in the `flag` output.
+
+3. The `disc_reg` is set correctly when detecting the 0111110 pattern, but similarly to the `flag_reg`, the `disc` signal is not asserted for a complete cycle beginning on the clock cycle after the condition occurs. This leads to mismatches in the `disc` output as well.
+
+4. Another issue is that the initial state after reset (`IDLE`) is not handling the case where the input is zero properly. It should transition to a different state if the input is zero.
+
+5. The outputs should only reflect the updated values after the clock edge, which is not implemented correctly for all signals.
+
+These issues result in multiple mismatches in the simulation log due to incorrect handling of state transitions, output signal assertions, and error flagging conditions.

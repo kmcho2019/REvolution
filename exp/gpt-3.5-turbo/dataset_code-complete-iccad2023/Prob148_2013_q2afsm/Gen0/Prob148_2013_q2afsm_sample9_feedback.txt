@@ -1,0 +1,9 @@
+1. The FSM implementation does not properly handle the synchronous reset signal. The resetn signal is an active-low synchronous reset, but the reset condition in the state flip-flop always block doesn't reset the state and next_state variables correctly, leading to incorrect behavior after reset.
+
+2. In state A, the conditions for setting the outputs g are correct based on the priority logic mentioned in the problem description. However, there is a redundancy issue where the transition to state D when r[3] is high conflicts with other conditions in state A.
+
+3. In states B and C, the output assignment based on the request signals is correct, but the transition logic and output assignments could cause issues depending on the scenario of requests from the devices.
+
+4. The simulation log indicates 797 mismatches in the output 'g'. This discrepancy signifies that the FSM is not functioning as expected, likely due to multiple incorrect state transitions and output assignments.
+
+In summary, the code contains errors in handling the reset signal, state transitions, output assignments, and does not fully adhere to the described FSM behavior leading to significant simulation mismatches.

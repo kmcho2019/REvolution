@@ -1,0 +1,5 @@
+The primary issue lies in the state transition logic of the finite-state machine. Specifically, the transition from state S2 to S3 is incorrect. In state S2, when data is high, the next state should be S3 as per the design intent. However, the code incorrectly assigns S1 as the next state in this scenario, causing the FSM to deviate from the expected behavior.
+
+This incorrect state transition leads to the FSM not being able to recognize and maintain the sequence 1101 properly. As a result, the output signal `start_shifting` is not set to 1 when the sequence is detected, leading to numerous mismatches in the simulation output.
+
+To align the code with the design intent and fix the issues in simulation, the state transition from S2 to S3 needs to be corrected to transition to state S3 instead of S1.

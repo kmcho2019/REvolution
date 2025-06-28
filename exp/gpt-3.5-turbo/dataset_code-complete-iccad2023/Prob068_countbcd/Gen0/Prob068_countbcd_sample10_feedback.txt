@@ -1,0 +1,5 @@
+1. The simulation log shows warnings indicating that the `ena` output of the `BCDCounter4` modules is 1 bit wide instead of 4 bits wide. This mismatch causes the upper 3 bits to be padded during connection, which is incorrect.
+
+2. In the `TopModule`, the `ena_temp` signal is declared incorrectly as a 4-bit vector (`reg [3:0] ena_temp;`). However, in the instantiations for the `BCDCounter4` modules, `ena_temp` is connected to `ena` ports with indices 1, 2, and 3. This results in an out-of-range error when trying to assign to `ena_temp[4]`. 
+
+3. Additionally, there is a warning for the `ena` port connection in the `TopModule` where the upper 3 bits are padded, indicating a mismatch in the port width again.

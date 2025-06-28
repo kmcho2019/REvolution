@@ -1,0 +1,4 @@
+The main issue lies in the state transition logic and the handling of the 'start_shifting' signal. 
+1. The change of 'next_state' in the combinational logic is problematic. In the STATE_110 state, regardless of the 'data' input, 'start_shifting' should be set to 1. However, in the current code, 'start_shifting' is only set to 1 when 'data' is high, leading to incorrect behavior.
+2. The state transition conditions are not correctly capturing the sequence '1101'. When transitioning from STATE_11 to STATE_110, 'data' should be considered as the last '1' in the sequence '1101', but the code does not differentiate between intermediate '1's and the final '1'. This results in incorrect state transitions.
+3. The assignment of 'next_state' and 'start_shifting' is not mutually exclusive in the case statements, causing conflicts in signal values.

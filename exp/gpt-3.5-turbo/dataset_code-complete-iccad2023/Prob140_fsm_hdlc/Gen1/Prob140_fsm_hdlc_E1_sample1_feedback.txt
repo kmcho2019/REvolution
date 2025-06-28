@@ -1,0 +1,9 @@
+1. The initial state after reset is not representing the behavior as if the previous input was 0. It should go to the IDLE state immediately.
+
+2. In the `GOT_1` state, the condition for moving to `GOT_01` state or going back to the IDLE state is not handled correctly after encountering the correct 7-bit pattern `0111110`.
+
+3. In the `GOT_01` state, the transition to the next state is missing after receiving the correct input pattern.
+
+4. The transition logic to set error (`err`) or flag (`flag`) is incorrect in the `GOT_011` state. It should check for 7 consecutive ones to indicate an error.
+
+These issues lead to incorrect behavior in the state machine, causing mismatches in the `disc`, `flag`, and `err` outputs during simulation.

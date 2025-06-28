@@ -1,0 +1,9 @@
+1. The main issue lies in the data transfer logic inside the always block. The code is trying to update the flip-flops based on individual bit conditions for each flip-flop. This approach doesn't guarantee correct behavior since the update is not atomic for all flip-flops. As a result, the behavior of flip-flops is not as expected, leading to mismatched simulation results.
+
+2. Another issue is the reset implementation. The reset condition is not synchronous to the clock. This asynchronous reset could cause metastability issues and incorrect behavior in the flip-flops, impacting the simulation results.
+
+To address the problems:
+- Consider revising the data transfer logic to update all flip-flops simultaneously for proper synchronization.
+- Implement a synchronous reset that asserts reset during the clock's rising edge to ensure deterministic behavior.
+
+These changes will help in achieving the desired functionality of the design and resolve the simulation mismatches.

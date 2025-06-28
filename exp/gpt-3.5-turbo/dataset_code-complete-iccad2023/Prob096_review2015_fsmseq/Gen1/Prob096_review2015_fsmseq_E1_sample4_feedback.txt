@@ -1,0 +1,5 @@
+The issue lies in the state transitions and sequence detection logic in the Verilog code. The sequence detection logic for finding '1101' is incorrect, leading to incorrect state transitions. In state S3, where the sequence '1101' is supposed to be detected, the `else` condition assigns the next state incorrectly to S0 instead of maintaining the current state.
+
+Additionally, the state transitions from S1, S2, and S3 are not correctly setting the `next_state` based on the input data. This causes the machine to not transition correctly through the states for sequence detection.
+
+These incorrect state transitions result in the `start_shifting` signal being set incorrectly or not being set at all when the sequence is detected. This ultimately leads to the mismatches seen in the simulation results.

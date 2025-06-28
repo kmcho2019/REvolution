@@ -1,0 +1,5 @@
+The issue lies in the LFSR shifting logic. In the line:
+```verilog
+q <= {q[4] ^ q[0], q[4], q[3], q[2], q[1]};
+```
+The logic to update the LFSR states is incorrect. In a Galois LFSR with taps at bit positions 5 and 3, the XOR operation should consider the bits at positions 5 and 3, but instead, it wrongly refers to bits 4 and 0. This incorrect XOR operation disrupts the intended shift register behavior, leading to incorrect outputs and mismatches during simulation.

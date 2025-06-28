@@ -1,0 +1,19 @@
+module TopModule (
+  input clk,
+  input [7:0] in,
+  output reg [7:0] anyedge
+);
+  
+  reg [7:0] prev_in; // Store previous input values
+
+  always @(posedge clk) begin
+    for (int i=0; i<8; i=i+1) begin
+      if (in[i] != prev_in[i]) // Detect edge
+        anyedge[i] <= 1;
+      else
+        anyedge[i] <= 0;
+    end
+    prev_in <= in; // Update previous input values
+  end
+
+endmodule

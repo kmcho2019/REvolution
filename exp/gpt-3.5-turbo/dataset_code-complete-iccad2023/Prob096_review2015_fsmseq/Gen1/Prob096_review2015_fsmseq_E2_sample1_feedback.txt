@@ -1,0 +1,8 @@
+The code is intended to implement a finite-state machine that searches for the sequence 1101 in the input bit stream and sets the 'start_shifting' output high indefinitely until a reset signal is received. 
+
+There are multiple issues in the code leading to the simulation failures:
+1. The 'start_shifting' output is being driven inside the always block conditionally when the state transitions to state 3. This logic might not hold consistently and can lead to glitches in the output.
+2. The FSM transitions are not correctly defined. The transitions do not completely match the sequence to be detected (1101). The FSM transitions do not reset to the initial state upon encountering an incorrect bit sequence, causing the FSM to remain stuck in an invalid state.
+3. When the FSM reaches state 3, the 'start_shifting' is correctly set; however, it does not stay high consistently until a reset signal is received, as per the problem statement.
+
+These issues likely lead to incorrect behavior of the FSM and mismatched outputs observed during simulation, resulting in a score of 5.
