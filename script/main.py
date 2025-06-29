@@ -6,6 +6,111 @@ import shutil
 import random
 from openai import OpenAI
 
+
+import os
+import subprocess
+import re
+
+class SynthesisEvaluator:
+    def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="pdk"):
+        self.yosys_path = yosys_path
+        self.openroad_path = openroad_path
+        self.pdk_path = pdk_path
+
+    def evaluate(self, verilog_file, module_name, output_directory):
+        """
+        Performs synthesis and PPA analysis on a given Verilog file.
+        """
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+
+        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, module_name, output_directory)
+
+        if not synthesis_success:
+            return {
+                "synthesis_success": False,
+                "ppa_success": False,
+                "synthesis_log": synthesis_log,
+                "ppa_metrics": None
+            }
+
+        ppa_success, ppa_metrics, ppa_log = self._run_ppa_analysis(module_name, output_directory)
+
+        return {
+            "synthesis_success": True,
+            "ppa_success": ppa_success,
+            "synthesis_log": synthesis_log,
+            "ppa_metrics": ppa_metrics,
+            "ppa_log": ppa_log
+        }
+
+    def _run_synthesis(self, verilog_file, module_name, output_directory):
+        """
+        Runs the Yosys synthesis script.
+        """
+        yosys_script_path = self._create_yosys_script(verilog_file, module_name, output_directory)
+        log_path = os.path.join(output_directory, "yosys.log")
+
+        command = [self.yosys_path, "-s", yosys_script_path]
+        try:
+            process = subprocess.run(command, capture_output=True, text=True, check=True)
+            return True, process.stdout
+        except subprocess.CalledProcessError as e:
+            return False, e.stdout + e.stderr
+
+    def _create_yosys_script(self, verilog_file, module_name, output_directory):
+        script = f"""foo"""
+        script_path = os.path.join(output_directory, "synthesize.ys")
+        with open(script_path, "w") as f:
+            f.write(script)
+        return script_path
+
+    def _run_ppa_analysis(self, module_name, output_directory):
+        """
+        Runs the OpenROAD PPA analysis script.
+        """
+        openroad_script_path = self._create_openroad_script(module_name, output_directory)
+        log_path = os.path.join(output_directory, "openroad.log")
+
+        command = [self.openroad_path, "-exit", openroad_script_path]
+        try:
+            process = subprocess.run(command, capture_output=True, text=True, check=True)
+            ppa_metrics = self._parse_ppa_log(log_path)
+            return True, ppa_metrics, process.stdout
+        except subprocess.CalledProcessError as e:
+            return False, None, e.stdout + e.stderr
+
+    def _create_openroad_script(self, module_name, output_directory):
+        # A simplified OpenROAD script. This may need to be adapted for your specific PDK and design.
+        script = f"""foo"""
+        script_path = os.path.join(output_directory, "ppa_analyze.tcl")
+        with open(script_path, "w") as f:
+            f.write(script)
+        return script_path
+
+    def _parse_ppa_log(self, log_path):
+        """
+        A simple parser for the OpenROAD log to extract PPA metrics.
+        """
+        ppa = {"power": None, "timing": None, "area": None}
+        with open(log_path, "r") as f:
+            for line in f:
+                # This is a placeholder; you'll need to adapt the regex to your OpenROAD output
+                if "Total Power" in line:
+                    match = re.search(r'(\d+\.\d+)\s*uW', line)
+                    if match:
+                        ppa["power"] = float(match.group(1))
+                if "Worst Slack" in line:
+                    match = re.search(r'(-?\d+\.\d+)', line)
+                    if match:
+                        ppa["timing"] = float(match.group(1))
+                if "Total Area" in line:
+                    match = re.search(r'(\d+\.\d+)', line)
+                    if match:
+                        ppa["area"] = float(match.group(1))
+        return ppa
+
+
 class VerilogEvaluator:
     def __init__(self, iverilog_executable_path, vvp_executable_path):
         if not shutil.which(iverilog_executable_path):
@@ -403,6 +508,10 @@ class Heuristic:
         self.score = score
         self.generation = generation 
         self.parent_ids = parent_ids if parent_ids else [] 
+        # New attributes for synthesis and PPA
+        self.synthesis_success = False
+        self.ppa_success = False
+        self.ppa_metrics = {}
 
     def __repr__(self):
         thought_repr = self.thought[:50] 
@@ -895,7 +1004,7 @@ class EoHEngine:
 if __name__ == "__main__":
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None) 
 
-    MODEL_NAME = "gpt-3.5-turbo"
+    MODEL_NAME = "gpt-3.5-turbo" # alternative models, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, o3, o4-mini
     # SELECTED_PROBLEMS = "Prob078_dualedge" 
     PROBLEM_TYPE = "dataset_code-complete-iccad2023" 
     POPULATION_SIZE = 10      
