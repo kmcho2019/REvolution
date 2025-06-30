@@ -12,10 +12,25 @@ import subprocess
 import re
 
 class SynthesisEvaluator:
-    def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="../pdk"):
+    def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="./pdk"):
         self.yosys_path = yosys_path
         self.openroad_path = openroad_path
         self.pdk_path = pdk_path
+
+        # Get the directory where this script (main.py) is located.
+        script_main_dir = os.path.dirname(os.path.abspath(__file__)) 
+        # From there, construct the path to the 'script' directory (.../EoR/script)
+        self.script_root_dir = os.path.abspath(os.path.join(script_main_dir, ".."))
+        # The ref directory is inside the script root
+        self.ref_dir_path = os.path.join(self.script_root_dir, "script", "ref")
+        # The pdk directory is the same level as the script root
+        self.pdk_path = os.path.abspath(os.path.join(self.script_root_dir, "pdk"))
+
+        # Print directories for debugging
+        print(f"Script Main Directory: {script_main_dir}")
+        print(f"Script Root Directory: {self.script_root_dir}")
+        print(f"Reference Directory: {self.ref_dir_path}")
+        print(f"PDK Directory: {self.pdk_path}")
 
     def evaluate(self, verilog_file, module_name, output_directory):
         """
@@ -102,16 +117,16 @@ class SynthesisEvaluator:
         return sdc_gen
 
     def _create_yosys_script(self, verilog_file, module_name, output_directory, clk_period):
-        yosys_ref = f'./ref/ref.yosys.tcl'
+        yosys_ref = os.path.join(self.ref_dir_path, 'ref.yosys.tcl')
         yosys_gen = f'{output_directory}/{module_name}.yosys.tcl'
 
         with open(yosys_ref, 'r') as infile:
             with open(yosys_gen, 'w') as outfile:
                 text = infile.read()
                 text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
-                text = text.replace("__MODULE_NAME__", module_name)
+                text = text.replace("__MODULE_NAME__", "TopModule") #module_name) # The current benchmark "dataset_code-complete-iccad2023" assumes that the module name is "TopModule"
                 text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
-                text = text.replace("__REF_DIR__", os.path.abspath('./ref'))
+                text = text.replace("__REF_DIR__", self.ref_dir_path)
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
                 text = text.replace("__CLK_PERIOD__", str(clk_period * 1000))
                 outfile.write(text)
@@ -120,17 +135,17 @@ class SynthesisEvaluator:
 
     def _create_openroad_script(self, sdc_file_path, module_name, output_directory):
         # A simplified OpenROAD script. This may need to be adapted for your specific PDK and design.
-        or_ref = f'./ref/ref.openroad.tcl'
+        or_ref = os.path.join(self.ref_dir_path, 'ref.openroad.tcl')
         or_gen = f'{output_directory}/{module_name}.openroad.tcl'
 
         with open(or_ref, 'r') as infile:
             with open(or_gen, 'w') as outfile:
                 text = infile.read()
-                text = text.replace("__UTIL_DIR__", os.path.abspath('./util'))
+                text = text.replace("__UTIL_DIR__", os.path.join(self.script_root_dir, "script", "util"))
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
                 text = text.replace("__DESIGN_NAME__", module_name)
-                text = text.replace("__MODULE_NAME__", module_name)
-                text = text.replace("__NETLIST__", os.path.abspath(f'{output_directory}/{module_name}.syn.v'))
+                text = text.replace("__MODULE_NAME__", "TopModule") #module_name)
+                text = text.replace("__NETLIST__", os.path.abspath(f'{output_directory}/TopModule.syn.v'))
                 text = text.replace("__SDC__", sdc_file_path)
                 text = text.replace("__UTILIZATION__", str(0.5))
                 outfile.write(text)
@@ -145,14 +160,27 @@ class SynthesisEvaluator:
 
         with open(report_path, 'r') as file:
             for line in file:
-                if line.startswith('tns'):
-                    tns = float(line.split()[1])
-                elif line.startswith('wns'):
-                    wns = float(line.split()[1])
+                parts = line.split()
+                if not parts:  # Skip empty lines
+                    continue
+
+                # Handle TNS and WNS, which may have a 'max' keyword
+                if parts[0] == 'tns':
+                    if len(parts) > 1 and parts[1] == 'max':
+                        tns = float(parts[2])
+                    elif len(parts) > 1:
+                        tns = float(parts[1])
+                elif parts[0] == 'wns':
+                    if len(parts) > 1 and parts[1] == 'max':
+                        wns = float(parts[2])
+                    elif len(parts) > 1:
+                        wns = float(parts[1])
+                
+                # Handle Power and Area as before
                 elif line.startswith('Total'):
-                    power = float(line.split()[4])
+                    power = float(parts[4])
                 elif line.startswith('Design area'):
-                    area = float(line.split()[2])
+                    area = float(parts[2])
 
         ppa_path = report_path.replace(".rpt", ".ppa")
         with open(ppa_path, 'w') as f:
@@ -591,6 +619,7 @@ class EoHEngine:
         self.synthesis_evaluator = synthesis_evaluator
         self.population_size = population_size
         self.num_generations = num_generations
+        self.num_ppa_iterations = num_ppa_iterations
         self.default_llm_temp = default_llm_temp
         self.default_llm_top_p = default_llm_top_p
         self.default_llm_max_tokens = default_llm_max_tokens

@@ -46,7 +46,7 @@ set global_routing_layer_adjustments {{{metal2-metal10} 0.5}}
 
 #source -echo "$util_dir/flow.tcl"
 
-if {[catch {source -echo "$util_dir/flow.tcl"} result]} {
+if {[catch {source "$util_dir/flow.tcl"} result]} {
     puts "Error: $result"
     exit 1
 }
