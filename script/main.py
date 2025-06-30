@@ -34,14 +34,13 @@ class SynthesisEvaluator:
                 "ppa_metrics": None
             }
 
-        ppa_success, ppa_metrics, ppa_log = self._run_ppa_analysis(module_name, output_directory)
+        ppa_metrics = self._parse_ppa_log(synthesis_log)
 
         return {
             "synthesis_success": True,
-            "ppa_success": ppa_success,
+            "ppa_success": True,
             "synthesis_log": synthesis_log,
-            "ppa_metrics": ppa_metrics,
-            "ppa_log": ppa_log
+            "ppa_metrics": ppa_metrics
         }
 
     def _run_synthesis(self, verilog_file, module_name, output_directory):
@@ -57,14 +56,16 @@ class SynthesisEvaluator:
 
         command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
 
-        log_path = os.path.join(output_directory, "yosys.log")
+        # log_path = os.path.join(output_directory, "yosys.log")
 
         process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        try:
-            process = subprocess.run(command, capture_output=True, text=True, check=True)
-            return True, process.stdout
-        except subprocess.CalledProcessError as e:
-            return False, e.stdout + e.stderr
+
+        if process.returncode == 0:
+            print(f"Synthesis completed successfully. Report saved to {report_path}")
+            return True, report_path
+        else:
+            print(f"Synthesis failed. Error: {process.stderr.decode()}")
+            return False, process.stderr.decode()
     
     def _create_sdc_file(self, verilog_file, module_name, output_directory, clk_period):
         """
@@ -136,22 +137,6 @@ class SynthesisEvaluator:
 
         return or_gen
 
-    def _run_ppa_analysis(self, module_name, output_directory):
-        """
-        Runs the OpenROAD PPA analysis script.
-        """
-        openroad_script_path = self._create_openroad_script(module_name, output_directory)
-        log_path = os.path.join(output_directory, "openroad.log")
-
-        command = [self.openroad_path, "-exit", openroad_script_path]
-        try:
-            process = subprocess.run(command, capture_output=True, text=True, check=True)
-            ppa_metrics = self._parse_ppa_log(log_path)
-            return True, ppa_metrics, process.stdout
-        except subprocess.CalledProcessError as e:
-            return False, None, e.stdout + e.stderr
-
-
     def _parse_ppa_log(self, report_path):
         """
         A simple parser for the OpenROAD log to extract PPA metrics.
@@ -173,6 +158,13 @@ class SynthesisEvaluator:
         with open(ppa_path, 'w') as f:
             f.write('tns,wns,power,area\n')
             f.write(f'{tns},{wns},{power},{area}')
+        return {
+            "tns": tns,
+            "wns": wns,
+            "power": power,
+            "area": area,
+            "report_path": ppa_path
+        }
 
 
 class VerilogEvaluator:
@@ -583,7 +575,7 @@ class Heuristic:
                 f"Thought: '{thought_repr}...', Parents: {self.parent_ids})")
 
 class EoHEngine:
-    def __init__(self, problem_type, problem_name, llm_interface, verilog_evaluator,
+    def __init__(self, problem_type, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
                  population_size=20, num_generations=20,
                  default_llm_temp=1.0, default_llm_top_p=1.0, default_llm_max_tokens=2048, base_save_path=None): 
         
@@ -593,6 +585,7 @@ class EoHEngine:
         self.problem_description = self.load_problem_description(problem_type, problem_name) 
         self.llm = llm_interface
         self.evaluator = verilog_evaluator
+        self.synthesis_evaluator = synthesis_evaluator
         self.population_size = population_size
         self.num_generations = num_generations
         self.default_llm_temp = default_llm_temp
@@ -699,6 +692,8 @@ class EoHEngine:
                 test_sv_file = os.path.join(base_dir, f"{self.problem_name}_test.sv")
                 ref_sv_file = os.path.join(base_dir, f"{self.problem_name}_ref.sv")
                 results = self.evaluator.evaluate(candidate_data['code_file_path'], test_sv_file, ref_sv_file)
+
+                # Not yet implemented synthesis evaluation self.synthesis_evaluator.evaluate(candidate_data['code_file_path'])
                 
                 mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
                 evaluation_succeeded = False # 최종 성공 여부를 저장할 변수
@@ -1095,6 +1090,7 @@ if __name__ == "__main__":
         iverilog_executable_path=iverilog_executable,
         vvp_executable_path=vvp_executable
     )
+    synthesis_evaluator = SynthesisEvaluator()
 
     with open("../log.txt", "w") as log_file:
         for problem in problems:
@@ -1105,6 +1101,7 @@ if __name__ == "__main__":
                 problem_type=PROBLEM_TYPE, 
                 llm_interface=llm_interface,
                 verilog_evaluator=verilog_evaluator,
+                synthesis_evaluator=synthesis_evaluator,
                 population_size=POPULATION_SIZE,
                 num_generations=NUM_GENERATIONS,
                 default_llm_temp=DEFAULT_LLM_TEMP, 
