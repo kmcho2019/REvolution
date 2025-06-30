@@ -12,7 +12,7 @@ import subprocess
 import re
 
 class SynthesisEvaluator:
-    def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="pdk"):
+    def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="../pdk"):
         self.yosys_path = yosys_path
         self.openroad_path = openroad_path
         self.pdk_path = pdk_path
@@ -48,22 +48,93 @@ class SynthesisEvaluator:
         """
         Runs the Yosys synthesis script.
         """
-        yosys_script_path = self._create_yosys_script(verilog_file, module_name, output_directory)
+        clk_period = 0.01 # ns
+        sdc_file_path = self._create_sdc_file(verilog_file, module_name, output_directory, clk_period=clk_period)
+        yosys_script_path = self._create_yosys_script(verilog_file, module_name, output_directory, clk_period)
+        openroad_script_path = self._create_openroad_script(sdc_file_path, module_name, output_directory)
+
+        report_path = os.path.join(output_directory, f"{module_name}_synthesis_report.rpt")
+
+        command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
+
         log_path = os.path.join(output_directory, "yosys.log")
 
-        command = [self.yosys_path, "-s", yosys_script_path]
+        process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         try:
             process = subprocess.run(command, capture_output=True, text=True, check=True)
             return True, process.stdout
         except subprocess.CalledProcessError as e:
             return False, e.stdout + e.stderr
+    
+    def _create_sdc_file(self, verilog_file, module_name, output_directory, clk_period):
+        """
+        Creates a simple SDC file for timing constraints.
+        """
+        clk_ports = []
+        clk_pattern = r'\b(clk|Clock|clock|Clk|CLK|CK|ck)\w*'
 
-    def _create_yosys_script(self, verilog_file, module_name, output_directory):
-        script = f"""foo"""
-        script_path = os.path.join(output_directory, "synthesize.ys")
-        with open(script_path, "w") as f:
-            f.write(script)
-        return script_path
+        with open(verilog_file, 'r') as inFile:
+            lines = inFile.read().split(';')
+            for line in lines:
+                if f"module {module_name}" in line:
+                    ob = line.find('(')
+                    cb = line.rfind(')')
+                    matches = re.findall(clk_pattern, line[ob:cb-1])
+                    if matches:
+                        clk_ports.extend(matches)
+                    else:
+                        clk_ports.append("f_clk")
+                break
+
+        sdc_lines = []
+        sdc_lines.append(f"current_design {module_name}\n")
+        sdc_lines.append(f"set clk_name clk\n")
+        sdc_lines.append(f"set clk_period {clk_period}\n")
+        for clk_port in clk_ports:
+            sdc_lines.append(f"create_clock -name $clk_name -period $clk_period [get_ports {clk_port}]\n")
+
+        sdc_gen = f"{output_directory}/{module_name}.sdc"
+        with open(sdc_gen, 'w') as outfile:
+            for sdc_line in sdc_lines:
+                outfile.write(sdc_line)
+
+        return sdc_gen
+
+    def _create_yosys_script(self, verilog_file, module_name, output_directory, clk_period):
+        yosys_ref = f'./ref/ref.yosys.tcl'
+        yosys_gen = f'{output_directory}/{module_name}.yosys.tcl'
+
+        with open(yosys_ref, 'r') as infile:
+            with open(yosys_gen, 'w') as outfile:
+                text = infile.read()
+                text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
+                text = text.replace("__MODULE_NAME__", module_name)
+                text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
+                text = text.replace("__REF_DIR__", os.path.abspath('./ref'))
+                text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
+                text = text.replace("__CLK_PERIOD__", str(clk_period * 1000))
+                outfile.write(text)
+
+        return yosys_gen
+
+    def _create_openroad_script(self, sdc_file_path, module_name, output_directory):
+        # A simplified OpenROAD script. This may need to be adapted for your specific PDK and design.
+        or_ref = f'./ref/ref.openroad.tcl'
+        or_gen = f'{output_directory}/{module_name}.openroad.tcl'
+
+        with open(or_ref, 'r') as infile:
+            with open(or_gen, 'w') as outfile:
+                text = infile.read()
+                text = text.replace("__UTIL_DIR__", os.path.abspath('./util'))
+                text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
+                text = text.replace("__DESIGN_NAME__", module_name)
+                text = text.replace("__MODULE_NAME__", module_name)
+                text = text.replace("__NETLIST__", os.path.abspath(f'{output_directory}/{module_name}.syn.v'))
+                text = text.replace("__SDC__", sdc_file_path)
+                text = text.replace("__UTILIZATION__", str(0.5))
+                outfile.write(text)
+
+        return or_gen
 
     def _run_ppa_analysis(self, module_name, output_directory):
         """
@@ -80,35 +151,28 @@ class SynthesisEvaluator:
         except subprocess.CalledProcessError as e:
             return False, None, e.stdout + e.stderr
 
-    def _create_openroad_script(self, module_name, output_directory):
-        # A simplified OpenROAD script. This may need to be adapted for your specific PDK and design.
-        script = f"""foo"""
-        script_path = os.path.join(output_directory, "ppa_analyze.tcl")
-        with open(script_path, "w") as f:
-            f.write(script)
-        return script_path
 
-    def _parse_ppa_log(self, log_path):
+    def _parse_ppa_log(self, report_path):
         """
         A simple parser for the OpenROAD log to extract PPA metrics.
         """
-        ppa = {"power": None, "timing": None, "area": None}
-        with open(log_path, "r") as f:
-            for line in f:
-                # This is a placeholder; you'll need to adapt the regex to your OpenROAD output
-                if "Total Power" in line:
-                    match = re.search(r'(\d+\.\d+)\s*uW', line)
-                    if match:
-                        ppa["power"] = float(match.group(1))
-                if "Worst Slack" in line:
-                    match = re.search(r'(-?\d+\.\d+)', line)
-                    if match:
-                        ppa["timing"] = float(match.group(1))
-                if "Total Area" in line:
-                    match = re.search(r'(\d+\.\d+)', line)
-                    if match:
-                        ppa["area"] = float(match.group(1))
-        return ppa
+        tns, wns, power, area = "None", "None", "None", "None"
+
+        with open(report_path, 'r') as file:
+            for line in file:
+                if line.startswith('tns'):
+                    tns = float(line.split()[1])
+                elif line.startswith('wns'):
+                    wns = float(line.split()[1])
+                elif line.startswith('Total'):
+                    power = float(line.split()[4])
+                elif line.startswith('Design area'):
+                    area = float(line.split()[2])
+
+        ppa_path = report_path.replace(".rpt", ".ppa")
+        with open(ppa_path, 'w') as f:
+            f.write('tns,wns,power,area\n')
+            f.write(f'{tns},{wns},{power},{area}')
 
 
 class VerilogEvaluator:
