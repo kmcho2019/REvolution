@@ -584,7 +584,7 @@ class LLMInterface:
         return parsed_feedback
 
 class Heuristic:
-    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None):
+    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax"):
         self.id = str(uuid.uuid4()) # Use UUID for unique ID
         self.thought = thought 
         self.code = code
@@ -593,6 +593,7 @@ class Heuristic:
         self.generation = generation 
         self.parent_ids = parent_ids if parent_ids else [] 
         # New attributes for synthesis and PPA
+        self.status = status # Can be either "syntax", functionality", "ppa", or "optimized"
         self.synthesis_success = False
         self.ppa_success = False
         self.ppa_metrics = {}
@@ -603,7 +604,7 @@ class Heuristic:
         thought_repr = self.thought[:50] 
         ppa_info = f"PPA: {self.ppa_metrics}" if self.ppa_success else "PPA: Not run or failed"
         return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Score: {self.score:.4f}, "
-                f"Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
+                f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
 class EoHEngine:
     def __init__(self, problem_type, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
@@ -624,7 +625,13 @@ class EoHEngine:
         self.default_llm_top_p = default_llm_top_p
         self.default_llm_max_tokens = default_llm_max_tokens
 
-        self.population = []
+        # Pools for different types of heuristics, replaces self.population = []
+        self.syntax_pool = []
+        self.functionality_pool = []
+        self.ppa_pool = []
+
+
+        
         self.current_generation = 0
         self.history = [] 
 
@@ -681,13 +688,15 @@ class EoHEngine:
 
     def initialize_population(self):
         """
-        Creates the initial population. LLM generates thoughts and codes.
+        Creates the initial population and places them within the syntax pool. 
+        LLM generates thoughts and codes.
         All codes are generated and saved first, then evaluated in a batch.
         Raises errors immediately if LLM call or parsing fails.
         """
         print(f"\n--- Initializing Population (Size: {self.population_size}) ---")
 
-        generated_candidates = [] # To store (thought, code, code_file_path) tuples
+        # Instead of storing tuples we will store Heuristic objects directly
+        # generated_candidates = [] # To store (thought, code, code_file_path) tuples
 
         print(f"Step 1: Generating {self.population_size} initial code candidates...")
         for i in range(self.population_size):
@@ -701,7 +710,18 @@ class EoHEngine:
                 )
 
                 code_file_path, thought_file_path = self._save_result_to_file(code, thought, generation_num=0, sample_idx_in_generation=i+1)
-                generated_candidates.append({"thought": thought, "code": code, "code_file_path": code_file_path, "thought_file_path":thought_file_path, "generation": 0, "parent_ids": []})
+                heuristic = Heuristic(
+                    thought=thought,
+                    code=code,
+                    feedback="",
+                    score=0.0,  # Initial score is 0
+                    generation=0,
+                    parent_ids=[],  # No parents for initial generation
+                    status="syntax",
+                )
+                heuristic.code_file_path = code_file_path  # Save the file path in the heuristic
+                self.syntax_pool.append(heuristic)  # Add to syntax pool
+                #generated_candidates.append({"thought": thought, "code": code, "code_file_path": code_file_path, "thought_file_path":thought_file_path, "generation": 0, "parent_ids": []})
 
             except (ValueError, RuntimeError) as e: # Errors from LLM or saving file
                 print(f"Critical error generating initial candidate {i+1}: {e}")
@@ -711,111 +731,126 @@ class EoHEngine:
                 print(f"Unexpected critical error during initial candidate {i+1} generation: {e}")
                 raise
 
-        if len(generated_candidates) != self.population_size:
-            raise RuntimeError(f"Code generation for population incomplete ({len(generated_candidates)}/{self.population_size}). Check logic.")
+        print(f"--- Initial Population Generation Complete. All {len(self.syntax_pool)} candidates are in the syntax pool. ---")
 
-        print(f"\nStep 2: Evaluating {len(generated_candidates)} generated code candidates...")
-        initial_heuristics = []
-        for i, candidate_data in enumerate(generated_candidates):
-            print(f"Evaluating candidate {i+1}/{len(generated_candidates)}: {candidate_data['code_file_path']}")
-            try:
+    
+    def _evaluate_and_promote_candidate(self, candidate, sample_idx):
+        """
+        Evaluates a single candidate and promotes it to the next pool if it passes.
+        """
+        print(f"Evaluating candidate {candidate.id} from status {candidate.status}")
+        base_dir = os.path.join('/project/cad-team/LX_Semicon/kmcho/verilog-eval', self.problem_type)
+        test_sv_file = os.path.join(base_dir, f"{self.problem_name}_test.sv")
+        ref_sv_file = os.path.join(base_dir, f"{self.problem_name}_ref.sv")
 
-                base_dir = os.path.join('/project/cad-team/LX_Semicon/kmcho/verilog-eval', self.problem_type)
-                test_sv_file = os.path.join(base_dir, f"{self.problem_name}_test.sv")
-                ref_sv_file = os.path.join(base_dir, f"{self.problem_name}_ref.sv")
-                results = self.evaluator.evaluate(candidate_data['code_file_path'], test_sv_file, ref_sv_file)
+        # Stage 1: Syntax and Functionality Check
+        if candidate.status == 'syntax' or candidate.status == 'functionality':
+            results = self.evaluator.evaluate(candidate.code_file_path, test_sv_file, ref_sv_file)
 
-                # Not yet implemented synthesis evaluation self.synthesis_evaluator.evaluate(candidate_data['code_file_path'])
+            if results['status'] == "compilation_error":
+                print("Result: Compilation error. Stays in syntax_pool.")
+                # Optionally update feedback with compilation error
+                return None
 
-                mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
-                evaluation_succeeded = False # 최종 성공 여부를 저장할 변수
+            mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
+            match = re.search(mismatch_pattern, results.get('simulation_stdout', ''), re.MULTILINE)
 
-                if results['status'] == "success":
-                    match = re.search(mismatch_pattern, results['simulation_stdout'], re.MULTILINE)
-                    if match:
-                        num_mismatches = int(match.group(1))
-                        if num_mismatches == 0:
-                            evaluation_succeeded = True
-                            print(f"Candidate {i+1} evaluation succeeded with status: {results['status']} and 0 mismatches.")
-                            # Create a heuristic with a perfect score and return it
-                            perfect_heuristic = Heuristic(
-                                thought=candidate_data['thought'],
-                                code=candidate_data['code'],
-                                score=10.0,
-                                feedback="Functionally correct.",
-                                generation=0,
-                                parent_ids=[]
-                            )
-                            perfect_heuristic.code_file_path = candidate_data['code_file_path']
-                            self.population.append(perfect_heuristic)
-                            return perfect_heuristic # Return the first functional heuristic
-                    else:
-                        print(f"Candidate {i+1} evaluation failed: Mismatch pattern not found in simulation output.")
-                else:
-                    print(f"Candidate {i+1} evaluation failed with status: {results['status']}")
+            if results['status'] == "success" and match and int(match.group(1)) == 0:
+                print("Result: Functionally correct. Promoting to ppa_pool.")
+                candidate.status = 'ppa'
+                candidate.score = 10.0 # Base score for being functional
+                candidate.feedback = "Functionally correct."
+                self.ppa_pool.append(candidate)
+                # Now, do the first PPA evaluation
+                self._evaluate_and_promote_candidate(candidate, sample_idx)
 
-
+            else: # Functional failure
+                print("Result: Functional failure. Moving to functionality_pool.")
+                candidate.status = 'functionality'
                 feedback = self.llm.generate_feedback(
                     problem_def=self.problem_description,
-                    verilog_code=candidate_data['code'],
+                    verilog_code=candidate.code,
                     simulation_log=results["compilation_stdout"] + "\n" + results["compilation_stderr"] + "\n" + results['simulation_stdout'] + "\n" + results['simulation_stderr'],
                     temperature=self.default_llm_temp,
                     top_p=self.default_llm_top_p,
                     max_tokens=self.default_llm_max_tokens
                 )
+                candidate.feedback = feedback['analysis']
+                candidate.score = feedback['score']
+                self.functionality_pool.append(candidate)
 
+                # Save the feedback file and score file
                 model_name_cleaned = self.llm.model_name.replace("/", "_")
                 feedback_file_path = os.path.join(self.base_save_path,
                                                   model_name_cleaned,
                                                   self.problem_type,
                                                   self.problem_name,
-                                                  f"Gen{candidate_data['generation']}",
-                                                  f"{self.problem_name}_sample{i+1}_feedback.txt")
-
-                # 디렉토리가 없는 경우 생성
+                                                  f"Gen{candidate.generation}",
+                                                  f"{self.problem_name}_sample{sample_idx}_{candidate.status}_feedback_{candidate.id}.txt")
+                # If there is no directory, create it
                 os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
-
                 with open(feedback_file_path, "w") as f:
                     f.write(feedback['analysis'])
-                print(f"Feedback saved to: {feedback_file_path}")
 
                 score_file_path = os.path.join(self.base_save_path,
-                                               model_name_cleaned,
-                                               self.problem_type,
-                                               self.problem_name,
-                                               f"Gen{candidate_data['generation']}",
-                                               f"{self.problem_name}_sample{i+1}_score.txt")
+                                                model_name_cleaned,
+                                                self.problem_type,
+                                                self.problem_name,
+                                                f"Gen{candidate.generation}",
+                                                f"{self.problem_name}_sample{sample_idx}_{candidate.status}_score_{candidate.id}.txt")
                 with open(score_file_path, "w") as f:
                     f.write(f"Score: {feedback['score']}\nJustification: {feedback['justification']}")
+                print(f"Feedback saved to: {feedback_file_path}")
                 print(f"Score and justification saved to: {score_file_path}")
 
-                heuristic = Heuristic(
-                    thought=candidate_data['thought'],
-                    code=candidate_data['code'],
-                    score = feedback['score'],
-                    feedback=feedback['analysis'],
-                    generation=candidate_data['generation'],
-                    parent_ids=candidate_data['parent_ids'],
-                )
-                heuristic.code_file_path = candidate_data['code_file_path']
-                initial_heuristics.append(heuristic)
-                print(f"Evaluated heuristic: {heuristic}")
+        # Stage 2: PPA Evaluation
+        elif candidate.status == 'ppa' or candidate.status == 'optimized':
+            print(f"Synthesizing candidate {candidate.id} for PPA evaluation...")
+            output_dir = os.path.dirname(candidate.code_file_path)
+            synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir)
 
-            except Exception as e: # Catch evaluation errors
-                print(f"Critical error evaluating candidate {candidate_data['code_file_path']}: {e}")
-                print("Stopping population initialization due to evaluation error.")
-                raise
+            if synthesis_results["synthesis_success"]:
+                candidate.synthesis_success = True
+                candidate.ppa_success = True
+                candidate.ppa_metrics = synthesis_results["ppa_metrics"]
+                
+                # Simple cost function: lower is better. Can be tuned. 
+                # Later, we plan to add reference values from human designs and calculate relative scores.
+                # As well as adding tns, wns, and effective clock metrics.
+                # Handle None values from PPA parsing gracefully.
 
-        print(f"--- Batch Evaluation for Initialization Complete ---\n")
+                # Reference values for PPA metrics, can be set to a reference value if available
+                ref_tns = -1 # unit ns, can be set to a reference value if available
+                ref_area = 10 # unit um^2, can be set to a reference value if available
+                ref_power = 5e-8 # unit mW, can be set to a reference value if available
 
-        if len(initial_heuristics) != self.population_size:
-                 # This should ideally not be reached if individual evaluations are also critical
-            raise RuntimeError(f"Population initialization incomplete after evaluation ({len(initial_heuristics)}/{self.population_size}).")
 
-        self.population = initial_heuristics
-        self.population.sort(key=lambda h: h.score, reverse=True)
-        print(f"--- Initial Population Generation Complete (Initialized: {len(self.population)}) ---")
-        return None # No functional solution found yet
+                tns = candidate.ppa_metrics.get("tns") or float('-inf')
+                area = candidate.ppa_metrics.get("area") or float('inf')
+                power = candidate.ppa_metrics.get("power") or float('inf')
+                # Update score based on PPA. The 10.0 base score indicates functionality.
+
+                # Divide by reference values to normalize, if available
+                tns_score = 1 - ((tns / ref_tns)/2)
+                area_score = 1 - ((area / ref_area)/2)  
+                power_score = 1 - ((power / ref_power)/2) 
+
+                # cap the scores to be between 0 and 1
+                tns_score = max(0, min(1, tns_score))
+                area_score = max(0, min(1, area_score))
+                power_score = max(0, min(1, power_score))
+
+                cost = area * power - tns # Example cost function: area * power - tns
+                candidate.score = 10.0 + tns_score + area_score + power_score
+                # candidate.score = 10.0 + 1 + (1/ (cost + 1e-9)) # Add inverse of cost to score and 1 score for successful synthesis
+
+                print(f"PPA evaluation successful for {candidate.id}. PPA Metrics: {candidate.ppa_metrics}")
+
+            else:
+                print(f"Synthesis failed for {candidate.id}. Keeping it in its current pool for now.")
+                candidate.feedback += "\n\n--- Synthesis Failed ---\n" + synthesis_results.get("synthesis_log", "")
+                candidate.score += 0 # Keep the score the same for synthesis failure
+
 
     def evolve_one_generation(self):
         """
@@ -834,6 +869,24 @@ class EoHEngine:
 
         generated_candidates_data = []
 
+        # Determine which pools to draw parents from
+        # Prioritize improving PPA if we have functional candidates
+        if self.ppa_pool:
+            parent_pool = self.ppa_pool
+            print("Focusing evolution on PPA optimization.")
+        # Otherwise, focus on achieving functionality
+        elif self.functionality_pool:
+            parent_pool = self.functionality_pool
+            print("Focusing evolution on fixing functional errors.")
+        # If all else fails, work from the syntax pool
+        else:
+            parent_pool = self.syntax_pool
+            print("Focusing evolution on fixing syntax errors.")
+        
+        if not parent_pool:
+             print("No candidates in any pool to evolve from. Stopping.")
+             return "STOP"
+
         print(f"Step 1: Generating new candidates for generation {self.current_generation}...")
         for config in strategies_config:
             strategy_name = config["name"]
@@ -844,17 +897,25 @@ class EoHEngine:
             print(f"Applying Strategy {strategy_name} (Target: {num_to_create})...")
             for i in range(1, num_to_create + 1):
                 try:
-                    parents = self._select_parents(num_parents=num_parents)
+                    parents = self._select_parents(num_parents=num_parents, parent_pool=parent_pool)
+                    if not parents:
+                        print(f"Not enough parents available for strategy {strategy_name}. Skipping candidate generation.")
+                        continue
 
                     new_thought, new_code = strategy_func(parents)
                     # Sample index is now strategy-specific to avoid collision
                     code_file_path, thought_file_path = self._save_result_to_file(new_code, new_thought, self.current_generation, i, strategy=strategy_name)
 
-                    generated_candidates_data.append({
-                        "thought": new_thought, "code": new_code, "code_file_path": code_file_path,
-                        "thought_file_path": thought_file_path, "generation": self.current_generation,
-                        "parent_ids": [p.id for p in parents], "sample_idx": i, "strategy": strategy_name
-                    })
+                    new_candidate = Heuristic(
+                        thought=new_thought, code=new_code, feedback="",
+                        generation=self.current_generation,
+                        parent_ids=[p.id for p in parents],
+                        status='syntax', # All new candidates start at the syntax stage
+                    )
+                    new_candidate.code_file_path = code_file_path  # Save the file path in the heuristic
+                    generated_candidates_data.append(new_candidate)
+
+
                 except (ValueError, RuntimeError, IOError) as e:
                     print(f"Critical error generating candidate via {strategy_name}: {e}")
                     raise
@@ -863,92 +924,48 @@ class EoHEngine:
                     raise
 
         print(f"\nStep 2: Evaluating {len(generated_candidates_data)} new candidates...")
-        new_heuristics = []
-        for i, candidate_data in enumerate(generated_candidates_data):
-            print(f"Evaluating candidate {i+1}/{len(generated_candidates_data)}: {candidate_data['code_file_path']}")
-            try:
-                base_dir = os.path.join('/project/cad-team/LX_Semicon/kmcho/verilog-eval', self.problem_type)
-                test_sv_file = os.path.join(base_dir, f"{self.problem_name}_test.sv")
-                ref_sv_file = os.path.join(base_dir, f"{self.problem_name}_ref.sv")
+        # Clear the syntax and functionality pools. We will repopulate them with the new generation.
+        # PPA pool remains, as they are our best candidates so far.
+        self.syntax_pool.clear()
+        self.functionality_pool.clear()
 
-                if not os.path.exists(test_sv_file):
-                    with open(test_sv_file, "w") as f: f.write("// Dummy test file\n")
-                if not os.path.exists(ref_sv_file):
-                    with open(ref_sv_file, "w") as f: f.write("// Dummy ref file\n")
+        self.functionality_pool.clear()
 
-                results = self.evaluator.evaluate(candidate_data['code_file_path'], test_sv_file, ref_sv_file)
-                
-                mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
-                evaluation_succeeded = False
-                if results['status'] == "success":
-                    match = re.search(mismatch_pattern, results['simulation_stdout'], re.MULTILINE)
-                    if match and int(match.group(1)) == 0:
-                        evaluation_succeeded = True
+        for i, candidate in enumerate(generated_candidates_data):
+            self._evaluate_and_promote_candidate(candidate, i)
+
+        # Elitism: Ensure the best candidates are not lost
+        self.functionality_pool.sort(key=lambda h: h.score, reverse=True)
+        self.ppa_pool.sort(key=lambda h: h.score, reverse=True)
+
+        # Trim pools to population size to prevent them from growing indefinitely
+        self.functionality_pool = self.functionality_pool[:self.population_size]
+        self.ppa_pool = self.ppa_pool[:self.population_size]
 
 
-                if evaluation_succeeded:
-                    print(f"Candidate {i+1} evaluation succeeded with no mismatches.")
-                    perfect_heuristic = Heuristic(
-                        thought=candidate_data['thought'],
-                        code=candidate_data['code'],
-                        score=10.0,
-                        feedback="Functionally correct.",
-                        generation=self.current_generation,
-                        parent_ids=candidate_data['parent_ids']
-                    )
-                    perfect_heuristic.code_file_path = candidate_data['code_file_path']
-                    self.population.append(perfect_heuristic)
-                    return perfect_heuristic # Return the functional heuristic
+        print(f"--- Generation {self.current_generation} Complete ---")
+        print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
+        if self.ppa_pool:
+            print(f"Best PPA candidate so far: {self.ppa_pool[0]}")
+        elif self.functionality_pool:
+            print(f"Best functional candidate so far: {self.functionality_pool[0]}")
+        
+        return None # Continue evolution
 
+    def _select_parents(self, num_parents=2, parent_pool=None):
+        if not parent_pool:
+            return []
 
-                print(f"Candidate {i+1} evaluation failed. Generating feedback...")
-                feedback_data = self.llm.generate_feedback(
-                    self.problem_description, candidate_data['code'],
-                    "\n".join(results.values()), self.default_llm_temp, self.default_llm_top_p, self.default_llm_max_tokens
-                )
-                feedback_analysis = feedback_data['analysis']
-                final_score = feedback_data['score']
-
-                # Save feedback files
-                model_name_cleaned = self.llm.model_name.replace("/", "_")
-                feedback_file_path = os.path.join(self.base_save_path, model_name_cleaned, self.problem_type, self.problem_name, f"Gen{self.current_generation}", f"{self.problem_name}_{candidate_data['strategy']}_sample{candidate_data['sample_idx']}_feedback.txt")
-                score_file_path = os.path.join(self.base_save_path, model_name_cleaned, self.problem_type, self.problem_name, f"Gen{self.current_generation}", f"{self.problem_name}_{candidate_data['strategy']}_sample{candidate_data['sample_idx']}_score.txt")
-                os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
-                with open(feedback_file_path, "w") as f: f.write(feedback_analysis)
-                with open(score_file_path, "w") as f: f.write(f"Score: {final_score}\nJustification: {feedback_data['justification']}")
-
-
-                heuristic = Heuristic(
-                    candidate_data['thought'], candidate_data['code'], feedback_analysis, final_score,
-                    self.current_generation, candidate_data['parent_ids']
-                )
-                heuristic.code_file_path = candidate_data['code_file_path']
-
-                new_heuristics.append(heuristic)
-                print(f"Processed heuristic: {heuristic}")
-            except Exception as e:
-                print(f"Critical error evaluating candidate {candidate_data['code_file_path']}: {e}")
-                raise
-
-        # Elitism: Combine the old population with all new heuristics and keep the best
-        combined_population = self.population + new_heuristics
-        combined_population.sort(key=lambda h: h.score, reverse=True)
-        self.population = combined_population[:self.population_size]
-
-        print(f"--- Generation {self.current_generation} Complete ({len(new_heuristics)} new created) ---")
-        return None # No functional solution found in this generation
-
-    def _select_parents(self, num_parents=2):
-        if not self.population: 
-            raise RuntimeError("Cannot select parents from an empty population.")
-
-        # 거듭제곱을 통해 선택 압력 강화
-        selection_pressure = 2.0 
-        weights = [(h.score + 0.1) ** selection_pressure for h in self.population]
+        # Use score for selection pressure
+        weights = [(h.score + 0.1) ** 2.0 for h in parent_pool]
+        
+        # Handle case where all weights are zero
+        if all(w == 0 for w in weights):
+            return random.choices(parent_pool, k=num_parents)
         
         # random.choices를 사용하여 간단하게 부모 선택 (중복 허용)
         # 이 방식이 더 효율적이고 일반적인 유전 알고리즘 관행에 부합합니다.
-        return random.choices(self.population, weights=weights, k=num_parents)
+        return random.choices(parent_pool, weights=weights, k=num_parents)
 
     def _apply_prompt_strategy_E1(self, parent):
         parent_prompt = ""
@@ -965,12 +982,15 @@ class EoHEngine:
                 f"{p.feedback}\n"
                 "```\n\n"
             )
+            if p.status in ['ppa', 'optimized']:
+                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
 
         prompt = (
             self.problem_description +
             f"Here are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
             f"{parent_prompt}\n\n"
             "Based on the examples above, please implement a unique approach (thought and code) to solve the problem, making it as different from the provided examples as possible. "
+            "If the examples include PPA metrics, consider them to find a completely new, potentially better, architectural approach. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
         return self.llm.generate_response(
@@ -996,11 +1016,16 @@ class EoHEngine:
                 "```\n\n"
             )
 
+            if p.status in ['ppa', 'optimized']:
+                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
+
+
         prompt = (
             self.problem_description +
             f"\nHere are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
             f"{parent_prompt}\n\n"
             "Please refer to the examples above to find their common idea, develop it further, and then implement the best possible thought process and code to solve the problem. "
+            "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
         return self.llm.generate_response(
@@ -1026,11 +1051,16 @@ class EoHEngine:
                 "```\n\n"
             )
 
+            if p.status in ['ppa', 'optimized']:
+                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
+
+
         prompt = (
             self.problem_description +
             f"Here are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
             f"{parent_prompt}\n\n"
             "Using the examples above, please modify them to improve the thought process and code for a better solution. "
+            "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
         return self.llm.generate_response(
@@ -1055,12 +1085,15 @@ class EoHEngine:
                 f"{p.feedback}\n"
                 "```\n\n"
             )
+            if p.status in ['ppa', 'optimized']:
+                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
 
         prompt = (
             self.problem_description +
             f"Here are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
             f"{parent_prompt}\n\n"
             "Please refer to the examples above to simplify the thought process and code. You can do this by identifying the essential parts and removing the unnecessary ones to solve the problem. "
+            "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
         return self.llm.generate_response(
@@ -1110,149 +1143,62 @@ class EoHEngine:
         )
 
     def run(self):
-        print(f"--- Starting EoH Run: Problem '{self.problem_type}/{self.problem_name}' ---")
-        print(f"Generations: {self.num_generations}, Population: {self.population_size}")
-        
+        """
+        Runs the unified evolutionary framework.
+        """
+        print(f"--- Starting Unified EoH Run: Problem '{self.problem_type}/{self.problem_name}' ---")
+        print(f"Generations: {self.num_generations}, Population Size: {self.population_size}")
 
-        functionally_correct_solution = None
-
-        # --- PHASE 1: Search for a functionally correct solution ---
-        print("\n--- PHASE 1: Searching for Functional Solution ---")
         try:
-            # Check initial population
-            functionally_correct_solution = self.initialize_population()
+            self.initialize_population()
+            # Initial evaluation of the first generation
+            print("\n--- Evaluating Initial Population ---")
+            initial_candidates = list(self.syntax_pool) # Create a copy to iterate over
+            self.syntax_pool.clear()
+            for i, candidate in enumerate(initial_candidates):
+                self._evaluate_and_promote_candidate(candidate, i)
+            
+            print("--- Initial Evaluation Complete ---")
+            print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
+
+
         except (RuntimeError, ValueError, Exception) as e:
             print(f"Critical error during population initialization: {e}")
             print("EoH run aborted.")
             return f"{self.problem_name},initialization_failed"
 
-        if not functionally_correct_solution:
-            while self.current_generation < self.num_generations:
-                if not self.population:
-                    print(f"Stopping evolution at generation {self.current_generation} due to empty population.")
-                    break
-                try:
-                    functionally_correct_solution = self.evolve_one_generation()
-                    if functionally_correct_solution:
-                        print(f"\nFunctionally correct solution found in Generation {self.current_generation}!")
-                        print(functionally_correct_solution)
-                        break # Exit the functional search loop
-                except (RuntimeError, ValueError, Exception) as e:
-                    print(f"Critical error during generation {self.current_generation} evolution: {e}")
-                    print("EoH run aborted.")
-                    return f"{self.problem_name},evolution_failed"
+        # Main evolution loop
+        for gen in range(self.num_generations):
+            if self.evolve_one_generation() == "STOP":
+                break
 
-        # --- End of Phase 1 ---
-
-        if not functionally_correct_solution:
-            print("\n--- Run Finished: No functionally correct solution found. ---")
-            return f"{self.problem_name},failed"
-
-        # --- PHASE 2: Optimize the found solution for PPA ---
-        print("\n--- PHASE 2: Optimizing Functional Solution for PPA ---")
-        best_ppa_solution = functionally_correct_solution
-
-        # Get baseline PPA
-        print("Synthesizing initial functional solution to get baseline PPA...")
-        print(best_ppa_solution)
-        output_dir = os.path.dirname(best_ppa_solution.code_file_path)
-        synthesis_results = self.synthesis_evaluator.evaluate(best_ppa_solution.code_file_path, self.problem_name, output_dir)
-
-        if not synthesis_results["synthesis_success"]:
-            print("Synthesis failed for the initial functional solution. Cannot proceed with PPA optimization.")
-            return f"{self.problem_name},synthesis_failed,{best_ppa_solution.code_file_path}"
-
-        best_ppa_solution.synthesis_success = True
-        best_ppa_solution.ppa_success = True
-        best_ppa_solution.ppa_metrics = synthesis_results["ppa_metrics"]
+        # --- End of Evolution ---
+        print("\n--- EoH Run Finished ---")
         
-        # Simple cost function: lower is better. Can be tuned.
-        # Handle None values from PPA parsing gracefully.
-        current_area = best_ppa_solution.ppa_metrics.get("area") or float('inf')
-        current_power = best_ppa_solution.ppa_metrics.get("power") or float('inf')
-        best_ppa_cost = current_area * current_power
+        # Determine the best solution
+        best_solution = None
+        if self.ppa_pool:
+            self.ppa_pool.sort(key=lambda h: h.score, reverse=True)
+            best_solution = self.ppa_pool[0]
+            print("Final best solution is from PPA pool.")
+        elif self.functionality_pool:
+            self.functionality_pool.sort(key=lambda h: h.score, reverse=True)
+            best_solution = self.functionality_pool[0]
+            print("No PPA-optimized solution, best solution is from functionality pool.")
+        elif self.syntax_pool:
+            self.syntax_pool.sort(key=lambda h: h.score, reverse=True)
+            best_solution = self.syntax_pool[0]
+            print("No functional solution, best solution is from syntax pool.")
 
-        print(f"Baseline PPA Metrics: {best_ppa_solution.ppa_metrics}")
-        print(f"Initial PPA Cost: {best_ppa_cost}")
+        if not best_solution:
+            print("No solution found in any pool.")
+            return f"{self.problem_name},failed"
+            
+        print("Final Best Solution Found:")
+        print(best_solution)
 
-        for ppa_iter in range(self.num_ppa_iterations):
-            print(f"\n--- PPA Optimization Iteration {ppa_iter + 1}/{self.num_ppa_iterations} ---")
-            try:
-                # 1. Generate a new optimized version
-                new_thought, new_code = self._apply_ppa_optimization_prompt(best_ppa_solution)
-                
-                # Save the new code candidate
-                opt_code_path, _ = self._save_result_to_file(
-                    new_code, new_thought, f"PPA_Opt_{ppa_iter+1}", 0
-                )
-                
-                # 2. Verify functionality is not broken
-                print("Verifying functionality of the optimized candidate...")
-                base_dir = os.path.join('/project/cad-team/LX_Semicon/kmcho/verilog-eval', self.problem_type)
-                test_sv_file = os.path.join(base_dir, f"{self.problem_name}_test.sv")
-                ref_sv_file = os.path.join(base_dir, f"{self.problem_name}_ref.sv")
-                func_results = self.evaluator.evaluate(opt_code_path, test_sv_file, ref_sv_file)
-                
-                mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
-                is_functional = False
-                if func_results['status'] == 'success':
-                    match = re.search(mismatch_pattern, func_results['simulation_stdout'], re.MULTILINE)
-                    if match and int(match.group(1)) == 0:
-                        is_functional = True
-
-                if not is_functional:
-                    print("Functionality verification failed. Discarding this candidate.")
-                    continue
-
-                print("Functionality preserved. Evaluating PPA of the new candidate...")
-
-                # 3. Evaluate PPA of the new functional version
-                new_synthesis_results = self.synthesis_evaluator.evaluate(opt_code_path, self.problem_name, os.path.dirname(opt_code_path))
-                
-                if not new_synthesis_results["synthesis_success"]:
-                    print("Synthesis failed for the new candidate. Discarding.")
-                    continue
-
-                new_ppa_metrics = new_synthesis_results["ppa_metrics"]
-                new_area = new_ppa_metrics.get("area") or float('inf')
-                new_power = new_ppa_metrics.get("power") or float('inf')
-                new_ppa_cost = new_area * new_power
-                
-                print(f"New Candidate PPA Metrics: {new_ppa_metrics}")
-                print(f"New PPA Cost: {new_ppa_cost} vs. Best PPA Cost: {best_ppa_cost}")
-
-                # 4. Compare and update the best solution
-                if new_ppa_cost < best_ppa_cost:
-                    print(">>> New PPA is better! Updating the best solution. <<<")
-                    best_ppa_cost = new_ppa_cost
-                    # Create a new heuristic object for the improved version
-                    best_ppa_solution = Heuristic(
-                        thought=new_thought,
-                        code=new_code,
-                        feedback="PPA Optimized",
-                        score=10.0, # It's functionally correct
-                        generation=f"PPA_Opt_{ppa_iter+1}",
-                        parent_ids=[best_ppa_solution.id]
-                    )
-                    best_ppa_solution.code_file_path = opt_code_path
-                    best_ppa_solution.synthesis_success = True
-                    best_ppa_solution.ppa_success = True
-                    best_ppa_solution.ppa_metrics = new_ppa_metrics
-                else:
-                    print("New PPA is not an improvement. Keeping the previous best solution.")
-
-            except (RuntimeError, ValueError, Exception) as e:
-                print(f"Critical error during PPA optimization iteration {ppa_iter + 1}: {e}")
-                # Decide if you want to stop or continue on error
-                continue
-
-        print("\n--- EoH Run Complete ---")
-        print("Final PPA-Optimized Solution:")
-        print(best_ppa_solution)
-
-        # Return a string indicating success and providing the path to the final optimized code and its PPA report
-        final_ppa_report_path = best_ppa_solution.ppa_metrics.get("report_path", "N/A")
-        return f"{self.problem_name},success_optimized,{best_ppa_solution.code_file_path},{final_ppa_report_path}"
+        final_ppa_report_path = best_solution.ppa_metrics.get("report_path", "N/A")
+        return f"{self.problem_name},success_optimized,{best_solution.code_file_path},{final_ppa_report_path}"
 
 if __name__ == "__main__":
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None) 
