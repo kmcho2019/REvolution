@@ -11,6 +11,23 @@ import os
 import subprocess
 import re
 
+import argparse
+
+
+def find_module_name(verilog_code):
+    """
+    Parse Verilog code to find the module name.
+    Useful as each problem has a different module name.
+    Also, each benchmark have different conventions for module names.
+    Example:
+    - RTLLM: different module names for each problem (e.g. `accu`, ...)
+    - VerilogEval-Code-Complete: module name is always `TopModule`
+    """
+    match = re.search(r'\bmodule\s+(\w+)', verilog_code)
+    if match:
+        return match.group(1)
+    return None
+
 class SynthesisEvaluator:
     def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="./pdk"):
         self.yosys_path = yosys_path
@@ -32,14 +49,14 @@ class SynthesisEvaluator:
         print(f"Reference Directory: {self.ref_dir_path}")
         print(f"PDK Directory: {self.pdk_path}")
 
-    def evaluate(self, verilog_file, module_name, output_directory):
+    def evaluate(self, verilog_file, problem_name, output_directory):
         """
         Performs synthesis and PPA analysis on a given Verilog file.
         """
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, module_name, output_directory)
+        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, output_directory)
 
         if not synthesis_success:
             return {
@@ -58,16 +75,21 @@ class SynthesisEvaluator:
             "ppa_metrics": ppa_metrics
         }
 
-    def _run_synthesis(self, verilog_file, module_name, output_directory):
+    def _run_synthesis(self, verilog_file, problem_name, output_directory):
         """
         Runs the Yosys synthesis script.
         """
+
         clk_period = 0.01 # ns
+
+        # Extract the actual internal module name from the Verilog file
+        module_name = find_module_name(open(verilog_file, 'r').read())
+
         sdc_file_path = self._create_sdc_file(verilog_file, module_name, output_directory, clk_period=clk_period)
         yosys_script_path = self._create_yosys_script(verilog_file, module_name, output_directory, clk_period)
         openroad_script_path = self._create_openroad_script(sdc_file_path, module_name, output_directory)
 
-        report_path = os.path.join(output_directory, f"{module_name}_synthesis_report.rpt")
+        report_path = os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
 
         command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
 
@@ -80,7 +102,11 @@ class SynthesisEvaluator:
             return True, report_path
         else:
             print(f"Synthesis failed. Error: {process.stderr.decode()}")
-            return False, process.stderr.decode()
+            # Return the path to the report even on failure to aid debugging
+            with open(report_path, "a") as f:
+                f.write("\n\n--- SYNTHESIS FAILED ---\n")
+                f.write(process.stderr.decode())
+            return False, report_path
     
     def _create_sdc_file(self, verilog_file, module_name, output_directory, clk_period):
         """
@@ -124,7 +150,7 @@ class SynthesisEvaluator:
             with open(yosys_gen, 'w') as outfile:
                 text = infile.read()
                 text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
-                text = text.replace("__MODULE_NAME__", "TopModule") #module_name) # The current benchmark "dataset_code-complete-iccad2023" assumes that the module name is "TopModule"
+                text = text.replace("__MODULE_NAME__", module_name) # Reverted to using module_name directly as we now extract it from the Verilog file
                 text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
                 text = text.replace("__REF_DIR__", self.ref_dir_path)
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
@@ -144,8 +170,8 @@ class SynthesisEvaluator:
                 text = text.replace("__UTIL_DIR__", os.path.join(self.script_root_dir, "script", "util"))
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
                 text = text.replace("__DESIGN_NAME__", module_name)
-                text = text.replace("__MODULE_NAME__", "TopModule") #module_name)
-                text = text.replace("__NETLIST__", os.path.abspath(f'{output_directory}/TopModule.syn.v'))
+                text = text.replace("__MODULE_NAME__", module_name) # Reverted to using module_name directly as we now extract it from the Verilog file
+                text = text.replace("__NETLIST__", os.path.abspath(f'{output_directory}/{module_name}.syn.v'))
                 text = text.replace("__SDC__", sdc_file_path)
                 text = text.replace("__UTILIZATION__", str(0.5))
                 outfile.write(text)
@@ -607,14 +633,19 @@ class Heuristic:
                 f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
 class EoHEngine:
-    def __init__(self, problem_type, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
+    def __init__(self, benchmark_name, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
                  population_size=20, num_generations=20, num_ppa_iterations=10,
                  default_llm_temp=1.0, default_llm_top_p=1.0, default_llm_max_tokens=2048, base_save_path=None): 
         
         self.base_save_path = base_save_path if base_save_path else os.path.join(os.getcwd(), "verilog_eoh_results")
-        self.problem_type = problem_type
+        self.benchmark_name = benchmark_name # Changed problem_type to benchmark_name for clarity
         self.problem_name = problem_name
-        self.problem_description = self.load_problem_description(problem_type, problem_name) 
+        # Currently ./EoR/bench/<benchmark_name> is the path to the benchmark directory
+        # And current location of this script is ./EoR/script/main.py == os.path.abspath(__file__)
+        # Finds the location of bench based on the script's location
+        # Need to be updated if the script is moved
+        self.benchmark_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bench", self.benchmark_name))
+        self.problem_description = self.load_problem_description() # Uses internal variables to retrieve the problem description
         self.llm = llm_interface
         self.evaluator = verilog_evaluator
         self.synthesis_evaluator = synthesis_evaluator
@@ -634,16 +665,51 @@ class EoHEngine:
         
         self.current_generation = 0
         self.history = [] 
+        # NEW: To store reference PPA metrics calculated dynamically
+        self.ref_ppa_metrics = {}
 
-    def load_problem_description(self, problem_type, problem_name):
-        prompt_path = f"/project/cad-team/LX_Semicon/kmcho/verilog-eval/{problem_type}/{problem_name}_prompt.txt"
-        print(prompt_path)
+    def load_problem_description(self):
+        # Construct the paths dynamically based on benchmark instead of relying on hardcoded paths 
+        prompt_path = os.path.join(self.benchmark_path, f"{self.problem_name}_prompt.txt")
+        print(f"Loading prompt from: {prompt_path}")
 
-        if os.path.exists(f"/project/cad-team/LX_Semicon/kmcho/verilog-eval/{problem_type}/{problem_name}_prompt.txt"):
-            with open(f"/project/cad-team/LX_Semicon/kmcho/verilog-eval/{self.problem_type}/{problem_name}_prompt.txt", "r") as f:
+        if os.path.exists(prompt_path):
+            with open(prompt_path, "r") as f:
                 return f.read().strip()
         else:
-            raise FileNotFoundError(f"Problem description file not found for {problem_name} in {self.problem_type}.")
+            raise FileNotFoundError(f"Problem description file not found: {prompt_path}")
+    
+    # Method to calculate the reference PPA metrics used to calculate the PPA score
+    def _calculate_reference_ppa(self):
+        """
+        Synthesizes the reference Verilog module to establish baseline PPA metrics.
+        """
+        print(f"\n--- Calculating Reference PPA for {self.problem_name} ---")
+        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+
+        if not os.path.exists(ref_sv_file):
+            print(f"WARNING: Reference Verilog file not found at {ref_sv_file}. Cannot calculate reference PPA.")
+            # Set defaults that make any valid synthesis result look good.
+            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "area": float('inf'), "power": float('inf')}
+            return
+
+        # Create a dedicated directory for the reference synthesis to keep results separate
+        ref_output_dir = os.path.join(self.base_save_path, "reference_synthesis", self.benchmark_name, self.problem_name)
+        
+        print(f"Synthesizing reference design: {ref_sv_file}")
+        # The module name is assumed to be the problem name (e.g., "Prob001_accu")
+        synthesis_results = self.synthesis_evaluator.evaluate(
+            verilog_file=ref_sv_file,
+            problem_name=self.problem_name, 
+            output_directory=ref_output_dir
+        )
+
+        if synthesis_results and synthesis_results.get("ppa_success"):
+            self.ref_ppa_metrics = synthesis_results["ppa_metrics"]
+            print(f"Reference PPA calculated successfully: {self.ref_ppa_metrics}")
+        else:
+            print("WARNING: Reference PPA synthesis failed. Using default high values for scoring.")
+            self.ref_ppa_metrics = {"tns": -0.01, "wns": -0.001, "area": 100, "power": 100}
 
     def _save_result_to_file(self, code_content, thought_content, generation_num, sample_idx_in_generation, strategy=None):
         """
@@ -655,7 +721,7 @@ class EoHEngine:
         directory_path = os.path.join(
             self.base_save_path,
             model_name_cleaned,
-            self.problem_type,
+            self.benchmark_name,
             self.problem_name,
             f"Gen{generation_num}" 
         )
@@ -739,9 +805,9 @@ class EoHEngine:
         Evaluates a single candidate and promotes it to the next pool if it passes.
         """
         print(f"Evaluating candidate {candidate.id} from status {candidate.status}")
-        base_dir = os.path.join('/project/cad-team/LX_Semicon/kmcho/verilog-eval', self.problem_type)
-        test_sv_file = os.path.join(base_dir, f"{self.problem_name}_test.sv")
-        ref_sv_file = os.path.join(base_dir, f"{self.problem_name}_ref.sv")
+        # Paths to the test and reference Verilog files constructed dynamically using benchmark_path and problem_name
+        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
 
         # Stage 1: Syntax and Functionality Check
         if candidate.status == 'syntax' or candidate.status == 'functionality':
@@ -750,6 +816,7 @@ class EoHEngine:
             if results['status'] == "compilation_error":
                 print("Result: Compilation error. Stays in syntax_pool.")
                 # Optionally update feedback with compilation error
+                self.syntax_pool.append(candidate)  # Re-add to syntax pool
                 return None
 
             mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
@@ -783,7 +850,7 @@ class EoHEngine:
                 model_name_cleaned = self.llm.model_name.replace("/", "_")
                 feedback_file_path = os.path.join(self.base_save_path,
                                                   model_name_cleaned,
-                                                  self.problem_type,
+                                                  self.benchmark_name,
                                                   self.problem_name,
                                                   f"Gen{candidate.generation}",
                                                   f"{self.problem_name}_sample{sample_idx}_{candidate.status}_feedback_{candidate.id}.txt")
@@ -794,7 +861,7 @@ class EoHEngine:
 
                 score_file_path = os.path.join(self.base_save_path,
                                                 model_name_cleaned,
-                                                self.problem_type,
+                                                self.benchmark_name,
                                                 self.problem_name,
                                                 f"Gen{candidate.generation}",
                                                 f"{self.problem_name}_sample{sample_idx}_{candidate.status}_score_{candidate.id}.txt")
@@ -809,7 +876,7 @@ class EoHEngine:
             output_dir = os.path.dirname(candidate.code_file_path)
             synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir)
 
-            if synthesis_results["synthesis_success"]:
+            if synthesis_results["synthesis_success"] and synthesis_results["ppa_success"]:
                 candidate.synthesis_success = True
                 candidate.ppa_success = True
                 candidate.ppa_metrics = synthesis_results["ppa_metrics"]
@@ -824,6 +891,10 @@ class EoHEngine:
                 ref_area = 10 # unit um^2, can be set to a reference value if available
                 ref_power = 5e-8 # unit mW, can be set to a reference value if available
 
+                # Retrieve reference values from calculated reference PPA metrics
+                ref_tns = self.ref_ppa_metrics.get("tns")
+                ref_area = self.ref_ppa_metrics.get("area")
+                ref_power = self.ref_ppa_metrics.get("power")
 
                 tns = candidate.ppa_metrics.get("tns") or float('-inf')
                 area = candidate.ppa_metrics.get("area") or float('inf')
@@ -831,7 +902,11 @@ class EoHEngine:
                 # Update score based on PPA. The 10.0 base score indicates functionality.
 
                 # Divide by reference values to normalize, if available
-                tns_score = 1 - ((tns / ref_tns)/2)
+                # tns_score = 1 - ((tns / ref_tns)/2)
+                # if tns is 0 then tns_score should be 1
+                # if ref_tns is 0 then tns_score should be 0
+                tns_score = 1 - ((tns / ref_tns) / 2) if ref_tns != 0 else 1.0
+
                 area_score = 1 - ((area / ref_area)/2)  
                 power_score = 1 - ((power / ref_power)/2) 
 
@@ -927,8 +1002,6 @@ class EoHEngine:
         # Clear the syntax and functionality pools. We will repopulate them with the new generation.
         # PPA pool remains, as they are our best candidates so far.
         self.syntax_pool.clear()
-        self.functionality_pool.clear()
-
         self.functionality_pool.clear()
 
         for i, candidate in enumerate(generated_candidates_data):
@@ -1146,10 +1219,13 @@ class EoHEngine:
         """
         Runs the unified evolutionary framework.
         """
-        print(f"--- Starting Unified EoH Run: Problem '{self.problem_type}/{self.problem_name}' ---")
+        print(f"--- Starting Unified EoH Run: Problem '{self.benchmark_name}/{self.problem_name}' ---")
         print(f"Generations: {self.num_generations}, Population Size: {self.population_size}")
 
         try:
+            # Calculate reference PPA metrics before starting the evolution
+            self._calculate_reference_ppa()
+            print(f"Reference PPA Metrics: {self.ref_ppa_metrics}")
             self.initialize_population()
             # Initial evaluation of the first generation
             print("\n--- Evaluating Initial Population ---")
@@ -1201,94 +1277,94 @@ class EoHEngine:
         return f"{self.problem_name},success_optimized,{best_solution.code_file_path},{final_ppa_report_path}"
 
 if __name__ == "__main__":
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None) 
+    # MODIFIED: Use argparse to make the script configurable
+    parser = argparse.ArgumentParser(description="Run the EoH framework on specified Verilog benchmarks.")
+    
+    # List of all available benchmarks in the 'bench' directory
+    # Current benches: ['RTLLM', 'VerilogEval-Code-Complete', 'VerilogEval-Spec-to-RTL']
+    available_benchmarks = [d for d in os.listdir('./bench') if os.path.isdir(os.path.join('./bench', d))]
+    
+    parser.add_argument(
+        '--benchmarks',
+        nargs='+',
+        default=available_benchmarks,
+        choices=available_benchmarks,
+        help=f'A list of benchmark suites to run. Default is all available. Choices: {available_benchmarks}'
+    )
+    parser.add_argument('--problems', nargs='+',
+                        help='A list of specific problem names to run. If not provided, all problems in the suite will be run.')
+    parser.add_argument('--model_name', type=str, default="gpt-4.1-mini", help='Name of the OpenAI model to use.')
+    parser.add_argument('--population_size', type=int, default=5, help='Number of candidates in each generation.')
+    parser.add_argument('--num_generations', type=int, default=5, help='Number of evolutionary generations to run.')
+    parser.add_argument('--save_path', type=str, default="/project/cad-team/LX_Semicon/kmcho/EoR/exp", help='Base path to save results.')
+    
+    args = parser.parse_args()
 
-    MODEL_NAME = "gpt-4.1-mini" #"gpt-3.5-turbo" # alternative models, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, o3, o4-mini, could assign different models to different problems (coding, heuristic generation, feedback, etc.)
-    # SELECTED_PROBLEMS = "Prob078_dualedge" 
-    PROBLEM_TYPE = "dataset_code-complete-iccad2023" 
-    POPULATION_SIZE = 5#10      
-    NUM_GENERATIONS = 5#20
-    NUM_PPA_ITERATIONS = 2#5 # Number of optimization cycles after finding a functional solution      
-    DEFAULT_LLM_TEMP = 1.0
-    DEFAULT_LLM_TOP_P = 1.0 
-    USER_BASE_SAVE_PATH = "/project/cad-team/LX_Semicon/kmcho/EoR/exp" 
-    iverilog_executable = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/iverilog"
-    vvp_executable = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/vvp"
-
-    with open("/project/cad-team/LX_Semicon/kmcho/verilog-eval/dataset_code-complete-iccad2023/problems.txt", "r") as f:
-        problems = f.read().strip().splitlines()
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    IVERILOG_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/iverilog"
+    VVP_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/vvp"
 
     try:
-        if not OPENAI_API_KEY: 
-            raise ValueError("A valid OpenAI API key must be set. Found placeholder or missing key.")
-        llm_interface = LLMInterface(api_key=OPENAI_API_KEY, model_name=MODEL_NAME)
+        if not OPENAI_API_KEY:
+            raise ValueError("A valid OpenAI API key must be set in the environment variable OPENAI_API_KEY.")
+        llm_interface = LLMInterface(api_key=OPENAI_API_KEY, model_name=args.model_name)
     except (ValueError, RuntimeError) as e:
         print(f"LLM Initialization Error: {e}")
-        print("Please set the OPENAI_API_KEY environment variable or update it in the script.")
-        exit(1) 
+        exit(1)
         
     verilog_evaluator = VerilogEvaluator(
-        iverilog_executable_path=iverilog_executable,
-        vvp_executable_path=vvp_executable
+        iverilog_executable_path=IVERILOG_EXECUTABLE,
+        vvp_executable_path=VVP_EXECUTABLE
     )
     synthesis_evaluator = SynthesisEvaluator()
 
-    with open("../log.txt", "w") as log_file:
-        for problem in problems:
-            # if "Prob078_dualedge" not in problem: 
-            #     continue
-            eoh_engine = EoHEngine(
-                problem_name=problem,
-                problem_type=PROBLEM_TYPE, 
-                llm_interface=llm_interface,
-                verilog_evaluator=verilog_evaluator,
-                synthesis_evaluator=synthesis_evaluator,
-                population_size=POPULATION_SIZE,
-                num_generations=NUM_GENERATIONS,
-                default_llm_temp=DEFAULT_LLM_TEMP, 
-                default_llm_top_p=DEFAULT_LLM_TOP_P,
-                base_save_path=USER_BASE_SAVE_PATH 
-            )
-            out_str = eoh_engine.run()
-            log_file.write(f"{out_str}\n")
-            print(out_str)
+    # Print benchmarks and problems to be run
+    print(f"Selected Benchmarks: {args.benchmarks}")
+    if args.problems:
+        print(f"Selected Problems: {args.problems}")
+    else:
+        print("No specific problems provided, all problems in the benchmarks will be run.")
 
-    # print("\nEoH process finished.")
-    # if final_population:
-    #     print(f"Best heuristic in final generation: {final_population[0]}")
-    # else:
-    #     print("No heuristics in the final population.")
+    # MODIFIED: Main loop iterates through selected benchmarks and their problems
+    for benchmark in args.benchmarks:
+        print(f"\n{'='*20} Starting Benchmark Suite: {benchmark} {'='*20}\n")
+        benchmark_dir = os.path.join('bench', benchmark)
+        problems_file = os.path.join(benchmark_dir, 'problems.txt')
 
+        if not os.path.exists(problems_file):
+            print(f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping this benchmark.")
+            continue
 
-    # print("\n--- Measuring Baseline LLM Performance (No EoH) ---")
-    
-    # print("Requesting direct code generation from baseline LLM...")
-    # try:
-    #     baseline_prompt_for_parser = f"For the Verilog problem: {eoh_engine.problem_description}, provide a Verilog code solution. " \
-    #                                  f"Start with a thought like 'Direct code generation for baseline.' " \
-    #                                  f"Format your response with ```thought ... ``` and ```code ... ``` blocks."
+        with open(problems_file, "r") as f:
+            all_problems = [line.strip() for line in f if line.strip()]
 
-    #     baseline_thought, baseline_code = llm_interface.generate_response(
-    #         baseline_prompt_for_parser, 
-    #         temperature=0.5, 
-    #         top_p=1.0
-    #     ) 
-        
-    #     if baseline_code: 
-    #         # For baseline, use a specific subdirectory and a fixed sample index (e.g., 0 or "baseline")
-    #         baseline_file_path = eoh_engine._save_code_to_file(baseline_code, generation_num="Baseline", sample_idx_in_generation=0)
+        if args.problems:
+            # If specific problems are provided, filter them
+            problems = [p for p in args.problems if p in all_problems]
+            if not problems:
+                print(f"No valid problems found in {args.problems} for benchmark {benchmark}. Skipping.")
+                continue
+        else: 
+            # If no specific problems are provided, use all available problems
+            problems = all_problems
 
-    #         baseline_fitness = verilog_evaluator.evaluate(baseline_file_path, SELECTED_PROBLEM) 
-    #         print(f"Baseline LLM generated code (thought: '{baseline_thought[:50]}...'), File: {baseline_file_path}")
-    #         print(f"Baseline LLM fitness: {baseline_fitness:.4f}")
-    #     else: 
-    #         print("Failed to generate or parse baseline code.") 
-    #         print(f"Baseline LLM fitness: 0.0")
-    # except (ValueError, RuntimeError) as e: 
-    #     print(f"Error during baseline LLM call or parsing: {e}")
-    #     print(f"Baseline LLM fitness: 0.0")
-    # except Exception as e: 
-    #     print(f"Unexpected error during baseline measurement: {e}")
-    #     print(f"Baseline LLM fitness: 0.0")
+        results_log_path = os.path.join(args.save_path, f"{benchmark}_results_log.txt")
+        with open(results_log_path, "w") as log_file:
+            for problem in problems:
+                print(f"\n--- Running Problem: {problem} ---\n")
+                eoh_engine = EoHEngine(
+                    problem_name=problem,
+                    benchmark_name=benchmark,
+                    llm_interface=llm_interface,
+                    verilog_evaluator=verilog_evaluator,
+                    synthesis_evaluator=synthesis_evaluator,
+                    population_size=args.population_size,
+                    num_generations=args.num_generations,
+                    base_save_path=args.save_path
+                )
+                result_str = eoh_engine.run()
+                log_file.write(f"{result_str}\n")
+                log_file.flush() # Ensure results are written immediately
+                print(f"Result for {problem}: {result_str}")
 
-    # print("---------------------------------------------")
+    print("\nEoH process finished for all selected benchmarks.")
