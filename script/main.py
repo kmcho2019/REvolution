@@ -887,12 +887,14 @@ class EoHEngine:
 
                 # Save the feedback file and score file
                 model_name_cleaned = self.llm.model_name.replace("/", "_")
+                # Get the code file name from the candidate and cut off the .sv extension
+                code_file_name = os.path.basename(candidate.code_file_path).rsplit('.', 1)[0] # e.g., "Prob001_accu_sample1"
                 feedback_file_path = os.path.join(self.base_save_path,
                                                   model_name_cleaned,
                                                   self.benchmark_name,
                                                   self.problem_name,
                                                   f"Gen{candidate.generation}",
-                                                  f"{self.problem_name}_sample{sample_idx}_{candidate.status}_feedback_{candidate.id}.txt")
+                                                  f"{code_file_name}_{candidate.status}_feedback_{candidate.id}.txt")
                 # If there is no directory, create it
                 os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
                 with open(feedback_file_path, "w") as f:
@@ -903,7 +905,7 @@ class EoHEngine:
                                                 self.benchmark_name,
                                                 self.problem_name,
                                                 f"Gen{candidate.generation}",
-                                                f"{self.problem_name}_sample{sample_idx}_{candidate.status}_score_{candidate.id}.txt")
+                                                f"{code_file_name}_{candidate.status}_score_{candidate.id}.txt")
                 with open(score_file_path, "w") as f:
                     f.write(f"Score: {feedback['score']}\nJustification: {feedback['justification']}")
                 print(f"Feedback saved to: {feedback_file_path}")
