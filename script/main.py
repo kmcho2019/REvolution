@@ -13,6 +13,9 @@ import re
 
 import argparse
 
+import multiprocessing
+import datetime
+
 
 def find_module_name(verilog_code):
     """
@@ -1296,6 +1299,38 @@ class EoHEngine:
 
         final_ppa_report_path = best_solution.ppa_metrics.get("report_path", "N/A")
         return f"{self.problem_name},success_optimized,{best_solution.code_file_path},{final_ppa_report_path}"
+    
+# Wrapper function for multiprocessing
+def run_problem_worker(args_tuple):
+    """
+    Wrapper function to run a single problem instance.
+    This function will be executed by each worker process.
+    """
+    # Unpack arguments
+    benchmark, problem, args = args_tuple
+    
+    print(f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n")
+    
+    # Initialize objects within the worker process to avoid pickling issues
+    llm_interface = LLMInterface(api_key=os.getenv("OPENAI_API_KEY"), model_name=args.model_name)
+    verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
+    synthesis_evaluator = SynthesisEvaluator()
+
+    eoh_engine = EoHEngine(
+        problem_name=problem,
+        benchmark_name=benchmark,
+        llm_interface=llm_interface,
+        verilog_evaluator=verilog_evaluator,
+        synthesis_evaluator=synthesis_evaluator,
+        population_size=args.population_size,
+        num_generations=args.num_generations,
+        base_save_path=args.save_path,
+        default_llm_temp=args.temperature,
+        default_llm_top_p=args.top_p,
+        default_llm_max_tokens=args.max_tokens
+    )
+    result_str = eoh_engine.run()
+    return result_str
 
 if __name__ == "__main__":
     # MODIFIED: Use argparse to make the script configurable
@@ -1317,75 +1352,67 @@ if __name__ == "__main__":
     parser.add_argument('--model_name', type=str, default="gpt-4.1-mini", help='Name of the OpenAI model to use.')
     parser.add_argument('--population_size', type=int, default=5, help='Number of candidates in each generation.')
     parser.add_argument('--num_generations', type=int, default=5, help='Number of evolutionary generations to run.')
-    parser.add_argument('--save_path', type=str, default="/project/cad-team/LX_Semicon/kmcho/EoR/exp", help='Base path to save results.')
-    
+    parser.add_argument('--save_path', type=str, default=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "exp")), help='Base path to save results.') # Default is ./exp, defined relative to main.py
+    parser.add_argument('--num_workers', type=int, default=10, help='Number of parallel processes to use.')
+    parser.add_argument('--temperature', type=float, default=1.0)
+    parser.add_argument('--top_p', type=float, default=1.0)
+    parser.add_argument('--max_tokens', type=int, default=2048)
+
     args = parser.parse_args()
 
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     IVERILOG_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/iverilog"
     VVP_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/vvp"
+    YOSYS_EXECUTABLE = "/project/cad-team/LX_Semicon/kmcho/yosys/yosys"
+    OPENROAD_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/openroad/install/bin/openroad"
 
     try:
         if not OPENAI_API_KEY:
             raise ValueError("A valid OpenAI API key must be set in the environment variable OPENAI_API_KEY.")
-        llm_interface = LLMInterface(api_key=OPENAI_API_KEY, model_name=args.model_name)
+        # llm_interface = LLMInterface(api_key=OPENAI_API_KEY, model_name=args.model_name)
     except (ValueError, RuntimeError) as e:
         print(f"LLM Initialization Error: {e}")
         exit(1)
         
-    verilog_evaluator = VerilogEvaluator(
-        iverilog_executable_path=IVERILOG_EXECUTABLE,
-        vvp_executable_path=VVP_EXECUTABLE
-    )
-    synthesis_evaluator = SynthesisEvaluator()
+    # verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
+    # synthesis_evaluator = SynthesisEvaluator()
 
-    # Print benchmarks and problems to be run
-    print(f"Selected Benchmarks: {args.benchmarks}")
-    if args.problems:
-        print(f"Selected Problems: {args.problems}")
-    else:
-        print("No specific problems provided, all problems in the benchmarks will be run.")
-
-    # MODIFIED: Main loop iterates through selected benchmarks and their problems
+    # --- Task Preparation ---
+    run_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    tasks_to_run = []
     for benchmark in args.benchmarks:
-        print(f"\n{'='*20} Starting Benchmark Suite: {benchmark} {'='*20}\n")
         benchmark_dir = os.path.join('bench', benchmark)
         problems_file = os.path.join(benchmark_dir, 'problems.txt')
-
         if not os.path.exists(problems_file):
-            print(f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping this benchmark.")
+            print(f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping.")
             continue
-
         with open(problems_file, "r") as f:
             all_problems = [line.strip() for line in f if line.strip()]
+        
+        problems_to_process = args.problems if args.problems else all_problems
+        for problem in problems_to_process:
+            if problem in all_problems:
+                # Package all arguments for the worker function into a tuple
+                tasks_to_run.append((benchmark, problem, args))
 
-        if args.problems:
-            # If specific problems are provided, filter them
-            problems = [p for p in args.problems if p in all_problems]
-            if not problems:
-                print(f"No valid problems found in {args.problems} for benchmark {benchmark}. Skipping.")
-                continue
-        else: 
-            # If no specific problems are provided, use all available problems
-            problems = all_problems
+    if not tasks_to_run:
+        print("No valid problems found to run. Exiting.")
+        exit(0)
 
-        results_log_path = os.path.join(args.save_path, f"{benchmark}_results_log.txt")
-        with open(results_log_path, "w") as log_file:
-            for problem in problems:
-                print(f"\n--- Running Problem: {problem} ---\n")
-                eoh_engine = EoHEngine(
-                    problem_name=problem,
-                    benchmark_name=benchmark,
-                    llm_interface=llm_interface,
-                    verilog_evaluator=verilog_evaluator,
-                    synthesis_evaluator=synthesis_evaluator,
-                    population_size=args.population_size,
-                    num_generations=args.num_generations,
-                    base_save_path=args.save_path
-                )
-                result_str = eoh_engine.run()
-                log_file.write(f"{result_str}\n")
-                log_file.flush() # Ensure results are written immediately
-                print(f"Result for {problem}: {result_str}")
+    # --- Multiprocessing Execution ---
+    print(f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems.")
+    
+    with multiprocessing.Pool(processes=args.num_workers) as pool:
+        results = pool.map(run_problem_worker, tasks_to_run)
 
-    print("\nEoH process finished for all selected benchmarks.")
+    # --- Result Aggregation ---
+    print("\n--- All parallel tasks completed. Aggregating results. ---")
+    # A single log file for the entire run, can be split by benchmark if needed
+    model_name_cleaned = args.model_name.replace("/", "_")
+
+    master_log_path = os.path.join(args.save_path, model_name_cleaned, run_datetime + "_master_run_log.txt")
+    with open(master_log_path, "w") as log_file:
+        for result_str in results:
+            log_file.write(f"{result_str}\n")
+    
+    print(f"\nEoH process finished. Master log saved to: {master_log_path}")
