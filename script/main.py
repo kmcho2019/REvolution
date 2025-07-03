@@ -34,6 +34,9 @@ class SynthesisEvaluator:
         self.openroad_path = openroad_path
         self.pdk_path = pdk_path
 
+        # Synthesis clk period in nanoseconds
+        self.clk_period = 0.01  # ns
+
         # Get the directory where this script (main.py) is located.
         script_main_dir = os.path.dirname(os.path.abspath(__file__)) 
         # From there, construct the path to the 'script' directory (.../EoR/script)
@@ -80,7 +83,7 @@ class SynthesisEvaluator:
         Runs the Yosys synthesis script.
         """
 
-        clk_period = 0.01 # ns
+        clk_period = self.clk_period # ns
 
         # Extract the actual internal module name from the Verilog file
         module_name = find_module_name(open(verilog_file, 'r').read())
@@ -208,13 +211,17 @@ class SynthesisEvaluator:
                 elif line.startswith('Design area'):
                     area = float(parts[2])
 
+        # Effective clock period (delay or performance metric) eff_clk_period = clk_period - wns
+        eff_clk_period = self.clk_period - wns
+
         ppa_path = report_path.replace(".rpt", ".ppa")
         with open(ppa_path, 'w') as f:
-            f.write('tns,wns,power,area\n')
-            f.write(f'{tns},{wns},{power},{area}')
+            f.write('tns,wns,eff_clk_period,power,area\n')
+            f.write(f'{tns},{wns},{eff_clk_period},{power},{area}')
         return {
             "tns": tns,
             "wns": wns,
+            "eff_clk_period": eff_clk_period,
             "power": power,
             "area": area,
             "report_path": ppa_path
@@ -628,7 +635,14 @@ class Heuristic:
 
     def __repr__(self):
         thought_repr = self.thought[:50] 
-        ppa_info = f"PPA: {self.ppa_metrics}" if self.ppa_success else "PPA: Not run or failed"
+        ppa_info = "PPA: Not run or failed"
+        if self.ppa_success and self.ppa_metrics:
+            # Format PPA metrics for cleaner display
+            clk = self.ppa_metrics.get('eff_clk_period')
+            area = self.ppa_metrics.get('area')
+            power = self.ppa_metrics.get('power')
+            ppa_str = f"Eff. Clk: {clk:.4f}ns, Area: {area:.2f}, Power: {power:.4e}"
+            ppa_info = f"PPA: ({ppa_str})"
         return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Score: {self.score:.4f}, "
                 f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
@@ -655,6 +669,7 @@ class EoHEngine:
         self.default_llm_temp = default_llm_temp
         self.default_llm_top_p = default_llm_top_p
         self.default_llm_max_tokens = default_llm_max_tokens
+        self.clk_period = self.synthesis_evaluator.clk_period # ns
 
         # Pools for different types of heuristics, replaces self.population = []
         self.syntax_pool = []
@@ -690,7 +705,7 @@ class EoHEngine:
         if not os.path.exists(ref_sv_file):
             print(f"WARNING: Reference Verilog file not found at {ref_sv_file}. Cannot calculate reference PPA.")
             # Set defaults that make any valid synthesis result look good.
-            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "area": float('inf'), "power": float('inf')}
+            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": float('inf'), "power": float('inf')}
             return
 
         # Create a dedicated directory for the reference synthesis to keep results separate
@@ -709,7 +724,7 @@ class EoHEngine:
             print(f"Reference PPA calculated successfully: {self.ref_ppa_metrics}")
         else:
             print("WARNING: Reference PPA synthesis failed. Using default high values for scoring.")
-            self.ref_ppa_metrics = {"tns": -0.01, "wns": -0.001, "area": 100, "power": 100}
+            self.ref_ppa_metrics = {"tns": 0, "wns": 0, "eff_clk_period": self.clk_period, "area": 100, "power": 100}
 
     def _save_result_to_file(self, code_content, thought_content, generation_num, sample_idx_in_generation, strategy=None):
         """
@@ -880,43 +895,26 @@ class EoHEngine:
                 candidate.synthesis_success = True
                 candidate.ppa_success = True
                 candidate.ppa_metrics = synthesis_results["ppa_metrics"]
+
+                # PPA metrics scoring with eff_clk_period, area, and power
+                ref_eff_clk_period = self.ref_ppa_metrics.get("eff_clk_period") # unit ns
+                ref_area = self.ref_ppa_metrics.get("area") # unit um^2
+                ref_power = self.ref_ppa_metrics.get("power") # unit W
                 
-                # Simple cost function: lower is better. Can be tuned. 
-                # Later, we plan to add reference values from human designs and calculate relative scores.
-                # As well as adding tns, wns, and effective clock metrics.
-                # Handle None values from PPA parsing gracefully.
 
-                # Reference values for PPA metrics, can be set to a reference value if available
-                ref_tns = -1 # unit ns, can be set to a reference value if available
-                ref_area = 10 # unit um^2, can be set to a reference value if available
-                ref_power = 5e-8 # unit mW, can be set to a reference value if available
 
-                # Retrieve reference values from calculated reference PPA metrics
-                ref_tns = self.ref_ppa_metrics.get("tns")
-                ref_area = self.ref_ppa_metrics.get("area")
-                ref_power = self.ref_ppa_metrics.get("power")
-
-                tns = candidate.ppa_metrics.get("tns") or float('-inf')
-                area = candidate.ppa_metrics.get("area") or float('inf')
-                power = candidate.ppa_metrics.get("power") or float('inf')
+                eff_clk_period = candidate.ppa_metrics.get("eff_clk_period")
+                area = candidate.ppa_metrics.get("area")
+                power = candidate.ppa_metrics.get("power")
                 # Update score based on PPA. The 10.0 base score indicates functionality.
+                # score = 0 : indicates that the candiate has not passed synthesis or requires at least twice area/power/delay compared to the reference design
+                # score = 1 : indicates that the candidate has passed synthesis and has equal area/power/delay compared to the reference design
+                # score = 2 : indicates that the candidate has passed synthesis and has zero area/power/delay compared to the reference design (e.g., a perfect design)
+                perf_score = 2 - min(eff_clk_period / (ref_eff_clk_period + 1e-10), 2) # Scale to [0, 2]
+                power_score = 2 - min(power / (ref_power + 1e-10), 2) # Scale to [0, 2]
+                area_score = 2 - min(area / (ref_area + 1e-10), 2) # Scale to [0, 2]
 
-                # Divide by reference values to normalize, if available
-                # tns_score = 1 - ((tns / ref_tns)/2)
-                # if tns is 0 then tns_score should be 1
-                # if ref_tns is 0 then tns_score should be 0
-                tns_score = 1 - ((tns / ref_tns) / 2) if ref_tns != 0 else 1.0
-
-                area_score = 1 - ((area / ref_area)/2)  
-                power_score = 1 - ((power / ref_power)/2) 
-
-                # cap the scores to be between 0 and 1
-                tns_score = max(0, min(1, tns_score))
-                area_score = max(0, min(1, area_score))
-                power_score = max(0, min(1, power_score))
-
-                cost = area * power - tns # Example cost function: area * power - tns
-                candidate.score = 10.0 + tns_score + area_score + power_score
+                candidate.score = 10.0 + perf_score + power_score + area_score
                 # candidate.score = 10.0 + 1 + (1/ (cost + 1e-9)) # Add inverse of cost to score and 1 score for successful synthesis
 
                 print(f"PPA evaluation successful for {candidate.id}. PPA Metrics: {candidate.ppa_metrics}")
@@ -1185,6 +1183,7 @@ class EoHEngine:
             f"Current PPA Metrics:\n"
             f"- Area: {ppa_metrics.get('area', 'N/A')} um^2\n"
             f"- Power: {ppa_metrics.get('power', 'N/A')} uW\n"
+            f"- Effective Clock Period: {ppa_metrics.get('eff_clk_period', 'N/A')} ns\n"
             f"- Worst Negative Slack (WNS): {ppa_metrics.get('wns', 'N/A')} ns\n"
             f"- Total Negative Slack (TNS): {ppa_metrics.get('tns', 'N/A')} ns\n"
         )
