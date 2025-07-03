@@ -52,14 +52,15 @@ class SynthesisEvaluator:
         print(f"Reference Directory: {self.ref_dir_path}")
         print(f"PDK Directory: {self.pdk_path}")
 
-    def evaluate(self, verilog_file, problem_name, output_directory):
+    def evaluate(self, verilog_file, problem_name, output_directory, report_base_path):
         """
         Performs synthesis and PPA analysis on a given Verilog file.
+        The report files will be named based on `report_base_path`.
         """
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, output_directory)
+        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, output_directory, report_base_path)
 
         if not synthesis_success:
             return {
@@ -78,9 +79,10 @@ class SynthesisEvaluator:
             "ppa_metrics": ppa_metrics
         }
 
-    def _run_synthesis(self, verilog_file, problem_name, output_directory):
+    def _run_synthesis(self, verilog_file, problem_name, output_directory, report_base_path):
         """
         Runs the Yosys synthesis script.
+        Synthesis report saved based on report_base_path.
         """
 
         clk_period = self.clk_period # ns
@@ -92,7 +94,7 @@ class SynthesisEvaluator:
         yosys_script_path = self._create_yosys_script(verilog_file, module_name, output_directory, clk_period)
         openroad_script_path = self._create_openroad_script(sdc_file_path, module_name, output_directory)
 
-        report_path = os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
+        report_path = report_base_path + "_synthesis_report.rpt" #os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
 
         command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
 
@@ -710,18 +712,37 @@ class EoHEngine:
 
         # Create a dedicated directory for the reference synthesis to keep results separate
         ref_output_dir = os.path.join(self.base_save_path, "reference_synthesis", self.benchmark_name, self.problem_name)
+        os.makedirs(ref_output_dir, exist_ok=True)
+
+        # Create a unique base path for the reference PPA report
+        ref_report_base_path = os.path.join(ref_output_dir, f"{self.problem_name}_ref")
         
         print(f"Synthesizing reference design: {ref_sv_file}")
         # The module name is assumed to be the problem name (e.g., "Prob001_accu")
         synthesis_results = self.synthesis_evaluator.evaluate(
             verilog_file=ref_sv_file,
             problem_name=self.problem_name, 
-            output_directory=ref_output_dir
+            output_directory=ref_output_dir,
+            report_base_path=ref_report_base_path
         )
+
+
 
         if synthesis_results and synthesis_results.get("ppa_success"):
             self.ref_ppa_metrics = synthesis_results["ppa_metrics"]
             print(f"Reference PPA calculated successfully: {self.ref_ppa_metrics}")
+            # Also save the reference PPA metrics to experiment directory for easier access
+            try:
+                source_ppa_path = synthesis_results["ppa_metrics"].get("report_path")
+                if source_ppa_path and os.path.exists(source_ppa_path):
+                    model_name_cleaned = self.llm.model_name.replace("/", "_")
+                    exp_problem_dir = os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name)
+                    os.makedirs(exp_problem_dir, exist_ok=True)
+                    dest_ppa_path = os.path.join(exp_problem_dir, f"{self.problem_name}_reference.ppa")
+                    shutil.copy(source_ppa_path, dest_ppa_path)
+                    print(f"Copied reference PPA report to: {dest_ppa_path}")
+            except Exception as e:
+                print(f"WARNING: Failed to copy reference PPA report to experiment directory: {e}")
         else:
             print("WARNING: Reference PPA synthesis failed. Using default high values for scoring.")
             self.ref_ppa_metrics = {"tns": 0, "wns": 0, "eff_clk_period": self.clk_period, "area": 100, "power": 100}
@@ -888,8 +909,9 @@ class EoHEngine:
         # Stage 2: PPA Evaluation
         elif candidate.status == 'ppa' or candidate.status == 'optimized':
             print(f"Synthesizing candidate {candidate.id} for PPA evaluation...")
+            report_base_path = candidate.code_file_path.rsplit('.', 1)[0] # Base path for PPA report
             output_dir = os.path.dirname(candidate.code_file_path)
-            synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir)
+            synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir, report_base_path)
 
             if synthesis_results["synthesis_success"] and synthesis_results["ppa_success"]:
                 candidate.synthesis_success = True
