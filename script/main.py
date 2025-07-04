@@ -951,7 +951,7 @@ class EoHEngine:
                                                   self.benchmark_name,
                                                   self.problem_name,
                                                   f"Gen{candidate.generation}",
-                                                  f"{code_file_name}_{candidate.status}_feedback_{candidate.id}.txt")
+                                                  f"{code_file_name}_{candidate.status}_feedback.txt")
                 # If there is no directory, create it
                 os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
                 with open(feedback_file_path, "w") as f:
@@ -962,7 +962,7 @@ class EoHEngine:
                                                 self.benchmark_name,
                                                 self.problem_name,
                                                 f"Gen{candidate.generation}",
-                                                f"{code_file_name}_{candidate.status}_score_{candidate.id}.txt")
+                                                f"{code_file_name}_{candidate.status}_score.txt")
                 with open(score_file_path, "w") as f:
                     f.write(f"Score: {feedback['score']}\nJustification: {feedback['justification']}")
                 print(f"Feedback saved to: {feedback_file_path}")
