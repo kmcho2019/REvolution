@@ -1,8 +1,8 @@
 `timescale 1ns/1ns
 `define width 8
-`define TESTFILE "test_data.dat"
+`define TESTFILE "Prob013_multi_booth_8bit_test_data.dat"
 
-module booth4_mul_tb () ;
+module tb () ;
     reg signed [`width-1:0] a, b;
     reg             clk, reset;
 

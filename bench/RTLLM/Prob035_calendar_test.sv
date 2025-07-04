@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module main();
+module tb();
 reg clk,rst;
 
 wire[5:0] out1,out2,out3;
@@ -28,7 +28,7 @@ initial begin
 	#25;
 	rst = 0;
 	// outfile = $fopen("reference.txt", "w");
-	$readmemh("reference.txt",reference_data);
+	$readmemh("Prob035_calendar_reference.txt",reference_data);
 	repeat(4000) begin	
 		// $fwrite(outfile, "%h\n", clocktime);
 		error = (reference_data[i] == clocktime) ? error :error +1;

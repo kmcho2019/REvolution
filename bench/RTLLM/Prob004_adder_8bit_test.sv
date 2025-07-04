@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module testbench;
+module tb;
   
   reg [7:0] a;
   reg [7:0] b;

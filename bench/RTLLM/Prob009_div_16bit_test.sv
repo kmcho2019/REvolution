@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_division();
+module tb();
 
 reg [15:0] A;
 reg [7:0] B;

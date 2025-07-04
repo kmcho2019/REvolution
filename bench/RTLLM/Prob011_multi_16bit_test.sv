@@ -1,4 +1,4 @@
-module tb_multi_16bit;
+module tb;
   
   reg clk;
   reg rst_n;

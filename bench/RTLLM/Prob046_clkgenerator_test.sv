@@ -1,4 +1,4 @@
-module clkgenerator_tb;
+module tb;
 
     reg clk_tb; // Clock signal from the testbench
     reg res = 1'b0;
@@ -20,7 +20,7 @@ module clkgenerator_tb;
             // $display(clk_tb);
         end
         if (error == 0) begin
-        $display("=========== Your Design Passed ===========");
+        $display("===========Your Design Passed===========");
         end
         else begin
         $display("=========== Test completed with %d failures ===========", error);

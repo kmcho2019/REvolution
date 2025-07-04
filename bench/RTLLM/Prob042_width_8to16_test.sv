@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module testbench();
+module tb();
     reg rst,valid_in;
 	reg clk=1;
 	reg[7:0] data_in;

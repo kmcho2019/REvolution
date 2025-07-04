@@ -1,4 +1,4 @@
-module lfsr_tb();
+module tb();
 reg clk_tb;
 reg rst_tb;
 wire [3:0] out_tb;
@@ -15,7 +15,7 @@ begin
     #200;
     // $display("Failed: out=%b (expected 1101)", out_tb);
     if (out_tb == 4'b1101) begin
-      $display("=========== Your Design Passed ===========");
+      $display("===========Your Design Passed===========");
     end
     else begin
       $display("=========== Failed ===========");

@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module testbench;
+module tb;
     // Inputs
     reg clk_a;
     reg clk_b;

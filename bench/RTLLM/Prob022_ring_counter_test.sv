@@ -1,4 +1,4 @@
-module testbench;
+module tb;
 
     reg clk;
     reg reset;
@@ -38,7 +38,7 @@ module testbench;
     // Stop simulation after checking all values
     always @(posedge clk) begin
         if (i == 9) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
             $finish;
         end
     end

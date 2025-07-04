@@ -1,4 +1,4 @@
-module tb_signal_generator;
+module tb;
 reg				clk,rst_n;
 wire[4:0]		wave;
 
@@ -14,7 +14,7 @@ integer i = 0;
 integer error = 0;
 // integer outfile;
 initial begin
-      $readmemh("tri_gen.txt",reference);
+      $readmemh("Prob049_signal_generator_tri_gen.txt",reference);
 			clk = 0;
       rst_n = 0;
 			#10

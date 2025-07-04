@@ -1,4 +1,4 @@
-module rom_tb;
+module tb;
 
     reg [7:0] addr_tb;          // Address input for the ROM
     wire [15:0] dout_tb;        // Data output from the ROM
@@ -48,7 +48,7 @@ module rom_tb;
 
         // Check for errors
         if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
         end else begin
             $display("Test completed with %d errors.", error);
         end

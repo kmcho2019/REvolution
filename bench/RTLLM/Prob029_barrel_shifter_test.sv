@@ -1,4 +1,4 @@
-module barrel_shifter_tb;
+module tb;
   reg [7:0] in;
   reg [2:0] ctrl;
   wire [7:0] out; 
@@ -23,7 +23,7 @@ initial
     //     $monitor("Input=%d, Control=%d, Output=%d",in,ctrl,out);
     // end
         if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
             end
         else begin
             $display("=========== Test completed with %d failures ===========", error);

@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module testbench;
+module tb;
     // Parameters
     parameter Q = 15;
     parameter N = 32;
@@ -45,7 +45,7 @@ module testbench;
 
         // Final test result summary
         if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
         end
         else begin
             $display("=========== Test completed with %d /100 failures ===========", error);

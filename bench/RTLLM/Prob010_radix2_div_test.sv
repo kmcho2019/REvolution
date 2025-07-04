@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module radix2_div_tb;
+module tb;
     reg clk;
     reg rst;
     reg [7:0] dividend, divisor;

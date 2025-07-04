@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module tb_traffic_light;
+module tb;
   
   reg clk;
   reg rst_n;

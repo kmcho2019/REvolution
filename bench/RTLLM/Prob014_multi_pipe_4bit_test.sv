@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module multi_pipe_tb;
+module tb;
   reg clk;
   reg rst_n;
   reg [3:0] mul_a;

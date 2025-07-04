@@ -1,4 +1,4 @@
-module square_wave_tb;
+module tb;
 
     reg clk_tb = 0;        
     reg [8:0] freq_tb = 8'b0000100; 
@@ -31,7 +31,7 @@ module square_wave_tb;
             #5; // Time delay between clock cycles
         end
         if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
         end
         $finish;  // Finish the simulation
     end

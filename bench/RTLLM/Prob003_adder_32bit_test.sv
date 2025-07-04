@@ -1,5 +1,5 @@
 `timescale  1ns/1ns
-module adder32_tb;
+module tb;
   
   reg [31:0] A;
   reg [31:0] B;

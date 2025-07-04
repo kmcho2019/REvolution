@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module tb_fixed_point_subtractor;
+module tb;
 
     // Parameters
     parameter Q = 15;
@@ -63,7 +63,7 @@ module tb_fixed_point_subtractor;
 
         // Final test result summary
         if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
         end
         else begin
             $display("=========== Test completed with %d /100 failures ===========", error);

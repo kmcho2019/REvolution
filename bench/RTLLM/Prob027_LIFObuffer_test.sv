@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module LIFObuffer_tb;
+module tb;
 
 // Inputs
 reg [3:0] dataIn;
@@ -62,7 +62,7 @@ initial begin
     // $display(dataOut);
     error = (dataOut==4) ? error : error+1;
     if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
             end
         else begin
             $display("=========== Test completed with %d/20 failures ===========", error);

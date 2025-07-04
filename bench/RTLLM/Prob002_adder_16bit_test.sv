@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module add16_tb();
+module tb();
 
     reg [15:0] a;
     reg [15:0] b;

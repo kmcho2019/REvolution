@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module pulse_detect_tb;
+module tb;
   reg clk;
   reg rst_n;
   reg data_in;

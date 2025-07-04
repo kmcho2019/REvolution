@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module counter_12_tb;
+module tb;
 
   reg clk, rst_n, valid_count;
   wire [3:0] out;

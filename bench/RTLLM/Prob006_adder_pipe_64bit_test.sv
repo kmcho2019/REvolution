@@ -1,4 +1,4 @@
-module tb_adder64();
+module tb();
 
   parameter DATA_WIDTH = 64;
   parameter STG_WIDTH = 16;
@@ -38,7 +38,7 @@ module tb_adder64();
     end
 
     if (error == 0) begin
-      $display("=========== Your Design Passed ===========");
+      $display("===========Your Design Passed===========");
     end
     else begin
       $display("=========== Test completed with %d / 100 failures ===========", error);

@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module right_shifter_tb;
+module tb;
   reg clk;
   reg d;
   wire [7:0] q;

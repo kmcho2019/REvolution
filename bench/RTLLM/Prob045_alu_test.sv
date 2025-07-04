@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module test_alu();
+module tb();
 
     reg [31:0] a;
     reg [31:0] b;
@@ -40,7 +40,7 @@ module test_alu();
     integer file_open;
     initial begin
 
-    $readmemh("reference.dat",reference);
+    $readmemh("Prob045_alu_reference.dat",reference);
 
     opcodes[0]=ADD;
     opcodes[1]=ADDU;

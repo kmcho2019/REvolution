@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module instr_reg_tb;
+module tb;
 
 reg clk;
 reg rst;
@@ -70,7 +70,7 @@ initial begin
 
     // Finish simulation and display total errors
     if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
             end
     else begin
         $display("=========== Test completed with %d failures ===========", error);

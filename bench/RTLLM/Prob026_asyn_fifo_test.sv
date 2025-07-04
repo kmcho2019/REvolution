@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module asyn_fifo_tb;
+module tb;
 
   reg wclk, rclk, wrstn, rrstn, winc, rinc;
   reg [7:0] wdata;
@@ -62,9 +62,9 @@ module asyn_fifo_tb;
 
   initial begin
     #550;
-    $readmemh("wfull.txt",data1);
-    $readmemh("rempty.txt",data2);
-    $readmemh("tdata.txt",data3);
+    $readmemh("Prob026_asyn_fifo_wfull.txt",data1);
+    $readmemh("Prob026_asyn_fifo_rempty.txt",data2);
+    $readmemh("Prob026_asyn_fifo_tdata.txt",data3);
     // outfile1 = $fopen("wfull.txt", "w");
     // outfile2 = $fopen("rempty.txt", "w");
     // outfile3 = $fopen("tdata.txt", "w");

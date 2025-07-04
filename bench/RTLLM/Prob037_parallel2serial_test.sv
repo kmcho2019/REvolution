@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module parallel2serial_tb;
+module tb;
   reg clk;
   reg rst_n;
   reg [3:0] d;

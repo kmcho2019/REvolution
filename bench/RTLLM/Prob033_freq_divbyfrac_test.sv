@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module freq_divbyfrac_tb;
+module tb;
     // Inputs
     reg clk;
     reg rst_n;
@@ -45,7 +45,7 @@ module freq_divbyfrac_tb;
             #5;
         end
         if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
             end
         else begin
             $display("=========== Test completed with %d/20 failures ===========", error);

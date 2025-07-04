@@ -1,4 +1,4 @@
-module fmultiplier_tb;
+module tb;
 
 reg [31:0] a, b;
 wire [31:0] z;
@@ -27,7 +27,7 @@ initial begin
 	#80
     error = (z==32'b00111101101110000101000111101100) ? error:error+1;
     if (error == 0) begin
-            $display("=========== Your Design Passed ===========");
+            $display("===========Your Design Passed===========");
             end
     else begin
         $display("=========== Test completed with %d/20 failures ===========", error);

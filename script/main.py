@@ -367,13 +367,23 @@ class VerilogEvaluator:
             print(f"INFO: Simulation command: {' '.join(run_cmd_list)}")
             lf.write(f"Command: {' '.join(run_cmd_list)}\n\n")
 
+            # Set the working directory to the location of the testbench file (this is to include the miscellaneous files sometimes required by the testbench)
+            # Some modules in RTLLM have files that supply the input and output files for the testbench
+            # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt, 
+            # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
+            # Prob049_signal_generator_tri_gen.txt
+            simulation_working_dir = os.path.dirname(test_sv_file)
+            print(f"INFO: Running simulation in directory: {simulation_working_dir}")
+            lf.write(f"Working Directory: {simulation_working_dir}\n\n")
+
             try:
                 run_process = subprocess.run(
                     run_cmd_list,
                     capture_output=True,
                     text=True,
                     timeout=simulation_timeout_seconds,
-                    check=False # Do not raise exception on non-zero exit
+                    check=False, # Do not raise exception on non-zero exit
+                    cwd=simulation_working_dir  # Set the working directory for the simulation
                 )
                 sim_stdout = run_process.stdout or ""
                 sim_stderr = run_process.stderr or ""
@@ -857,11 +867,33 @@ class EoHEngine:
                 # Optionally update feedback with compilation error
                 self.syntax_pool.append(candidate)  # Re-add to syntax pool
                 return None
+            
+            # Initialize functional success flag
+            # Needed to handle both VerilogEvalv2 and RTLLMv2 evaluation formats
+            is_functional_success = False
+            simulation_output = results.get('simulation_stdout', '')
 
+            # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
+            # This regex matches the expected output format from VerilogEval
+            # It captures the number of mismatches in the first group.
+            # If there are no mismatches, it means the design is functionally correct.
             mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
-            match = re.search(mismatch_pattern, results.get('simulation_stdout', ''), re.MULTILINE)
+            match = re.search(mismatch_pattern, simulation_output, re.MULTILINE)
+            if match and int(match.group(1)) == 0: # When number of mismatches is 0
+                is_functional_success = True
+            
+            # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
+            elif "===========Your Design Passed===========" in simulation_output:
+                is_functional_success = True
 
-            if results['status'] == "success" and match and int(match.group(1)) == 0:
+            
+
+            # Debugging output
+            print(f"results[status]: {results['status']}")
+            print(f"match: {match}")
+            print(f"match.group(1): {match.group(1) if match else 'None'}")
+            print(f"Simulation stdout: {results.get('simulation_stdout', '')[:200]}...")  # Print first 200 chars for brevity
+            if results['status'] == "success" and is_functional_success:
                 print("Result: Functionally correct. Promoting to ppa_pool.")
                 candidate.status = 'ppa'
                 candidate.score = 10.0 # Base score for being functional

@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module testbench;
+module tb;
 
     // Parameters
     parameter CLK_PERIOD = 10; // Clock period in simulation time units

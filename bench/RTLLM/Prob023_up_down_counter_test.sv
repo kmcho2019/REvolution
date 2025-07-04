@@ -1,4 +1,4 @@
-module testbench;
+module tb;
 
     reg clk;
     reg reset;
@@ -44,7 +44,7 @@ module testbench;
         // $display("Count = %d", count);
         error = (count==21)?error : error+1;
         if (error == 0) begin
-        $display("=========== Your Design Passed ===========");
+        $display("===========Your Design Passed===========");
         end
         else begin
         $display("=========== Test completed with %d failures ===========", error);

@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 `define clk_period 20
-module tb_multi_pipe();
+module tb();
  
      reg [7:0] mul_a;
      reg [7:0] mul_b;

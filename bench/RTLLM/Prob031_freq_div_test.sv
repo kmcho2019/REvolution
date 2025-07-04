@@ -1,4 +1,4 @@
-module test ();
+module tb ();
 
 reg  clk,rst;
 

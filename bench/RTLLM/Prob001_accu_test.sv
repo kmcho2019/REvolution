@@ -1,6 +1,6 @@
 `timescale  1ns / 1ps
 
-module tb_valid_ready;
+module tb;
 
 
 parameter PERIOD  = 10;

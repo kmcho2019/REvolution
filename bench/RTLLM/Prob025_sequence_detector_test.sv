@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module tb_sequence_detector();
+module tb();
 
     reg clk, rst_n, data_in;
     wire sequence_detected;
@@ -42,7 +42,7 @@ module tb_sequence_detector();
         if (!sequence_detected)
             error = error+1;
     if (error == 0) begin
-      $display("=========== Your Design Passed ===========");
+      $display("===========Your Design Passed===========");
     end
     else begin
       $display("=========== Test completed with %d /100 failures ===========", error);
