@@ -372,7 +372,7 @@ class VerilogEvaluator:
             # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt, 
             # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
             # Prob049_signal_generator_tri_gen.txt
-            simulation_working_dir = os.path.dirname(test_sv_file)
+            simulation_working_dir = os.path.dirname(generated_sv_file)
             print(f"INFO: Running simulation in directory: {simulation_working_dir}")
             lf.write(f"Working Directory: {simulation_working_dir}\n\n")
 
@@ -709,6 +709,29 @@ class EoHEngine:
         else:
             raise FileNotFoundError(f"Problem description file not found: {prompt_path}")
     
+    # Copy miscellaneous files sometimes needed for testing to the output directory
+    # Some modules in RTLLM have files that supply the input and output files for the testbench
+    # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt, 
+    # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
+    # Prob049_signal_generator_tri_gen.txt
+    # Copy files that are not _makefile, _ppa.txt, _prompt.txt, _ref.sv, and _test.sv
+    # Each generation need to copy these files to the output directory so that the testbench can find them
+    def _copy_misc_files(self, output_directory):
+        """
+        Copies miscellaneous files needed for testing to the output directory.
+        Excludes files that match specific patterns.
+        """
+        misc_files = [f for f in os.listdir(self.benchmark_path) if f.startswith(self.problem_name) and not f.endswith(('_makefile','_ifc.txt', '_ppa.txt', '_prompt.txt', '_ref.sv', '_test.sv'))]
+        
+        for file_name in misc_files:
+            source_path = os.path.join(self.benchmark_path, file_name)
+            dest_path = os.path.join(output_directory, file_name)
+            try:
+                shutil.copy(source_path, dest_path)
+                print(f"Copied {file_name} to {output_directory}")
+            except Exception as e:
+                print(f"WARNING: Failed to copy {file_name} to {output_directory}: {e}")
+
     # Method to calculate the reference PPA metrics used to calculate the PPA score
     def _calculate_reference_ppa(self):
         """
@@ -845,7 +868,9 @@ class EoHEngine:
             except Exception as e:
                 print(f"Unexpected critical error during initial candidate {i+1} generation: {e}")
                 raise
-
+        # Copy miscellaneous files needed for testing to the output directory
+        model_name_cleaned = self.llm.model_name.replace("/", "_")
+        self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))
         print(f"--- Initial Population Generation Complete. All {len(self.syntax_pool)} candidates are in the syntax pool. ---")
 
     
@@ -1054,6 +1079,10 @@ class EoHEngine:
                 except Exception as e:
                     print(f"Unexpected critical error during {strategy_name} candidate generation: {e}")
                     raise
+
+        # Copy miscellaneous files needed for testing to the output directory
+        model_name_cleaned = self.llm.model_name.replace("/", "_")
+        self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))          
 
         print(f"\nStep 2: Evaluating {len(generated_candidates_data)} new candidates...")
         # Clear the syntax and functionality pools. We will repopulate them with the new generation.
