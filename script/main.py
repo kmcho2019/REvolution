@@ -4,7 +4,7 @@ import uuid
 import subprocess
 import shutil 
 import random
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI, APIConnectionError, RateLimitError, InternalServerError, APITimeoutError # added for async support
 
 
 import os
@@ -15,6 +15,8 @@ import argparse
 
 import multiprocessing
 import datetime
+
+import asyncio # added for async support for calling OpenAI API
 
 
 def find_module_name(verilog_code):
@@ -440,18 +442,20 @@ class VerilogEvaluator:
         }
 
 class LLMInterface:
-    def __init__(self, api_key=None, model_name="gpt-3.5-turbo"):
+    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", max_retries=3, base_delay=2):
         if not api_key: 
             raise ValueError("API key is required for LLMInterface initialization.")
         
         self.api_key = api_key
         self.model_name = model_name
         self.client = None
+        self.max_retries = max_retries  # Maximum number of retries
+        self.base_delay = base_delay    # Base delay in seconds for backoff
         try:
-            self.client = OpenAI(api_key=self.api_key)
-            print(f"OpenAI client initialized successfully (Model: {self.model_name})")
+            self.client = AsyncOpenAI(api_key=self.api_key, timeout=20)
+            print(f"AsyncOpenAI client initialized successfully (Model: {self.model_name})")
         except Exception as e:
-            raise RuntimeError(f"Failed to initialize OpenAI client: {e}")
+            raise RuntimeError(f"Failed to initialize AsyncOpenAI client: {e}")
 
     def parse_thought_and_code(self, response_text):
         thought_match = re.search(r"```thought\s*\n(.*?)\n```", response_text, re.DOTALL)
@@ -470,13 +474,13 @@ class LLMInterface:
 
         return thought, code
 
-    def generate_response(self, prompt, temperature=1.0, top_p=1.0, max_tokens=2048):
-        print(f"\n--- LLM Request ---")
-        print(f"Prompt (first 200 chars):\n{prompt[:200]}...")
-        print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
+    async def generate_response(self, prompt, temperature=1.0, top_p=1.0, max_tokens=2048):
+        # print(f"\n--- LLM Request ---")
+        # print(f"Prompt (first 200 chars):\n{prompt[:200]}...")
+        # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
 
         if not self.client: 
-            raise RuntimeError("OpenAI client not initialized. Cannot generate response.")
+            raise RuntimeError("AsyncOpenAI client not initialized. Cannot generate response.")
 
         full_response_text = ""
         
@@ -495,46 +499,124 @@ class LLMInterface:
             "```"
         )
         
-        try:
-            chat_completion = self.client.chat.completions.create(
-                messages=[
-                    {
-                        "role": "system",
-                        "content": system_prompt_content,
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt,
-                    }
-                ],
-                model=self.model_name,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p 
-            )
-            full_response_text = chat_completion.choices[0].message.content.strip()
+        for attempt in range(self.max_retries):
+            try:
+                chat_completion = await self.client.chat.completions.create(
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": system_prompt_content,
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt,
+                        }
+                    ],
+                    model=self.model_name,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p 
+                )
+                full_response_text = chat_completion.choices[0].message.content.strip()
+                thought, code = self.parse_thought_and_code(full_response_text)
+                return thought, code
 
-        except Exception as e:
-            raise RuntimeError(f"OpenAI API call failed: {e}") 
+            except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
+                print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
+                if attempt + 1 == self.max_retries:
+                    print("Max retries reached. Failing the request.")
+                    return None, None
+                
+                delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
+                print(f"Waiting for {delay:.2f} seconds before retrying...")
+                await asyncio.sleep(delay)
 
-        print(f"LLM Full Response (first 200 chars):\n{full_response_text[:200]}...\n--- LLM Request End ---\n")
-        
-        thought, code = self.parse_thought_and_code(full_response_text)
-            
-        return thought, code
+            except Exception as e:
+                print(f"An unexpected, non-retriable error occurred in generate_response: {e}")
+                return None, None
 
-    def generate_feedback(self, problem_def, verilog_code, simulation_log, temperature=1.0, top_p=1.0, max_tokens=2048):
+
+
+    # This new method uses the 'n' parameter for more efficient batching of identical prompts.
+    async def generate_n_responses(self, prompt, n, temperature=1.0, top_p=1.0, max_tokens=2048):
+        """
+        Generates 'n' different responses for a single prompt in a single API call.
+        """
+        print(f"\n--- Sending Single-Prompt Batch Request for {n} responses ---")
+        if not self.client:
+            raise RuntimeError("AsyncOpenAI client not initialized.")
+
+        system_prompt_content = (
+            "You are an expert Verilog design assistant. "
+            "Your role is to address Verilog-related problems posed by the user. "
+            "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
+            "The 'thought' is your conceptual idea for solving the problem. "
+            "The 'code' is the Verilog implementation of your 'thought'.\n"
+            "Strictly format your response as follows:\n"
+            "```thought\n"
+            "[Your concise design idea (thought) here]\n"
+            "```\n"
+            "```code\n"
+            "[Your complete, runnable Verilog implementation of the thought here]\n"
+            "```"
+        )
+
+        for attempt in range(self.max_retries):
+            try:
+                chat_completion = await self.client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": system_prompt_content},
+                        {"role": "user", "content": prompt}
+                    ],
+                    model=self.model_name,
+                    n=n,  # Request n completions
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p
+                )
+                
+                # Parse each of the 'n' choices in the response
+                parsed_results = []
+                for choice in chat_completion.choices:
+                    full_response_text = choice.message.content.strip()
+                    try:
+                        thought, code = self.parse_thought_and_code(full_response_text)
+                        parsed_results.append((thought, code))
+                    except ValueError as e:
+                        print(f"Warning: Failed to parse one of the initial responses: {e}")
+                        parsed_results.append((None, None)) # Add a failure marker
+                
+                print("--- Single-Prompt Batch Response Received ---")
+                return parsed_results
+
+            except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
+                print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
+                if attempt + 1 == self.max_retries:
+                    print("Max retries reached. Failing the request.")
+                    return [(None, None)] * n # Return failures
+                
+                # Exponential backoff with jitter
+                delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
+                print(f"Waiting for {delay:.2f} seconds before retrying...")
+                await asyncio.sleep(delay)
+                
+            except Exception as e:
+                print(f"An unexpected, non-retriable error occurred in generate_n_responses: {e}")
+                return [(None, None)] * n
+
+
+    async def generate_feedback(self, problem_def, verilog_code, simulation_log, temperature=1.0, top_p=1.0, max_tokens=2048):
         """
         Verilog 코드, 시뮬레이션 로그, 문제 정의를 LLM에 보내 코드의 오류를 분석하고 점수를 매기게 합니다.
         점수, 채점 이유, 분석 내용이 포함된 딕셔너리를 반환합니다.
         """
-        print(f"\n--- LLM Feedback Generation Request ---")
-        print(f"Verilog Code (first 200 chars):\n{verilog_code[:200]}...")
-        print(f"Simulation Log (first 500 chars):\n{simulation_log[:500]}...")
-        print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
+        # print(f"\n--- LLM Feedback Generation Request ---")
+        # print(f"Verilog Code (first 200 chars):\n{verilog_code[:200]}...")
+        # print(f"Simulation Log (first 500 chars):\n{simulation_log[:500]}...")
+        # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
 
         if not self.client:
-            raise RuntimeError("OpenAI client not initialized. Cannot generate feedback.")
+            raise RuntimeError("AsyncOpenAI client not initialized. Cannot generate feedback.")
 
         # --- 시스템 프롬프트 수정 ---
         # 점수 채점 및 포맷팅 지침이 추가되었습니다.
@@ -583,53 +665,104 @@ class LLMInterface:
             "```\n\n"
         )
 
-        try:
-            chat_completion = self.client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": system_prompt_content},
-                    {"role": "user", "content": user_prompt}
-                ],
-                model=self.model_name,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p
-            )
-            feedback_text = chat_completion.choices[0].message.content.strip()
-            print("LLM Response Received. Parsing feedback...")
+        for attempt in range(self.max_retries):
+            try:
+                chat_completion = await self.client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": system_prompt_content},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    model=self.model_name,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p
+                )
+                feedback_text = chat_completion.choices[0].message.content.strip()
+                # print("LLM Response Received. Parsing feedback...")
+                return self._parse_feedback_response(feedback_text)
+            except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
+                print(f"OpenAI API call for feedback failed on attempt {attempt + 1}/{self.max_retries}: {e}")
+                if attempt + 1 == self.max_retries:
+                    print("Max retries reached. Failing the feedback request.")
+                    return {
+                        'score': 0,
+                        'justification': 'LLM call for feedback failed after multiple retries.',
+                        'analysis': f"Could not generate feedback due to a persistent API error: {e}"
+                    }
+                
+                delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
+                print(f"Waiting for {delay:.2f} seconds before retrying...")
+                await asyncio.sleep(delay)
 
-        except Exception as e:
-            print(f"Error during OpenAI API call for feedback: {e}")
-            raise RuntimeError(f"OpenAI API call for feedback failed: {e}")
-
-        # --- 응답 파싱 로직 추가 ---
-        # 지정된 포맷에 따라 점수, 채점 이유, 분석 내용을 추출합니다.
+            except Exception as e:
+                print(f"An unexpected, non-retriable error occurred in generate_feedback: {e}")
+                return {
+                    'score': 0,
+                    'justification': 'An unexpected error occurred during the LLM call.',
+                    'analysis': f"Could not generate feedback due to an unexpected error: {e}"
+                }
+        return {
+            'score': 0,
+            'justification': 'LLM call for feedback failed.',
+            'analysis': f"Could not generate feedback due to an API error: {e}"
+        }
+    
+    def _parse_feedback_response(self, feedback_text):
+        # Helper to parse the structured feedback response
+        # This function extracts the score, justification, and analysis from the LLM response
         parsed_feedback = {
             'score': None,
             'justification': 'Parsing failed.',
-            'analysis': feedback_text # 파싱 실패 시 원본 텍스트를 반환
+            'analysis': feedback_text # Default to raw text if parsing fails
         }
         try:
-            # 정규 표현식을 사용하여 각 태그 사이의 내용을 추출
             score_match = re.search(r'<SCORE>(.*?)</SCORE>', feedback_text, re.DOTALL)
             justification_match = re.search(r'<JUSTIFICATION>(.*?)</JUSTIFICATION>', feedback_text, re.DOTALL)
             analysis_match = re.search(r'<ANALYSIS>(.*?)</ANALYSIS>', feedback_text, re.DOTALL)
 
             if score_match:
-                # 점수는 정수(int)로 변환
                 parsed_feedback['score'] = int(score_match.group(1).strip())
             if justification_match:
                 parsed_feedback['justification'] = justification_match.group(1).strip()
             if analysis_match:
                 parsed_feedback['analysis'] = analysis_match.group(1).strip()
-            
-            print(f"LLM Feedback Parsed Successfully. Score: {parsed_feedback['score']}")
 
         except Exception as e:
             print(f"Error parsing LLM feedback: {e}. Returning raw text.")
-            # 파싱 중 에러가 발생해도 원본 텍스트는 analysis 키에 남아있습니다.
 
-        print(f"--- LLM Feedback Generation Request End ---\n")
         return parsed_feedback
+
+    # Method for batching code generation requests
+    async def generate_batch_responses(self, prompts, temperature, top_p, max_tokens):
+        """
+        Generates responses for a batch of prompts concurrently.
+        """
+        print(f"\n--- Sending Batch LLM Request for {len(prompts)} prompts ---")
+        tasks = [
+            self.generate_response(prompt, temperature, top_p, max_tokens)
+            for prompt in prompts
+        ]
+        results = await asyncio.gather(*tasks)
+        print("--- Batch LLM Response Received ---")
+        return results
+
+    # Method for batching feedback generation requests
+    async def generate_batch_feedback(self, feedback_requests, temperature, top_p, max_tokens):
+        """
+        Generates feedback for a batch of candidates concurrently.
+        Each request is a dictionary with problem_def, verilog_code, and simulation_log.
+        """
+        print(f"\n--- Sending Batch LLM Feedback Request for {len(feedback_requests)} candidates ---")
+        tasks = [
+            self.generate_feedback(
+                req['problem_def'], req['verilog_code'], req['simulation_log'],
+                temperature, top_p, max_tokens
+            ) for req in feedback_requests
+        ]
+        results = await asyncio.gather(*tasks)
+        print("--- Batch LLM Feedback Received ---")
+        return results
+
 
 class Heuristic:
     def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax"):
@@ -827,53 +960,207 @@ class EoHEngine:
     def initialize_population(self):
         """
         Creates the initial population and places them within the syntax pool. 
-        LLM generates thoughts and codes.
+        LLM generates thoughts and codes through a single batch call (using generate_n_responses).
         All codes are generated and saved first, then evaluated in a batch.
         Raises errors immediately if LLM call or parsing fails.
         """
         print(f"\n--- Initializing Population (Size: {self.population_size}) ---")
+    
+        try:
+            # Step 1: Call LLM in a single, efficient batch using the 'n' parameter
+            results = asyncio.run(self.llm.generate_n_responses(
+                prompt=self.problem_description,
+                n=self.population_size,
+                temperature=self.default_llm_temp,
+                top_p=self.default_llm_top_p,
+                max_tokens=self.default_llm_max_tokens
+            ))
 
-        # Instead of storing tuples we will store Heuristic objects directly
-        # generated_candidates = [] # To store (thought, code, code_file_path) tuples
+            # Step 2: Process the results
+            print("Step 2: Processing LLM responses and creating candidates...")
+            for i, result in enumerate(results):
+                if result and all(result):  # Check if the result is valid
+                    thought, code = result
+                    code_file_path, _ = self._save_result_to_file(code, thought, generation_num=0, sample_idx_in_generation=i + 1)
+                    
+                    heuristic = Heuristic(
+                        thought=thought,
+                        code=code,
+                        feedback="",
+                        score=0.0,  # Initial score is 0
+                        generation=0,
+                        parent_ids=[],  # No parents for initial generation
+                        status="syntax"
+                    )
+                    heuristic.code_file_path = code_file_path
+                    self.syntax_pool.append(heuristic)
+                else:
+                    print(f"WARNING: Failed to generate initial candidate {i+1}. Skipping.")
 
-        print(f"Step 1: Generating {self.population_size} initial code candidates...")
-        for i in range(self.population_size):
-            print(f"Generating initial candidate {i+1}/{self.population_size}...")
-            try:
-                thought, code = self.llm.generate_response(
-                    prompt=self.problem_description,
-                    max_tokens=self.default_llm_max_tokens,
-                    temperature=self.default_llm_temp,
-                    top_p=self.default_llm_top_p
-                )
+        except (ValueError, RuntimeError) as e:
+            print(f"Critical error during batched population initialization: {e}")
+            raise
 
-                code_file_path, thought_file_path = self._save_result_to_file(code, thought, generation_num=0, sample_idx_in_generation=i+1)
-                heuristic = Heuristic(
-                    thought=thought,
-                    code=code,
-                    feedback="",
-                    score=0.0,  # Initial score is 0
-                    generation=0,
-                    parent_ids=[],  # No parents for initial generation
-                    status="syntax",
-                )
-                heuristic.code_file_path = code_file_path  # Save the file path in the heuristic
-                self.syntax_pool.append(heuristic)  # Add to syntax pool
-                #generated_candidates.append({"thought": thought, "code": code, "code_file_path": code_file_path, "thought_file_path":thought_file_path, "generation": 0, "parent_ids": []})
-
-            except (ValueError, RuntimeError) as e: # Errors from LLM or saving file
-                print(f"Critical error generating initial candidate {i+1}: {e}")
-                print("Stopping population initialization.")
-                raise
-            except Exception as e:
-                print(f"Unexpected critical error during initial candidate {i+1} generation: {e}")
-                raise
         # Copy miscellaneous files needed for testing to the output directory
         model_name_cleaned = self.llm.model_name.replace("/", "_")
         self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))
-        print(f"--- Initial Population Generation Complete. All {len(self.syntax_pool)} candidates are in the syntax pool. ---")
 
+        if not self.syntax_pool:
+            raise RuntimeError("Failed to generate any valid candidates during initialization.")
+
+        print(f"--- Initial Population Generation Complete. {len(self.syntax_pool)} candidates are in the syntax pool. ---")
     
+    # Method to evaluate a whole population/generation at once.
+    # Add the candidates to the appropriate pools based on their evaluation results.
+    # This method is called after the population is initialized or when new candidates are generated.
+    def _evaluate_population(self, candidates_to_evaluate):
+        """
+        Evaluates a list of candidates, requests LLM feedback in a batch for failures,
+        and promotes them to the appropriate pools.
+        """
+        if not candidates_to_evaluate:
+            print("No candidates to evaluate.")
+            return
+
+        print(f"\n--- Evaluating Population of {len(candidates_to_evaluate)} Candidates ---")
+
+        # --- Stage 1: Functional Simulation ---
+        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+        feedback_requests = []
+        candidates_needing_feedback = []
+        passed_candidates = []
+
+        for candidate in candidates_to_evaluate:
+            sim_results = self.evaluator.evaluate(candidate.code_file_path, test_sv_file, ref_sv_file)
+
+            is_functional_success = False
+            simulation_output = sim_results.get('simulation_stdout', '')
+
+            # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
+            # This regex matches the expected output format from VerilogEval
+            # It captures the number of mismatches in the first group.
+            # If there are no mismatches, it means the design is functionally correct.
+            mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
+            match = re.search(mismatch_pattern, simulation_output, re.MULTILINE)
+            if match and int(match.group(1)) == 0:
+                is_functional_success = True
+            # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
+            elif "===========Your Design Passed===========" in simulation_output:
+                is_functional_success = True
+
+            if sim_results['status'] == "success" and is_functional_success:
+                print(f"Candidate {candidate.id}: Functionally correct. Staging for PPA pool.")
+                candidate.status = 'ppa'
+                candidate.score = 10.0 # Base score for functionality
+                candidate.feedback = "Functionally correct."
+                passed_candidates.append(candidate)
+            else:
+                print(f"Candidate {candidate.id}: Functional or compilation failure. Staging for feedback.")
+                if sim_results['status'] == "compilation_error":
+                    candidate.status = 'syntax'
+                else:
+                    candidate.status = 'functionality'
+                candidates_needing_feedback.append(candidate)
+                feedback_requests.append({
+                    'problem_def': self.problem_description,
+                    'verilog_code': candidate.code,
+                    'simulation_log': sim_results.get("compilation_stderr", "") + "\n" + sim_results.get('simulation_stdout', "") + "\n" + sim_results.get('simulation_stderr', "")
+                })
+
+        # --- Stage 2: Batch LLM Feedback for Failures ---
+        if feedback_requests:
+            feedback_results = asyncio.run(self.llm.generate_batch_feedback(
+                feedback_requests,
+                self.default_llm_temp,
+                self.default_llm_top_p,
+                self.default_llm_max_tokens
+            ))
+
+            for candidate, feedback in zip(candidates_needing_feedback, feedback_results):
+                candidate.feedback = feedback['analysis']
+                candidate.score = feedback.get('score', 0) # Use a default score if parsing fails
+                if candidate.status == 'syntax':
+                    self.syntax_pool.append(candidate)
+                elif candidate.status == 'functionality':
+                    self.functionality_pool.append(candidate)
+                # Save feedback and score files
+                self._save_feedback_files(candidate, feedback)
+
+        # --- Stage 3: PPA Evaluation for Passed Candidates ---
+        for candidate in passed_candidates:
+            self._evaluate_ppa(candidate) # This evaluates and places it in the ppa_pool if successful
+
+        print("--- Population Evaluation Complete ---")
+
+    def _save_feedback_files(self, candidate, feedback):
+        """Helper to save feedback and score files for a candidate."""
+        model_name_cleaned = self.llm.model_name.replace("/", "_")
+        code_file_name = os.path.basename(candidate.code_file_path).rsplit('.', 1)[0]
+        gen_dir = os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{candidate.generation}")
+        os.makedirs(gen_dir, exist_ok=True)
+
+        feedback_file_path = os.path.join(gen_dir, f"{code_file_name}_{candidate.status}_feedback_{candidate.id}.txt")
+        with open(feedback_file_path, "w") as f:
+            f.write(feedback.get('analysis', ''))
+
+        score_file_path = os.path.join(gen_dir, f"{code_file_name}_{candidate.status}_score_{candidate.id}.txt")
+        with open(score_file_path, "w") as f:
+            f.write(f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}")
+        print(f"Feedback and score saved for candidate {candidate.id}")
+
+    def _evaluate_ppa(self, candidate):
+        """
+        Performs PPA evaluation for a single, functionally correct candidate.
+        Places the candidate in the ppa_pool and updates its score.
+        """
+        print(f"Synthesizing candidate {candidate.id} for PPA evaluation...")
+        report_base_path = candidate.code_file_path.rsplit('.', 1)[0] # Base path for PPA report
+        output_dir = os.path.dirname(candidate.code_file_path)
+        synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir, report_base_path)
+
+        if synthesis_results["synthesis_success"] and synthesis_results["ppa_success"]:
+            candidate.synthesis_success = True
+            candidate.ppa_success = True
+            candidate.ppa_metrics = synthesis_results["ppa_metrics"]
+
+            # PPA metrics scoring with eff_clk_period, area, and power
+            ref_eff_clk_period = self.ref_ppa_metrics.get("eff_clk_period", self.clk_period) # unit ns
+            ref_area = self.ref_ppa_metrics.get("area", 10000)  # unit um^2
+            ref_power = self.ref_ppa_metrics.get("power", 0.1)  # unit W
+
+            eff_clk_period = candidate.ppa_metrics.get("eff_clk_period")
+            area = candidate.ppa_metrics.get("area")
+            power = candidate.ppa_metrics.get("power")
+
+            # Update score based on PPA. The 10.0 base score indicates functionality.
+            # score = 0 : indicates that the candiate has not passed synthesis or requires at least twice area/power/delay compared to the reference design
+            # score = 1 : indicates that the candidate has passed synthesis and has equal area/power/delay compared to the reference design
+            # score = 2 : indicates that the candidate has passed synthesis and has zero area/power/delay compared to the reference design (e.g., a perfect design)
+            # Individual scores for performance, power, and area are scale to [0, 2].
+            perf_score = 2 - min(eff_clk_period / (ref_eff_clk_period + 1e-10), 2)
+            power_score = 2 - min(power / (ref_power + 1e-10), 2)
+            area_score = 2 - min(area / (ref_area + 1e-10), 2)
+
+            candidate.score = 10.0 + perf_score + power_score + area_score
+            self.ppa_pool.append(candidate)
+            print(f"PPA evaluation successful for {candidate.id}. New Score: {candidate.score:.2f}")
+        else:
+            candidate.feedback += "\n\n--- Synthesis Failed ---\n" "Candidate failed synthesis and PPA evaluation. Moved back to functionality.\n" + synthesis_results.get("synthesis_log", "")
+            # Failed synthesis means it's not a valid PPA candidate.
+            # Move back to functionality pool.
+            # Update the score(set it to 9.5 for successful simulation but failed synthesis) and save feedback
+            candidate.score = 9.5
+            candidate.status = 'functionality'
+            # Save feedback and score files
+            self._save_feedback_files(candidate, {
+                'analysis': candidate.feedback,
+                'score': candidate.score,
+                'justification': "Candidate failed synthesis and PPA evaluation."
+            })
+            self.functionality_pool.append(candidate)
+            print(f"Synthesis failed for {candidate.id}. It will not be added to the PPA pool, instead it will be kept at functionality pool.")
+
     def _evaluate_and_promote_candidate(self, candidate, sample_idx):
         """
         Evaluates a single candidate and promotes it to the next pool if it passes.
@@ -1008,99 +1295,110 @@ class EoHEngine:
                 candidate.feedback += "\n\n--- Synthesis Failed ---\n" + synthesis_results.get("synthesis_log", "")
                 candidate.score += 0 # Keep the score the same for synthesis failure
 
-
+    # This method prepares all evolution prompts, calls the LLM in a batch,
+    # and then evaluates the new generation together.
     def evolve_one_generation(self):
         """
-        Performs one generation of evolution by creating and evaluating a large number of new heuristics.
+        Performs one generation of evolution by creating new candidates in a batch,
+        then evaluating them all together.
         """
         self.current_generation += 1
         print(f"\n--- Starting Generation {self.current_generation} Evolution ---")
 
-        # Each strategy will generate population_size candidates
         strategies_config = [
-            {"name": "E1", "func": self._apply_prompt_strategy_E1, "num_parents": 2},
-            {"name": "E2", "func": self._apply_prompt_strategy_E2, "num_parents": 2},
-            {"name": "M1", "func": self._apply_prompt_strategy_M1, "num_parents": 1},
-            {"name": "M3", "func": self._apply_prompt_strategy_M3, "num_parents": 2},
+            {"name": "E1", "func": self._create_prompt_strategy_E1, "num_parents": 2},
+            {"name": "E2", "func": self._create_prompt_strategy_E2, "num_parents": 2},
+            {"name": "M1", "func": self._create_prompt_strategy_M1, "num_parents": 1},
+            {"name": "M3", "func": self._create_prompt_strategy_M3, "num_parents": 2},
         ]
 
-        generated_candidates_data = []
-
-        # Determine which pools to draw parents from
-        # Prioritize improving PPA if we have functional candidates
+        # Determine parent pool
         if self.ppa_pool:
             parent_pool = self.ppa_pool
             print("Focusing evolution on PPA optimization.")
-        # Otherwise, focus on achieving functionality
         elif self.functionality_pool:
             parent_pool = self.functionality_pool
             print("Focusing evolution on fixing functional errors.")
-        # If all else fails, work from the syntax pool
         else:
             parent_pool = self.syntax_pool
             print("Focusing evolution on fixing syntax errors.")
-        
-        if not parent_pool:
-             print("No candidates in any pool to evolve from. Stopping.")
-             return "STOP"
 
-        print(f"Step 1: Generating new candidates for generation {self.current_generation}...")
+        if not parent_pool:
+            print("No candidates in any pool to evolve from. Stopping.")
+            return "STOP"
+
+        # --- Step 1: Generate prompts for the new generation ---
+        all_prompts = []
+        candidate_metadata = [] # To store parents and strategy for each new candidate
+
+        print(f"Step 1: Generating new prompts for generation {self.current_generation}...")
         for config in strategies_config:
             strategy_name = config["name"]
             strategy_func = config["func"]
             num_parents = config["num_parents"]
-            num_to_create = self.population_size # Each strategy creates population_size candidates
 
-            print(f"Applying Strategy {strategy_name} (Target: {num_to_create})...")
-            for i in range(1, num_to_create + 1):
-                try:
-                    parents = self._select_parents(num_parents=num_parents, parent_pool=parent_pool)
-                    if not parents:
-                        print(f"Not enough parents available for strategy {strategy_name}. Skipping candidate generation.")
-                        continue
+            for i in range(self.population_size): # Each strategy creates population_size candidates
+                parents = self._select_parents(num_parents=num_parents, parent_pool=parent_pool)
+                if not parents:
+                    print(f"Not enough parents for {strategy_name}. Skipping.")
+                    continue
 
-                    new_thought, new_code = strategy_func(parents)
-                    # Sample index is now strategy-specific to avoid collision
-                    code_file_path, thought_file_path = self._save_result_to_file(new_code, new_thought, self.current_generation, i, strategy=strategy_name)
+                prompt = strategy_func(parents)
+                all_prompts.append(prompt)
+                candidate_metadata.append({"parents": parents, "strategy": strategy_name})
 
-                    new_candidate = Heuristic(
-                        thought=new_thought, code=new_code, feedback="",
-                        generation=self.current_generation,
-                        parent_ids=[p.id for p in parents],
-                        status='syntax', # All new candidates start at the syntax stage
-                    )
-                    new_candidate.code_file_path = code_file_path  # Save the file path in the heuristic
-                    generated_candidates_data.append(new_candidate)
+        if not all_prompts:
+            print("No new prompts were generated. Stopping evolution.")
+            return "STOP"
+
+        # --- Step 2: Get LLM responses in a batch ---
+        llm_results = asyncio.run(self.llm.generate_batch_responses(
+            all_prompts,
+            self.default_llm_temp,
+            self.default_llm_top_p,
+            self.default_llm_max_tokens
+        ))
+
+        # --- Step 3: Create new candidates from responses ---
+        new_candidates = []
+        # We need a per-strategy index for unique file naming
+        strategy_sample_indices = {s['name']: 0 for s in strategies_config}
+
+        for i, result in enumerate(llm_results):
+            if result and all(result):
+                thought, code = result
+                meta = candidate_metadata[i]
+                strategy = meta["strategy"]
+                strategy_sample_indices[strategy] += 1
+                sample_idx = strategy_sample_indices[strategy]
+
+                code_file_path, _ = self._save_result_to_file(code, thought, self.current_generation, sample_idx, strategy=strategy)
+                new_candidate = Heuristic(
+                    thought=thought, code=code, feedback="",
+                    generation=self.current_generation,
+                    parent_ids=[p.id for p in meta["parents"]],
+                    status='syntax',
+                )
+                new_candidate.code_file_path = code_file_path
+                new_candidates.append(new_candidate)
+            else:
+                print(f"WARNING: Failed to generate a new candidate (Index {i}). Skipping.")
 
 
-                except (ValueError, RuntimeError, IOError) as e:
-                    print(f"Critical error generating candidate via {strategy_name}: {e}")
-                    raise
-                except Exception as e:
-                    print(f"Unexpected critical error during {strategy_name} candidate generation: {e}")
-                    raise
-
-        # Copy miscellaneous files needed for testing to the output directory
+        # Copy miscellaneous files for the new generation
         model_name_cleaned = self.llm.model_name.replace("/", "_")
-        self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))          
+        self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))
 
-        print(f"\nStep 2: Evaluating {len(generated_candidates_data)} new candidates...")
-        # Clear the syntax and functionality pools. We will repopulate them with the new generation.
-        # PPA pool remains, as they are our best candidates so far.
-        self.syntax_pool.clear()
-        self.functionality_pool.clear()
+        # --- Step 4: Evaluate the new generation ---
+        self.syntax_pool.clear() # Clear out old failed candidates
+        self.functionality_pool.clear() # Clear out old functional failures
+        self._evaluate_population(new_candidates)
 
-        for i, candidate in enumerate(generated_candidates_data):
-            self._evaluate_and_promote_candidate(candidate, i)
-
-        # Elitism: Ensure the best candidates are not lost
+        # --- Step 5: Elitism and Trimming ---
         self.functionality_pool.sort(key=lambda h: h.score, reverse=True)
         self.ppa_pool.sort(key=lambda h: h.score, reverse=True)
-
-        # Trim pools to population size to prevent them from growing indefinitely
         self.functionality_pool = self.functionality_pool[:self.population_size]
         self.ppa_pool = self.ppa_pool[:self.population_size]
-
 
         print(f"--- Generation {self.current_generation} Complete ---")
         print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
@@ -1108,7 +1406,7 @@ class EoHEngine:
             print(f"Best PPA candidate so far: {self.ppa_pool[0]}")
         elif self.functionality_pool:
             print(f"Best functional candidate so far: {self.functionality_pool[0]}")
-        
+
         return None # Continue evolution
 
     def _select_parents(self, num_parents=2, parent_pool=None):
@@ -1126,7 +1424,8 @@ class EoHEngine:
         # 이 방식이 더 효율적이고 일반적인 유전 알고리즘 관행에 부합합니다.
         return random.choices(parent_pool, weights=weights, k=num_parents)
 
-    def _apply_prompt_strategy_E1(self, parent):
+    # Strategies now return the prompt string directly instead of calling the LLM.
+    def _create_prompt_strategy_E1(self, parent):
         parent_prompt = ""
         for i, p in enumerate(parent):
             parent_prompt += (
@@ -1152,14 +1451,9 @@ class EoHEngine:
             "If the examples include PPA metrics, consider them to find a completely new, potentially better, architectural approach. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
-        return self.llm.generate_response(
-            prompt, 
-            temperature=self.default_llm_temp, 
-            top_p=self.default_llm_top_p,
-            max_tokens=self.default_llm_max_tokens
-        )
+        return prompt
 
-    def _apply_prompt_strategy_E2(self, parent):
+    def _create_prompt_strategy_E2(self, parent):
         parent_prompt = ""
         for i, p in enumerate(parent):
             parent_prompt += (
@@ -1187,14 +1481,9 @@ class EoHEngine:
             "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
-        return self.llm.generate_response(
-            prompt, 
-            temperature=self.default_llm_temp, 
-            top_p=self.default_llm_top_p,
-            max_tokens=self.default_llm_max_tokens
-        )
+        return prompt
 
-    def _apply_prompt_strategy_M1(self, parent):
+    def _create_prompt_strategy_M1(self, parent):
         parent_prompt = ""
         for i, p in enumerate(parent):
             parent_prompt += (
@@ -1222,14 +1511,9 @@ class EoHEngine:
             "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
-        return self.llm.generate_response(
-            prompt, 
-            temperature=self.default_llm_temp, 
-            top_p=self.default_llm_top_p,
-            max_tokens=self.default_llm_max_tokens
-        )
+        return prompt
 
-    def _apply_prompt_strategy_M3(self, parent):
+    def _create_prompt_strategy_M3(self, parent):
         parent_prompt = ""
         for i, p in enumerate(parent):
             parent_prompt += (
@@ -1255,13 +1539,8 @@ class EoHEngine:
             "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
             "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
         )
-        return self.llm.generate_response(
-            prompt, 
-            temperature=self.default_llm_temp, 
-            top_p=self.default_llm_top_p,
-            max_tokens=self.default_llm_max_tokens
-        )
-
+        return prompt
+    
     def _apply_ppa_optimization_prompt(self, current_best_solution):
         """
         Creates a prompt to ask the LLM to optimize a functionally correct solution for PPA.
@@ -1295,12 +1574,12 @@ class EoHEngine:
             f"```"
         )
 
-        return self.llm.generate_response(
+        return asyncio.run(self.llm.generate_response(
             prompt,
-            temperature=0.4,  # Lower temperature for more focused, less creative changes
+            temperature=self.default_llm_temp,
             top_p=self.default_llm_top_p,
             max_tokens=self.default_llm_max_tokens
-        )
+        ))
 
     def run(self):
         """
@@ -1317,9 +1596,8 @@ class EoHEngine:
             # Initial evaluation of the first generation
             print("\n--- Evaluating Initial Population ---")
             initial_candidates = list(self.syntax_pool) # Create a copy to iterate over
-            self.syntax_pool.clear()
-            for i, candidate in enumerate(initial_candidates):
-                self._evaluate_and_promote_candidate(candidate, i)
+            self.syntax_pool.clear() # Clear before evaluation
+            self._evaluate_population(initial_candidates)
             
             print("--- Initial Evaluation Complete ---")
             print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
