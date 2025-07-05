@@ -18,6 +18,12 @@ import datetime
 
 import asyncio # added for async support for calling OpenAI API
 
+# Imports for logging
+import json
+from collections import defaultdict
+import numpy as np
+import time
+
 
 def find_module_name(verilog_code):
     """
@@ -32,6 +38,193 @@ def find_module_name(verilog_code):
     if match:
         return match.group(1)
     return None
+
+class EoHLogger:
+    """
+    Handles logging for the evolutionary coding process.
+    Creates a detailed generation-by-generation log and a final summary for each problem.
+    """
+    def __init__(self, problem_name, benchmark_name, model_name, save_path, ref_ppa):
+        self.problem_name = problem_name
+        self.benchmark_name = benchmark_name
+        self.model_name = model_name
+        self.ref_ppa_metrics = ref_ppa or {}
+
+        # Setup save paths
+        model_name_cleaned = model_name.replace("/", "_")
+        self.log_dir = os.path.join(save_path, model_name_cleaned, benchmark_name, problem_name)
+        os.makedirs(self.log_dir, exist_ok=True)
+        self.gen_log_path = os.path.join(self.log_dir, "generation_log.jsonl")
+        self.summary_path = os.path.join(self.log_dir, f"{problem_name}_summary.json")
+
+        # Data for final summary
+        self.generation_stats_summary = []
+        self.all_candidates_generated = set()
+        self.all_syntax_passed = set()
+        self.all_func_passed = set()
+        self.all_synth_passed = set()
+        self.total_llm_api_calls = 0
+
+    def _calculate_ppa_stats(self, ppa_candidates):
+        """Helper to calculate best/avg PPA metrics and scores for a list of candidates."""
+        if not ppa_candidates:
+            return {
+                "best_score": None, "average_score": None,
+                "best_metrics": {}, "average_metrics": {}
+            }
+
+        scores = [c.score for c in ppa_candidates]
+        best_cand = max(ppa_candidates, key=lambda c: c.score)
+
+        metrics = [c.ppa_metrics for c in ppa_candidates if c.ppa_metrics and all(isinstance(v, (int, float)) for v in c.ppa_metrics.values() if isinstance(v, (int, float)))]
+        avg_metrics = {}
+        if metrics:
+            # Get all keys from all metrics dictionaries
+            all_keys = set(key for m in metrics for key in m if isinstance(m[key], (int, float)))
+            for key in all_keys:
+                values = [m[key] for m in metrics if key in m]
+                if values:
+                    avg_metrics[key] = np.mean(values)
+
+        return {
+            "best_score": max(scores) if scores else None,
+            "average_score": np.mean(scores) if scores else None,
+            "best_metrics": best_cand.ppa_metrics if best_cand else {},
+            "average_metrics": avg_metrics
+        }
+
+    def log_generation(self, generation_num, candidates_this_gen, runtime_sec, llm_calls_this_gen):
+        """Logs the statistics for a single generation."""
+        total_generated = len(candidates_this_gen)
+        if total_generated == 0:
+            print("Logger: No new candidates to log for this generation.")
+            return
+
+        # 1. Group candidates by strategy
+        candidates_by_strategy = defaultdict(list)
+        for c in candidates_this_gen:
+            candidates_by_strategy[c.strategy].append(c)
+
+        # 2. Calculate total success rates
+        total_syntax_success = sum(1 for c in candidates_this_gen if c.status != 'syntax')
+        total_func_success = sum(1 for c in candidates_this_gen if c.status in ['ppa', 'optimized'])
+        total_synth_success = sum(1 for c in candidates_this_gen if c.synthesis_success)
+
+        # 3. Calculate strategy-wise success rates
+        strategy_success_rates = {}
+        for strategy, candidates in candidates_by_strategy.items():
+            count = len(candidates)
+            if count == 0: continue
+            strategy_success_rates[strategy] = {
+                "syntax": sum(1 for c in candidates if c.status != 'syntax') / count,
+                "functionality": sum(1 for c in candidates if c.status in ['ppa', 'optimized']) / count,
+                "synthesis_ppa": sum(1 for c in candidates if c.synthesis_success) / count
+            }
+
+        # 4. Calculate generation-wide PPA stats
+        ppa_candidates_this_gen = [c for c in candidates_this_gen if c.ppa_success]
+        generation_ppa_stats = self._calculate_ppa_stats(ppa_candidates_this_gen)
+
+        # 5. Calculate strategy-wise PPA stats
+        strategy_ppa_stats = {}
+        for strategy, candidates in candidates_by_strategy.items():
+            ppa_cands = [c for c in candidates if c.ppa_success]
+            if ppa_cands:
+                strategy_ppa_stats[strategy] = self._calculate_ppa_stats(ppa_cands)
+
+        # 6. Assemble log entry
+        log_entry = {
+            "generation": generation_num,
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "runtime_seconds": runtime_sec,
+            "llm_api_calls": llm_calls_this_gen,
+            "success_rates": {
+                "total_syntax": total_syntax_success / total_generated,
+                "total_functionality": total_func_success / total_generated,
+                "total_synthesis_ppa": total_synth_success / total_generated
+            },
+            "strategy_success_rates": strategy_success_rates,
+            "generation_ppa": generation_ppa_stats,
+            "strategy_ppa": strategy_ppa_stats
+        }
+
+        # 7. Write to file and update accumulators
+        def numpy_converter(o):
+            if isinstance(o, (np.generic, np.ndarray)):
+                return o.item() if o.size == 1 else o.tolist()
+            if isinstance(o, float) and (np.isnan(o) or np.isinf(o)):
+                return None
+            return o
+
+        with open(self.gen_log_path, 'a') as f:
+            f.write(json.dumps(log_entry, default=numpy_converter) + '\n')
+
+        self.total_llm_api_calls += llm_calls_this_gen
+        self.generation_stats_summary.append({
+            "generation": generation_num,
+            "runtime_seconds": runtime_sec,
+            "llm_api_calls": llm_calls_this_gen,
+            "best_score": generation_ppa_stats.get("best_score"),
+            "average_score": generation_ppa_stats.get("average_score")
+        })
+        for c in candidates_this_gen:
+            self.all_candidates_generated.add(c.id)
+            if c.status != 'syntax': self.all_syntax_passed.add(c.id)
+            if c.status in ['ppa', 'optimized']: self.all_func_passed.add(c.id)
+            if c.synthesis_success: self.all_synth_passed.add(c.id)
+
+    def finalize_summary(self, start_utc, end_utc, total_runtime_sec, total_generations, final_ppa_pool):
+        """Calculates and writes the final problem summary."""
+        # 1. Final PPA stats from the last generation's ppa_pool
+        final_ppa_stats = self._calculate_ppa_stats(final_ppa_pool)
+
+        # 2. Strategy-wise PPA for the final pool
+        final_strategy_ppa_stats = {}
+        if final_ppa_pool:
+            candidates_by_strategy = defaultdict(list)
+            for c in final_ppa_pool:
+                candidates_by_strategy[c.strategy].append(c)
+            for strategy, candidates in candidates_by_strategy.items():
+                if candidates:
+                    final_strategy_ppa_stats[strategy] = self._calculate_ppa_stats(candidates)
+
+        # 3. Accumulated success rates across all generations
+        total_unique_generated = len(self.all_candidates_generated)
+        acc_rates = {"syntax": 0, "functionality": 0, "synthesis_ppa": 0}
+        if total_unique_generated > 0:
+            acc_rates["syntax"] = len(self.all_syntax_passed) / total_unique_generated
+            acc_rates["functionality"] = len(self.all_func_passed) / total_unique_generated
+            acc_rates["synthesis_ppa"] = len(self.all_synth_passed) / total_unique_generated
+
+        # 4. Assemble summary data
+        summary_data = {
+            "problem_name": self.problem_name,
+            "benchmark_name": self.benchmark_name,
+            "model_name": self.model_name,
+            "start_time": start_utc.isoformat(),
+            "end_time": end_utc.isoformat(),
+            "total_runtime_seconds": total_runtime_sec,
+            "total_llm_api_calls": self.total_llm_api_calls,
+            "total_generations": total_generations,
+            "accumulated_success_rates": acc_rates,
+            "ref_ppa_metric": self.ref_ppa_metrics,
+            "final_generation_ppa": final_ppa_stats,
+            "strategy_ppa": final_strategy_ppa_stats,
+            "generation_statistics": self.generation_stats_summary,
+        }
+
+        # 5. Write to file
+        def numpy_converter(o):
+            if isinstance(o, (np.generic, np.ndarray)):
+                return o.item() if o.size == 1 else o.tolist()
+            if isinstance(o, float) and (np.isnan(o) or np.isinf(o)):
+                return None
+            return o
+
+        with open(self.summary_path, 'w') as f:
+            json.dump(summary_data, f, indent=2, default=numpy_converter)
+        print(f"Final summary saved to: {self.summary_path}")
+
 
 class SynthesisEvaluator:
     def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="./pdk"):
@@ -451,11 +644,25 @@ class LLMInterface:
         self.client = None
         self.max_retries = max_retries  # Maximum number of retries
         self.base_delay = base_delay    # Base delay in seconds for backoff
+
+        self.api_call_count = 0  # Initialize API call counter
+        self.lock = asyncio.Lock()  # Make counter thread-safe with async calls
         try:
             self.client = AsyncOpenAI(api_key=self.api_key, timeout=20)
             print(f"AsyncOpenAI client initialized successfully (Model: {self.model_name})")
         except Exception as e:
             raise RuntimeError(f"Failed to initialize AsyncOpenAI client: {e}")
+        
+    # Method for managing API call count in a thread-safe manner
+    async def _increment_call_count(self, n=1):
+        async with self.lock:
+            self.api_call_count += n
+    
+    # Synchronous method that will be called my main engine thread
+    def get_and_reset_api_calls(self):
+        count = self.api_call_count
+        self.api_call_count = 0  # Reset the counter after getting the value
+        return count
 
     def parse_thought_and_code(self, response_text):
         thought_match = re.search(r"```thought\s*\n(.*?)\n```", response_text, re.DOTALL)
@@ -501,6 +708,8 @@ class LLMInterface:
         
         for attempt in range(self.max_retries):
             try:
+                # Increment the API call count
+                await self._increment_call_count()
                 chat_completion = await self.client.chat.completions.create(
                     messages=[
                         {
@@ -563,6 +772,8 @@ class LLMInterface:
 
         for attempt in range(self.max_retries):
             try:
+                # Increment the API call count
+                await self._increment_call_count(n)  # Increment by 'n' since we're requesting n completions
                 chat_completion = await self.client.chat.completions.create(
                     messages=[
                         {"role": "system", "content": system_prompt_content},
@@ -667,6 +878,8 @@ class LLMInterface:
 
         for attempt in range(self.max_retries):
             try:
+                # Increment the API call count
+                await self._increment_call_count()
                 chat_completion = await self.client.chat.completions.create(
                     messages=[
                         {"role": "system", "content": system_prompt_content},
@@ -765,7 +978,7 @@ class LLMInterface:
 
 
 class Heuristic:
-    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax"):
+    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax", strategy="initial"):
         self.id = str(uuid.uuid4()) # Use UUID for unique ID
         self.thought = thought 
         self.code = code
@@ -780,6 +993,7 @@ class Heuristic:
         self.ppa_metrics = {}
         # File path to the code for evaluation purposes
         self.code_file_path = ""
+        self.strategy = strategy  # Strategy used to generate this heuristic, e.g., "initial", "E1", "M1", etc.
 
     def __repr__(self):
         thought_repr = self.thought[:50] 
@@ -791,7 +1005,7 @@ class Heuristic:
             power = self.ppa_metrics.get('power')
             ppa_str = f"Eff. Clk: {clk:.4f}ns, Area: {area:.2f}, Power: {power:.4e}"
             ppa_info = f"PPA: ({ppa_str})"
-        return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Score: {self.score:.4f}, "
+        return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
                 f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
 class EoHEngine:
@@ -830,6 +1044,12 @@ class EoHEngine:
         self.history = [] 
         # NEW: To store reference PPA metrics calculated dynamically
         self.ref_ppa_metrics = {}
+
+        # Logger instances and timing variables
+        self.logger = None
+        self.run_start_time = 0
+        self.run_start_utc = None
+        self.gen_start_time = 0
 
     def load_problem_description(self):
         # Construct the paths dynamically based on benchmark instead of relying on hardcoded paths 
@@ -990,7 +1210,8 @@ class EoHEngine:
                         score=0.0,  # Initial score is 0
                         generation=0,
                         parent_ids=[],  # No parents for initial generation
-                        status="syntax"
+                        status="syntax",
+                        strategy="initial"  # Strategy for initial population
                     )
                     heuristic.code_file_path = code_file_path
                     self.syntax_pool.append(heuristic)
@@ -1304,6 +1525,7 @@ class EoHEngine:
         """
         self.current_generation += 1
         print(f"\n--- Starting Generation {self.current_generation} Evolution ---")
+        self.gen_start_time = time.time()
 
         strategies_config = [
             {"name": "E1", "func": self._create_prompt_strategy_E1, "num_parents": 2},
@@ -1378,6 +1600,7 @@ class EoHEngine:
                     generation=self.current_generation,
                     parent_ids=[p.id for p in meta["parents"]],
                     status='syntax',
+                    strategy=strategy,  # Store the strategy used
                 )
                 new_candidate.code_file_path = code_file_path
                 new_candidates.append(new_candidate)
@@ -1393,6 +1616,18 @@ class EoHEngine:
         self.syntax_pool.clear() # Clear out old failed candidates
         self.functionality_pool.clear() # Clear out old functional failures
         self._evaluate_population(new_candidates)
+
+        # Add logging for generation time
+        gen_runtime = time.time() - self.gen_start_time
+        llm_calls = self.llm.get_and_reset_api_calls()
+        if self.logger:
+            self.logger.log_generation(
+                generation_num=self.current_generation,
+                candidates_this_gen=new_candidates,
+                runtime_sec=gen_runtime,
+                llm_calls_this_gen=llm_calls
+            )
+
 
         # --- Step 5: Elitism and Trimming ---
         self.functionality_pool.sort(key=lambda h: h.score, reverse=True)
@@ -1588,16 +1823,40 @@ class EoHEngine:
         print(f"--- Starting Unified EoH Run: Problem '{self.benchmark_name}/{self.problem_name}' ---")
         print(f"Generations: {self.num_generations}, Population Size: {self.population_size}")
 
+        self.run_start_time = time.time()
+        self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
+
         try:
             # Calculate reference PPA metrics before starting the evolution
             self._calculate_reference_ppa()
             print(f"Reference PPA Metrics: {self.ref_ppa_metrics}")
+
+            # Init Logger
+            self.logger = EoHLogger(
+                problem_name=self.problem_name,
+                benchmark_name=self.benchmark_name,
+                model_name=self.llm.model_name,
+                save_path=self.base_save_path,
+                ref_ppa=self.ref_ppa_metrics
+            )
+
+
             self.initialize_population()
             # Initial evaluation of the first generation
             print("\n--- Evaluating Initial Population ---")
             initial_candidates = list(self.syntax_pool) # Create a copy to iterate over
             self.syntax_pool.clear() # Clear before evaluation
-            self._evaluate_population(initial_candidates)
+            self._evaluate_population(initial_candidates) # Populate syntax, functionality, and ppa pools based on initial candidates
+
+            # Log Gen 0 (initial population) metrics
+            gen0_runtime = time.time() - self.gen_start_time
+            llm_calls_gen0 = self.llm.get_and_reset_api_calls()
+            self.logger.log_generation(
+                generation_num=0,
+                candidates_this_gen=initial_candidates,
+                runtime_sec=gen0_runtime,
+                llm_calls_this_gen=llm_calls_gen0
+            )
             
             print("--- Initial Evaluation Complete ---")
             print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
@@ -1615,6 +1874,18 @@ class EoHEngine:
 
         # --- End of Evolution ---
         print("\n--- EoH Run Finished ---")
+
+        # Finalize the summary log
+        total_runtime = time.time() - self.run_start_time
+        end_utc = datetime.datetime.now(datetime.timezone.utc)
+        if self.logger:
+            self.logger.finalize_summary(
+                start_utc=self.run_start_utc,
+                end_utc=end_utc,
+                total_runtime_sec=total_runtime,
+                total_generations=self.num_generations,
+                final_ppa_pool= self.ppa_pool
+            )
         
         # Determine the best solution
         best_solution = None
