@@ -57,6 +57,10 @@ class EoHLogger:
         self.gen_log_path = os.path.join(self.log_dir, "generation_log.jsonl")
         self.summary_path = os.path.join(self.log_dir, f"{problem_name}_summary.json")
 
+        # Initialize generation log file delete if it exists
+        if os.path.exists(self.gen_log_path):
+            os.remove(self.gen_log_path)
+
         # Data for final summary
         self.generation_stats_summary = []
         self.all_candidates_generated = set()
@@ -64,6 +68,7 @@ class EoHLogger:
         self.all_func_passed = set()
         self.all_synth_passed = set()
         self.total_llm_api_calls = 0
+        self.strategy_counter = defaultdict(int)  # Accumulated across generations, count of how many times each strategy was used
 
     def _calculate_ppa_stats(self, ppa_candidates):
         """Helper to calculate best/avg PPA metrics and scores for a list of candidates."""
@@ -102,13 +107,16 @@ class EoHLogger:
 
         # 1. Group candidates by strategy
         candidates_by_strategy = defaultdict(list)
+        strategy_count_this_gen = defaultdict(int)
         for c in candidates_this_gen:
             candidates_by_strategy[c.strategy].append(c)
+            strategy_count_this_gen[c.strategy] += 1
+            self.strategy_counter[c.strategy] += 1  # accumulate
 
         # 2. Calculate total success rates
-        total_syntax_success = sum(1 for c in candidates_this_gen if c.status != 'syntax')
-        total_func_success = sum(1 for c in candidates_this_gen if c.status in ['ppa', 'optimized'])
-        total_synth_success = sum(1 for c in candidates_this_gen if c.synthesis_success)
+        total_syntax_success = sum(1 for c in candidates_this_gen if c.status != 'failed_syntax')
+        total_func_success = sum(1 for c in candidates_this_gen if c.status != 'failed_syntax' and c.status != 'failed_functionality')
+        total_synth_success = sum(1 for c in candidates_this_gen if c.status == 'success')
 
         # 3. Calculate strategy-wise success rates
         strategy_success_rates = {}
@@ -116,19 +124,19 @@ class EoHLogger:
             count = len(candidates)
             if count == 0: continue
             strategy_success_rates[strategy] = {
-                "syntax": sum(1 for c in candidates if c.status != 'syntax') / count,
-                "functionality": sum(1 for c in candidates if c.status in ['ppa', 'optimized']) / count,
-                "synthesis_ppa": sum(1 for c in candidates if c.synthesis_success) / count
+                "syntax": sum(1 for c in candidates if c.status != 'failed_syntax') / count,
+                "functionality": sum(1 for c in candidates if c.status not in ['failed_syntax', 'failed_functionality']) / count,
+                "synthesis_ppa": sum(1 for c in candidates if c.status == 'success') / count
             }
 
         # 4. Calculate generation-wide PPA stats
-        ppa_candidates_this_gen = [c for c in candidates_this_gen if c.ppa_success]
+        ppa_candidates_this_gen = [c for c in candidates_this_gen if c.status == 'success']
         generation_ppa_stats = self._calculate_ppa_stats(ppa_candidates_this_gen)
 
         # 5. Calculate strategy-wise PPA stats
         strategy_ppa_stats = {}
         for strategy, candidates in candidates_by_strategy.items():
-            ppa_cands = [c for c in candidates if c.ppa_success]
+            ppa_cands = [c for c in candidates if c.status == 'success']
             if ppa_cands:
                 strategy_ppa_stats[strategy] = self._calculate_ppa_stats(ppa_cands)
 
@@ -138,10 +146,11 @@ class EoHLogger:
             "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "runtime_seconds": runtime_sec,
             "llm_api_calls": llm_calls_this_gen,
+            "strategy_counts_this_generation": dict(strategy_count_this_gen),
             "success_rates": {
-                "total_syntax": total_syntax_success / total_generated,
-                "total_functionality": total_func_success / total_generated,
-                "total_synthesis_ppa": total_synth_success / total_generated
+                "total_syntax": total_syntax_success / total_generated if total_generated > 0 else 0,
+                "total_functionality": total_func_success / total_generated if total_generated > 0 else 0,
+                "total_synthesis_ppa": total_synth_success / total_generated if total_generated > 0 else 0
             },
             "strategy_success_rates": strategy_success_rates,
             "generation_ppa": generation_ppa_stats,
@@ -169,9 +178,9 @@ class EoHLogger:
         })
         for c in candidates_this_gen:
             self.all_candidates_generated.add(c.id)
-            if c.status != 'syntax': self.all_syntax_passed.add(c.id)
-            if c.status in ['ppa', 'optimized']: self.all_func_passed.add(c.id)
-            if c.synthesis_success: self.all_synth_passed.add(c.id)
+            if c.status != 'failed_syntax': self.all_syntax_passed.add(c.id)
+            if c.status not in ['failed_syntax', 'failed_functionality']: self.all_func_passed.add(c.id)
+            if c.status == 'success': self.all_synth_passed.add(c.id)
 
     def finalize_summary(self, start_utc, end_utc, total_runtime_sec, total_generations, final_ppa_pool):
         """Calculates and writes the final problem summary."""
@@ -206,10 +215,12 @@ class EoHLogger:
             "total_runtime_seconds": total_runtime_sec,
             "total_llm_api_calls": self.total_llm_api_calls,
             "total_generations": total_generations,
+            "total_candidates_generated": total_unique_generated,
+            "accumulated_strategy_counts:": dict(self.strategy_counter),
             "accumulated_success_rates": acc_rates,
             "ref_ppa_metric": self.ref_ppa_metrics,
-            "final_generation_ppa": final_ppa_stats,
-            "strategy_ppa": final_strategy_ppa_stats,
+            "final_population_ppa": final_ppa_stats,
+            "final_strategy_ppa": final_strategy_ppa_stats,
             "generation_statistics": self.generation_stats_summary,
         }
 
@@ -245,10 +256,10 @@ class SynthesisEvaluator:
         self.pdk_path = os.path.abspath(os.path.join(self.script_root_dir, "pdk"))
 
         # Print directories for debugging
-        print(f"Script Main Directory: {script_main_dir}")
-        print(f"Script Root Directory: {self.script_root_dir}")
-        print(f"Reference Directory: {self.ref_dir_path}")
-        print(f"PDK Directory: {self.pdk_path}")
+        # print(f"Script Main Directory: {script_main_dir}")
+        # print(f"Script Root Directory: {self.script_root_dir}")
+        # print(f"Reference Directory: {self.ref_dir_path}")
+        # print(f"PDK Directory: {self.pdk_path}")
 
     def evaluate(self, verilog_file, problem_name, output_directory, report_base_path):
         """
@@ -987,13 +998,13 @@ class Heuristic:
         self.generation = generation 
         self.parent_ids = parent_ids if parent_ids else [] 
         # New attributes for synthesis and PPA
-        self.status = status # Can be either "syntax", functionality", "ppa", or "optimized"
+        self.status = status # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis'
         self.synthesis_success = False
         self.ppa_success = False
         self.ppa_metrics = {}
         # File path to the code for evaluation purposes
         self.code_file_path = ""
-        self.strategy = strategy  # Strategy used to generate this heuristic, e.g., "initial", "E1", "M1", etc.
+        self.strategy = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
 
     def __repr__(self):
         thought_repr = self.thought[:50] 
@@ -1009,908 +1020,403 @@ class Heuristic:
                 f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
 class EoHEngine:
+    # Entire class executing for the new REvolution framework for each problem in the benchmark.
     def __init__(self, benchmark_name, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
-                 population_size=20, num_generations=20, num_ppa_iterations=10,
-                 default_llm_temp=1.0, default_llm_top_p=1.0, default_llm_max_tokens=2048, base_save_path=None): 
-        
+                 population_size=20, num_generations=20,
+                 default_llm_temp=1.0, default_llm_top_p=1.0, default_llm_max_tokens=2048, base_save_path=None):
+
         self.base_save_path = base_save_path if base_save_path else os.path.join(os.getcwd(), "verilog_eoh_results")
-        self.benchmark_name = benchmark_name # Changed problem_type to benchmark_name for clarity
+        self.benchmark_name = benchmark_name
         self.problem_name = problem_name
-        # Currently ./EoR/bench/<benchmark_name> is the path to the benchmark directory
-        # And current location of this script is ./EoR/script/main.py == os.path.abspath(__file__)
-        # Finds the location of bench based on the script's location
-        # Need to be updated if the script is moved
         self.benchmark_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bench", self.benchmark_name))
-        self.problem_description = self.load_problem_description() # Uses internal variables to retrieve the problem description
+        self.problem_description = self.load_problem_description()
         self.llm = llm_interface
         self.evaluator = verilog_evaluator
         self.synthesis_evaluator = synthesis_evaluator
         self.population_size = population_size
+        self.num_offspring_lambda = population_size  # λ, number of offspring to generate
         self.num_generations = num_generations
-        self.num_ppa_iterations = num_ppa_iterations
         self.default_llm_temp = default_llm_temp
         self.default_llm_top_p = default_llm_top_p
         self.default_llm_max_tokens = default_llm_max_tokens
-        self.clk_period = self.synthesis_evaluator.clk_period # ns
+        self.clk_period = synthesis_evaluator.clk_period
 
-        # Pools for different types of heuristics, replaces self.population = []
-        self.syntax_pool = []
-        self.functionality_pool = []
-        self.ppa_pool = []
-
-
+        # Simplified to two population pools
+        self.fail_pool = []
+        self.success_pool = []
         
         self.current_generation = 0
-        self.history = [] 
-        # NEW: To store reference PPA metrics calculated dynamically
         self.ref_ppa_metrics = {}
-
-        # Logger instances and timing variables
         self.logger = None
         self.run_start_time = 0
         self.run_start_utc = None
         self.gen_start_time = 0
 
     def load_problem_description(self):
-        # Construct the paths dynamically based on benchmark instead of relying on hardcoded paths 
         prompt_path = os.path.join(self.benchmark_path, f"{self.problem_name}_prompt.txt")
-        print(f"Loading prompt from: {prompt_path}")
-
         if os.path.exists(prompt_path):
             with open(prompt_path, "r") as f:
                 return f.read().strip()
         else:
             raise FileNotFoundError(f"Problem description file not found: {prompt_path}")
-    
-    # Copy miscellaneous files sometimes needed for testing to the output directory
-    # Some modules in RTLLM have files that supply the input and output files for the testbench
-    # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt, 
-    # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
-    # Prob049_signal_generator_tri_gen.txt
-    # Copy files that are not _makefile, _ppa.txt, _prompt.txt, _ref.sv, and _test.sv
-    # Each generation need to copy these files to the output directory so that the testbench can find them
+
     def _copy_misc_files(self, output_directory):
-        """
-        Copies miscellaneous files needed for testing to the output directory.
-        Excludes files that match specific patterns.
-        """
         misc_files = [f for f in os.listdir(self.benchmark_path) if f.startswith(self.problem_name) and not f.endswith(('_makefile','_ifc.txt', '_ppa.txt', '_prompt.txt', '_ref.sv', '_test.sv'))]
-        
         for file_name in misc_files:
             source_path = os.path.join(self.benchmark_path, file_name)
             dest_path = os.path.join(output_directory, file_name)
-            try:
+            if not os.path.exists(dest_path):
                 shutil.copy(source_path, dest_path)
-                print(f"Copied {file_name} to {output_directory}")
-            except Exception as e:
-                print(f"WARNING: Failed to copy {file_name} to {output_directory}: {e}")
 
-    # Method to calculate the reference PPA metrics used to calculate the PPA score
+    def _save_result_to_file(self, code_content, thought_content, generation_num, sample_idx_in_generation, strategy=None):
+        model_name_cleaned = self.llm.model_name.replace("/", "_")
+        directory_path = os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{generation_num}")
+        os.makedirs(directory_path, exist_ok=True)
+        
+        base_name = f"{self.problem_name}_{strategy}_sample{sample_idx_in_generation}"
+        code_file_path = os.path.join(directory_path, f"{base_name}.sv")
+        thought_file_path = os.path.join(directory_path, f"{base_name}_thought.txt")
+
+        with open(code_file_path, "w") as f: f.write(code_content)
+        with open(thought_file_path, "w") as f: f.write(thought_content)
+        
+        self._copy_misc_files(directory_path)
+        return code_file_path, thought_file_path
+
     def _calculate_reference_ppa(self):
-        """
-        Synthesizes the reference Verilog module to establish baseline PPA metrics.
-        """
         print(f"\n--- Calculating Reference PPA for {self.problem_name} ---")
         ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
-
         if not os.path.exists(ref_sv_file):
-            print(f"WARNING: Reference Verilog file not found at {ref_sv_file}. Cannot calculate reference PPA.")
-            # Set defaults that make any valid synthesis result look good.
-            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": float('inf'), "power": float('inf')}
+            print(f"WARNING: Reference Verilog file not found. Using default high PPA values.")
+            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e6, "power": 1.0}
             return
-
-        # Create a dedicated directory for the reference synthesis to keep results separate
-        ref_output_dir = os.path.join(self.base_save_path, "reference_synthesis", self.benchmark_name, self.problem_name)
-        os.makedirs(ref_output_dir, exist_ok=True)
-
-        # Create a unique base path for the reference PPA report
-        ref_report_base_path = os.path.join(ref_output_dir, f"{self.problem_name}_ref")
         
-        print(f"Synthesizing reference design: {ref_sv_file}")
-        # The module name is assumed to be the problem name (e.g., "Prob001_accu")
-        synthesis_results = self.synthesis_evaluator.evaluate(
-            verilog_file=ref_sv_file,
-            problem_name=self.problem_name, 
-            output_directory=ref_output_dir,
-            report_base_path=ref_report_base_path
-        )
-
-
+        ref_output_dir = os.path.join(self.base_save_path, "reference_synthesis", self.benchmark_name, self.problem_name)
+        ref_report_base_path = os.path.join(ref_output_dir, f"{self.problem_name}_ref")
+        synthesis_results = self.synthesis_evaluator.evaluate(ref_sv_file, self.problem_name, ref_output_dir, ref_report_base_path)
 
         if synthesis_results and synthesis_results.get("ppa_success"):
             self.ref_ppa_metrics = synthesis_results["ppa_metrics"]
             print(f"Reference PPA calculated successfully: {self.ref_ppa_metrics}")
-            # Also save the reference PPA metrics to experiment directory for easier access
-            try:
-                source_ppa_path = synthesis_results["ppa_metrics"].get("report_path")
-                if source_ppa_path and os.path.exists(source_ppa_path):
-                    model_name_cleaned = self.llm.model_name.replace("/", "_")
-                    exp_problem_dir = os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name)
-                    os.makedirs(exp_problem_dir, exist_ok=True)
-                    dest_ppa_path = os.path.join(exp_problem_dir, f"{self.problem_name}_reference.ppa")
-                    shutil.copy(source_ppa_path, dest_ppa_path)
-                    print(f"Copied reference PPA report to: {dest_ppa_path}")
-            except Exception as e:
-                print(f"WARNING: Failed to copy reference PPA report to experiment directory: {e}")
         else:
-            print("WARNING: Reference PPA synthesis failed. Using default high values for scoring.")
-            self.ref_ppa_metrics = {"tns": 0, "wns": 0, "eff_clk_period": self.clk_period, "area": 100, "power": 100}
+            print("WARNING: Reference PPA synthesis failed. Using default high values.")
+            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e6, "power": 1.0}
 
-    def _save_result_to_file(self, code_content, thought_content, generation_num, sample_idx_in_generation, strategy=None):
-        """
-        Saves the Verilog code to a structured file path.
-        Filename includes generation number and a unique index for that generation.
-        Returns the path to the saved file.
-        """
-        model_name_cleaned = self.llm.model_name.replace("/", "_") 
-        directory_path = os.path.join(
-            self.base_save_path,
-            model_name_cleaned,
-            self.benchmark_name,
-            self.problem_name,
-            f"Gen{generation_num}" 
-        )
-        os.makedirs(directory_path, exist_ok=True)
-        
-        code_file_name = f"{self.problem_name}_sample{sample_idx_in_generation}.sv"
-        if strategy:
-            code_file_name = f"{self.problem_name}_{strategy}_sample{sample_idx_in_generation}.sv"
-        code_file_path = os.path.join(directory_path, code_file_name)
-        
-        thought_file_name = f"{self.problem_name}_sample{sample_idx_in_generation}_thought.txt"
-        if strategy:
-            thought_file_name = f"{self.problem_name}_{strategy}_sample{sample_idx_in_generation}_thought.txt"
-        thought_file_path = os.path.join(directory_path, thought_file_name)
+    def _calculate_fitness_score(self, candidate):
+        """Calculates a fitness score for a successful candidate based on PPA improvement."""
+        if not candidate.ppa_success or not self.ref_ppa_metrics:
+            return 0 
 
-        try:
-            with open(code_file_path, "w") as f:
-                f.write(code_content)
-            print(f"Verilog code saved to: {code_file_path}")
+        P_gen = candidate.ppa_metrics.get("power")
+        A_gen = candidate.ppa_metrics.get("area")
+        T_gen = candidate.ppa_metrics.get("eff_clk_period")
+
+        P_ref = self.ref_ppa_metrics.get("power")
+        A_ref = self.ref_ppa_metrics.get("area")
+        T_ref = self.ref_ppa_metrics.get("eff_clk_period")
+
+        if any(v is None for v in [P_gen, A_gen, T_gen, P_ref, A_ref, T_ref]):
+            print(f"Warning: Missing PPA values for {candidate.id} or reference. Assigning low fitness.")
+            return 0
+
+        # Avoid division by zero for reference values
+        P_ref = P_ref if P_ref > 1e-12 else 1e-12
+        A_ref = A_ref if A_ref > 1e-12 else 1e-12
+        T_ref = T_ref if T_ref > 1e-12 else 1e-12
+
+        power_improvement = (P_gen - P_ref) / P_ref
+        area_improvement = (A_gen - A_ref) / A_ref
+        
+        # A non-zero TNS or WNS in reference implies a sequential circuit for this calculation
+        # Combinatorial circuits will have TNS and WNS as 0, and eff_clk_period of 0
+        is_sequential = (self.ref_ppa_metrics.get("tns", 0) != 0 or self.ref_ppa_metrics.get("wns", 0) != 0 or self.ref_ppa_metrics.get("eff_clk_period", 0) != 0)
+
+        if is_sequential:
+            timing_improvement = (T_gen - T_ref) / T_ref
+            total_improvement = (power_improvement + area_improvement + timing_improvement) / 3
+        else: # Combinational
+            total_improvement = (power_improvement + area_improvement) / 2
             
-            with open(thought_file_path, "w") as f:
-                f.write(thought_content)
-            print(f"Thought saved to: {thought_file_path}")
-            
-            return code_file_path, thought_file_path
-        
-        except IOError as e:
-            print(f"Error saving code to file {code_file_path} or {thought_file_path}: {e}")
-            raise 
-
-    def initialize_population(self):
-        """
-        Creates the initial population and places them within the syntax pool. 
-        LLM generates thoughts and codes through a single batch call (using generate_n_responses).
-        All codes are generated and saved first, then evaluated in a batch.
-        Raises errors immediately if LLM call or parsing fails.
-        """
-        print(f"\n--- Initializing Population (Size: {self.population_size}) ---")
-    
-        try:
-            # Step 1: Call LLM in a single, efficient batch using the 'n' parameter
-            results = asyncio.run(self.llm.generate_n_responses(
-                prompt=self.problem_description,
-                n=self.population_size,
-                temperature=self.default_llm_temp,
-                top_p=self.default_llm_top_p,
-                max_tokens=self.default_llm_max_tokens
-            ))
-
-            # Step 2: Process the results
-            print("Step 2: Processing LLM responses and creating candidates...")
-            for i, result in enumerate(results):
-                if result and all(result):  # Check if the result is valid
-                    thought, code = result
-                    code_file_path, _ = self._save_result_to_file(code, thought, generation_num=0, sample_idx_in_generation=i + 1)
-                    
-                    heuristic = Heuristic(
-                        thought=thought,
-                        code=code,
-                        feedback="",
-                        score=0.0,  # Initial score is 0
-                        generation=0,
-                        parent_ids=[],  # No parents for initial generation
-                        status="syntax",
-                        strategy="initial"  # Strategy for initial population
-                    )
-                    heuristic.code_file_path = code_file_path
-                    self.syntax_pool.append(heuristic)
-                else:
-                    print(f"WARNING: Failed to generate initial candidate {i+1}. Skipping.")
-
-        except (ValueError, RuntimeError) as e:
-            print(f"Critical error during batched population initialization: {e}")
-            raise
-
-        # Copy miscellaneous files needed for testing to the output directory
-        model_name_cleaned = self.llm.model_name.replace("/", "_")
-        self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))
-
-        if not self.syntax_pool:
-            raise RuntimeError("Failed to generate any valid candidates during initialization.")
-
-        print(f"--- Initial Population Generation Complete. {len(self.syntax_pool)} candidates are in the syntax pool. ---")
-    
-    # Method to evaluate a whole population/generation at once.
-    # Add the candidates to the appropriate pools based on their evaluation results.
-    # This method is called after the population is initialized or when new candidates are generated.
-    def _evaluate_population(self, candidates_to_evaluate):
-        """
-        Evaluates a list of candidates, requests LLM feedback in a batch for failures,
-        and promotes them to the appropriate pools.
-        """
-        if not candidates_to_evaluate:
-            print("No candidates to evaluate.")
-            return
-
-        print(f"\n--- Evaluating Population of {len(candidates_to_evaluate)} Candidates ---")
-
-        # --- Stage 1: Functional Simulation ---
-        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
-        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
-        feedback_requests = []
-        candidates_needing_feedback = []
-        passed_candidates = []
-
-        for candidate in candidates_to_evaluate:
-            sim_results = self.evaluator.evaluate(candidate.code_file_path, test_sv_file, ref_sv_file)
-
-            is_functional_success = False
-            simulation_output = sim_results.get('simulation_stdout', '')
-
-            # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
-            # This regex matches the expected output format from VerilogEval
-            # It captures the number of mismatches in the first group.
-            # If there are no mismatches, it means the design is functionally correct.
-            mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
-            match = re.search(mismatch_pattern, simulation_output, re.MULTILINE)
-            if match and int(match.group(1)) == 0:
-                is_functional_success = True
-            # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
-            elif "===========Your Design Passed===========" in simulation_output:
-                is_functional_success = True
-
-            if sim_results['status'] == "success" and is_functional_success:
-                print(f"Candidate {candidate.id}: Functionally correct. Staging for PPA pool.")
-                candidate.status = 'ppa'
-                candidate.score = 10.0 # Base score for functionality
-                candidate.feedback = "Functionally correct."
-                passed_candidates.append(candidate)
-            else:
-                print(f"Candidate {candidate.id}: Functional or compilation failure. Staging for feedback.")
-                if sim_results['status'] == "compilation_error":
-                    candidate.status = 'syntax'
-                else:
-                    candidate.status = 'functionality'
-                candidates_needing_feedback.append(candidate)
-                feedback_requests.append({
-                    'problem_def': self.problem_description,
-                    'verilog_code': candidate.code,
-                    'simulation_log': sim_results.get("compilation_stderr", "") + "\n" + sim_results.get('simulation_stdout', "") + "\n" + sim_results.get('simulation_stderr', "")
-                })
-
-        # --- Stage 2: Batch LLM Feedback for Failures ---
-        if feedback_requests:
-            feedback_results = asyncio.run(self.llm.generate_batch_feedback(
-                feedback_requests,
-                self.default_llm_temp,
-                self.default_llm_top_p,
-                self.default_llm_max_tokens
-            ))
-
-            for candidate, feedback in zip(candidates_needing_feedback, feedback_results):
-                candidate.feedback = feedback['analysis']
-                candidate.score = feedback.get('score', 0) # Use a default score if parsing fails
-                if candidate.status == 'syntax':
-                    self.syntax_pool.append(candidate)
-                elif candidate.status == 'functionality':
-                    self.functionality_pool.append(candidate)
-                # Save feedback and score files
-                self._save_feedback_files(candidate, feedback)
-
-        # --- Stage 3: PPA Evaluation for Passed Candidates ---
-        for candidate in passed_candidates:
-            self._evaluate_ppa(candidate) # This evaluates and places it in the ppa_pool if successful
-
-        print("--- Population Evaluation Complete ---")
+        # Fitness is maximized, and lower improvement % is better. So, fitness = -improvement.
+        return -total_improvement
 
     def _save_feedback_files(self, candidate, feedback):
-        """Helper to save feedback and score files for a candidate."""
-        model_name_cleaned = self.llm.model_name.replace("/", "_")
-        code_file_name = os.path.basename(candidate.code_file_path).rsplit('.', 1)[0]
-        gen_dir = os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{candidate.generation}")
-        os.makedirs(gen_dir, exist_ok=True)
-
-        feedback_file_path = os.path.join(gen_dir, f"{code_file_name}_{candidate.status}_feedback_{candidate.id}.txt")
+        """Helper to save feedback files for a failed candidate."""
+        base_path = candidate.code_file_path.rsplit('.', 1)[0]
+        feedback_file_path = f"{base_path}_feedback.txt"
         with open(feedback_file_path, "w") as f:
-            f.write(feedback.get('analysis', ''))
+            f.write(f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}\n\nANALYSIS:\n{feedback.get('analysis', '')}")
 
-        score_file_path = os.path.join(gen_dir, f"{code_file_name}_{candidate.status}_score_{candidate.id}.txt")
-        with open(score_file_path, "w") as f:
-            f.write(f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}")
-        print(f"Feedback and score saved for candidate {candidate.id}")
-
-    def _evaluate_ppa(self, candidate):
+    def _evaluate_candidates(self, candidates_to_evaluate):
         """
-        Performs PPA evaluation for a single, functionally correct candidate.
-        Places the candidate in the ppa_pool and updates its score.
+        Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
+        Updates each candidate object with its final status, feedback, and score.
         """
-        print(f"Synthesizing candidate {candidate.id} for PPA evaluation...")
-        report_base_path = candidate.code_file_path.rsplit('.', 1)[0] # Base path for PPA report
-        output_dir = os.path.dirname(candidate.code_file_path)
-        synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir, report_base_path)
+        if not candidates_to_evaluate: return
 
-        if synthesis_results["synthesis_success"] and synthesis_results["ppa_success"]:
-            candidate.synthesis_success = True
-            candidate.ppa_success = True
-            candidate.ppa_metrics = synthesis_results["ppa_metrics"]
-
-            # PPA metrics scoring with eff_clk_period, area, and power
-            ref_eff_clk_period = self.ref_ppa_metrics.get("eff_clk_period", self.clk_period) # unit ns
-            ref_area = self.ref_ppa_metrics.get("area", 10000)  # unit um^2
-            ref_power = self.ref_ppa_metrics.get("power", 0.1)  # unit W
-
-            eff_clk_period = candidate.ppa_metrics.get("eff_clk_period")
-            area = candidate.ppa_metrics.get("area")
-            power = candidate.ppa_metrics.get("power")
-
-            # Update score based on PPA. The 10.0 base score indicates functionality.
-            # score = 0 : indicates that the candiate has not passed synthesis or requires at least twice area/power/delay compared to the reference design
-            # score = 1 : indicates that the candidate has passed synthesis and has equal area/power/delay compared to the reference design
-            # score = 2 : indicates that the candidate has passed synthesis and has zero area/power/delay compared to the reference design (e.g., a perfect design)
-            # Individual scores for performance, power, and area are scale to [0, 2].
-            perf_score = 2 - min(eff_clk_period / (ref_eff_clk_period + 1e-10), 2)
-            power_score = 2 - min(power / (ref_power + 1e-10), 2)
-            area_score = 2 - min(area / (ref_area + 1e-10), 2)
-
-            candidate.score = 10.0 + perf_score + power_score + area_score
-            self.ppa_pool.append(candidate)
-            print(f"PPA evaluation successful for {candidate.id}. New Score: {candidate.score:.2f}")
-        else:
-            candidate.feedback += "\n\n--- Synthesis Failed ---\n" "Candidate failed synthesis and PPA evaluation. Moved back to functionality.\n" + synthesis_results.get("synthesis_log", "")
-            # Failed synthesis means it's not a valid PPA candidate.
-            # Move back to functionality pool.
-            # Update the score(set it to 9.5 for successful simulation but failed synthesis) and save feedback
-            candidate.score = 9.5
-            candidate.status = 'functionality'
-            # Save feedback and score files
-            self._save_feedback_files(candidate, {
-                'analysis': candidate.feedback,
-                'score': candidate.score,
-                'justification': "Candidate failed synthesis and PPA evaluation."
-            })
-            self.functionality_pool.append(candidate)
-            print(f"Synthesis failed for {candidate.id}. It will not be added to the PPA pool, instead it will be kept at functionality pool.")
-
-    def _evaluate_and_promote_candidate(self, candidate, sample_idx):
-        """
-        Evaluates a single candidate and promotes it to the next pool if it passes.
-        """
-        print(f"Evaluating candidate {candidate.id} from status {candidate.status}")
-        # Paths to the test and reference Verilog files constructed dynamically using benchmark_path and problem_name
+        print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
         test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
         ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+        
+        func_passed, func_failed, feedback_requests = [], [], []
 
-        # Stage 1: Syntax and Functionality Check
-        if candidate.status == 'syntax' or candidate.status == 'functionality':
-            results = self.evaluator.evaluate(candidate.code_file_path, test_sv_file, ref_sv_file)
-
-            if results['status'] == "compilation_error":
-                print("Result: Compilation error. Stays in syntax_pool.")
-                # Optionally update feedback with compilation error
-                self.syntax_pool.append(candidate)  # Re-add to syntax pool
-                return None
+        # Stage 1: Functional Simulation
+        for cand in candidates_to_evaluate:
+            sim_results = self.evaluator.evaluate(cand.code_file_path, test_sv_file, ref_sv_file)
             
-            # Initialize functional success flag
-            # Needed to handle both VerilogEvalv2 and RTLLMv2 evaluation formats
-            is_functional_success = False
-            simulation_output = results.get('simulation_stdout', '')
-
-            # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
-            # This regex matches the expected output format from VerilogEval
-            # It captures the number of mismatches in the first group.
-            # If there are no mismatches, it means the design is functionally correct.
-            mismatch_pattern = r'^Mismatches: (\d+) in \d+ samples$'
-            match = re.search(mismatch_pattern, simulation_output, re.MULTILINE)
-            if match and int(match.group(1)) == 0: # When number of mismatches is 0
-                is_functional_success = True
-            
-            # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
-            elif "===========Your Design Passed===========" in simulation_output:
-                is_functional_success = True
-
-            
-
-            # Debugging output
-            print(f"results[status]: {results['status']}")
-            print(f"match: {match}")
-            print(f"match.group(1): {match.group(1) if match else 'None'}")
-            print(f"Simulation stdout: {results.get('simulation_stdout', '')[:200]}...")  # Print first 200 chars for brevity
-            if results['status'] == "success" and is_functional_success:
-                print("Result: Functionally correct. Promoting to ppa_pool.")
-                candidate.status = 'ppa'
-                candidate.score = 10.0 # Base score for being functional
-                candidate.feedback = "Functionally correct."
-                self.ppa_pool.append(candidate)
-                # Now, do the first PPA evaluation
-                self._evaluate_and_promote_candidate(candidate, sample_idx)
-
-            else: # Functional failure
-                print("Result: Functional failure. Moving to functionality_pool.")
-                candidate.status = 'functionality'
-                feedback = self.llm.generate_feedback(
-                    problem_def=self.problem_description,
-                    verilog_code=candidate.code,
-                    simulation_log=results["compilation_stdout"] + "\n" + results["compilation_stderr"] + "\n" + results['simulation_stdout'] + "\n" + results['simulation_stderr'],
-                    temperature=self.default_llm_temp,
-                    top_p=self.default_llm_top_p,
-                    max_tokens=self.default_llm_max_tokens
-                )
-                candidate.feedback = feedback['analysis']
-                candidate.score = feedback['score']
-                self.functionality_pool.append(candidate)
-
-                # Save the feedback file and score file
-                model_name_cleaned = self.llm.model_name.replace("/", "_")
-                # Get the code file name from the candidate and cut off the .sv extension
-                code_file_name = os.path.basename(candidate.code_file_path).rsplit('.', 1)[0] # e.g., "Prob001_accu_sample1"
-                feedback_file_path = os.path.join(self.base_save_path,
-                                                  model_name_cleaned,
-                                                  self.benchmark_name,
-                                                  self.problem_name,
-                                                  f"Gen{candidate.generation}",
-                                                  f"{code_file_name}_{candidate.status}_feedback.txt")
-                # If there is no directory, create it
-                os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
-                with open(feedback_file_path, "w") as f:
-                    f.write(feedback['analysis'])
-
-                score_file_path = os.path.join(self.base_save_path,
-                                                model_name_cleaned,
-                                                self.benchmark_name,
-                                                self.problem_name,
-                                                f"Gen{candidate.generation}",
-                                                f"{code_file_name}_{candidate.status}_score.txt")
-                with open(score_file_path, "w") as f:
-                    f.write(f"Score: {feedback['score']}\nJustification: {feedback['justification']}")
-                print(f"Feedback saved to: {feedback_file_path}")
-                print(f"Score and justification saved to: {score_file_path}")
-
-        # Stage 2: PPA Evaluation
-        elif candidate.status == 'ppa' or candidate.status == 'optimized':
-            print(f"Synthesizing candidate {candidate.id} for PPA evaluation...")
-            report_base_path = candidate.code_file_path.rsplit('.', 1)[0] # Base path for PPA report
-            output_dir = os.path.dirname(candidate.code_file_path)
-            synthesis_results = self.synthesis_evaluator.evaluate(candidate.code_file_path, self.problem_name, output_dir, report_base_path)
-
-            if synthesis_results["synthesis_success"] and synthesis_results["ppa_success"]:
-                candidate.synthesis_success = True
-                candidate.ppa_success = True
-                candidate.ppa_metrics = synthesis_results["ppa_metrics"]
-
-                # PPA metrics scoring with eff_clk_period, area, and power
-                ref_eff_clk_period = self.ref_ppa_metrics.get("eff_clk_period") # unit ns
-                ref_area = self.ref_ppa_metrics.get("area") # unit um^2
-                ref_power = self.ref_ppa_metrics.get("power") # unit W
-                
-
-
-                eff_clk_period = candidate.ppa_metrics.get("eff_clk_period")
-                area = candidate.ppa_metrics.get("area")
-                power = candidate.ppa_metrics.get("power")
-                # Update score based on PPA. The 10.0 base score indicates functionality.
-                # score = 0 : indicates that the candiate has not passed synthesis or requires at least twice area/power/delay compared to the reference design
-                # score = 1 : indicates that the candidate has passed synthesis and has equal area/power/delay compared to the reference design
-                # score = 2 : indicates that the candidate has passed synthesis and has zero area/power/delay compared to the reference design (e.g., a perfect design)
-                perf_score = 2 - min(eff_clk_period / (ref_eff_clk_period + 1e-10), 2) # Scale to [0, 2]
-                power_score = 2 - min(power / (ref_power + 1e-10), 2) # Scale to [0, 2]
-                area_score = 2 - min(area / (ref_area + 1e-10), 2) # Scale to [0, 2]
-
-                candidate.score = 10.0 + perf_score + power_score + area_score
-                # candidate.score = 10.0 + 1 + (1/ (cost + 1e-9)) # Add inverse of cost to score and 1 score for successful synthesis
-
-                print(f"PPA evaluation successful for {candidate.id}. PPA Metrics: {candidate.ppa_metrics}")
-
+            if sim_results['status'] == 'compilation_error':
+                cand.status = 'failed_syntax'
+                log = sim_results.get("compilation_stderr", "Compilation log not available.")
             else:
-                print(f"Synthesis failed for {candidate.id}. Keeping it in its current pool for now.")
-                candidate.feedback += "\n\n--- Synthesis Failed ---\n" + synthesis_results.get("synthesis_log", "")
-                candidate.score += 0 # Keep the score the same for synthesis failure
-
-    # This method prepares all evolution prompts, calls the LLM in a batch,
-    # and then evaluates the new generation together.
-    def evolve_one_generation(self):
-        """
-        Performs one generation of evolution by creating new candidates in a batch,
-        then evaluating them all together.
-        """
-        self.current_generation += 1
-        print(f"\n--- Starting Generation {self.current_generation} Evolution ---")
-        self.gen_start_time = time.time()
-
-        strategies_config = [
-            {"name": "E1", "func": self._create_prompt_strategy_E1, "num_parents": 2},
-            {"name": "E2", "func": self._create_prompt_strategy_E2, "num_parents": 2},
-            {"name": "M1", "func": self._create_prompt_strategy_M1, "num_parents": 1},
-            {"name": "M3", "func": self._create_prompt_strategy_M3, "num_parents": 2},
-        ]
-
-        # Determine parent pool
-        if self.ppa_pool:
-            parent_pool = self.ppa_pool
-            print("Focusing evolution on PPA optimization.")
-        elif self.functionality_pool:
-            parent_pool = self.functionality_pool
-            print("Focusing evolution on fixing functional errors.")
-        else:
-            parent_pool = self.syntax_pool
-            print("Focusing evolution on fixing syntax errors.")
-
-        if not parent_pool:
-            print("No candidates in any pool to evolve from. Stopping.")
-            return "STOP"
-
-        # --- Step 1: Generate prompts for the new generation ---
-        all_prompts = []
-        candidate_metadata = [] # To store parents and strategy for each new candidate
-
-        print(f"Step 1: Generating new prompts for generation {self.current_generation}...")
-        for config in strategies_config:
-            strategy_name = config["name"]
-            strategy_func = config["func"]
-            num_parents = config["num_parents"]
-
-            for i in range(self.population_size): # Each strategy creates population_size candidates
-                parents = self._select_parents(num_parents=num_parents, parent_pool=parent_pool)
-                if not parents:
-                    print(f"Not enough parents for {strategy_name}. Skipping.")
+                is_success = False
+                if sim_results['status'] == 'success':
+                    output = sim_results.get('simulation_stdout', '')
+                    m_match = re.search(r'^Mismatches: (\d+)', output, re.M)
+                    if (m_match and int(m_match.group(1)) == 0) or "===========Your Design Passed===========" in output:
+                        is_success = True
+                
+                if is_success:
+                    func_passed.append(cand)
                     continue
+                else:
+                    cand.status = 'failed_functionality'
+                    log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
 
-                prompt = strategy_func(parents)
-                all_prompts.append(prompt)
-                candidate_metadata.append({"parents": parents, "strategy": strategy_name})
+            # If we reach here, the candidate has failed syntax or functionality
+            cand.score = -float('inf')
+            feedback_requests.append({'problem_def': self.problem_description, 'verilog_code': cand.code, 'simulation_log': log})
+            func_failed.append(cand)
 
-        if not all_prompts:
-            print("No new prompts were generated. Stopping evolution.")
-            return "STOP"
+        # Stage 2: Synthesis and PPA for functionally correct candidates
+        for cand in func_passed:
+            report_base_path = cand.code_file_path.rsplit('.', 1)[0]
+            output_dir = os.path.dirname(cand.code_file_path)
+            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, output_dir, report_base_path)
 
-        # --- Step 2: Get LLM responses in a batch ---
-        llm_results = asyncio.run(self.llm.generate_batch_responses(
-            all_prompts,
-            self.default_llm_temp,
-            self.default_llm_top_p,
-            self.default_llm_max_tokens
+            if synth_results["synthesis_success"] and synth_results["ppa_success"]:
+                cand.status = 'success'
+                cand.synthesis_success = True
+                cand.ppa_success = True
+                cand.ppa_metrics = synth_results["ppa_metrics"]
+                cand.score = self._calculate_fitness_score(cand)
+                cand.feedback = f"Synthesis successful. PPA score: {cand.score:.4f}"
+            else:
+                cand.status = 'failed_synthesis'
+                cand.score = -float('inf')
+                cand.synthesis_success = False
+                log = f"Functionality OK, but synthesis failed.\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
+                feedback_requests.append({'problem_def': self.problem_description, 'verilog_code': cand.code, 'simulation_log': log})
+                func_failed.append(cand)
+
+        # Stage 3: Batch LLM Feedback Generation for all failures
+        if feedback_requests:
+            print(f"Requesting LLM feedback for {len(func_failed)} failed candidates...")
+            feedback_results = asyncio.run(self.llm.generate_batch_feedback(feedback_requests, self.default_llm_temp, self.default_llm_top_p, self.default_llm_max_tokens))
+            for cand, feedback_data in zip(func_failed, feedback_results):
+                cand.feedback = feedback_data.get('analysis', 'Feedback generation failed.')
+                self._save_feedback_files(cand, feedback_data)
+
+    # Prompt generation functions for the 6 new strategies
+    def _format_parent_for_prompt(self, parent, example_num=1):
+        """Helper to format a parent candidate for inclusion in a prompt."""
+        parent_prompt = (f"<Example {example_num}>:\n"
+                         f"```thought\n{parent.thought}\n```\n"
+                         f"```code\n{parent.code}\n```\n"
+                         f"```feedback\n{parent.feedback}\n```\n")
+        if parent.ppa_success:
+            parent_prompt += f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
+        return parent_prompt
+
+    def _create_prompt_M_F(self, parents): # Fix
+        parent_info = self._format_parent_for_prompt(parents[0])
+        return (f"{self.problem_description}\n\nThe following attempt failed. Use the feedback to fix it.\n\n"
+                f"{parent_info}\nYour task is to fix the code based on the feedback. Provide a new thought process explaining the fix and the corrected code.")
+
+    def _create_prompt_M_S(self, parents): # Simplify
+        parent_info = self._format_parent_for_prompt(parents[0])
+        return (f"{self.problem_description}\n\nHere is a previous solution.\n\n{parent_info}\n"
+                f"Your task is to simplify this solution. Reduce complexity while maintaining functionality. Provide your simplified thought and code.")
+
+    def _create_prompt_M_E(self, parents): # Explore
+        parent_info = self._format_parent_for_prompt(parents[0])
+        return (f"{self.problem_description}\n\nHere is one approach.\n\n{parent_info}\n"
+                f"Your task is to generate a completely new and different solution. Come up with a novel architectural idea. Describe your new idea and provide the code.")
+
+    def _create_prompt_M_R(self, parents): # Refactor
+        parent_info = self._format_parent_for_prompt(parents[0])
+        return (f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
+                f"Your task is to refactor this code. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). Explain the refactoring and provide the new code.")
+
+    def _create_prompt_M_I(self, parents): # Improve
+        parent_info = self._format_parent_for_prompt(parents[0])
+        return (f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
+                f"Your task is to improve this solution. If it failed, make it correct. If it succeeded, optimize it for better PPA based on its metrics. Describe your improvement strategy and provide the improved code.")
+
+    def _create_prompt_C_F(self, parents): # Fusion
+        parent1_info = self._format_parent_for_prompt(parents[0], 1)
+        parent2_info = self._format_parent_for_prompt(parents[1], 2)
+        return (f"{self.problem_description}\n\nHere are two different successful solutions.\n\n{parent1_info}\n{parent2_info}\n"
+                f"Your task is to create a superior solution by fusing the best ideas from both examples. Analyze their strengths and combine them. Explain your fusion strategy and provide the new code.")
+
+    def initialize_population(self):
+        """Creates and evaluates the initial population."""
+        print(f"\n--- Initializing Population (Size: {self.population_size}) ---")
+        self.gen_start_time = time.time()
+        
+        results = asyncio.run(self.llm.generate_n_responses(
+            prompt=self.problem_description, n=self.population_size,
+            temperature=self.default_llm_temp, top_p=self.default_llm_top_p, max_tokens=self.default_llm_max_tokens
         ))
 
-        # --- Step 3: Create new candidates from responses ---
-        new_candidates = []
-        # We need a per-strategy index for unique file naming
-        strategy_sample_indices = {s['name']: 0 for s in strategies_config}
+        initial_candidates = []
+        for i, (thought, code) in enumerate(results):
+            if thought and code:
+                code_path, _ = self._save_result_to_file(code, thought, 0, i + 1, "initial")
+                cand = Heuristic(thought, code, "", generation=0, strategy="initial")
+                cand.code_file_path = code_path
+                initial_candidates.append(cand)
+        
+        if not initial_candidates:
+            raise RuntimeError("Failed to generate any valid candidates during initialization.")
 
-        for i, result in enumerate(llm_results):
-            if result and all(result):
-                thought, code = result
-                meta = candidate_metadata[i]
-                strategy = meta["strategy"]
-                strategy_sample_indices[strategy] += 1
-                sample_idx = strategy_sample_indices[strategy]
-
-                code_file_path, _ = self._save_result_to_file(code, thought, self.current_generation, sample_idx, strategy=strategy)
-                new_candidate = Heuristic(
-                    thought=thought, code=code, feedback="",
-                    generation=self.current_generation,
-                    parent_ids=[p.id for p in meta["parents"]],
-                    status='syntax',
-                    strategy=strategy,  # Store the strategy used
-                )
-                new_candidate.code_file_path = code_file_path
-                new_candidates.append(new_candidate)
+        self._evaluate_candidates(initial_candidates)
+        
+        for cand in initial_candidates:
+            if cand.status == 'success':
+                self.success_pool.append(cand)
             else:
-                print(f"WARNING: Failed to generate a new candidate (Index {i}). Skipping.")
+                self.fail_pool.append(cand)
+        
+        gen0_runtime = time.time() - self.gen_start_time
+        llm_calls = self.llm.get_and_reset_api_calls()
+        self.logger.log_generation(0, initial_candidates, gen0_runtime, llm_calls)
 
+        print(f"--- Initial Population Processed. Success: {len(self.success_pool)}, Fail: {len(self.fail_pool)} ---")
+        if self.success_pool:
+            self.success_pool.sort(key=lambda c: c.score, reverse=True)
+            print(f"Best initial candidate: {self.success_pool[0]}")
 
-        # Copy miscellaneous files for the new generation
-        model_name_cleaned = self.llm.model_name.replace("/", "_")
-        self._copy_misc_files(os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{self.current_generation}"))
+    def evolve_one_generation(self):
+        """Performs one generation of the REvolution algorithm."""
+        self.current_generation += 1
+        print(f"\n--- Starting Generation {self.current_generation} ---")
+        self.gen_start_time = time.time()
 
-        # --- Step 4: Evaluate the new generation ---
-        self.syntax_pool.clear() # Clear out old failed candidates
-        self.functionality_pool.clear() # Clear out old functional failures
-        self._evaluate_population(new_candidates)
+        strategies = {"M-F": {"func": self._create_prompt_M_F, "num_parents": 1},
+                      "M-S": {"func": self._create_prompt_M_S, "num_parents": 1},
+                      "M-E": {"func": self._create_prompt_M_E, "num_parents": 1},
+                      "M-R": {"func": self._create_prompt_M_R, "num_parents": 1},
+                      "M-I": {"func": self._create_prompt_M_I, "num_parents": 1},
+                      "C-F": {"func": self._create_prompt_C_F, "num_parents": 2}}
+        fail_strats, success_strats = ['M-F','M-S','M-E','M-R','M-I'], ['M-S','M-E','M-R','M-I','C-F']
 
-        # Add logging for generation time
+        total_current_pop = len(self.fail_pool) + len(self.success_pool)
+        if total_current_pop == 0: return "STOP"
+
+        num_from_fail = round(self.num_offspring_lambda * len(self.fail_pool) / total_current_pop)
+        num_from_success = self.num_offspring_lambda - num_from_fail
+
+        prompts, metadata = [], []
+
+        # Generate from Fail Pool
+        if self.fail_pool:
+            for _ in range(num_from_fail):
+                strat_name = random.choice(fail_strats)
+                parents = random.choices(self.fail_pool, k=strategies[strat_name]["num_parents"])
+                prompts.append(strategies[strat_name]["func"](parents))
+                metadata.append({"parents": parents, "strategy": strat_name})
+        
+        # Generate from Success Pool
+        if self.success_pool:
+            available_strategies = success_strats.copy()
+            # First check if we have enough candidates in the success pool for the strategy that requires fusion
+            if len(self.success_pool) < 2:
+                available_strategies.remove("C-F")
+            for _ in range(num_from_success):
+                strat_name = random.choice(available_strategies)
+                # Weighted selection for success pool
+                weights = [c.score - min(p.score for p in self.success_pool) + 0.1 for c in self.success_pool]
+                parents = random.choices(self.success_pool, weights=weights, k=strategies[strat_name]["num_parents"])
+                # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
+                prompts.append(strategies[strat_name]["func"](parents))
+                metadata.append({"parents": parents, "strategy": strat_name})
+
+        if not prompts: return "STOP"
+
+        llm_results = asyncio.run(self.llm.generate_batch_responses(prompts, self.default_llm_temp, self.default_llm_top_p, self.default_llm_max_tokens))
+        
+        new_offspring = []
+        for i, (thought, code) in enumerate(llm_results):
+            if thought and code:
+                meta = metadata[i]
+                code_path, _ = self._save_result_to_file(code, thought, self.current_generation, i + 1, meta["strategy"])
+                cand = Heuristic(thought, code, "", self.current_generation, [p.id for p in meta["parents"]], strategy=meta["strategy"])
+                cand.code_file_path = code_path
+                new_offspring.append(cand)
+
+        self._evaluate_candidates(new_offspring)
+
+        # Survivor Selection (Elitism)
+        candidate_pool = self.success_pool + new_offspring
+        # Shuffle the candidate pool to ensure diversity
+        random.shuffle(candidate_pool)
+        candidate_pool.sort(key=lambda c: c.score, reverse=True)
+        next_gen_population = candidate_pool[:self.population_size]
+
+        # Population Redivision
+        self.fail_pool.clear()
+        self.success_pool.clear()
+        for cand in next_gen_population:
+            if cand.status == 'success':
+                self.success_pool.append(cand)
+            else:
+                self.fail_pool.append(cand)
+
         gen_runtime = time.time() - self.gen_start_time
         llm_calls = self.llm.get_and_reset_api_calls()
         if self.logger:
-            self.logger.log_generation(
-                generation_num=self.current_generation,
-                candidates_this_gen=new_candidates,
-                runtime_sec=gen_runtime,
-                llm_calls_this_gen=llm_calls
-            )
+            self.logger.log_generation(self.current_generation, new_offspring, gen_runtime, llm_calls)
 
-
-        # --- Step 5: Elitism and Trimming ---
-        self.functionality_pool.sort(key=lambda h: h.score, reverse=True)
-        self.ppa_pool.sort(key=lambda h: h.score, reverse=True)
-        self.functionality_pool = self.functionality_pool[:self.population_size]
-        self.ppa_pool = self.ppa_pool[:self.population_size]
-
-        print(f"--- Generation {self.current_generation} Complete ---")
-        print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
-        if self.ppa_pool:
-            print(f"Best PPA candidate so far: {self.ppa_pool[0]}")
-        elif self.functionality_pool:
-            print(f"Best functional candidate so far: {self.functionality_pool[0]}")
-
-        return None # Continue evolution
-
-    def _select_parents(self, num_parents=2, parent_pool=None):
-        if not parent_pool:
-            return []
-
-        # Use score for selection pressure
-        weights = [(h.score + 0.1) ** 2.0 for h in parent_pool]
-        
-        # Handle case where all weights are zero
-        if all(w == 0 for w in weights):
-            return random.choices(parent_pool, k=num_parents)
-        
-        # random.choices를 사용하여 간단하게 부모 선택 (중복 허용)
-        # 이 방식이 더 효율적이고 일반적인 유전 알고리즘 관행에 부합합니다.
-        return random.choices(parent_pool, weights=weights, k=num_parents)
-
-    # Strategies now return the prompt string directly instead of calling the LLM.
-    def _create_prompt_strategy_E1(self, parent):
-        parent_prompt = ""
-        for i, p in enumerate(parent):
-            parent_prompt += (
-                f"<Example {i+1}>:\n"
-                "```thought\n"
-                f"{p.thought}\n"
-                "```\n"
-                "```code\n"
-                f"{p.code}\n"
-                "```\n"
-                "```feedback\n"
-                f"{p.feedback}\n"
-                "```\n\n"
-            )
-            if p.status in ['ppa', 'optimized']:
-                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
-
-        prompt = (
-            self.problem_description +
-            f"Here are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
-            f"{parent_prompt}\n\n"
-            "Based on the examples above, please implement a unique approach (thought and code) to solve the problem, making it as different from the provided examples as possible. "
-            "If the examples include PPA metrics, consider them to find a completely new, potentially better, architectural approach. "
-            "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
-        )
-        return prompt
-
-    def _create_prompt_strategy_E2(self, parent):
-        parent_prompt = ""
-        for i, p in enumerate(parent):
-            parent_prompt += (
-                f"<Example {i+1}>:\n"
-                "```thought\n"
-                f"{p.thought}\n"
-                "```\n"
-                "```code\n"
-                f"{p.code}\n"
-                "```\n"
-                "```feedback\n"
-                f"{p.feedback}\n"
-                "```\n\n"
-            )
-
-            if p.status in ['ppa', 'optimized']:
-                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
-
-
-        prompt = (
-            self.problem_description +
-            f"\nHere are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
-            f"{parent_prompt}\n\n"
-            "Please refer to the examples above to find their common idea, develop it further, and then implement the best possible thought process and code to solve the problem. "
-            "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
-            "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
-        )
-        return prompt
-
-    def _create_prompt_strategy_M1(self, parent):
-        parent_prompt = ""
-        for i, p in enumerate(parent):
-            parent_prompt += (
-                f"<Example {i+1}>:\n"
-                "```thought\n"
-                f"{p.thought}\n"
-                "```\n"
-                "```code\n"
-                f"{p.code}\n"
-                "```\n"
-                "```feedback\n"
-                f"{p.feedback}\n"
-                "```\n\n"
-            )
-
-            if p.status in ['ppa', 'optimized']:
-                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
-
-
-        prompt = (
-            self.problem_description +
-            f"Here are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
-            f"{parent_prompt}\n\n"
-            "Using the examples above, please modify them to improve the thought process and code for a better solution. "
-            "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
-            "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
-        )
-        return prompt
-
-    def _create_prompt_strategy_M3(self, parent):
-        parent_prompt = ""
-        for i, p in enumerate(parent):
-            parent_prompt += (
-                f"<Example {i+1}>:\n"
-                "```thought\n"
-                f"{p.thought}\n"
-                "```\n"
-                "```code\n"
-                f"{p.code}\n"
-                "```\n"
-                "```feedback\n"
-                f"{p.feedback}\n"
-                "```\n\n"
-            )
-            if p.status in ['ppa', 'optimized']:
-                parent_prompt += "```ppa_metrics\n" + str(p.ppa_metrics) + "\n```\n\n"
-
-        prompt = (
-            self.problem_description +
-            f"Here are my attempts at solving the same problem, including my thought process, code, and feedback.\n\n"
-            f"{parent_prompt}\n\n"
-            "Please refer to the examples above to simplify the thought process and code. You can do this by identifying the essential parts and removing the unnecessary ones to solve the problem. "
-            "If PPA metrics are present, your goal is to optimize the code to improve Power, Performance, and Area while preserving functionality. "
-            "Remember to format your response with ```thought ... ``` and ```code ... ``` blocks."
-        )
-        return prompt
-    
-    def _apply_ppa_optimization_prompt(self, current_best_solution):
-        """
-        Creates a prompt to ask the LLM to optimize a functionally correct solution for PPA.
-        """
-        ppa_metrics = current_best_solution.ppa_metrics
-        ppa_report_str = (
-            f"Current PPA Metrics:\n"
-            f"- Area: {ppa_metrics.get('area', 'N/A')} um^2\n"
-            f"- Power: {ppa_metrics.get('power', 'N/A')} uW\n"
-            f"- Effective Clock Period: {ppa_metrics.get('eff_clk_period', 'N/A')} ns\n"
-            f"- Worst Negative Slack (WNS): {ppa_metrics.get('wns', 'N/A')} ns\n"
-            f"- Total Negative Slack (TNS): {ppa_metrics.get('tns', 'N/A')} ns\n"
-        )
-
-        prompt = (
-            f"The following Verilog code correctly implements the desired functionality for the problem:\n\n"
-            f"**Problem Description:**\n{self.problem_description}\n\n"
-            f"**Functionally Correct Verilog Code:**\n"
-            f"```verilog\n{current_best_solution.code}\n```\n\n"
-            f"This code was synthesized, and its Power, Performance, and Area (PPA) report is as follows:\n"
-            f"```report\n{ppa_report_str}\n```\n\n"
-            f"**Your task is to optimize the provided Verilog code to improve its PPA metrics (reduce area and power, improve timing by making slack less negative or more positive) while strictly preserving its original functionality.**\n\n"
-            f"Analyze the code and the report, then provide a new version of the code that is better optimized. "
-            f"Do not change the module's input/output ports.\n\n"
-            f"Format your response with a `thought` on your optimization strategy and the resulting `code`.\n"
-            f"```thought\n"
-            f"[Your concise optimization idea here]\n"
-            f"```\n"
-            f"```code\n"
-            f"[Your complete, optimized, and functionally identical Verilog code here]\n"
-            f"```"
-        )
-
-        return asyncio.run(self.llm.generate_response(
-            prompt,
-            temperature=self.default_llm_temp,
-            top_p=self.default_llm_top_p,
-            max_tokens=self.default_llm_max_tokens
-        ))
+        print(f"--- Gen {self.current_generation} Complete. Pools: Success({len(self.success_pool)}), Fail({len(self.fail_pool)}) ---")
+        if self.success_pool:
+            print(f"Best candidate: {self.success_pool[0]}")
+        return None
 
     def run(self):
-        """
-        Runs the unified evolutionary framework.
-        """
-        print(f"--- Starting Unified EoH Run: Problem '{self.benchmark_name}/{self.problem_name}' ---")
-        print(f"Generations: {self.num_generations}, Population Size: {self.population_size}")
-
+        """Main entry point to run the evolutionary framework."""
+        print(f"--- Starting REvolution Run: Problem '{self.benchmark_name}/{self.problem_name}' ---")
         self.run_start_time = time.time()
         self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
 
         try:
-            # Calculate reference PPA metrics before starting the evolution
             self._calculate_reference_ppa()
-            print(f"Reference PPA Metrics: {self.ref_ppa_metrics}")
-
-            # Init Logger
-            self.logger = EoHLogger(
-                problem_name=self.problem_name,
-                benchmark_name=self.benchmark_name,
-                model_name=self.llm.model_name,
-                save_path=self.base_save_path,
-                ref_ppa=self.ref_ppa_metrics
-            )
-
-
+            self.logger = EoHLogger(self.problem_name, self.benchmark_name, self.llm.model_name, self.base_save_path, self.ref_ppa_metrics)
             self.initialize_population()
-            # Initial evaluation of the first generation
-            print("\n--- Evaluating Initial Population ---")
-            initial_candidates = list(self.syntax_pool) # Create a copy to iterate over
-            self.syntax_pool.clear() # Clear before evaluation
-            self._evaluate_population(initial_candidates) # Populate syntax, functionality, and ppa pools based on initial candidates
-
-            # Log Gen 0 (initial population) metrics
-            gen0_runtime = time.time() - self.gen_start_time
-            llm_calls_gen0 = self.llm.get_and_reset_api_calls()
-            self.logger.log_generation(
-                generation_num=0,
-                candidates_this_gen=initial_candidates,
-                runtime_sec=gen0_runtime,
-                llm_calls_this_gen=llm_calls_gen0
-            )
-            
-            print("--- Initial Evaluation Complete ---")
-            print(f"Pool Sizes: Syntax({len(self.syntax_pool)}), Functionality({len(self.functionality_pool)}), PPA({len(self.ppa_pool)})")
-
-
-        except (RuntimeError, ValueError, Exception) as e:
-            print(f"Critical error during population initialization: {e}")
-            print("EoH run aborted.")
+        except Exception as e:
+            print(f"Critical error during initialization: {e}")
             return f"{self.problem_name},initialization_failed"
 
-        # Main evolution loop
-        for gen in range(self.num_generations):
+        for _ in range(self.num_generations):
             if self.evolve_one_generation() == "STOP":
                 break
 
-        # --- End of Evolution ---
-        print("\n--- EoH Run Finished ---")
-
-        # Finalize the summary log
+        print("\n--- REvolution Run Finished ---")
         total_runtime = time.time() - self.run_start_time
         end_utc = datetime.datetime.now(datetime.timezone.utc)
         if self.logger:
-            self.logger.finalize_summary(
-                start_utc=self.run_start_utc,
-                end_utc=end_utc,
-                total_runtime_sec=total_runtime,
-                total_generations=self.num_generations,
-                final_ppa_pool= self.ppa_pool
-            )
-        
-        # Determine the best solution
-        best_solution = None
-        if self.ppa_pool:
-            self.ppa_pool.sort(key=lambda h: h.score, reverse=True)
-            best_solution = self.ppa_pool[0]
-            print("Final best solution is from PPA pool.")
-        elif self.functionality_pool:
-            self.functionality_pool.sort(key=lambda h: h.score, reverse=True)
-            best_solution = self.functionality_pool[0]
-            print("No PPA-optimized solution, best solution is from functionality pool.")
-        elif self.syntax_pool:
-            self.syntax_pool.sort(key=lambda h: h.score, reverse=True)
-            best_solution = self.syntax_pool[0]
-            print("No functional solution, best solution is from syntax pool.")
+            self.logger.finalize_summary(self.run_start_utc, end_utc, total_runtime, self.current_generation, self.success_pool)
 
-        if not best_solution:
-            print("No solution found in any pool.")
+        if self.success_pool:
+            best_solution = self.success_pool[0]
+            print(f"Final Best Solution Found:\n{best_solution}")
+            final_report = best_solution.ppa_metrics.get("report_path", "N/A")
+            # # Debug print success pool
+            # print(f"Success Pool: {[str(c) for c in self.success_pool]}")
+            return f"{self.problem_name},success,{best_solution.code_file_path},{final_report}"
+        else:
+            print("No functionally correct and synthesizable solution found.")
             return f"{self.problem_name},failed"
-            
-        print("Final Best Solution Found:")
-        print(best_solution)
-
-        final_ppa_report_path = best_solution.ppa_metrics.get("report_path", "N/A")
-        return f"{self.problem_name},success_optimized,{best_solution.code_file_path},{final_ppa_report_path}"
+        
     
 # Wrapper function for multiprocessing
 def run_problem_worker(args_tuple):
