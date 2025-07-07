@@ -722,14 +722,30 @@ class VerilogEvaluator:
         }
 
 class LLMInterface:
-    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", max_retries=5, base_delay=2):
+    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", api_backend="openai", max_retries=5, base_delay=2):
         if not api_key: 
             raise ValueError("API key is required for LLMInterface initialization.")
         
-        self.api_key = api_key
+        self.api_backend = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
         self.model_name = model_name
         self.max_retries = max_retries  # Maximum number of retries
         self.base_delay = base_delay    # Base delay in seconds for backoff
+
+        # Configure arguments for the AsyncOpenAI client based on the backend
+        self.client_args = {
+            "api_key": api_key,
+            "timeout": 120,
+        }
+
+        if api_backend == "openai":
+            # Default OpenAI, no extra args needed
+            pass
+        elif api_backend == "openrouter":
+            self.client_args["base_url"] = "https://openrouter.ai/api/v1"
+        elif api_backend == "deepseek":
+            self.client_args["base_url"] = "https://api.deepseek.com"
+        else:
+            raise ValueError(f"Unsupported API backend: '{api_backend}'. Choose from 'openai', 'openrouter', 'deepseek'.")
 
         self.api_call_count = 0  # Initialize API call counter
         self.lock = asyncio.Lock()  # Make counter thread-safe with async calls
@@ -797,7 +813,7 @@ class LLMInterface:
         )
         
         # Use 'async with' to manage the client's lifecycle correctly
-        async with AsyncOpenAI(api_key=self.api_key, timeout=120) as client:
+        async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
                     # Increment the API call count
@@ -860,7 +876,7 @@ class LLMInterface:
             "```"
         )
 
-        async with AsyncOpenAI(api_key=self.api_key, timeout=120) as client:
+        async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
                     # Increment the API call count
@@ -968,7 +984,7 @@ class LLMInterface:
             "```\n\n"
         )
 
-        async with AsyncOpenAI(api_key=self.api_key, timeout=120) as client:
+        async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
                     # Increment the API call count
@@ -1671,7 +1687,21 @@ def run_problem_worker(args_tuple):
         print(f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n")
         
         # Initialize objects within the worker process to avoid pickling issues
-        llm_interface = LLMInterface(api_key=os.getenv("OPENAI_API_KEY"), model_name=args.model_name)
+        # Determine the API key based on the selected backend
+        api_key = None
+        if args.api_backend == 'openai':
+            api_key = os.getenv("OPENAI_API_KEY")
+        elif args.api_backend == 'openrouter':
+            api_key = os.getenv("OPENROUTER_API_KEY")
+        elif args.api_backend == 'deepseek':
+            api_key = os.getenv("DEEPSEEK_API_KEY")
+        
+        if not api_key:
+            raise ValueError(
+                f"API key for backend '{args.api_backend}' not found. "
+                f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
+            )
+        llm_interface = LLMInterface(api_key=api_key, model_name=args.model_name, api_backend=args.api_backend)
         verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
         synthesis_evaluator = SynthesisEvaluator()
 
@@ -1702,7 +1732,7 @@ if __name__ == "__main__":
     
     # List of all available benchmarks in the 'bench' directory
     # Current benches: ['RTLLM', 'VerilogEval-Code-Complete', 'VerilogEval-Spec-to-RTL']
-    benchmark_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bench'))
+    benchmark_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bench')) # Assumes that the script is in script/main.py, and bench is in bench/
     available_benchmarks = [d for d in os.listdir(benchmark_root) if os.path.isdir(os.path.join(benchmark_root, d))]
     
     parser.add_argument(
@@ -1714,6 +1744,9 @@ if __name__ == "__main__":
     )
     parser.add_argument('--problems', nargs='+',
                         help='A list of specific problem names to run. If not provided, all problems in the suite will be run.')
+    parser.add_argument('--api_backend', type=str, default='openai', 
+                        choices=['openai', 'openrouter', 'deepseek'], 
+                        help='The API backend to use for LLM calls.')
     parser.add_argument('--model_name', type=str, default="gpt-4.1-mini", help='Name of the OpenAI model to use.')
     parser.add_argument('--population_size', type=int, default=5, help='Number of candidates in each generation.')
     parser.add_argument('--num_generations', type=int, default=5, help='Number of evolutionary generations to run.')
