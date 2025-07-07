@@ -26,6 +26,8 @@ import time
 
 import math # Used for UCB calculation
 
+import sys # Used for stream redirection
+
 
 def find_module_name(verilog_code):
     """
@@ -40,6 +42,40 @@ def find_module_name(verilog_code):
     if match:
         return match.group(1)
     return None
+
+# StreamRedirector class for systematic output redirection and error logging
+# This class is used to redirect stdout and stderr to a file for each problem
+# And then aggregate the outputs in a systematic way.
+class StreamRedirector:
+    """
+    A context manager to redirect stdout and stderr to a file.
+    This helps in capturing all outputs from a block of code, especially
+    in a multiprocessing context where outputs can get jumbled.
+    """
+    def __init__(self, filepath):
+        self.filepath = filepath
+        self.original_stdout = sys.stdout
+        self.original_stderr = sys.stderr
+        self.log_file = None
+
+    def __enter__(self):
+        # Ensure the directory for the log file exists
+        os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+        # Open the log file in write mode
+        self.log_file = open(self.filepath, 'w', encoding='utf-8')
+        # Redirect stdout and stderr
+        sys.stdout = self.log_file
+        sys.stderr = self.log_file
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Flush the file and restore original stdout/stderr
+        if self.log_file:
+            self.log_file.flush()
+        sys.stdout = self.original_stdout
+        sys.stderr = self.original_stderr
+        if self.log_file:
+            self.log_file.close()
 
 class EoHLogger:
     """
@@ -1616,35 +1652,49 @@ def run_problem_worker(args_tuple):
     """
     Wrapper function to run a single problem instance.
     This function will be executed by each worker process.
+    All stdout/stderr from this process is redirected to a problem-specific log file.
     """
     # Unpack arguments
     benchmark, problem, args = args_tuple
-    
-    print(f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n")
-    
-    # Initialize objects within the worker process to avoid pickling issues
-    llm_interface = LLMInterface(api_key=os.getenv("OPENAI_API_KEY"), model_name=args.model_name)
-    verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
-    synthesis_evaluator = SynthesisEvaluator()
 
-    eoh_engine = EoHEngine(
-        problem_name=problem,
-        benchmark_name=benchmark,
-        llm_interface=llm_interface,
-        verilog_evaluator=verilog_evaluator,
-        synthesis_evaluator=synthesis_evaluator,
-        population_size=args.population_size,
-        num_generations=args.num_generations,
-        base_save_path=args.save_path,
-        default_llm_temp=args.temperature,
-        default_llm_top_p=args.top_p,
-        default_llm_max_tokens=args.max_tokens,
-        strategy_selection_method=args.strategy_selection,
-        epsilon=args.epsilon,
-        ucb_c=args.ucb_c
-    )
-    result_str = eoh_engine.run()
-    return result_str
+    # Individual Log Setup
+    model_name_cleaned = args.model_name.replace("/", "_")
+    problem_log_dir = os.path.join(args.save_path, model_name_cleaned, benchmark, problem)
+    # The EoHEngine will create this directory, but we ensure it exists early.
+    os.makedirs(problem_log_dir, exist_ok=True)
+    individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
+    
+
+    # Redirect all output from this worker to the individual log file
+    with StreamRedirector(filepath=individual_log_path):
+            
+        print(f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n")
+        
+        # Initialize objects within the worker process to avoid pickling issues
+        llm_interface = LLMInterface(api_key=os.getenv("OPENAI_API_KEY"), model_name=args.model_name)
+        verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
+        synthesis_evaluator = SynthesisEvaluator()
+
+        eoh_engine = EoHEngine(
+            problem_name=problem,
+            benchmark_name=benchmark,
+            llm_interface=llm_interface,
+            verilog_evaluator=verilog_evaluator,
+            synthesis_evaluator=synthesis_evaluator,
+            population_size=args.population_size,
+            num_generations=args.num_generations,
+            base_save_path=args.save_path,
+            default_llm_temp=args.temperature,
+            default_llm_top_p=args.top_p,
+            default_llm_max_tokens=args.max_tokens,
+            strategy_selection_method=args.strategy_selection,
+            epsilon=args.epsilon,
+            ucb_c=args.ucb_c
+        )
+        result_str = eoh_engine.run()
+        # Return the result string and the path to the individual log file created for this problem
+        print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
+    return result_str, individual_log_path
 
 if __name__ == "__main__":
     # MODIFIED: Use argparse to make the script configurable
@@ -1652,7 +1702,8 @@ if __name__ == "__main__":
     
     # List of all available benchmarks in the 'bench' directory
     # Current benches: ['RTLLM', 'VerilogEval-Code-Complete', 'VerilogEval-Spec-to-RTL']
-    available_benchmarks = [d for d in os.listdir('./bench') if os.path.isdir(os.path.join('./bench', d))]
+    benchmark_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bench'))
+    available_benchmarks = [d for d in os.listdir(benchmark_root) if os.path.isdir(os.path.join(benchmark_root, d))]
     
     parser.add_argument(
         '--benchmarks',
@@ -1698,42 +1749,99 @@ if __name__ == "__main__":
     # verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
     # synthesis_evaluator = SynthesisEvaluator()
 
+
+    # Main execution block now handles comprehensive, aggregated logging
     # --- Task Preparation ---
     run_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    tasks_to_run = []
-    for benchmark in args.benchmarks:
-        benchmark_dir = os.path.join('bench', benchmark)
-        problems_file = os.path.join(benchmark_dir, 'problems.txt')
-        if not os.path.exists(problems_file):
-            print(f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping.")
-            continue
-        with open(problems_file, "r") as f:
-            all_problems = [line.strip() for line in f if line.strip()]
-        
-        problems_to_process = args.problems if args.problems else all_problems
-        for problem in problems_to_process:
-            if problem in all_problems:
-                # Package all arguments for the worker function into a tuple
-                tasks_to_run.append((benchmark, problem, args))
-
-    if not tasks_to_run:
-        print("No valid problems found to run. Exiting.")
-        exit(0)
-
-    # --- Multiprocessing Execution ---
-    print(f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems.")
-    
-    with multiprocessing.Pool(processes=args.num_workers) as pool:
-        results = pool.map(run_problem_worker, tasks_to_run)
-
-    # --- Result Aggregation ---
-    print("\n--- All parallel tasks completed. Aggregating results. ---")
-    # A single log file for the entire run, can be split by benchmark if needed
+    start_time = time.time()
     model_name_cleaned = args.model_name.replace("/", "_")
-
-    master_log_path = os.path.join(args.save_path, model_name_cleaned, run_datetime + "_master_run_log.txt")
-    with open(master_log_path, "w") as log_file:
-        for result_str in results:
-            log_file.write(f"{result_str}\n")
+    # Define path for the new comprehensive log file for the entire run
+    master_log_dir = os.path.join(args.save_path, model_name_cleaned)
+    comprehensive_log_path = os.path.join(master_log_dir, f"{run_datetime}_run_log.txt")
     
-    print(f"\nEoH process finished. Master log saved to: {master_log_path}")
+    # Define path for the summary results file (similar to the original script's master log)
+    summary_results_path = os.path.join(master_log_dir, f"{run_datetime}_summary_results.txt")
+
+    # Use a list to store results before writing to files
+    results_data = []
+    tasks_to_run = [] # Define this before the try block
+
+
+    # The `finally` block will handle aggregation.
+    try:
+        # Redirect all output from this main script to the comprehensive log file
+        with StreamRedirector(filepath=comprehensive_log_path):
+            print(f"--- EoH Framework Run Started: {run_datetime} ---")
+            print(f"Arguments: {vars(args)}")
+            print("-" * 50)
+
+            # --- Task Preparation ---
+            # Task preparation loop to populate tasks_to_run
+            for benchmark in args.benchmarks:
+                benchmark_dir = os.path.join(benchmark_root, benchmark)
+                problems_file = os.path.join(benchmark_dir, 'problems.txt')
+                if not os.path.exists(problems_file):
+                    print(f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping.")
+                    continue
+                with open(problems_file, "r") as f:
+                    all_problems = [line.strip() for line in f if line.strip()]
+                
+                problems_to_process = args.problems if args.problems else all_problems
+                for problem in problems_to_process:
+                    if problem in all_problems:
+                        tasks_to_run.append((benchmark, problem, args))
+
+
+            if not tasks_to_run:
+                print("No valid problems found to run. Exiting.")
+            else:
+                print(f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems.")
+                
+                with multiprocessing.Pool(processes=args.num_workers) as pool:
+                    # This is the line that might fail
+                    results_data = pool.map(run_problem_worker, tasks_to_run)
+
+                print("\n--- All parallel tasks completed successfully.---")
+            end_time = time.time()
+            print(f"Total run time: {end_time - start_time:.2f} seconds")
+
+    finally:
+        # --- This block will ALWAYS run, even if the pool crashes ---
+        print("\n--- Aggregation & Finalization Step ---")
+        
+        # Re-open the comprehensive log in append mode to add aggregation results
+        with open(comprehensive_log_path, "a", encoding='utf-8') as log_file:
+            log_file.write("\n\n" + "="*20 + " AGGREGATED INDIVIDUAL LOGS " + "="*20 + "\n")
+            
+            # Check if any results were produced before a potential crash
+            if not results_data:
+                log_file.write("\nNo results were returned from worker processes. This may be due to an early crash.\nCheck individual problem directories for logs.\n")
+            else:
+                for result_str, individual_log_path in results_data:
+                    try:
+                        path_parts = individual_log_path.split(os.sep)
+                        problem_identifier = os.path.join(path_parts[-3], path_parts[-2])
+                        
+                        with open(individual_log_path, 'r', encoding='utf-8') as f_individual:
+                            log_contents = f_individual.read()
+                        
+                        log_file.write(f"\n{problem_identifier}:\n")
+                        log_file.write(f"{{\n{log_contents}\n}}\n")
+                        log_file.write("-" * 50 + "\n")
+
+                    except Exception as e:
+                        log_file.write(f"\n--- Error processing log {individual_log_path}: {e} ---\n")
+
+        # --- Write the summary results file ---
+        if results_data:
+            try:
+                with open(summary_results_path, "w") as summary_file:
+                    for result_str, _ in results_data:
+                        summary_file.write(f"{result_str}\n")
+                print(f"\nSummary results saved to: {summary_results_path}")
+            except Exception as e:
+                print(f"Error writing summary results file: {e}")
+
+        print(f"Comprehensive run log with aggregated details saved to: {comprehensive_log_path}")
+        print(f"Total run time: {end_time - start_time:.2f} seconds")
+        print("--- EoH Framework Run Completed ---")
