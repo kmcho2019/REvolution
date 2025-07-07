@@ -656,17 +656,12 @@ class LLMInterface:
         
         self.api_key = api_key
         self.model_name = model_name
-        self.client = None
         self.max_retries = max_retries  # Maximum number of retries
         self.base_delay = base_delay    # Base delay in seconds for backoff
 
         self.api_call_count = 0  # Initialize API call counter
         self.lock = asyncio.Lock()  # Make counter thread-safe with async calls
-        try:
-            self.client = AsyncOpenAI(api_key=self.api_key, timeout=20)
-            print(f"AsyncOpenAI client initialized successfully (Model: {self.model_name})")
-        except Exception as e:
-            raise RuntimeError(f"Failed to initialize AsyncOpenAI client: {e}")
+
         
     # Method for managing API call count in a thread-safe manner
     async def _increment_call_count(self, n=1):
@@ -701,9 +696,6 @@ class LLMInterface:
         # print(f"Prompt (first 200 chars):\n{prompt[:200]}...")
         # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
 
-        if not self.client: 
-            raise RuntimeError("AsyncOpenAI client not initialized. Cannot generate response.")
-
         full_response_text = ""
         
         system_prompt_content = (
@@ -721,43 +713,45 @@ class LLMInterface:
             "```"
         )
         
-        for attempt in range(self.max_retries):
-            try:
-                # Increment the API call count
-                await self._increment_call_count()
-                chat_completion = await self.client.chat.completions.create(
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": system_prompt_content,
-                        },
-                        {
-                            "role": "user",
-                            "content": prompt,
-                        }
-                    ],
-                    model=self.model_name,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p 
-                )
-                full_response_text = chat_completion.choices[0].message.content.strip()
-                thought, code = self.parse_thought_and_code(full_response_text)
-                return thought, code
+        # Use 'async with' to manage the client's lifecycle correctly
+        async with AsyncOpenAI(api_key=self.api_key, timeout=20) as client:
+            for attempt in range(self.max_retries):
+                try:
+                    # Increment the API call count
+                    await self._increment_call_count()
+                    chat_completion = await client.chat.completions.create(
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": system_prompt_content,
+                            },
+                            {
+                                "role": "user",
+                                "content": prompt,
+                            }
+                        ],
+                        model=self.model_name,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p 
+                    )
+                    full_response_text = chat_completion.choices[0].message.content.strip()
+                    thought, code = self.parse_thought_and_code(full_response_text)
+                    return thought, code
 
-            except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
-                print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
-                if attempt + 1 == self.max_retries:
-                    print("Max retries reached. Failing the request.")
+                except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
+                    print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
+                    if attempt + 1 == self.max_retries:
+                        print("Max retries reached. Failing the request.")
+                        return None, None
+                    
+                    delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
+                    print(f"Waiting for {delay:.2f} seconds before retrying...")
+                    await asyncio.sleep(delay)
+
+                except Exception as e:
+                    print(f"An unexpected, non-retriable error occurred in generate_response: {e}")
                     return None, None
-                
-                delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
-                print(f"Waiting for {delay:.2f} seconds before retrying...")
-                await asyncio.sleep(delay)
-
-            except Exception as e:
-                print(f"An unexpected, non-retriable error occurred in generate_response: {e}")
-                return None, None
 
 
 
@@ -767,8 +761,6 @@ class LLMInterface:
         Generates 'n' different responses for a single prompt in a single API call.
         """
         print(f"\n--- Sending Single-Prompt Batch Request for {n} responses ---")
-        if not self.client:
-            raise RuntimeError("AsyncOpenAI client not initialized.")
 
         system_prompt_content = (
             "You are an expert Verilog design assistant. "
@@ -785,54 +777,55 @@ class LLMInterface:
             "```"
         )
 
-        for attempt in range(self.max_retries):
-            try:
-                # Increment the API call count
-                await self._increment_call_count(n)  # Increment by 'n' since we're requesting n completions
-                chat_completion = await self.client.chat.completions.create(
-                    messages=[
-                        {"role": "system", "content": system_prompt_content},
-                        {"role": "user", "content": prompt}
-                    ],
-                    model=self.model_name,
-                    n=n,  # Request n completions
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p
-                )
-                
-                # Parse each of the 'n' choices in the response
-                parsed_results = []
-                for choice in chat_completion.choices:
-                    full_response_text = choice.message.content.strip()
-                    try:
-                        thought, code = self.parse_thought_and_code(full_response_text)
-                        parsed_results.append((thought, code))
-                    except ValueError as e:
-                        print(f"Warning: Failed to parse one of the initial responses: {e}")
-                        # Debug
-                        # print(f"\nSystem prompt: \n{system_prompt_content}")
-                        # print(f"\nUser prompt: \n{prompt}")
-                        # print(f"\nFull response text: \n{full_response_text}...")  # Print the text for context
-                        parsed_results.append((None, None)) # Add a failure marker
-                
-                print("--- Single-Prompt Batch Response Received ---")
-                return parsed_results
+        async with AsyncOpenAI(api_key=self.api_key, timeout=20) as client:
+            for attempt in range(self.max_retries):
+                try:
+                    # Increment the API call count
+                    await self._increment_call_count(n)  # Increment by 'n' since we're requesting n completions
+                    chat_completion = await client.chat.completions.create(
+                        messages=[
+                            {"role": "system", "content": system_prompt_content},
+                            {"role": "user", "content": prompt}
+                        ],
+                        model=self.model_name,
+                        n=n,  # Request n completions
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p
+                    )
+                    
+                    # Parse each of the 'n' choices in the response
+                    parsed_results = []
+                    for choice in chat_completion.choices:
+                        full_response_text = choice.message.content.strip()
+                        try:
+                            thought, code = self.parse_thought_and_code(full_response_text)
+                            parsed_results.append((thought, code))
+                        except ValueError as e:
+                            print(f"Warning: Failed to parse one of the initial responses: {e}")
+                            # Debug
+                            # print(f"\nSystem prompt: \n{system_prompt_content}")
+                            # print(f"\nUser prompt: \n{prompt}")
+                            # print(f"\nFull response text: \n{full_response_text}...")  # Print the text for context
+                            parsed_results.append((None, None)) # Add a failure marker
+                    
+                    print("--- Single-Prompt Batch Response Received ---")
+                    return parsed_results
 
-            except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
-                print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
-                if attempt + 1 == self.max_retries:
-                    print("Max retries reached. Failing the request.")
-                    return [(None, None)] * n # Return failures
-                
-                # Exponential backoff with jitter
-                delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
-                print(f"Waiting for {delay:.2f} seconds before retrying...")
-                await asyncio.sleep(delay)
-                
-            except Exception as e:
-                print(f"An unexpected, non-retriable error occurred in generate_n_responses: {e}")
-                return [(None, None)] * n
+                except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
+                    print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
+                    if attempt + 1 == self.max_retries:
+                        print("Max retries reached. Failing the request.")
+                        return [(None, None)] * n # Return failures
+                    
+                    # Exponential backoff with jitter
+                    delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
+                    print(f"Waiting for {delay:.2f} seconds before retrying...")
+                    await asyncio.sleep(delay)
+                    
+                except Exception as e:
+                    print(f"An unexpected, non-retriable error occurred in generate_n_responses: {e}")
+                    return [(None, None)] * n
 
 
     async def generate_feedback(self, problem_def, verilog_code, simulation_log, temperature=1.0, top_p=1.0, max_tokens=2048):
@@ -844,9 +837,6 @@ class LLMInterface:
         # print(f"Verilog Code (first 200 chars):\n{verilog_code[:200]}...")
         # print(f"Simulation Log (first 500 chars):\n{simulation_log[:500]}...")
         # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
-
-        if not self.client:
-            raise RuntimeError("AsyncOpenAI client not initialized. Cannot generate feedback.")
 
         # --- 시스템 프롬프트 수정 ---
         # 점수 채점 및 포맷팅 지침이 추가되었습니다.
@@ -895,44 +885,45 @@ class LLMInterface:
             "```\n\n"
         )
 
-        for attempt in range(self.max_retries):
-            try:
-                # Increment the API call count
-                await self._increment_call_count()
-                chat_completion = await self.client.chat.completions.create(
-                    messages=[
-                        {"role": "system", "content": system_prompt_content},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    model=self.model_name,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p
-                )
-                feedback_text = chat_completion.choices[0].message.content.strip()
-                # print("LLM Response Received. Parsing feedback...")
-                return self._parse_feedback_response(feedback_text)
-            except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
-                print(f"OpenAI API call for feedback failed on attempt {attempt + 1}/{self.max_retries}: {e}")
-                if attempt + 1 == self.max_retries:
-                    print("Max retries reached. Failing the feedback request.")
+        async with AsyncOpenAI(api_key=self.api_key, timeout=20) as client:
+            for attempt in range(self.max_retries):
+                try:
+                    # Increment the API call count
+                    await self._increment_call_count()
+                    chat_completion = await client.chat.completions.create(
+                        messages=[
+                            {"role": "system", "content": system_prompt_content},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        model=self.model_name,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p
+                    )
+                    feedback_text = chat_completion.choices[0].message.content.strip()
+                    # print("LLM Response Received. Parsing feedback...")
+                    return self._parse_feedback_response(feedback_text)
+                except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
+                    print(f"OpenAI API call for feedback failed on attempt {attempt + 1}/{self.max_retries}: {e}")
+                    if attempt + 1 == self.max_retries:
+                        print("Max retries reached. Failing the feedback request.")
+                        return {
+                            'score': 0,
+                            'justification': 'LLM call for feedback failed after multiple retries.',
+                            'analysis': f"Could not generate feedback due to a persistent API error: {e}"
+                        }
+                    
+                    delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
+                    print(f"Waiting for {delay:.2f} seconds before retrying...")
+                    await asyncio.sleep(delay)
+
+                except Exception as e:
+                    print(f"An unexpected, non-retriable error occurred in generate_feedback: {e}")
                     return {
                         'score': 0,
-                        'justification': 'LLM call for feedback failed after multiple retries.',
-                        'analysis': f"Could not generate feedback due to a persistent API error: {e}"
+                        'justification': 'An unexpected error occurred during the LLM call.',
+                        'analysis': f"Could not generate feedback due to an unexpected error: {e}"
                     }
-                
-                delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
-                print(f"Waiting for {delay:.2f} seconds before retrying...")
-                await asyncio.sleep(delay)
-
-            except Exception as e:
-                print(f"An unexpected, non-retriable error occurred in generate_feedback: {e}")
-                return {
-                    'score': 0,
-                    'justification': 'An unexpected error occurred during the LLM call.',
-                    'analysis': f"Could not generate feedback due to an unexpected error: {e}"
-                }
         return {
             'score': 0,
             'justification': 'LLM call for feedback failed.',
