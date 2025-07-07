@@ -24,6 +24,8 @@ from collections import defaultdict
 import numpy as np
 import time
 
+import math # Used for UCB calculation
+
 
 def find_module_name(verilog_code):
     """
@@ -69,6 +71,11 @@ class EoHLogger:
         self.all_synth_passed = set()
         self.total_llm_api_calls = 0
         self.strategy_counter = defaultdict(int)  # Accumulated across generations, count of how many times each strategy was used
+        # Add attributes for tracking rewards and meta-strategies
+        # Initialize rewards for fail and success pools as dictionaries with default float values(0.0)
+        self.fail_pool_strategy_rewards = defaultdict(float)
+        self.success_pool_strategy_rewards = defaultdict(float)
+        self.meta_strategy_name = "random"  # Default meta-strategy name to be updated by engine
 
     def _calculate_ppa_stats(self, ppa_candidates):
         """Helper to calculate best/avg PPA metrics and scores for a list of candidates."""
@@ -98,7 +105,7 @@ class EoHLogger:
             "average_metrics": avg_metrics
         }
 
-    def log_generation(self, generation_num, candidates_this_gen, runtime_sec, llm_calls_this_gen):
+    def log_generation(self, generation_num, candidates_this_gen, runtime_sec, llm_calls_this_gen, fail_rewards_this_gen, success_rewards_this_gen, fail_strategy_stats, success_strategy_stats):
         """Logs the statistics for a single generation."""
         total_generated = len(candidates_this_gen)
         if total_generated == 0:
@@ -140,13 +147,37 @@ class EoHLogger:
             if ppa_cands:
                 strategy_ppa_stats[strategy] = self._calculate_ppa_stats(ppa_cands)
 
-        # 6. Assemble log entry
+        # 6. Update accumulated strategy rewards for each pool
+        for strategy, reward in fail_rewards_this_gen.items():
+            self.fail_pool_strategy_rewards[strategy] += reward
+        for strategy, reward in success_rewards_this_gen.items():
+            self.success_pool_strategy_rewards[strategy] += reward
+
+        # 7. Assemble log entry
         log_entry = {
             "generation": generation_num,
             "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "runtime_seconds": runtime_sec,
             "llm_api_calls": llm_calls_this_gen,
             "strategy_counts_this_generation": dict(strategy_count_this_gen),
+            "strategy_values_after_evolution": { 
+                # Use fail_strategy_stats and success_strategy_stats, actual Q-values used to select strategies next generation
+                # fail_strategy_stats and success_strategy_stats structure:
+                # key: strategy name
+                # value: dictionary {"count": 0, "value": 0.0}, 
+                # count is how many times this strategy was used, value is the Q-value to be used for next generation selection
+                # We want to only print the Q-values, not the counts.
+                "fail_pool": {k: v["value"] for k, v in fail_strategy_stats.items()},
+                "success_pool": {k: v["value"] for k, v in success_strategy_stats.items()}
+            },
+            "accumulated_strategy_rewards": {
+                "fail_pool": dict(self.fail_pool_strategy_rewards),
+                "success_pool": dict(self.success_pool_strategy_rewards)
+            },
+            "strategy_rewards_this_generation": {
+                "fail_pool": dict(fail_rewards_this_gen),
+                "success_pool": dict(success_rewards_this_gen)
+            },
             "success_rates": {
                 "total_syntax": total_syntax_success / total_generated if total_generated > 0 else 0,
                 "total_functionality": total_func_success / total_generated if total_generated > 0 else 0,
@@ -157,7 +188,7 @@ class EoHLogger:
             "strategy_ppa": strategy_ppa_stats
         }
 
-        # 7. Write to file and update accumulators
+        # 8. Write to file and update accumulators
         def numpy_converter(o):
             if isinstance(o, (np.generic, np.ndarray)):
                 return o.item() if o.size == 1 else o.tolist()
@@ -210,6 +241,7 @@ class EoHLogger:
             "problem_name": self.problem_name,
             "benchmark_name": self.benchmark_name,
             "model_name": self.model_name,
+            "strategy_selection_method": self.meta_strategy_name,
             "start_time": start_utc.isoformat(),
             "end_time": end_utc.isoformat(),
             "total_runtime_seconds": total_runtime_sec,
@@ -217,6 +249,10 @@ class EoHLogger:
             "total_generations": total_generations,
             "total_candidates_generated": total_unique_generated,
             "accumulated_strategy_counts:": dict(self.strategy_counter),
+            "accumulated_strategy_rewards": {
+                "fail_pool": dict(self.fail_pool_strategy_rewards),
+                "success_pool": dict(self.success_pool_strategy_rewards)
+            },
             "accumulated_success_rates": acc_rates,
             "ref_ppa_metric": self.ref_ppa_metrics,
             "final_population_ppa": final_ppa_stats,
@@ -650,7 +686,7 @@ class VerilogEvaluator:
         }
 
 class LLMInterface:
-    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", max_retries=3, base_delay=2):
+    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", max_retries=5, base_delay=2):
         if not api_key: 
             raise ValueError("API key is required for LLMInterface initialization.")
         
@@ -714,7 +750,7 @@ class LLMInterface:
         )
         
         # Use 'async with' to manage the client's lifecycle correctly
-        async with AsyncOpenAI(api_key=self.api_key, timeout=20) as client:
+        async with AsyncOpenAI(api_key=self.api_key, timeout=120) as client:
             for attempt in range(self.max_retries):
                 try:
                     # Increment the API call count
@@ -777,7 +813,7 @@ class LLMInterface:
             "```"
         )
 
-        async with AsyncOpenAI(api_key=self.api_key, timeout=20) as client:
+        async with AsyncOpenAI(api_key=self.api_key, timeout=120) as client:
             for attempt in range(self.max_retries):
                 try:
                     # Increment the API call count
@@ -885,7 +921,7 @@ class LLMInterface:
             "```\n\n"
         )
 
-        async with AsyncOpenAI(api_key=self.api_key, timeout=20) as client:
+        async with AsyncOpenAI(api_key=self.api_key, timeout=120) as client:
             for attempt in range(self.max_retries):
                 try:
                     # Increment the API call count
@@ -1004,6 +1040,7 @@ class Heuristic:
         # File path to the code for evaluation purposes
         self.code_file_path = ""
         self.strategy = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
+        self.reward_from_parent = 0.0 # Reward obtained by the strategy that created this heuristic
 
     def __repr__(self):
         thought_repr = self.thought[:50] 
@@ -1018,11 +1055,12 @@ class Heuristic:
         return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
                 f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
+# Entire class executing for the new REvolution framework for each problem in the benchmark.
 class EoHEngine:
-    # Entire class executing for the new REvolution framework for each problem in the benchmark.
     def __init__(self, benchmark_name, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
                  population_size=10, num_generations=5,
-                 default_llm_temp=1.0, default_llm_top_p=0.95, default_llm_max_tokens=2048, base_save_path=None):
+                 default_llm_temp=1.0, default_llm_top_p=0.95, default_llm_max_tokens=2048, base_save_path=None,
+                 strategy_selection_method="random", epsilon=0.1, ucb_c=2.0):
 
         self.base_save_path = base_save_path if base_save_path else os.path.join(os.getcwd(), "verilog_eoh_results")
         self.benchmark_name = benchmark_name
@@ -1043,6 +1081,18 @@ class EoHEngine:
         # Simplified to two population pools
         self.fail_pool = []
         self.success_pool = []
+
+        # Add attributes for dynamic strategy selection using meta-strategies
+        # Formulate problem of picking which strategy to use as a multi-armed bandit problem
+        self.strategy_selection_method = strategy_selection_method  # "random", "epsilon-greedy", "ucb"
+        self.epsilon = epsilon  # For epsilon-greedy strategy (default 0.1)
+        self.ucb_c = ucb_c  # Exploration parameter for UCB strategy (default 2.0)
+
+        self.fail_strats = ["M-F", "M-S", "M-E", "M-R", "M-I"]
+        self.success_strats = ["M-S", "M-E", "M-R", "M-I", "C-F"]
+
+        self.fail_strategy_stats = {s: {'count': 0, 'value': 0.0} for s in self.fail_strats}
+        self.success_strategy_stats = {s: {'count': 0, 'value': 0.0} for s in self.success_strats} 
         
         self.current_generation = 0
         self.ref_ppa_metrics = {}
@@ -1171,6 +1221,12 @@ class EoHEngine:
                 if sim_results['status'] == 'success':
                     output = sim_results.get('simulation_stdout', '')
                     m_match = re.search(r'^Mismatches: (\d+)', output, re.M)
+                    # Check for simulation success based on output in two ways:
+                    # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
+                    # This regex matches the expected output format from VerilogEval
+                    # It captures the number of mismatches in the first group.
+                    # If there are no mismatches (X==0), it means the design is functionally correct.
+                    # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
                     if (m_match and int(m_match.group(1)) == 0) or "===========Your Design Passed===========" in output:
                         is_success = True
                 
@@ -1276,6 +1332,8 @@ class EoHEngine:
                 initial_candidates.append(cand)
         
         if not initial_candidates:
+            print("WARNING: No valid candidates generated during initialization. Check LLM responses.")
+            print(f"LLM Responses: {results}")
             raise RuntimeError("Failed to generate any valid candidates during initialization.")
 
         self._evaluate_candidates(initial_candidates)
@@ -1288,12 +1346,76 @@ class EoHEngine:
         
         gen0_runtime = time.time() - self.gen_start_time
         llm_calls = self.llm.get_and_reset_api_calls()
-        self.logger.log_generation(0, initial_candidates, gen0_runtime, llm_calls)
+        self.logger.log_generation(0, initial_candidates, gen0_runtime, llm_calls, {}, {}, self.fail_strategy_stats, self.success_strategy_stats) # No rewards for initial generation
 
         print(f"--- Initial Population Processed. Success: {len(self.success_pool)}, Fail: {len(self.fail_pool)} ---")
         if self.success_pool:
             self.success_pool.sort(key=lambda c: c.score, reverse=True)
             print(f"Best initial candidate: {self.success_pool[0]}")
+
+    def _select_strategy(self, pool_type, available_strategies):
+        """Selects a strategy based on the chosen multi-armed bandit algorithm."""
+        if not available_strategies:
+            print(f"No available strategies for pool type '{pool_type}'. Returning None.")
+            return None
+
+        stats_dict = self.fail_strategy_stats if pool_type == 'fail' else self.success_strategy_stats
+        method = self.strategy_selection_method
+
+        if method == "random":
+            return random.choice(available_strategies)
+
+        elif method == "epsilon-greedy":
+            if random.random() < self.epsilon:
+                return random.choice(available_strategies)
+            else:
+                # Select the best-performing strategy from those available
+                # Break ties randomly in case of multiple strategies with the same score
+                max_score = max(stats_dict[s]["value"] for s in available_strategies)
+                best_strategies = [s for s in available_strategies if stats_dict[s]["value"] == max_score]
+                if len(best_strategies) > 1:
+                    return random.choice(best_strategies)
+                else:
+                    # If only one best strategy, return it
+                    return best_strategies[0] if best_strategies else random.choice(available_strategies)
+
+        elif method == "ucb":
+            # --- Initialization Phase ---
+            # Identify all strategies that have not been selected yet.
+            untried_strategies = [s for s in available_strategies if stats_dict[s]["count"] == 0]
+
+            # If there are untried strategies, randomly select one. This ensures that for the
+            # first evolution, strategies are selected as evenly as possible, and each
+            # strategy is guaranteed to be chosen once before moving to exploration.
+            if untried_strategies:
+                return random.choice(untried_strategies)
+            elif self.current_generation == 0:
+                # If we are still in the first generation and all strategies have been tried,
+                # we can randomly select one as evaluation hasn't been done yet.
+                # So rewards are not available.
+                return random.choice(available_strategies)
+
+            # --- Exploration Phase (Standard UCB) ---
+            # Once all strategies have been tried at least once, use the UCB formula.
+            total_pulls = sum(stats_dict[s]["count"] for s in available_strategies)
+            ucb_scores = {}
+            for strat in available_strategies:
+                avg_reward = stats_dict[strat]["value"]
+                exploration_term = self.ucb_c * math.sqrt(math.log(total_pulls) / stats_dict[strat]["count"])
+                ucb_scores[strat] = avg_reward + exploration_term
+            
+            # Return the strategy with the highest UCB score
+            # Need to break ties randomly if multiple strategies have the same score
+            max_score = max(ucb_scores.values())
+            best_strategies = [s for s, score in ucb_scores.items() if score == max_score]
+            if len(best_strategies) > 1:
+                return random.choice(best_strategies)
+            else:
+                return max(ucb_scores, key=ucb_scores.get)
+
+        else: # Fallback to random
+            return random.choice(available_strategies)
+
 
     def evolve_one_generation(self):
         """Performs one generation of the REvolution algorithm."""
@@ -1307,10 +1429,11 @@ class EoHEngine:
                       "M-R": {"func": self._create_prompt_M_R, "num_parents": 1},
                       "M-I": {"func": self._create_prompt_M_I, "num_parents": 1},
                       "C-F": {"func": self._create_prompt_C_F, "num_parents": 2}}
-        fail_strats, success_strats = ['M-F','M-S','M-E','M-R','M-I'], ['M-S','M-E','M-R','M-I','C-F']
+        # fail_strats, success_strats = ['M-F','M-S','M-E','M-R','M-I'], ['M-S','M-E','M-R','M-I','C-F']
 
         total_current_pop = len(self.fail_pool) + len(self.success_pool)
-        if total_current_pop == 0: return "STOP"
+        if total_current_pop == 0: 
+            return "STOP"
 
         num_from_fail = round(self.num_offspring_lambda * len(self.fail_pool) / total_current_pop)
         num_from_success = self.num_offspring_lambda - num_from_fail
@@ -1320,27 +1443,28 @@ class EoHEngine:
         # Generate from Fail Pool
         if self.fail_pool:
             for _ in range(num_from_fail):
-                strat_name = random.choice(fail_strats)
+                strat_name = self._select_strategy("fail", self.fail_strats)
                 parents = random.choices(self.fail_pool, k=strategies[strat_name]["num_parents"])
                 prompts.append(strategies[strat_name]["func"](parents))
-                metadata.append({"parents": parents, "strategy": strat_name})
+                metadata.append({"parents": parents, "strategy": strat_name, "pool": "fail"})
         
         # Generate from Success Pool
         if self.success_pool:
-            available_strategies = success_strats.copy()
+            available_success_strategies = self.success_strats.copy()
             # First check if we have enough candidates in the success pool for the strategy that requires fusion
             if len(self.success_pool) < 2:
-                available_strategies.remove("C-F")
+                available_success_strategies.remove("C-F")
             for _ in range(num_from_success):
-                strat_name = random.choice(available_strategies)
+                strat_name = self._select_strategy("success", available_success_strategies)
                 # Weighted selection for success pool
                 weights = [c.score - min(p.score for p in self.success_pool) + 0.1 for c in self.success_pool]
                 parents = random.choices(self.success_pool, weights=weights, k=strategies[strat_name]["num_parents"])
                 # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
                 prompts.append(strategies[strat_name]["func"](parents))
-                metadata.append({"parents": parents, "strategy": strat_name})
+                metadata.append({"parents": parents, "strategy": strat_name, "pool": "success"})
 
-        if not prompts: return "STOP"
+        if not prompts: 
+            return "STOP"
 
         llm_results = asyncio.run(self.llm.generate_batch_responses(prompts, self.default_llm_temp, self.default_llm_top_p, self.default_llm_max_tokens))
         
@@ -1354,6 +1478,61 @@ class EoHEngine:
                 new_offspring.append(cand)
 
         self._evaluate_candidates(new_offspring)
+
+        # For different pools/population types track strategy rewards separately
+        fail_rewards_this_gen = defaultdict(float)
+        success_rewards_this_gen = defaultdict(float)
+
+        # Reward calculation and strategy statistics/weight update
+        for i, cand in enumerate(new_offspring):
+            meta = metadata[i]
+            strategy_name = meta["strategy"]
+            parent_pool_type = meta["pool"]
+            parent = meta["parents"][0] # For simplicity, use the first parent for comparison
+            cand_parents = meta["parents"] # Could either be a single parent or two parents for fusion
+            reward = 0.0
+
+            if parent_pool_type == "fail":
+                # Reward is 1 if it moves from fail to success, 0 otherwise
+                if parent.status != "success" and cand.status == "success":
+                    reward = 1.0
+            elif parent_pool_type == "success":
+                # Reward is 1 if there is metric improvement, or 0 if none/worse
+                # Also take the fact that there are sometimes there are two parents,
+                # There has to be metric improvement over two parents in this case
+                if len(cand_parents) == 1:
+                    # Single parent case
+                    if parent.status == "success" and cand.status == "success":
+                        if cand.score > parent.score:
+                            reward = 1.0
+                elif len(cand_parents) == 2:
+                    # Two parents case (fusion)
+                    parent1, parent2 = cand_parents
+                    if parent1.status == "success" and parent2.status == "success" and cand.status == "success":
+                        # Reward is the difference between the best child and the best parent
+                        best_parent_score = max(parent1.score, parent2.score)
+                        if cand.score > best_parent_score:
+                            reward = 1.0
+
+            cand.reward_from_parent = reward
+            # Populate the correct reward dictionary based on the pool type
+            if parent_pool_type == "fail":
+                fail_rewards_this_gen[strategy_name] += reward
+            else:
+                success_rewards_this_gen[strategy_name] += reward
+
+            # Update strategy stats 
+            # Use nonstationary bandit approach to update strategy statistics (Section 2.5 of Sutton and Barto book)
+            # Q_(n+1) = Q_n + alpha * (R_n - Q_n)
+            # where alpha = 1 / (n) is the learning rate,
+            # 1 / (n) satisfies the stochastic approximation condition
+            # sigma alpha_n = infinity, and sigma alpha_n^2 < infinity
+            # R_n is the reward from the parent, and Q_n is the current value of the strategy
+            stats_dict = self.fail_strategy_stats if parent_pool_type == "fail" else self.success_strategy_stats
+
+            s = stats_dict[strategy_name]
+            s["count"] += 1  # Increment the count of times this strategy was used
+            s["value"] = s["value"] + (reward - s["value"]) / (s["count"])
 
         # Survivor Selection (Elitism)
         candidate_pool = self.success_pool + new_offspring
@@ -1374,7 +1553,7 @@ class EoHEngine:
         gen_runtime = time.time() - self.gen_start_time
         llm_calls = self.llm.get_and_reset_api_calls()
         if self.logger:
-            self.logger.log_generation(self.current_generation, new_offspring, gen_runtime, llm_calls)
+            self.logger.log_generation(self.current_generation, new_offspring, gen_runtime, llm_calls, fail_rewards_this_gen, success_rewards_this_gen, self.fail_strategy_stats, self.success_strategy_stats)
 
         print(f"--- Gen {self.current_generation} Complete. Pools: Success({len(self.success_pool)}), Fail({len(self.fail_pool)}) ---")
         if self.success_pool:
@@ -1390,6 +1569,7 @@ class EoHEngine:
         try:
             self._calculate_reference_ppa()
             self.logger = EoHLogger(self.problem_name, self.benchmark_name, self.llm.model_name, self.base_save_path, self.ref_ppa_metrics)
+            self.logger.meta_strategy_name = self.strategy_selection_method
             self.initialize_population()
         except Exception as e:
             print(f"Critical error during initialization: {e}")
@@ -1409,9 +1589,10 @@ class EoHEngine:
             best_solution = self.success_pool[0]
             print(f"Final Best Solution Found:\n{best_solution}")
             final_report = best_solution.ppa_metrics.get("report_path", "N/A")
+            final_score = best_solution.score if best_solution.score is not None else "N/A"
             # # Debug print success pool
             # print(f"Success Pool: {[str(c) for c in self.success_pool]}")
-            return f"{self.problem_name},success,{best_solution.code_file_path},{final_report}"
+            return f"{self.problem_name},success,{best_solution.code_file_path},{final_report},{final_score}"
         else:
             print("No functionally correct and synthesizable solution found.")
             return f"{self.problem_name},failed"
@@ -1444,7 +1625,10 @@ def run_problem_worker(args_tuple):
         base_save_path=args.save_path,
         default_llm_temp=args.temperature,
         default_llm_top_p=args.top_p,
-        default_llm_max_tokens=args.max_tokens
+        default_llm_max_tokens=args.max_tokens,
+        strategy_selection_method=args.strategy_selection,
+        epsilon=args.epsilon,
+        ucb_c=args.ucb_c
     )
     result_str = eoh_engine.run()
     return result_str
@@ -1474,6 +1658,13 @@ if __name__ == "__main__":
     parser.add_argument('--temperature', type=float, default=1.0)
     parser.add_argument('--top_p', type=float, default=0.95)
     parser.add_argument('--max_tokens', type=int, default=2048)
+    parser.add_argument('--strategy_selection', type=str, default='random', choices=['random', 'epsilon-greedy', 'ucb'],
+                        help='The meta-strategy for selecting genetic operators.')
+    parser.add_argument('--epsilon', type=float, default=0.1,
+                        help='The exploration factor for the epsilon-greedy strategy.')
+    parser.add_argument('--ucb_c', type=float, default=2.0,
+                        help='The exploration constant (c) for the UCB strategy.')
+
 
     args = parser.parse_args()
 
