@@ -1,0 +1,29 @@
+We will implement a Moore FSM with states encoding the Lemming's current action and direction. The states are:
+
+- WALK_LEFT
+- WALK_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- SPLATTER (final state)
+
+The FSM transitions are based on inputs bump_left, bump_right, ground, and dig, with priority: fall > dig > bump direction change.
+
+- When ground=0 and not already falling or splattered, transition to FALL state preserving direction.
+- When falling and ground=1, if fall duration > 20 cycles, transition to SPLATTER, else resume walking in previous direction.
+- When walking on ground and dig=1, transition to DIG state in current direction.
+- When digging and ground=0, transition to FALL state in current direction.
+- When walking and bumped (left or right or both), switch walking direction.
+- Bumps have no effect when falling or digging.
+- In SPLATTER state, all outputs are 0 forever until reset.
+
+We will keep a fall counter to track how long the Lemming has been falling.
+
+Outputs are determined solely by the current state (Moore machine).
+
+The asynchronous reset sets the FSM to WALK_LEFT and clears the fall counter.
+
+We will implement the FSM with a state register and a fall counter register, updating on the positive clock edge, with asynchronous reset.
+
+Outputs are assigned combinationally from the current state.

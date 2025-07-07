@@ -1,0 +1,56 @@
+Analyze the Karnaugh map to find a minimal sum-of-products expression for f, using the don't-care conditions to simplify the function. Then implement the simplified logic in Verilog.
+
+K-map (x[3]x[4] rows, x[1]x[2] columns):
+
+        00  01  11  10
+00 |  d | 0 | d | d |
+01 |  0 | d | 1 | 0 |
+11 |  1 | 1 | d | d |
+10 |  1 | 1 | 0 | d |
+
+Let's assign the cells with coordinates (x[3]x[4], x[1]x[2]):
+
+(00,00) = d
+(00,01) = 0
+(00,11) = d
+(00,10) = d
+
+(01,00) = 0
+(01,01) = d
+(01,11) = 1
+(01,10) = 0
+
+(11,00) = 1
+(11,01) = 1
+(11,11) = d
+(11,10) = d
+
+(10,00) = 1
+(10,01) = 1
+(10,11) = 0
+(10,10) = d
+
+We want to cover all 1's and can use d's as 1 or 0 to simplify.
+
+1's at:
+(01,11), (11,00), (11,01), (10,00), (10,01)
+
+Try to find groups:
+
+- Group1: (11,00), (11,01), (10,00), (10,01) = x[3]x[4] = 1x (11 or 10), x[1]x[2] = 00 or 01
+  This corresponds to x[3] = 1 and x[2]' (since x[2] = 0 in 00 and 01)
+  So group1: x[3] & ~x[2]
+
+- Group2: (01,11) = x[3]x[4] = 01, x[1]x[2] = 11
+  Single 1, but d's at (00,11) and (11,11) can be 1 to form a vertical group in column 11:
+  (00,11) = d, (01,11) = 1, (11,11) = d, (10,11) = 0
+  Can't form a group of 4 because (10,11) = 0
+  But can form a group of 2 with (00,11) and (01,11) if (00,11) = 1 (d)
+  So group2: x[4]' & x[1] & x[2] (since row 00 = x[3]'x[4]', row 01 = x[3]'x[4])
+  Actually, rows 00 and 01 differ in x[4], so group2 is x[3]' & x[1] & x[2]
+
+So final expression:
+
+f = (x[3] & ~x[2]) + (~x[3] & x[1] & x[2])
+
+Implement this in Verilog.

@@ -1,0 +1,38 @@
+Score: 3
+Justification: The code is syntactically correct and compiles, but it fails simulation with a large number of mismatches on both the done signal and the out_bytes output, indicating significant functional errors in the FSM implementation.
+
+ANALYSIS:
+The design intent is to implement a 3-byte message capture FSM that waits for a byte with in[3]=1 to start capturing, then collects two more bytes, and asserts done immediately after the third byte is received, outputting the concatenated 24-bit message.
+
+The code uses a 3-state FSM (IDLE, BYTE2, BYTE3) with synchronous reset and updates state and outputs in a single always block triggered on posedge clk.
+
+Key issues causing simulation failures:
+
+1. **Incorrect next_state updates inside the sequential always block:**
+   The code assigns `next_state` inside the clocked always block, mixing combinational next state logic with sequential logic. This can cause race conditions and incorrect state transitions. The design intent requires next_state to be computed combinationally before the clock edge, but here it is updated sequentially, which can cause the FSM to stall or skip states.
+
+2. **Missing combinational next_state logic:**
+   There is no separate combinational always block to compute `next_state` based on current `state` and inputs. Instead, `next_state` is assigned inside the clocked block, which is not standard FSM design practice and likely causes incorrect state progression.
+
+3. **Output `done` is assigned inside the clocked block with default 0 and set to 1 only in BYTE3 state:**
+   While this matches the intent to assert done immediately after the third byte, the done signal is reset to 0 at every clock cycle before the case statement, which may cause timing issues if the testbench expects done to be asserted for exactly one cycle after the third byte.
+
+4. **Partial register updates for out_bytes:**
+   The code updates only the relevant byte of `out_bytes` in each state, but since `out_bytes` is a reg, the other bits retain their previous values. This is consistent with the intent, but if the initial out_bytes is zeroed only on reset, and the FSM does not properly transition, the output may be incorrect or stale.
+
+5. **Reset behavior:**
+   The reset is synchronous and sets state to IDLE, out_bytes to zero, and done to zero, which is correct. However, due to the next_state assignment inside the clocked block, the FSM may not properly initialize or transition after reset.
+
+6. **Mismatch in simulation:**
+   The simulation log shows 488 mismatches on out_bytes and 966 mismatches on done, with the first mismatch at time 200-210, indicating the FSM does not correctly detect message boundaries or assert done at the correct cycle.
+
+In summary, the main cause of failure is the incorrect FSM coding style: next_state should be computed combinationally outside the clocked block, and state should be updated on the clock edge. Assigning next_state inside the clocked block breaks the FSM logic, causing incorrect state transitions and output timing, which leads to the observed simulation mismatches.
+
+These issues directly violate the design intent of detecting the first byte with in[3]=1, capturing three bytes, and asserting done immediately after the third byte.
+
+Relevant code sections:
+- The always @(posedge clk) block where next_state is assigned inside the case statement.
+- The done signal assignment inside the same block.
+- The partial updates to out_bytes in each state.
+
+No syntax errors are present, but the FSM logic is flawed, causing functional failures in simulation.

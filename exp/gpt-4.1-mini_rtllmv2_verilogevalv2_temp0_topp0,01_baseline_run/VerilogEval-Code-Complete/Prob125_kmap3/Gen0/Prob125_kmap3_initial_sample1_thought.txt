@@ -1,0 +1,91 @@
+First, interpret the Karnaugh map with variables a,b as columns and c,d as rows. The map is:
+
+       ab
+cd   01  00  10  11
+00 | d | 0 | 1 | 1 |
+01 | 0 | 0 | d | d |
+11 | 0 | 1 | 1 | 1 |
+10 | 0 | 1 | 1 | 1 |
+
+Mapping the inputs to the outputs:
+
+- For cd=00 (c=0,d=0):
+  ab=01 (a=0,b=1): d (don't care)
+  ab=00 (a=0,b=0): 0
+  ab=10 (a=1,b=0): 1
+  ab=11 (a=1,b=1): 1
+
+- For cd=01 (c=0,d=1):
+  ab=01: 0
+  ab=00: 0
+  ab=10: d
+  ab=11: d
+
+- For cd=11 (c=1,d=1):
+  ab=01: 0
+  ab=00: 1
+  ab=10: 1
+  ab=11: 1
+
+- For cd=10 (c=1,d=0):
+  ab=01: 0
+  ab=00: 1
+  ab=10: 1
+  ab=11: 1
+
+We can use the don't cares to simplify the expression.
+
+Let's write the minterms where output=1:
+
+- cd=00, ab=10 (a=1,b=0,c=0,d=0)
+- cd=00, ab=11 (a=1,b=1,c=0,d=0)
+- cd=11, ab=00 (a=0,b=0,c=1,d=1)
+- cd=11, ab=10 (a=1,b=0,c=1,d=1)
+- cd=11, ab=11 (a=1,b=1,c=1,d=1)
+- cd=10, ab=00 (a=0,b=0,c=1,d=0)
+- cd=10, ab=10 (a=1,b=0,c=1,d=0)
+- cd=10, ab=11 (a=1,b=1,c=1,d=0)
+
+Also, ab=00, cd=11 and cd=10 are 1, so for c=1,d=x and a=0,b=0 output=1.
+
+Similarly, for c=1,d=1 or d=0 and a=1,b=0 or a=1,b=1 output=1.
+
+For cd=00, ab=10 and 11 output=1.
+
+Try to find groups:
+
+Group 1: All cells where c=1 (cd=10 or 11) and b=0 or b=1 and a=0 or 1, except ab=01 (a=0,b=1) is 0.
+
+But ab=01 is 0 for c=1 rows.
+
+Group 2: For cd=00, ab=10 and 11 are 1.
+
+Group 3: For cd=11 and 10, ab=00 is 1.
+
+Group 4: For cd=00, ab=00 is 0.
+
+Group 5: For cd=01, ab=00 and 01 are 0.
+
+Try to write expression:
+
+- For c=1 (cd=10 or 11), output=1 except when ab=01 (a=0,b=1) which is 0.
+
+So for c=1 and not (a=0,b=1) output=1.
+
+- For cd=00 (c=0,d=0), output=1 when ab=10 or 11 (a=1,b=0 or a=1,b=1).
+
+- For cd=01 (c=0,d=1), output=0 or don't care.
+
+So expression:
+
+out = (c & ~(~a & b)) | (~c & ~d & a)
+
+Explanation:
+
+- c & ~(~a & b): c=1 and not (a=0,b=1) means c=1 and (a=1 or b=0)
+
+- ~c & ~d & a: c=0,d=0,a=1
+
+This matches the map.
+
+Implement this in Verilog.

@@ -1,0 +1,32 @@
+To implement Y0 (the least significant bit of the next state) and output z based on the present state y[2:0] and input x, we first analyze the given state table. For each present state and input x, we note the next state and output z. Then, we derive the logic expressions for Y0 and z by mapping the transitions and outputs.
+
+From the table:
+
+Present state y | Next state when x=0 | Next state when x=1 | z
+000            | 000 (Y0=0)          | 001 (Y0=1)          | 0
+001            | 001 (Y0=1)          | 100 (Y0=0)          | 0
+010            | 010 (Y0=0)          | 001 (Y0=1)          | 0
+011            | 001 (Y0=1)          | 010 (Y0=0)          | 1
+100            | 011 (Y0=1)          | 100 (Y0=0)          | 1
+
+We can write the truth table for Y0 and z as functions of y[2:0] and x:
+
+y2 y1 y0 x | Y0 | z
+0  0  0  0 | 0  | 0
+0  0  0  1 | 1  | 0
+0  0  1  0 | 1  | 0
+0  0  1  1 | 0  | 0
+0  1  0  0 | 0  | 0
+0  1  0  1 | 1  | 0
+0  1  1  0 | 1  | 1
+0  1  1  1 | 0  | 1
+1  0  0  0 | 1  | 1
+1  0  0  1 | 0  | 1
+
+From this, we can derive the logic expressions for Y0 and z using combinational logic.
+
+For z, it is 1 only when present state is 011 or 100, regardless of x.
+
+For Y0, it depends on y and x as per the table.
+
+We implement these as combinational always block or continuous assignments.

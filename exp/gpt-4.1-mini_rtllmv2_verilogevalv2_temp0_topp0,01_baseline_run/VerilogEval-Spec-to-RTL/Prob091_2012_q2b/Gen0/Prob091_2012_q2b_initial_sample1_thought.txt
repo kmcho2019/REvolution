@@ -1,0 +1,23 @@
+The FSM uses one-hot encoding with states A to F represented by y[0] to y[5]. The transitions depend on input w and current state y.
+
+We need to find the next state inputs for y[1] (state B) and y[3] (state D).
+
+From the FSM:
+
+- y[1] (B) next state input Y1 is high when:
+  - From A (y[0]) with w=1: A --1--> B
+  - From C (y[2]) with w=1: C --1--> E (no)
+  - From other states: no direct transition to B
+  So only from A with w=1.
+
+- y[3] (D) next state input Y3 is high when:
+  - From B (y[1]) with w=0: B --0--> D
+  - From C (y[2]) with w=0: C --0--> D
+  - From E (y[4]) with w=0: E --0--> D
+  - From F (y[5]) with w=0: F --0--> D
+  - From D (y[3]) with w=0: D --0--> A (no)
+  So Y3 = (y[1] & ~w) | (y[2] & ~w) | (y[4] & ~w) | (y[5] & ~w)
+
+Implement these as combinational logic outputs.
+
+Note: y is 6 bits, y[0] to y[5], with y[0] = A, y[1] = B, y[2] = C, y[3] = D, y[4] = E, y[5] = F.

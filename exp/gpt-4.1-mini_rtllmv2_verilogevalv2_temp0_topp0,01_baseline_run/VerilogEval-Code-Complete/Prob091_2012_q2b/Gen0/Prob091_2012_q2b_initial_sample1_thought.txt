@@ -1,0 +1,17 @@
+We need to find the next state logic for flip-flops y[1] (state B) and y[3] (state D) based on the current state y and input w.
+
+From the state transitions:
+
+- For Y1 (next state B):
+  B is reached from A on input w=1.
+  So, Y1 = (y[0] & w)
+
+- For Y3 (next state D):
+  D is reached from:
+    - B on w=0: y[1] & ~w
+    - C on w=0: y[2] & ~w
+    - E on w=0: y[4] & ~w
+    - F on w=0: y[5] & ~w
+  So, Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+Implement these expressions directly in Verilog.

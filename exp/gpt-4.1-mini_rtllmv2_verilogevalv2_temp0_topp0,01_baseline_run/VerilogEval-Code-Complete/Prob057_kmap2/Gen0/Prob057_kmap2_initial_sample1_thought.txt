@@ -1,0 +1,124 @@
+First, interpret the Karnaugh map to find the minterms where the output is 1. Then, simplify the boolean expression using K-map grouping. Finally, implement the simplified expression in Verilog.
+
+K-map (cd rows, ab columns):
+
+       ab
+cd    00  01  11  10
+00 | 1 | 1 | 0 | 1 |
+01 | 1 | 0 | 0 | 1 |
+11 | 0 | 1 | 1 | 1 |
+10 | 1 | 1 | 0 | 0 |
+
+List minterms (cdab):
+
+cd=00 (c=0,d=0):
+ab=00 (a=0,b=0): 1 -> m0 (c=0,d=0,a=0,b=0)
+ab=01 (a=0,b=1): 1 -> m1
+ab=11 (a=1,b=1): 0
+ab=10 (a=1,b=0): 1 -> m2
+
+cd=01 (c=0,d=1):
+ab=00:1 -> m4
+ab=01:0
+ab=11:0
+ab=10:1 -> m6
+
+cd=11 (c=1,d=1):
+ab=00:0
+ab=01:1 -> m13
+ab=11:1 -> m15
+ab=10:1 -> m14
+
+cd=10 (c=1,d=0):
+ab=00:1 -> m8
+ab=01:1 -> m9
+ab=11:0
+ab=10:0
+
+Minterms with 1: 0,1,2,4,6,8,9,13,14,15
+
+Now group to simplify:
+
+Group1: m0,m1,m4,m8,m9 (all with a=0 or 1, b=0 or 1, c=0 or 1, d=0 or 1) - check carefully.
+
+Try to find groups:
+
+- Group of four: m0(0000), m1(0001), m4(0100), m5(0101) but m5=0, so no.
+
+- Group m0,m1,m8,m9 (cd=00 and 10, ab=00 and 01): c=0 or 1, d=0, a=0, b=0 or 1
+
+This group corresponds to a=0, d=0 (since c varies 0 or 1, b varies 0 or 1)
+
+So group1: a=0, d=0 -> ~a & ~d
+
+- Group m2(0010), m6(0110), m14(1110), m10(1010) but m10=0, so no.
+
+- Group m2,m6,m14: c=0 or 1, d=0 or 1, a=1, b=0
+
+Check if we can group m2,m6,m14:
+
+m2=0010 (c=0,d=0,a=1,b=0)
+
+m6=0110 (c=0,d=1,a=1,b=0)
+
+m14=1110 (c=1,d=1,a=1,b=0)
+
+They differ in c and d, but a=1,b=0 fixed.
+
+So group2: a=1,b=0
+
+- Group m13(1101), m15(1111), m14(1110)
+
+m13=1101 (c=1,d=1,a=0,b=1)
+
+m15=1111 (c=1,d=1,a=1,b=1)
+
+m14=1110 (c=1,d=1,a=1,b=0)
+
+They share c=1,d=1
+
+Group3: c=1,d=1
+
+- Group m1(0001), m9(1001), m13(1101)
+
+m1=0001 (c=0,d=0,a=0,b=1)
+
+m9=1001 (c=1,d=0,a=0,b=1)
+
+m13=1101 (c=1,d=1,a=0,b=1)
+
+They share a=0,b=1
+
+Group4: a=0,b=1
+
+- Group m0,m4,m8
+
+m0=0000, m4=0100, m8=1000
+
+They share b=0,d=0
+
+Group5: b=0,d=0
+
+But this overlaps with group1 (~a & ~d), so group1 is better.
+
+Final simplified expression:
+
+out = (~a & ~d) | (a & ~b) | (c & d)
+
+Check if (a & ~b) covers m2,m6,m14
+
+Check if (c & d) covers m13,m14,m15
+
+Check if (~a & b) covers m1,m9,m13? No, we used (a=0,b=1) group4, so add ( ~a & b )
+
+So final expression:
+
+out = (~a & ~d) | (a & ~b) | (c & d) | (~a & b)
+
+Simplify (~a & b) | (~a & ~d) = ~a & (b | ~d)
+
+So:
+
+out = ~a & (b | ~d) | a & ~b | c & d
+
+Implement this in Verilog.

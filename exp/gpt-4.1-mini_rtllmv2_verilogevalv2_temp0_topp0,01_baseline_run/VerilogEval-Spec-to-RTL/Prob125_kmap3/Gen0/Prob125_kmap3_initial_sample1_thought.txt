@@ -1,0 +1,40 @@
+First, interpret the Karnaugh map with inputs a,b as columns and c,d as rows. The map is:
+
+       ab
+cd   01  00  10  11
+00 | d | 0 | 1 | 1 |
+01 | 0 | 0 | d | d |
+11 | 0 | 1 | 1 | 1 |
+10 | 0 | 1 | 1 | 1 |
+
+Since d is don't care, we can assign convenient values to simplify the expression.
+
+Assign d=0 for all don't care cells to simplify.
+
+Rewrite the map with d=0:
+
+       ab
+cd   01  00  10  11
+00 | 0 | 0 | 1 | 1 |
+01 | 0 | 0 | 0 | 0 |
+11 | 0 | 1 | 1 | 1 |
+10 | 0 | 1 | 1 | 1 |
+
+Now, identify the minterms where output=1:
+
+- c=0,d=0 (cd=00), ab=10 or 11 => a=1,b=0 or 1, c=0,d=0
+- c=1,d=1 (cd=11), ab=01,10,11 => a,b,c=1,d=1 with b=1 or a=1
+- c=1,d=0 (cd=10), ab=01,10,11 => a,b,c=1,d=0 with b=1 or a=1
+
+From the map, the output is 1 when:
+
+- c=0,d=0 and a=1 (since ab=10 or 11 means a=1)
+- c=1 and a=1 or b=1 (since for cd=11 and 10, output=1 when a=1 or b=1)
+
+So the function can be simplified as:
+
+out = (c' & d' & a) | (c & (a | b))
+
+Implement this logic in Verilog.
+
+Note: c' means ~c, d' means ~d.

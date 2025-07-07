@@ -1,0 +1,15 @@
+Implement a finite state machine with the following states:
+- IDLE: searching for the pattern 1101 on the serial data input.
+- SHIFT: after detecting 1101, assert shift_ena for exactly 4 clock cycles to shift in 4 bits.
+- COUNT: assert counting and wait for done_counting to go high.
+- DONE: assert done and wait for ack to go high, then return to IDLE.
+
+To detect the pattern 1101, use a 4-bit shift register that shifts in the data each clock cycle. When the pattern matches, transition to SHIFT.
+
+In SHIFT, use a 2-bit counter to count 4 clock cycles while asserting shift_ena.
+
+In COUNT, assert counting until done_counting is high.
+
+In DONE, assert done until ack is high.
+
+On synchronous reset, go to IDLE state and clear outputs.

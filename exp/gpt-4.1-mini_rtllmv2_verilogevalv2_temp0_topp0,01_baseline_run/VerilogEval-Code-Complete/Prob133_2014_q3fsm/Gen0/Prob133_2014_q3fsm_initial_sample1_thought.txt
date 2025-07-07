@@ -1,0 +1,20 @@
+The FSM starts in state A, waiting for s=1 to move to state B. In state B, it counts the number of times w=1 over the next three clock cycles. We can implement this counting with a 2-bit counter (0 to 3) and a 2-bit cycle counter (0 to 3). After three cycles, if the count of w=1 is exactly 2, output z=1 for one cycle; otherwise z=0. Then reset counters and continue checking w in groups of three cycles. We only need two main states: A and B. In B, we use internal counters to track the number of cycles and w=1 counts. The output z is asserted for one cycle after the three cycles are counted. Reset is synchronous and active high.
+
+State encoding:
+- A: waiting for s=1
+- B: counting w over 3 cycles
+
+Internal registers:
+- cycle_count: counts 0 to 3 (3 cycles)
+- w_count: counts number of w=1 in current 3-cycle window
+
+Output z is asserted for one cycle after counting.
+
+Implementation details:
+- On reset, go to A, z=0
+- In A, if s=1, go to B and start counting cycles and w
+- In B, increment cycle_count each clock, increment w_count if w=1
+- When cycle_count == 3, check w_count==2, set z=1 for one cycle, then reset counters and continue counting next 3 cycles
+- z=1 only for one cycle after counting
+
+This approach uses minimal states and simple counters.

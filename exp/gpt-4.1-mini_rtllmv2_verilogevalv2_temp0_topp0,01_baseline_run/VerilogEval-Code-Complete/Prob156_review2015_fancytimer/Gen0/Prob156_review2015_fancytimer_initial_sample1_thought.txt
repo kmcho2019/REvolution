@@ -1,0 +1,23 @@
+Implement a finite state machine (FSM) with the following states:
+- SEARCH: Shift in bits to detect the pattern 1101 on the data input.
+- LOAD_DELAY: After detecting 1101, shift in 4 bits MSB first to load delay[3:0].
+- COUNT: Count down the timer for (delay+1)*1000 cycles, outputting the current count value on count[3:0] every 1000 cycles.
+- DONE: Assert done, wait for ack=1 to return to SEARCH.
+
+Use a 4-bit shift register to detect the start pattern. Use a 4-bit register to store delay. Use a 10-bit counter to count 1000 clock cycles, and a 4-bit counter to count down delay. The count output shows the current remaining delay value during counting, otherwise don't care.
+
+Reset synchronously to SEARCH state.
+
+The data input is sampled every clock cycle.
+
+The counting output is asserted only during COUNT state.
+
+The done output is asserted only during DONE state.
+
+The count output is updated every clock cycle during COUNT state to reflect the current remaining delay value.
+
+The FSM transitions:
+- SEARCH: shift in data, when pattern 1101 detected, go to LOAD_DELAY.
+- LOAD_DELAY: shift in 4 bits MSB first into delay register, then go to COUNT.
+- COUNT: count down delay with 1000 cycle subcounts, when done go to DONE.
+- DONE: assert done, wait for ack=1, then go to SEARCH.

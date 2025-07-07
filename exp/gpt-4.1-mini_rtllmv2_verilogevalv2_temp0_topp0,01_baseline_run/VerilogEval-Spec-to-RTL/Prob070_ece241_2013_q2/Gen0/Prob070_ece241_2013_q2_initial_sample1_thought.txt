@@ -1,0 +1,101 @@
+First, interpret the 4 inputs (a,b,c,d) as a 4-bit binary number with a as the MSB and d as the LSB. The module should output logic-1 for inputs representing decimal 2, 7, or 15, and logic-0 for inputs representing decimal 0,1,4,5,6,9,10,13,14. Inputs 3,8,11,12 never occur.
+
+We will derive the minimal sum-of-products (SOP) and product-of-sums (POS) expressions for the output based on the given minterms and maxterms.
+
+Mapping inputs to bits: a b c d (a is MSB, d is LSB)
+Decimal to binary:
+0 = 0000
+1 = 0001
+2 = 0010
+3 = 0011 (never occurs)
+4 = 0100
+5 = 0101
+6 = 0110
+7 = 0111
+8 = 1000 (never occurs)
+9 = 1001
+10= 1010
+11= 1011 (never occurs)
+12= 1100 (never occurs)
+13= 1101
+14= 1110
+15= 1111
+
+Outputs=1 for 2(0010),7(0111),15(1111)
+Outputs=0 for 0,1,4,5,6,9,10,13,14
+
+We can write the minterms for output=1:
+m2 = a'b'c d'
+m7 = a' b c d
+m15= a b c d
+
+But let's write them explicitly:
+
+2 = 0 0 1 0 => a'=0, b'=0, c=1, d=0
+7 = 0 1 1 1 => a'=0, b=1, c=1, d=1
+15= 1 1 1 1 => a=1, b=1, c=1, d=1
+
+Sum of products (SOP) minterms:
+m2: a' b' c d'
+m7: a' b c d
+m15: a b c d
+
+We can simplify the SOP expression using Karnaugh map or Boolean algebra.
+
+K-map for output=1:
+
+a b c d
+We place 1s at 2,7,15.
+
+Let's write the minterms:
+
+m2: a' b' c d'
+m7: a' b c d
+m15: a b c d
+
+Try to find common terms:
+
+- m7 and m15 share b c d, differ in a (a' and a), so b c d is common.
+- m2 is separate.
+
+So SOP = b c d + a' b' c d'
+
+Now for POS (product of sums), output=0 for 0,1,4,5,6,9,10,13,14.
+
+Maxterms correspond to output=0:
+
+0=0000
+1=0001
+4=0100
+5=0101
+6=0110
+9=1001
+10=1010
+13=1101
+14=1110
+
+We can write the maxterms for these inputs and simplify.
+
+Alternatively, since POS is the complement of SOP, and SOP is b c d + a' b' c d', the complement is:
+
+out = b c d + a' b' c d'
+
+out' = (b c d)' (a' b' c d')'
+
+Using De Morgan's:
+
+(b c d)' = b' + c' + d'
+(a' b' c d')' = a + b + c' + d
+
+So POS = (b' + c' + d') (a + b + c' + d)
+
+This is the minimal POS expression.
+
+Therefore:
+
+out_sop = b c d + a' b' c d'
+out_pos = (b' + c' + d') (a + b + c' + d)
+
+We will implement these two expressions in the module.
+
+Note: Inputs are single bits, outputs are single bits.

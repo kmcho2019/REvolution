@@ -1,0 +1,15 @@
+To implement a serial 2's complementer as a Moore state machine, we need to process the input bits starting from the least significant bit (LSB). The 2's complement of a binary number can be obtained by copying all the least significant bits up to and including the first '1' bit, then inverting all the remaining more significant bits.
+
+The state machine will have two states:
+- COPY: output the input bit as is until the first '1' is encountered.
+- INVERT: after the first '1' is output, invert all subsequent bits.
+
+On reset (asynchronous active high), the machine resets to the COPY state.
+
+The output z depends only on the current state and input x (Moore machine output depends on state only, but here output depends on input and state, so we treat output as combinational logic based on state and input).
+
+The machine processes bits on each positive clock edge when reset is not asserted.
+
+When reset is asserted, the machine stops processing and output is zero.
+
+This design uses asynchronous reset, positive edge clock, and outputs the 2's complement serially.

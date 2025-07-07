@@ -1,0 +1,78 @@
+The K-map is a function of inputs a,b,c,d, but the 4-to-1 mux uses a,b as selectors and mux_in[3:0] as inputs. So the function F(a,b,c,d) = mux_in[{b,a}] (assuming ab is the selector with a as MSB or LSB).
+
+Given the K-map with rows cd and columns ab, the 4-to-1 mux selects based on ab, so mux_in[0] corresponds to ab=00, mux_in[1] to ab=01, mux_in[2] to ab=11, mux_in[3] to ab=10.
+
+We need to implement mux_in[3:0] as functions of c and d only, using only 2-to-1 muxes and constants 0 or 1 (no other gates).
+
+From the K-map:
+
+ab=00 (mux_in[0]): cd=00->0, 01->1, 11->1, 10->1
+ab=01 (mux_in[1]): cd=00->0, 01->0, 11->0, 10->0
+ab=11 (mux_in[2]): cd=00->0, 01->0, 11->1, 10->0
+ab=10 (mux_in[3]): cd=00->1, 01->0, 11->1, 10->1
+
+We implement each mux_in[i] as a function of c,d using 2-to-1 muxes only.
+
+For example, for mux_in[0]:
+
+cd: 00=0, 01=1, 11=1, 10=1
+
+We can write mux_in[0] = if c=0 then d else 1
+
+Because when c=0 (cd=00 or 01), output is 0 or 1 (matches d), when c=1 (cd=10 or 11), output is 1.
+
+Similarly for mux_in[1]:
+
+All zeros, so mux_in[1] = 0
+
+mux_in[2]:
+
+cd=00->0, 01->0, 11->1, 10->0
+
+So output is 1 only when c=1 and d=1, else 0
+
+So mux_in[2] = c & d
+
+We can implement c & d using muxes:
+
+c & d = if c=0 then 0 else d
+
+mux_in[3]:
+
+cd=00->1, 01->0, 11->1, 10->1
+
+When c=0:
+
+d=0 ->1
+
+d=1 ->0
+
+When c=1:
+
+d=0 ->1
+
+d=1 ->1
+
+So for c=0, output = ~d
+
+for c=1, output=1
+
+So mux_in[3] = if c=0 then ~d else 1
+
+We cannot use NOT gates, but we can implement ~d using a 2-to-1 mux with inputs 1 and 0 and selector d:
+
+~d = mux(d,0,1)
+
+So we can implement mux_in[3] as:
+
+if c=0 then ~d else 1
+
+= mux(c, mux(d,0,1), 1)
+
+We will implement all these using 2-to-1 mux modules and constants.
+
+Finally, the TopModule outputs mux_in[3:0] as these functions of c,d.
+
+We will define a 2-to-1 mux module and instantiate it as needed.
+
+No other gates are used.

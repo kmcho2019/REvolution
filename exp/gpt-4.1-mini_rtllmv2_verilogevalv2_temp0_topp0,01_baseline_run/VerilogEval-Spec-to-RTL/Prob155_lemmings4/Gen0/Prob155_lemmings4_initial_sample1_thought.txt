@@ -1,0 +1,50 @@
+We will implement a Moore FSM with states encoding the Lemming's current activity and direction:
+
+States:
+- WALK_LEFT
+- WALK_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- SPLAT
+
+On reset, the Lemming starts in WALK_LEFT.
+
+Transitions:
+- From WALK states:
+  - If ground=0, transition to FALL state with same direction.
+  - Else if dig=1, transition to DIG state with same direction.
+  - Else if bumped (bump_left or bump_right), switch direction (WALK_LEFT <-> WALK_RIGHT).
+  - Else remain in current WALK state.
+
+- From FALL states:
+  - Increment fall counter.
+  - If ground=1:
+    - If fall counter > 20, transition to SPLAT.
+    - Else transition to WALK state with same direction.
+  - Else remain in FALL state.
+
+- From DIG states:
+  - If ground=0, transition to FALL state with same direction.
+  - Else remain in DIG state.
+
+- From SPLAT:
+  - Remain in SPLAT forever until reset.
+
+Outputs (Moore):
+- walk_left = 1 if in WALK_LEFT
+- walk_right = 1 if in WALK_RIGHT
+- aaah = 1 if in FALL states
+- digging = 1 if in DIG states
+- all outputs 0 in SPLAT
+
+Fall counter resets on entering FALL states, increments each cycle in FALL states, and resets on leaving FALL states.
+
+Bumps have no effect in FALL, DIG, or SPLAT states.
+
+Dig command is ignored if not walking on ground.
+
+The asynchronous reset sets state to WALK_LEFT and resets fall counter.
+
+We will implement the FSM with a state register, a fall counter register, and combinational logic for next state and outputs.

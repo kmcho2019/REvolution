@@ -1,0 +1,24 @@
+Implement a gshare branch predictor with a 7-bit PC and 7-bit global history register (GHR). The index into the 128-entry PHT (two-bit saturating counters) is formed by XORing the PC and GHR. The predictor has two interfaces: prediction and training.
+
+Prediction interface:
+- When predict_valid is high, output the prediction (taken if counter MSB=1) and the current GHR used for prediction.
+- At the next clock edge, update the GHR by shifting in the predicted bit.
+- If a training and prediction happen in the same cycle, training takes precedence for GHR update.
+
+Training interface:
+- When train_valid is high, update the PHT entry indexed by XOR of train_pc and train_history with the actual outcome.
+- If train_mispredicted is high, restore the GHR to train_history (the GHR state after the mispredicted branch).
+- Training updates happen at the clock edge.
+- If training and prediction happen simultaneously, training updates the GHR and PHT, prediction only reads old PHT state.
+
+Reset:
+- Asynchronous active-high reset clears GHR and initializes PHT entries to weakly taken (2'b10).
+
+Implementation details:
+- Use a reg [1:0] array for PHT with 128 entries.
+- GHR is a 7-bit register.
+- On prediction, output prediction and current GHR.
+- On clock edge:
+  - If train_valid, update PHT and if mispredicted, restore GHR.
+  - Else if predict_valid, update GHR with predicted bit.
+- Prediction uses current PHT state before any update.
