@@ -396,39 +396,43 @@ class SynthesisEvaluator:
         """
         A simple parser for the OpenROAD log to extract PPA metrics.
         """
-        tns, wns, power, area = "None", "None", "None", "None"
+        tns, wns, power, area = None, None, None, None
 
-        with open(report_path, 'r') as file:
-            for line in file:
-                parts = line.split()
-                if not parts:  # Skip empty lines
-                    continue
+        try:
+            with open(report_path, 'r') as file:
+                for line in file:
+                    parts = line.split()
+                    if not parts:  # Skip empty lines
+                        continue
 
-                # Handle TNS and WNS, which may have a 'max' keyword
-                if parts[0] == 'tns':
-                    if len(parts) > 1 and parts[1] == 'max':
-                        tns = float(parts[2])
-                    elif len(parts) > 1:
-                        tns = float(parts[1])
-                elif parts[0] == 'wns':
-                    if len(parts) > 1 and parts[1] == 'max':
-                        wns = float(parts[2])
-                    elif len(parts) > 1:
-                        wns = float(parts[1])
-                
-                # Handle Power and Area as before
-                elif line.startswith('Total'):
-                    power = float(parts[4])
-                elif line.startswith('Design area'):
-                    area = float(parts[2])
+                    try:
+                        # Handle TNS and WNS
+                        if parts[0] == 'tns':
+                            tns = float(parts[2] if parts[1] == 'max' else parts[1])
+                        elif parts[0] == 'wns':
+                            wns = float(parts[2] if parts[1] == 'max' else parts[1])
+                        # Handle Power and Area
+                        elif line.startswith('Total'):
+                            power = float(parts[4])
+                        elif line.startswith('Design area'):
+                            area = float(parts[2])
+                    except (ValueError, IndexError):
+                        # Safely ignore lines that don't parse correctly
+                        continue
+        except FileNotFoundError:
+            print(f"Error: PPA report file not found at {report_path}")
+            return {"tns": None, "wns": None, "eff_clk_period": None, "power": None, "area": None, "report_path": None}
 
-        # Effective clock period (delay or performance metric) eff_clk_period = clk_period - wns
-        eff_clk_period = self.clk_period - wns
+        # Calculate effective clock period only if wns was found
+        eff_clk_period = None
+        if wns is not None:
+            eff_clk_period = self.clk_period - wns
 
         ppa_path = report_path.replace(".rpt", ".ppa")
         with open(ppa_path, 'w') as f:
             f.write('tns,wns,eff_clk_period,power,area\n')
             f.write(f'{tns},{wns},{eff_clk_period},{power},{area}')
+
         return {
             "tns": tns,
             "wns": wns,
@@ -806,6 +810,10 @@ class LLMInterface:
                         parsed_results.append((thought, code))
                     except ValueError as e:
                         print(f"Warning: Failed to parse one of the initial responses: {e}")
+                        # Debug
+                        # print(f"\nSystem prompt: \n{system_prompt_content}")
+                        # print(f"\nUser prompt: \n{prompt}")
+                        # print(f"\nFull response text: \n{full_response_text}...")  # Print the text for context
                         parsed_results.append((None, None)) # Add a failure marker
                 
                 print("--- Single-Prompt Batch Response Received ---")
@@ -1022,8 +1030,8 @@ class Heuristic:
 class EoHEngine:
     # Entire class executing for the new REvolution framework for each problem in the benchmark.
     def __init__(self, benchmark_name, problem_name, llm_interface, verilog_evaluator, synthesis_evaluator,
-                 population_size=20, num_generations=20,
-                 default_llm_temp=1.0, default_llm_top_p=1.0, default_llm_max_tokens=2048, base_save_path=None):
+                 population_size=10, num_generations=5,
+                 default_llm_temp=1.0, default_llm_top_p=0.95, default_llm_max_tokens=2048, base_save_path=None):
 
         self.base_save_path = base_save_path if base_save_path else os.path.join(os.getcwd(), "verilog_eoh_results")
         self.benchmark_name = benchmark_name
@@ -1473,7 +1481,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "exp")), help='Base path to save results.') # Default is ./exp, defined relative to main.py
     parser.add_argument('--num_workers', type=int, default=10, help='Number of parallel processes to use.')
     parser.add_argument('--temperature', type=float, default=1.0)
-    parser.add_argument('--top_p', type=float, default=1.0)
+    parser.add_argument('--top_p', type=float, default=0.95)
     parser.add_argument('--max_tokens', type=int, default=2048)
 
     args = parser.parse_args()
