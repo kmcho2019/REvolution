@@ -717,15 +717,26 @@ class LLMInterface:
         thought = thought_match.group(1).strip() if thought_match else None
         code = code_match.group(1).strip() if code_match else None
 
-        if thought is None:
-            error_message = f"Could not parse 'thought' from LLM response. Expected ```thought ... ``` block. Response:\n{response_text[:500]}..."
-            raise ValueError(error_message)
-            
-        if code is None:
-            error_message = f"Could not parse 'code' from LLM response. Expected ```code ... ``` block. Response:\n{response_text[:500]}..."
-            raise ValueError(error_message)
+        # When either thought or code is not found, we do not raise an exception.
+        # Instead of raising exception ValueError for parsing issues or missing blocks,
+        # we just return the original response text.
+        # This allows the caller to handle the error gracefully, e.g., by logging it or
+        # retrying with a different prompt.
 
-        return thought, code
+        if thought is None or code is None:
+            append_text = "\n\n--- WARNING: Parsing Issues ---\n"
+            if thought is None:
+                print(f"Warning: Could not parse 'thought' from LLM response. Expected ```thought ... ``` block. Response:\n{response_text[:500]}...")
+                append_text += "Could not parse 'thought' from LLM response. Expected ```thought ... ``` block.(PARSE_ERROR)\n"
+            if code is None:
+                print(f"Warning: Could not parse 'code' from LLM response. Expected ```code ... ``` block. Response:\n{response_text[:500]}...")
+                append_text += "Could not parse 'code' from LLM response. Expected ```code ... ``` block.(PARSE_ERROR)\n"
+
+            # Append to the response text to indicate parsing issues
+            response_text_with_issues = response_text + append_text
+            return response_text_with_issues, response_text_with_issues
+        else:
+            return thought, code
 
     async def generate_response(self, prompt, temperature=1.0, top_p=1.0, max_tokens=2048):
         # print(f"\n--- LLM Request ---")
@@ -1126,9 +1137,11 @@ class EoHEngine:
         code_file_path = os.path.join(directory_path, f"{base_name}.sv")
         thought_file_path = os.path.join(directory_path, f"{base_name}_thought.txt")
 
-        with open(code_file_path, "w") as f: f.write(code_content)
-        with open(thought_file_path, "w") as f: f.write(thought_content)
-        
+        with open(code_file_path, "w") as f: 
+            f.write(str(code_content))
+        with open(thought_file_path, "w") as f: 
+            f.write(str(thought_content))
+
         self._copy_misc_files(directory_path)
         return code_file_path, thought_file_path
 
