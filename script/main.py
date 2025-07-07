@@ -4,7 +4,7 @@ import uuid
 import subprocess
 import shutil 
 import random
-from openai import OpenAI, AsyncOpenAI, APIConnectionError, RateLimitError, InternalServerError, APITimeoutError # added for async support
+from openai import OpenAI, AsyncOpenAI, APIConnectionError, RateLimitError, InternalServerError, APITimeoutError, BadRequestError # added for async support
 
 
 import os
@@ -910,6 +910,30 @@ class LLMInterface:
                     
                     print("--- Single-Prompt Batch Response Received ---")
                     return parsed_results
+
+                except BadRequestError as e:
+                    # Found that DeepSeek API does not support 'n' > 1, so we need to handle this case.
+                    # As of 2025/07/08, OpenAI's API supports 'n' > 1, DeepSeek does not.
+                    # This is a workaround for APIs that do not support 'n' > 1.
+                    # Example of error message: 
+                    # Error code: 400 - {'error': {'message': 'Invalid n value (currently only n = 1 is supported)', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}
+                    # This is the key fallback logic and workaround for DeepSeek and potentially other APIs that do not support 'n' > 1.
+                    error_message = str(e).lower()
+                    if "invalid n value" in error_message or "only n = 1 is supported" in error_message:
+                        print(f"Warning: API backend '{self.api_backend}' does not support n > 1. Falling back to {n} individual requests.")
+                        
+                        # The individual 'generate_response' calls will handle their own retries and counting.
+                        tasks = [
+                            self.generate_response(prompt, temperature, top_p, max_tokens)
+                            for _ in range(n)
+                        ]
+                        results = await asyncio.gather(*tasks)
+                        print(f"--- Fallback with {n} individual requests completed ---")
+                        return results
+                    else:
+                        # It's a different, non-retriable bad request.
+                        print(f"A non-retriable BadRequestError occurred in generate_n_responses: {e}")
+                        return [(None, None)] * n
 
                 except (APIConnectionError, RateLimitError, APITimeoutError, InternalServerError) as e:
                     print(f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}")
