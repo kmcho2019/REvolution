@@ -18,7 +18,7 @@ module freq_div (
         end
     end
 
-    // CLK_10 generation: toggle every 5 clock cycles (divide by 10)
+    // CLK_10 generation: toggle every 5 cycles (divide by 10)
     always @(posedge CLK_in or posedge RST) begin
         if (RST) begin
             CLK_10 <= 1'b0;
@@ -33,7 +33,7 @@ module freq_div (
         end
     end
 
-    // CLK_1 generation: toggle every 50 clock cycles (divide by 100)
+    // CLK_1 generation: toggle every 50 cycles (divide by 100)
     always @(posedge CLK_in or posedge RST) begin
         if (RST) begin
             CLK_1 <= 1'b0;

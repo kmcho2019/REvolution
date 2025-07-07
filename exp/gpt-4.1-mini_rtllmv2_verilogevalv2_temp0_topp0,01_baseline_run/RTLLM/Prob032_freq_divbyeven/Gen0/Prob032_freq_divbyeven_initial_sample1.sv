@@ -8,14 +8,6 @@ module freq_diveven #(
 
     reg [3:0] cnt;
 
-    // Check that NUM_DIV is even at compile time
-    initial begin
-        if (NUM_DIV % 2 != 0) begin
-            $error("NUM_DIV parameter must be an even number.");
-            $finish;
-        end
-    end
-
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             cnt     <= 4'd0;

@@ -1,14 +1,13 @@
 module RAM (
-    input                   clk,
-    input                   rst_n,
-    input                   write_en,
-    input       [2:0]       write_addr,
-    input       [5:0]       write_data,
-    input                   read_en,
-    input       [2:0]       read_addr,
-    output reg  [5:0]       read_data
+    input clk,
+    input rst_n,
+    input write_en,
+    input [2:0] write_addr,
+    input [5:0] write_data,
+    input read_en,
+    input [2:0] read_addr,
+    output reg [5:0] read_data
 );
-
     parameter WIDTH = 6;
     parameter DEPTH = 8;
 

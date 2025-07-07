@@ -917,157 +917,157 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .QN(_166_),
     .RN(_058_)
   );
-  DLH_X1 _299_ (
-    .D(a[0]),
-    .G(reset),
-    .Q(\multiplier[0] )
-  );
-  DLH_X1 _300_ (
-    .D(a[1]),
-    .G(reset),
-    .Q(\multiplier[1] )
-  );
-  DLH_X1 _301_ (
-    .D(a[2]),
-    .G(reset),
-    .Q(\multiplier[2] )
-  );
-  DLH_X1 _302_ (
-    .D(a[3]),
-    .G(reset),
-    .Q(\multiplier[3] )
-  );
-  DLH_X1 _303_ (
-    .D(a[4]),
-    .G(reset),
-    .Q(\multiplier[4] )
-  );
-  DLH_X1 _304_ (
-    .D(a[5]),
-    .G(reset),
-    .Q(\multiplier[5] )
-  );
-  DLH_X1 _305_ (
-    .D(a[6]),
-    .G(reset),
-    .Q(\multiplier[6] )
-  );
-  DLH_X1 _306_ (
-    .D(a[7]),
-    .G(reset),
-    .Q(\multiplier[10] )
-  );
-  DFFR_X1 _307_ (
+  DFFR_X1 _299_ (
     .CK(clk),
     .D(_059_),
     .Q(p[0]),
     .QN(_165_),
     .RN(_058_)
   );
-  DFFR_X1 _308_ (
+  DFFR_X1 _300_ (
     .CK(clk),
     .D(_060_),
     .Q(p[1]),
     .QN(_167_),
     .RN(_058_)
   );
-  DFFR_X1 _309_ (
+  DFFR_X1 _301_ (
     .CK(clk),
     .D(_061_),
     .Q(p[2]),
     .QN(_168_),
     .RN(_058_)
   );
-  DFFR_X1 _310_ (
+  DFFR_X1 _302_ (
     .CK(clk),
     .D(_062_),
     .Q(p[3]),
     .QN(_164_),
     .RN(_058_)
   );
-  DFFR_X1 _311_ (
+  DFFR_X1 _303_ (
     .CK(clk),
     .D(_063_),
     .Q(p[4]),
     .QN(_169_),
     .RN(_058_)
   );
-  DFFR_X1 _312_ (
+  DFFR_X1 _304_ (
     .CK(clk),
     .D(_064_),
     .Q(p[5]),
     .QN(_163_),
     .RN(_058_)
   );
-  DFFR_X1 _313_ (
+  DFFR_X1 _305_ (
     .CK(clk),
     .D(_065_),
     .Q(p[6]),
     .QN(_162_),
     .RN(_058_)
   );
-  DFFR_X1 _314_ (
+  DFFR_X1 _306_ (
     .CK(clk),
     .D(_066_),
     .Q(p[7]),
     .QN(_161_),
     .RN(_058_)
   );
-  DFFR_X1 _315_ (
+  DFFR_X1 _307_ (
     .CK(clk),
     .D(_067_),
     .Q(p[8]),
     .QN(_170_),
     .RN(_058_)
   );
-  DFFR_X1 _316_ (
+  DFFR_X1 _308_ (
     .CK(clk),
     .D(_068_),
     .Q(p[9]),
     .QN(_160_),
     .RN(_058_)
   );
-  DFFR_X1 _317_ (
+  DFFR_X1 _309_ (
     .CK(clk),
     .D(_069_),
     .Q(p[10]),
     .QN(_159_),
     .RN(_058_)
   );
-  DFFR_X1 _318_ (
+  DFFR_X1 _310_ (
     .CK(clk),
     .D(_070_),
     .Q(p[11]),
     .QN(_158_),
     .RN(_058_)
   );
-  DFFR_X1 _319_ (
+  DFFR_X1 _311_ (
     .CK(clk),
     .D(_071_),
     .Q(p[12]),
     .QN(_157_),
     .RN(_058_)
   );
-  DFFR_X1 _320_ (
+  DFFR_X1 _312_ (
     .CK(clk),
     .D(_072_),
     .Q(p[13]),
     .QN(_156_),
     .RN(_058_)
   );
-  DFFR_X1 _321_ (
+  DFFR_X1 _313_ (
     .CK(clk),
     .D(_073_),
     .Q(p[14]),
     .QN(_155_),
     .RN(_058_)
   );
-  DFFR_X1 _322_ (
+  DFFR_X1 _314_ (
     .CK(clk),
     .D(_074_),
     .Q(p[15]),
     .QN(_154_),
     .RN(_058_)
+  );
+  DLH_X1 _315_ (
+    .D(b[0]),
+    .G(reset),
+    .Q(\multiplier[0] )
+  );
+  DLH_X1 _316_ (
+    .D(b[1]),
+    .G(reset),
+    .Q(\multiplier[1] )
+  );
+  DLH_X1 _317_ (
+    .D(b[2]),
+    .G(reset),
+    .Q(\multiplier[2] )
+  );
+  DLH_X1 _318_ (
+    .D(b[3]),
+    .G(reset),
+    .Q(\multiplier[3] )
+  );
+  DLH_X1 _319_ (
+    .D(b[4]),
+    .G(reset),
+    .Q(\multiplier[4] )
+  );
+  DLH_X1 _320_ (
+    .D(b[5]),
+    .G(reset),
+    .Q(\multiplier[5] )
+  );
+  DLH_X1 _321_ (
+    .D(b[6]),
+    .G(reset),
+    .Q(\multiplier[6] )
+  );
+  DLH_X1 _322_ (
+    .D(b[7]),
+    .G(reset),
+    .Q(\multiplier[10] )
   );
   DFFR_X1 _323_ (
     .CK(clk),
@@ -1105,7 +1105,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .RN(_058_)
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[0]  /* _328_ */ (
-    .AD(b[0]),
+    .AD(a[0]),
     .C(clk),
     .D(_171_),
     .E(\ctr[4] ),
@@ -1113,7 +1113,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[0] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[1]  /* _329_ */ (
-    .AD(b[1]),
+    .AD(a[1]),
     .C(clk),
     .D(\multiplicand[0] ),
     .E(\ctr[4] ),
@@ -1121,7 +1121,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[1] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[2]  /* _330_ */ (
-    .AD(b[2]),
+    .AD(a[2]),
     .C(clk),
     .D(\multiplicand[1] ),
     .E(\ctr[4] ),
@@ -1129,7 +1129,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[2] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[3]  /* _331_ */ (
-    .AD(b[3]),
+    .AD(a[3]),
     .C(clk),
     .D(\multiplicand[2] ),
     .E(\ctr[4] ),
@@ -1137,7 +1137,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[3] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[4]  /* _332_ */ (
-    .AD(b[4]),
+    .AD(a[4]),
     .C(clk),
     .D(\multiplicand[3] ),
     .E(\ctr[4] ),
@@ -1145,7 +1145,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[4] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[5]  /* _333_ */ (
-    .AD(b[5]),
+    .AD(a[5]),
     .C(clk),
     .D(\multiplicand[4] ),
     .E(\ctr[4] ),
@@ -1153,7 +1153,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[5] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[6]  /* _334_ */ (
-    .AD(b[6]),
+    .AD(a[6]),
     .C(clk),
     .D(\multiplicand[5] ),
     .E(\ctr[4] ),
@@ -1161,7 +1161,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[6] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[7]  /* _335_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[6] ),
     .E(\ctr[4] ),
@@ -1169,7 +1169,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[7] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[8]  /* _336_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[7] ),
     .E(\ctr[4] ),
@@ -1177,7 +1177,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[8] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[9]  /* _337_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[8] ),
     .E(\ctr[4] ),
@@ -1185,7 +1185,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[9] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[10]  /* _338_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[9] ),
     .E(\ctr[4] ),
@@ -1193,7 +1193,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[10] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[11]  /* _339_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[10] ),
     .E(\ctr[4] ),
@@ -1201,7 +1201,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[11] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[12]  /* _340_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[11] ),
     .E(\ctr[4] ),
@@ -1209,7 +1209,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[12] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[13]  /* _341_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[12] ),
     .E(\ctr[4] ),
@@ -1217,7 +1217,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[13] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[14]  /* _342_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[13] ),
     .E(\ctr[4] ),
@@ -1225,7 +1225,7 @@ module multi_booth_8bit(clk, reset, a, b, p, rdy);
     .Q(\multiplicand[14] )
   );
   \$_ALDFFE_PPN_  \multiplicand_reg[15]  /* _343_ */ (
-    .AD(b[7]),
+    .AD(a[7]),
     .C(clk),
     .D(\multiplicand[14] ),
     .E(\ctr[4] ),

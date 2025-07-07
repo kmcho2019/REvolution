@@ -1,9 +1,9 @@
 set util_dir /project/cad-team/LX_Semicon/kmcho/EoR/script/util
 set pdk_dir /project/cad-team/LX_Semicon/kmcho/EoR/pdk
-set design fsm
-set top_module fsm
-set synth_verilog /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob024_fsm/Gen0/fsm.syn.v
-set sdc_file /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob024_fsm/Gen0/fsm.sdc
+set design width_8to16
+set top_module width_8to16
+set synth_verilog /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob042_width_8to16/Gen0/width_8to16.syn.v
+set sdc_file /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob042_width_8to16/Gen0/width_8to16.sdc
 set core_utilization 0.5
 set aspect_ratio 1.0
 set max metal10

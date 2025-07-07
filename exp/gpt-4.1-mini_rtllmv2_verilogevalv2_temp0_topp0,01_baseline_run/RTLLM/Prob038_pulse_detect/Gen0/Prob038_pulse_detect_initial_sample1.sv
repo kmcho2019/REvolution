@@ -6,10 +6,10 @@ module pulse_detect (
 );
 
     // State encoding
-    typedef enum reg [1:0] {
-        IDLE  = 2'b00, // waiting for data_in=0
-        S1    = 2'b01, // detected data_in=0, waiting for data_in=1
-        S2    = 2'b10  // detected data_in=1, waiting for data_in=0 to complete pulse
+    typedef enum logic [1:0] {
+        S_WAIT_0 = 2'd0,  // Waiting for initial 0
+        S_WAIT_1 = 2'd1,  // Detected 0, waiting for 1
+        S_WAIT_0_END = 2'd2 // Detected 0->1, waiting for 0 to complete pulse
     } state_t;
 
     state_t state, next_state;
@@ -17,12 +17,12 @@ module pulse_detect (
     // State transition and output logic
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            state    <= IDLE;
+            state <= S_WAIT_0;
             data_out <= 1'b0;
         end else begin
             state <= next_state;
-            // data_out is 1 only when pulse completes (on transition from S2 to IDLE)
-            if (state == S2 && data_in == 1'b0)
+            // data_out is 1 only when pulse ends (on transition to S_WAIT_0 after S_WAIT_0_END)
+            if (state == S_WAIT_0_END && data_in == 1'b0)
                 data_out <= 1'b1;
             else
                 data_out <= 1'b0;
@@ -32,29 +32,27 @@ module pulse_detect (
     // Next state logic
     always @(*) begin
         case (state)
-            IDLE: begin
+            S_WAIT_0: begin
                 if (data_in == 1'b0)
-                    next_state = S1;
+                    next_state = S_WAIT_1; // got first 0, wait for 1
                 else
-                    next_state = IDLE;
+                    next_state = S_WAIT_0; // stay waiting for 0
             end
-            S1: begin
+            S_WAIT_1: begin
                 if (data_in == 1'b1)
-                    next_state = S2;
+                    next_state = S_WAIT_0_END; // got 1, wait for 0 to complete pulse
                 else if (data_in == 1'b0)
-                    next_state = S1; // stay in S1 if still 0
+                    next_state = S_WAIT_1; // still 0, keep waiting for 1
                 else
-                    next_state = IDLE;
+                    next_state = S_WAIT_0; // fallback
             end
-            S2: begin
+            S_WAIT_0_END: begin
                 if (data_in == 1'b0)
-                    next_state = IDLE; // pulse complete
-                else if (data_in == 1'b1)
-                    next_state = S2; // stay in S2 if still 1
+                    next_state = S_WAIT_1; // pulse ended, start detecting next pulse
                 else
-                    next_state = IDLE;
+                    next_state = S_WAIT_0_END; // still 1, wait for 0
             end
-            default: next_state = IDLE;
+            default: next_state = S_WAIT_0;
         endcase
     end
 

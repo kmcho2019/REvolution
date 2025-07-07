@@ -13,11 +13,10 @@ module sub_64bit (
     wire sign_B = B[63];
     wire sign_result = result[63];
 
-    // Overflow detection:
-    // Overflow occurs if:
-    // 1) A is positive (sign_A=0), B is negative (sign_B=1), and result is negative (sign_result=1)
-    // 2) A is negative (sign_A=1), B is positive (sign_B=0), and result is positive (sign_result=0)
-    assign overflow = (~sign_A &  sign_B &  sign_result) |
-                      ( sign_A & ~sign_B & ~sign_result);
+    // Overflow detection
+    // Overflow if A positive and B negative and result negative
+    // or A negative and B positive and result positive
+    assign overflow = ( (sign_A == 1'b0) && (sign_B == 1'b1) && (sign_result == 1'b1) ) ||
+                      ( (sign_A == 1'b1) && (sign_B == 1'b0) && (sign_result == 1'b0) );
 
 endmodule

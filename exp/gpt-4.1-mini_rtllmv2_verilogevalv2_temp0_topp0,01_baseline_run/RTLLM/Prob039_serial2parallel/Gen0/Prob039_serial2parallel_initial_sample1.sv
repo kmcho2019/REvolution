@@ -17,14 +17,14 @@ module serial2parallel (
             dout_parallel <= 8'd0;
             dout_valid   <= 1'b0;
         end else begin
-            dout_valid <= 1'b0; // default to 0, set to 1 only when 8 bits received
+            dout_valid <= 1'b0; // default to 0 each cycle
             if (din_valid) begin
                 // Shift in the new bit from MSB to LSB
                 shift_reg <= {shift_reg[6:0], din_serial};
                 cnt <= cnt + 1'b1;
 
                 if (cnt == 4'd7) begin
-                    // 8 bits received (count from 0 to 7)
+                    // After receiving 8 bits (count from 0 to 7)
                     dout_parallel <= {shift_reg[6:0], din_serial};
                     dout_valid <= 1'b1;
                     cnt <= 4'd0;

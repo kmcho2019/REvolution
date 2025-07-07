@@ -30,7 +30,7 @@ module LIFObuffer (
                 if (SP != 3'd0) begin
                     SP <= SP - 1;
                     stack_mem[SP - 1] <= dataIn;
-                    dataOut <= 4'd0; // No valid output on write
+                    dataOut <= 4'd0;
                 end
             end else begin
                 // Read operation (pop)
@@ -39,7 +39,7 @@ module LIFObuffer (
                     stack_mem[SP] <= 4'd0;
                     SP <= SP + 1;
                 end else begin
-                    dataOut <= 4'd0; // No data to pop
+                    dataOut <= 4'd0;
                 end
             end
 

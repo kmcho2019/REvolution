@@ -1,8 +1,8 @@
 yosys -import
 
-set VERILOG_FILE /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob024_fsm/Gen0/Prob024_fsm_initial_sample1.sv
-set MODULE_NAME fsm
-set OUTPUT_DIR /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob024_fsm/Gen0
+set VERILOG_FILE /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob036_edge_detect/Gen0/Prob036_edge_detect_initial_sample1.sv
+set MODULE_NAME edge_detect
+set OUTPUT_DIR /project/cad-team/LX_Semicon/kmcho/EoR/exp/gpt-4.1-mini/RTLLM/Prob036_edge_detect/Gen0
 set REF_DIR /project/cad-team/LX_Semicon/kmcho/EoR/script/ref
 set PDK_DIR /project/cad-team/LX_Semicon/kmcho/EoR/pdk
 set ABC_CLOCK_PERIOD_IN_PS 10.0

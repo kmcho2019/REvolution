@@ -6,15 +6,16 @@ module adder_bcd (
     output       Cout
 );
 
-    wire [4:0] raw_sum;
-    wire       correction_needed;
+    wire [4:0] raw_sum;       // 5 bits to hold sum + carry
     wire [4:0] corrected_sum;
+    wire       correction_needed;
 
-    // Perform binary addition of A, B and Cin
+    // Binary addition of inputs and carry-in
     assign raw_sum = A + B + Cin;
 
     // Determine if correction is needed:
-    // Correction needed if raw_sum > 9 (1001) or if carry from bit 3 is set
+    // Correction needed if raw_sum > 9 (decimal 9 = 4'b1001)
+    // or if there is a carry out from bit 3 (raw_sum[4] == 1)
     assign correction_needed = (raw_sum > 5'd9);
 
     // Add 6 (0110) if correction is needed

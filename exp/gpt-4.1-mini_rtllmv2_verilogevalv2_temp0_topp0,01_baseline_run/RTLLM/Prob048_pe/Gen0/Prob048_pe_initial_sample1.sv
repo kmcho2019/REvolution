@@ -6,16 +6,12 @@ module pe (
     output reg [31:0] c
 );
 
-    // Use a 64-bit register to hold the accumulation result to avoid overflow
-    reg [63:0] acc;
-
+    // On reset, clear accumulator; otherwise accumulate product of a and b
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            acc <= 64'd0;
-            c <= 32'd0;
+            c <= 32'b0;
         end else begin
-            acc <= acc + a * b;
-            c <= acc[31:0];
+            c <= c + a * b;
         end
     end
 

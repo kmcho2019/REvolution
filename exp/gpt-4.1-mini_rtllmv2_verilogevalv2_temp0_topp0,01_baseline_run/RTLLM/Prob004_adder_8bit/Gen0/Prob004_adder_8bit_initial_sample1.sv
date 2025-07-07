@@ -1,4 +1,4 @@
-module full_adder(
+module full_adder (
     input wire a,
     input wire b,
     input wire cin,
@@ -8,14 +8,14 @@ module full_adder(
     assign {cout, sum} = a + b + cin;
 endmodule
 
-module adder_8bit(
+module adder_8bit (
     input wire [7:0] a,
     input wire [7:0] b,
     input wire cin,
     output wire [7:0] sum,
     output wire cout
 );
-    wire [7:0] c; // internal carry wires
+    wire [7:0] carry;
 
     // Instantiate full adders for each bit
     full_adder fa0 (
@@ -23,7 +23,7 @@ module adder_8bit(
         .b(b[0]),
         .cin(cin),
         .sum(sum[0]),
-        .cout(c[0])
+        .cout(carry[0])
     );
 
     genvar i;
@@ -32,12 +32,12 @@ module adder_8bit(
             full_adder fa (
                 .a(a[i]),
                 .b(b[i]),
-                .cin(c[i-1]),
+                .cin(carry[i-1]),
                 .sum(sum[i]),
-                .cout(c[i])
+                .cout(carry[i])
             );
         end
     endgenerate
 
-    assign cout = c[7];
+    assign cout = carry[7];
 endmodule

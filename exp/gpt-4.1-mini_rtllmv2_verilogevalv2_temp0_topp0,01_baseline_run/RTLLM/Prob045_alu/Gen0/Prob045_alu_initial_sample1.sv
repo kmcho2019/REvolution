@@ -1,13 +1,13 @@
-module alu(
-    input  [31:0] a,
-    input  [31:0] b,
-    input  [5:0]  aluc,
-    output reg [31:0] r,
-    output zero,
-    output reg carry,
-    output negative,
-    output reg overflow,
-    output reg flag
+module alu (
+    input  wire [31:0] a,
+    input  wire [31:0] b,
+    input  wire [5:0]  aluc,
+    output reg  [31:0] r,
+    output wire        zero,
+    output reg         carry,
+    output wire        negative,
+    output reg         overflow,
+    output reg         flag
 );
 
     // Operation codes
@@ -29,103 +29,107 @@ module alu(
     parameter SRAV = 6'b000111;
     parameter LUI  = 6'b001111;
 
-    // Signed versions of inputs for signed operations
     wire signed [31:0] a_signed = a;
     wire signed [31:0] b_signed = b;
 
-    reg signed [32:0] res_ext; // 33-bit for carry detection
-    reg [31:0] res;
-
-    wire [4:0] shamt = a[4:0]; // shift amount from a for variable shifts
+    reg [32:0] add_sub_res; // 33 bits to capture carry out for add/sub
+    reg [31:0] shift_res;
+    reg [31:0] res_tmp;
 
     always @(*) begin
-        carry = 0;
-        overflow = 0;
+        carry = 1'b0;
+        overflow = 1'b0;
         flag = 1'bz;
-        res_ext = 33'b0;
-        res = 32'b0;
+        res_tmp = 32'bz;
 
-        case(aluc)
+        case (aluc)
             ADD: begin
-                res_ext = {a_signed[31], a_signed} + {b_signed[31], b_signed};
-                res = res_ext[31:0];
-                carry = res_ext[32];
+                add_sub_res = {1'b0, a} + {1'b0, b};
+                res_tmp = add_sub_res[31:0];
+                carry = add_sub_res[32];
                 // Overflow detection for signed addition
-                overflow = (~a_signed[31] & ~b_signed[31] & res[31]) | (a_signed[31] & b_signed[31] & ~res[31]);
+                overflow = (~a[31] & ~b[31] & res_tmp[31]) | (a[31] & b[31] & ~res_tmp[31]);
             end
             ADDU: begin
-                res_ext = {1'b0, a} + {1'b0, b};
-                res = res_ext[31:0];
-                carry = res_ext[32];
-                overflow = 0;
-            end
-            SUB: begin
-                res_ext = {a_signed[31], a_signed} - {b_signed[31], b_signed};
-                res = res_ext[31:0];
-                carry = res_ext[32]; // borrow bit in subtraction is carry here
-                // Overflow detection for signed subtraction
-                overflow = (a_signed[31] & ~b_signed[31] & ~res[31]) | (~a_signed[31] & b_signed[31] & res[31]);
-            end
-            SUBU: begin
-                res_ext = {1'b0, a} - {1'b0, b};
-                res = res_ext[31:0];
-                carry = res_ext[32];
-                overflow = 0;
-            end
-            AND: begin
-                res = a & b;
-            end
-            OR: begin
-                res = a | b;
-            end
-            XOR: begin
-                res = a ^ b;
-            end
-            NOR: begin
-                res = ~(a | b);
-            end
-            SLT: begin
-                // signed less than
-                flag = (a_signed < b_signed) ? 1'b1 : 1'b0;
-                res = {31'b0, flag};
-            end
-            SLTU: begin
-                // unsigned less than
-                flag = (a < b) ? 1'b1 : 1'b0;
-                res = {31'b0, flag};
-            end
-            SLL: begin
-                res = b << a[4:0];
-            end
-            SRL: begin
-                res = b >> a[4:0];
-            end
-            SRA: begin
-                res = $signed(b) >>> a[4:0];
-            end
-            SLLV: begin
-                res = b << shamt;
-            end
-            SRLV: begin
-                res = b >> shamt;
-            end
-            SRAV: begin
-                res = $signed(b) >>> shamt;
-            end
-            LUI: begin
-                res = {b[15:0], 16'b0};
-            end
-            default: begin
-                res = 32'bz;
-                flag = 1'bz;
-                carry = 1'b0;
+                add_sub_res = {1'b0, a} + {1'b0, b};
+                res_tmp = add_sub_res[31:0];
+                carry = add_sub_res[32];
                 overflow = 1'b0;
             end
+            SUB: begin
+                add_sub_res = {1'b0, a} - {1'b0, b};
+                res_tmp = add_sub_res[31:0];
+                carry = ~add_sub_res[32]; // borrow flag inverted for carry
+                // Overflow detection for signed subtraction
+                overflow = (a[31] & ~b[31] & ~res_tmp[31]) | (~a[31] & b[31] & res_tmp[31]);
+            end
+            SUBU: begin
+                add_sub_res = {1'b0, a} - {1'b0, b};
+                res_tmp = add_sub_res[31:0];
+                carry = ~add_sub_res[32];
+                overflow = 1'b0;
+            end
+            AND: begin
+                res_tmp = a & b;
+            end
+            OR: begin
+                res_tmp = a | b;
+            end
+            XOR: begin
+                res_tmp = a ^ b;
+            end
+            NOR: begin
+                res_tmp = ~(a | b);
+            end
+            SLT: begin
+                // signed comparison
+                flag = (a_signed < b_signed) ? 1'b1 : 1'b0;
+                res_tmp = {31'b0, flag};
+            end
+            SLTU: begin
+                // unsigned comparison
+                flag = (a < b) ? 1'b1 : 1'b0;
+                res_tmp = {31'b0, flag};
+            end
+            SLL: begin
+                shift_res = b << a[4:0];
+                res_tmp = shift_res;
+            end
+            SRL: begin
+                shift_res = b >> a[4:0];
+                res_tmp = shift_res;
+            end
+            SRA: begin
+                shift_res = $signed(b) >>> a[4:0];
+                res_tmp = shift_res;
+            end
+            SLLV: begin
+                shift_res = b << (a[4:0]);
+                res_tmp = shift_res;
+            end
+            SRLV: begin
+                shift_res = b >> (a[4:0]);
+                res_tmp = shift_res;
+            end
+            SRAV: begin
+                shift_res = $signed(b) >>> (a[4:0]);
+                res_tmp = shift_res;
+            end
+            LUI: begin
+                res_tmp = {b[15:0], 16'b0};
+            end
+            default: begin
+                res_tmp = 32'bz;
+                carry = 1'b0;
+                overflow = 1'b0;
+                flag = 1'bz;
+            end
         endcase
+
+        r = res_tmp;
     end
 
-    assign r = res;
-    assign zero = (res == 32'b0) ? 1'b1 : 1'b0;
-    assign negative = res[31];
+    assign zero = (r == 32'b0) ? 1'b1 : 1'b0;
+    assign negative = r[31];
 
 endmodule

@@ -12,7 +12,7 @@ always @(posedge clk or negedge rst_n) begin
         if (out == 4'd11)
             out <= 4'b0000;
         else
-            out <= out + 1;
+            out <= out + 1'b1;
     end
     // else hold current value
 end

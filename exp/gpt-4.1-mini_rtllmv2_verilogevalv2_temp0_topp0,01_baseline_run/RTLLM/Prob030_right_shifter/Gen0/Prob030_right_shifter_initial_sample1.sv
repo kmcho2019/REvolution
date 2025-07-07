@@ -9,7 +9,8 @@ initial begin
 end
 
 always @(posedge clk) begin
-    q <= {d, q[7:1]};
+    q <= (q >> 1);
+    q[7] <= d;
 end
 
 endmodule

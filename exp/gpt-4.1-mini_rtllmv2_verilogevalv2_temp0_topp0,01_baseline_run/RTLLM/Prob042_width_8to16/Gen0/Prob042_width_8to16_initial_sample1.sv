@@ -8,34 +8,27 @@ module width_8to16 (
 );
 
     reg [7:0] data_lock;
-    reg       flag;       // Indicates if first data is stored
-    reg       valid_out_next;
+    reg       flag;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            data_lock   <= 8'd0;
-            flag        <= 1'b0;
-            data_out    <= 16'd0;
-            valid_out   <= 1'b0;
-            valid_out_next <= 1'b0;
+            data_lock  <= 8'd0;
+            data_out   <= 16'd0;
+            valid_out  <= 1'b0;
+            flag       <= 1'b0;
         end else begin
-            valid_out <= valid_out_next;
-
+            valid_out <= 1'b0; // default no valid output each cycle
             if (valid_in) begin
                 if (!flag) begin
                     // Store first 8-bit data
                     data_lock <= data_in;
                     flag <= 1'b1;
-                    valid_out_next <= 1'b0;
                 end else begin
-                    // Second 8-bit data arrived, output concatenated data next cycle
-                    data_out <= {data_lock, data_in};
-                    valid_out_next <= 1'b1;
+                    // Concatenate stored data and current data_in
+                    data_out  <= {data_lock, data_in};
+                    valid_out <= 1'b1;
                     flag <= 1'b0;
                 end
-            end else begin
-                // No valid input, clear valid_out_next
-                valid_out_next <= 1'b0;
             end
         end
     end

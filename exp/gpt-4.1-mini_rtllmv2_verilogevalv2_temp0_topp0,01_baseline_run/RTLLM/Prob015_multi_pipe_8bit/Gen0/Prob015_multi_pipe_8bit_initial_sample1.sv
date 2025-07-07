@@ -8,77 +8,86 @@ module multi_pipe_8bit (
     output  [15:0]  mul_out
 );
 
-// Pipeline registers for enable signal (8 stages to match pipeline depth)
-reg [7:0] mul_en_out_reg;
-
-// Input registers for multiplicand and multiplier
+// Pipeline stage 1: Input registers
 reg [7:0] mul_a_reg;
 reg [7:0] mul_b_reg;
+reg       mul_en_reg_stage1;
 
-// Partial products wires (8 partial products, each shifted accordingly)
-wire [15:0] temp [7:0];
-
-// Registers for partial sums (pipeline stages)
-reg [15:0] sum1; // sum of partial products 0 and 1
-reg [15:0] sum2; // sum of partial products 2 and 3
-reg [15:0] sum3; // sum of partial products 4 and 5
-reg [15:0] sum4; // sum of partial products 6 and 7
-
-reg [15:0] sum5; // sum of sum1 and sum2
-reg [15:0] sum6; // sum of sum3 and sum4
-
-reg [15:0] mul_out_reg;
-
-// Generate partial products by ANDing mul_a with each bit of mul_b and shifting
-genvar i;
-generate
-    for (i=0; i<8; i=i+1) begin : gen_partial_products
-        assign temp[i] = mul_b_reg[i] ? (mul_a_reg << i) : 16'd0;
-    end
-endgenerate
-
-// Pipeline process
-always @(posedge clk) begin
+always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-        mul_en_out_reg <= 8'd0;
-        mul_a_reg <= 8'd0;
-        mul_b_reg <= 8'd0;
-        sum1 <= 16'd0;
-        sum2 <= 16'd0;
-        sum3 <= 16'd0;
-        sum4 <= 16'd0;
-        sum5 <= 16'd0;
-        sum6 <= 16'd0;
-        mul_out_reg <= 16'd0;
+        mul_a_reg       <= 8'd0;
+        mul_b_reg       <= 8'd0;
+        mul_en_reg_stage1 <= 1'b0;
     end else begin
-        // Pipeline enable signal
-        mul_en_out_reg <= {mul_en_out_reg[6:0], mul_en_in};
-
-        // Register inputs only when mul_en_in is high
         if (mul_en_in) begin
-            mul_a_reg <= mul_a;
-            mul_b_reg <= mul_b;
+            mul_a_reg       <= mul_a;
+            mul_b_reg       <= mul_b;
         end
-
-        // Stage 1: sum pairs of partial products
-        sum1 <= temp[0] + temp[1];
-        sum2 <= temp[2] + temp[3];
-        sum3 <= temp[4] + temp[5];
-        sum4 <= temp[6] + temp[7];
-
-        // Stage 2: sum pairs of sums
-        sum5 <= sum1 + sum2;
-        sum6 <= sum3 + sum4;
-
-        // Stage 3: final sum
-        mul_out_reg <= sum5 + sum6;
+        mul_en_reg_stage1 <= mul_en_in;
     end
 end
 
-// Output enable is the MSB of mul_en_out_reg (8 cycles latency)
-assign mul_en_out = mul_en_out_reg[7];
+// Partial product generation (wires)
+wire [15:0] partial_products [7:0];
+genvar i;
+generate
+    for (i=0; i<8; i=i+1) begin : gen_partial_products
+        assign partial_products[i] = mul_b_reg[i] ? (mul_a_reg << i) : 16'd0;
+    end
+endgenerate
 
-// Output product is valid only when mul_en_out is high
-assign mul_out = mul_en_out ? mul_out_reg : 16'd0;
+// Pipeline stage 2: sum partial products in pairs (4 sums)
+reg [15:0] sum_stage2 [3:0];
+reg        mul_en_reg_stage2;
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        sum_stage2[0] <= 16'd0;
+        sum_stage2[1] <= 16'd0;
+        sum_stage2[2] <= 16'd0;
+        sum_stage2[3] <= 16'd0;
+        mul_en_reg_stage2 <= 1'b0;
+    end else begin
+        sum_stage2[0] <= partial_products[0] + partial_products[1];
+        sum_stage2[1] <= partial_products[2] + partial_products[3];
+        sum_stage2[2] <= partial_products[4] + partial_products[5];
+        sum_stage2[3] <= partial_products[6] + partial_products[7];
+        mul_en_reg_stage2 <= mul_en_reg_stage1;
+    end
+end
+
+// Pipeline stage 3: sum pairs of sums from stage 2 (2 sums)
+reg [15:0] sum_stage3 [1:0];
+reg        mul_en_reg_stage3;
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        sum_stage3[0] <= 16'd0;
+        sum_stage3[1] <= 16'd0;
+        mul_en_reg_stage3 <= 1'b0;
+    end else begin
+        sum_stage3[0] <= sum_stage2[0] + sum_stage2[1];
+        sum_stage3[1] <= sum_stage2[2] + sum_stage2[3];
+        mul_en_reg_stage3 <= mul_en_reg_stage2;
+    end
+end
+
+// Pipeline stage 4: final sum
+reg [15:0] mul_out_reg;
+reg        mul_en_reg_stage4;
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        mul_out_reg <= 16'd0;
+        mul_en_reg_stage4 <= 1'b0;
+    end else begin
+        mul_out_reg <= sum_stage3[0] + sum_stage3[1];
+        mul_en_reg_stage4 <= mul_en_reg_stage3;
+    end
+end
+
+// Output assignments
+assign mul_en_out = mul_en_reg_stage4;
+assign mul_out = mul_en_reg_stage4 ? mul_out_reg : 16'd0;
 
 endmodule

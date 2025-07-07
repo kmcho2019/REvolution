@@ -70,6 +70,26 @@ module multi_pipe_4bit(clk, rst_n, mul_a, mul_b, mul_out);
   wire _066_;
   wire _067_;
   wire _068_;
+  wire _069_;
+  wire _070_;
+  wire _071_;
+  wire _072_;
+  wire _073_;
+  wire _074_;
+  wire _075_;
+  wire _076_;
+  wire _077_;
+  wire _078_;
+  wire _079_;
+  wire _080_;
+  wire _081_;
+  wire _082_;
+  wire _083_;
+  wire _084_;
+  wire _085_;
+  wire _086_;
+  wire _087_;
+  wire _088_;
   input clk;
   wire clk;
   input [3:0] mul_a;
@@ -79,456 +99,452 @@ module multi_pipe_4bit(clk, rst_n, mul_a, mul_b, mul_out);
   output [7:0] mul_out;
   wire [7:0] mul_out;
   wire \partial_products[0][0] ;
-  wire \partial_products[0][1] ;
-  wire \partial_products[0][2] ;
-  wire \partial_products[0][3] ;
-  wire \partial_products[1][1] ;
-  wire \partial_products[1][2] ;
-  wire \partial_products[1][3] ;
-  wire \partial_products[1][4] ;
   wire \partial_products[2][2] ;
-  wire \partial_products[2][3] ;
-  wire \partial_products[2][4] ;
-  wire \partial_products[2][5] ;
-  wire \partial_products[3][3] ;
-  wire \partial_products[3][4] ;
-  wire \partial_products[3][5] ;
-  wire \partial_products[3][6] ;
+  wire \reg_stage1[0] ;
+  wire \reg_stage1[1] ;
+  wire \reg_stage1[2] ;
+  wire \reg_stage1[3] ;
+  wire \reg_stage1[4] ;
+  wire \reg_stage1[5] ;
+  wire \reg_stage2[2] ;
+  wire \reg_stage2[3] ;
+  wire \reg_stage2[4] ;
+  wire \reg_stage2[5] ;
+  wire \reg_stage2[6] ;
+  wire \reg_stage2[7] ;
   input rst_n;
   wire rst_n;
-  wire \stage1_reg0[0] ;
-  wire \stage1_reg0[1] ;
-  wire \stage1_reg0[2] ;
-  wire \stage1_reg0[3] ;
-  wire \stage1_reg1[1] ;
-  wire \stage1_reg1[2] ;
-  wire \stage1_reg1[3] ;
-  wire \stage1_reg1[4] ;
-  wire \stage2_reg0[2] ;
-  wire \stage2_reg0[3] ;
-  wire \stage2_reg0[4] ;
-  wire \stage2_reg0[5] ;
-  wire \stage2_reg1[3] ;
-  wire \stage2_reg1[4] ;
-  wire \stage2_reg1[5] ;
-  wire \stage2_reg1[6] ;
-  AND2_X1 _069_ (
+  AND2_X1 _089_ (
     .A1(mul_b[0]),
     .A2(mul_a[0]),
     .ZN(\partial_products[0][0] )
   );
-  AND2_X1 _070_ (
-    .A1(mul_b[0]),
-    .A2(mul_a[1]),
-    .ZN(\partial_products[0][1] )
-  );
-  AND2_X1 _071_ (
-    .A1(mul_b[0]),
-    .A2(mul_a[2]),
-    .ZN(\partial_products[0][2] )
-  );
-  AND2_X1 _072_ (
-    .A1(mul_b[0]),
-    .A2(mul_a[3]),
-    .ZN(\partial_products[0][3] )
-  );
-  AND2_X1 _073_ (
-    .A1(mul_a[0]),
-    .A2(mul_b[1]),
-    .ZN(\partial_products[1][1] )
-  );
-  AND2_X1 _074_ (
-    .A1(mul_a[1]),
-    .A2(mul_b[1]),
-    .ZN(\partial_products[1][2] )
-  );
-  AND2_X1 _075_ (
-    .A1(mul_a[2]),
-    .A2(mul_b[1]),
-    .ZN(\partial_products[1][3] )
-  );
-  AND2_X1 _076_ (
-    .A1(mul_a[3]),
-    .A2(mul_b[1]),
-    .ZN(\partial_products[1][4] )
-  );
-  AND2_X1 _077_ (
+  AND2_X1 _090_ (
     .A1(mul_a[0]),
     .A2(mul_b[2]),
     .ZN(\partial_products[2][2] )
   );
-  AND2_X1 _078_ (
-    .A1(mul_a[1]),
-    .A2(mul_b[2]),
-    .ZN(\partial_products[2][3] )
+  NAND2_X1 _091_ (
+    .A1(mul_b[3]),
+    .A2(mul_a[1]),
+    .ZN(_009_)
   );
-  AND2_X1 _079_ (
-    .A1(mul_a[2]),
-    .A2(mul_b[2]),
-    .ZN(\partial_products[2][4] )
-  );
-  AND2_X1 _080_ (
-    .A1(mul_a[3]),
-    .A2(mul_b[2]),
-    .ZN(\partial_products[2][5] )
-  );
-  AND2_X1 _081_ (
-    .A1(mul_a[0]),
-    .A2(mul_b[3]),
-    .ZN(\partial_products[3][3] )
-  );
-  AND2_X1 _082_ (
-    .A1(mul_a[1]),
-    .A2(mul_b[3]),
-    .ZN(\partial_products[3][4] )
-  );
-  AND2_X1 _083_ (
-    .A1(mul_a[2]),
-    .A2(mul_b[3]),
-    .ZN(\partial_products[3][5] )
-  );
-  AND2_X1 _084_ (
-    .A1(mul_a[3]),
-    .A2(mul_b[3]),
-    .ZN(\partial_products[3][6] )
-  );
-  XNOR2_X1 _085_ (
-    .A(\stage1_reg1[4] ),
-    .B(_008_),
-    .ZN(_004_)
-  );
-  INV_X2 _086_ (
-    .A(_002_),
-    .ZN(_007_)
-  );
-  AOI21_X1 _087_ (
-    .A(_023_),
-    .B1(_024_),
-    .B2(_007_),
-    .ZN(_037_)
-  );
-  OR2_X2 _088_ (
-    .A1(_000_),
-    .A2(_037_),
-    .ZN(_016_)
-  );
-  XNOR2_X1 _089_ (
-    .A(_014_),
-    .B(_033_),
-    .ZN(_036_)
-  );
-  INV_X1 _090_ (
-    .A(_009_),
+  NAND2_X1 _092_ (
+    .A1(mul_b[2]),
+    .A2(mul_a[2]),
     .ZN(_010_)
   );
-  INV_X1 _091_ (
-    .A(_029_),
-    .ZN(_013_)
+  AND2_X1 _093_ (
+    .A1(mul_a[0]),
+    .A2(mul_b[3]),
+    .ZN(_036_)
   );
-  INV_X1 _092_ (
-    .A(_012_),
-    .ZN(_034_)
-  );
-  INV_X1 _093_ (
-    .A(_015_),
-    .ZN(_035_)
-  );
-  INV_X1 _094_ (
-    .A(_006_),
-    .ZN(_025_)
+  AND2_X1 _094_ (
+    .A1(mul_b[3]),
+    .A2(mul_a[2]),
+    .ZN(_032_)
   );
   INV_X1 _095_ (
-    .A(_005_),
-    .ZN(_030_)
+    .A(_032_),
+    .ZN(_013_)
   );
-  INV_X1 _096_ (
-    .A(_003_),
-    .ZN(_022_)
+  AND2_X1 _096_ (
+    .A1(mul_b[2]),
+    .A2(mul_a[3]),
+    .ZN(_033_)
   );
   INV_X1 _097_ (
-    .A(_011_),
-    .ZN(_026_)
+    .A(_033_),
+    .ZN(_014_)
   );
-  INV_X1 _098_ (
-    .A(_018_),
-    .ZN(_031_)
+  NAND2_X1 _098_ (
+    .A1(mul_b[3]),
+    .A2(mul_a[3]),
+    .ZN(_059_)
   );
-  INV_X1 _099_ (
-    .A(_017_),
-    .ZN(_019_)
+  XOR2_X1 _099_ (
+    .A(_015_),
+    .B(_059_),
+    .Z(_003_)
   );
-  NAND3_X1 _100_ (
-    .A1(_029_),
-    .A2(_028_),
-    .A3(_033_),
-    .ZN(_038_)
+  XNOR2_X1 _100_ (
+    .A(_020_),
+    .B(_042_),
+    .ZN(_006_)
   );
-  AOI21_X1 _101_ (
-    .A(_032_),
-    .B1(_027_),
-    .B2(_033_),
-    .ZN(_039_)
+  XOR2_X1 _101_ (
+    .A(_044_),
+    .B(\reg_stage2[7] ),
+    .Z(_007_)
   );
   NAND2_X1 _102_ (
-    .A1(_038_),
-    .A2(_039_),
-    .ZN(_020_)
+    .A1(mul_a[1]),
+    .A2(mul_b[1]),
+    .ZN(_022_)
   );
-  INV_X1 _103_ (
+  NAND2_X1 _103_ (
+    .A1(mul_b[0]),
+    .A2(mul_a[2]),
+    .ZN(_023_)
+  );
+  AND2_X1 _104_ (
+    .A1(mul_a[0]),
+    .A2(mul_b[1]),
+    .ZN(_050_)
+  );
+  AND2_X1 _105_ (
+    .A1(mul_a[2]),
+    .A2(mul_b[1]),
+    .ZN(_046_)
+  );
+  INV_X1 _106_ (
+    .A(_046_),
+    .ZN(_027_)
+  );
+  AND2_X1 _107_ (
+    .A1(mul_b[0]),
+    .A2(mul_a[3]),
+    .ZN(_047_)
+  );
+  INV_X1 _108_ (
+    .A(_047_),
+    .ZN(_028_)
+  );
+  NAND2_X1 _109_ (
+    .A1(mul_a[3]),
+    .A2(mul_b[1]),
+    .ZN(_060_)
+  );
+  XOR2_X1 _110_ (
+    .A(_029_),
+    .B(_060_),
+    .Z(_055_)
+  );
+  INV_X1 _111_ (
+    .A(_011_),
+    .ZN(_061_)
+  );
+  AOI21_X1 _112_ (
+    .A(_034_),
+    .B1(_035_),
+    .B2(_061_),
+    .ZN(_062_)
+  );
+  NOR2_X1 _113_ (
+    .A1(_059_),
+    .A2(_062_),
+    .ZN(_000_)
+  );
+  INV_X1 _114_ (
+    .A(_025_),
+    .ZN(_063_)
+  );
+  AOI21_X1 _115_ (
+    .A(_048_),
+    .B1(_049_),
+    .B2(_063_),
+    .ZN(_064_)
+  );
+  NOR2_X1 _116_ (
+    .A1(_060_),
+    .A2(_064_),
+    .ZN(_052_)
+  );
+  INV_X1 _117_ (
+    .A(_016_),
+    .ZN(_002_)
+  );
+  INV_X1 _118_ (
     .A(_021_),
+    .ZN(_005_)
+  );
+  INV_X1 _119_ (
+    .A(_030_),
+    .ZN(_054_)
+  );
+  INV_X1 _120_ (
+    .A(_012_),
     .ZN(_001_)
   );
-  FA_X1 _104_ (
-    .A(_055_),
-    .B(_056_),
-    .CI(_001_),
-    .CO(_002_),
-    .S(_003_)
+  INV_X1 _121_ (
+    .A(_019_),
+    .ZN(_004_)
   );
-  FA_X1 _105_ (
-    .A(_057_),
-    .B(_058_),
-    .CI(_004_),
-    .CO(_005_),
-    .S(_006_)
+  INV_X1 _122_ (
+    .A(_026_),
+    .ZN(_053_)
   );
-  FA_X1 _106_ (
-    .A(\stage1_reg0[3] ),
-    .B(\stage1_reg1[3] ),
-    .CI(_007_),
-    .CO(_008_),
-    .S(_009_)
+  AND2_X1 _123_ (
+    .A1(mul_b[2]),
+    .A2(mul_a[1]),
+    .ZN(_037_)
   );
-  FA_X1 _107_ (
-    .A(_059_),
-    .B(_060_),
+  INV_X1 _124_ (
+    .A(_018_),
+    .ZN(_056_)
+  );
+  NAND3_X1 _125_ (
+    .A1(_056_),
+    .A2(_040_),
+    .A3(_042_),
+    .ZN(_057_)
+  );
+  AOI21_X1 _126_ (
+    .A(_041_),
+    .B1(_039_),
+    .B2(_042_),
+    .ZN(_058_)
+  );
+  NAND2_X1 _127_ (
+    .A1(_057_),
+    .A2(_058_),
+    .ZN(_043_)
+  );
+  AND2_X1 _128_ (
+    .A1(mul_b[0]),
+    .A2(mul_a[1]),
+    .ZN(_051_)
+  );
+  INV_X1 _129_ (
+    .A(_031_),
+    .ZN(_008_)
+  );
+  INV_X1 _130_ (
+    .A(_038_),
+    .ZN(_017_)
+  );
+  INV_X1 _131_ (
+    .A(_045_),
+    .ZN(_024_)
+  );
+  FA_X1 _132_ (
+    .A(_008_),
+    .B(_009_),
     .CI(_010_),
     .CO(_011_),
     .S(_012_)
   );
-  FA_X1 _108_ (
-    .A(_006_),
+  FA_X1 _133_ (
+    .A(_013_),
     .B(_011_),
-    .CI(_013_),
-    .CO(_014_),
-    .S(_015_)
+    .CI(_014_),
+    .CO(_015_),
+    .S(_016_)
   );
-  FA_X1 _109_ (
-    .A(_061_),
-    .B(_062_),
-    .CI(_016_),
-    .CO(_017_),
-    .S(_018_)
+  FA_X1 _134_ (
+    .A(_084_),
+    .B(_085_),
+    .CI(_017_),
+    .CO(_018_),
+    .S(_019_)
   );
-  FA_X1 _110_ (
-    .A(\stage2_reg1[6] ),
-    .B(_019_),
-    .CI(_020_),
-    .CO(_063_),
-    .S(_064_)
+  FA_X1 _135_ (
+    .A(_086_),
+    .B(_087_),
+    .CI(_018_),
+    .CO(_020_),
+    .S(_021_)
   );
-  HA_X1 _111_ (
-    .A(\stage1_reg0[1] ),
-    .B(\stage1_reg1[1] ),
-    .CO(_021_),
+  FA_X1 _136_ (
+    .A(_022_),
+    .B(_023_),
+    .CI(_024_),
+    .CO(_025_),
+    .S(_026_)
+  );
+  FA_X1 _137_ (
+    .A(_027_),
+    .B(_028_),
+    .CI(_025_),
+    .CO(_029_),
+    .S(_030_)
+  );
+  HA_X1 _138_ (
+    .A(_032_),
+    .B(_033_),
+    .CO(_034_),
+    .S(_035_)
+  );
+  HA_X1 _139_ (
+    .A(_036_),
+    .B(_037_),
+    .CO(_031_),
     .S(_065_)
   );
-  HA_X1 _112_ (
-    .A(\stage2_reg0[2] ),
-    .B(_022_),
-    .CO(_066_),
+  HA_X1 _140_ (
+    .A(\reg_stage1[4] ),
+    .B(\reg_stage2[4] ),
+    .CO(_039_),
+    .S(_040_)
+  );
+  HA_X1 _141_ (
+    .A(\reg_stage1[5] ),
+    .B(\reg_stage2[5] ),
+    .CO(_041_),
+    .S(_042_)
+  );
+  HA_X1 _142_ (
+    .A(\reg_stage2[6] ),
+    .B(_043_),
+    .CO(_044_),
     .S(_067_)
   );
-  HA_X1 _113_ (
-    .A(\stage1_reg0[3] ),
-    .B(\stage1_reg1[3] ),
-    .CO(_023_),
-    .S(_024_)
+  HA_X1 _143_ (
+    .A(\reg_stage1[2] ),
+    .B(\reg_stage2[2] ),
+    .CO(_038_),
+    .S(_066_)
   );
-  HA_X1 _114_ (
-    .A(_025_),
-    .B(_026_),
-    .CO(_027_),
-    .S(_028_)
+  HA_X1 _144_ (
+    .A(_046_),
+    .B(_047_),
+    .CO(_048_),
+    .S(_049_)
   );
-  HA_X1 _115_ (
-    .A(_030_),
-    .B(_031_),
-    .CO(_032_),
-    .S(_033_)
+  HA_X1 _145_ (
+    .A(_050_),
+    .B(_051_),
+    .CO(_045_),
+    .S(_088_)
   );
-  HA_X1 _116_ (
-    .A(_066_),
-    .B(_034_),
-    .CO(_029_),
-    .S(_068_)
-  );
-  DFFR_X1 _117_ (
-    .CK(clk),
-    .D(\partial_products[1][1] ),
-    .Q(\stage1_reg1[1] ),
-    .QN(_041_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _118_ (
-    .CK(clk),
-    .D(\partial_products[1][2] ),
-    .Q(\stage1_reg1[2] ),
-    .QN(_056_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _119_ (
-    .CK(clk),
-    .D(\partial_products[1][3] ),
-    .Q(\stage1_reg1[3] ),
-    .QN(_042_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _120_ (
-    .CK(clk),
-    .D(\partial_products[1][4] ),
-    .Q(\stage1_reg1[4] ),
-    .QN(_000_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _121_ (
-    .CK(clk),
-    .D(\partial_products[3][3] ),
-    .Q(\stage2_reg1[3] ),
-    .QN(_060_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _122_ (
-    .CK(clk),
-    .D(\partial_products[3][4] ),
-    .Q(\stage2_reg1[4] ),
-    .QN(_058_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _123_ (
-    .CK(clk),
-    .D(\partial_products[3][5] ),
-    .Q(\stage2_reg1[5] ),
-    .QN(_062_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _124_ (
-    .CK(clk),
-    .D(\partial_products[3][6] ),
-    .Q(\stage2_reg1[6] ),
-    .QN(_043_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _125_ (
-    .CK(clk),
-    .D(\partial_products[2][2] ),
-    .Q(\stage2_reg0[2] ),
-    .QN(_044_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _126_ (
-    .CK(clk),
-    .D(\partial_products[2][3] ),
-    .Q(\stage2_reg0[3] ),
-    .QN(_059_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _127_ (
-    .CK(clk),
-    .D(\partial_products[2][4] ),
-    .Q(\stage2_reg0[4] ),
-    .QN(_057_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _128_ (
-    .CK(clk),
-    .D(\partial_products[2][5] ),
-    .Q(\stage2_reg0[5] ),
-    .QN(_061_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _129_ (
-    .CK(clk),
-    .D(\stage1_reg0[0] ),
-    .Q(mul_out[0]),
-    .QN(_045_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _130_ (
-    .CK(clk),
-    .D(_065_),
-    .Q(mul_out[1]),
-    .QN(_046_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _131_ (
-    .CK(clk),
-    .D(_067_),
-    .Q(mul_out[2]),
-    .QN(_047_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _132_ (
-    .CK(clk),
-    .D(_068_),
-    .Q(mul_out[3]),
-    .QN(_048_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _133_ (
-    .CK(clk),
-    .D(_035_),
-    .Q(mul_out[4]),
-    .QN(_049_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _134_ (
-    .CK(clk),
-    .D(_036_),
-    .Q(mul_out[5]),
-    .QN(_050_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _135_ (
-    .CK(clk),
-    .D(_064_),
-    .Q(mul_out[6]),
-    .QN(_051_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _136_ (
-    .CK(clk),
-    .D(_063_),
-    .Q(mul_out[7]),
-    .QN(_052_),
-    .RN(rst_n)
-  );
-  DFFR_X1 _137_ (
+  DFFR_X1 _146_ (
     .CK(clk),
     .D(\partial_products[0][0] ),
-    .Q(\stage1_reg0[0] ),
-    .QN(_053_),
+    .Q(\reg_stage1[0] ),
+    .QN(_069_),
     .RN(rst_n)
   );
-  DFFR_X1 _138_ (
+  DFFR_X1 _147_ (
     .CK(clk),
-    .D(\partial_products[0][1] ),
-    .Q(\stage1_reg0[1] ),
-    .QN(_054_),
+    .D(_088_),
+    .Q(\reg_stage1[1] ),
+    .QN(_070_),
     .RN(rst_n)
   );
-  DFFR_X1 _139_ (
+  DFFR_X1 _148_ (
     .CK(clk),
-    .D(\partial_products[0][2] ),
-    .Q(\stage1_reg0[2] ),
-    .QN(_055_),
+    .D(_053_),
+    .Q(\reg_stage1[2] ),
+    .QN(_071_),
     .RN(rst_n)
   );
-  DFFR_X1 _140_ (
+  DFFR_X1 _149_ (
     .CK(clk),
-    .D(\partial_products[0][3] ),
-    .Q(\stage1_reg0[3] ),
-    .QN(_040_),
+    .D(_054_),
+    .Q(\reg_stage1[3] ),
+    .QN(_084_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _150_ (
+    .CK(clk),
+    .D(_055_),
+    .Q(\reg_stage1[4] ),
+    .QN(_086_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _151_ (
+    .CK(clk),
+    .D(_052_),
+    .Q(\reg_stage1[5] ),
+    .QN(_072_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _152_ (
+    .CK(clk),
+    .D(\reg_stage1[0] ),
+    .Q(mul_out[0]),
+    .QN(_073_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _153_ (
+    .CK(clk),
+    .D(\reg_stage1[1] ),
+    .Q(mul_out[1]),
+    .QN(_074_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _154_ (
+    .CK(clk),
+    .D(_066_),
+    .Q(mul_out[2]),
+    .QN(_075_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _155_ (
+    .CK(clk),
+    .D(_004_),
+    .Q(mul_out[3]),
+    .QN(_076_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _156_ (
+    .CK(clk),
+    .D(_005_),
+    .Q(mul_out[4]),
+    .QN(_077_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _157_ (
+    .CK(clk),
+    .D(_006_),
+    .Q(mul_out[5]),
+    .QN(_078_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _158_ (
+    .CK(clk),
+    .D(_067_),
+    .Q(mul_out[6]),
+    .QN(_079_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _159_ (
+    .CK(clk),
+    .D(_007_),
+    .Q(mul_out[7]),
+    .QN(_080_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _160_ (
+    .CK(clk),
+    .D(\partial_products[2][2] ),
+    .Q(\reg_stage2[2] ),
+    .QN(_081_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _161_ (
+    .CK(clk),
+    .D(_065_),
+    .Q(\reg_stage2[3] ),
+    .QN(_085_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _162_ (
+    .CK(clk),
+    .D(_001_),
+    .Q(\reg_stage2[4] ),
+    .QN(_087_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _163_ (
+    .CK(clk),
+    .D(_002_),
+    .Q(\reg_stage2[5] ),
+    .QN(_082_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _164_ (
+    .CK(clk),
+    .D(_003_),
+    .Q(\reg_stage2[6] ),
+    .QN(_083_),
+    .RN(rst_n)
+  );
+  DFFR_X1 _165_ (
+    .CK(clk),
+    .D(_000_),
+    .Q(\reg_stage2[7] ),
+    .QN(_068_),
     .RN(rst_n)
   );
 endmodule

@@ -5,11 +5,7 @@ module adder_8bit (
     output [7:0] y,
     output       Co
 );
-    wire [8:0] sum;
-
-    assign sum = {1'b0, a} + {1'b0, b} + Cin;
-    assign y = sum[7:0];
-    assign Co = sum[8];
+    assign {Co, y} = a + b + Cin;
 endmodule
 
 module adder_16bit (
@@ -22,7 +18,7 @@ module adder_16bit (
     wire carry_mid;
 
     // Instantiate lower 8-bit adder
-    adder_8bit lower_adder (
+    adder_8bit u0 (
         .a(a[7:0]),
         .b(b[7:0]),
         .Cin(Cin),
@@ -31,7 +27,7 @@ module adder_16bit (
     );
 
     // Instantiate upper 8-bit adder
-    adder_8bit upper_adder (
+    adder_8bit u1 (
         .a(a[15:8]),
         .b(b[15:8]),
         .Cin(carry_mid),

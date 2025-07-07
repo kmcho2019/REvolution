@@ -15,17 +15,17 @@ module signal_generator (
                 1'b0: begin
                     if (wave == 5'd31) begin
                         state <= 1'b1;
-                        wave  <= wave - 1;
+                        wave  <= wave - 1'b1;
                     end else begin
-                        wave <= wave + 1;
+                        wave <= wave + 1'b1;
                     end
                 end
                 1'b1: begin
                     if (wave == 5'd0) begin
                         state <= 1'b0;
-                        wave  <= wave + 1;
+                        wave  <= wave + 1'b1;
                     end else begin
-                        wave <= wave - 1;
+                        wave <= wave - 1'b1;
                     end
                 end
             endcase

@@ -8,23 +8,23 @@ module accu (
 );
 
     reg [9:0] accumulator;
-    reg [1:0] count; // 2 bits to count from 0 to 4
+    reg [1:0] count;  // 2 bits to count from 0 to 4
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             accumulator <= 10'd0;
             count <= 2'd0;
-            valid_out <= 1'b0;
             data_out <= 10'd0;
+            valid_out <= 1'b0;
         end else begin
-            valid_out <= 1'b0; // default low, only high for one cycle when outputting
+            valid_out <= 1'b0; // default no valid output
 
             if (valid_in) begin
                 accumulator <= accumulator + data_in;
                 count <= count + 1'b1;
 
                 if (count == 2'd3) begin
-                    // This is the 4th data (count starts from 0)
+                    // This is the 4th data (count from 0 to 3)
                     data_out <= accumulator + data_in;
                     valid_out <= 1'b1;
                     accumulator <= 10'd0;

@@ -8,10 +8,11 @@ module LFSR (
     assign feedback = ~(out[3] ^ out[2]);
 
     always @(posedge clk) begin
-        if (rst)
+        if (rst) begin
             out <= 4'b0000;
-        else
+        end else begin
             out <= {out[2:0], feedback};
+        end
     end
 
 endmodule
