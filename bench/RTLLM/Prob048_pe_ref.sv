@@ -1,4 +1,4 @@
-module verified_pe(
+module RefModule(
     input clk,
     input rst,
     input [31:0] a,

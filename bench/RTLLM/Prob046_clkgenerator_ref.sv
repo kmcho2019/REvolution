@@ -1,4 +1,4 @@
-module clkgenerator (
+module RefModule (
     output reg clk
 );
 

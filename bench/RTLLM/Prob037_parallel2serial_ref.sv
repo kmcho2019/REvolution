@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module verified_parallel2serial(
+module RefModule(
 	input wire clk  ,
 	input wire rst_n  ,
 	input wire [3:0]d ,

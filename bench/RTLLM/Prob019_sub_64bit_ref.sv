@@ -1,4 +1,4 @@
-module sub_64bit(
+module RefModule(
   input [63:0] A,
   input [63:0] B,
   output reg [63:0] result,

@@ -1,5 +1,5 @@
 
-module verified_serial2parallel(
+module RefModule(
 	input clk,
 	input rst_n,
 	input din_serial,

@@ -1,4 +1,4 @@
-module freq_divbyodd(
+module RefModule(
     clk,
     rst_n,
     clk_div

@@ -1,4 +1,4 @@
-module LIFObuffer (
+module RefModule (
     input [3:0] dataIn,
     input RW,
     input EN,

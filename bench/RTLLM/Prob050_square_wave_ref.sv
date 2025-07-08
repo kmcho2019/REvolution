@@ -1,4 +1,4 @@
-module square_wave(
+module RefModule(
     input clk,                     
     input [7:0] freq,           
     output reg wave_out          

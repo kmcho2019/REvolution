@@ -1,4 +1,4 @@
-module fixed_point_adder #(
+module RefModule #(
 	//Parameterized values
 	parameter Q = 15,
 	parameter N = 32

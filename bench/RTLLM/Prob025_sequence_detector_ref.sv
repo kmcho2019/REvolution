@@ -1,4 +1,4 @@
-module sequence_detector(
+module RefModule(
      input  clk, 
      input  rst_n,
      input  data_in, 

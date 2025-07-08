@@ -1,4 +1,4 @@
-module adder_bcd (
+module RefModule (
     input  [3:0] A,   // First BCD number (0-9)
     input  [3:0] B,   // Second BCD number (0-9)
     input  Cin,       // Input carry

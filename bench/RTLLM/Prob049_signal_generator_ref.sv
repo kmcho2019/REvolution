@@ -1,4 +1,4 @@
-module verified_signal_generator(
+module RefModule(
   input clk,
   input rst_n,
   output reg [4:0] wave

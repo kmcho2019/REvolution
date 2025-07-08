@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module verified_edge_detect(
+module RefModule(
 	input clk,
 	input rst_n,
 	input a,

@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module verified_radix2_div(
+module RefModule(
     input wire clk,
     input wire rst,
     input wire [7:0] dividend,    

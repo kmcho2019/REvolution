@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module verified_JC_counter(
+module RefModule(
    input                clk ,
    input                rst_n,
  

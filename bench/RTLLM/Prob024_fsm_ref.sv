@@ -1,4 +1,4 @@
-module verified_fsm(IN,MATCH,CLK,RST);
+module RefModule(IN,MATCH,CLK,RST);
 input IN,CLK,RST;
 output reg MATCH;
 

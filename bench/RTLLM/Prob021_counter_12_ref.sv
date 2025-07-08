@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module verified_counter_12 
+module RefModule 
 (
   input rst_n,
   input clk,

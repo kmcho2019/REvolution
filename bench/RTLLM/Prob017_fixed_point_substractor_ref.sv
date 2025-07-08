@@ -1,4 +1,4 @@
-module fixed_point_subtractor #(
+module RefModule #(
 	parameter Q = 15,
 	parameter N = 32
 	)

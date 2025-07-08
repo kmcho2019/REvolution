@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module verified_pulse_detect(    
+module RefModule(    
     input clk,
     input rst_n,
     input data_in,

@@ -1,4 +1,4 @@
-module comparator_4bit(
+module RefModule(
     input [3:0] A,   // First 4-bit input operand
     input [3:0] B,   // Second 4-bit input operand
     output A_greater, 

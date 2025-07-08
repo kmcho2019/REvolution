@@ -28,21 +28,6 @@ import math # Used for UCB calculation
 
 import sys # Used for stream redirection
 
-
-def find_module_name(verilog_code):
-    """
-    Parse Verilog code to find the module name.
-    Useful as each problem has a different module name.
-    Also, each benchmark have different conventions for module names.
-    Example:
-    - RTLLM: different module names for each problem (e.g. `accu`, ...)
-    - VerilogEval-Code-Complete: module name is always `TopModule`
-    """
-    match = re.search(r'\bmodule\s+(\w+)', verilog_code)
-    if match:
-        return match.group(1)
-    return None
-
 # StreamRedirector class for systematic output redirection and error logging
 # This class is used to redirect stdout and stderr to a file for each problem
 # And then aggregate the outputs in a systematic way.
@@ -351,7 +336,7 @@ class SynthesisEvaluator:
         # print(f"Reference Directory: {self.ref_dir_path}")
         # print(f"PDK Directory: {self.pdk_path}")
 
-    def evaluate(self, verilog_file, problem_name, output_directory, report_base_path):
+    def evaluate(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path):
         """
         Performs synthesis and PPA analysis on a given Verilog file.
         The report files will be named based on `report_base_path`.
@@ -359,7 +344,7 @@ class SynthesisEvaluator:
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, output_directory, report_base_path)
+        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path)
 
         if not synthesis_success:
             return {
@@ -378,7 +363,7 @@ class SynthesisEvaluator:
             "ppa_metrics": ppa_metrics
         }
 
-    def _run_synthesis(self, verilog_file, problem_name, output_directory, report_base_path):
+    def _run_synthesis(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path):
         """
         Runs the Yosys synthesis script.
         Synthesis report saved based on report_base_path.
@@ -386,12 +371,10 @@ class SynthesisEvaluator:
 
         clk_period = self.clk_period # ns
 
-        # Extract the actual internal module name from the Verilog file
-        module_name = find_module_name(open(verilog_file, 'r').read())
 
-        sdc_file_path = self._create_sdc_file(verilog_file, module_name, output_directory, clk_period=clk_period)
-        yosys_script_path = self._create_yosys_script(verilog_file, module_name, output_directory, clk_period)
-        openroad_script_path = self._create_openroad_script(sdc_file_path, module_name, output_directory)
+        sdc_file_path = self._create_sdc_file(verilog_file, synth_top_module_name, output_directory, clk_period=clk_period)
+        yosys_script_path = self._create_yosys_script(verilog_file, synth_top_module_name, output_directory, clk_period)
+        openroad_script_path = self._create_openroad_script(sdc_file_path, synth_top_module_name, output_directory)
 
         report_path = report_base_path + "_synthesis_report.rpt" #os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
 
@@ -1249,7 +1232,9 @@ class EoHEngine:
         
         ref_output_dir = os.path.join(self.base_save_path, "reference_synthesis", self.benchmark_name, self.problem_name)
         ref_report_base_path = os.path.join(ref_output_dir, f"{self.problem_name}_ref")
-        synthesis_results = self.synthesis_evaluator.evaluate(ref_sv_file, self.problem_name, ref_output_dir, ref_report_base_path)
+        ref_top_module_name = "RefModule"  # Use a fixed name for the reference module, 
+        # RTLLM originally used different names for each reference file, but we have standardized it to bring it in line with VerilogEvalv2.
+        synthesis_results = self.synthesis_evaluator.evaluate(ref_sv_file, self.problem_name, ref_top_module_name, ref_output_dir, ref_report_base_path)
 
         if synthesis_results and synthesis_results.get("ppa_success"):
             self.ref_ppa_metrics = synthesis_results["ppa_metrics"]
@@ -1353,7 +1338,26 @@ class EoHEngine:
         for cand in func_passed:
             report_base_path = cand.code_file_path.rsplit('.', 1)[0]
             output_dir = os.path.dirname(cand.code_file_path)
-            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, output_dir, report_base_path)
+
+            # Find the module name from the reference file (synthesis_top_module_names.json is expected to exist within the benchmark directory)
+            # This is needed to ensure the synthesis evaluator knows which module to synthesize.
+            # Important as each benchmark may have a different top module name. 
+            # (RTLLM uses individual problem name and VerilogEvalv2 uses TopModule)
+            # And sometimes the LLM will generate multiple modules in the same file as part of hierarchical design.
+            # In previous versions, we used the first module name found in the file.
+            # This lead to some situations where the synthesized module was not the intended top module.
+            # Now, we will use a JSON file that maps problem names to top module names.
+            # If the file does not exist, we will use a default module name "TopModule".
+            # This is a fallback mechanism to ensure synthesis can proceed even if the JSON file is missing
+            top_module_name_file = os.path.join(self.benchmark_path, "synthesis_top_module_names.json")
+            if not os.path.exists(top_module_name_file):
+                print(f"WARNING: Top module name file not found. Using default module name 'TopModule'.")
+                top_module_name = "TopModule"
+            else:
+                with open(top_module_name_file, "r") as f:
+                    top_module_names = json.load(f)
+                top_module_name = top_module_names.get(self.problem_name, "TopModule")
+            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, top_module_name, output_dir, report_base_path)
 
             if synth_results["synthesis_success"] and synth_results["ppa_success"]:
                 cand.status = 'success'

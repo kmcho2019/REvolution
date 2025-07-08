@@ -1,4 +1,4 @@
-module verified_RAM (
+module RefModule (
 	input clk,
 	input rst_n,
 	

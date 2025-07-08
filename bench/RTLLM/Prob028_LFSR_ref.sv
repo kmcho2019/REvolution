@@ -1,4 +1,4 @@
-module LFSR (out, clk, rst);
+module RefModule (out, clk, rst);
   input clk, rst;
   output reg [3:0] out;
   wire feedback;

@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module verified_traffic_light
+module RefModule
     (
 		input rst_n, 
       input clk, 

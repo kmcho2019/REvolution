@@ -1,4 +1,4 @@
-module barrel_shifter (in, ctrl, out);
+module RefModule (in, ctrl, out);
   input  [7:0] in;
   input [2:0] ctrl;
   output [7:0] out;

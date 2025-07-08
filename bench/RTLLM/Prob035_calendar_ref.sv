@@ -1,4 +1,4 @@
-module verified_calendar(CLK,RST,Hours,Mins,Secs);
+module RefModule(CLK,RST,Hours,Mins,Secs);
 input CLK,RST;
 output [5:0] Hours,Mins,Secs;
 reg [5:0] Hours,Mins,Secs;

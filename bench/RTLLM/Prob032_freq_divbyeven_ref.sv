@@ -1,4 +1,4 @@
-module freq_divbyeven(
+module RefModule(
     clk,
     rst_n,
     clk_div

@@ -1,4 +1,4 @@
-module instr_reg (
+module RefModule (
     input clk,
     input rst,
     input [1:0] fetch,

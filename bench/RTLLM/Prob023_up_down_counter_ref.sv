@@ -1,4 +1,4 @@
-module up_down_counter (
+module RefModule (
     input wire clk,
     input wire reset,
     input wire up_down,

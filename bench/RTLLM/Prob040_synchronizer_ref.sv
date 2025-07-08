@@ -1,4 +1,4 @@
-module verified_synchronizer(
+module RefModule(
 	input 				clk_a	, 
 	input 				clk_b	,   
 	input 				arstn	,

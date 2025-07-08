@@ -1,4 +1,4 @@
-module verified_right_shifter(clk, q,d);  
+module RefModule(clk, q,d);  
 
     input  clk;  
     input d;  

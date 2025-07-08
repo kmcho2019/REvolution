@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module verified_multi_pipe#(
+module RefModule#(
 	parameter size = 4
 )(
 	input 						clk 		,   

@@ -1,4 +1,4 @@
-module verified_adder_16bit (
+module RefModule (
     input wire [15:0] a,
     input wire [15:0] b,
     input wire Cin,

@@ -1,4 +1,4 @@
-module ROM (
+module RefModule (
     input wire [7:0] addr,        // 8-bit Address input
     output reg [15:0] dout        // 16-bit Data output
 );

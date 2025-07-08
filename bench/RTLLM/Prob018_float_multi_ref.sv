@@ -1,4 +1,4 @@
-module float_multi(clk, rst, a, b, z);
+module RefModule(clk, rst, a, b, z);
 
 input clk, rst;
 input [31:0] a, b;

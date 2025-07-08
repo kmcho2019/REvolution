@@ -1,4 +1,4 @@
-module multi_8bit (
+module RefModule (
   input [7:0] A,
   input [7:0] B,
   output reg [15:0] product

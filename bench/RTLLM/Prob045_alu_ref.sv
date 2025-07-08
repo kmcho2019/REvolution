@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module verified_alu(
+module RefModule(
     input [31:0] a,
     input [31:0] b,
     input [5:0] aluc,

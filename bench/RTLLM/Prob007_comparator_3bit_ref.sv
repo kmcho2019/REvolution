@@ -1,4 +1,4 @@
-module comparator_3bit (
+module RefModule (
     input [2:0] A,
     input [2:0] B,
     output A_greater,

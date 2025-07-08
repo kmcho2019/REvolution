@@ -1,4 +1,4 @@
-module verified_multi_16bit(
+module RefModule(
     input clk,          // Chip clock signal.
     input rst_n,        // Active-low reset signal. Defined as 0 for chip reset; defined as 1 for reset signal inactive.
     input start,        // Chip enable signal. 
