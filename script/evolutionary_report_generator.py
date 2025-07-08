@@ -50,6 +50,9 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
     """Generates and prints a summary report for the entire run across all benchmarks."""
     
     grand_total_problems = 0
+    grand_total_initial_solved_count = 0
+    grand_total_final_solved_count = 0
+    grand_total_score_improvements = []
     grand_total_ppa_improved_count = 0
     grand_total_initial_func_pass = []
     grand_total_final_func_pass = []
@@ -60,6 +63,10 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
         grand_total_ppa_improved_count += stats['ppa_improved_count']
         grand_total_initial_func_pass.extend(stats['initial_rates']['func'])
         grand_total_final_func_pass.extend(stats['final_rates']['func'])
+
+        grand_total_initial_solved_count += stats['initial_any_pass_synth_count']
+        grand_total_final_solved_count += stats['final_any_pass_synth_count']
+        grand_total_score_improvements.extend(stats['score_improvements'])
         for key in ['area', 'power', 'period', 'avg']:
             valid_improvements = [p for p in stats['ppa_improvements'][key] if isinstance(p, float)]
             grand_total_ppa_improvements[key].extend(valid_improvements)
@@ -74,7 +81,7 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
     ]
     
     headers = [
-        "Benchmark", "Problems", "Func Pass (Initial → Final)", "PPA Improved", 
+        "Benchmark", "Problems", "Solved (Initial)", "Solved (Final)", "Func Pass (Initial → Final)", "PPA Improved", "Avg PPA Score Improv.",
         "Avg Area Improv.", "Avg Power Improv.", "Avg Period Improv."
     ]
     report_content.append("| " + " | ".join(headers) + " |")
@@ -84,6 +91,11 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
         total = stats['total_problems']
         if total == 0: continue
         
+
+        initial_solved_rate = (stats['initial_any_pass_synth_count'] / total) * 100
+        final_solved_rate = (stats['final_any_pass_synth_count'] / total) * 100
+        avg_score_improv = np.mean(stats['score_improvements']) if stats['score_improvements'] else 'nan'
+
         avg_initial_func = np.mean(stats['initial_rates']['func']) * 100
         avg_final_func = np.mean(stats['final_rates']['func']) * 100
         
@@ -92,8 +104,13 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
         avg_period_improv = np.mean([p for p in stats['ppa_improvements']['period'] if p is not None])
 
         row = [
-            f"**{name}**", str(total), f"{avg_initial_func:.1f}% → {avg_final_func:.1f}%",
+            f"**{name}**", 
+            str(total), 
+            f"{stats['initial_any_pass_synth_count']}/{total} ({initial_solved_rate:.1f}%)",
+            f"{stats['final_any_pass_synth_count']}/{total} ({final_solved_rate:.1f}%)",
+            f"{avg_initial_func:.1f}% → {avg_final_func:.1f}%",
             f"{stats['ppa_improved_count']}/{total}",
+            f"{avg_score_improv:.2f}%" if not np.isnan(avg_score_improv) else "N/A",
             f"{avg_area_improv:+.2f}%" if not np.isnan(avg_area_improv) else "N/A",
             f"{avg_power_improv:+.2f}%" if not np.isnan(avg_power_improv) else "N/A",
             f"{avg_period_improv:+.2f}%" if not np.isnan(avg_period_improv) else "N/A",
@@ -101,6 +118,10 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
         report_content.append("| " + " | ".join(row) + " |")
 
     if grand_total_problems > 0:
+        overall_initial_solved_rate = (grand_total_initial_solved_count / grand_total_problems) * 100
+        overall_final_solved_rate = (grand_total_final_solved_count / grand_total_problems) * 100
+        overall_avg_score_improv = np.mean(grand_total_score_improvements) if grand_total_score_improvements else 'nan'
+
         overall_avg_initial_func = np.mean(grand_total_initial_func_pass) * 100
         overall_avg_final_func = np.mean(grand_total_final_func_pass) * 100
         
@@ -109,9 +130,13 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
         overall_avg_period = np.mean(grand_total_ppa_improvements['period'])
 
         total_row = [
-            "**🏁 OVERALL**", f"**{grand_total_problems}**",
+            "**🏁 OVERALL**", 
+            f"**{grand_total_problems}**",
+            f"**{grand_total_initial_solved_count}/{grand_total_problems} ({overall_initial_solved_rate:.1f}%)**",
+            f"**{grand_total_final_solved_count}/{grand_total_problems} ({overall_final_solved_rate:.1f}%)**",
             f"**{overall_avg_initial_func:.1f}% → {overall_avg_final_func:.1f}%**",
             f"**{grand_total_ppa_improved_count}/{grand_total_problems}**",
+            f"**{overall_avg_score_improv:+.2f}%**" if not np.isnan(overall_avg_score_improv) else "**N/A**",
             f"**{overall_avg_area:+.2f}%**" if not np.isnan(overall_avg_area) else "**N/A**",
             f"**{overall_avg_power:+.2f}%**" if not np.isnan(overall_avg_power) else "**N/A**",
             f"**{overall_avg_period:+.2f}%**" if not np.isnan(overall_avg_period) else "**N/A**",
@@ -119,9 +144,9 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
         report_content.append("| " + " | ".join(total_row) + " |")
     
     final_report_str = "\n".join(report_content)
-    print("\n" + "="*100)
+    print("\n" + "="*120)
     print("🚀 OVERALL RUN SUMMARY")
-    print("="*100)
+    print("="*120)
     print(final_report_str)
 
     if save_markdown:
@@ -143,6 +168,15 @@ def generate_benchmark_report(model_path: pathlib.Path, benchmark_name: str, sta
     def calc_rate(key):
         return (stats[key] / total) * 100 if total > 0 else 0
 
+
+    # Calculate rates for new 'initial any passing' columns
+    initial_any_pass_syntax = calc_rate('initial_any_pass_syntax_count')
+    initial_any_pass_func = calc_rate('initial_any_pass_func_count')
+    initial_any_pass_synth = calc_rate('initial_any_pass_synth_count')
+    final_any_pass_syntax = calc_rate('final_any_pass_syntax_count')
+    final_any_pass_func = calc_rate('final_any_pass_func_count')
+    final_any_pass_synth = calc_rate('final_any_pass_synth_count')
+
     any_pass_syntax = calc_rate('any_pass_syntax_count')
     any_pass_func = calc_rate('any_pass_func_count')
     any_pass_synth = calc_rate('any_pass_synth_count')
@@ -159,23 +193,23 @@ def generate_benchmark_report(model_path: pathlib.Path, benchmark_name: str, sta
         f"- **Average LLM API Calls per Problem:** {np.mean(stats['api_calls']):.1f}\n",
 
         "### ✅ Pass Rate Analysis",
-        "| Metric | Any Passing Gen | Initial Pass@1 | Final Pass@1 | Change |",
-        "|:---|:---|:---|:---|:---|",
-        f"| **Syntax** | {any_pass_syntax:.1f}% ({stats['any_pass_syntax_count']}/{total}) | {np.mean(stats['initial_rates']['syntax'])*100:.1f}% | {np.mean(stats['final_rates']['syntax'])*100:.1f}% | **{np.mean(stats['final_rates']['syntax'])*100 - np.mean(stats['initial_rates']['syntax'])*100:+.1f}%** |",
-        f"| **Functionality** | {any_pass_func:.1f}% ({stats['any_pass_func_count']}/{total}) | {np.mean(stats['initial_rates']['func'])*100:.1f}% | {np.mean(stats['final_rates']['func'])*100:.1f}% | **{np.mean(stats['final_rates']['func'])*100 - np.mean(stats['initial_rates']['func'])*100:+.1f}%** |",
-        f"| **Synthesis** | {any_pass_synth:.1f}% ({stats['any_pass_synth_count']}/{total}) | {np.mean(stats['initial_rates']['synth'])*100:.1f}% | {np.mean(stats['final_rates']['synth'])*100:.1f}% | **{np.mean(stats['final_rates']['synth'])*100 - np.mean(stats['initial_rates']['synth'])*100:+.1f}%** |\n",
+        "| Metric | Initial Any Passing Gen | Any Passing Gen | Initial Pass@1 | Final Pass@1 | Change |",
+        "|:---|:---|:---|:---|:---|:---|",
+        f"| **Syntax** | {initial_any_pass_syntax:.1f}% ({stats['initial_any_pass_syntax_count']}/{total}) | {any_pass_syntax:.1f}% ({stats['any_pass_syntax_count']}/{total}) | {np.mean(stats['initial_rates']['syntax'])*100:.1f}% | {np.mean(stats['final_rates']['syntax'])*100:.1f}% | **{np.mean(stats['final_rates']['syntax'])*100 - np.mean(stats['initial_rates']['syntax'])*100:+.1f}%** |",
+        f"| **Functionality** | {initial_any_pass_func:.1f}% ({stats['initial_any_pass_func_count']}/{total}) | {any_pass_func:.1f}% ({stats['any_pass_func_count']}/{total}) | {np.mean(stats['initial_rates']['func'])*100:.1f}% | {np.mean(stats['final_rates']['func'])*100:.1f}% | **{np.mean(stats['final_rates']['func'])*100 - np.mean(stats['initial_rates']['func'])*100:+.1f}%** |",
+        f"| **Synthesis** | {initial_any_pass_synth:.1f}% ({stats['initial_any_pass_synth_count']}/{total}) | {any_pass_synth:.1f}% ({stats['any_pass_synth_count']}/{total}) | {np.mean(stats['initial_rates']['synth'])*100:.1f}% | {np.mean(stats['final_rates']['synth'])*100:.1f}% | **{np.mean(stats['final_rates']['synth'])*100 - np.mean(stats['initial_rates']['synth'])*100:+.1f}%** |\n",
 
         "### ⚡ PPA Optimization Summary",
-        f"- **Problems with PPA Improvement (Compared to Reference):** {stats['ppa_improved_count']} / {total} ({calc_rate('ppa_improved_count'):.1f}%)",
+        f"- **Problems with PPA Improvement (Best Solution Compared to Reference):** {stats['ppa_improved_count']} / {total} ({calc_rate('ppa_improved_count'):.1f}%)",
     ]
     
     # --- Correctly build the PPA summary table ---
     md_content.append("")
     md_content.append("| PPA Metric | Average Improvement |")
     md_content.append("|:-----------|:--------------------|")
-    md_content.append(f"| **Area** | {avg_area:+.2f}%" if not np.isnan(avg_area) else "N/A |")
-    md_content.append(f"| **Power** | {avg_power:+.2f}%" if not np.isnan(avg_power) else "N/A |")
-    md_content.append(f"| **Performance (Period)** | {avg_period:+.2f}%" if not np.isnan(avg_period) else "N/A |")
+    md_content.append(f"| **Area** | {avg_area:+.2f}% |" if not np.isnan(avg_area) else "N/A |")
+    md_content.append(f"| **Power** | {avg_power:+.2f}% |" if not np.isnan(avg_power) else "N/A |")
+    md_content.append(f"| **Performance (Period)** | {avg_period:+.2f}% |" if not np.isnan(avg_period) else "N/A |")
     
     # --- Strategy Analysis Section ---
     md_content.extend([
@@ -194,14 +228,14 @@ def generate_benchmark_report(model_path: pathlib.Path, benchmark_name: str, sta
     # --- Detailed Problem Results Table ---
     md_content.extend([
         "\n## 📋 Detailed Problem-by-Problem Analysis",
-        "| Problem | Status | Best Score | Reference PPA | Best Evo. PPA | PPA % Improv. (A/P/T) | Runtime (s) | API Calls |",
-        "|:---|:---|:---:|:---|:---|:---|:---:|:---:|"
+        "| Problem | Initial Status | Final Status | Best Score | Reference PPA | Best Evo. PPA | PPA % Improv. (A/P/T) | Runtime (s) | API Calls |",
+        "|:---|:---|:---|:---:|:---|:---|:---|:---:|:---:|"
     ])
 
     for res in sorted(stats['problem_results'], key=lambda x: x['Problem']):
-        status_emoji = "✅" if res['Final Pass Rate'] > 0 else "❌"
+        final_status_emoji = "✅" if res['Final Pass Rate'] > 0 else "❌"
         row = [
-            res['Problem'], f"{status_emoji} (Func: {res['Final Pass Rate']:.0f}%)",
+            res['Problem'], res['Initial Status'], f"{final_status_emoji} (Func: {res['Final Pass Rate']:.0f}%)",
             res['Best Score'], f"`{res['Reference PPA']}`", f"`{res['Best PPA']}`",
             res['PPA Improvement'], f"{res['Runtime']:.1f}", str(res['API Calls'])
         ]
@@ -234,10 +268,13 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
 
     benchmark_data = defaultdict(lambda: {
         'total_problems': 0, 'ppa_improved_count': 0,
+        'initial_any_pass_syntax_count': 0, 'initial_any_pass_func_count': 0, 'initial_any_pass_synth_count': 0,
+        'final_any_pass_syntax_count': 0, 'final_any_pass_func_count': 0, 'final_any_pass_synth_count': 0,
         'any_pass_syntax_count': 0, 'any_pass_func_count': 0, 'any_pass_synth_count': 0,
         'initial_rates': {'syntax': [], 'func': [], 'synth': []},
         'final_rates': {'syntax': [], 'func': [], 'synth': []},
         'ppa_improvements': {'area': [], 'power': [], 'period': [], 'avg': []},
+        'score_improvements': [],
         'runtimes': [], 'api_calls': [], 'problem_results': [],
         'strategy_counts': defaultdict(int), 'strategy_rewards': defaultdict(int)
     })
@@ -265,6 +302,10 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             if final_rates.get('functionality', 0.0) > 0: stats['any_pass_func_count'] += 1
             if final_rates.get('synthesis_ppa', 0.0) > 0: stats['any_pass_synth_count'] += 1
 
+            if final_rates.get('syntax', 0.0) > 0: stats['final_any_pass_syntax_count'] += 1
+            if final_rates.get('functionality', 0.0) > 0: stats['final_any_pass_func_count'] += 1
+            if final_rates.get('synthesis_ppa', 0.0) > 0: stats['final_any_pass_synth_count'] += 1
+
             stats['runtimes'].append(data.get('total_runtime_seconds', 0))
             stats['api_calls'].append(data.get('total_llm_api_calls', 0))
 
@@ -276,6 +317,11 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
                     if first_gen_data.get('generation') == 0:
                         initial_rates = first_gen_data.get('success_rates', initial_rates)
             
+           # Increment initial any pass counters based on Gen 0 results
+            if initial_rates.get('total_syntax', 0.0) > 0: stats['initial_any_pass_syntax_count'] += 1
+            if initial_rates.get('total_functionality', 0.0) > 0: stats['initial_any_pass_func_count'] += 1
+            if initial_rates.get('total_synthesis_ppa', 0.0) > 0: stats['initial_any_pass_synth_count'] += 1
+
             stats['initial_rates']['syntax'].append(initial_rates.get('total_syntax', 0.0))
             stats['initial_rates']['func'].append(initial_rates.get('total_functionality', 0.0))
             stats['initial_rates']['synth'].append(initial_rates.get('total_synthesis_ppa', 0.0))
@@ -283,6 +329,11 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             ref_ppa = data.get('ref_ppa_metric', {})
             best_ppa = data.get('final_population_ppa', {}).get('best_metrics', {})
             best_score = data.get('final_population_ppa', {}).get('best_score')
+
+            # Calculate and store score improvement.
+            # Assuming reference score is 0, improvement is best_score
+            if best_score is not None:
+                stats['score_improvements'].append(best_score * 100)  # Convert to percentage
 
             area_improv_str, area_improv_val = format_percentage_improvement(best_ppa.get('area'), ref_ppa.get('area'))
             power_improv_str, power_improv_val = format_percentage_improvement(best_ppa.get('power'), ref_ppa.get('power'))
@@ -312,9 +363,15 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
                     if reward is not None:
                          stats['strategy_rewards'][strategy] += 1
             
+            # Prepare the 'Initial Status' string for the detailed report
+            initial_func_rate = initial_rates.get('total_functionality', 0.0) * 100
+            initial_status_emoji = "✅" if initial_func_rate > 0 else "❌"
+            initial_status_str = f"{initial_status_emoji} (Func: {initial_func_rate:.0f}%)"
+
             stats['total_problems'] += 1
             stats['problem_results'].append({
                 'Problem': problem_name,
+                'Initial Status': initial_status_str,
                 'Final Pass Rate': final_rates.get('functionality', 0.0) * 100,
                 'Best Score': f"{best_score:.4f}" if best_score is not None else "N/A",
                 'Reference PPA': format_ppa_metrics(ref_ppa),
