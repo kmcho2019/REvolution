@@ -175,6 +175,14 @@ class EoHLogger:
         # 4. Calculate generation-wide PPA stats
         ppa_candidates_this_gen = [c for c in candidates_this_gen if c.status == 'success']
         generation_ppa_stats = self._calculate_ppa_stats(ppa_candidates_this_gen)
+        # Collect detailed PPA metrics for all successful individuals
+        population_ppa = [
+            {"id": c.id,
+             "strategy": c.strategy,
+             "score": c.score,
+             "ppa_metrics": c.ppa_metrics}
+             for c in ppa_candidates_this_gen
+        ]
 
         # 5. Calculate strategy-wise PPA stats
         strategy_ppa_stats = {}
@@ -221,7 +229,8 @@ class EoHLogger:
             },
             "strategy_success_rates": strategy_success_rates,
             "generation_ppa": generation_ppa_stats,
-            "strategy_ppa": strategy_ppa_stats
+            "strategy_ppa": strategy_ppa_stats,
+            "population_ppa_details": population_ppa
         }
 
         # 8. Write to file and update accumulators
@@ -253,6 +262,14 @@ class EoHLogger:
         """Calculates and writes the final problem summary."""
         # 1. Final PPA stats from the last generation's ppa_pool
         final_ppa_stats = self._calculate_ppa_stats(final_ppa_pool)
+        # Collect detailed PPA metrics for all successful individuals in the final population pool
+        final_population_ppa = [
+            {"id": c.id,
+             "strategy": c.strategy,
+             "score": c.score,
+             "ppa_metrics": c.ppa_metrics}
+             for c in final_ppa_pool if c.status == 'success'
+        ]
 
         # 2. Strategy-wise PPA for the final pool
         final_strategy_ppa_stats = {}
@@ -293,6 +310,7 @@ class EoHLogger:
             "ref_ppa_metric": self.ref_ppa_metrics,
             "final_population_ppa": final_ppa_stats,
             "final_strategy_ppa": final_strategy_ppa_stats,
+            "final_population_ppa_details": final_population_ppa,
             "generation_statistics": self.generation_stats_summary,
         }
 
@@ -1799,7 +1817,7 @@ def run_problem_worker(args_tuple):
     return result_str, individual_log_path
 
 if __name__ == "__main__":
-    # MODIFIED: Use argparse to make the script configurable
+    # Use argparse to make the script configurable
     parser = argparse.ArgumentParser(description="Run the EoH framework on specified Verilog benchmarks.")
     
     # List of all available benchmarks in the 'bench' directory
