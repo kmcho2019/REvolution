@@ -4,7 +4,15 @@ import pathlib
 from collections import defaultdict
 
 def format_ppa_metrics(metrics: dict) -> str:
-    """Formats PPA metrics dictionary into a readable string."""
+    """
+    Formats PPA metrics dictionary into a readable string.
+    
+    Args:
+        metrics: A dictionary containing PPA metrics.
+        
+    Returns:
+        A formatted string of key-value pairs.
+    """
     if not metrics:
         return "N/A"
     # Order keys for consistent output
@@ -12,20 +20,48 @@ def format_ppa_metrics(metrics: dict) -> str:
     return ", ".join(f"{key.capitalize()}: {metrics.get(key, 'N/A')}" for key in keys)
 
 def generate_markdown_report(benchmark_name: str, stats: dict) -> str:
-    """Generates the full report content as a Markdown formatted string."""
-    total = stats['total_problems']
-    pass_rate_syntax = (stats['syntax_passes'] / total) * 100
-    pass_rate_func = (stats['func_passes'] / total) * 100
-    pass_rate_synth = (stats['synth_passes'] / total) * 100
+    """
+    Generates the full report content as a Markdown formatted string.
 
-    # Using a list of strings and joining is more efficient
+    Args:
+        benchmark_name: The name of the benchmark.
+        stats: The aggregated statistics for the benchmark.
+
+    Returns:
+        A string containing the report in Markdown format.
+    """
+    total = stats['total_problems']
+    if total == 0:
+        return f"# 📊 BENCHMARK REPORT: {benchmark_name}\n\nNo valid problems found for this benchmark."
+
+    # --- Calculate Final Metrics ---
+    generations_per_problem = stats.get('total_generations_per_problem', 'N/A')
+    
+    pass_at_1_syntax = (stats['sum_pass_rate_syntax'] / total) * 100
+    pass_at_1_func = (stats['sum_pass_rate_func'] / total) * 100
+    pass_at_1_synth = (stats['sum_pass_rate_synth'] / total) * 100
+
+    any_pass_rate_syntax = (stats['problems_any_pass_syntax'] / total) * 100
+    any_pass_rate_func = (stats['problems_any_pass_func'] / total) * 100
+    any_pass_rate_synth = (stats['problems_any_pass_synth'] / total) * 100
+
+    # --- Build Markdown Content ---
     md_content = [
         f"# 📊 BENCHMARK REPORT: {benchmark_name}\n",
         "## 📈 Overall Summary",
         f"- **Total Problems Analyzed:** {total}",
-        f"- **Syntax Pass@1 Rate:** {pass_rate_syntax:.2f}% ({stats['syntax_passes']}/{total})",
-        f"- **Functionality Pass@1 Rate:** {pass_rate_func:.2f}% ({stats['func_passes']}/{total})",
-        f"- **Synthesis Pass@1 Rate:** {pass_rate_synth:.2f}% ({stats['synth_passes']}/{total})\n",
+        f"- **Generations per Problem:** {generations_per_problem}\n",
+        
+        "### Pass@1 Rates (Average success rate across all problems)",
+        f"- **Syntax Pass@1 Rate:** {pass_at_1_syntax:.2f}%",
+        f"- **Functionality Pass@1 Rate:** {pass_at_1_func:.2f}%",
+        f"- **Synthesis Pass@1 Rate:** {pass_at_1_synth:.2f}%\n",
+
+        "### Problems with at Least One Passing Generation",
+        f"- **Syntax:** {any_pass_rate_syntax:.2f}% ({stats['problems_any_pass_syntax']}/{total})",
+        f"- **Functionality:** {any_pass_rate_func:.2f}% ({stats['problems_any_pass_func']}/{total})",
+        f"- **Synthesis:** {any_pass_rate_synth:.2f}% ({stats['problems_any_pass_synth']}/{total})\n",
+        
         "## 📋 Detailed Problem Results"
     ]
 
@@ -36,13 +72,13 @@ def generate_markdown_report(benchmark_name: str, stats: dict) -> str:
 
     for res in stats['problem_results']:
         row = [
-            res['name'],
-            res['pass_syntax'],
-            res['pass_func'],
-            res['pass_synth'],
-            res['best_score'],
-            f"`{res['best_ppa']}`",
-            f"`{res['ref_ppa']}`"
+            res['Problem'],
+            res['Syntax'],
+            res['Functionality'],
+            res['Synthesis'],
+            res['Best Score'],
+            f"`{res['Best PPA Metrics']}`",
+            f"`{res['Reference PPA Metrics']}`"
         ]
         md_content.append("| " + " | ".join(row) + " |")
 
@@ -60,11 +96,16 @@ def generate_report(experiment_path: pathlib.Path, save_markdown: bool = False):
         print(f"❌ Error: Path not found -> {experiment_path}")
         return
 
+    # Updated data structure to handle multi-generation stats
     benchmark_data = defaultdict(lambda: {
         'total_problems': 0,
-        'syntax_passes': 0,
-        'func_passes': 0,
-        'synth_passes': 0,
+        'total_generations_per_problem': None,
+        'problems_any_pass_syntax': 0,
+        'problems_any_pass_func': 0,
+        'problems_any_pass_synth': 0,
+        'sum_pass_rate_syntax': 0.0,
+        'sum_pass_rate_func': 0.0,
+        'sum_pass_rate_synth': 0.0,
         'problem_results': []
     })
 
@@ -73,6 +114,7 @@ def generate_report(experiment_path: pathlib.Path, save_markdown: bool = False):
         print(f"⚠️ No `_summary.json` files found in the specified directory structure.")
         return
 
+    # --- Data Aggregation ---
     for file_path in summary_files:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
@@ -80,31 +122,52 @@ def generate_report(experiment_path: pathlib.Path, save_markdown: bool = False):
 
             benchmark_name = data.get('benchmark_name', 'Unknown Benchmark')
             problem_name = data.get('problem_name', 'Unknown Problem')
+            stats = benchmark_data[benchmark_name]
+
+            # Get generations per problem and check for consistency
+            generations = data.get('total_candidates_generated', 1)
+            if stats['total_generations_per_problem'] is None:
+                stats['total_generations_per_problem'] = generations
+            elif stats['total_generations_per_problem'] != generations:
+                print(f"⚠️ Warning: Inconsistent number of generations for benchmark {benchmark_name}. "
+                      f"Found {generations} for {problem_name}, expected {stats['total_generations_per_problem']}.")
 
             rates = data.get('accumulated_success_rates', {})
-            syntax_pass = rates.get('syntax', 0.0)
-            func_pass = rates.get('functionality', 0.0)
-            synth_pass = rates.get('synthesis_ppa', 0.0)
+            syntax_pass_rate = rates.get('syntax', 0.0)
+            func_pass_rate = rates.get('functionality', 0.0)
+            synth_pass_rate = rates.get('synthesis_ppa', 0.0)
 
             final_ppa = data.get('final_population_ppa', {})
             best_score = final_ppa.get('best_score')
             ref_ppa = data.get('ref_ppa_metric', {})
             best_ppa = final_ppa.get('best_metrics', {})
 
-            stats = benchmark_data[benchmark_name]
+            # Update aggregate stats
             stats['total_problems'] += 1
-            if syntax_pass > 0: stats['syntax_passes'] += 1
-            if func_pass > 0: stats['func_passes'] += 1
-            if synth_pass > 0: stats['synth_passes'] += 1
+            stats['sum_pass_rate_syntax'] += syntax_pass_rate
+            stats['sum_pass_rate_func'] += func_pass_rate
+            stats['sum_pass_rate_synth'] += synth_pass_rate
+
+            # Update count of problems with at least one successful generation
+            if syntax_pass_rate > 0: stats['problems_any_pass_syntax'] += 1
+            if func_pass_rate > 0: stats['problems_any_pass_func'] += 1
+            if synth_pass_rate > 0: stats['problems_any_pass_synth'] += 1
             
+            # Format detailed results for the table with pass rate percentages
+            def format_pass_fail_with_rate(rate: float) -> str:
+                if rate > 0:
+                    return f"✅ Pass ({rate * 100:.1f}%)"
+                return "❌ Fail (0.0%)"
+
+            # Using keys that match the headers to avoid KeyErrors later
             stats['problem_results'].append({
-                'name': problem_name,
-                'pass_syntax': "✅ Pass" if syntax_pass > 0 else "❌ Fail",
-                'pass_func': "✅ Pass" if func_pass > 0 else "❌ Fail",
-                'pass_synth': "✅ Pass" if synth_pass > 0 else "❌ Fail",
-                'best_score': f"{best_score:.4f}" if best_score is not None else "N/A",
-                'ref_ppa': format_ppa_metrics(ref_ppa),
-                'best_ppa': format_ppa_metrics(best_ppa)
+                'Problem': problem_name,
+                'Syntax': format_pass_fail_with_rate(syntax_pass_rate),
+                'Functionality': format_pass_fail_with_rate(func_pass_rate),
+                'Synthesis': format_pass_fail_with_rate(synth_pass_rate),
+                'Best Score': f"{best_score:.4f}" if best_score is not None else "N/A",
+                'Best PPA Metrics': format_ppa_metrics(best_ppa),
+                'Reference PPA Metrics': format_ppa_metrics(ref_ppa)
             })
 
         except (json.JSONDecodeError, KeyError) as e:
@@ -122,36 +185,47 @@ def generate_report(experiment_path: pathlib.Path, save_markdown: bool = False):
             print("No valid problems found for this benchmark.")
             continue
 
-        pass_rate_syntax = (stats['syntax_passes'] / total) * 100
-        pass_rate_func = (stats['func_passes'] / total) * 100
-        pass_rate_synth = (stats['synth_passes'] / total) * 100
+        # --- Calculate Final Metrics ---
+        generations_per_problem = stats.get('total_generations_per_problem', 'N/A')
+        pass_at_1_syntax = (stats['sum_pass_rate_syntax'] / total) * 100
+        pass_at_1_func = (stats['sum_pass_rate_func'] / total) * 100
+        pass_at_1_synth = (stats['sum_pass_rate_synth'] / total) * 100
+        any_pass_rate_syntax = (stats['problems_any_pass_syntax'] / total) * 100
+        any_pass_rate_func = (stats['problems_any_pass_func'] / total) * 100
+        any_pass_rate_synth = (stats['problems_any_pass_synth'] / total) * 100
 
+        # --- Print Console Summary ---
         print("\n📈 Overall Summary:")
-        print(f"  - Total Problems Analyzed: {total}")
-        print(f"  - Syntax Pass@1 Rate:      {pass_rate_syntax:.2f}% ({stats['syntax_passes']}/{total})")
-        print(f"  - Functionality Pass@1 Rate: {pass_rate_func:.2f}% ({stats['func_passes']}/{total})")
-        print(f"  - Synthesis Pass@1 Rate:     {pass_rate_synth:.2f}% ({stats['synth_passes']}/{total})")
+        print(f"  - Total Problems Analyzed:      {total}")
+        print(f"  - Generations per Problem:      {generations_per_problem}\n")
+        print("  --- Pass@1 Rates (Average success rate across all problems) ---")
+        print(f"  - Syntax Pass@1 Rate:           {pass_at_1_syntax:.2f}%")
+        print(f"  - Functionality Pass@1 Rate:    {pass_at_1_func:.2f}%")
+        print(f"  - Synthesis Pass@1 Rate:        {pass_at_1_synth:.2f}%\n")
+        print("  --- Problems with at Least One Passing Generation ---")
+        print(f"  - Syntax:                       {any_pass_rate_syntax:.2f}% ({stats['problems_any_pass_syntax']}/{total})")
+        print(f"  - Functionality:                {any_pass_rate_func:.2f}% ({stats['problems_any_pass_func']}/{total})")
+        print(f"  - Synthesis:                    {any_pass_rate_synth:.2f}% ({stats['problems_any_pass_synth']}/{total})")
 
+        # --- Print Console Detailed Table ---
         print("\n📋 Detailed Problem Results:")
         headers = ["Problem", "Syntax", "Functionality", "Synthesis", "Best Score", "Best PPA Metrics", "Reference PPA Metrics"]
+        
+        # Determine column widths dynamically for a clean table layout
         col_widths = {h: len(h) for h in headers}
         for res in stats['problem_results']:
-            col_widths['Problem'] = max(col_widths['Problem'], len(res['name']))
-            col_widths['Best PPA Metrics'] = max(col_widths['Best PPA Metrics'], len(res['best_ppa']))
-            col_widths['Reference PPA Metrics'] = max(col_widths['Reference PPA Metrics'], len(res['ref_ppa']))
+            for key, value in res.items():
+                if key in col_widths:
+                    col_widths[key] = max(col_widths[key], len(str(value)))
         
-        header_line = (f"{headers[0]:<{col_widths['Problem']}} | "
-                       f"{headers[1]:<13} | {headers[2]:<13} | {headers[3]:<11} | "
-                       f"{headers[4]:<12} | {headers[5]:<{col_widths['Best PPA Metrics']}} | "
-                       f"{headers[6]:<{col_widths['Reference PPA Metrics']}}")
+        # Print header
+        header_line = " | ".join(f"{h:<{col_widths[h]}}" for h in headers)
         print(header_line)
         print("-" * len(header_line))
 
+        # Print rows
         for res in stats['problem_results']:
-            row_line = (f"{res['name']:<{col_widths['Problem']}} | "
-                        f"{res['pass_syntax']:<13} | {res['pass_func']:<13} | {res['pass_synth']:<11} | "
-                        f"{res['best_score']:<12} | {res['best_ppa']:<{col_widths['Best PPA Metrics']}} | "
-                        f"{res['ref_ppa']:<{col_widths['Reference PPA Metrics']}}")
+            row_line = " | ".join(f"{str(res[key]):<{col_widths[key]}}" for key in headers)
             print(row_line)
 
         # --- Markdown File Saving ---
@@ -168,17 +242,17 @@ def generate_report(experiment_path: pathlib.Path, save_markdown: bool = False):
     print("\n" + "="*80)
     print("Report generation complete.")
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Generate a summary report from experiment result files.",
+        description="Generate a summary report from Verilog benchmark experiment result files.",
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument(
         '--experiment_result_path',
         type=pathlib.Path,
         required=True,
-        help="Path to the root directory containing experiment results."
+        help="Path to the root directory containing experiment results.\n"
+             "The script expects a structure like: .../{benchmark_name}/{problem_name}/{problem_name}_summary.json"
     )
     parser.add_argument(
         '--save_markdown',
