@@ -92,6 +92,8 @@ class EoHLogger:
         self.all_synth_passed = set()
         self.total_llm_api_calls = 0
         self.strategy_counter = defaultdict(int)  # Accumulated across generations, count of how many times each strategy was used
+        self.strategy_counter_fail = defaultdict(int)  # Count of how many times each strategy was used in the fail pool
+        self.strategy_counter_success = defaultdict(int)  # Count of how many times each strategy was used in the success pool
         # Add attributes for tracking rewards and meta-strategies
         # Initialize rewards for fail and success pools as dictionaries with default float values(0.0)
         self.fail_pool_strategy_rewards = defaultdict(float)
@@ -126,7 +128,7 @@ class EoHLogger:
             "average_metrics": avg_metrics
         }
 
-    def log_generation(self, generation_num, candidates_this_gen, runtime_sec, llm_calls_this_gen, fail_rewards_this_gen, success_rewards_this_gen, fail_strategy_stats, success_strategy_stats):
+    def log_generation(self, generation_num, candidates_this_gen, runtime_sec, llm_calls_this_gen, fail_rewards_this_gen, success_rewards_this_gen, fail_strategy_stats, success_strategy_stats, strategy_avg_selection_probabilities):
         """Logs the statistics for a single generation."""
         total_generated = len(candidates_this_gen)
         if total_generated == 0:
@@ -136,10 +138,18 @@ class EoHLogger:
         # 1. Group candidates by strategy
         candidates_by_strategy = defaultdict(list)
         strategy_count_this_gen = defaultdict(int)
+        strategy_count_this_gen_fail = defaultdict(int)
+        strategy_count_this_gen_success = defaultdict(int)
         for c in candidates_this_gen:
             candidates_by_strategy[c.strategy].append(c)
             strategy_count_this_gen[c.strategy] += 1
             self.strategy_counter[c.strategy] += 1  # accumulate
+            if c.status == "success":
+                self.strategy_counter_success[c.strategy] += 1
+                strategy_count_this_gen_success[c.strategy] += 1
+            else:
+                self.strategy_counter_fail[c.strategy] += 1
+                strategy_count_this_gen_fail[c.strategy] += 1
 
         # 2. Calculate total success rates
         total_syntax_success = sum(1 for c in candidates_this_gen if c.status != 'failed_syntax')
@@ -189,6 +199,10 @@ class EoHLogger:
             "runtime_seconds": runtime_sec,
             "llm_api_calls": llm_calls_this_gen,
             "strategy_counts_this_generation": dict(strategy_count_this_gen),
+            "strategy_counts_for_each_pool": {
+                "fail_pool": strategy_count_this_gen_fail,
+                "success_pool": strategy_count_this_gen_success
+            },
             "strategy_values_after_evolution": { 
                 # Use fail_strategy_stats and success_strategy_stats, actual Q-values used to select strategies next generation
                 # fail_strategy_stats and success_strategy_stats structure:
@@ -199,6 +213,7 @@ class EoHLogger:
                 "fail_pool": {k: v["value"] for k, v in fail_strategy_stats.items()},
                 "success_pool": {k: v["value"] for k, v in success_strategy_stats.items()}
             },
+            "average_strategy_probabilities": dict(strategy_avg_selection_probabilities),
             "accumulated_strategy_rewards": {
                 "fail_pool": dict(self.fail_pool_strategy_rewards),
                 "success_pool": dict(self.success_pool_strategy_rewards)
@@ -287,6 +302,10 @@ class EoHLogger:
             "total_generations": total_generations,
             "total_candidates_generated": total_unique_generated,
             "accumulated_strategy_counts:": dict(self.strategy_counter),
+            "accumulated_strategy_counts_by_pool": {
+                "fail_pool": dict(self.strategy_counter_fail),
+                "success_pool": dict(self.strategy_counter_success)
+            },
             "accumulated_strategy_rewards": {
                 "fail_pool": dict(self.fail_pool_strategy_rewards),
                 "success_pool": dict(self.success_pool_strategy_rewards)
@@ -1428,7 +1447,9 @@ class EoHEngine:
         """Creates and evaluates the initial population."""
         print(f"\n--- Initializing Population (Size: {self.population_size}) ---")
         self.gen_start_time = time.time()
-        
+        # For initial population generation the strategy is always "initial".
+        # This is the first generation, so we do not have any previous strategies to select from
+        strategy_avg_selection_probabilities = { "initial": 1.0 } # Only the initial strategy is available
         results = asyncio.run(self.llm.generate_n_responses(
             prompt=self.problem_description, n=self.population_size,
             temperature=self.default_llm_temp, top_p=self.default_llm_top_p, max_tokens=self.default_llm_max_tokens
@@ -1457,7 +1478,7 @@ class EoHEngine:
         
         gen0_runtime = time.time() - self.gen_start_time
         llm_calls = self.llm.get_and_reset_api_calls()
-        self.logger.log_generation(0, initial_candidates, gen0_runtime, llm_calls, {}, {}, self.fail_strategy_stats, self.success_strategy_stats) # No rewards for initial generation
+        self.logger.log_generation(0, initial_candidates, gen0_runtime, llm_calls, {}, {}, self.fail_strategy_stats, self.success_strategy_stats, strategy_avg_selection_probabilities) # No rewards for initial generation
 
         print(f"--- Initial Population Processed. Success: {len(self.success_pool)}, Fail: {len(self.fail_pool)} ---")
         if self.success_pool:
@@ -1465,30 +1486,51 @@ class EoHEngine:
             print(f"Best initial candidate: {self.success_pool[0]}")
 
     def _select_strategy(self, pool_type, available_strategies):
-        """Selects a strategy based on the chosen multi-armed bandit algorithm."""
+        """
+        Selects a strategy based on the chosen multi-armed bandit algorithm.
+        Also return the probability distribution of strategies for debugging purposes.
+        The probability should be ex-ante, for example for epsilon-greedy, it should be the probability of selecting each strategy before the selection is made.
+        pool_type: 'fail' or 'success' to indicate which pool we are selecting from
+        available_strategies: List of strategies available for the given pool type.
+        Returns the selected strategy name and dictionary with key: strategy name and value: probability of selection.
+        If no strategies are available, returns None, None.
+        """
         if not available_strategies:
             print(f"No available strategies for pool type '{pool_type}'. Returning None.")
-            return None
+            return None, None
 
         stats_dict = self.fail_strategy_stats if pool_type == 'fail' else self.success_strategy_stats
         method = self.strategy_selection_method
 
         if method == "random":
-            return random.choice(available_strategies)
+            dist = {s: 1.0 / len(available_strategies) for s in available_strategies}
+            return random.choice(available_strategies), dist
 
         elif method == "epsilon-greedy":
-            if random.random() < self.epsilon:
-                return random.choice(available_strategies)
-            else:
-                # Select the best-performing strategy from those available
-                # Break ties randomly in case of multiple strategies with the same score
-                max_score = max(stats_dict[s]["value"] for s in available_strategies)
-                best_strategies = [s for s in available_strategies if stats_dict[s]["value"] == max_score]
-                if len(best_strategies) > 1:
-                    return random.choice(best_strategies)
+            # Probability should be ex-ante, so we calculate it before making the selection
+            # The top strategy or those that are tied should get 1 - self.epsilon probability in total,
+            # and the rest should get self.epsilon / (number of non-top strategies) probability.
+            n = len(available_strategies)
+            # Identify best strategies (max value)
+            max_score = max(stats_dict[s]["value"] for s in available_strategies)
+            best_strategies = [s for s in available_strategies if stats_dict[s]["value"] == max_score]
+            k = len(best_strategies)
+            
+            # Build probability distribution
+            dist = {}
+            for s in available_strategies:
+                base_prob = self.epsilon / n
+                if s in best_strategies:
+                    dist[s] = base_prob + (1 - self.epsilon) / k
                 else:
-                    # If only one best strategy, return it
-                    return best_strategies[0] if best_strategies else random.choice(available_strategies)
+                    dist[s] = base_prob
+            
+            # Select strategy
+            if random.random() < self.epsilon:
+                selected = random.choice(available_strategies)
+            else:
+                selected = random.choice(best_strategies) if k > 1 else best_strategies[0]
+            return selected, dist
 
         elif method == "ucb":
             # --- Initialization Phase ---
@@ -1499,12 +1541,16 @@ class EoHEngine:
             # first evolution, strategies are selected as evenly as possible, and each
             # strategy is guaranteed to be chosen once before moving to exploration.
             if untried_strategies:
-                return random.choice(untried_strategies)
-            elif self.current_generation == 0:
+                # untried_strategies should have equal probability of selection
+                prob = 1.0 / len(untried_strategies)
+                dist = {s: prob for s in untried_strategies}
+                return random.choice(untried_strategies), dist
+            elif self.current_generation == 1:
                 # If we are still in the first generation and all strategies have been tried,
                 # we can randomly select one as evaluation hasn't been done yet.
                 # So rewards are not available.
-                return random.choice(available_strategies)
+                dist = {s: 1.0 / len(available_strategies) for s in available_strategies}
+                return random.choice(available_strategies), dist
 
             # --- Exploration Phase (Standard UCB) ---
             # Once all strategies have been tried at least once, use the UCB formula.
@@ -1515,17 +1561,27 @@ class EoHEngine:
                 exploration_term = self.ucb_c * math.sqrt(math.log(total_pulls) / stats_dict[strat]["count"])
                 ucb_scores[strat] = avg_reward + exploration_term
             
-            # Return the strategy with the highest UCB score
-            # Need to break ties randomly if multiple strategies have the same score
-            max_score = max(ucb_scores.values())
-            best_strategies = [s for s, score in ucb_scores.items() if score == max_score]
-            if len(best_strategies) > 1:
-                return random.choice(best_strategies)
-            else:
-                return max(ucb_scores, key=ucb_scores.get)
+            # Use softmax to choose a strategy based on UCB scores
+            # This allows for a probabilistic selection based on the scores
+            # We found that argmax can lead to premature convergence, so we use a softmax approach to encourage exploration
+            # Use the max trick to avoid overflow in exponentiation
+            # Compute softmax probabilities
+            scores = [ucb_scores[s] for s in available_strategies]
+            max_score = max(scores)
+            exp_scores = [math.exp(score - max_score) for score in scores]
+            sum_exp = sum(exp_scores)
+            weights = [exp_score / sum_exp for exp_score in exp_scores]
+            dist = dict(zip(available_strategies, weights))
+            
+            # Select strategy using softmax distribution
+            selected = random.choices(available_strategies, weights=weights, k=1)[0]
+            return selected, dist
 
         else: # Fallback to random
-            return random.choice(available_strategies)
+            print(f"[WARNING] Unknown strategy selection method '{method}'. Defaulting to random selection.")
+            prob = 1.0 / len(available_strategies)
+            dist = {s: prob for s in available_strategies}
+            return random.choice(available_strategies), dist
 
 
     def evolve_one_generation(self):
@@ -1551,14 +1607,23 @@ class EoHEngine:
 
         prompts, metadata = [], []
 
+        success_strategy_average_probabilities = {s: 0.0 for s in self.success_strats}
+        fail_strategy_average_probabilities = {s: 0.0 for s in self.fail_strats}
+
         # Generate from Fail Pool
         if self.fail_pool:
             for _ in range(num_from_fail):
-                strat_name = self._select_strategy("fail", self.fail_strats)
+                strat_name, prob_dist_dict = self._select_strategy("fail", self.fail_strats)
                 parents = random.choices(self.fail_pool, k=strategies[strat_name]["num_parents"])
                 prompts.append(strategies[strat_name]["func"](parents))
-                metadata.append({"parents": parents, "strategy": strat_name, "pool": "fail"})
-        
+                metadata.append({"parents": parents, "strategy": strat_name, "pool": "fail", "prob_dist": prob_dist_dict})
+                for k, v in prob_dist_dict.items():
+                    fail_strategy_average_probabilities[k] += v
+            # Normalize probabilities for fail strategies
+            if num_from_fail > 0:
+                for k in fail_strategy_average_probabilities:
+                    fail_strategy_average_probabilities[k] /= num_from_fail
+
         # Generate from Success Pool
         if self.success_pool:
             available_success_strategies = self.success_strats.copy()
@@ -1566,7 +1631,7 @@ class EoHEngine:
             if len(self.success_pool) < 2:
                 available_success_strategies.remove("C-F")
             for _ in range(num_from_success):
-                strat_name = self._select_strategy("success", available_success_strategies)
+                strat_name, prob_dist_dict = self._select_strategy("success", available_success_strategies)
                 # Weighted selection for success pool
                 weights = [c.score - min(p.score for p in self.success_pool) + 0.1 for c in self.success_pool]
                 parents = random.choices(self.success_pool, weights=weights, k=strategies[strat_name]["num_parents"])
@@ -1581,7 +1646,19 @@ class EoHEngine:
                         parents[1] = random.choices(available_strategies, weights=updated_weights, k=1)[0]
                 # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
                 prompts.append(strategies[strat_name]["func"](parents))
-                metadata.append({"parents": parents, "strategy": strat_name, "pool": "success"})
+                metadata.append({"parents": parents, "strategy": strat_name, "pool": "success", "prob_dist": prob_dist_dict})
+                for k, v in prob_dist_dict.items():
+                    success_strategy_average_probabilities[k] += v
+            # Normalize probabilities for success strategies
+            if num_from_success > 0:
+                for k in success_strategy_average_probabilities:
+                    success_strategy_average_probabilities[k] /= num_from_success
+
+        # Form dictionary of strategy probabilities for logging
+        strategy_avg_selection_probabilities = {
+            "fail_pool": fail_strategy_average_probabilities,
+            "success_pool": success_strategy_average_probabilities
+        }
 
         if not prompts: 
             return "STOP"
@@ -1714,7 +1791,7 @@ class EoHEngine:
         gen_runtime = time.time() - self.gen_start_time
         llm_calls = self.llm.get_and_reset_api_calls()
         if self.logger:
-            self.logger.log_generation(self.current_generation, new_offspring, gen_runtime, llm_calls, fail_rewards_this_gen, success_rewards_this_gen, self.fail_strategy_stats, self.success_strategy_stats)
+            self.logger.log_generation(self.current_generation, new_offspring, gen_runtime, llm_calls, fail_rewards_this_gen, success_rewards_this_gen, self.fail_strategy_stats, self.success_strategy_stats, strategy_avg_selection_probabilities)
 
         print(f"--- Gen {self.current_generation} Complete. Pools: Success({len(self.success_pool)}), Fail({len(self.fail_pool)}) ---")
         if self.success_pool:
