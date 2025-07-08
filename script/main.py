@@ -1637,7 +1637,46 @@ class EoHEngine:
         # Shuffle the candidate pool to ensure diversity
         random.shuffle(candidate_pool)
         candidate_pool.sort(key=lambda c: c.score, reverse=True)
-        next_gen_population = candidate_pool[:self.population_size]
+
+        # When selecting the next generation, we take the top N candidates based on score
+        # However, also try to find the candidates that have the best power, area, and timing metrics
+        next_gen_population = []
+        added_ids = set() # Ensure unique candidates in the next generation
+
+        # 1. Filter for successful candidates that can be ranked by PPA
+        successful_candidates = [c for c in candidate_pool if c.status == 'success' and c.ppa_success]
+
+        if successful_candidates:
+            # 2. Identify champions for each metric
+            # These champions are always relevant
+            best_by_score = max(successful_candidates, key=lambda c: c.score)
+            best_by_power = min(successful_candidates, key=lambda c: c.ppa_metrics.get('power', float('inf')))
+            best_by_area = min(successful_candidates, key=lambda c: c.ppa_metrics.get('area', float('inf')))
+
+            champions = [best_by_score, best_by_power, best_by_area]
+
+            # Conditionally add the delay champion for sequential circuits only
+            # As combinatorial circuits do not have a meaningful clock period and eff_clk_period are set to 0.0
+            is_sequential = (self.ref_ppa_metrics.get("eff_clk_period", 0) > 1e-9)
+            if is_sequential:
+                best_by_delay = min(successful_candidates, key=lambda c: c.ppa_metrics.get('eff_clk_period', float('inf')))
+                champions.append(best_by_delay)
+                
+            # 3. Add unique champions to the next generation
+            for champ in champions:
+                if champ.id not in added_ids:
+                    next_gen_population.append(champ)
+                    added_ids.add(champ.id)
+
+        # 4. Fill remaining spots with top-scoring candidates (elitism)
+        candidate_pool.sort(key=lambda c: c.score, reverse=True)
+        
+        for cand in candidate_pool:
+            if len(next_gen_population) >= self.population_size:
+                break
+            if cand.id not in added_ids:
+                next_gen_population.append(cand)
+                added_ids.add(cand.id)
 
         # Population Redivision
         self.fail_pool.clear()
