@@ -1548,6 +1548,15 @@ class EoHEngine:
                 # Weighted selection for success pool
                 weights = [c.score - min(p.score for p in self.success_pool) + 0.1 for c in self.success_pool]
                 parents = random.choices(self.success_pool, weights=weights, k=strategies[strat_name]["num_parents"])
+                # if the strategy is fusion, we need two parents that are different
+                if strat_name == "C-F" and len(parents) == 2 and parents[0].id == parents[1].id:
+                    # If both parents are the same, we need to select a different one
+                    # This is a rare case, but can happen if the success pool has only one candidate
+                    # Sample again without the same parent and weights
+                    available_strategies = [p for p in self.success_pool if p.id != parents[0].id]
+                    updated_weights = [c.score - min(p.score for p in available_strategies) + 0.1 for c in available_strategies]
+                    if available_strategies:
+                        parents[1] = random.choices(available_strategies, weights=updated_weights, k=1)[0]
                 # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
                 prompts.append(strategies[strat_name]["func"](parents))
                 metadata.append({"parents": parents, "strategy": strat_name, "pool": "success"})
