@@ -1668,16 +1668,18 @@ class EoHEngine:
             # 2. Identify champions for each metric
             # These champions are always relevant
             best_by_score = max(successful_candidates, key=lambda c: c.score)
-            best_by_power = min(successful_candidates, key=lambda c: c.ppa_metrics.get('power', float('inf')))
-            best_by_area = min(successful_candidates, key=lambda c: c.ppa_metrics.get('area', float('inf')))
+            best_by_power = min(successful_candidates, key=lambda c: c.ppa_metrics.get('power') if c.ppa_metrics.get('power') is not None else float('inf'))
+            best_by_area = min(successful_candidates, key=lambda c: c.ppa_metrics.get('area') if c.ppa_metrics.get('area') is not None else float('inf'))
 
             champions = [best_by_score, best_by_power, best_by_area]
 
             # Conditionally add the delay champion for sequential circuits only
             # As combinatorial circuits do not have a meaningful clock period and eff_clk_period are set to 0.0
-            is_sequential = (self.ref_ppa_metrics.get("eff_clk_period", 0) > 1e-9)
+            # Current clk_period(0.01 ns) is used as a threshold to determine if the circuit is sequential
+            # This is a heuristic, but it works well for most cases
+            is_sequential = (self.ref_ppa_metrics.get("eff_clk_period", 0) > 0.01)  # Threshold to determine if it's sequential
             if is_sequential:
-                best_by_delay = min(successful_candidates, key=lambda c: c.ppa_metrics.get('eff_clk_period', float('inf')))
+                best_by_delay = min(successful_candidates, key=lambda c: c.ppa_metrics.get('eff_clk_period') if c.ppa_metrics.get('eff_clk_period') is not None else float('inf'))
                 champions.append(best_by_delay)
                 
             # 3. Add unique champions to the next generation
@@ -1855,18 +1857,23 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # Map backends to their required environment variables
+    api_key_env_vars = {
+        'openai': 'OPENAI_API_KEY',
+        'openrouter': 'OPENROUTER_API_KEY',
+        'deepseek': 'DEEPSEEK_API_KEY'
+    }
+
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     IVERILOG_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/iverilog"
     VVP_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/vvp"
     YOSYS_EXECUTABLE = "/project/cad-team/LX_Semicon/kmcho/yosys/yosys"
     OPENROAD_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/openroad/install/bin/openroad"
 
-    try:
-        if not OPENAI_API_KEY:
-            raise ValueError("A valid OpenAI API key must be set in the environment variable OPENAI_API_KEY.")
-        # llm_interface = LLMInterface(api_key=OPENAI_API_KEY, model_name=args.model_name)
-    except (ValueError, RuntimeError) as e:
-        print(f"LLM Initialization Error: {e}")
+    # Check for the correct key based on the selected backend
+    required_key_var = api_key_env_vars[args.api_backend]
+    if not os.getenv(required_key_var):
+        print(f"LLM Initialization Error: The environment variable '{required_key_var}' must be set for the '{args.api_backend}' backend.")
         exit(1)
         
     # verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
@@ -1925,10 +1932,9 @@ if __name__ == "__main__":
                     results_data = pool.map(run_problem_worker, tasks_to_run)
 
                 print("\n--- All parallel tasks completed successfully.---")
-            end_time = time.time()
-            print(f"Total run time: {end_time - start_time:.2f} seconds")
 
     finally:
+        end_time = time.time()
         # --- This block will ALWAYS run, even if the pool crashes ---
         print("\n--- Aggregation & Finalization Step ---")
         
@@ -1954,7 +1960,8 @@ if __name__ == "__main__":
 
                     except Exception as e:
                         log_file.write(f"\n--- Error processing log {individual_log_path}: {e} ---\n")
-
+            log_file.write("\n--- EoH Framework Run Completed ---\n")
+            log_file.write(f"Total run time: {end_time - start_time:.2f} seconds\n")
         # --- Write the summary results file ---
         if results_data:
             try:
