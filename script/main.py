@@ -1485,7 +1485,7 @@ class EoHEngine:
             self.success_pool.sort(key=lambda c: c.score, reverse=True)
             print(f"Best initial candidate: {self.success_pool[0]}")
 
-    def _select_strategy(self, pool_type, available_strategies):
+    def _select_strategy(self, pool_type, available_strategies, selected_this_gen=None):
         """
         Selects a strategy based on the chosen multi-armed bandit algorithm.
         Also return the probability distribution of strategies for debugging purposes.
@@ -1494,10 +1494,20 @@ class EoHEngine:
         available_strategies: List of strategies available for the given pool type.
         Returns the selected strategy name and dictionary with key: strategy name and value: probability of selection.
         If no strategies are available, returns None, None.
+        Args:
+            pool_type (str): 'fail' or 'success' to indicate which pool.
+            available_strategies (list): List of strategies available for the pool.
+            selected_this_gen (set, optional): Strategies already selected in this generation's loop. Defaults to None.
+        
+        Returns:
+            tuple: The selected strategy name and a dictionary of selection probabilities.
         """
         if not available_strategies:
             print(f"No available strategies for pool type '{pool_type}'. Returning None.")
             return None, None
+        
+        if selected_this_gen is None:
+            selected_this_gen = set()
 
         stats_dict = self.fail_strategy_stats if pool_type == 'fail' else self.success_strategy_stats
         method = self.strategy_selection_method
@@ -1535,8 +1545,11 @@ class EoHEngine:
         elif method == "ucb":
             # --- Initialization Phase ---
             # Identify all strategies that have not been selected yet.
-            untried_strategies = [s for s in available_strategies if stats_dict[s]["count"] == 0]
-
+            untried_strategies = [
+                s for s in available_strategies 
+                if stats_dict[s]["count"] == 0 and s not in selected_this_gen
+            ]
+            print(f"Debug UCB: Untried strategies: {untried_strategies}")
             # If there are untried strategies, randomly select one. This ensures that for the
             # first evolution, strategies are selected as evenly as possible, and each
             # strategy is guaranteed to be chosen once before moving to exploration.
@@ -1544,19 +1557,33 @@ class EoHEngine:
                 # untried_strategies should have equal probability of selection
                 prob = 1.0 / len(untried_strategies)
                 dist = {s: prob for s in untried_strategies}
+                print(f"Debug UCB: Untried strategies selected with equal probability: {dist}")
                 return random.choice(untried_strategies), dist
-            elif self.current_generation == 1:
-                # If we are still in the first generation and all strategies have been tried,
-                # we can randomly select one as evaluation hasn't been done yet.
-                # So rewards are not available.
-                dist = {s: 1.0 / len(available_strategies) for s in available_strategies}
-                return random.choice(available_strategies), dist
 
             # --- Exploration Phase (Standard UCB) ---
             # Once all strategies have been tried at least once, use the UCB formula.
             total_pulls = sum(stats_dict[s]["count"] for s in available_strategies)
+
+            # If total_pulls is 0, it means no strategies have been selected yet.
+            # Or haven't updated their stats yet. As stats update happens only after evaluation,
+            # of generation and strategy selection happens before evaluation,
+            # we can end up in this situation at the start of the run.
+            # In this case, we cannot compute UCB scores since we have no data.
+            # Also this causes issues with log(0) and division by zero in UCB formula.
+            # So just select one randomly.
+            if total_pulls == 0:
+                prob = 1.0 / len(available_strategies)
+                dist = {s: prob for s in available_strategies}
+                return random.choice(available_strategies), dist
+
             ucb_scores = {}
             for strat in available_strategies:
+                # If a strategy has 0 pulls, its exploration value is infinite.
+                # This prevents a ZeroDivisionError and correctly prioritizes it.
+                if stats_dict[strat]["count"] == 0:
+                    ucb_scores[strat] = float('inf')
+                    continue
+                
                 avg_reward = stats_dict[strat]["value"]
                 exploration_term = self.ucb_c * math.sqrt(math.log(total_pulls) / stats_dict[strat]["count"])
                 ucb_scores[strat] = avg_reward + exploration_term
@@ -1571,6 +1598,7 @@ class EoHEngine:
             exp_scores = [math.exp(score - max_score) for score in scores]
             sum_exp = sum(exp_scores)
             weights = [exp_score / sum_exp for exp_score in exp_scores]
+            print(f"Debug UCB: Strategy scores: {ucb_scores}, Weights: {weights}, dist: {dict(zip(available_strategies, weights))}")
             dist = dict(zip(available_strategies, weights))
             
             # Select strategy using softmax distribution
@@ -1610,18 +1638,27 @@ class EoHEngine:
         success_strategy_average_probabilities = {s: 0.0 for s in self.success_strats}
         fail_strategy_average_probabilities = {s: 0.0 for s in self.fail_strats}
 
+        # Track strategies selected in this generation's loop for UCB
+        fail_strategies_selected_this_gen = set()
+        success_strategies_selected_this_gen = set()
+
         # Generate from Fail Pool
         if self.fail_pool:
             for _ in range(num_from_fail):
-                strat_name, prob_dist_dict = self._select_strategy("fail", self.fail_strats)
+                strat_name, prob_dist_dict = self._select_strategy("fail", self.fail_strats, fail_strategies_selected_this_gen)
+                if strat_name is None:
+                    print("No valid fail strategies available. Skipping...")
+                    continue
+                fail_strategies_selected_this_gen.add(strat_name)
                 parents = random.choices(self.fail_pool, k=strategies[strat_name]["num_parents"])
                 prompts.append(strategies[strat_name]["func"](parents))
                 metadata.append({"parents": parents, "strategy": strat_name, "pool": "fail", "prob_dist": prob_dist_dict})
+                print(f"Fail Pool Evolve Debug: Selected parents {parents} for strategy {strat_name} with prob_dist {prob_dist_dict}")
                 for k, v in prob_dist_dict.items():
                     fail_strategy_average_probabilities[k] += v
             # Normalize probabilities for fail strategies
             if num_from_fail > 0:
-                for k in fail_strategy_average_probabilities:
+                for k in fail_strategy_average_probabilities.keys():
                     fail_strategy_average_probabilities[k] /= num_from_fail
 
         # Generate from Success Pool
@@ -1631,7 +1668,11 @@ class EoHEngine:
             if len(self.success_pool) < 2:
                 available_success_strategies.remove("C-F")
             for _ in range(num_from_success):
-                strat_name, prob_dist_dict = self._select_strategy("success", available_success_strategies)
+                strat_name, prob_dist_dict = self._select_strategy("success", available_success_strategies, success_strategies_selected_this_gen)
+                if strat_name is None:
+                    print("No valid success strategies available. Skipping...")
+                    continue
+                success_strategies_selected_this_gen.add(strat_name)
                 # Weighted selection for success pool
                 weights = [c.score - min(p.score for p in self.success_pool) + 0.1 for c in self.success_pool]
                 parents = random.choices(self.success_pool, weights=weights, k=strategies[strat_name]["num_parents"])
@@ -1647,11 +1688,12 @@ class EoHEngine:
                 # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
                 prompts.append(strategies[strat_name]["func"](parents))
                 metadata.append({"parents": parents, "strategy": strat_name, "pool": "success", "prob_dist": prob_dist_dict})
+                print(f"Success Pool Evolve Debug: Selected parents {parents} for strategy {strat_name} with prob_dist {prob_dist_dict}")
                 for k, v in prob_dist_dict.items():
                     success_strategy_average_probabilities[k] += v
             # Normalize probabilities for success strategies
             if num_from_success > 0:
-                for k in success_strategy_average_probabilities:
+                for k in success_strategy_average_probabilities.keys():
                     success_strategy_average_probabilities[k] /= num_from_success
 
         # Form dictionary of strategy probabilities for logging
