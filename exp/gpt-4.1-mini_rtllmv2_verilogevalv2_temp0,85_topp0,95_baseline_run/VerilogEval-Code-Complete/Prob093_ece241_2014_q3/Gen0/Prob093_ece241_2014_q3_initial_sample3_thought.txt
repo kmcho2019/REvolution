@@ -1,0 +1,139 @@
+The K-map specifies the output for each combination of inputs a,b,c,d. The 4-to-1 mux selects among 4 inputs based on a,b. Each mux_in[i] corresponds to a fixed value of a,b, with i = ab.
+
+For each ab = 00,01,11,10, mux_in[i] is a function of c,d.
+
+From the K-map:
+
+ab=00 (mux_in[0]): c,d outputs are:
+cd=00 -> 0
+cd=01 -> 1
+cd=11 -> 1
+cd=10 -> 1
+
+So, mux_in[0] = f0(c,d) = 0 1 1 1 for cd = 00 01 11 10
+
+ab=01 (mux_in[1]):
+cd=00 ->0
+cd=01 ->0
+cd=11 ->0
+cd=10 ->0
+=> all zero
+
+ab=11 (mux_in[2]):
+cd=00->0
+cd=01->0
+cd=11->1
+cd=10->0
+=> only cd=11 is 1
+
+ab=10 (mux_in[3]):
+cd=00->1
+cd=01->0
+cd=11->1
+cd=10->1
+
+Now, express each mux_in[i] in terms of c,d and implement using only 2-to-1 muxes.
+
+Since only mux_in[1] is zero, mux_in[1]=0.
+
+Implement the others as mux of c and d with 2-to-1 muxes.
+
+We can build a 2-to-1 mux as: mux_out = sel ? in1 : in0;
+
+We'll implement each mux_in[i] as a small mux tree:
+
+- mux_in[0] (for ab=00):
+
+cd: 00->0,01->1,11->1,10->1
+
+Index cd in binary: c d
+
+We can use d as selector:
+
+If d=0: cd=00 or 10
+
+At d=0:
+
+c=0 => 0
+
+c=1 =>1
+
+If d=1:
+
+cd=01 or 11
+
+Both 1
+
+So mux_in[0] = d ? 1 : c
+
+- mux_in[1] = 0
+
+- mux_in[2]:
+
+cd=00->0
+
+cd=01->0
+
+cd=11->1
+
+cd=10->0
+
+So only when c=1 and d=1.
+
+Therefore mux_in[2] = c & d
+
+We can implement c & d using mux:
+
+c & d = d ? c : 0
+
+- mux_in[3]:
+
+cd=00->1
+
+cd=01->0
+
+cd=11->1
+
+cd=10->1
+
+Let's analyze with selector d:
+
+d=0:
+
+cd=00 or 10
+
+cd=00 =>1
+
+cd=10 =>1
+
+=> When d=0 output=1
+
+d=1:
+
+cd=01 or 11
+
+cd=01=0
+
+cd=11=1
+
+Use c as selector:
+
+c=0 =>0
+
+c=1 =>1
+
+So mux_in[3] = d ? c : 1
+
+Now, implement these expressions using only 2-to-1 muxes and constants 0,1, variables c,d.
+
+Summary:
+
+mux_in[0] = d ? 1 : c
+
+mux_in[1] = 0
+
+mux_in[2] = d ? c : 0
+
+mux_in[3] = d ? c : 1
+
+We'll implement these using 2-to-1 mux modules.

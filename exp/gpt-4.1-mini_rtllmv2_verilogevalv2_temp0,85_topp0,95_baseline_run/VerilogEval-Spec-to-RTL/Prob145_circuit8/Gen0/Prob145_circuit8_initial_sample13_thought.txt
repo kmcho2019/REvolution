@@ -1,0 +1,19 @@
+From the waveform, the outputs p and q change only at clock edges (rising or falling). Initially, p and q are unknown (x). On the first rising edge, p is 0 and q is unknown. On falling edges, q takes the value of p, and p may change on rising edges based on input 'a'. Specifically:
+
+- On rising clock edges:
+  - p is assigned the input 'a' ANDed with the previous value of q (or zero if q is unknown).
+  - q remains unchanged.
+
+- On falling clock edges:
+  - q is assigned the previous value of p.
+  - p remains unchanged.
+
+This behavior can be implemented by two always blocks or a single always block triggered on both edges, storing p and q with appropriate update logic.
+
+Since initial outputs are unknown (x), we can initialize p and q to 0 at start for simulation.
+
+In summary:
+- On rising edge, p <= a & q; q <= q;
+- On falling edge, q <= p; p <= p;
+
+Implement this with non-blocking assignments and reg outputs.

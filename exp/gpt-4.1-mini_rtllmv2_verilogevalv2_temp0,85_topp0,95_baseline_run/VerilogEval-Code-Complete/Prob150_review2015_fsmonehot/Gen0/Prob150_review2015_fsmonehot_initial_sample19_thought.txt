@@ -1,0 +1,35 @@
+Derive next-state logic and outputs by inspecting the state transitions and outputs in the Moore machine with one-hot encoding.
+
+- Current states are one-hot encoded with bits:
+  S = state[0], S1 = state[1], S11 = state[2], S110 = state[3],
+  B0 = state[4], B1 = state[5], B2 = state[6], B3 = state[7],
+  Count = state[8], Wait = state[9].
+
+- Next-state logic (one-hot signals) are combinational and derived by conditions on inputs and current state bits:
+
+  S_next:
+    - From S: if d=0
+    - From S1: if d=0
+    - From S110: if d=0
+    - From Wait: if ack=1
+
+  S1_next:
+    - From S: if d=1
+
+  B3_next:
+    - From B2: always
+
+  Count_next:
+    - From B3: always
+    - From Count: if done_counting=0
+
+  Wait_next:
+    - From Count: if done_counting=1
+    - From Wait: if ack=0
+
+- Outputs depend on the current state:
+  done = (Wait)
+  counting = (Count)
+  shift_ena = (B0 or B1 or B2 or B3)
+
+Implement combinational logic equations accordingly.

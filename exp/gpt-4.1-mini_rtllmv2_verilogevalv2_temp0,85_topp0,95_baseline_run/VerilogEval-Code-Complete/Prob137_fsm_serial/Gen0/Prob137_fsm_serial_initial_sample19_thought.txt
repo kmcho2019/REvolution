@@ -1,0 +1,11 @@
+Design a finite state machine (FSM) to detect the start bit (0), then shift in 8 data bits (LSB first), then check for a stop bit (1). The FSM has states: IDLE (waiting for start bit), RECEIVE (receiving data bits), STOP (checking stop bit), and WAIT_STOP (waiting for correct stop bit if previous stop bit was wrong). Use a counter to count data bits received. The 'done' output goes high for one clock cycle when a byte is correctly received (i.e., after a correct stop bit). On synchronous reset, return to IDLE. Data bits are shifted in LSB first. The FSM will sample input at each clock; no oversampling or baud rate considerations are included, assuming input is aligned to clock.
+
+Implementation details:
+- IDLE: Wait for in == 0 (start bit detected), then go to RECEIVE.
+- RECEIVE: Shift in bits, count up to 8 bits.
+- STOP: Check if in == 1 (stop bit). If yes, done=1 for one cycle, then go to IDLE. If no, go to WAIT_STOP.
+- WAIT_STOP: Stay here until in == 1 (stop bit detected), then go to IDLE.
+
+Because done is synchronous, it is asserted only for one clock cycle, right after the stop bit is validated.
+
+No output for data is required per the problem statement, just done signal.

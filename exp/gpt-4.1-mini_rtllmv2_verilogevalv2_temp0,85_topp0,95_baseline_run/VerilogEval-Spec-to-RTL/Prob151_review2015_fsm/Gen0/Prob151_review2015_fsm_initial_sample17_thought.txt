@@ -1,0 +1,19 @@
+Implement a finite state machine with the following states:
+
+IDLE: Searching for the 1101 pattern serially on the data input.
+SHIFT: Once pattern 1101 detected, assert shift_ena for exactly 4 clock cycles to shift in delay bits.
+COUNT: After shifting, assert counting and wait until done_counting is high.
+DONE: Assert done to notify user timer expired, wait for ack to return to IDLE.
+
+To detect the 1101 pattern, we can keep track of the last 4 bits received serially using a shift register updated each clock. When the 4-bit shift register matches 4'b1101, move to SHIFT state.
+
+The outputs are asserted in the corresponding states. The synchronous reset sets the FSM to IDLE state and clears outputs.
+
+The FSM transitions on positive clock edges, and outputs are registered signals.
+
+Signal summary:
+- shift_ena: asserted only in SHIFT state (for 4 cycles).
+- counting: asserted only in COUNT state (waiting for done_counting).
+- done: asserted only in DONE state (waiting for ack).
+
+Use a counter to count 4 shift cycles in SHIFT state.

@@ -1,0 +1,34 @@
+First, interpret the Karnaugh map for the function F(a,b,c). The map is organized with 'bc' as the row and 'a' as the column:
+
+          a
+   bc   0   1
+   00 | 0 | 1 |
+   01 | 1 | 1 |
+   11 | 1 | 1 |
+   10 | 1 | 1 |
+
+Converting the rows to (b,c):
+- bc=00 -> b=0, c=0
+- bc=01 -> b=0, c=1
+- bc=11 -> b=1, c=1
+- bc=10 -> b=1, c=0
+
+Let's write the minterms where output is 1:
+
+- (b=0,c=0,a=1) -> m1
+- (b=0,c=1,a=0) -> m2
+- (b=0,c=1,a=1) -> m3
+- (b=1,c=1,a=0) -> m6
+- (b=1,c=1,a=1) -> m7
+- (b=1,c=0,a=0) -> m4
+- (b=1,c=0,a=1) -> m5
+
+Zero only at (b=0,c=0,a=0) -> m0
+
+So output is 1 for all minterms except m0.
+
+Therefore, function F = NOT (b=0,c=0,a=0) = NOT (~b & ~c & ~a) = a + b + c
+
+Hence, the function can be simplified as out = a OR b OR c.
+
+We'll implement this in Verilog.

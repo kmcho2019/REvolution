@@ -1,0 +1,52 @@
+First, translate the Karnaugh map into a truth table for the inputs x[4:1]. The map indexes x[3]x[4] as rows and x[1]x[2] as columns.
+
+Row (x3x4):
+00 -> 0,0
+01 -> 0,1
+11 -> 1,1
+10 -> 1,0
+
+Column (x1x2):
+00 -> 0,0
+01 -> 0,1
+11 -> 1,1
+10 -> 1,0
+
+Fill in the values given, with d as don't-care which can be chosen for minimal logic.
+
+Construct the minterms for f=1 and use don't-care conditions to simplify.
+
+From the K-map:
+
+x3x4\x1x2 | 00 | 01 | 11 | 10
+--------------------------------
+00        | d  | 0  | d  | d
+01        | 0  | d  | 1  | 0
+11        | 1  | 1  | d  | d
+10        | 1  | 1  | 0  | d
+
+Marked 1 cells:
+
+(01,11) = x3x4=01, x1x2=11
+
+(11,00) = 11,00
+
+(11,01) = 11,01
+
+(10,00) = 10,00
+
+(10,01) = 10,01
+
+Don't-cares can be used to combine terms.
+
+We can write the function as sum of products or use a case statement or combinational logic.
+
+Given the complexity, writing a case statement or using an assign statement with a combination of minterms and don't-care assignments is efficient.
+
+We'll implement using a combinational always block with casez to specify don't-care bits.
+
+Alternatively, write the function in terms of x bits and implement the logic from the simplified expression.
+
+But to keep things simple and clear, use a combinational always block with case statement covering all 16 input combinations explicitly and assign f accordingly, choosing don't-cares for simplification.
+
+This approach is easy to verify.

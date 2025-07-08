@@ -1,0 +1,71 @@
+First, label the Karnaugh map rows and columns with the corresponding inputs x[1]x[2] (rows) and x[3]x[4] (columns). Then, identify minterms where the function f=1. From the map:
+
+x[1]x[2] \ x[3]x[4]:
+00: 1 0 0 1
+01: 0 0 0 0
+11: 1 1 1 0
+10: 1 1 0 1
+
+The minterms with 1 are:
+- 00 00 -> x=0000
+- 00 10 -> x=0010
+- 11 00 -> x=1100
+- 11 01 -> x=1101
+- 11 11 -> x=1111
+- 10 00 -> x=1000
+- 10 01 -> x=1001
+- 00 10 -> already listed
+- 10 11 -> x=1011 is 0 actually (check carefully)
+- 10 10 -> x=1010 is 1
+- So check carefully each cell:
+
+Positions with 1:
+(00,00) - x=0000 -> f=1
+(00,10) - x=0010 -> f=1
+(10,00) - x=1000 -> f=1
+(10,01) - x=1001 -> f=1
+(10,10) - x=1010 -> f=1
+(11,00) - x=1100 -> f=1
+(11,01) - x=1101 -> f=1
+(11,11) - x=1111 -> f=1
+
+Positions with 0:
+(00,01), (00,11), (01,00), (01,01), (01,11), (01,10), (11,10), (10,11)
+
+Group 1: The column x[3]x[4] = 00: rows 00,10,11 are 1. This is x[3]' x[4]' and x[1]x[2] in {00,10,11}.
+
+Group 2: The column x[3]x[4] = 01: rows 10,11 are 1. So x[3]' x[4] and x[1]x[2] in {10,11}.
+
+Group 3: The column x[3]x[4] = 10: rows 00,10 are 1. So x[3] x[4]' and x[1]x[2] in {00,10}.
+
+Group 4: The column x[3]x[4] = 11: row 11 only is 1. x[3] x[4] and x[1]x[2]=11.
+
+Therefore:
+
+f = (x[3]' x[4]' & (x[1:2] == 00 or 10 or 11)) 
+  + (x[3]' x[4] & (x[1:2] == 10 or 11))
+  + (x[3] x[4]' & (x[1:2] == 00 or 10))
+  + (x[3] x[4] & (x[1:2] == 11))
+
+We can write these conditions in boolean expressions:
+
+- (x[3]' x[4]') & ( (~x[1] & ~x[2]) | (x[1] & ~x[2]) | (x[1] & x[2]) )
+- (x[3]' x[4]) & ( (x[1] & ~x[2]) | (x[1] & x[2]) )
+- (x[3] x[4]') & ( (~x[1] & ~x[2]) | (x[1] & ~x[2]) )
+- (x[3] x[4]) & (x[1] & x[2])
+
+This can be simplified as:
+
+f = x[3]' x[4]' ( ~x[2] | x[1] ) + x[3]' x[4] (x[1]) + x[3] x[4]' (~x[2]) + x[3] x[4] (x[1] & x[2])
+
+Since:
+
+- ( (~x[1]&~x[2]) | (x[1]&~x[2]) | (x[1]&x[2]) ) = ~x[2] + x[1]
+- ( (x[1]&~x[2]) | (x[1]&x[2]) ) = x[1]
+- ( (~x[1]&~x[2]) | (x[1]&~x[2]) ) = ~x[2]
+
+Hence:
+
+f = x[3]' x[4]' ( ~x[2] + x[1] ) + x[3]' x[4] x[1] + x[3] x[4]' ~x[2] + x[3] x[4] x[1] x[2]
+
+This is our final expression to implement in Verilog.

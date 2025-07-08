@@ -1,0 +1,18 @@
+Since the state encoding is one-hot, each state corresponds to a single bit in the y[5:0] vector. The state flip-flop inputs (Y1 and Y3) correspond to the next state bits for states B (y[1]) and D (y[3]), respectively.
+
+By inspecting the state transitions for Y1 (state B) and Y3 (state D):
+
+Y1 corresponds to state B. From the transitions:
+- A (y[0]) --1--> B (y[1]): so if currently in A (y[0]) and w=1, next state is B.
+No other transitions go to B, so:
+Y1 = y[0] & w
+
+Y3 corresponds to state D. From transitions:
+- B (y[1]) --0--> D (y[3]): y[1] & ~w
+- C (y[2]) --0--> D (y[3]): y[2] & ~w
+- E (y[4]) --0--> D (y[3]): y[4] & ~w
+- F (y[5]) --0--> D (y[3]): y[5] & ~w
+
+So Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+Thus, the Verilog assignments are direct Boolean expressions from these observations.

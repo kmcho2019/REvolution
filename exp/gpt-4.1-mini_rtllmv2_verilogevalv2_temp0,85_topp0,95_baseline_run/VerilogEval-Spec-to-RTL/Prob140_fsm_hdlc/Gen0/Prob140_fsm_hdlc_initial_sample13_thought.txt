@@ -1,0 +1,11 @@
+Implement a Moore FSM that counts consecutive 1s in the input stream. 
+States will represent the count of consecutive 1s seen so far after a 0.
+- Start state (S0) means the last input was 0 or we are ready for a new frame.
+- On input=1, move through states S1 to S6 representing 1 to 6 consecutive 1s.
+- On input=0, reset to S0.
+Outputs:
+- disc asserted for one cycle when a zero follows exactly five consecutive 1s (detecting stuffed zero).
+- flag asserted for one cycle when a zero follows six consecutive 1s (detecting flag 0x7E pattern).
+- err asserted when the count reaches 7 or more consecutive 1s (error).
+
+Because outputs are Moore type, outputs depend only on current state, so outputs are asserted on the clock cycle after the pattern is recognized by reaching the corresponding states. Use synchronous reset to initialize FSM to S0.

@@ -1,0 +1,21 @@
+Score: 3
+Justification: The code compiles correctly but fails functional simulation, likely due to incorrect bit ordering and shift logic that does not match the design intent of placing serial bits from MSB to LSB, resulting in an infinite wait or improper output generation.
+
+ANALYSIS:
+The design intent is to receive 8 serial bits on din_serial with din_valid indicating valid data, and after 8 bits, output a parallel 8-bit vector dout_parallel with bits arranged from most significant bit (MSB) to least significant bit (LSB) in the order received. The count cnt should track the number of bits received, and after 8 bits, dout_valid is asserted for one cycle.
+
+In the code, there is an inconsistency in how bits are shifted into shift_reg:
+
+- The comment states "MSB first" and that the register should shift right and insert din_serial at MSB, but the actual shift operation is `shift_reg <= {shift_reg[6:0], din_serial};`, which shifts left and inserts din_serial at LSB instead.
+
+- This means the bits are inserted in reverse order compared to the stated MSB-first requirement.
+
+- When cnt == 7, dout_parallel is assigned `{shift_reg[6:0], din_serial}`, which matches the same shifting approach, but due to the mismatch with the MSB-first intent, the parallel output bits will not be in the correct order.
+
+- The counter cnt is 4 bits but only counts up to 7; although this is functionally acceptable, it is unconventional. The counter reset logic is inside the din_valid condition, which may cause it to never reach 7 if din_valid is not asserted continuously.
+
+- The simulation timing out after 60 seconds suggests the output valid signal dout_valid is never asserted, which aligns with the shifting and count logic not correctly detecting the 8th bit.
+
+In summary, the main root cause is the discrepancy between the code's bit shifting direction and the design specification of MSB-first placement, leading to the module never signaling output validity and causing simulation to stall indefinitely. The code also relies heavily on din_valid being asserted continuously for the counter to work properly, which might not always be the case in test scenarios.
+
+These issues cumulatively cause the module to fail the functional simulation requirements, despite no syntax errors in the code itself.

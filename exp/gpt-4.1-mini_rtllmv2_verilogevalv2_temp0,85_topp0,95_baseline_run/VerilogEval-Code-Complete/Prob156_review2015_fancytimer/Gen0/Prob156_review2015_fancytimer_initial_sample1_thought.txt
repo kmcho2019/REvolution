@@ -1,0 +1,29 @@
+Implement a finite state machine with the following states:
+
+IDLE: searching for the pattern 1101 on the serial input data bit-by-bit.
+When the 4-bit pattern 1101 is detected, move to SHIFT_DELAY.
+
+SHIFT_DELAY: shift in 4 bits MSB first from data input to form delay[3:0].
+After receiving all 4 bits, move to COUNTING.
+
+COUNTING: count (delay+1)*1000 clock cycles.
+Maintain a sub-counter counting 1000 cycles, and a 4-bit remaining count initialized to delay.
+Every 1000 cycles decrement remaining count by 1, continue until remaining count is 0 and last 1000 cycles finish.
+
+When counting is finished, assert done, deassert counting, and move to WAIT_ACK.
+
+WAIT_ACK: wait for ack=1 to reset and start searching for the pattern again.
+
+Outputs:
+- counting asserted only during COUNTING state.
+- done asserted only during WAIT_ACK.
+- count output shows remaining count during counting, don't care otherwise.
+
+Reset is synchronous active high, initializes to IDLE state and clears all counters and outputs.
+
+Implementation notes:
+- Use a 4-bit shift register for pattern matching and delay shifting.
+- Use a 10-bit cycle counter for counting 1000 cycles (since 2^10=1024).
+- Store delay in a register.
+- On every clock, shift in data bit when in IDLE and SHIFT_DELAY states.
+- Ensure to compare the last 4 bits for pattern 1101 during IDLE.

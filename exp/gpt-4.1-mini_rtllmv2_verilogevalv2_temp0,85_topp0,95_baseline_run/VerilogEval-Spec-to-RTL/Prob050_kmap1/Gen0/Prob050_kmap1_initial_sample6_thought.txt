@@ -1,0 +1,31 @@
+The Karnaugh map is for three variables (a, b, c) with b and c on the rows and a on the columns. The map entries represent the output for each combination of inputs.
+
+Map:
+
+      a
+   bc 0 1
+   00 0 1
+   01 1 1
+   11 1 1
+   10 1 1
+
+Let's write minterms for all 1s:
+
+Positions with 1:
+- b=0,c=0,a=1  => a b' c'
+- b=0,c=1,a=0  => a' b' c
+- b=0,c=1,a=1  => a b' c
+- b=1,c=1,a=0  => a' b c
+- b=1,c=1,a=1  => a b c
+- b=1,c=0,a=0  => a' b c'
+- b=1,c=0,a=1  => a b c'
+
+Observing the map, the only 0 is at a=0, b=0, c=0.
+
+So the output is 0 only when a=0,b=0,c=0; output=1 otherwise.
+
+Thus, out = !(~a & ~b & ~c) = a + b + c
+
+Therefore, the logic is output = a OR b OR c.
+
+Implement module with out = a | b | c.

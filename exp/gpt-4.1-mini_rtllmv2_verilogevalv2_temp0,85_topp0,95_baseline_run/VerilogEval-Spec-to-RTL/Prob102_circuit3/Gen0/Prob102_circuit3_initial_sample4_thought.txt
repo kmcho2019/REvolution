@@ -1,0 +1,15 @@
+From the waveform table, q is 1 when either a=1 or b=1, except when both a=0 and b=0, q=0 regardless of c and d. 
+So q = (a OR b) AND (c OR d OR a OR b) but since when a or b is 1, q is always 1 regardless of c and d, the expression simplifies to q = a OR b AND (c OR d) when a=0 and b=1. 
+Checking the rows carefully:
+- When a=0,b=1,q=1 if c=1 or d=1 or both.
+- When a=1,b=0, q=1 if c=1 or d=1 or both.
+- When a=1,b=1, q=1 regardless of c and d.
+- When a=0,b=0, q=0.
+
+This can be simplified as q = (a OR b) AND (c OR d) OR (a AND b). Since (a AND b) is included in (a OR b), it is enough to say q = (a OR b) AND (c OR d) OR (a AND b).
+
+We can re-express this as q = (a AND b) OR ((a OR b) AND (c OR d)).
+
+This matches the given table.
+
+Hence, the logic implementation is q = (a & b) | ((a | b) & (c | d)).

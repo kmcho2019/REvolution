@@ -1,0 +1,41 @@
+To implement Y0 (the least significant bit of the next state Y[0]) and output z based on the given state table, I will first analyze the next state Y[0] and output z for each present state y and input x. Then I will derive combinational logic equations for Y0 and z. Since y and x are inputs, I will implement this with combinational always block or continuous assignments.
+
+From the table:
+
+Present state y | Next state when x=0 | Next state when x=1 | z
+000            | 000 (Y0=0)          | 001 (Y0=1)          | 0
+001            | 001 (Y0=1)          | 100 (Y0=0)          | 0
+010            | 010 (Y0=0)          | 001 (Y0=1)          | 0
+011            | 001 (Y0=1)          | 010 (Y0=0)          | 1
+100            | 011 (Y0=1)          | 100 (Y0=0)          | 1
+
+Now, define the inputs:
+
+y[2], y[1], y[0], x
+
+List the cases:
+
+For Y0:
+
+| y2 y1 y0 | x | Next Y0 |
+|----------|---|---------|
+| 0  0  0  | 0 | 0       |
+| 0  0  0  | 1 | 1       |
+| 0  0  1  | 0 | 1       |
+| 0  0  1  | 1 | 0       |
+| 0  1  0  | 0 | 0       |
+| 0  1  0  | 1 | 1       |
+| 0  1  1  | 0 | 1       |
+| 0  1  1  | 1 | 0       |
+| 1  0  0  | 0 | 1       |
+| 1  0  0  | 1 | 0       |
+
+Similarly for z:
+
+z = 1 only when y = 011 or 100; else 0
+
+So z = 1 when (y == 3) or (y == 4).
+
+I will implement Y0 and z as combinational logic using case statements or if-else.
+
+Since this is a small mapping, a case statement is clean.

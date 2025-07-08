@@ -1,0 +1,24 @@
+Design a Moore FSM to track the number of consecutive ones seen after a zero or at reset. States correspond to how many consecutive 1s have been observed (0 to 6). On each clock, input bit is processed:
+- If input is 0, reset count to 0 (state 0).
+- If input is 1, move to next count state.
+- When count reaches 5 and input=0, signal disc next cycle (means a zero inserted after 5 ones).
+- When count reaches 6 and input=0, signal flag next cycle (6 ones followed by 0).
+- If count reaches 7 or more ones (input=1 in state 6), signal error next cycle.
+Since Moore FSM outputs depend only on the current state, define outputs associated with states that correspond to events detected on previous inputs. Outputs are asserted for one clock cycle, starting the cycle after the input pattern is completed.
+
+State encoding:
+S0: 0 consecutive ones
+S1: 1 one
+S2: 2 ones
+S3: 3 ones
+S4: 4 ones
+S5: 5 ones
+S6: 6 ones (possible flag or error next)
+S7: error state (>=7 ones)
+
+Outputs:
+- disc asserted when previous input pattern was 0111110 (zero after 5 ones), so in the cycle after seeing zero in S5,
+- flag asserted when previous input pattern was 01111110 (zero after 6 ones), so in the cycle after seeing zero in S6,
+- err asserted in S7 state (7 or more ones).
+
+Implement synchronous reset active high. Outputs are single-cycle pulse, based on states.

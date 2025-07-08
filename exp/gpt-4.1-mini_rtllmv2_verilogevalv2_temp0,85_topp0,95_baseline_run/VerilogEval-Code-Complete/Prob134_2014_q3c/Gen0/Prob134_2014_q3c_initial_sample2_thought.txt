@@ -1,0 +1,19 @@
+To implement Y0 (the LSB of the next state Y[0]) and output z based on the present state y[2:0] and input x, we first map the transitions and output from the given table.
+
+From the table:
+
+Present y | Next state when x=0 | Next state when x=1 | z
+000       | 000 (Y0=0)          | 001 (Y0=1)          | 0
+001       | 001 (Y0=1)          | 100 (Y0=0)          | 0
+010       | 010 (Y0=0)          | 001 (Y0=1)          | 0
+011       | 001 (Y0=1)          | 010 (Y0=0)          | 1
+100       | 011 (Y0=1)          | 100 (Y0=0)          | 1
+
+We can write the logic for Y0 depending on x and y:
+
+- For x=0: Y0 is the LSB of the next state given x=0.
+- For x=1: Y0 is the LSB of the next state given x=1.
+
+We will implement combinational logic using a case statement for present state y and input x to assign Y0 and z.
+
+This approach is straightforward and matches the truth table directly.

@@ -1,0 +1,11 @@
+To implement Rule 110 cellular automaton with 512 cells, we need to:
+1. Handle the load operation when 'load' is high - directly load data into q
+2. For normal operation (load=0), compute next state for each cell based on its left, center, and right neighbors
+3. Handle boundary conditions by treating q[-1] and q[512] as 0
+4. Update all cells synchronously on clock edges
+
+The key is to generate the next state for each cell by:
+- For each bit q[i], its next state depends on q[i+1] (left), q[i] (center), and q[i-1] (right)
+- Special cases for boundary bits (q[0] and q[511]) where one neighbor is implicitly 0
+- Use a combinational always block to compute next state based on current state
+- Update state synchronously in sequential always block

@@ -1,0 +1,36 @@
+Implement a Moore FSM that counts consecutive 1s after a 0. On reset (sync, active high), start in S0 (previous bit 0). States represent count of consecutive 1s seen: S0 (no 1s), S1, S2, ..., S6 (six 1s). Transition on input 1 increments count state, on input 0 resets to S0. Outputs are asserted in the cycle after detecting the patterns:
+
+- disc: detected 5 consecutive 1s followed by a 0 (pattern 0111110)
+- flag: detected 6 consecutive 1s followed by 0 (pattern 01111110)
+- err: detected 7 or more consecutive 1s (01111111...)
+
+To detect disc and flag on the cycle after the zero after the sequence, we output in states where we have confirmed these patterns. For error, assert err as soon as the 7th 1 is detected and in all states beyond S7 (we can merge S7+ into one state).
+
+State encoding:
+S0: 0 ones counted
+S1: 1 one
+S2: 2 ones
+S3: 3 ones
+S4: 4 ones
+S5: 5 ones
+S6: 6 ones
+S7: >=7 ones (error)
+
+Outputs:
+- disc: asserted only in S5 when input=0 (so next cycle in S0 output disc=1)
+- flag: asserted only in S6 when input=0 (so next cycle in S0 output flag=1)
+- err: asserted in S7 and above (starting on cycle after 7th one)
+
+We output disc or flag when in S0 and previous input was zero, but only if the previous transition was from S5 or S6 followed by input zero. So we can store an output register set when transitioning from S5 or S6 to S0, then output these signals on the next cycle.
+
+To implement this cleanly, use state registers and output registers updated on clock.
+
+Summary:
+- On input=0, transition to S0 from any Si.
+- On input=1, increment state count until S7 (error state).
+- When transitioning S5->S0 with input=0, set disc_output=1 for next cycle.
+- When transitioning S6->S0 with input=0, set flag_output=1 for next cycle.
+- When in S7 or above, err=1.
+- Outputs disc, flag, err are registered outputs valid for one cycle.
+
+Implement synchronous reset to S0 with outputs cleared.

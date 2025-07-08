@@ -1,0 +1,21 @@
+Score: 0
+Justification: The code fails to compile due to illegal use of variable indices in array accesses, resulting in numerous elaboration errors related to non-constant array indices.
+
+ANALYSIS:
+The simulation log reports multiple errors of the form: "A reference to a wire or reg (`r') is not allowed in a constant expression" and "Array index expressions must be constant here." These errors occur because the code uses loop variables such as `r`, `c`, `nr`, and `nc` as indices to access elements of a multi-dimensional array declared as `reg [0:15][0:15] grid;` and `next_grid`.
+
+Verilog requires that when using unpacked arrays with multiple dimensions (e.g., `reg [0:15][0:15]`), the index expressions must be constant during elaboration for some contexts or the tool may interpret them as illegal. The errors arise specifically at lines where the code accesses `grid[r][c]`, `grid[nr][nc]`, `next_grid[r][c]`, and similarly for assignment to `q[r*16 + c]`. The error messages pinpoint lines 33, 52, 62, 64, 66, 68, 74, 75, all corresponding to these variable-indexed array accesses inside the always block.
+
+This indicates that the code is attempting to use runtime loop variables to index unpacked 2D arrays inside a procedural block, which is not allowed in some Verilog implementations or requires a different data representation. Additionally, the use of packed vectors (`q` and `data`) indexed with expressions like `r*16 + c` is legal, but here the indexing problem is mainly with the unpacked 2D arrays.
+
+The original design intent is to maintain a 16x16 grid to represent the game state, with wrapping implemented by the `wrap` function, and update the grid cell states on every clock cycle according to the neighbor count rules. However, the fundamental issue is the choice of data structures and indexing methods, which results in illegal array indexing and prevents synthesis or simulation elaboration.
+
+In summary, the root cause of the compilation failure is the use of variable (non-constant) indices `r`, `c`, `nr`, `nc` to access unpacked multi-dimensional arrays inside an always block, which violates Verilog elaboration rules for array indexing. This prevents the design from compiling and simulating at all, making functional verification impossible.
+
+Relevant code sections:
+- Declaration: `reg [0:15][0:15] grid;`
+- Line 33: `grid[r][c] <= data[r*16 + c];` inside the load branch
+- Line 52: `neighbors = neighbors + grid[nr][nc];`
+- Lines 62–75: multiple accesses and assignments to `grid[r][c]`, `next_grid[r][c]`, and `q[r*16 + c]` with variable indices inside the always block.
+
+All these contribute to the errors reported in the log.

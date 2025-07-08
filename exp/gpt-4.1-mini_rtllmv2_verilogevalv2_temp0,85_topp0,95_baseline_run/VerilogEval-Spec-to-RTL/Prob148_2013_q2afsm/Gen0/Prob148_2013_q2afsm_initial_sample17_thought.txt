@@ -1,0 +1,30 @@
+Implement a three-state FSM with states A, B, and C representing no grant, grant to device 0, and grant to device 1 respectively. The problem mentions state D, but the transitions to D from A are ambiguous (two transitions for the same input), so we will omit state D and implement the FSM according to the priority scheme and transitions described clearly:
+
+- State A (no grant): 
+  - If r[0] == 1, go to B (grant device 0).
+  - Else if r[1] == 1, go to C (grant device 1).
+  - Else stay in A.
+  
+- State B (grant to device 0):
+  - If r[0] == 1, stay in B.
+  - Else go to A.
+  
+- State C (grant to device 1):
+  - If r[1] == 1, stay in C.
+  - Else go to A.
+
+Device 2's request (r[2]) is only granted if no r[0] or r[1] request is active; since the problem does not specify a state for grant to device 2, we will treat this as remaining in state A (no grant).
+
+Grant outputs are combinational: g = 3'b000 in A, g[0] = 1 in B, g[1] = 1 in C.
+
+Reset is synchronous active low: on resetn == 0, set state to A on clock edge.
+
+We will use separate always blocks for sequential logic (state flip-flops) and combinational logic (next state and outputs).
+
+Assign state codes arbitrarily:
+
+- A = 2'b00
+- B = 2'b01
+- C = 2'b10
+
+Since only 3 states, 2 bits are enough.

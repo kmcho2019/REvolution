@@ -1,0 +1,15 @@
+Implement combinational next-state logic and output logic for the given Moore FSM with one-hot state encoding.
+
+Inputs: current state (10 bits), inputs d, done_counting, ack.
+
+Outputs: signals asserted when next state equals a particular state (B3_next, S_next, S1_next, Count_next, Wait_next) and outputs done, counting, shift_ena.
+
+Derive next states by inspecting the state diagram and one-hot states. For states with input-dependent transitions (S, S1, S11, S110, Count, Wait), use input conditions to select next states. For states with unconditional transitions (B0, B1, B2, B3), next state is fixed.
+
+Output signals are asserted according to the Moore machine output diagram:
+
+- shift_ena=1 for states B0, B1, B2, B3
+- counting=1 for Count
+- done=1 for Wait
+
+Finally, assign output signals and next-state signals by comparing the next-state one-hot vector to corresponding one-hot codes.

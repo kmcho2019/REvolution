@@ -1,0 +1,14 @@
+Implement a finite state machine with the following states:
+
+- IDLE: waiting for pattern 1101 serially on 'data'. Use a 4-bit shift register to detect the pattern.
+- LOAD_DELAY: after detecting 1101, shift in next 4 bits MSB first into delay register.
+- COUNTING: count clock cycles for (delay+1)*1000 cycles. Maintain a 10-bit cycle counter for counting 1000 cycles each, and a 4-bit delay counter for remaining counts. Output 'count' as remaining delay value. Assert 'counting' high during counting.
+- DONE: after counting completes, assert 'done' high and wait for 'ack' to go high. Once ack is received, transition back to IDLE.
+
+Implement all logic synchronously on rising edge of clk with synchronous reset.
+
+During IDLE and DONE states, 'count' is don't care. During COUNTING, 'count' outputs the current remaining delay value.
+
+Ignore input data during LOAD_DELAY, COUNTING, DONE except for ack in DONE.
+
+The module takes in clk, reset, data, ack; outputs count[3:0], counting, done.

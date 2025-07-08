@@ -1,0 +1,62 @@
+The Karnaugh map represents the function f of four variables x[1], x[2], x[3], x[4] arranged in a 4x4 grid with rows labeled by x[1]x[2] and columns by x[3]x[4]. By analyzing the K-map, we identify the minterms where f=1 and derive a minimized sum-of-products expression. Then we implement this expression in Verilog.
+
+From the map:
+Rows (x[1]x[2]): 00, 01, 11, 10
+Cols (x[3]x[4]): 00, 01, 11, 10
+
+Map (row,col):
+(00,00)=1, (00,01)=0, (00,11)=0, (00,10)=1
+(01,00)=0, (01,01)=0, (01,11)=0, (01,10)=0
+(11,00)=1, (11,01)=1, (11,11)=1, (11,10)=0
+(10,00)=1, (10,01)=1, (10,11)=0, (10,10)=1
+
+Minterms (input bits order x1x2x3x4):
+- 0000 (0):1
+- 0010 (2):1
+- 1100 (12):1
+- 1101 (13):1
+- 1111 (15):1
+- 1110 (14):0
+- 1000 (8):1
+- 1001 (9):1
+- 1010 (10):1
+
+Grouping 1s, we find a simplified expression.
+
+One possible simplified SOP from the Karnaugh map:
+
+f = (~x1 & ~x2 & ~x3 & ~x4)    // m0
+  + (~x1 & ~x2 & x3 & ~x4)     // m2
+  + (x1 & x2 & ~x3)            // m12,13 (x1=1,x2=1,x3=0 regardless of x4 except m14=0)
+  + (x1 & ~x2 & ~x4)           // m8,10
+  + (x1 & ~x2 & x3 & ~x4)      // m10 overlaps here
+  + (x1 & ~x2 & ~x3 & x4)      // m9
+  + (x1 & ~x2 & x3 & ~x4)      // repeated
+
+After grouping, a cleaner expression:
+
+f = (~x1 & ~x2 & ~x4 & (~x3 | x3))  // simplifies to ~x1 & ~x2 & ~x4
+  + (x1 & x2 & ~x3)
+  + (x1 & ~x2 & (~x4 | x3 & ~x4 | ~x3 & x4))
+
+Notice ~x1 & ~x2 & ~x4 group covers m0 and m2.
+
+In the last group, from m8(1000), m9(1001), m10(1010):
+
+- m8: x1=1,x2=0,x3=0,x4=0
+- m9: x1=1,x2=0,x3=0,x4=1
+- m10:x1=1,x2=0,x3=1,x4=0
+
+Try grouping them:
+
+Group1: x1 & ~x2 & ~x3 (covers m8,m9)
+Group2: x1 & ~x2 & x3 & ~x4 (m10)
+
+Final expression:
+
+f = (~x1 & ~x2 & ~x4)
+  + (x1 & x2 & ~x3)
+  + (x1 & ~x2 & ~x3)
+  + (x1 & ~x2 & x3 & ~x4)
+
+We can implement this directly in Verilog.

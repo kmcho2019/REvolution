@@ -1,0 +1,12 @@
+To implement a 32-bit adder using the Carry-Lookahead Adder (CLA) architecture, we first design a 16-bit CLA block that computes the sum and carry-out efficiently using generate (G) and propagate (P) signals and hierarchical carry lookahead logic. Then, the top-level 32-bit adder instantiates two 16-bit CLA blocks: the lower 16 bits and the upper 16 bits. The carry-out of the lower block is fed as carry-in to the upper block, allowing fast calculation of the carry chain.
+
+Key details:
+- Inputs and outputs are 1-based indexing as per the problem statement (e.g., A[32:1]).
+- The 16-bit CLA block will have inputs: A[16:1], B[16:1], carry-in (Cin).
+- Outputs: S[16:1] and carry-out (Cout).
+- The 32-bit top module will instantiate two 16-bit CLA blocks:
+  - Lower 16 bits: A[16:1], B[16:1], Cin=0
+  - Upper 16 bits: A[32:17], B[32:17], Cin = carry-out from lower block
+- The top module outputs S[32:1] and carry-out C32.
+
+The implementation uses standard CLA logic for the 16-bit block and combines two blocks for 32 bits.

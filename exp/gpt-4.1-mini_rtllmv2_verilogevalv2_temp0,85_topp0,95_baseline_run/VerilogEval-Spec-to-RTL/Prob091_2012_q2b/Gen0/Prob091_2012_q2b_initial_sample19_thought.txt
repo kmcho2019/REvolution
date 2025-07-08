@@ -1,0 +1,28 @@
+We are given a 6-bit one-hot encoded state vector y, representing states A to F. The transitions are determined by the input w.
+
+The task is to find the next state inputs Y1 and Y3 (corresponding to the next values of y[1] and y[3], which are states B and D respectively) from the current state y and input w.
+
+By inspection of the FSM transitions:
+
+- Y1 corresponds to next state B (bit 1).
+- Y3 corresponds to next state D (bit 3).
+
+We analyze when Y1 and Y3 should be asserted based on current state y and input w:
+
+Transitions to B (y[1]=1 next cycle):
+- From A (y[0]) on w=1
+No other transitions to B.
+
+So,
+Y1 = y[0] & w
+
+Transitions to D (y[3]=1 next cycle):
+- From B (y[1]) on w=0
+- From C (y[2]) on w=0
+- From E (y[4]) on w=0
+- From F (y[5]) on w=0
+
+So,
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w
+
+We implement these equations directly.

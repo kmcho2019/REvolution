@@ -1,0 +1,56 @@
+Score: 7
+Justification: The code is syntactically correct and simulates without errors, and the output 'aaah' behaves correctly, but the simulation log shows a significant number of mismatches (154 out of 441) on the walk_left and walk_right outputs, indicating functional issues with direction switching or state transitions related to walking direction. These errors relate to the handling of bumps and the preservation of walking direction, resulting in direction output mismatches while falling behavior is correctly implemented.
+
+ANALYSIS:
+The code implements a Moore finite state machine with three states: WALK_LEFT, WALK_RIGHT, and FALLING, correctly handling asynchronous reset to WALK_LEFT and preserving walking direction in prev_dir before falling.
+
+Key observations linking code to the functional mismatches:
+
+1. **Direction switching on bump signals:**
+   The next state logic for WALK_LEFT and WALK_RIGHT treats any bump (bump_left or bump_right) as a trigger to switch direction:
+   ```verilog
+   if (bump_left || bump_right) begin
+       next_state = (state == WALK_LEFT) ? WALK_RIGHT : WALK_LEFT;
+   end
+   ```
+   This matches the problem description that bump on either side (or both) should cause a direction flip.
+
+2. **Ignoring bumps while falling:**
+   In FALLING state, the next state only changes when ground is restored; bumps are ignored, which matches the specification:
+   ```verilog
+   FALLING: begin
+       if (ground) begin
+           next_state = (prev_dir == 1'b0) ? WALK_LEFT : WALK_RIGHT;
+       end else begin
+           next_state = FALLING;
+       end
+   end
+   ```
+
+3. **Preserving direction before falling:**
+   The prev_dir register is updated asynchronously with state changes. In the sequential block:
+   ```verilog
+   if (state != FALLING && next_state == FALLING) begin
+       prev_dir <= (state == WALK_RIGHT) ? 1'b1 : 1'b0;
+   end
+   ```
+   This logic intends to remember the current walking direction before entering FALLING.
+
+4. **Potential issues leading to mismatches:**
+
+   - The update of `prev_dir` occurs only on the clock edge and depends on the current and next state. However, bump signals may cause rapid switching of directions which could lead to `prev_dir` not being updated in time or being stale when falling resumes.
+   
+   - The bump inputs are handled combinationally in the next-state logic but `prev_dir` is updated only in the sequential block, which might cause a cycle lag where the FSM direction output does not match expected direction immediately after bumps.
+   
+   - The simulation log reports 154 mismatches on `walk_left` and `walk_right` but none on `aaah`, indicating that the FALLING state and its output is correct, while the direction outputs are not reliably reflecting correct state transitions.
+   
+   - Furthermore, the initial value of `prev_dir` on reset is hardcoded to left (0), which aligns with the reset state of WALK_LEFT, but if bumps happen immediately at the start or in quick succession, the direction memory might not update properly, causing inconsistent outputs.
+   
+   - The logic updates `prev_dir` only when entering or leaving FALLING state; any direction changes while walking are not updating `prev_dir`. If the Lemming is walking and changes direction due to bumps, `prev_dir` should reflect the new direction so that when falling resumes, it resumes the correct direction. The current code does not update `prev_dir` on direction changes during walking states, potentially causing mismatch after falls.
+   
+   - Additionally, in the always block for the sequential logic, `prev_dir` does not change when switching between WALK_LEFT and WALK_RIGHT states. This may cause incorrect walking directions after falling if the direction before falling was not accurately stored.
+   
+5. **Summary:**
+   The principal functional error appears to be that `prev_dir` does not update correctly upon direction changes during walking states, causing the FSM to resume walking in an incorrect direction after a fall, leading to output mismatches on `walk_left` and `walk_right`.
+
+Hence, the design is correct in structure and adheres to the problem's FSM requirements but has a critical flaw in the handling and updating of the `prev_dir` signal in relation to bumps and direction changes while walking, causing the majority of simulation mismatches reported.

@@ -1,0 +1,27 @@
+To implement a Moore state machine that outputs the 2's complement of an input bit stream (x) one bit at a time, starting from the least significant bit, we need to:
+
+1. Understand the 2's complement process: In a binary number, to find its 2's complement, you copy bits from the least significant bit upwards until you encounter the first '1'. This first '1' is copied as is, then all subsequent bits are inverted.
+
+2. States:
+   - IDLE: When reset is asserted, output is 0 (or could be default).
+   - COPY: Before the first '1' has been encountered, output = input bit x.
+   - INVERT: After the first '1' has been encountered, output = inverted input bit.
+
+3. On reset release, state moves from IDLE to COPY.
+4. On each clock cycle, depending on the state and input bit, the output is generated and state transitions accordingly.
+5. The output depends only on the current state, making it a Moore machine.
+
+This approach requires a 2-state FSM:
+
+- State 0 (COPY): output = x; if x == 1, transition to State 1
+- State 1 (INVERT): output = ~x
+
+On areset asserted, reset to IDLE state.
+
+Implementation details:
+
+- Use synchronous state transitions and output logic with asynchronous active-high reset.
+- Since the reset is asynchronous, state and output should be reset immediately when areset is asserted.
+- The machine processes arbitrary-length streams until reset is asserted again.
+
+We will define state encoding and follow this logic for output and transitions.

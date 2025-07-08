@@ -1,0 +1,46 @@
+The state machine uses one-hot encoding for states A to F mapped to y[0] to y[5]. We have inputs w and current state y[5:0]. The next state is determined based on the current state and input w.
+
+We need to derive next-state signals Y1 and Y3 corresponding to y[1] (state B) and y[3] (state D) respectively, i.e., whether the next state is B (Y1=1) or D (Y3=1).
+
+From the state transitions:
+
+State A (y=000001) (y[0]=1):
+- If w=0: next state B (y[1]=1) => Y1=1
+- If w=1: next state A
+
+State B (y=000010) (y[1]=1):
+- If w=0: next state C (y[2]=1)
+- If w=1: next state D (y[3]=1) => Y3=1
+
+State C (y=000100) (y[2]=1):
+- If w=0: next state E (y[4]=1)
+- If w=1: next state D (y[3]=1) => Y3=1
+
+State D (y=001000) (y[3]=1):
+- If w=0: next state F (y[5]=1)
+- If w=1: next state A (y[0]=1)
+
+State E (y=010000) (y[4]=1):
+- If w=0: next state E (y[4]=1)
+- If w=1: next state D (y[3]=1) => Y3=1
+
+State F (y=100000) (y[5]=1):
+- If w=0: next state C (y[2]=1)
+- If w=1: next state D (y[3]=1) => Y3=1
+
+Now, the next state B (Y1) is reached only from A if w=0. So,
+
+Y1 = y[0] & ~w
+
+Next state D (Y3) is reached from:
+
+- B if w=1: y[1] & w
+- C if w=1: y[2] & w
+- E if w=1: y[4] & w
+- F if w=1: y[5] & w
+
+So,
+
+Y3 = w & (y[1] | y[2] | y[4] | y[5])
+
+We implement these logic equations in the TopModule with inputs y[5:0], w, outputs Y1, Y3.

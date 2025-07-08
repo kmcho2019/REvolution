@@ -1,0 +1,20 @@
+Analyze the state and output q transitions at each clock's positive edge to determine the next state and output logic. The circuit has one bit of memory (state), updated on clock's posedge. Observing waveforms:
+- state is initially unknown.
+- q equals 1 only when state=0 and inputs (a,b) satisfy certain conditions.
+- state updates are controlled by inputs a and b and current state.
+
+By examining the waveforms:
+- At time 45ns (clk posedge): state=0, inputs a=0, b=1, q=1
+- At time 65ns: state=0, a=1, b=1, q=0
+- At time 75ns: state=1, a=0, b=0, q=1
+
+From the transitions and q outputs, the output q appears to be (state AND NOT b) OR (NOT state AND b AND NOT a).
+
+The next state logic from waveforms can be approximated as: next_state = (state AND NOT (a AND b)) OR (NOT state AND b AND NOT a).
+
+To summarize:
+- On each clock posedge, state updates to next_state.
+- q is combinational based on current state and inputs.
+- Output state is current state.
+
+Implement a flip-flop for state and combinational logic for q and next_state accordingly.

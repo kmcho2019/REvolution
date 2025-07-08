@@ -1,0 +1,32 @@
+The given states A to F are one-hot encoded in y[5:0]. The transitions are defined by input w. We need to derive the next-state signals Y1 (next state y[1]) and Y3 (next state y[3]) from current state y and input w.
+
+By inspection:
+
+- y[1] corresponds to state B (second bit).
+- y[3] corresponds to state D (fourth bit).
+
+We analyze the transitions to find expressions for next y[1] and y[3].
+
+From the transition diagram and current state bits:
+
+Next y[1] (next B):
+- From A (y[0]): A --0--> B (y[1]) => if y[0] & ~w
+- From C (y[2]): C --1--> D (y[3]), so no B here.
+- From other states: no transitions to B.
+
+Hence:
+Y1 = (y[0] & ~w)
+
+Next y[3] (next D):
+- From B (y[1]): B --1--> D => y[1] & w
+- From C (y[2]): C --1--> D => y[2] & w
+- From D (y[3]): D --1--> A (no D), D --0--> F (no D)
+- From E (y[4]): E --1--> D => y[4] & w
+- From F (y[5]): F --1--> D => y[5] & w
+
+Hence:
+Y3 = w & (y[1] | y[2] | y[4] | y[5])
+
+Implementing these as combinational logic outputs.
+
+The module has inputs y[5:0], w and outputs Y1 and Y3.

@@ -1,0 +1,17 @@
+The circuit has two outputs p and q and is sequential. From the waveform:
+- Initially at time 0 p and q are unknown (x).
+- At the first clock=1 edge (25ns) with a=0, p=0 and q=x.
+- When clock=0, p and q hold values until the next clock=1.
+- p changes to 1 only on clock rising edge when a=1, otherwise p=0 on clock=1 edges.
+- q is set to 1 on clock falling edge if previously p was 1; q holds its state during clock=0.
+- After q is set, p is reset to 0 on the next clock=1 edge unless a=1 again.
+- When clock goes from 1 to 0, q copies p's previous value.
+- p updates only on rising edge of clock to a, q updates only on falling edge of clock to p.
+
+Hence:
+- On posedge clock: p <= a
+- On negedge clock: q <= p
+
+Initialize p and q to 0 at start for defined behavior.
+
+This implements a one-bit latch behavior where p follows a at clock rising edge, and q samples p at clock falling edge.

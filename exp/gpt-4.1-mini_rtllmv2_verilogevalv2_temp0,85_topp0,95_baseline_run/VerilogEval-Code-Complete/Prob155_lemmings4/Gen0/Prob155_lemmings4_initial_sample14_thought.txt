@@ -1,0 +1,12 @@
+Design a Moore FSM with states representing direction (walk_left or walk_right), falling, digging, and splattered. We store the current direction separately to remember it during falling and digging. Use a counter to track how long the Lemming has been falling. On reset, start walking left. On each clock cycle:
+
+- If splattered, stay splattered forever (all outputs 0).
+- Else if ground=0, transition to falling (aaah=1), increment fall counter.
+- If ground=1 and falling, check fall duration: if >20 cycles, splatter; else resume walking in stored direction.
+- If not falling and ground=1:
+  - If dig=1 and currently walking, start digging.
+  - Else if bumped left or right, switch walking direction.
+- Digging continues until ground=0, then transition to falling.
+- Bumps ignored during falling and digging.
+- Outputs depend only on state (Moore machine).
+Implement states with an enum and store direction in a reg. Use a separate reg for fall count.

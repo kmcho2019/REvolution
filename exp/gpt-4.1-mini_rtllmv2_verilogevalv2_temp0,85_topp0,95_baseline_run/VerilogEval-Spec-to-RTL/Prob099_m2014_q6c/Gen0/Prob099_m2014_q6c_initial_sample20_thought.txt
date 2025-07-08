@@ -1,0 +1,22 @@
+The state machine uses one-hot encoding for states A-F in y[5:0]. The next states are determined by the current state and the input w.
+
+The next-state logic is encoded into the 6-bit y signal where each bit corresponds to a state: 
+y[0] = A, y[1] = B, y[2] = C, y[3] = D, y[4] = E, y[5] = F.
+
+The problem asks to implement the next-state signals Y1 and Y3, which correspond to next states B (y[1]) and D (y[3]), derived by inspection.
+
+From the state transitions:
+
+- Next state B (y[1]) is active if:
+  - From A (y[0]) with input 0 (w=0), next is B
+  - So, Y1 = y[0] & ~w
+
+- Next state D (y[3]) is active if:
+  - From B (y[1]) with w=1
+  - From C (y[2]) with w=1
+  - From D (y[3]) with w=1
+  - From E (y[4]) with w=1
+  - From F (y[5]) with w=1
+  So, Y3 = w & (y[1] | y[2] | y[3] | y[4] | y[5])
+
+We'll implement a module with inputs y[5:0], w, outputs Y1, Y3 with the derived combinational logic.

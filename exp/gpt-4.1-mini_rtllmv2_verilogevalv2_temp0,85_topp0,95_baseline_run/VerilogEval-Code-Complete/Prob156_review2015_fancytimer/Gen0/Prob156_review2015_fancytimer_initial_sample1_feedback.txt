@@ -1,0 +1,57 @@
+Score: 3
+Justification: The code is syntactically correct and compiles, but it contains multiple functional design issues that cause extensive mismatches during simulation, particularly in the pattern detection and delay counting phases. The FSM does not correctly detect the pattern or properly transition states based on bit counts, leading to incorrect outputs for count, counting, and done signals.
+
+ANALYSIS:
+1. **Pattern Detection Logic Issue:**
+
+   - The problem requires detecting the 4-bit pattern `1101` on the serial `data` input, shifting in one bit per clock cycle in the IDLE state.
+   - The code uses a 4-bit `pattern_shift` register to shift in bits, which is correct in principle.
+   - However, the FSM's transition from IDLE to SHIFT_DELAY depends on the combinational check `if (pattern_shift == 4'b1101)`, but this check alone can be unreliable because `pattern_shift` shifts every clock, including during other states (see next point).
+   - Additionally, `pattern_shift` is always shifted in the IDLE and SHIFT_DELAY states, but the code does not mask or reset it appropriately on state transitions, which may cause incorrect detection due to residual bits.
+
+2. **Inadequate State Transition Control for SHIFT_DELAY State:**
+
+   - The SHIFT_DELAY state is responsible for shifting in the 4-bit delay value MSB first.
+   - The code attempts to track how many bits have been shifted in during SHIFT_DELAY using `shift_delay_bits` as a 3-bit counter.
+   - Although `shift_delay_bits` increments each clock in SHIFT_DELAY, the `next_state` logic to move from SHIFT_DELAY to COUNTING is split between two `always @(*)` blocks, one of which is combinational and depends on `shift_delay_bits`:
+     ```verilog
+     always @(*) begin
+       if (state == SHIFT_DELAY && shift_delay_bits == 3'd4) begin
+         next_state = COUNTING;
+       end
+     end
+     ```
+   - This causes a conflict with the main `next_state` combinational block, potentially leading to unpredictable or conflicting assignments to `next_state`.
+   - Since `shift_delay_bits` is a registered (sequential) signal, using it in combinational always block for next state decision introduces a race or glitch risk.
+   - The code comments mention the difficulty but fail to properly integrate the bit count into state transitions, resulting in indefinite or incorrect state durations in SHIFT_DELAY.
+
+3. **`pattern_shift` Usage Overlapping for Pattern and Delay:**
+
+   - The `pattern_shift` register is used both for detecting the pattern and for shifting delay bits.
+   - During SHIFT_DELAY, the pattern_shift continues shifting bits, overwriting the previous pattern detection bits.
+   - The delay bits stored in `pattern_shift` at the time `shift_delay_bits == 3'd3` are used to set `delay` and `remaining_count`.
+   - However, given the shifting continues after that count and the lack of synchronization between this logic and state transitions, the delay value may be corrupted or not stabilized when assigned.
+   - This misuse of the same register for two distinct functions causes timing and data integrity problems.
+
+4. **Counting Logic Discrepancy:**
+
+   - The counting phase intends to run for `(delay + 1) * 1000` cycles.
+   - The code counts down `remaining_count` from `delay` to zero, decrementing it every 1000 cycles (tracked by `cycle_count`).
+   - `count` output is assigned the current `remaining_count`.
+   - This design assumes that the initial `remaining_count` matches the delay value, but since delay loading logic has issues, `remaining_count` may be incorrect.
+   - The output `count` signal mismatches in simulation suggest that the count decrement or timing is off, possibly because of delay misassignment or cycle counting errors.
+
+5. **Done and Ack Handling:**
+
+   - After counting finishes, the FSM moves to WAIT_ACK and asserts `done=1`.
+   - It waits for `ack=1` to return to IDLE.
+   - This part of the FSM is straightforward and seems correct.
+   - However, simulation mismatches on `done` imply that the transitions to WAIT_ACK and signaling done may be occurring incorrectly or at wrong times, likely stemming from earlier state errors.
+
+6. **Simulation Evidence:**
+
+   - The simulation log reports over 117,000 mismatches on `count` and over 35,000 on `counting`, with the first mismatch around simulation time 130.
+   - This early mismatch time indicates the pattern detection and initial shifting are flawed, causing the FSM to fail to detect the start sequence or properly load the delay.
+   - The significant mismatch count implies that the FSM either stays in the wrong states or produces incorrect outputs for large portions of the simulation.
+
+**Summary:** The core problems trace back to flawed pattern detection logic and improper handling of bit counting and state transitions in SHIFT_DELAY. The dual use of `pattern_shift` for both pattern detection and delay bits, plus conflicting `next_state` assignments involving a sequential counter, leads to inconsistent FSM behavior and output mismatches. Counting and done signaling further suffer as a consequence of these upstream issues.

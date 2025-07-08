@@ -1,0 +1,14 @@
+From the waveform table, outputs p and q are driven only after several clock cycles. Initially, outputs are unknown (x). At the first rising clock edge (25ns), p becomes 0, q remains x, then at the falling clock edge at 55ns, q becomes 0. After several cycles, p output seems to latch the input a value sampled at the rising clock edge, and q output seems to latch p value sampled at the falling clock edge. 
+
+More specifically:
+- On rising clock edge, p <= a.
+- On falling clock edge, q <= p.
+
+This behavior fits a master-slave flip-flop where p is updated at clock rising edge from input a, and q updated at clock falling edge from p.
+
+Therefore:
+- We implement two always blocks triggered by clock edges:
+  - on posedge clock: p <= a;
+  - on negedge clock: q <= p;
+
+Outputs p and q are registers driven by clock edges.

@@ -1,0 +1,67 @@
+We need to implement a function F(a,b,c,d) using one 4-to-1 mux with selectors a,b, and the inputs mux_in[3:0] chosen based on c,d and implemented only with 2-to-1 muxes (no other gates).
+
+The 4-to-1 mux selects among mux_in[0..3] with selectors {a,b}:
+- mux_in[0] = F(a=0,b=0,c,d)
+- mux_in[1] = F(a=0,b=1,c,d)
+- mux_in[2] = F(a=1,b=1,c,d)
+- mux_in[3] = F(a=1,b=0,c,d)
+
+Extracting these from the K-map:
+
+K-map entries for ab=00 (mux_in[0]):
+cd: 00=0, 01=1, 11=1, 10=1
+So mux_in[0] = 0,1,1,1 for cd=00..11..10
+That is: when cd=00 output=0 else 1
+
+K-map entries for ab=01 (mux_in[1]):
+cd: 00=0, 01=0, 11=0, 10=0
+Always 0
+
+K-map entries for ab=11 (mux_in[2]):
+cd: 00=0, 01=0, 11=1, 10=0
+Only cd=11 is 1, else 0
+
+K-map entries for ab=10 (mux_in[3]):
+cd: 00=1, 01=0, 11=1, 10=1
+So 1,0,1,1
+
+Now implement each mux_in[i] using only 2-to-1 muxes with inputs c,d.
+
+Use d as selector for 2-to-1 mux since cd combinations matter:
+- For mux_in[0]: output 0 at cd=00, else 1
+cd=00 => c=0,d=0 => output=0
+else output=1
+This can be done as: if c==0 and d==0 then 0 else 1
+Implementing with muxes:
+
+mux0 = mux(d, 1 (cd=01), mux(c, 1 (cd=10), 0 (cd=00)))
+
+- For mux_in[1]: always 0
+
+- For mux_in[2]: only cd=11=1 else 0
+cd=11 means c=1,d=1 output=1 else 0
+Use d selector:
+mux(d, output when d=1, output when d=0)
+When d=1: c=1->1 else 0
+When d=0: always 0
+So mux(d, mux(c,1,0), 0)
+
+- For mux_in[3]: cd=00=1, 01=0, 11=1, 10=1
+cd=00=1 (c=0,d=0)
+cd=01=0 (c=0,d=1)
+cd=11=1 (c=1,d=1)
+cd=10=1 (c=1,d=0)
+
+Using d selector:
+If d=0: cd=00 or 10: c=0 or 1 => outputs 1
+If d=1: cd=01 or 11: c=0 output 0, c=1 output 1
+
+So:
+when d=0 output 1
+when d=1 output c
+
+mux(d, c, 1)
+
+All muxes are 2-to-1 muxes with inputs and selectors a,b,c,d as described.
+
+We implement this in Verilog as a module TopModule that outputs mux_in[3:0].

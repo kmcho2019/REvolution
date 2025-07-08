@@ -1,0 +1,14 @@
+The outputs p and q are sequential and change on the clock edges. Observing the waveform:
+
+- At the first rising edge (around 25ns clock=1), p=0, q=x.
+- At falling clock edges, q updates to the previous p value.
+- p updates on rising clock edges and is set to 'a & q' (1 only when both a and q are 1).
+- q updates on falling clock edges to the previous p.
+
+Essentially, the circuit is a two-bit shift register with feedback on p:
+- On rising edge: p <= a & q
+- On falling edge: q <= p
+
+Initial values are unknown (x) and then settle to 0.
+
+Implementing this with sequential always blocks triggered on posedge and negedge of clock.

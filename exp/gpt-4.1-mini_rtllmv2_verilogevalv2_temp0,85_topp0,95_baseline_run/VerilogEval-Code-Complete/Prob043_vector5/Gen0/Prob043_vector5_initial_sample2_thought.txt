@@ -1,0 +1,12 @@
+To compute all 25 pairwise comparisons between the 5 one-bit inputs, we consider each pair (including a bit compared with itself) and set the output bit to 1 if they are equal. Since equality for bits is (x == y), which can be implemented as ~(x ^ y), or equivalently ~(x ^ y). Using bitwise operators, this is the logical XNOR operation.
+
+We'll order the output bits from index 24 down to 0 corresponding to pairs:
+(a,a), (a,b), (a,c), (a,d), (a,e),
+(b,a), (b,b), (b,c), (b,d), (b,e),
+(c,a), (c,b), (c,c), (c,d), (c,e),
+(d,a), (d,b), (d,c), (d,d), (d,e),
+(e,a), (e,b), (e,c), (e,d), (e,e)
+
+To assign bits, we can define a 5-element array with inputs and then use nested loops or explicit assignments. Since Verilog does not support loops in continuous assignments, we'll explicitly write out all pairs.
+
+For each pair, out[index] = ~(input1 ^ input2); or equivalently (input1 ~^ input2).

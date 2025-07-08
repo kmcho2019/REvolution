@@ -1,0 +1,18 @@
+Implement a Moore FSM with these states: WALK_LEFT, WALK_RIGHT, FALLING_LEFT, FALLING_RIGHT, DIGGING_LEFT, DIGGING_RIGHT, SPLATTERED.
+
+- On reset, go to WALK_LEFT.
+- In walking states, if ground=0, go to falling state preserving direction.
+- In walking states with ground=1, if dig=1, go to digging state preserving direction.
+- In walking states with ground=1 and no dig or fall, if bumped, switch walking direction.
+- Falling states increment a fall counter each cycle.
+- If ground returns (ground=1) while falling:
+  - If fall counter > 20, go to SPLATTERED.
+  - Else go back to walking with direction preserved.
+- Digging states continue until ground=0, then go to falling state preserving direction.
+- In SPLATTERED state, all outputs zero, stays here until reset.
+- Outputs depend only on the state.
+- The fall counter resets on entering falling state and on reset.
+- Bump inputs ignored while falling or digging.
+- Dig input ignored while falling or no ground.
+
+Implement the FSM and outputs accordingly.

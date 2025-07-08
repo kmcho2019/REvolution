@@ -1,0 +1,6 @@
+Implement a simple FSM with three states: IDLE (waiting for the first byte with in[3]=1),
+BYTE2 (waiting for the second byte), and BYTE3 (waiting for the third byte). When reset is asserted,
+go to IDLE. On each clock edge, if in IDLE and in[3] is 1, move to BYTE2. From BYTE2 to BYTE3,
+then from BYTE3 back to IDLE and assert done for one clock cycle. If a byte with in[3]=1 appears
+unexpectedly in BYTE2 or BYTE3, treat it as the start of a new message (go to BYTE2 again),
+ensuring resynchronization.

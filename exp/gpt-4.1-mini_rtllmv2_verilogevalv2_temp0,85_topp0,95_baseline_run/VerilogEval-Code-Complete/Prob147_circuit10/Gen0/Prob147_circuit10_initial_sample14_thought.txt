@@ -1,0 +1,19 @@
+From the waveform, the circuit uses a single flip-flop and combinational logic based on inputs a, b, and the current state (flip-flop output). The state output reflects the current flip-flop value, and q mirrors the stored bit.
+
+Observing transitions:
+- q (flip-flop output) updates on the rising edge of clk.
+- The next state seems to be a function of inputs a, b, and current q.
+- From the waveform:
+  - At 45ns (clk rising), a=0, b=1, q goes to 1.
+  - At 65ns (clk rising), a=1, b=1, q goes to 0.
+  - At 95ns (clk rising), a=1, b=1, q goes to 1.
+  - At 115ns (clk rising), a=1, b=0, q goes to 0.
+  - At 135ns (clk rising), a=0, b=0, q goes to 1.
+  
+Deriving next state:
+- The next q is (a XOR b) XOR current q.
+- This fits the toggling pattern observed.
+
+Thus, next_state = a ^ b ^ state.
+Implement a D flip-flop storing state updated on posedge clk.
+Output q and state both reflect the stored value.

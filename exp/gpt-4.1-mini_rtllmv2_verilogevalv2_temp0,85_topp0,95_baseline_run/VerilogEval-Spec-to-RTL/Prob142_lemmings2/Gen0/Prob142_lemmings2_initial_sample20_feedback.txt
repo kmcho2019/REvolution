@@ -1,0 +1,42 @@
+Score: 7
+Justification: The code is syntactically correct and the outputs mostly match expected behavior, with no mismatches on the aaah output, but there are significant mismatches on walk_left and walk_right signals, indicating functional errors in walking direction updates during bumps and falling transitions.
+
+ANALYSIS:
+The design intent is a Moore FSM with three states: WALK_LEFT, WALK_RIGHT, and FALLING, where the Lemming switches walking direction when bumped and falls when ground=0. Upon ground restoration, it should resume the previous walking direction.
+
+1. **Walking Direction State Update Timing:**
+   The stored walking direction `walk_dir_state` is updated only when `(ground && (state != FALLING))`, and the update uses `next_state`. However, `next_state` is computed combinationally and may not yet reflect the final direction after bumps. This can cause incorrect restoration after falling, because `walk_dir_state` might store an unintended state if bumps are processed simultaneously with ground transitions.
+
+2. **Bump Handling in Next State Logic:**
+   The next state logic for bump detection uses `(bump_left || bump_right)` to switch directions. According to the problem, if bumped on either side or both sides simultaneously, direction switches. This is correct as coded. However, because `walk_dir_state` update depends on `next_state` during non-falling states, the timing of the bump input relative to the update of `walk_dir_state` might cause inconsistencies in the saved walking direction.
+
+3. **Falling State Direction Preservation:**
+   When `state == FALLING`, the FSM returns to `walk_dir_state` once ground is detected. Since bumps during falling do not affect direction, this logic seems correct, but the saved `walk_dir_state` might be incorrect due to previous updates during bumps right before falling.
+
+4. **Asynchronous Reset Behavior:**
+   The asynchronous reset sets both `state` and `walk_dir_state` to `WALK_LEFT`, which matches the requirement.
+
+5. **Mismatch in walk_left and walk_right Outputs:**
+   The simulation log indicates 154 mismatches each for walk_left and walk_right, starting at time 270ps, while aaah has no mismatches. This suggests that the falling detection and output are implemented correctly, but the switching of walking direction upon bumps or after falling is not matching expected behavior.
+
+Overall, the core problem appears related to how and when `walk_dir_state` is updated relative to bumps and falling transitions, leading to incorrect walking direction restoration after falling and incorrect outputs during bump events.
+
+Key code sections related to this issue are:
+- The always_ff block updating `walk_dir_state`:
+  ```verilog
+  if (ground && (state != FALLING))
+      walk_dir_state <= next_state;
+  ```
+- The next state logic for bump and ground transitions:
+  ```verilog
+  case(state)
+    WALK_LEFT:
+      if (!ground) next_state = FALLING;
+      else if (bump_left || bump_right) next_state = WALK_RIGHT;
+      else next_state = WALK_LEFT;
+    ...
+  ```
+
+This timing and logic mismatch explains the significant mismatches on walk_left and walk_right in the simulation.
+
+No syntax errors are present, but the FSM's internal state updates and timing cause functional simulation failures.

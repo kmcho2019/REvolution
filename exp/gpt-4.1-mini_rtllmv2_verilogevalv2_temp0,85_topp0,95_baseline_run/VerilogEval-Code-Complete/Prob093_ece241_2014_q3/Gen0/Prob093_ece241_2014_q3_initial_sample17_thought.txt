@@ -1,0 +1,62 @@
+We need to implement the K-map function using a single 4-to-1 MUX with selector inputs a and b, and the 4 inputs mux_in[3:0] depend only on c and d. The 4-to-1 MUX inputs correspond to ab = 00, 01, 11, 10 respectively.
+
+First, map the K-map values for each ab (a,b) to mux_in:
+
+For ab=00 (mux_in[0]):
+  cd=00:0, 01:1, 11:1, 10:1
+  Function of c,d: When d=1 output=1 (cd=01,11,10), when d=0 output=0 (cd=00)
+  So mux_in[0] = d
+
+For ab=01 (mux_in[1]):
+  cd=00:0, 01:0, 11:0, 10:0
+  All zero: mux_in[1] = 0
+
+For ab=11 (mux_in[3]):
+  cd=00:0, 01:0, 11:1, 10:0
+  Only 11=1, others 0
+  So mux_in[3] = c & d
+
+For ab=10 (mux_in[2]):
+  cd=00:1, 01:0, 11:1, 10:1
+  Output is 1 except for 01 (cd=01=0)
+  So mux_in[2] = c | d (true for 00=1? 00=cd=00 is 1 but c|d=0|0=0)
+  So c|d does not fit because cd=00=1 but c|d=0
+  Let's check for better function:
+
+  For cd=00 (c=0,d=0): output=1
+  cd=01 (0,1): output=0
+  cd=11 (1,1): output=1
+  cd=10 (1,0): output=1
+
+  This corresponds to (~c & ~d) + (c & d) + (c & ~d) = (~c & ~d) + c
+  So mux_in[2] = (~c & ~d) | c = (~c & ~d) + c
+
+  This can be implemented with 2-to-1 mux:
+    select c:
+      if c=0 output = ~d (since c=0: output = (~c & ~d) = (1 & ~d) = ~d)
+      if c=1 output = 1
+
+  So mux_in[2] = c ? 1 : ~d
+
+Now, implement mux_in[0] = d, mux_in[1] = 0, mux_in[3] = c & d, mux_in[2] = c ? 1 : ~d
+
+We only use c and d, and only multiplexers (2-to-1) and constants 0 or 1.
+
+To implement mux_in[3] = c & d using 2-to-1 muxes:
+ c & d = c ? d : 0
+
+To implement mux_in[2]:
+ Use a 2-to-1 mux with select c:
+   c=0 -> ~d
+   c=1 -> 1
+
+To implement mux_in[0]:
+  Just d (input directly)
+
+mux_in[1] = 0 (constant zero)
+
+Hence, inside TopModule, we assign mux_in[1] = 0, mux_in[0] = d, mux_in[3] implemented by c & d (using 2-to-1 mux), mux_in[2] implemented by the described 2-to-1 mux.
+
+We implement ~d as a 2-to-1 mux with select d: d=0->1, d=1->0
+
+In total, we use the minimal number of 2-to-1 muxes and no gates except muxes and constants, following the constraints.

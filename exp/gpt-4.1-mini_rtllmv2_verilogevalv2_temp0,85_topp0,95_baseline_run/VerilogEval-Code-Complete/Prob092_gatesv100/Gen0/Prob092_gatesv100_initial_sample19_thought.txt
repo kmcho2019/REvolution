@@ -1,0 +1,5 @@
+For out_both, each bit [98:0] is 1 if both in[i] and in[i+1] are 1; out_both[99] is not used.  
+For out_any, each bit [99:1] is 1 if in[i] or in[i-1] is 1; out_any[0] is not used.  
+For out_different, each bit [99:0] compares in[i] and its neighbor to the left, with wrap-around:  
+ neighbor to the left of in[0] is in[99], so out_different[i] = in[i] ^ in[(i+1) mod 100] where left neighbor is (i+1) mod 100, or more simply in[i] ^ in[i==99?0:i+1].  
+Implement all these with simple bitwise operations and indexing.

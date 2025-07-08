@@ -1,0 +1,23 @@
+For one-hot encoding, each state corresponds to one bit in y being '1'. We need to find the input logic for flip-flops y[1] (state B) and y[3] (state D).
+
+From the state transitions:
+- y[1] (B) is set when the previous state is A and input w=1 (A --1--> B).
+- y[3] (D) is set from B or C or E or F states with input w=0, and also from D with input w=0 (from B(0)-->D, C(0)-->D, D(0)-->A but that leads to A, E(0)-->D, F(0)-->D).
+
+Specifically:
+
+Y1 (input for y[1]) = (y[0] & w) // From A to B on w=1
+
+Y3 (input for y[3]) = (y[1] & ~w) | (y[2] & ~w) | (y[4] & ~w) | (y[5] & ~w)
+
+Note: y[0] = A, y[1] = B, y[2] = C, y[3] = D, y[4] = E, y[5] = F
+
+So Y3 is set to 1 when any of B, C, E, F with w=0.
+
+No transitions directly from D to D on 0, so D(0)-->A, so no self loop for D on 0.
+
+Therefore:
+
+Y1 = y[0] & w
+
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w

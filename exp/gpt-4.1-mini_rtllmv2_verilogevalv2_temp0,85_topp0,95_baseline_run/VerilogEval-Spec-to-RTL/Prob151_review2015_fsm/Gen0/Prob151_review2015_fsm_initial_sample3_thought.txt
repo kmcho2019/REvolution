@@ -1,0 +1,9 @@
+Implement a synchronous FSM with the following states:
+- IDLE: searching for the pattern 1101 serially on the data input.
+- SHIFT: after detecting 1101, enable shift_ena for exactly 4 cycles to shift in the 4 bits determining delay duration.
+- COUNT: assert counting until done_counting is high.
+- DONE: assert done until ack is high, then return to IDLE.
+
+Use a 2-bit or 3-bit shift register or explicit state transitions to detect the pattern 1101. On reset, go to IDLE. On each clock, shift in data to detect pattern. After detecting pattern, move to SHIFT and count 4 cycles asserting shift_ena. Then move to COUNT, assert counting until done_counting. Then move to DONE, assert done until ack. Then go back to IDLE.
+
+All outputs are combinational based on state. FSM state updates on positive clock edge with synchronous reset.

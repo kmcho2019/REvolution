@@ -1,0 +1,160 @@
+We have a 4-to-1 multiplexer controlled by inputs a,b, and for each combination of (a,b), the mux inputs mux_in[3:0] are driven by functions of (c,d) to produce the final function from the K-map.
+
+The K-map is arranged as:
+
+     ab
+cd  00  01  11  10
+00 | 0 | 0 | 0 | 1 |
+01 | 1 | 0 | 0 | 0 |
+11 | 1 | 0 | 1 | 1 |
+10 | 1 | 0 | 0 | 1 |
+
+Since the mux uses a,b to select among mux_in[3:0], and mux_in[i] is a function of c,d for fixed ab = i.
+
+So for each ab:
+
+ab=00 (mux_in[0]) = function for all cd with ab=00:
+cd=00:0
+cd=01:1
+cd=11:1
+cd=10:1
+So mux_in[0] = f_ab00(c,d) = 0 1 1 1 for cd=00,01,11,10
+
+ab=01 (mux_in[1]) =
+cd=00:0
+cd=01:0
+cd=11:0
+cd=10:0
+mux_in[1] = 0 (constant zero)
+
+ab=11 (mux_in[2]) =
+cd=00:0
+cd=01:0
+cd=11:1
+cd=10:0
+mux_in[2] = 1 only at cd=11; else 0
+so mux_in[2] = c & d
+
+ab=10 (mux_in[3]) =
+cd=00:1
+cd=01:0
+cd=11:1
+cd=10:1
+mux_in[3] = 1 at cd=00,11,10; 0 at cd=01
+
+Let's simplify mux_in[0]:
+cd=00:0
+cd=01:1
+cd=10:1
+cd=11:1
+If we think in terms of c,d:
+00=0
+01=1
+10=1
+11=1
+This can be expressed as: d + c (since cd=00 is 0, and all others 1)
+
+Let's check (c + d):
+c d | c+d
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 1
+Matches mux_in[0].
+
+mux_in[1] = 0
+
+mux_in[2] = c & d
+
+mux_in[3]:
+cd=00:1
+cd=01:0
+cd=10:1
+cd=11:1
+
+Try to express mux_in[3]:
+Truth table:
+c d | f
+0 0 | 1
+0 1 | 0
+1 0 | 1
+1 1 | 1
+
+Try expression:
+f = (~c & ~d) + (c & d) + (c & ~d) = (~c & ~d) + c
+
+Because c=1 covers (1,0) and (1,1), and (~c & ~d) covers (0,0)
+
+So mux_in[3] = c + (~c & ~d) = c + ~c ~d
+
+This is equivalent to: (~c & ~d) + c
+
+We can implement this using 2-to-1 muxes and no other gates:
+
+Expression:
+
+mux_in[0] = c + d
+
+mux_in[1] = 0
+
+mux_in[2] = c & d
+
+mux_in[3] = c + (~c & ~d)
+
+Since only muxes allowed, implement OR as mux:
+
+X + Y = mux(sel=X, input0=Y, input1=1)  (But 1 is not allowed as input except constant)
+
+But since we cannot use logic gates, only multiplexers, constants, and inputs, we can implement the signals as follows:
+
+We are allowed constants 0 and 1.
+
+We have no logic gates, only multiplexers.
+
+We need to implement the expressions:
+
+mux_in[0] = c + d
+
+Implement as: mux with c as select, if c=1 output 1; else output d
+
+mux_in[1] = 0
+
+mux_in[2] = c & d
+
+Implement as: mux with c as select, if c=1 output d; else 0
+
+mux_in[3] = c + (~c & ~d)
+
+Rewrite mux_in[3]:
+
+If c=1 output 1
+
+if c=0 output ~d
+
+~d can be implemented with a 2-to-1 mux with d as select:
+
+If d=0 output 1
+
+If d=1 output 0
+
+Thus:
+
+mux_in[3]:
+
+mux c:
+
+if c=1 -> 1
+
+if c=0 -> ~d
+
+~d implemented as mux(d): d=0 =>1, d=1 =>0
+
+Therefore:
+
+We can implement each mux_in[i] using 2-to-1 muxes and constants 0 or 1 as inputs.
+
+Finally, the module will output mux_in[3:0].
+
+We do not implement the 4-to-1 mux here (it's external), only mux_in signals as functions of c,d.
+
+Code will reflect this.

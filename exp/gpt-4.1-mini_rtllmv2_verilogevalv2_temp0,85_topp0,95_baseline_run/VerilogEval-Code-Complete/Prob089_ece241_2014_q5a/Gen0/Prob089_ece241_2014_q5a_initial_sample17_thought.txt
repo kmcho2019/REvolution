@@ -1,0 +1,31 @@
+To create a serial 2's complementer as a Moore machine, the idea is to process the input bitstream (starting from the LSB) and output the 2's complement bitstream. The 2's complement of a binary number can be found by scanning bits from LSB to MSB, outputting the input bits until the first '1' is encountered, then outputting the inverted bits after that.
+
+Since the input is serial and the output is serial, the FSM has two states:
+
+- WAIT_FOR_FIRST_ONE: Initially, before encountering the first '1', output exactly the input bit (because 2's complement copying bits until first '1').
+
+- INVERTING: After the first '1' is encountered, output the inverted input bit.
+
+On reset (asynchronous active high), the machine resets to WAIT_FOR_FIRST_ONE.
+
+The output z depends only on the state and input (Moore machine), so output z is registered and updated on clock edges.
+
+Implementation detail:
+
+- State encoding: WAIT_FOR_FIRST_ONE = 0, INVERTING = 1
+
+- On each clock cycle:
+
+  - If in WAIT_FOR_FIRST_ONE:
+
+    - output z = input x
+
+    - if x == 1, move to INVERTING
+
+  - If in INVERTING:
+
+    - output z = ~x
+
+    - stay in INVERTING
+
+This machine will process arbitrary length input numbers, resetting when areset is asserted.

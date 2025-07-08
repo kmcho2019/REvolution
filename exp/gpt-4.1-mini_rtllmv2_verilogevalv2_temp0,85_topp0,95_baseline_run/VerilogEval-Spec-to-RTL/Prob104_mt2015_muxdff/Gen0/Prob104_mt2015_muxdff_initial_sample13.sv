@@ -1,0 +1,19 @@
+module TopModule (
+    input clk,
+    input L,
+    input q_in,
+    input r_in,
+    output reg Q
+);
+
+  wire mux_out;
+
+  // 2:1 MUX: if L is high, load r_in, else shift in q_in
+  assign mux_out = L ? r_in : q_in;
+
+  // flip-flop with synchronous load
+  always @(posedge clk) begin
+    Q <= mux_out;
+  end
+
+endmodule

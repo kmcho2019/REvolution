@@ -1,0 +1,31 @@
+Model the Lemming as a Moore FSM with four states:
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- FALLING: falling (aaah!), direction remembered but no walking
+- DIGGING: digging on ground, direction remembered
+
+Outputs derive from the state:
+- WALK_LEFT: walk_left=1
+- WALK_RIGHT: walk_right=1
+- FALLING: aaah=1
+- DIGGING: digging=1 plus walking direction outputs as well (walking direction maintained during digging)
+
+State transitions based on inputs and precedence:
+1. If ground=0, go to FALLING from WALK or DIGGING.
+2. From FALLING, when ground=1, return to previous walking or digging state.
+3. From WALKING (ground=1, not falling), if dig=1, go to DIGGING.
+4. From WALKING (ground=1, not falling, dig=0), if bump (left or right), switch walking direction.
+5. From DIGGING, if ground=0, transition to FALLING.
+6. Bumps have no effect when FALLING or DIGGING.
+
+Use a register to hold current state and previous walking direction (for FALLING and DIGGING).
+
+areset asynchronously sets state to WALK_LEFT.
+
+Implement outputs as combinational from state.
+
+Implement state transitions on clock posedge with asynchronous reset.
+
+Ensure direction is maintained through falling and digging.
+
+This FSM is a Moore machine, so outputs depend only on current state.

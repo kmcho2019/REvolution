@@ -1,0 +1,17 @@
+Implement a sequential radix-2 division algorithm for 8-bit operands, supporting signed and unsigned division.
+1. On opn_valid and res_valid==0, latch inputs and initialize:
+   - SR = {abs(dividend), 1'b0} shifted left by 1 (9 bits total)
+   - NEG_DIVISOR = -abs(divisor)
+   - cnt = 1, start_cnt = 1
+2. On each clock cycle when start_cnt is high, perform the division step:
+   - Subtract divisor from upper bits of SR (using NEG_DIVISOR)
+   - If subtraction result >= 0, shift SR left, insert 1 at LSB; else shift left, insert 0
+   - Increment cnt
+3. When cnt reaches 8, finish division:
+   - Clear start_cnt, cnt
+   - SR now contains remainder in upper bits and quotient in lower bits
+4. For signed operation:
+   - Adjust sign of quotient and remainder accordingly at the end
+5. res_valid asserted when result ready
+6. result combines remainder (upper 8 bits) and quotient (lower 8 bits)
+7. Provide synchronous reset handling

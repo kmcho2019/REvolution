@@ -1,0 +1,31 @@
+The design requires tracking the water level based on 3 sensor bits s[2:0] indicating if the water is above each sensor. We must determine the nominal flow rate signals fr0, fr1, fr2, and the supplemental flow valve signal dfr based on the current sensor input and the previous water level category to detect if the water level is rising (previous lower than current) to enable dfr.
+
+Steps:
+1. Define states to represent water level categories:
+   - BELOW (no sensors asserted)
+   - BETWEEN_1_0 (only s[0] asserted)
+   - BETWEEN_2_1 (s[0], s[1] asserted)
+   - ABOVE (s[0], s[1], s[2] asserted)
+2. On each clock, sample s and determine the current water level category.
+3. Compare current category with the previous category.
+4. Determine nominal flow signals per the table:
+   - ABOVE: fr0=fr1=fr2=0, dfr=0
+   - BETWEEN_2_1: fr0=1, fr1=fr2=0, dfr depends on level change
+   - BETWEEN_1_0: fr0=1, fr1=1, fr2=0, dfr depends on level change
+   - BELOW: fr0=1, fr1=1, fr2=1, dfr depends on level change
+5. If the previous level was lower than the current level (e.g. BELOW < BETWEEN_1_0 < BETWEEN_2_1 < ABOVE), then dfr=1, else 0.
+6. Implement synchronous reset to the BELOW state with fr0=fr1=fr2=dfr=1.
+
+Encoding:
+- Assign integer values to states to compare levels easily:
+  BELOW=0, BETWEEN_1_0=1, BETWEEN_2_1=2, ABOVE=3
+
+Check sensor patterns:
+- ABOVE: s == 3'b111
+- BETWEEN_2_1: s == 3'b011 (s[1]=1, s[0]=1, s[2]=0)
+- BETWEEN_1_0: s == 3'b001 (s[0]=1 only)
+- BELOW: s == 3'b000
+
+If s does not match exactly these patterns, we can assign the state based on highest sensor asserted. Since sensors are placed vertically, it's reasonable to consider only these patterns.
+
+Implement logic accordingly.

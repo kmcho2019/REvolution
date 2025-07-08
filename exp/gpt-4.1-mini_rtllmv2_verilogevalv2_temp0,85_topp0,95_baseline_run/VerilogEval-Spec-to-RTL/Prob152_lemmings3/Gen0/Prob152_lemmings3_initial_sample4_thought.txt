@@ -1,0 +1,28 @@
+The problem requires a Moore FSM modeling a Lemming's behavior with states for walking left, walking right, falling, and digging. The FSM has to prioritize falling over digging over switching directions.
+
+States:
+- WALK_LEFT
+- WALK_RIGHT
+- FALLING_LEFT (falling while last walking left)
+- FALLING_RIGHT (falling while last walking right)
+- DIGGING_LEFT
+- DIGGING_RIGHT
+
+On reset, Lemming walks left.
+
+Transitions:
+- If ground=0 and not digging, go to FALLING_* according to walking direction.
+- If currently FALLING_* and ground=1, return to WALK_* (same direction before falling).
+- If currently WALK_* and dig=1 and ground=1, start DIGGING_*.
+- If currently DIGGING_* and ground=0, go to FALLING_*.
+- If currently WALK_* and bumped on left or right (or both), switch directions.
+- Bumps have no effect when falling or digging.
+- If multiple conditions met, fall > dig > bump.
+
+Outputs:
+- walk_left = 1 for WALK_LEFT or DIGGING_LEFT
+- walk_right = 1 for WALK_RIGHT or DIGGING_RIGHT
+- aaah = 1 for FALLING_*
+- digging = 1 for DIGGING_*
+
+The code uses an enumerated state type and synchronous logic with asynchronous reset.

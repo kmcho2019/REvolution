@@ -1,0 +1,21 @@
+Implement a synchronous FSM with these states:
+- A: Initial/reset state. On reset (resetn=0), stay here.
+- B: After resetn goes high, output f=1 for one cycle, then move to C.
+- C: Monitor x for the sequence 1,0,1 over three consecutive clock cycles. Use a small sequence detector FSM.
+- D: After detecting the sequence, set g=1 for one cycle and then go to E.
+- E: Monitor y for up to two clock cycles. If y=1 within these two cycles, remain in E with g=1 permanently. Otherwise, move to F.
+- F: Set g=0 permanently until reset.
+
+Use a single FSM with these states encoding the sequence detection and y monitoring phases. Outputs f and g are registered outputs updated synchronously.
+
+On reset (resetn=0), FSM in A, f=0, g=0.
+
+On resetn=1, FSM moves from A to B: f=1 for one cycle.
+
+Then FSM moves to C and watches the input x to detect the pattern 1,0,1 using an internal counter/state.
+
+After detection, FSM moves to D to set g=1 for one cycle.
+
+Then FSM moves to E and monitors y for up to two cycles, counting cycles. If y=1 during that period, stay in E with g=1 forever. Otherwise, move to F with g=0 forever.
+
+This approach covers all required behavior.

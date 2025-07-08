@@ -1,0 +1,38 @@
+Score: 4
+Justification: The code is syntactically correct and compiles, but it fails simulation due to incorrect data bit shifting and timing of the done signal. These functional issues cause multiple output mismatches, indicating the FSM does not correctly capture the received bytes as specified.
+
+ANALYSIS:
+The design intent is to detect a serial data byte framed by a start bit (0) and a stop bit (1), sample 8 data bits LSB first, and assert `done` alongside a valid `out_byte` when a correct stop bit is detected.
+
+1. **Data bit shifting order error:**  
+   In the `DATA` state:
+   ```verilog
+   data_reg <= {in, data_reg[7:1]};
+   ```
+   This line shifts the current input bit into the MSB of `data_reg` and shifts existing bits right by one. Because the protocol sends the least significant bit first, each new bit should be shifted into the LSB, not the MSB. This causes the output byte to be reversed relative to the input bit stream, leading to mismatched expected values in simulation.
+
+2. **Bit count increment sequencing issue:**  
+   Still in the `DATA` state:
+   ```verilog
+   if (bit_count == 3'd7) begin
+       state <= STOP;
+   end
+   bit_count <= bit_count + 3'd1;
+   ```
+   The increment of `bit_count` occurs after the check, which means the state transitions to `STOP` when `bit_count` is 7, but the last data bit is shifted in simultaneously with incrementing `bit_count` to 8 on the next cycle. This mismatch between shifting and state change timing can cause incorrect sampling or early state transitions.
+
+3. **Timing and assertion of `done`:**  
+   The `done` signal is asserted only in the `STOP` state when `in` is 1 (valid stop bit):
+   ```verilog
+   out_byte <= data_reg;
+   done <= 1'b1;
+   state <= IDLE;
+   ```
+   However, because `out_byte` is assigned the value of `data_reg` directly at the same clock edge as `done`, `out_byte` may not hold the final received byte correctly during the `done` assertion. This timing relationship may cause simulation mismatches on `done` and `out_byte` outputs.
+
+4. **Potential missing sampling of start bit:**  
+   The `START` state checks if `in` is 0 again and then proceeds to `DATA` with resetting `bit_count` and `data_reg`. However, the protocol requires sampling the start bit once to confirm it, and then begin sampling data bits at the next clock. The current approach might not provide the correct timing for sampling the first data bit, leading to off-by-one errors in bit capture.
+
+Overall, these issues cause the FSM to misinterpret the incoming bit stream and output incorrect bytes and done signals, matching the simulation errors showing many mismatches for `out_byte` and `done`.
+
+No syntax errors are present, and the FSM framework is largely correct, but functional timing and bit-shifting logic do not conform exactly to the protocol requirements, resulting in test failures.

@@ -1,0 +1,6 @@
+To implement 16 D flip-flops with byte-level write enable control, we'll create a register that updates only the enabled bytes on each clock cycle. The design will:
+1. Use synchronous active-low reset (when resetn=0, q=0)
+2. On each positive clock edge:
+   - If resetn is low, clear all bits
+   - Else update only the bytes where byteena is set (byteena[1] for upper byte, byteena[0] for lower byte)
+3. Maintain current value for non-enabled bytes

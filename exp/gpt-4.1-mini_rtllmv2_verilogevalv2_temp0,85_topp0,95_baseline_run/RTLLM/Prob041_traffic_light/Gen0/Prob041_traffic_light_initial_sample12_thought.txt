@@ -1,0 +1,7 @@
+Implement a finite state machine with four states: idle, s1_red, s2_yellow, s3_green. Use an 8-bit counter to track timing in each state. The counter values for each state are: red 10 clocks, yellow 5 clocks, green 60 clocks. On reset, initialize to idle state and counter 10. Transition logic per state:
+- idle: immediately move to s1_red.
+- s1_red: red light on, count down from 10 to 0, then move to s3_green.
+- s3_green: green light on, count down from 60 to 0, then move to s2_yellow. If pass_request pressed and remaining green time > 10, shorten to 10.
+- s2_yellow: yellow light on, count down from 5 to 0, then move to s1_red.
+
+Use registers p_red, p_yellow, p_green for next values; output assigned from them. The counter adjusts on transitions and pass_request. On pass_request, if green and cnt > 10, reset cnt to 10, else no change. On state changes, load respective timing values. Assign cnt to output clock. Implement state transitions, counter decrement, and output updates on clock edges and reset conditions.

@@ -1,0 +1,27 @@
+To implement the Moore FSM for the Lemming behavior, we need to define states representing walking left, walking right, falling, and digging. The outputs depend only on the current state. The state transitions depend on the inputs and the current state according to the priority rules:
+
+1. If ground=0 and not already falling, the Lemming starts falling (aaah).
+2. If the Lemming is walking on ground (ground=1, not falling) and dig=1, it starts digging.
+3. If bump_left or bump_right occurs during walking (and not falling or digging), the direction switches accordingly.
+4. Falling continues until ground=1 again, then returns to previous walking direction.
+5. Digging continues until ground=0, then falls.
+6. Being bumped during falling or digging has no effect.
+7. The initial/reset state is walking left.
+
+We'll encode states as:
+- WALK_LEFT
+- WALK_RIGHT
+- FALLING_LEFT (remember last direction)
+- FALLING_RIGHT
+- DIGGING_LEFT
+- DIGGING_RIGHT
+
+Transitions and output signals are generated accordingly. The FSM is synchronous with asynchronous positive-edge reset.
+
+Outputs:
+- walk_left = 1 if walking left or digging left
+- walk_right = 1 if walking right or digging right
+- aaah = 1 if falling
+- digging = 1 if digging
+
+This solves the problem comprehensively and cleanly.

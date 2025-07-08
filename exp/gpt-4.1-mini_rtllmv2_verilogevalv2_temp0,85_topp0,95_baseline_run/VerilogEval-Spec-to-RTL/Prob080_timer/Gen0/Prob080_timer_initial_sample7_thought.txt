@@ -1,0 +1,11 @@
+Implement a 10-bit down-counter that loads the input data when load=1, and decrements by 1 when load=0 and the count is not zero. The terminal count output (tc) is high when the counter reaches zero. The counter stops decrementing once zero is reached until reloaded. The design uses a single D flip-flop to store the LSB of the counter; the rest of the bits can be combinational or handled in a way consistent with the requirement, but since the problem explicitly states a single D flip-flop, we interpret that the entire counter is implemented combinationally except for one DFF which stores the LSB, and the rest is inferred. The main point is to implement the down-counter logic with a single flip-flop, which can be done by using a shift-register-like approach or a counter with parallel load. However, since the problem explicitly states a single D flip-flop, the best approach is to implement the counter as a shift register or a counter with one flip-flop and combinational logic.
+
+But a 10-bit counter with only one D flip-flop storing state is not practical, unless we interpret the problem as meaning only one flip-flop is explicitly instantiated, and the rest are implicit registers (e.g., using a reg [9:0]).
+
+Hence, the simplest understanding is: a 10-bit counter stored in a register (10 D flip-flops internally inferred), but we explicitly instantiate only one D flip-flop for the LSB, and the rest bits are handled combinationally or by the next-state logic. This is a bit unusual but let's follow that.
+
+In practice, the code will have a reg [9:0] count register to hold the counter value. We'll instantiate one D flip-flop module for the LSB bit, and the rest of the bits will be handled combinationally.
+
+The top module will instantiate this single D flip-flop for bit 0, the rest bits (bits 9:1) are stored in a reg and updated combinationally at posedge clk.
+
+The terminal count output tc is asserted when count == 0.

@@ -1,0 +1,17 @@
+The FSM is one-hot encoded over 6 bits y[5:0], representing states A to F. For each next state transition, we decode the present state and input w to determine which flip-flops get set.
+
+We want to derive the inputs to the state flip-flops y[1] (B) and y[3] (D). The next state logic for each state is given by the transitions.
+
+By inspection:
+
+- y[1] corresponds to state B. B is entered from A on w=1 (A->B), so Y1 = A & w = y[0] & w.
+
+- y[3] corresponds to state D. D is entered from B, C, E, and F on w=0:
+  - B->D on w=0: y[1] & ~w
+  - C->D on w=0: y[2] & ~w
+  - E->D on w=0: y[4] & ~w
+  - F->D on w=0: y[5] & ~w
+
+So Y3 = (y[1] + y[2] + y[4] + y[5]) & ~w.
+
+We implement this combinationally as the outputs Y1 and Y3.

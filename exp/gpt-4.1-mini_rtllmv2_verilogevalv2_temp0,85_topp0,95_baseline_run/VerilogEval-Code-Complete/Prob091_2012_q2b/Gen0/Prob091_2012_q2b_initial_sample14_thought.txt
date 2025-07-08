@@ -1,0 +1,24 @@
+To find Y1 (next state input for flip-flop y[1], corresponding to state B), we inspect transitions leading to B. From the state diagram:
+- B is state y[1]
+- States: A= y[0], B= y[1], C= y[2], D= y[3], E= y[4], F= y[5]
+
+Looking at transitions into B (state B), there are none specified in the diagram. So Y1 depends only on current states and inputs that cause transitions into B.
+
+Check each transition:
+- A --1--> B: So if current state y[0] (A) and input w=1, next state is B (Y1=1)
+- No other transitions go to B.
+
+Hence,
+Y1 = y[0] & w;
+
+Similarly for Y3 (input for flip-flop y[3], corresponding to D):
+Transitions into D (state y[3]) are:
+- B --0--> D: y[1] & ~w
+- C --0--> D: y[2] & ~w
+- E --0--> D: y[4] & ~w
+- F --0--> D: y[5] & ~w
+
+So,
+Y3 = (~w) & (y[1] | y[2] | y[4] | y[5]);
+
+We just implement these expressions directly.

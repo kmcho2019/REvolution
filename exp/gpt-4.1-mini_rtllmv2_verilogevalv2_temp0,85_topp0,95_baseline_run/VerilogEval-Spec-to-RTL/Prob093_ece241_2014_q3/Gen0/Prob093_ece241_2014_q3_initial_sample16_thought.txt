@@ -1,0 +1,194 @@
+We need to implement the logic function defined by the given K-map using one 4-to-1 multiplexer with selector inputs a and b, and the mux_in[3:0] lines as inputs to this 4-to-1 mux.
+
+The inputs to TopModule are c and d, and outputs mux_in[3:0].
+
+The 4-to-1 mux has inputs mux_in[3:0] selected by {a,b}. The problem states a and b are the selector inputs for the 4-to-1 mux, and we must implement the logic function using mux_in inputs derived from c and d, with only multiplexers (one 4-to-1 mux plus any number of 2-to-1 muxes), no logic gates.
+
+So our task is to assign mux_in[0], mux_in[1], mux_in[2], mux_in[3] functions of c and d, so that the output of the 4-to-1 mux with selector a,b equals the function from the K-map.
+
+From the problem description, the entire circuit output is F = mux_in[{a,b}].
+
+Given that, we must build mux_in[3:0] so that for each ab = 00,01,11,10, the output mux_in[ab] equals the value of the function at those values.
+
+The K-map is:
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+For each ab (00,01,11,10), mux_in[ab] is a function of c and d.
+
+Let's write each mux_in entry in terms of c and d:
+
+- mux_in[0] (ab=00) = function for ab=00 column: For c,d:
+
+  cd=00 => 0
+
+  cd=01 => 1
+
+  cd=11 => 1
+
+  cd=10 => 1
+
+  So mux_in[0] is 1 except when cd=00 (c=0,d=0), it's 0.
+
+  So mux_in[0] = 1 when (c,d) ≠ (0,0)
+
+- mux_in[1] (ab=01):
+
+  cd=00 => 0
+
+  cd=01 => 0
+
+  cd=11 => 0
+
+  cd=10 => 0
+
+  So mux_in[1] = 0 always.
+
+- mux_in[3] (ab=10):
+
+  cd=00 => 1
+
+  cd=01 => 0
+
+  cd=11 => 1
+
+  cd=10 => 1
+
+  So mux_in[3] = 1 except when cd=01 (c=0,d=1), it's 0.
+
+- mux_in[2] (ab=11):
+
+  cd=00 => 0
+
+  cd=01 => 0
+
+  cd=11 => 1
+
+  cd=10 => 0
+
+  So mux_in[2] = 1 only when cd=11 (c=1,d=1), else 0.
+
+Now, we want to implement each mux_in[i] using only c, d and 2-to-1 muxes (no gates).
+
+Recall that a 2-to-1 mux input is select line S, inputs I0 and I1, output Y = S ? I1 : I0
+
+We can use c and d as select signals to build these functions.
+
+Implementing mux_in[0]:
+
+- mux_in[0] = 1 except when c=0,d=0 => mux_in[0] = ~(~c & ~d) = c + d (using OR gate, but gates not allowed)
+
+We must implement it using muxes only.
+
+Implement mux_in[0] = ?
+
+Try using c as select:
+
+If c=0:
+
+ - mux_in[0] = depends on d: if c=0, then
+
+   d=0 -> mux_in[0]=0
+
+   d=1 -> mux_in[0]=1
+
+If c=1:
+
+ - mux_in[0]=1 always
+
+So mux_in[0] can be written:
+
+mux_in[0] = c ? 1 : d
+
+Implement as mux with select = c, input0 = d, input1 = 1
+
+Implementing mux_in[1]:
+
+Always 0.
+
+So mux_in[1] = 0.
+
+Implementing mux_in[3]:
+
+mux_in[3] = 1 except when c=0,d=1 => 0.
+
+Try using c as select:
+
+If c=0:
+
+- d=0 => 1
+
+- d=1 => 0
+
+If c=1:
+
+- mux_in[3] =1 always
+
+So mux_in[3] = c ? 1 : (~d)
+
+Since we can't use ~d directly, use muxes:
+
+To implement ~d:
+
+We can use a mux with select d, inputs 0 and 1 to get ~d:
+
+~d = d ? 0 : 1
+
+So mux_in[3] = c ? 1 : (~d) = c ? 1 : (d ? 0 : 1)
+
+Implement mux_in[2]:
+
+mux_in[2] = 1 only when c=1 and d=1, else 0.
+
+Try using c as select:
+
+If c=0: mux_in[2] = 0
+
+If c=1:
+
+  mux_in[2] = d
+
+So mux_in[2] = c & d = c ? d : 0
+
+Implementing with mux:
+
+select c, input0=0, input1=d
+
+Summary:
+
+mux_in[0] = mux select c: input0=d, input1=1
+
+mux_in[1] = 0
+
+mux_in[2] = mux select c: input0=0, input1=d
+
+mux_in[3] = mux select c: input0=~d, input1=1
+
+But ~d must be implemented by a mux with select d: input0=1, input1=0
+
+So we need to instantiate a mux for ~d, then use it in mux_in[3].
+
+We can implement ~d as a wire:
+
+not_d = d ? 0 : 1;
+
+Then mux_in[3] = c ? 1 : not_d
+
+So total we use:
+
+- 1 4-to-1 mux (not in module, but inputs mux_in[3:0])
+
+- 1 mux for ~d
+
+- 4 muxes to implement mux_in[0] and mux_in[2], and mux_in[3]
+
+Actually, mux_in[1] is constant 0, no mux needed.
+
+Final module will output mux_in[3:0] accordingly.
+
+We only use muxes and constants.

@@ -1,0 +1,11 @@
+Implement the arbiter FSM with four states: A (no grant), B (grant to device 1), C (grant to device 2), D (grant to device 3).
+On synchronous active-low reset, go to state A.
+In state A, check the requests with priority: r1 > r2 > r3.
+- If r1=1, next state B.
+- Else if r2=1, next state C.
+- Else if r3=1, next state D.
+- Else remain in A.
+In states B, C, D, grant output g1, g2, g3=1 respectively.
+Stay in the current grant state as long as the corresponding request remains asserted; otherwise return to A.
+Separate always block for state flip-flops and combinational next state logic.
+Outputs assigned combinationally with continuous assignment based on current state.

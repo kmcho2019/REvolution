@@ -1,0 +1,19 @@
+The module monitors the 3-bit sensor input `s` representing water level sensors arranged vertically. Based on the sensor pattern, the nominal flow rate signals fr0, fr1, fr2 are asserted according to the table. The supplemental flow valve `dfr` is controlled by detecting if the water level is rising since the last sensor change (previous level lower than current level).
+
+We need to keep track of the previous sensor pattern to determine if the level increased. The reset state sets the system to the lowest water level (no sensors asserted, all outputs asserted).
+
+The logic steps:
+- On reset, store previous sensor = 3'b000 and outputs all asserted.
+- On each clock, compare current sensor pattern to previous.
+- Determine nominal flow rate signals based on current sensor pattern:
+  * s == 3'b111 (above s2): no fr signals
+  * s == 3'b011 (between s2 and s1): fr0
+  * s == 3'b001 (between s1 and s0): fr0, fr1
+  * s == 3'b000 (below s0): fr0, fr1, fr2
+- Detect if water level increased by comparing previous and current sensor patterns:
+  We consider previous level lower if the number of sensors asserted previously is fewer than currently asserted.
+  Because sensors are in ascending order s[0]<s[1]<s[2], so higher bit set means higher level.
+- If water level increased, assert dfr (supplemental valve), else deassert dfr.
+- Store the current sensor for next cycle.
+
+This approach implements the state machine and output combinational logic, synchronous reset, and detection of water level changes.

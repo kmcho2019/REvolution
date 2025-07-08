@@ -1,0 +1,24 @@
+Given the FSM with one-hot encoding on y[5:0], each bit corresponds to a state:
+y[0] = A, y[1] = B, y[2] = C, y[3] = D, y[4] = E, y[5] = F.
+
+We want to find the input logic for the flip-flops y[1] (B) and y[3] (D) based on the transitions.
+
+From the state transitions:
+
+- For B (y[1]) next state input (Y1):
+  B is active next if the current input is:
+  - From A (y[0]): if w==1 then next B
+  - From F (y[5]): if w==1 then next C, so no
+  - From other states: no transitions to B
+So, Y1 = (y[0] & w)
+
+- For D (y[3]) next state input (Y3):
+  D is active next if the current input is:
+  - From B (y[1]): if w==0 then next D
+  - From C (y[2]): if w==0 then next D
+  - From E (y[4]): if w==0 then next D
+  - From F (y[5]): if w==0 then next D
+  - From D (y[3]): if w==0 then next A (y[0]) - so no D there
+So, Y3 = (y[1] & ~w) | (y[2] & ~w) | (y[4] & ~w) | (y[5] & ~w)
+
+This is the minimal direct implementation by inspection.

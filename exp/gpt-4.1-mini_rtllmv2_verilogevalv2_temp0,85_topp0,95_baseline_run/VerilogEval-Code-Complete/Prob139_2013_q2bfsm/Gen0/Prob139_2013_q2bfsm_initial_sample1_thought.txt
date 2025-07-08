@@ -1,0 +1,14 @@
+Design a FSM with the following states:
+- A: Initial state when resetn is low, f=0, g=0.
+- B: After resetn de-asserts, on next clock cycle output f=1 for one cycle.
+- C0, C1, C2: Monitoring x sequence 1,0,1 across three clock cycles.
+- D0, D1, D2: After detecting x pattern, g=1 and monitoring y for up to 2 cycles.
+- E: y=1 detected within 2 cycles, maintain g=1 permanently.
+- F: y not detected in 2 cycles, set g=0 permanently.
+
+Outputs:
+- f=1 only in state B for one cycle after reset release.
+- g=1 in states D0-D2 and E, g=0 in others except E and D states.
+- Transition and output logic is synchronous with posedge clk, synchronous active low resetn.
+
+Use a state register and next state logic, assign f and g based on current state.

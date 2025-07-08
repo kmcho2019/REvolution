@@ -1,0 +1,20 @@
+To implement the fixed_point_subtractor module, we need to carefully consider the sign and magnitude of the inputs a and b, and perform the subtraction or addition accordingly to produce the correct fixed-point result with sign.
+
+Since inputs are in fixed-point 2's complement format:
+- The MSB (bit N-1) is the sign bit.
+- The rest represents the integer and fractional parts.
+
+The subtraction depends on the signs:
+- If both have the same sign, we subtract magnitudes and keep the sign.
+- If signs differ, we add magnitudes and determine the result sign by comparing magnitudes.
+
+We implement:
+1. Extract sign bits of a and b.
+2. Compute magnitudes (absolute values) of a and b.
+3. If signs are equal, compute magnitude difference, sign is a's sign.
+4. If signs differ, add magnitudes, sign depends on which magnitude is greater.
+5. Assign sign bit accordingly.
+6. If result is zero, set sign bit explicitly to 0.
+7. Store result in internal register res and output c.
+
+The code uses parameterized bit widths for N and Q, works purely combinationally, and handles fixed-point arithmetic correctly.

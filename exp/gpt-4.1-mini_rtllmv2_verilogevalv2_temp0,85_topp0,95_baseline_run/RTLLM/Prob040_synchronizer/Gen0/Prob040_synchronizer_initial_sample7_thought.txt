@@ -1,0 +1,5 @@
+Implement a multi-bit synchronizer module that uses two separate clock domains clk_a and clk_b. 
+- On clk_a domain, latch the input data_in and data_en into data_reg and en_data_reg, respectively, with asynchronous active-low reset arstn.
+- On clk_b domain, create two-stage synchronizer registers en_clap_one and en_clap_two for the enable signal en_data_reg with asynchronous active-low reset brstn.
+- Use en_clap_two as an enable signal to update the output dataout from data_reg. When en_clap_two is low, retain the previous value of dataout.
+- The design meets timing constraints and signal domain crossings by first registering signals in clk_a domain, then synchronizing enable in clk_b domain, and finally gating output data update by synchronized enable.

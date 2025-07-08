@@ -1,0 +1,40 @@
+Based on the one-hot encoding, each next-state signal is asserted when the next state is that particular state. We can derive the next-state equations by inspecting the state transitions and inputs:
+
+- S_next is asserted when:
+  - Current state is S and d=0 (stay in S)
+  - Current state is S1 and d=0 (go to S)
+  - Current state is S11 and d=0 (go to S)
+  - Current state is S110 and d=0 (go to S)
+  - Current state is Wait and ack=1 (go to S)
+
+- S1_next is asserted when:
+  - Current state is S and d=1 (go to S1)
+
+- B3_next is asserted when:
+  - Current state is B2 (always go next to B3)
+
+- Count_next is asserted when:
+  - Current state is B3 (go to Count)
+
+- Wait_next is asserted when:
+  - Current state is Count and done_counting=1 (go to Wait)
+
+Outputs based on current state (Moore machine):
+
+- done = 1 when state = Wait
+- counting = 1 when state = Count
+- shift_ena = 1 when state in {B0, B1, B2, B3}
+
+Note: For clarity, we define the input state bits as per one-hot encoding:
+  state[0] = S
+  state[1] = S1
+  state[2] = S11
+  state[3] = S110
+  state[4] = B0
+  state[5] = B1
+  state[6] = B2
+  state[7] = B3
+  state[8] = Count
+  state[9] = Wait
+
+We'll implement combinational logic equations accordingly.

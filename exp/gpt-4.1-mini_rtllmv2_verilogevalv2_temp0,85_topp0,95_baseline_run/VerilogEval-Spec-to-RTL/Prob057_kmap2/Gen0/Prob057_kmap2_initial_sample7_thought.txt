@@ -1,0 +1,38 @@
+First, map the Karnaugh map entries to the minterms of inputs a,b,c,d. The K-map is organized with cd as rows and ab as columns. We'll write down which input combinations produce '1' on output. Then express the output as a sum of minterms or simplify it logically. Finally, implement the logic expression in Verilog.
+
+Mapping the K-map (rows cd, columns ab):
+
+cd\ab | 00 | 01 | 11 | 10
+  00  | 1  | 1  | 0  | 1
+  01  | 1  | 0  | 0  | 1
+  11  | 0  | 1  | 1  | 1
+  10  | 1  | 1  | 0  | 0
+
+Convert each cell to minterm:
+
+cd ab
+00 00 => c=0,d=0,a=0,b=0 => !c!d!a!b output=1
+00 01 => !c!d!a b    output=1
+00 11 => !c!d a b    output=0
+00 10 => !c!d a !b   output=1
+
+01 00 => !c d !a !b  output=1
+01 01 => !c d !a b   output=0
+01 11 => !c d a b    output=0
+01 10 => !c d a !b   output=1
+
+11 00 => c d !a !b   output=0
+11 01 => c d !a b    output=1
+11 11 => c d a b     output=1
+11 10 => c d a !b    output=1
+
+10 00 => c !d !a !b  output=1
+10 01 => c !d !a b   output=1
+10 11 => c !d a b    output=0
+10 10 => c !d a !b   output=0
+
+From the minterms, group and simplify the function.
+
+Alternatively, implement directly by checking the minterms (sum of products).
+
+Final Verilog will implement this logic.

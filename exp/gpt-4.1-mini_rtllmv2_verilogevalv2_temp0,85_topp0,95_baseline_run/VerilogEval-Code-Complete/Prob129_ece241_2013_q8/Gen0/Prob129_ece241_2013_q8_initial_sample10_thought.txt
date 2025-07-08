@@ -1,0 +1,27 @@
+To implement a Mealy FSM recognizing the sequence "101" with overlapping detection using only 3 states and a negative edge triggered asynchronous reset, I will define three states that represent the progress of matching the sequence:
+
+- S0: initial state, no bits matched yet.
+- S1: matched '1'.
+- S2: matched '10'.
+
+At each clock edge, depending on the input x, the FSM will transition and produce output z. The output z is asserted (1) when the sequence "101" is detected, i.e., when in state S2 and input x=1 (final '1' of the sequence).
+
+The asynchronous reset is active low and triggers on the negative edge of aresetn, so on negedge aresetn, the FSM will reset to S0.
+
+Since it is a Mealy machine, output z depends on state and input.
+
+The transitions and outputs:
+
+- From S0:
+  - x=1: go to S1, z=0
+  - x=0: stay in S0, z=0
+- From S1:
+  - x=0: go to S2, z=0
+  - x=1: stay in S1, z=0 (because matching '1' again)
+- From S2:
+  - x=1: go to S1, z=1 (sequence "101" detected)
+  - x=0: go to S0, z=0
+
+This allows overlapping sequences, e.g., for input '10101', the FSM will detect two sequences.
+
+I'll implement this using a synchronous always block triggered on posedge clk and negedge aresetn for asynchronous reset, and assign z combinationally inside the clocked block as it is a Mealy output.

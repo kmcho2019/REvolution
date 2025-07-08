@@ -1,0 +1,46 @@
+Analyze the given input-output pairs and identify the logic function for q in terms of inputs a,b,c,d.
+
+From the waveform table:
+- When all inputs are 0, output q=1.
+- At (a,b,c,d) = (0,0,0,1) q=0
+- At (0,0,1,0) q=0
+- At (0,0,1,1) q=1
+- At (0,1,0,0) q=0
+- At (0,1,0,1) q=1
+- At (0,1,1,0) q=1
+- At (0,1,1,1) q=0
+- At (1,0,0,0) q=0
+- At (1,0,0,1) q=1
+- At (1,0,1,0) q=1
+- At (1,0,1,1) q=0
+- At (1,1,0,0) q=1
+- At (1,1,0,1) q=0
+- At (1,1,1,0) q=0
+- At (1,1,1,1) q=1
+
+Check for patterns: It looks like q is 1 when the parity of inputs is even or some XOR pattern.
+
+Check the parity of inputs:
+Count number of 1's in inputs a,b,c,d:
+- time 0ns: 0000 -> 0 ones -> even -> q=1
+- 20ns: 0001 -> 1 one -> odd -> q=0
+- 25ns: 0010 -> 1 one -> odd -> q=0
+- 30ns: 0011 -> 2 ones -> even -> q=1
+- 35ns: 0100 -> 1 one -> odd -> q=0
+- 40ns: 0101 -> 2 ones -> even -> q=1
+- 45ns: 0110 -> 2 ones -> even -> q=1
+- 50ns: 0111 -> 3 ones -> odd -> q=0
+- 55ns: 1000 -> 1 one -> odd -> q=0
+- 60ns: 1001 -> 2 ones -> even -> q=1
+- 65ns: 1010 -> 2 ones -> even -> q=1
+- 70ns: 1011 -> 3 ones -> odd -> q=0
+- 75ns: 1100 -> 2 ones -> even -> q=1
+- 80ns: 1101 -> 3 ones -> odd -> q=0
+- 85ns: 1110 -> 3 ones -> odd -> q=0
+- 90ns: 1111 -> 4 ones -> even -> q=1
+
+So q=1 when number of input bits set to 1 is even, q=0 otherwise.
+
+Therefore, q = ~(a ^ b ^ c ^ d) (XNOR of all inputs)
+
+Implement q as the XNOR of all inputs.

@@ -1,0 +1,99 @@
+Analyze the Karnaugh map to find the minimized sum-of-products expression for the function f. Then implement this expression in Verilog.
+
+K-map layout (rows = x1x2, cols = x3x4):
+
+      00  01  11  10
+00 | 1 | 0 | 0 | 1 |  (x1x2 = 00)
+01 | 0 | 0 | 0 | 0 |  (x1x2 = 01)
+11 | 1 | 1 | 1 | 0 |  (x1x2 = 11)
+10 | 1 | 1 | 0 | 1 |  (x1x2 = 10)
+
+Let's denote:
+x1, x2, x3, x4 as bits 1 to 4 respectively.
+
+Mapping each cell to minterm:
+
+Row 00 (x1=0, x2=0):
+- Col 00 (x3=0, x4=0): 1 -> m0: x1'x2'x3'x4'
+- Col 01 (0,1): 0
+- Col 11 (1,1): 0
+- Col 10 (1,0): 1 -> m2: x1'x2'x3 x4'
+
+Row 01 (0,1):
+- all zeros
+
+Row 11 (1,1):
+- 11 (x3=1,x4=1): 1 -> m15: x1x2x3x4
+- 10 (1,0): 0
+- 01 (0,1):1 -> m13: x1x2x3'x4
+- 00 (0,0):1 -> m12: x1x2x3'x4'
+
+Row 10 (1,0):
+- 00 (0,0):1 -> m8: x1x2'x3'x4'
+- 01 (0,1):1 -> m9: x1x2'x3'x4
+- 11 (1,1):0
+- 10 (1,0):1 -> m10: x1x2'x3 x4'
+
+Let's look for groups:
+
+Group 1: Row 11 (x1=1,x2=1), cols 00,01,11 are 1 (m12,m13,m15)
+- This corresponds to x1 x2 and x3'x4' (00), x3'x4 (01), x3 x4 (11)
+- Grouping m12,m13,m15 together (3 adjacent ones) can simplify to x1 x2 (because cols 00,01,11 share x3 or x4)
+Actually, m12,m13,m15 are at col 00,01,11, but col 10 is 0, so cannot combine all 4 cols. Group of three might not simplify neatly.
+
+Group 2: Row 10 (x1=1,x2=0), cols 00,01,10 are 1 (m8,m9,m10)
+- Similarly, these three can be grouped as x1 x2' with some simplification.
+
+Group 3: Row 00 (x1=0,x2=0), cols 00 and 10 are 1 (m0, m2)
+
+Also, note vertical groups:
+
+Column 00 (x3=0,x4=0): rows 00, 10, 11 are 1 (m0,m8,m12)
+- Grouping vertical 3 ones might be simplified.
+
+Let's derive the minimal expression by inspection:
+
+- Group1: x1 x2 (row 11), columns 00,01,11 are 1 except col 10=0
+  This can be simplified as: x1 x2 x3' + x1 x2 x4
+
+  But better to split: x1 x2 x3' + x1 x2 x4
+
+- Group2: x1 x2' (row 10), cols 00,01,10 = 1 except col 11=0
+  Can be: x1 x2' x4' + x1 x2' x4 + x1 x2' x3 x4'
+
+  Let's rewrite:
+
+  m8: x1 x2' x3' x4'
+  m9: x1 x2' x3' x4
+  m10: x1 x2' x3 x4'
+
+  Group m8 and m9: x1 x2' x3' (x4 can be 0 or 1)
+  Group m8 and m10: x1 x2' x4' (x3 can be 0 or 1)
+
+  So group m8,m9,m10 is covered by x1 x2' x3' + x1 x2' x4'
+
+- Group3: row 00 (x1'x2'), cols 00 and 10 are 1
+  m0: x1' x2' x3' x4'
+  m2: x1' x2' x3 x4'
+
+  Group m0 and m2: x1' x2' x4'
+
+- Column 00 (x3' x4'): rows 00,10,11 are 1: m0,m8,m12
+  So vertical group: x3' x4' (rows 00,10,11 all 1 except row 01=0)
+  So group can be: x3' x4' (covers m0,m8,m12)
+
+Combine all:
+
+f = x3' x4' + x1 x2 x3' + x1 x2 x4 + x1 x2' x3' + x1 x2' x4'
+
+We can reduce further:
+
+Note that x1 x2 x3' + x1 x2 x4 = x1 x2 (x3' + x4)
+
+Similarly, x1 x2' x3' + x1 x2' x4' = x1 x2' (x3' + x4')
+
+Final expression:
+
+f = x3' x4' + x1 x2 (x3' + x4) + x1 x2' (x3' + x4')
+
+We will implement this in Verilog.

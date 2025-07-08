@@ -1,0 +1,43 @@
+Score: 7
+Justification: The code compiles and simulates without syntax errors, and the fall and dig outputs behave correctly, but the significant mismatches on walk_left and walk_right outputs indicate functional errors in direction switching logic under certain conditions.
+
+ANALYSIS:
+The simulation log shows no mismatches for `aaah` and `digging`, indicating the FSM correctly models falling and digging states and their outputs. However, the large number of mismatches (218 for walk_left and 149 for walk_right) suggests issues in walking direction outputs during walking states.
+
+Analyzing the Verilog code in relation to the problem:
+
+1. **Walking State Direction Switching on Bumps:**
+   The problem states that if the Lemming is bumped on the left, it should walk right, and if bumped on the right, it should walk left. Also, bump on both sides causes direction switch as well. The code checks this in walking states as:
+
+   ```verilog
+   else if (bump_left == 1 || bump_right == 1) begin
+     next_state = WALK_RIGHT; // for WALK_LEFT state
+   ```
+
+   and
+
+   ```verilog
+   else if (bump_left == 1 || bump_right == 1) begin
+     next_state = WALK_LEFT; // for WALK_RIGHT state
+   ```
+
+   Here, the code treats bump on **any** side equivalently by switching directions. However, the problem specifies that bump_left causes walk_right and bump_right causes walk_left, so switching should depend specifically on which bump input is asserted.
+
+   For example, in `WALK_LEFT`, bump_left==1 should cause walking right, but bump_right==1 should cause walking left, not walking right again. The current code always switches to the opposite direction regardless of which bump signal is active.
+
+2. **Bump Effect During Falling or Digging:**
+   The code correctly ignores bump inputs when falling or digging by not checking bumps in those states, consistent with the problem description.
+
+3. **Priority of Conditions:**
+   The problem defines a priority: fall > dig > bump switching. The code respects this in walking states, which is correct.
+
+4. **Output Logic:**
+   The outputs `walk_left` and `walk_right` are assigned as true for walking, falling, and digging states in that direction, which matches the description.
+
+Because the bump handling logic does not distinguish which side caused the bump and always switches direction to the opposite, the walking direction output will be wrong in cases where bump signals are asymmetric, causing the mismatches observed in simulation.
+
+In summary, the main functional issue is the lumping together of bump_left and bump_right conditions causing always the same direction switch, rather than switching based on which bump side is asserted, violating the problem requirements.
+
+No syntax errors or state machine structural issues exist; the asynchronous reset and Moore output are correctly implemented, explaining the partial correctness (aaah and digging outputs are correct).
+
+This explains why the simulation passes for falling and digging but fails significantly for walk_left and walk_right outputs.

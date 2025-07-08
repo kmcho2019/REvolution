@@ -1,0 +1,47 @@
+From the waveform, the flip-flop's output q updates on the rising edge of clk. The output q depends on inputs a, b, and the previous state q. The state output is just the stored value before the update (the current q value). 
+
+Analyzing the transitions at rising edges (clk=1):
+- At time 15ns, q=0 (initial)
+- At 45ns, b=1, q goes to 1
+- At 65ns, both a=1 and b=1, q goes to 0
+- At 75ns, state=1, q goes to 1
+- At 95ns, a=1, b=1, state=1, q=1
+- At 115ns, b=0, q goes to 0
+- At 135ns, a=0, b=0, state=1, q goes to 1
+- At 145ns, state=0, q goes to 0
+
+Based on this, the next state logic can be described as:
+- If b=1 and a=0, q=1
+- If a=1 and b=1, q=0
+- If state=1 and (a=0 and b=0), q=1
+- Otherwise, q=0
+
+Another approach is to find a boolean expression for the next state q_next in terms of a, b, and current q(state).
+
+From the patterns, it looks like:
+q_next = (b & ~a) | (state & ~a & ~b) | (state & a & b & q)
+
+But the last term seems redundant.
+
+Alternatively, from the waveforms, the next state q_next can be expressed as:
+q_next = (b & ~a) | (state & ~a & ~b) | (state & ~(a & b))
+
+Test this logic with the waveforms.
+
+Simplify to:
+q_next = (b & ~a) | (state & ~a & ~b) | (state & ~(a & b))
+= (b & ~a) | (state & (~a & ~b | ~(a & b)))
+
+Since (~a & ~b) is a subset of ~(a & b), the last two terms simplify to state & ~(a & b)
+
+So:
+q_next = (b & ~a) | (state & ~(a & b))
+
+This matches the waveform behaviour:
+- When b=1 and a=0, q_next=1
+- When state=1 and not (a=1 and b=1), q_next=1
+- Otherwise q_next=0
+
+Hence, the sequential circuit updates q on the rising edge of clk as per q_next above. The state output is just q before update.
+
+Implement this in Verilog with a flip-flop storing q and combinational logic for q_next.

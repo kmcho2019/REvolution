@@ -1,0 +1,124 @@
+The K-map inputs are 'a' and 'b' as selectors of the 4-to-1 mux, and the outputs are the mux inputs mux_in[3:0]. The inputs to TopModule are 'c' and 'd'. The output mux_in[3:0] are chosen so that when the 4-to-1 mux is selected by {a,b}, the output matches the K-map for inputs {c,d}.
+
+Since only 'c' and 'd' are inputs to TopModule, the four mux inputs mux_in correspond to the output of the circuit for fixed values of a,b.
+
+So we interpret the 4-to-1 mux as a higher-level mux that selects among four functions of c,d. We want to implement the K-map function F(a,b,c,d) = mux({a,b}, mux_in) = function of a,b,c,d.
+
+The K-map is given over variables a,b,c,d, with 'a' and 'b' being the selector inputs of the 4-to-1 mux outside TopModule, and 'c' and 'd' inputs to TopModule.
+
+Therefore, mux_in[3:0] = function of c,d that corresponds to the value of the K-map at fixed (a,b):
+
+For each (a,b):
+
+- mux_in[0] = F(0,0,c,d)
+- mux_in[1] = F(0,1,c,d)
+- mux_in[2] = F(1,1,c,d)
+- mux_in[3] = F(1,0,c,d)
+
+From the K-map given:
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+We extract for each fixed ab:
+
+- ab=00 (a=0,b=0), mux_in[0]:
+  cd=00:0, 01:1, 11:1, 10:1
+- ab=01 (a=0,b=1), mux_in[1]:
+  cd=00:0, 01:0, 11:0, 10:0
+- ab=11 (a=1,b=1), mux_in[2]:
+  cd=00:0, 01:0, 11:1, 10:0
+- ab=10 (a=1,b=0), mux_in[3]:
+  cd=00:1, 01:0, 11:1, 10:1
+
+Next, implement each mux_in[i] as logic of c,d using only 2-to-1 muxes and no other gates. Since only muxes allowed, implement the logic as multiplexers with c and d as selector inputs.
+
+We will implement each mux_in[i] as nested 2-to-1 muxes with c and d as selectors.
+
+For example, for mux_in[0]:
+
+Input combinations c d: 00, 01, 11, 10
+
+Values: 0,1,1,1
+
+Use d as first selector:
+
+If d=0:
+
+- c=0:0
+- c=1:1
+
+If d=1:
+
+- c=0:1
+- c=1:1
+
+So mux_in[0] = d ? 1 : c
+
+Implement as mux with d selector, inputs are:
+
+- input0 = c (when d=0)
+- input1 = 1 (when d=1)
+
+Similarly for mux_in[1]:
+
+Values all zero => mux_in[1] = 0
+
+mux_in[2]:
+
+Values: 00:0, 01:0, 11:1, 10:0
+
+d=0:
+
+- c=0:0
+- c=1:0
+
+d=1:
+
+- c=0:0
+- c=1:1
+
+So mux_in[2] = d ? c : 0
+
+mux_in[3]:
+
+Values: 00:1, 01:0, 11:1, 10:1
+
+d=0:
+
+- c=0:1
+- c=1:1
+
+d=1:
+
+- c=0:0
+- c=1:1
+
+So:
+
+if d=0 -> mux_in[3] = 1
+
+if d=1 -> mux_in[3] = c
+
+So mux_in[3] = d ? c : 1
+
+Implement mux_in[3] = mux with d selector, input0=1, input1=c
+
+Therefore, to implement 1 and 0 constants with muxes, we use the fact that inputs can be constants.
+
+In summary:
+
+- mux_in[0] = mux(d, c, 1)
+- mux_in[1] = 0
+- mux_in[2] = mux(d, 0, c)
+- mux_in[3] = mux(d, 1, c)
+
+No other logic gates are used.
+
+We only instantiate 2-to-1 muxes for each bit accordingly.
+
+Finally, output mux_in[3:0].

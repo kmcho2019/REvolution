@@ -1,0 +1,24 @@
+Implement a finite state machine with the following states:
+- IDLE: searching for the pattern 1101 serially on data input. Use a 4-bit shift register to detect the pattern.
+- READ_DELAY: after detecting 1101, shift in 4 bits (MSB first) into a 4-bit delay register.
+- COUNT: count down from delay to 0, each count lasting 1000 clock cycles. Use a cycle counter (10-bit to count to 1000) and a delay counter for the 4-bit delay value.
+- DONE: signal done output high, wait for ack input to become 1 to return to IDLE.
+
+Outputs:
+- counting: high during COUNT state.
+- done: high during DONE state.
+- count[3:0]: during COUNT, shows the current delay value counting down. Otherwise, don't care (assigned 0 for simplicity).
+
+All state transitions and counters update on the rising edge of clk and reset synchronously with reset signal.
+
+The timing of count output:
+- At the start of COUNT, count = delay, remains for 1000 cycles.
+- Then decrement count every 1000 cycles until count=0 for last 1000 cycles.
+
+The counter for 1000 cycles resets to 0 on reaching 999.
+
+During IDLE and READ_DELAY states, ignore input data except for pattern detection and delay reading.
+
+Wait in DONE state for ack to become 1, then go back to IDLE.
+
+Initialize all registers and counters on reset.

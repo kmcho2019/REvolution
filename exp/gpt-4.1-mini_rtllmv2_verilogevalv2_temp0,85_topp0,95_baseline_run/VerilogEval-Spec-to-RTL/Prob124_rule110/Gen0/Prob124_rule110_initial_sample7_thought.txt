@@ -1,0 +1,61 @@
+Implement a 512-bit register q to hold the current state of the cellular automaton. On each rising edge of clk:
+
+- If load is high, load q with the input data.
+- Otherwise, update q according to Rule 110.
+
+To compute the next state for each cell i, consider q[i+1] as left neighbor, q[i] as center, and q[i-1] as right neighbor. For out-of-bound indices, treat as zero. 
+
+Implement Rule 110 using the truth table given, which can be represented by the boolean function:
+
+next = (left & center & ~right) ? 0 :
+       (left & center & right) ? 0 :
+       (left & ~center & right) ? 1 :
+       (left & ~center & ~right) ? 0 :
+       (~left & center & right) ? 1 :
+       (~left & center & ~right) ? 1 :
+       (~left & ~center & right) ? 1 :
+       (~left & ~center & ~right) ? 0 :
+
+This can be simplified as next = (left & center & right) ? 0 :
+                                  (left & center & ~right) ? 1 :
+                                  (left & ~center & right) ? 1 :
+                                  (left & ~center & ~right) ? 0 :
+                                  (~left & center & right) ? 1 :
+                                  (~left & center & ~right) ? 1 :
+                                  (~left & ~center & right) ? 1 :
+                                  0;
+
+But easier to implement as the truth table in boolean expression or a small combinational logic.
+
+Alternatively, Rule 110's next state bit can be computed as:
+
+next = (left & center & ~right) ? 0 :
+       (left & center & right) ? 0 :
+       (left & ~center & right) ? 1 :
+       (left & ~center & ~right) ? 0 :
+       (~left & center & right) ? 1 :
+       (~left & center & ~right) ? 1 :
+       (~left & ~center & right) ? 1 :
+       (~left & ~center & ~right) ? 0;
+
+Which matches the boolean function: next = (left & center & ~right) ? 0 :...
+
+Alternatively, it is easier to implement by noticing Rule 110's binary representation is 01101110 (in binary), which corresponds to the next state bits indexed by the neighborhood bits (left, center, right):
+
+Neighborhood (left center right) -> next state (bit from LSB to MSB)
+111 (7) -> 0
+110 (6) -> 1
+101 (5) -> 1
+100 (4) -> 0
+011 (3) -> 1
+010 (2) -> 1
+001 (1) -> 1
+000 (0) -> 0
+
+So, next = rule110[{left, center, right}] where rule110 = 8'b01101110.
+
+This is most convenient to implement by concatenating left, center, right as a 3-bit index into the rule vector.
+
+For boundaries q[-1] and q[512], treat as 0.
+
+Implement combinational logic for next state q_next, then on clock edge, q <= q_next or q <= data if load is asserted.

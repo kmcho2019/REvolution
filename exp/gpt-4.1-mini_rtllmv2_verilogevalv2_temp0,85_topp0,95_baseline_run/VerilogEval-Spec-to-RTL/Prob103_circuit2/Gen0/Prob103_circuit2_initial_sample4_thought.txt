@@ -1,0 +1,37 @@
+Analyze the truth table from the given waveforms and derive the boolean expression for output q based on inputs a, b, c, d. Then implement the combinational logic using the derived expression.
+
+From the table, q=1 for these input combinations (a b c d):
+0000, 0011, 0101, 0110, 1001, 1010, 1100, 1111
+
+This can be recognized as q=1 when the number of ones in inputs is even (parity) but doesn't match exactly even parity since some even counts are zero.
+
+Rewrite the input and output to find the boolean expression:
+
+Listing inputs and q:
+a b c d : q
+0 0 0 0 : 1
+0 0 0 1 : 0
+0 0 1 0 : 0
+0 0 1 1 : 1
+0 1 0 0 : 0
+0 1 0 1 : 1
+0 1 1 0 : 1
+0 1 1 1 : 0
+1 0 0 0 : 0
+1 0 0 1 : 1
+1 0 1 0 : 1
+1 0 1 1 : 0
+1 1 0 0 : 1
+1 1 0 1 : 0
+1 1 1 0 : 0
+1 1 1 1 : 1
+
+This pattern matches q=1 when the number of ones is even.
+
+Check parity of inputs a,b,c,d:
+Number of ones even => q=1
+Number of ones odd => q=0
+
+Therefore, q is the even parity of inputs a,b,c,d.
+
+Implement q as XOR of inputs a,b,c,d and invert result (since XOR of all inputs is 1 for odd parity, q=1 for even parity means q=~(a^b^c^d).

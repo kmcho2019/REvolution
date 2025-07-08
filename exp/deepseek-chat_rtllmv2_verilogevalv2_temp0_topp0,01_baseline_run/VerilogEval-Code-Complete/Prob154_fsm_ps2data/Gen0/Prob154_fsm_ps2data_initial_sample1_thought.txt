@@ -1,0 +1,17 @@
+The problem requires implementing a finite state machine (FSM) that detects message boundaries in a byte stream. The FSM should:
+1. Wait for a byte with in[3]=1 (start condition)
+2. Collect the next 2 bytes to form a 3-byte message
+3. Output the 24-bit message and assert 'done' in the cycle after the third byte is received
+4. Reset all state on synchronous reset
+
+We'll use a 2-bit state register to track the current state:
+- IDLE: Waiting for start byte (in[3]=1)
+- BYTE1: First byte received, waiting for second
+- BYTE2: Second byte received, waiting for third
+
+The FSM transitions:
+- IDLE -> BYTE1 when in[3]=1
+- BYTE1 -> BYTE2 on any input
+- BYTE2 -> IDLE on any input (and assert done)
+
+We'll use a 24-bit shift register to accumulate the bytes, shifting in new bytes from the left.

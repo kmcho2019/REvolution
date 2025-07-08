@@ -1,0 +1,25 @@
+Design a Moore FSM that tracks the count of consecutive 1s seen after a leading 0. The input bit stream is continuous, so the FSM transitions based on the current bit and how many consecutive 1s have been counted. The initial state corresponds to having just seen a 0.
+
+States represent how many consecutive 1s have been counted (0 to 6), starting after a 0. When a 0 is detected, the count resets to 0. The FSM outputs are asserted for one cycle after detecting the pattern, so outputs correspond to the current state.
+
+- State s0: last bit was 0, waiting for 1 or 0
+- s1..s5: counting consecutive 1s from 1 to 5
+- s6: six consecutive 1s detected
+
+Transitions:
+- From s0:
+  - in=0: stay s0
+  - in=1: go to s1
+- From s1..s4:
+  - in=1: increment count (next state)
+  - in=0: reset to s0
+- From s5:
+  - in=0: signal disc (zero after five 1s), go s0
+  - in=1: go s6
+- From s6:
+  - in=0: signal flag (six 1s then zero), go s0
+  - in=1: signal err (7 or more 1s), stay s6
+
+All outputs (disc, flag, err) are registered and asserted for one clock cycle after the condition is detected. The FSM is synchronous with active-high reset and starts in s0 (pretending previous input was 0).
+
+Implement the FSM with enumerated states and registered outputs.

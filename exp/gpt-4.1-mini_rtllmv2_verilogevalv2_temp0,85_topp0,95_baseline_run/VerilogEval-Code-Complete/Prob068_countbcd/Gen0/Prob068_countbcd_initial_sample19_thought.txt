@@ -1,0 +1,24 @@
+To build a 4-digit BCD counter, we need to count from 0000 to 9999 in BCD format. Each digit is 4 bits. The ones digit increments every clock cycle. When the ones digit reaches 9 and rolls over, it enables the tens digit to increment. Similarly, the tens digit increments and enables the hundreds digit, and so on.
+
+We will implement synchronous logic with an active-high reset. On reset, the counter clears to 0. The ena signals for digits 3, 2, and 1 indicate when their respective digit should increment (i.e., when the lower digit wraps from 9 to 0). We will generate these signals by detecting when the digit to the right wraps.
+
+The outputs:
+- q[3:0]: ones digit
+- q[7:4]: tens digit
+- q[11:8]: hundreds digit
+- q[15:12]: thousands digit
+
+The enable signals (ena[3], ena[2], ena[1]) correspond to digits 3 (thousands), 2 (hundreds), and 1 (tens), and indicate when the digit should increment.
+
+Implementation steps:
+1. Use a synchronous always block sensitive to posedge clk.
+2. On reset, set q to 0.
+3. On each clock cycle:
+   - Increment ones digit.
+   - If ones rolls over to 0, ena[1] is high and increment tens digit.
+   - If tens rolls over to 0, ena[2] is high and increment hundreds digit.
+   - If hundreds rolls over to 0, ena[3] is high and increment thousands digit.
+4. Make sure each digit counts from 0 to 9 and rolls over.
+5. The ena signals are combinational outputs reflecting the increment enable for digits 1,2,3.
+
+We'll implement the counter as a chain of conditional increments and rollovers.

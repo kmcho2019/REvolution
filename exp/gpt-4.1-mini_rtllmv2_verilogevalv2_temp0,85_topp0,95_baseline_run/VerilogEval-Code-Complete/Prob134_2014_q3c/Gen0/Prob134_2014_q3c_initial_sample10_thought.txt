@@ -1,0 +1,28 @@
+To implement Y0 (the next state bit 0) and z (output) based on the state table, we first write down the mapping for each present state y and input x:
+
+From the table:
+Present y | Next Y when x=0 | Next Y when x=1 | z
+000       | 000             | 001             | 0
+001       | 001             | 100             | 0
+010       | 010             | 001             | 0
+011       | 001             | 010             | 1
+100       | 011             | 100             | 1
+
+We want to extract Y0 = next state's bit 0, so for each case:
+
+y=000 (0): x=0 -> next=000 (Y0=0), x=1 -> next=001 (Y0=1)
+y=001 (1): x=0 -> next=001 (Y0=1), x=1 -> next=100 (Y0=0)
+y=010 (2): x=0 -> next=010 (Y0=0), x=1 -> next=001 (Y0=1)
+y=011 (3): x=0 -> next=001 (Y0=1), x=1 -> next=010 (Y0=0)
+y=100 (4): x=0 -> next=011 (Y0=1), x=1 -> next=100 (Y0=0)
+
+We can implement Y0 using a combinational always block or a case statement that covers y and x and produces the next state's bit 0.
+
+Similarly, z is given for the present state only:
+
+z=0 for y in {000,001,010}
+z=1 for y in {011,100}
+
+We implement z combinationally from y.
+
+The module will output Y0 and z combinationally based on inputs y and x.

@@ -1,0 +1,9 @@
+Implement an FSM with states IDLE, START, DATA, STOP, and WAIT_STOP.  
+- IDLE: Wait for the line to go low indicating start bit.  
+- START: Confirm start bit (should be 0).  
+- DATA: Shift in 8 data bits LSB first.  
+- STOP: Check if stop bit is 1, if yes, assert done and output the byte.  
+- WAIT_STOP: If stop bit was not 1, wait until line becomes 1 (stop bit) to resync, no done asserted here.  
+On synchronous reset, go to IDLE and clear outputs.  
+The `done` signal is asserted for one clock cycle when a valid stop bit is detected.  
+`out_byte` is updated with the received data when `done` is asserted.

@@ -1,0 +1,16 @@
+To find the next state signals Y2 and Y4 (which correspond to states B and D respectively in one-hot encoding), we examine the transitions going into these states:
+
+- Y2 (state B) is asserted when the next state is B:
+  From the transitions, B is next state only from A on input 0.
+  So, Y2 = y[A] & (w == 0) = y[1] & ~w.
+
+- Y4 (state D) is asserted when next state is D:
+  From transitions:
+    B (y[2]) on w=1 → D (y[4])
+    C (y[3]) on w=1 → D (y[4])
+    E (y[5]) on w=1 → D (y[4])
+    F (y[6]) on w=1 → D (y[4])
+  Therefore,
+    Y4 = (y[2] | y[3] | y[5] | y[6]) & w
+
+We write these logic equations directly in the Verilog module.

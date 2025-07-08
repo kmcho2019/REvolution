@@ -1,0 +1,18 @@
+Analyze the waveform to deduce the state update logic:
+- The flip-flop output q is updated on the rising edge of clk.
+- state output reflects the stored state (the previous q).
+- From waveforms, state seems to be the value of q before the current clock cycle.
+- The next state (q) depends on inputs a, b, and current state.
+- Observing when q changes:
+  - When state=0 and (a=0,b=1), q=1 next cycle.
+  - When state=0 and (a=1,b=1), q=0 next cycle.
+  - When state=1 and (a=1,b=0), q=0 next cycle.
+  - When state=1 and (a=0,b=0), q=1 next cycle.
+- This behavior corresponds to the next state logic:
+  q_next = (~state & ~a & b) | (~state & a & b)' & (state & (a' & b)') ... simplifying:
+  The boolean logic can be simplified as:
+  q_next = (state & ~(a & ~b)) | (~state & ~a & b)
+- Implement this next state logic in an always block triggered on posedge clk,
+  with state register capturing q.
+- Output q is the flip-flop output.
+- Output state is current state (previous q).

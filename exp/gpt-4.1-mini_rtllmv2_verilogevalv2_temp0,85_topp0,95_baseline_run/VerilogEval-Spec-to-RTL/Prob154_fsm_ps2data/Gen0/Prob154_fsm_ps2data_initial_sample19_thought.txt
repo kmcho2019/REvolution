@@ -1,0 +1,6 @@
+We will implement a synchronous FSM with three states: IDLE, BYTE1, BYTE2.
+- In IDLE, we wait until a byte with in[3] = 1 arrives, indicating the start of a message. When such byte arrives, we store it as the first byte and move to BYTE1 state.
+- In BYTE1, we store the next byte as the second byte and move to BYTE2 state.
+- In BYTE2, we store the next byte as the third byte, assert done for one cycle, output the concatenated 24-bit message with first byte in [23:16], second in [15:8], third in [7:0], then return to IDLE state.
+Reset synchronously returns FSM to IDLE and clears outputs.
+done is asserted only for one cycle immediately after receiving the third byte.

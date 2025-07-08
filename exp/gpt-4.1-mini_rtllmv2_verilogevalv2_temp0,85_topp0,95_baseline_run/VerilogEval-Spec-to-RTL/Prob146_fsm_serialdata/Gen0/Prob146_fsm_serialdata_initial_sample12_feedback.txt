@@ -1,0 +1,36 @@
+Score: 5
+Justification: The code is syntactically correct and mostly follows the FSM design intent, but it fails simulation due to multiple functional issues in how data bits are shifted and the done signal is generated, causing output mismatches and incorrect behavior during byte reception.
+
+ANALYSIS:
+The code aims to implement a serial receiver FSM that detects a start bit (0), receives 8 data bits LSB first, verifies a stop bit (1), and signals done with the received byte. However, several design and coding issues contribute to simulation mismatches:
+
+1. **Data Bit Shifting Incorrectness (DATA state):**  
+   The code attempts to capture data bits by assigning `data_shift[bit_count] <= in;` within the DATA state. This is done inside a sequential always block with non-blocking assignments. However, this indexed bit assignment within a vector register inside a clocked block typically does not behave as a proper shift register; bits may not be set correctly or may require combinational logic. Also, `data_shift` is not shifted or updated as a whole vector, which is unusual for a shift register. This likely causes incorrect data capture.  
+   Furthermore, this partial bit assignment combined with simultaneous assignments to `bit_count` in another always block may lead to race or update ordering issues.  
+
+2. **Multiple always blocks driving `bit_count` and synchronization issues:**  
+   The `bit_count` register is assigned in two separate always blocks: one with reset in the main FSM block (in the same block as state and data_shift) and another always block solely for bit_count update. This creates multiple drivers for the same register, which is illegal in synthesis and may cause simulation mismatches. The conflicting assignments mean the value of `bit_count` is not well-defined and likely causes the FSM to malfunction during data reception.
+
+3. **'done' Signal Generation and Timing:**  
+   The `done` signal is assigned `1'b1` only in the STOP state if the stop bit is correct. It is cleared every clock cycle (`done <= 1'b0;` at the start of the sequential block). This means `done` is a one-clock-cycle pulse. However, simulation shows many mismatches on `done`, suggesting this pulse may be mistimed or missing due to state transitions or data latching order. This may be aggravated by the asynchronous sampling of `in` without oversampling or synchronization, but the main issue seems to be the placement and timing of `done` assertion.
+
+4. **FSM Next State Logic and Bit Count:**  
+   The FSM transitions from DATA to STOP when `bit_count == 7`, assuming 8 bits have been read (from 0 to 7). However, if `bit_count` is not correctly incremented or reset due to conflicting drivers, this will cause incorrect state sequencing.
+
+5. **WAIT_STOP State Usage:**  
+   The WAIT_STOP state is intended to wait for the line to return to idle (logic 1) after a missing stop bit. The FSM transitions back to IDLE only when `in == 1'b1`. Although this matches the specification, the code does not update other signals or counters here, which may cause undefined behavior or missed resynchronization.
+
+6. **Reset Handling:**  
+   The reset is synchronous and active high, correctly resetting all relevant registers. However, due to multiple always blocks driving bit_count and data_shift, reset behavior could be inconsistent.
+
+The simulation hints at 32 mismatches in `out_byte` and 66 mismatches in `done`, indicating serious problems in data capture and done pulse generation. The first mismatch at time 850 and 110 for `done` suggest early timing or state synchronization issues.
+
+In summary, the main causes of failure are the multiple always blocks driving `bit_count`, the unusual way of shifting in data bits by assigning a single bit indexed in `data_shift` inside a clocked block, and the timing and generation of the `done` signal. These cause the FSM to misbehave and output incorrect bytes and done pulses, failing to meet the serial protocol decoding requirements.
+
+Relevant code sections:  
+- DATA state sequential block with `data_shift[bit_count] <= in;`  
+- Multiple always blocks for `bit_count`  
+- DONE signal assignment inside STOP state  
+- FSM next state logic relying on `bit_count`  
+
+No syntax errors prevent compilation, but functional simulation mismatches are substantial.

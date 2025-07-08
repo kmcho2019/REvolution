@@ -1,0 +1,87 @@
+Score: 7
+Justification: The code is syntactically correct and mostly follows the problem requirements, but simulation results show mismatches on walk_left and walk_right outputs, indicating functional errors in direction switching logic or state transitions. The other outputs match expected behavior, so errors seem limited to walking direction states and transitions.
+
+ANALYSIS:
+The problem description specifies a Moore FSM with states for walking left/right, falling left/right, digging left/right, and splattered. The given code defines these states and transitions accordingly.
+
+The simulation log shows 46 mismatches out of 1003 samples on the outputs walk_left and walk_right, with no mismatches on aaah or digging. This indicates that the FSM transitions involving walking states are not always correct, while falling and digging outputs behave as expected.
+
+Key points and likely issues identified in the code relative to the problem and simulation:
+
+1. **Direction switching on bumps while walking:**
+
+   The problem states that if bumped on left or right (or both), the Lemming switches direction. The code implements this as:
+
+   ```verilog
+   if (bump_left || bump_right) begin
+     next_state = WALK_RIGHT; // in WALK_LEFT state
+   ```
+   and similarly the opposite for WALK_RIGHT state.
+
+   This matches the problem intent. However, the problem states that being bumped while falling or digging has no effect, and being bumped in the same cycle as ground disappears (but not yet falling) or ground reappears while still falling does not affect direction.
+
+   The code uses purely combinational logic in the `always @*` block without explicitly checking for these subtle timing conditions. Since the code transitions to falling immediately when ground=0, bump effects in the same cycle as ground disappearing may be incorrectly applied.
+
+2. **Priority of fall > dig > bump:**
+
+   The problem states that fall has higher precedence than dig, which has higher precedence than switching direction. The code implements this priority in the walking states:
+
+   ```verilog
+   if (!ground) begin
+     next_state = FALL_LEFT;
+   end else if (dig) begin
+     next_state = DIG_LEFT;
+   end else if (bump_left || bump_right) begin
+     next_state = WALK_RIGHT;
+   end else begin
+     next_state = WALK_LEFT;
+   end
+   ```
+
+   This seems correct and matches the problem requirement.
+
+3. **Handling of bump while falling or digging:**
+
+   The problem states bumps during falling or digging have no effect on direction.
+
+   The code does not check for bumps in FALL or DIG states, which is correct. 
+
+4. **Fall count for splattering:**
+
+   The fall_count increments correctly while falling and resets on landing or splattering. This matches the description.
+
+5. **Digging termination and fall start:**
+
+   Digging continues as long as ground is present; when ground disappears, the state moves to falling.
+
+6. **Reset behavior:**
+
+   The asynchronous reset sets state to WALK_LEFT and fall_count to 0, which matches the problem.
+
+7. **Outputs:**
+
+   The outputs match the current state only, as required for a Moore machine.
+
+---
+
+Given all this, the main cause of mismatches likely arises from **direction switching logic during transitions involving ground changes and bumps in the same cycle**.
+
+The problem explicitly states:
+
+> "Being bumped in the same cycle as ground disappears (but not yet falling), or when the ground reappears while still falling, also does not affect the walking direction."
+
+The code, however, immediately transitions from WALK_LEFT/RIGHT to FALL_LEFT/RIGHT on ground=0, before evaluating bumps, which means bumps in the same cycle as ground falling could incorrectly switch direction.
+
+Since the simulation log shows mismatches only on walk_left and walk_right outputs, this subtle timing of bump handling and state transitions is the primary issue.
+
+---
+
+**Summary:**
+
+- The FSM states and transitions are mostly correct.
+- The code correctly implements fall > dig > bump priority.
+- The issue is the lack of guarding against bump-triggered direction changes in the same cycle that ground disappears or ground reappears, violating the problem's timing requirements.
+- This causes incorrect walking direction signals in simulation, explaining the mismatches.
+- No syntax errors or output generation errors are present.
+
+Hence, the code is functionally close but flawed in bump handling timing during ground transitions, leading to the observed simulation mismatches on walking signals only.

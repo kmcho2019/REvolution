@@ -1,0 +1,24 @@
+Design a Moore FSM with states encoding the walking direction and mode (walking, falling, digging, or splattered).  
+- Walking states: walking_left, walking_right  
+- Falling states: falling_left, falling_right (keep track of direction before falling)  
+- Digging states: digging_left, digging_right  
+- Splattered state: splattered  
+
+Transitions:  
+- On areset: go to walking_left  
+- If splattered, remain splattered until reset  
+- Priority of transitions when walking:  
+  1. If ground=0 (no ground), transition to falling with the current direction, start fall counter=1  
+  2. Else if dig=1 and ground=1, start digging in current direction  
+  3. Else if bumped left or bumped right, switch walking direction accordingly  
+- When falling:  
+  - Increment fall counter  
+  - If ground=1, check fall counter: if >20 splatter else go back to walking same direction  
+- When digging:  
+  - Continue digging if ground=1  
+  - If ground=0, transition to falling same direction, reset fall counter=1  
+- When splattered: all outputs=0  
+
+Outputs are purely based on state: walk_left or walk_right, aaah (falling), digging, or all zero if splattered.  
+Implement fall counter as a 5-bit register (to count >20).  
+Handle asynchronous positive edge areset for reset logic.

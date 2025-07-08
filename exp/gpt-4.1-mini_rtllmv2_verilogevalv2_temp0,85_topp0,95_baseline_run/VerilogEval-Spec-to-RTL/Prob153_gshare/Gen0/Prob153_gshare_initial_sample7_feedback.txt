@@ -1,0 +1,27 @@
+Score: 5
+Justification: The code is syntactically correct and implements the intended gshare branch predictor, but it fails simulation with numerous mismatches on both output signals, indicating functional errors in prediction and history management logic.
+
+ANALYSIS:
+The design implements a gshare branch predictor with a global history register and a PHT of 2-bit saturating counters. Key parts of the logic appear consistent with the problem statement; however, the simulation log shows many mismatches in both `predict_taken` and `predict_history`, starting early in the simulation (first mismatch at time 20 and 110 respectively), indicating that the design's outputs do not match the expected behavior.
+
+1. **Prediction Output Logic (`always @(*)` block):**  
+   The outputs `predict_taken` and `predict_history` are generated combinationally only when `predict_valid` is asserted. Otherwise, the outputs are forced to zero. The problem statement does not specify output behavior when `predict_valid` is low, but this logic causes the outputs to be zero whenever prediction is not valid, which might not align with the testbench's expectations for output stability or timing. This could cause mismatches on `predict_taken` and especially `predict_history`.
+
+2. **Global History Update Logic and Prioritization:**  
+   The sequential `always @(posedge clk or posedge areset)` block updates the PHT and global history. According to the specification:
+   - If training (`train_valid`) is active, it takes precedence.  
+   - On training with misprediction, global history should be recovered to `train_history`.  
+   - Otherwise, global history shifts in the actual branch outcome (`train_taken`).  
+   - If no training, but prediction is valid, global history shifts in the predicted taken bit.  
+   This logic seems implemented as intended. However, the simultaneous update of global history and PHT at the clock edge may not correctly reflect the required timing relationship between prediction and training updates, especially the note that the prediction observes PHT state before training updates at the same cycle. Since the PHT update occurs in the same clock edge as prediction output, there might be subtle race or ordering issues unaccounted for.
+
+3. **PHT Index Calculation for Training:**  
+   The training index is computed as `train_pc ^ train_history`. The spec requires using the branch history register state immediately after the branch for training indexing. Because the global history register is updated asynchronously with respect to training (due to mispredictions recovering history), the training interface's `train_history` is provided externally. This is correct logically, but the code uses `train_history` directly without checking if it reflects the recovered history after a misprediction. If the testbench expects the predictor's internal global history to be recovered on misprediction, and uses `train_history` accordingly, this may cause inconsistency if `train_history` is not correctly aligned or if the internal global history update timing is off.
+
+4. **Reset Behavior and Initialization:**  
+   The simulation hints that the reset may not be working properly. The asynchronous reset is implemented, resetting global history and the PHT entries to weakly taken. The loop for initializing the PHT is inside the always block with the async reset, which is legal but might cause synthesis or simulation issues depending on tools. This could cause unpredictable initial PHT state and hence prediction mismatches early in the simulation.
+
+5. **Mismatch Timing and Number of Errors:**  
+   The first mismatch on `predict_taken` occurs very early (time 20), indicating early logic issues possibly related to initialization or output combinational logic when predict_valid is low. The larger number of mismatches on `predict_history` suggest that the output logic or the history update sequence is not properly matching the expected behavior.
+
+In summary, the code mostly matches the design intent but shows critical functional discrepancies in output generation timing, reset handling, and possibly subtle timing ordering between training and prediction updates causing the simulation mismatches.

@@ -1,0 +1,10 @@
+Implement combinational logic for next-state decoding and outputs from the current one-hot state and inputs. For each possible next state, derive its logic based on current state and inputs. Outputs are asserted based on the current state per the Moore machine definition. Since one-hot encoding is used, next state signals are independent bits. Follow state transitions as per the table and output assignments:
+- B3_next: goes high when next state is B3, which is after B2 (always next cycle)
+- S_next: transitions from S (d=0), S1(d=0), S11(d=0), S110(d=0), and Wait (ack=1)
+- S1_next: from S (d=1)
+- Count_next: from B3 (always next cycle) and stays in Count when done_counting=0
+- Wait_next: from Count(done_counting=1) and stays in Wait when ack=0
+Outputs:
+- done = Wait state
+- counting = Count state
+- shift_ena = B0, B1, B2, B3 states

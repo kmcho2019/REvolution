@@ -1,0 +1,9 @@
+To implement the required logic for each output vector:
+
+1. out_both: For bits 0 to 98, out_both[i] = in[i] & in[i+1]. For bit 99, no left neighbor exists, so out_both[99] = 0.
+
+2. out_any: For bits 1 to 99, out_any[i] = in[i] | in[i-1]. For bit 0, no right neighbor exists, so out_any[0] = 0.
+
+3. out_different: This is a wrap-around comparison. For bits 0 to 99, out_different[i] = in[i] ^ in[(i+1) mod 100]. So, in[99]'s left neighbor is in[0].
+
+We can implement this using bitwise operations and concatenations without looping.

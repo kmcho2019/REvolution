@@ -1,0 +1,121 @@
+The K-map defines a function f(c,d,a,b). We have to implement the function using a 4-to-1 mux with selector inputs a and b, and inputs mux_in[3:0]. The output of the 4-to-1 mux will be f.
+
+The mux selects among mux_in[0] to mux_in[3] according to ab = 00, 01, 11, 10.
+
+From the K-map, for each (a,b) = 00, 01, 11, 10, the function f(c,d) is:
+
+ab=00: outputs: c d=00->0, 01->1, 11->1, 10->1
+ab=01: outputs: all 0
+ab=11: outputs: 00->0, 01->0, 11->1, 10->0
+ab=10: outputs: 00->1, 01->0, 11->1, 10->1
+
+So mux_in[0], mux_in[1], mux_in[3], mux_in[2] correspond to ab=00, 01, 11, 10 respectively.
+
+We need to find mux_in[0], mux_in[1], mux_in[2], mux_in[3] as functions of c,d only, implemented with 2-to-1 muxes only and no gates.
+
+From the Karnaugh for each mux input:
+
+- mux_in[0] (ab=00): f = 1 when cd = 01, 11, 10, else 0
+- mux_in[1] (ab=01): f = 0 always
+- mux_in[3] (ab=11): f = 1 when cd=11 only, else 0
+- mux_in[2] (ab=10): f = 1 when cd=00,10,11; else 0
+
+We will implement these functions using only 2-to-1 muxes and no other logic gates.
+
+Since mux_in[1] = 0 always, it's just 0.
+
+Implementing mux_in[0]:
+
+cd | f
+00 | 0
+01 | 1
+11 | 1
+10 | 1
+
+We can see f is 0 only at cd=00; else 1.
+
+We can implement this by a mux with selector c:
+
+if c=0 -> check d=0 -> output 0 else 1
+
+if c=1 -> always 1
+
+Using mux:
+
+mux_out = mux c: if c=0 select d else 1
+
+So mux_in[0] = c ? 1 : d
+
+Similarly for mux_in[3] (ab=11):
+
+cd | f
+00 | 0
+01 | 0
+11 | 1
+10 | 0
+
+Only 1 at cd=11 (c=1,d=1)
+
+Implement with mux:
+
+Use c as selector:
+
+if c=0 => output 0
+
+if c=1 => output d
+
+So mux_in[3] = c ? d : 0
+
+mux_in[2] (ab=10):
+
+cd | f
+00 | 1
+01 | 0
+11 | 1
+10 | 1
+
+Looking carefully:
+
+At c=0:
+
+d=0 => 1
+
+d=1 => 0
+
+At c=1:
+
+d=0 =>1
+
+d=1 =>1
+
+So with c as selector:
+
+if c=0 -> output !d (since d=0->1, d=1->0)
+
+if c=1 -> output 1
+
+But no NOT allowed, so !d must be implemented with mux.
+
+Implement !d:
+
+not_d = mux d ? 0 :1
+
+So:
+
+mux_in[2] = c ? 1 : not_d
+
+We will build not_d with mux: select d: 0 if d=1 else 1
+
+Finally mux_in[1] = 0
+
+Thus we can implement mux_in as:
+
+mux_in[0] = c ? 1 : d
+
+mux_in[1] = 0
+
+mux_in[2] = c ? 1 : (d ? 0 :1)
+
+mux_in[3] = c ? d : 0
+
+We'll implement the 2-to-1 muxes as modules and instantiate them accordingly.

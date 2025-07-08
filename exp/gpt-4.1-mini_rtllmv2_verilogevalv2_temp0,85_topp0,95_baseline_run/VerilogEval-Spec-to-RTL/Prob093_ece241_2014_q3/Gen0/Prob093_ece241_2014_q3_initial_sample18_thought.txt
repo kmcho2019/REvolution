@@ -1,0 +1,174 @@
+We have a 4-variable function with inputs a,b,c,d but only c,d are inputs to the module, while a,b are selector inputs of the 4-to-1 mux outside TopModule.
+
+TopModule's job is to produce the four inputs to the 4-to-1 mux (mux_in[3:0]), each corresponding to a fixed ab value (00,01,11,10), so that when the 4-to-1 mux selects based on {a,b}, the function output matches the K-map.
+
+Each mux_in[i] is a function of c,d only, since a,b are the selectors of the 4-to-1 mux.
+
+From the K-map, for each ab:
+
+- ab=00 -> mux_in[0] = f(00,cd)
+- ab=01 -> mux_in[1] = f(01,cd)
+- ab=11 -> mux_in[2] = f(11,cd)
+- ab=10 -> mux_in[3] = f(10,cd)
+
+So we extract for each ab the c,d values and the output.
+
+Given the K-map:
+
+    ab
+cd  00 01 11 10
+00  0  0  0  1
+01  1  0  0  0
+11  1  0  1  1
+10  1  0  0  1
+
+Let's write down mux_in:
+
+- mux_in[0] (ab=00): rows c d = 00 01 11 10:
+
+  - c d=00 => 0
+  - c d=01 => 1
+  - c d=11 => 1
+  - c d=10 => 1
+
+ So, for mux_in[0], input is function of c,d:
+
+ cd:00=0, 01=1, 11=1, 10=1
+
+- mux_in[1] (ab=01): all zeros
+
+  - 00=0,01=0,11=0,10=0
+
+- mux_in[2] (ab=11):
+
+  - 00=0,01=0,11=1,10=0
+
+- mux_in[3] (ab=10):
+
+  - 00=1,01=0,11=1,10=1
+
+Now, implement each mux_in[i] as function of c,d only using only 2-to-1 muxes and constants (0/1). The constraints are only multiplexers, no logic gates.
+
+For mux_in[0]:
+
+Truth table for cd:
+
+c d | output
+
+0 0 | 0
+
+0 1 | 1
+
+1 1 | 1
+
+1 0 | 1
+
+We can view c as selector of a 2-to-1 mux:
+
+If c=0: output = d
+
+d=0 -> 0
+
+d=1 ->1
+
+If c=1: output = 1
+
+So mux_in[0] = (c)?1:d
+
+Implement with 2-to-1 mux: select input c:
+
+- if c=0: output d
+
+- else 1
+
+mux_in[0] = MUX(c, d, 1)
+
+mux_in[1]:
+
+All zeros = constant 0
+
+mux_in[2]:
+
+cd-> output
+
+00=0
+
+01=0
+
+11=1
+
+10=0
+
+Try c selector:
+
+c=0: output=0
+
+c=1: d=1 =>1, d=0=>0
+
+So mux_in[2] = c & d
+
+But no AND allowed, so implement c & d with mux:
+
+c=0: output=0
+
+c=1: output=d
+
+So mux_in[2] = MUX(c, 0, d)
+
+mux_in[3]:
+
+cd output
+
+00=1
+
+01=0
+
+11=1
+
+10=1
+
+Try c selector:
+
+c=0:
+
+d=0 ->1
+
+d=1 ->0
+
+c=1:
+
+d=0 ->1
+
+d=1 ->1
+
+When c=0, output = ~d
+
+When c=1, output =1
+
+So mux_in[3] = MUX(c, ~d, 1)
+
+But we have no NOT gate. We can implement ~d using a mux with constant inputs:
+
+~d = MUX(d, 0,1)
+
+So to implement mux_in[3]:
+
+1) ~d = MUX(d,0,1)
+
+2) mux_in[3] = MUX(c, ~d, 1)
+
+Implementing ~d first, then use it in mux_in[3].
+
+Putting all together:
+
+- mux_in[0] = MUX(c, d, 1)
+
+- mux_in[1] = 0 (constant 0)
+
+- mux_in[2] = MUX(c, 0, d)
+
+- mux_in[3] = MUX(c, ~d, 1) with ~d = MUX(d,0,1)
+
+Finally, the module outputs mux_in[3:0] as above.
+
+We will create helper modules for 2-to-1 muxes.

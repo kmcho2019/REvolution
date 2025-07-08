@@ -1,0 +1,49 @@
+We need to design a Moore FSM with three main states: WALK_LEFT, WALK_RIGHT, FALLING, and a DIGGING sub-mode for when walking on ground and digging. The states are mutually exclusive: the Lemming is either walking left, walking right, falling, or digging.
+
+Key points:
+- On reset, start walking left.
+- Walking states: walk_left=1 or walk_right=1, others 0.
+- On bump (left or right), switch walking direction.
+- If ground goes low, enter falling state (aaah=1).
+- While falling, keep a fall counter. If fall > 20 cycles and then ground returns, splatter (all outputs 0, locked).
+- Digging occurs only when walking on ground and dig=1, transitions to digging state; continues digging until ground=0 (then fall).
+- Bumps during falling or digging have no effect.
+- Precedence: falling > digging > bump direction switch.
+
+We will encode states as follows:
+- WALK_LEFT = 0
+- WALK_RIGHT = 1
+- DIG_LEFT = 2 (digging left)
+- DIG_RIGHT = 3 (digging right)
+- FALLING_LEFT = 4
+- FALLING_RIGHT = 5
+- SPLATTER = 6
+
+We keep direction info in state encoding to avoid extra flags.
+
+On each clock edge (posedge clk), if areset asserted, reset to WALK_LEFT, fall counter zero.
+
+Transitions:
+- If splattered, stay splattered.
+- If falling:
+  - If ground=1:
+    - If fall_counter > 20 -> splatter
+    - Else return to walking in the direction before fall
+  - Else continue falling, increment fall_counter
+- If digging:
+  - If ground=0 -> start falling in same direction, reset fall_counter
+  - Else if dig=0 -> stop digging, walk in same direction
+  - Else remain digging
+- If walking:
+  - If ground=0 -> falling in current direction, reset fall_counter
+  - Else if dig=1 -> start digging in current direction
+  - Else if bumped -> switch walking direction
+  - Else remain walking
+
+Output logic according to state.
+
+Fall counter only increments in falling state, reset otherwise.
+
+We use asynchronous posedge areset to reset to WALK_LEFT.
+
+All outputs are registered and updated in a Moore style (outputs depend on current state).

@@ -1,0 +1,35 @@
+Implement a finite state machine (FSM) with states encoded as 3-bit values for A-F as given. The next state logic is defined by the state transitions provided. Only the next state logic for y[1] (the middle bit of the 3-bit state) needs to be implemented; the other bits of y remain unchanged (held). The output Y1 equals y[1]. We implement this by calculating y1_next based on the current y and input w. The module has inputs y (3-bit) and w (1-bit), and output Y1 (1-bit). The next-state logic updates only y[1], so y[1] = y1_next, and y[2] and y[0] remain the same (not implemented here, so presumably held externally or unchanged).
+
+We create combinational logic that implements the mapping of y[1] next state per the state transitions, focusing only on y[1].
+
+To derive y1_next, analyze the transitions for y[1]:
+
+State codes:
+A=000
+B=001
+C=010
+D=011
+E=100
+F=101
+
+From the transitions:
+
+For each state and input w, next state is given; extract y[1] next from the next state.
+
+Example: From A(000):
+- w=0 => next state B(001) => y[1]=0
+- w=1 => next state A(000) => y[1]=0
+
+From B(001):
+- w=0 => next state C(010) => y[1]=1
+- w=1 => next state D(011) => y[1]=1
+
+... and so on for all states.
+
+We encode this in a combinational always block or assign statement.
+
+Since only y[1] next state is implemented, the code will assign y1_next accordingly.
+
+Finally, Y1 = y[1].
+
+No flip-flops implemented here; only next-state logic for y[1] is provided as combinational logic.

@@ -1,0 +1,18 @@
+The FSM uses one-hot encoding for six states: y[0] for A, y[1] for B, y[2] for C, y[3] for D, y[4] for E, y[5] for F. We need to find the input logic for flip-flops y[1] (state B) and y[3] (state D) based on the current state and input w.
+
+From the state transitions:
+
+For y[1] (B):
+- B is entered from A on input w=1.
+So, y[1] next = y[0] & w
+
+For y[3] (D):
+- D is entered from:
+   - B on w=0 (y[1] & ~w)
+   - C on w=0 (y[2] & ~w)
+   - E on w=0 (y[4] & ~w)
+   - F on w=0 (y[5] & ~w)
+So,
+y[3] next = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+We'll implement these combinational logic assignments to produce Y1 and Y3.

@@ -1,0 +1,11 @@
+Implement a finite state machine with the following states:
+- IDLE: searching for the 1101 pattern on the data input, using a 4-bit shift register.
+- READ_DELAY: after detecting 1101, shift in next 4 bits MSB first to capture delay[3:0].
+- COUNTING: count (delay+1)*1000 clock cycles, output counting=1, output current remaining time which decreases every 1000 cycles.
+- DONE: counting finished, assert done=1, wait for ack=1 to return to IDLE.
+
+Use a 4-bit shift register to detect the pattern and for delay capturing.
+Use a 10-bit counter to count to 1000 clock cycles and another 4-bit counter to count down the delay.
+On reset, go to IDLE state.
+
+The count output shows the current remaining time during COUNTING, otherwise don't-care (set to 0).

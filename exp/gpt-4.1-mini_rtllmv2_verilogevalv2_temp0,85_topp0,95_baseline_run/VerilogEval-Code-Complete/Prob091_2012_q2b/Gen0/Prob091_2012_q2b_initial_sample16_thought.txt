@@ -1,0 +1,15 @@
+To find Y1 (next state input for flip-flop y[1] corresponding to state B) and Y3 (for state D), we examine transitions leading to these states. Using one-hot encoding:
+
+- Y1 is set when the next state is B.
+From the transitions:
+  - A --1--> B: From y[0]=A with w=1, next is B (y[1])
+So Y1 = y[0] & w
+
+- Y3 is set when next state is D.
+From the transitions:
+  - B --0--> D: y[1] & ~w
+  - C --0--> D: y[2] & ~w
+  - E --0--> D: y[4] & ~w
+  - F --0--> D: y[5] & ~w
+
+So, Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w

@@ -1,0 +1,19 @@
+Implement a gshare predictor with a 7-bit PC and 7-bit global history XORed to index a 128-entry pattern history table (PHT) of 2-bit saturating counters. The global history register (GHR) is 7 bits. Prediction and training happen through separate interfaces.
+
+- Prediction:
+  * When predict_valid=1, compute index = predict_pc XOR current GHR.
+  * Read PHT[index] to get 2-bit counter and output prediction (taken if counter[1] = 1).
+  * Output current GHR as predict_history.
+  * Update GHR at next clock edge with predicted outcome (shift in predicted taken bit).
+  
+- Training:
+  * When train_valid=1, compute index = train_pc XOR train_history.
+  * Update the PHT[index] counter based on train_taken (increment or decrement saturating).
+  * If train_mispredicted=1, restore GHR to train_history at next clock edge (overriding prediction update).
+  
+- When both prediction and training are in the same cycle:
+  * Training update to PHT and GHR takes precedence.
+  * Prediction uses PHT state before training update.
+  * GHR update at clock edge prioritizes training recovery over prediction update.
+  
+- Asynchronous active-high reset clears GHR and PHT counters to weakly taken (01).

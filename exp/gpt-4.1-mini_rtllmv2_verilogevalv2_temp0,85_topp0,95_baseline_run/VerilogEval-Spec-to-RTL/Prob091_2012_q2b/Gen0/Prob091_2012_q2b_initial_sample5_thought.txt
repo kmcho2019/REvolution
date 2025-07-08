@@ -1,0 +1,19 @@
+The FSM uses a one-hot encoding with states represented by individual bits in y[5:0]. The transitions are defined for each state on input w. The output signals Y1 and Y3 correspond to the inputs of the flip-flops for states B and D, i.e. y[1] and y[3]. 
+
+To find Y1 (next state B), note from transitions:
+- A (y[0]) on input 1 goes to B (y[1])
+- No other transitions go to B.
+
+So Y1 = y[0] & w.
+
+To find Y3 (next state D), states that transition to D are:
+- B (y[1]) on 0 -> D
+- C (y[2]) on 0 -> D
+- E (y[4]) on 0 -> D
+- F (y[5]) on 0 -> D
+
+All transitions to D happen on input 0, so:
+
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w.
+
+This logic implements the input signals to the B and D flip-flops based on current state y and input w.

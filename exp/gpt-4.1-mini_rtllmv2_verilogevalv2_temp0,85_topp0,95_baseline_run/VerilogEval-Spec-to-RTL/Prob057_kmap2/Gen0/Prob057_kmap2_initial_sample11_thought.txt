@@ -1,0 +1,37 @@
+First, identify the minterms where the output is 1 from the Karnaugh map. Then derive a simplified Boolean expression and implement it.
+
+The Karnaugh map:
+
+              ab
+   cd   00  01  11  10
+   00 | 1 | 1 | 0 | 1 |
+   01 | 1 | 0 | 0 | 1 |
+   11 | 0 | 1 | 1 | 1 |
+   10 | 1 | 1 | 0 | 0 |
+
+Mapping to minterms (a,b,c,d):
+
+Let a,b be the columns (ab), c,d be the rows (cd).
+
+Indices of minterms with output=1:
+
+cd\ab = 00,01,11,10
+
+00(0,0): output=1 at 00,01,10 -> (c=0,d=0,a=0,b=0),(0,0,0,1),(0,0,1,0)
+01(0,1): output=1 at 00,10 -> (0,1,0,0),(0,1,1,0)
+11(1,1): output=1 at 01,11,10 -> (1,1,0,1),(1,1,1,1),(1,1,1,0)
+10(1,0): output=1 at 00,01 -> (1,0,0,0),(1,0,0,1)
+
+Let's write the minterms with output 1:
+(0,0,0,0), (0,0,0,1), (0,0,1,0), (0,1,0,0), (0,1,1,0), (1,1,0,1), (1,1,1,1), (1,1,1,0), (1,0,0,0), (1,0,0,1), (1,0,0,1), (1,0,0,1)
+
+Simplify the expression using K-map or boolean algebra:
+- Group1: c'd' (c=0,d=0) with a,b=00,01,10 => output=1, so covers (a,b) ≠ 11
+- Group2: a'b' (a=0,b=0) with c,d=00,01,10 => output=1
+- Group3: b d (b=1,d=1) with c,a=1,1 and 1,1 etc.
+
+After simplification, we can write the expression as:
+
+out = (~c & ~d) | (~a & ~b) | (b & d)
+
+Implement this expression in Verilog.

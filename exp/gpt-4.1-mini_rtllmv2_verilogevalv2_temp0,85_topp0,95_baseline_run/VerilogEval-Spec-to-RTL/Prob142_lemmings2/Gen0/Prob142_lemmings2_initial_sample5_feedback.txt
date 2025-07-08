@@ -1,0 +1,35 @@
+Score: 6
+Justification: The code is syntactically correct and implements the main FSM states with areset and output logic properly, but it fails simulation due to incorrect handling of direction changes on bumps while walking and possibly in transitions involving ground changes, causing 154 output mismatches despite correctly signaling the falling state.
+
+ANALYSIS:
+The design intent is to implement a Moore FSM modeling a Lemming walking left or right, switching direction when bumped on either side, falling when ground is lost, and resuming the prior walking direction on ground restoration. The asynchronous reset sets the state to WALK_LEFT.
+
+Key issues observed relate to the handling of bumps and direction changes:
+
+1. In the WALK_LEFT and WALK_RIGHT states, the next_state logic switches direction when either bump_left or bump_right is asserted:
+   ```verilog
+   if (bump_left || bump_right)
+       next_state = WALK_RIGHT; // for WALK_LEFT state
+   ```
+   and similarly for WALK_RIGHT state. According to the problem, if bumped on the left, the Lemming should walk right; if bumped on the right, walk left. But the code treats any bump identically, switching direction to the opposite side regardless of which side was bumped. This breaks the design intent that the bump on the left forces walking right and bump on the right forces walking left. The current logic ignores which bump signal is active.
+
+2. The code does not account for the priority or combination of bumps distinctly. The problem states that if bumped on both sides simultaneously, the Lemming still switches direction, but the direction to switch to depends on the bumps: in that case, both bumps would cause contradictory direction commands. The code's simplistic OR condition leads to always switching to the opposite state regardless, losing the intended direction logic.
+
+3. The updating of `prev_walk_dir` occurs in the sequential block after the state transition:
+   ```verilog
+   if (next_state == WALK_LEFT)
+       prev_walk_dir <= 1'b0;
+   else if (next_state == WALK_RIGHT)
+       prev_walk_dir <= 1'b1;
+   ```
+   This means bumps that cause a direction switch update `prev_walk_dir` immediately, which is correct. However, bumps during falling do not affect direction, consistent with the problem statement, and the code also respects this since in FALLING state, no bumps change state.
+
+4. The ground signal handling and falling logic appear correct: when ground=0, the Lemming falls (FALLING state), and when ground returns to 1, the FSM returns to the previous walking direction stored in `prev_walk_dir`.
+
+5. The output logic as Moore outputs based on current state is correctly implemented.
+
+6. The simulation log shows 154 mismatches on walk_left and walk_right but no mismatches on aaah, indicating that falling state recognition is fine but direction signals are incorrect at times.
+
+In summary, the primary cause of the mismatches is the incorrect next state logic for handling bumps in WALK_LEFT and WALK_RIGHT states, where the code does not differentiate bump_left and bump_right signals to decide the next walking direction as per problem specification.
+
+No syntax errors are present, so the code compiles but fails functional simulation due to this directional bump logic flaw.

@@ -1,0 +1,7 @@
+Implement a 32-bit shift register updated on the rising edge of clk. On areset (posedge), reset history to zero asynchronously. On each clock edge:
+- If train_mispredicted is high, load predict_history with {train_history[30:0], train_taken} (history before mispredicted branch + actual outcome).
+- Else if predict_valid is high, shift in predict_taken at LSB, shifting history left.
+- Else keep history unchanged.
+predict_history is the current state of the register.
+Since areset is asynchronous positive edge, use posedge of areset in sensitivity list.
+Misprediction update takes priority over prediction update.

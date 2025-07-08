@@ -1,0 +1,28 @@
+Analyze the truth table and derive a minimal Boolean expression for the output f, then implement it combinationally in Verilog.
+
+From the truth table:
+
+x3 x2 x1 | f
+0  0  0  | 0
+0  0  1  | 0
+0  1  0  | 1
+0  1  1  | 1
+1  0  0  | 0
+1  0  1  | 1
+1  1  0  | 0
+1  1  1  | 1
+
+We can write the minterms where f=1:
+- x3=0, x2=1, x1=0  -> x3' x2 x1'
+- x3=0, x2=1, x1=1  -> x3' x2 x1
+- x3=1, x2=0, x1=1  -> x3 x2' x1
+- x3=1, x2=1, x1=1  -> x3 x2 x1
+
+Group minterms:
+
+f = x3'x2(x1' + x1) + x3 x1 (x2' + x2)
+   = x3' x2 + x3 x1
+
+So f = (not x3 and x2) or (x3 and x1).
+
+Implement this logic directly.

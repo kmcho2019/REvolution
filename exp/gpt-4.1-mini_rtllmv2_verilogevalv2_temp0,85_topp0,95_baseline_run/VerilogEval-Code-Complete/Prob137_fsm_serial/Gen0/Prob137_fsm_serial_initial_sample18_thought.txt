@@ -1,0 +1,10 @@
+Design an FSM with the following states:
+- IDLE: line is high, waiting for start bit (0).
+- START: detected start bit, begin receiving data bits.
+- DATA: shift in 8 data bits, LSB first.
+- STOP: check for stop bit (should be 1).
+- ERROR: if stop bit is not 1, wait until stop bit (1) is detected before returning to IDLE.
+
+On reset, return to IDLE. On each clock, sample input bit. After receiving 8 data bits and the stop bit, assert done for one clock cycle indicating a byte was received correctly.
+
+Use a counter for data bits. done is high for one clock cycle after successful stop bit verification.

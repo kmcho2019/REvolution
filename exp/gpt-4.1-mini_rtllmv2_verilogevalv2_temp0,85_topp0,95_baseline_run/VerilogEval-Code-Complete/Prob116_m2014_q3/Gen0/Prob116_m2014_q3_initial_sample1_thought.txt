@@ -1,0 +1,35 @@
+Analyze the Karnaugh map to find a minimal expression for f, using the don't-cares (d) to simplify.
+
+K-map layout (rows x[3]x[4], cols x[1]x[2]):
+
+       00   01   11   10
+00:    d    0    d    d
+01:    0    d    1    0
+11:    1    1    d    d
+10:    1    1    0    d
+
+Let's interpret the map:
+
+- Positions with 1:
+  (11,00), (11,01), (01,11), (10,00), (10,01)
+- Positions with 0:
+  (00,01), (01,00), (01,10), (10,11)
+- Don't cares fill the rest.
+
+Grouping 1s with don't-cares to simplify:
+
+1) Group the four 1s in rows 10 and 11, columns 00 and 01:
+   Positions: (10,00), (10,01), (11,00), (11,01)
+   This corresponds to:
+   - x[3]x[4] = 10 or 11 (x[3]=1)
+   - x[1]x[2] = 00 or 01 (x[2]=0)
+   So group: x[3] & ~x[2]
+
+2) The single 1 at (01,11):
+   - x[3]x[4] = 01 (x[3]=0, x[4]=1)
+   - x[1]x[2] = 11 (x[1]=1, x[2]=1)
+   So minterm: ~x[3] & x[4] & x[1] & x[2]
+
+The final expression:
+
+f = (x[3] & ~x[2]) | (~x[3] & x[4] & x[1] & x[2])

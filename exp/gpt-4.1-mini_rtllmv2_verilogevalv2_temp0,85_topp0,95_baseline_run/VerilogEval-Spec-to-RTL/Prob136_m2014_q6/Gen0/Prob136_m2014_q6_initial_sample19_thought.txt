@@ -1,0 +1,16 @@
+The state machine has six states: A, B, C, D, E, F. Each state transitions depending on the input w and outputs a value z.
+
+From the description, the transitions are triggered on input w and the output z depends on the current state and input w. However, the output z is indicated only in some states with the input, e.g. E(1) outputs 1, F(1) outputs 1, and in other cases presumably outputs 0.
+
+From the transitions:
+
+- States A, B, C, D have no explicit output, so output z = 0.
+- State E outputs z=1 when w=1.
+- State F outputs z=1 when w=1.
+- For all other cases, z=0.
+
+We will encode states as a 3-bit parameter for clarity. On each positive clock edge, if reset is asserted, state returns to A; else state transitions according to input w and current state.
+
+We will implement the state machine with a sequential always block for state updates and a combinational always block for next state logic and output.
+
+Output z is combinationally assigned based on current state and input w.

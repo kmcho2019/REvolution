@@ -1,0 +1,19 @@
+For one-hot encoding, each state corresponds to a single bit in y being high. We want to find the inputs to flip-flops y[1] (for state B) and y[3] (for state D).
+
+From the state diagram:
+
+- State B (y[1]) is entered from:
+  - A (y[0]) when w=1
+
+- State D (y[3]) is entered from:
+  - B (y[1]) when w=0
+  - C (y[2]) when w=0
+  - E (y[4]) when w=0
+  - F (y[5]) when w=0
+
+Thus:
+
+Y1 = y[0] & w
+
+Y3 = (y[1] & ~w) | (y[2] & ~w) | (y[4] & ~w) | (y[5] & ~w)
+   = (~w) & (y[1] | y[2] | y[4] | y[5])

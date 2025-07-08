@@ -1,0 +1,20 @@
+Implement a Moore FSM with three states: WALK_LEFT, WALK_RIGHT, and FALLING. The outputs walk_left and walk_right indicate walking direction states only, and aaah is asserted only when in FALLING state.
+
+- On async reset, go to WALK_LEFT.
+- While walking:
+  - If ground=0, transition to FALLING.
+  - If bump_left=1 (or bump_left and bump_right both 1), transition to WALK_RIGHT.
+  - If bump_right=1, transition to WALK_LEFT.
+- While falling:
+  - Stay in FALLING while ground=0.
+  - When ground=1, return to previous walking direction state (stored in a register).
+- Bumps have no effect during falling or on ground transitions involving falling.
+- The FSM is Moore, so outputs are based on current state.
+- Use asynchronous reset.
+
+States encoding:
+- 2'b00: WALK_LEFT
+- 2'b01: WALK_RIGHT
+- 2'b10: FALLING
+
+Store previous walking direction to recover after falling.

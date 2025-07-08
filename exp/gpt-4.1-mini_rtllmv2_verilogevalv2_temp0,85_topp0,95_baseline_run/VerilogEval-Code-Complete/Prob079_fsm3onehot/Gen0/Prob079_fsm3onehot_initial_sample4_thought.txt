@@ -1,0 +1,22 @@
+For each current state (one-hot encoded), determine the next state based on the input `in`. The states are one-hot encoded as A=4'b0001, B=4'b0010, C=4'b0100, D=4'b1000. We create combinational logic to generate `next_state` from the current `state` and input `in`.
+
+- If state A (0001):
+  - next_state = A (0001) if in=0
+  - next_state = B (0010) if in=1
+
+- If state B (0010):
+  - next_state = C (0100) if in=0
+  - next_state = B (0010) if in=1
+
+- If state C (0100):
+  - next_state = A (0001) if in=0
+  - next_state = D (1000) if in=1
+
+- If state D (1000):
+  - next_state = C (0100) if in=0
+  - next_state = B (0010) if in=1
+
+The output depends only on the current state (Moore machine):
+- Output = 1 only when in state D, otherwise 0.
+
+We'll implement combinational logic that sets each bit of next_state accordingly using the current state bits and input `in`.

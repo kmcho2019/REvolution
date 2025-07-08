@@ -1,0 +1,27 @@
+We need to implement combinational logic for Y0 (the least significant bit of the next state) and output z based on the present state y[2:0] and input x, using the state table given.
+
+From the table:
+Present state y | Next state Y when x=0 | Next state Y when x=1 | Output z
+000            | 000                  | 001                  | 0
+001            | 001                  | 100                  | 0
+010            | 010                  | 001                  | 0
+011            | 001                  | 010                  | 1
+100            | 011                  | 100                  | 1
+
+We only need Y0, the LSB of Y[2:0]. Extract LSB from next state for each condition:
+
+For each present state y and input x:
+
+y=000 (0): next state = 000 (x=0), 001 (x=1) → Y0 = 0 (x=0), 1 (x=1)
+y=001 (1): next state = 001 (x=0), 100 (x=1) → Y0 = 1 (x=0), 0 (x=1)
+y=010 (2): next state = 010 (x=0), 001 (x=1) → Y0 = 0 (x=0), 1 (x=1)
+y=011 (3): next state = 001 (x=0), 010 (x=1) → Y0 = 1 (x=0), 0 (x=1)
+y=100 (4): next state = 011 (x=0), 100 (x=1) → Y0 = 1 (x=0), 0 (x=1)
+
+Output z is only function of present state y:
+z=1 for y=011 (3) and y=100 (4)
+z=0 otherwise
+
+We can create combinational logic expressions for Y0 and z by enumerating the present states.
+
+Implement a combinational always block to assign Y0 and z based on y and x.

@@ -1,0 +1,118 @@
+First, interpret the Karnaugh map as a 4-variable truth table with inputs a,b,c,d. The map rows represent cd and columns represent ab, with the given cell values as outputs.
+
+Map:
+    ab
+cd  00  01  11  10
+00: 1   1   0   1
+01: 1   0   0   1
+11: 0   1   1   1
+10: 1   1   0   0
+
+Indexing (cd rows, ab columns):
+cd=00, ab=00 -> out=1
+cd=00, ab=01 -> out=1
+cd=00, ab=11 -> out=0
+cd=00, ab=10 -> out=1
+cd=01, ab=00 -> out=1
+cd=01, ab=01 -> out=0
+cd=01, ab=11 -> out=0
+cd=01, ab=10 -> out=1
+cd=11, ab=00 -> out=0
+cd=11, ab=01 -> out=1
+cd=11, ab=11 -> out=1
+cd=11, ab=10 -> out=1
+cd=10, ab=00 -> out=1
+cd=10, ab=01 -> out=1
+cd=10, ab=11 -> out=0
+cd=10, ab=10 -> out=0
+
+We can write minterms where output=1.
+
+Variables: a,b,c,d (assume a is MSB of ab, b LSB; c MSB of cd, d LSB)
+
+Minterms (output=1):
+
+From rows and columns:
+
+cd=00 (c=0,d=0)
+ ab=00 (a=0,b=0): 1 -> m0 = !a & !b & !c & !d
+ ab=01 (a=0,b=1): 1 -> m1 = !a & b & !c & !d
+ ab=11 (a=1,b=1): 0
+ ab=10 (a=1,b=0): 1 -> m2 = a & !b & !c & !d
+
+cd=01 (c=0,d=1)
+ ab=00 (a=0,b=0): 1 -> m4 = !a & !b & !c & d
+ ab=01 (a=0,b=1): 0
+ ab=11 (a=1,b=1): 0
+ ab=10 (a=1,b=0): 1 -> m6 = a & !b & !c & d
+
+cd=11 (c=1,d=1)
+ ab=00 (a=0,b=0): 0
+ ab=01 (a=0,b=1): 1 -> m13 = !a & b & c & d
+ ab=11 (a=1,b=1): 1 -> m15 = a & b & c & d
+ ab=10 (a=1,b=0): 1 -> m14 = a & !b & c & d
+
+cd=10 (c=1,d=0)
+ ab=00 (a=0,b=0): 1 -> m8 = !a & !b & c & !d
+ ab=01 (a=0,b=1): 1 -> m9 = !a & b & c & !d
+ ab=11 (a=1,b=1): 0
+ ab=10 (a=1,b=0): 0
+
+Minterm numbers: 0,1,2,4,6,8,9,13,14,15
+
+We can write the function as the sum of these minterms or simplify by grouping:
+
+We see the groups:
+- For c=0,d=0: m0,m1,m2 (ab=00,01,10) are 1, only ab=11 is 0.
+- For c=0,d=1: m4 and m6=1 (ab=00,10)
+- For c=1,d=0: m8,m9=1 (ab=00,01)
+- For c=1,d=1: m13,m14,m15=1 (ab=01,10,11)
+
+Looking for groups:
+
+Group 1: m0,m1,m2,m4,m6 (c=0) and d varies, mostly a and b
+
+Try grouping on c and d:
+
+Observe that output=1 when (c=0 and b=0) or (d=0 and b=0) or (c=1 and d=1 and (b=1 or a=1)).
+
+Alternatively, let's try to find simplified expression by Sum of Products.
+
+Alternatively, use the K-map and write simplified SOP terms.
+
+Using K-map groups:
+
+- Group of 4: m0,m1,m4,m5 (but m5=0), so invalid.
+- Group of 2: m0,m1 (row cd=00 col ab=00,01) -> !a & !c & !d (since b varies)
+- Group of 2: m8,m9 (row cd=10 col ab=00,01) -> !a & c & !d
+- Group of 4: m13,m14,m15,m9? m9 is 1 but different row. Better group m13,m14,m15 (cd=11, ab=01,10,11) -> c & d & (b + a)
+
+Simplify:
+
+Term1: !a & !c & !d (covers m0,m1)
+Term2: a & !b & !c & !d (m2)
+Term3: !a & !b & !c & d (m4)
+Term4: a & !b & !c & d (m6)
+Term5: !a & !b & c & !d (m8)
+Term6: !a & b & c & !d (m9)
+Term7: !a & b & c & d (m13)
+Term8: a & !b & c & d (m14)
+Term9: a & b & c & d (m15)
+
+Alternatively, combine:
+
+From terms (m0,m1) -> !a & !c & !d
+From terms (m2,m6) -> a & !b & !c & (d or !d) = a & !b & !c
+From terms (m4) -> !a & !b & !c & d
+From terms (m8,m9) -> !a & c & !d
+From terms (m13,m14,m15) -> c & d & ( ( !a & b ) or ( a & !b ) or ( a & b ) ) = c & d & (a | b)
+
+Finally, write function as:
+
+out = (!a & !c & !d)          // covers m0,m1
+    | (a & !b & !c)           // covers m2,m6
+    | (!a & !b & !c & d)      // m4
+    | (!a & c & !d)           // m8,m9
+    | (c & d & (a | b));      // m13,m14,m15
+
+We can implement this as combinational logic.

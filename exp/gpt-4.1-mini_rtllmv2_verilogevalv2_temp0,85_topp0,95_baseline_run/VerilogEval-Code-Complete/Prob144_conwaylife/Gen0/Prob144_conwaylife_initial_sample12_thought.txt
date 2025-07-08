@@ -1,0 +1,10 @@
+Implement the Game of Life variant on a 16x16 toroidal grid represented by a 256-bit vector q. On each clock cycle, if load is high, load the input data into q synchronously. Otherwise, compute the next state of each cell in q according to the neighbor rules given:
+
+- Count the 8 neighbors using wrap-around indices.
+- Apply rules:
+  - 0 or 1 neighbor: next cell = 0
+  - 2 neighbors: next cell = current cell
+  - 3 neighbors: next cell = 1
+  - 4+ neighbors: next cell = 0
+
+Use modular arithmetic for toroidal addressing. Since q is a flat vector with rows stored consecutively, index calculation for neighbors uses row and column modulo 16. Compute all next states combinationally and update q on clk edge.

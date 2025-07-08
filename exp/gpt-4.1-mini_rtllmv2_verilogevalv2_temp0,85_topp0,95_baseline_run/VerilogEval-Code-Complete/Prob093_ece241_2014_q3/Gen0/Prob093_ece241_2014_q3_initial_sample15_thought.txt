@@ -1,0 +1,33 @@
+We have a 4-to-1 MUX with selectors a and b, selecting among mux_in[3:0]. Each mux_in[i] is a function of c and d, so mux_in[i] = f_i(c,d).
+
+From the Karnaugh map, rows correspond to cd (00, 01, 11, 10), columns correspond to ab (00, 01, 11, 10). For each fixed ab (fixed column), the output varies with cd (the row).
+
+So for each column (ab), we have 4 output bits corresponding to cd values 00, 01, 11, 10:
+
+ab=00 (mux_in[0]): outputs for cd = 00:0, 01:1, 11:1, 10:1 => 0,1,1,1
+
+ab=01 (mux_in[1]): outputs for cd = 00:0, 01:0, 11:0, 10:0 => 0,0,0,0
+
+ab=11 (mux_in[2]): outputs for cd = 00:0, 01:0, 11:1, 10:0 => 0,0,1,0
+
+ab=10 (mux_in[3]): outputs for cd = 00:1, 01:0, 11:1, 10:1 => 1,0,1,1
+
+Now we implement each mux_in[i] as a function of c and d, using only 2-to-1 muxes.
+
+Use c and d as inputs to the top_module; we need to express mux_in[i] in terms of c, d, and 2-to-1 multiplexers only.
+
+We will implement the function as a nested 2-to-1 mux tree.
+
+We can choose either c or d as the selector at each mux.
+
+For each mux_in[i], implement the 2-variable function of c and d with minimal 2-to-1 muxes.
+
+The general approach for 2 variables f(c,d):
+
+f = d ? f_c=1 : f_c=0
+
+So one 2-to-1 mux with selector d, inputs f_c=0 and f_c=1 (each a function of c).
+
+But since only c and d are inputs, and only 2-to-1 muxes are allowed, we can implement any 2-input function with at most 2 2-to-1 muxes.
+
+We will implement each mux_in[i] accordingly.

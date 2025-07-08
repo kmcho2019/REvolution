@@ -1,0 +1,35 @@
+The module will track the current water level based on the sensor inputs and remember the previous level category to detect if the water level has risen since the last sensor change.
+
+- Define water levels as states based on sensor input:
+  - Level 3 (Above s[2]): s == 3'b111
+  - Level 2 (Between s[2] and s[1]): s == 3'b011
+  - Level 1 (Between s[1] and s[0]): s == 3'b001
+  - Level 0 (Below s[0]): s == 3'b000
+
+Any other sensor states will be treated as the closest lower level for safety.
+
+- On each clock cycle, sample s and update current level.
+- Detect if the level has risen compared to previous level; if yes, assert dfr (supplemental valve).
+- Outputs fr0, fr1, fr2 asserted according to nominal flow rate for the current level.
+- On reset, set state to Level 0 (below s[0]) with all outputs asserted.
+
+The outputs based on level:
+
+| Level | Sensors Asserted | fr2 | fr1 | fr0 | dfr |
+|-------|------------------|-----|-----|-----|-----|
+| 3     | s[2], s[1], s[0] | 0   | 0   | 0   | 0   |
+| 2     | s[1], s[0]       | 0   | 0   | 1   | ?   |
+| 1     | s[0]             | 0   | 1   | 1   | ?   |
+| 0     | none             | 1   | 1   | 1   | ?   |
+
+dfr is asserted if level increased since last change.
+
+Implementation notes:
+- Use a 2-bit reg to hold previous level.
+- On reset, previous level = 0.
+- For safety, map any unexpected sensor pattern to a level accordingly:
+  - If s[2] == 1 => Level 3
+  - Else if s[1] == 1 => Level 2
+  - Else if s[0] == 1 => Level 1
+  - Else Level 0
+- The level comparison is numeric: higher number means higher water level.

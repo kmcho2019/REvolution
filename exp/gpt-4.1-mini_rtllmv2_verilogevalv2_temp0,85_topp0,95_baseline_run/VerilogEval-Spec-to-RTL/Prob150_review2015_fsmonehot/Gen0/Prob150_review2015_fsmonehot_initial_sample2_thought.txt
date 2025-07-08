@@ -1,0 +1,43 @@
+The module implements next-state logic and output logic of a one-hot Moore state machine with given states encoded as one-hot bits in a 10-bit input 'state'. Inputs are d, done_counting, and ack. From the state transition diagram, we write next-state conditions by checking which one-hot bit in 'state' is set and apply the input conditions to determine which next state bit to assert.
+
+Next state bits are B3_next, S_next, S1_next, Count_next, Wait_next (all one-hot bits asserted for next state). The other states' next bits are not explicitly required as outputs.
+
+Output signals are combinational from the current state:
+
+- done = 1 when in Wait state
+- counting = 1 when in Count state
+- shift_ena = 1 when in B0, B1, B2, or B3 states
+
+Since encoding is one-hot, 'state' bits correspond to states in order:
+
+S      = state[0]
+S1     = state[1]
+S11    = state[2]
+S110   = state[3]
+B0     = state[4]
+B1     = state[5]
+B2     = state[6]
+B3     = state[7]
+Count  = state[8]
+Wait   = state[9]
+
+Next state logic from diagram:
+
+- S_next = (S & (d==0)) | (S1 & (d==0)) | (S110 & (d==0)) | (Wait & ack==1)
+- S1_next = S & d
+- S11_next = S1 & d  (not output required)
+- S110_next = S11 & ~d (not output required)
+- B0_next = S110 & d (not output required)
+- B1_next = B0 (always)
+- B2_next = B1 (always)
+- B3_next = B2 (always)
+- Count_next = B3 (always) | (Count & ~done_counting)
+- Wait_next = Count & done_counting | (Wait & ~ack)
+
+Outputs:
+
+- done = Wait
+- counting = Count
+- shift_ena = B0 | B1 | B2 | B3
+
+Implement combinational logic for next state outputs and outputs accordingly.

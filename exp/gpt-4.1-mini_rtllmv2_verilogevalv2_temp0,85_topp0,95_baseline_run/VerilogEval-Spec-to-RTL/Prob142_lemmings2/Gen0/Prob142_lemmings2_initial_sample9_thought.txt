@@ -1,0 +1,29 @@
+Implement a Moore FSM with three states: WALK_LEFT, WALK_RIGHT, and FALLING.
+- WALK_LEFT: walk_left=1, walk_right=0, aaah=0
+- WALK_RIGHT: walk_left=0, walk_right=1, aaah=0
+- FALLING: walk_left and walk_right both 0, aaah=1
+
+On areset (async posedge), go to WALK_LEFT.
+
+Transitions:
+- From WALK_LEFT:
+  - if ground=0, go to FALLING
+  - else if bump_left or bump_right (or both), switch to WALK_RIGHT
+  - else stay WALK_LEFT
+
+- From WALK_RIGHT:
+  - if ground=0, go to FALLING
+  - else if bump_left or bump_right (or both), switch to WALK_LEFT
+  - else stay WALK_RIGHT
+
+- From FALLING:
+  - if ground=1, return to previous walking direction state (stored in a reg)
+  - else stay FALLING
+
+During FALLING, bump inputs do not change direction.
+
+Store previous walking direction state before falling to restore after fall.
+
+Implement the FSM using always @(posedge clk or posedge areset) for state update and asynchronous reset.
+
+The outputs depend only on the current state (Moore machine).

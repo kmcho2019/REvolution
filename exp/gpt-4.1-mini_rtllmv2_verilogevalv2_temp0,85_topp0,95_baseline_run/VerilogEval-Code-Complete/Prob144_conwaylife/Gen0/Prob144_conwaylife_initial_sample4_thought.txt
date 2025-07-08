@@ -1,0 +1,19 @@
+To implement the 16x16 Game of Life variant on a toroidal grid, we must:
+
+- Interpret the 256-bit vector `q` as a 16x16 grid, where bits [15:0] correspond to row 0, bits [31:16] to row 1, and so on.
+- On load=1, synchronously load the input data to `q`.
+- On load=0, at each clock cycle, compute the next generation state for each cell based on the number of live neighbors and the rules given.
+- Since the grid is toroidal, neighbors wrap around the edges.
+- Implement neighbor counting carefully, considering wrap-around in both row and column indices.
+- Use a combinational loop or generate block to compute the next state for all 256 cells in parallel.
+- Then, assign the combined next state to `q` on the next clock edge.
+
+This approach fits well in a single always_ff block with load check, and a combinational function to calculate the next state from current q.
+
+For efficiency, we can extract each cell using indexing and create helper functions for neighbor counting.
+
+Because of the 256-bit size, the code will use nested loops (genvar) to generate logic for all cells.
+
+Note that the 256-bit vector is arranged such that q[row*16 + col] corresponds to bit position (row*16 + col).
+
+Finally, the output q is a reg and updated synchronously.

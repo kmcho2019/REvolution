@@ -1,0 +1,21 @@
+From the waveform, p and q are outputs of a sequential circuit driven by clock and input a.
+
+- Initially (clock=0), p and q are unknown (x).
+- On the first rising clock edge (around 25ns), p becomes 0 and q remains unknown.
+- When clock is 0, p stays stable, q moves from 0 to 1 when clock falls from 1 to 0 and p was 1.
+- On clock=1 edges, p follows input a only when q=0.
+- When q=1, p follows input a only when clock is 1 and a=1, otherwise p=0.
+- q seems to latch to the previous p value on falling clock edge (clock=1 to 0).
+- q updates only on falling edges of clock and takes the previous p value.
+- p updates on rising edges of clock based on a and q.
+
+In summary:
+- q is updated on falling edge of clock to the value of p.
+- p is updated on rising edge of clock based on a and q.
+
+Implementation:
+- Use two always blocks triggered on posedge and negedge of clock.
+- On posedge clock: if q=0, p <= a; else p <= p & a (observing that p=1 only if a=1 and q=1).
+- On negedge clock: q <= p.
+
+This matches the waveform behavior and output sequences.

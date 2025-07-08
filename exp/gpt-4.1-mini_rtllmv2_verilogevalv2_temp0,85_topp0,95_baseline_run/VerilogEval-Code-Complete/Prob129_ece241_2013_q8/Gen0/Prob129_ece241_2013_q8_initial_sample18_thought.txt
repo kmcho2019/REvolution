@@ -1,0 +1,15 @@
+To implement a Mealy FSM that detects the sequence "101" with overlapping sequences and only 3 states, we define states to track the progress:
+- S0: Initial state, no match yet.
+- S1: Detected '1'.
+- S2: Detected '10'.
+
+On each clock's rising edge, the FSM transitions based on input x:
+- From S0: if x=1 go to S1, else stay in S0.
+- From S1: if x=0 go to S2, if x=1 stay in S1.
+- From S2: if x=1 sequence "101" is detected (assert z=1) and transition to S1 (since the last '1' can start a new sequence), if x=0 go to S0.
+
+The output z is asserted on the same clock cycle as detection (Mealy output) on transitions from S2 with x=1.
+
+Reset is asynchronous and active low, so on negative edge of aresetn, FSM goes to S0.
+
+This design supports overlapping sequences, e.g. "10101" will detect two sequences.

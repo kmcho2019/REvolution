@@ -1,0 +1,52 @@
+Score: 3
+Justification: The code is syntactically correct and compiles without errors, but it fails the simulation with numerous functional mismatches on the 'pm', 'hh', and 'mm' outputs. Only 'ss' shows no mismatches, indicating partial functionality but significant logic errors in hour and minute handling and the am/pm toggle.
+
+ANALYSIS:
+The primary design intent is to implement a 12-hour BCD clock with an AM/PM indicator, updating on an enable pulse every second. The code correctly resets to "12:00 AM" and increments seconds properly, as indicated by the correct 'ss' output in simulation. 
+
+However, the simulation failures show widespread mismatches on 'pm', 'hh', and 'mm', highlighting issues in the time incrementation logic beyond seconds.
+
+Key problematic areas:
+
+1. **Hour Increment Logic in `inc_hour_12` Function:**
+
+   - The function attempts to increment a 12-hour BCD hour counter, rolling over from 12 to 01 with a carry that should toggle 'pm'.
+   - The rollover condition uses:
+     ```verilog
+     if ((new_hour[7:4] > 4'd1) || (new_hour > 8'd12) || (new_hour == 8'd00)) 
+     ```
+     This mix of bitwise comparison for the tens digit (BCD) and decimal comparisons of an 8-bit vector causes ambiguity and incorrect behavior.
+   - The comparison `(new_hour > 8'd12)` treats the BCD hour as a pure 8-bit binary value rather than as two separate BCD digits, which leads to incorrect rollover detection.
+   - The use of `8'd` decimal values to compare BCD digits is incorrect and results in invalid hour values, causing erroneous resets and carry signals.
+   - Because of this, the hour counter likely fails to increment correctly between "01" and "12" and may skip values or reset unexpectedly, causing mismatches in 'hh'.
+
+2. **Minute Increment Logic in `bcd_inc60` Function:**
+
+   - The function increments two-digit BCD minutes from 00 to 59 with a carry beyond 59.
+   - Inside `bcd_inc60`, after incrementing the low digit, it increments the high digit if the low digit overflows. Then, if the high digit exceeds 5, it resets to 0 and generates a carry out.
+   - However, the condition uses `if (high > 4'd5)` to detect overflow, which might be off by one if the high digit is exactly 5 and the low digit is 9.
+   - This might cause incorrect carry generation and minute rollovers to fail or behave inconsistently, leading to mismatches in 'mm'.
+
+3. **Mixing Binary and BCD Arithmetic:**
+
+   - Several comparisons in the code treat BCD-encoded values as binary numbers, leading to erroneous conditions.
+   - For example, in `inc_hour_12`, the condition `(new_hour > 8'd12)` is invalid for BCD since '12' in BCD is `0001_0010` (decimal 18 in binary).
+   - This likely results in incorrect rollover detection, causing the hour counter to malfunction.
+
+4. **Register Declarations Inside Always Block:**
+
+   - The code declares local regs such as `sec_inc`, `min_inc`, `hr_inc`, and rollover flags inside the always block, which is syntactically legal in SystemVerilog but may cause synthesis or simulation tools to interpret them unexpectedly if targeting pure Verilog-2001.
+   - While this might not cause the simulation failures observed, it is a potential source of confusion.
+
+5. **AM/PM Toggle Logic:**
+
+   - The pm flip is toggled only when there is an hour rollover detected via `rollover_hr`.
+   - Since the hour rollover signal is misgenerated due to the flawed hour increment logic, the pm signal will not toggle correctly, producing many mismatches.
+
+In summary, the major cause of failure is incorrect handling of BCD arithmetic and comparisons, especially for the hours counter rollover detection and minute carry condition, which violate the design requirement of a proper 12-hour BCD clock with correct am/pm toggling.
+
+The 'ss' counter works correctly, confirming the increment and reset logic for seconds is fine.
+
+The simulation log supports this: 'ss' output has no mismatches, but 'mm', 'hh', and 'pm' have numerous mismatches starting early in the simulation, indicating persistent logic errors in these signals.
+
+Hence, the code is functionally flawed in the key time increment and rollover logic, though it is syntactically sound and partially functional.

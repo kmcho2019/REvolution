@@ -1,0 +1,110 @@
+We are given a 4-to-1 mux with selector inputs a and b, selecting one of mux_in[3:0]. We want the final function from inputs a,b,c,d to match the K-map given. So the K-map rows are c d and columns are a b.
+
+The mux_in corresponds to the four columns (ab = 00, 01, 11, 10).
+
+For each mux_in[i], we must implement the function of c and d for that fixed ab.
+
+From the table (cd rows: 00, 01, 11, 10; ab columns: 00, 01, 11, 10):
+
+Let's extract the columns for each ab:
+
+- ab=00 (mux_in[0]): values for cd=00,01,11,10 are: 0,1,1,1
+- ab=01 (mux_in[1]): values: 0,0,0,0
+- ab=11 (mux_in[2]): values: 0,0,1,0
+- ab=10 (mux_in[3]): values: 1,0,1,1
+
+We need to implement mux_in[3:0] as functions of c and d using only 2-to-1 muxes and no other gates.
+
+We can implement each function using 2-to-1 muxes with c or d as selector inputs.
+
+Implement each mux_in[i] as a tree of 2-to-1 muxes selecting between 0 and 1 values.
+
+For example, for mux_in[0]:
+
+cd=00:0, 01:1, 11:1, 10:1
+
+Group by c:
+
+c=0 (cd=00,01): values 0,1 -> can be chosen by d
+
+c=1 (cd=11,10): values 1,1 -> always 1
+
+So mux_in[0] = c ? 1 : d
+
+Similarly for mux_in[1]:
+
+All zeros -> mux_in[1] = 0
+
+mux_in[2]:
+
+cd=00:0, 01:0, 11:1, 10:0
+
+Group by c:
+
+c=0 (cd=00,01): 0,0 -> 0
+
+c=1 (cd=11,10): 1,0 -> select d'
+
+So mux_in[2] = c ? (~d) : 0
+
+But no NOT allowed, so we must implement ~d using a 2-to-1 mux.
+
+We only have muxes and no other logic.
+
+To get ~d, we can do a 2-to-1 mux with d as selector and inputs 1 and 0:
+
+~d = d?0:1 = mux with d selecting between 1 and 0.
+
+Similarly, for mux_in[3]:
+
+cd=00:1, 01:0, 11:1, 10:1
+
+Group by c:
+
+c=0 (cd=00,01): 1,0
+
+c=1 (cd=11,10): 1,1
+
+For c=0: values depend on d -> 1,0 means mux_in[3] = c ? 1 : ~d
+
+For c=1: always 1
+
+So mux_in[3] = c ? 1 : ~d
+
+Thus:
+
+mux_in[0] = c ? 1 : d
+
+mux_in[1] = 0
+
+mux_in[2] = c ? (d ? 0 : 1) : 0
+
+mux_in[3] = c ? 1 : (d ? 0 : 1)
+
+Implementing ~d as 2-to-1 mux: mux with select d, inputs 1 and 0.
+
+So the whole design inside top_module is to produce mux_in[3:0] as described using only 2-to-1 muxes.
+
+We'll implement 2-to-1 mux as module mux2, and instantiate it as needed.
+
+Note: The problem only requires implementing the top_module that outputs mux_in[3:0]. The 4-to-1 mux is outside.
+
+We'll build the expressions for each mux_in bit as a small mux network.
+
+For example,
+
+- mux_in[0] = c ? 1 : d = mux2(c, d, 1)
+
+- mux_in[1] = 0
+
+- mux_in[2] = c ? (~d) : 0
+
+- mux_in[3] = c ? 1 : (~d)
+
+We implement ~d as mux2(d, 1, 0)
+
+So for mux_in[2] and mux_in[3], we will instantiate mux2 for ~d and then use it in another mux2.
+
+This approach uses only 2-to-1 muxes and constants 0 or 1.
+
+This matches the requirement and uses as few muxes as possible.

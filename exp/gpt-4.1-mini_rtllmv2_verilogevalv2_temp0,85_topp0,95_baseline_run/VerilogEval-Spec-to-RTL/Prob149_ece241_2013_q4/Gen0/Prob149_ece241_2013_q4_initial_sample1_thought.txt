@@ -1,0 +1,22 @@
+The design requires a state machine that tracks the current water level using the 3-bit sensor input `s`. The sensors indicate the water level: s[2] highest, s[0] lowest, spaced 5 inches apart.
+
+- On reset, the system assumes the water level is below s[0], so no sensors are asserted and all outputs (fr0, fr1, fr2, dfr) are asserted.
+- Based on the current sensor input `s`, the module determines the nominal flow outputs (fr0, fr1, fr2).
+- The nominal flow is:
+  - Above s[2] (all sensors asserted) -> no flow outputs asserted.
+  - Between s[2] and s[1] (s[0], s[1] asserted) -> fr0
+  - Between s[1] and s[0] (only s[0] asserted) -> fr0, fr1
+  - Below s[0] (no sensors asserted) -> fr0, fr1, fr2
+- The supplemental flow valve `dfr` is asserted when the water level is rising from a lower level to a higher level (indicated by sensor change). To detect this, we track the previous level state and compare it to the current level state.
+- The "level" is encoded as an integer from 0 to 3:
+  - 3 = Above s[2] (all sensors asserted)
+  - 2 = Between s[2] and s[1] (s[0], s[1] asserted)
+  - 1 = Between s[1] and s[0] (s[0] asserted)
+  - 0 = Below s[0] (no sensors asserted)
+- On each clock, we update the level state from the sensor input, determine nominal flow outputs, compare current and previous level to assert dfr if rising.
+- Synchronous reset sets level to 0 (lowest) and outputs all flow signals asserted.
+
+Implementation details:
+- Use a combinational function to decode sensor inputs into the level number.
+- Store previous level in a register to detect rising level.
+- Outputs assigned combinationally from level and previous level.

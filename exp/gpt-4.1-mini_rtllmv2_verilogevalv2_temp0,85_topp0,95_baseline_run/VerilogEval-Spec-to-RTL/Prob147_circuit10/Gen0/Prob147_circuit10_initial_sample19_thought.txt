@@ -1,0 +1,22 @@
+The circuit has one-bit state memory updated on the clock's positive edge. Observing the state changes and output q:
+
+- Initially, state is unknown (x).
+- At 15ns (clk rising), state becomes 0.
+- When b=1 and state=0, q=1 at next clk rising edge, and state remains 0 or transitions accordingly.
+- When a=1 and b=1 and state=0, state becomes 0 and q=0.
+- When state=1 and a=0, q=1.
+- When a=1 and b=0 and state=1, q=0 and state becomes 0.
+- q seems to be a combinational output depending on inputs a, b and the current state.
+- state updates depending on a, b and current state.
+
+From the waveform, we can infer that the next state and q outputs follow:
+
+next_state = (state & ~(a & b)) | (~state & b)
+q = (state & ~a) | (~state & b)
+
+This satisfies the transitions and output behavior seen in the waveform.
+
+Therefore:
+- On posedge clk, state <= next_state
+- Output q = (state & ~a) | (~state & b)
+- Output state = current state

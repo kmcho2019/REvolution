@@ -1,0 +1,27 @@
+Score: 7
+Justification: The code is syntactically correct and the fall and dig outputs behave correctly, but the simulation log shows mismatches on the walk_left and walk_right outputs, indicating incorrect walking direction handling, likely due to logic errors in direction switching and bump handling in walking states.
+
+ANALYSIS:
+The design intent is to implement a Moore FSM representing a Lemming that walks left or right, switches directions when bumped, falls when ground=0, and digs when told. The outputs walk_left and walk_right should never be asserted simultaneously, and direction changes on bumps should occur only when walking and on ground.
+
+The key issues in the code relate to the walking states and bump handling:
+
+1. **Direction switching logic is symmetric but does not consider bump side properly in walking states:**  
+   In `WALK_LEFT` state, any bump on left or right sets `next_state = WALK_RIGHT`. In `WALK_RIGHT` state, any bump sets `next_state = WALK_LEFT`. According to the problem, if bumped on left, the Lemming should walk right, and if bumped on right, it should walk left, and if bumped on both sides simultaneously, it still switches direction.  
+   This is consistent with the code logic, but in the simulation, the `walk_left` and `walk_right` outputs show mismatches starting at time 280, indicating that the walking direction output does not always reflect the correct state after bumps.
+
+2. **Direction memory (`dir_before_fall`) update timing:**  
+   The `dir_before_fall` register is updated in the always block on posedge clk or posedge areset only when the `next_state` is a walking state. This is intended to remember the direction before falling. However, if the FSM transitions from walking to falling in one cycle, `dir_before_fall` still updates to the new walking direction before the state change. This could cause the FSM to remember an incorrect direction when resuming after fall. The design intent requires remembering the walking direction before falling, and bumps during falling or digging should not affect direction.
+
+3. **Handling of simultaneous bump_left and bump_right:**  
+   The code uses the condition `(bump_left | bump_right)` to switch direction in both walking states, which matches the spec that bump on either side or both causes direction switch. However, the code switches direction to a fixed opposite state rather than toggling direction based on which bump occurred. Although logically equivalent, the code's logic is split by states, which may cause subtle timing issues or misalignments with expected behavior in simulation.
+
+4. **Digging start condition:**  
+   The code allows digging only when in walking states and on ground (`dig==1` and `ground==1`). This is consistent with the spec.
+
+5. **Output logic matches the state, except for walking outputs mismatches:**  
+   The simulation log reports no mismatches for `aaah` and `digging`, showing those outputs correctly reflect the FSM states. However, `walk_left` and `walk_right` have 56 mismatches, indicating the walking outputs do not always track the walking states as expected. This hints that the FSM state transitions between walking left and walking right may not correctly handle direction changes or are delayed, causing output mismatches.
+
+Summary: The FSM states and transitions are mostly correct, but the way the direction is updated and bumps handled in walking states causes the walking direction outputs to mismatch the expected simulation results. The stored direction before fall may not correctly preserve the walking direction when falling and resuming. These logical flaws cause the walking output mismatches reported in the simulation log.
+
+No syntax errors were found, so the score reflects functional issues only.

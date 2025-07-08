@@ -1,0 +1,16 @@
+We have 5 inputs (a, b, c, d, e) and want to compute equality for every pair (including each bit with itself) for a total of 25 pairs. We'll arrange the output vector out[24:0] so that out[24] corresponds to (a, a), out[23] to (a, b), out[22] to (a, c), ..., down to out[0] = (e, e).
+
+Each output bit is 1 if the two compared bits are equal, 0 otherwise. Equality of single bits can be computed as ~(x ^ y).
+
+We will index the outputs so that the pairs are ordered row-wise in a 5x5 matrix:
+Row 0 (a): out[24] = (a,a), out[23] = (a,b), ..., out[20] = (a,e)
+Row 1 (b): out[19] = (b,a), ..., out[15] = (b,e)
+Row 2 (c): out[14] = (c,a), ..., out[10] = (c,e)
+Row 3 (d): out[9] = (d,a), ..., out[5] = (d,e)
+Row 4 (e): out[4] = (e,a), ..., out[0] = (e,e)
+
+We'll implement it using a combinational assign statement.
+
+Note: The example line `out[24] = ~a ^ a;` from the prompt is incorrect because `~a ^ a` is always 1 (if ~a means bitwise NOT), but better is to use equality as `~(a ^ a)` which equals 1 since a == a.
+
+We'll explicitly assign each output bit using `~(x ^ y)`.

@@ -1,0 +1,25 @@
+We implement a state machine with the following states: SEARCH (looking for pattern 1101), SHIFT_DELAY (shift in 4 bits for delay), COUNTING (counting down with the timer), DONE (timer done, waiting for ack). 
+
+In SEARCH, shift in bits to detect 1101 pattern. When detected, move to SHIFT_DELAY and shift in 4 bits into delay register.
+
+In COUNTING, implement a clock cycle counter to count 1000 cycles per decrement of delay counter. Output the current remaining delay as count. Counting is asserted during this time.
+
+When the delay reaches zero and 1000 cycles counted for the last delay, move to DONE, assert done signal and wait for ack==1.
+
+Once ack==1, return to SEARCH.
+
+Reset initializes the state machine to SEARCH state.
+
+Use a shift register or state bits to detect the start pattern. For the 1101 pattern detection, shift in bits serially. A 4-bit shift register can be used.
+
+For counting 1000 clock cycles, use a 10-bit counter (since 2^10=1024 > 1000). On each 1000 clock cycles, decrement delay counter.
+
+Output count is the current delay value.
+
+counting is asserted only during COUNTING.
+
+done is asserted only during DONE.
+
+The count output is don't-care outside COUNTING, so can be set to zero or delay value only in COUNTING.
+
+Synchronous reset sets state to SEARCH and clears registers.

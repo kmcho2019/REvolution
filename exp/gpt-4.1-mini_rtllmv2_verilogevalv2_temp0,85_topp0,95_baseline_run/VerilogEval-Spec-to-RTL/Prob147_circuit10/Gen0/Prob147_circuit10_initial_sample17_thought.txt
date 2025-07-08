@@ -1,0 +1,31 @@
+Analyze the state and output q with respect to inputs a and b and previous state.
+
+From the waveform:
+- The state output is the current flip-flop output.
+- The q output depends on inputs a, b and the current state.
+
+Observations:
+- At time 15ns (clk rising), state=0 and q=0 with inputs a=0, b=0.
+- At 45ns (clk rising), inputs a=0, b=1, state=0, output q=1.
+- At 65ns (clk rising), inputs a=1, b=1, state=0, q=0.
+- At 75ns (clk rising), inputs a=0, b=0, state=1, q=1.
+- At 95ns (clk rising), inputs a=1, b=1, state=1, q=1.
+
+Looking at q behavior:
+- q = (b & ~state) | (a & state)
+
+Looking at state update:
+- At 15ns: state=0
+- At 45ns: state=0
+- At 75ns: state=1
+- At 135ns: state=1
+- At 145ns: state=0
+
+Analyzing state transitions:
+From the waveform, the state updates on clock edge to the previous q value.
+
+Therefore:
+- state <= q (flip-flop stores q on rising edge)
+- q combinationally = (b & ~state) | (a & state)
+
+Implement a D flip-flop with D = q, output state = flip-flop output, q combinational output as above.

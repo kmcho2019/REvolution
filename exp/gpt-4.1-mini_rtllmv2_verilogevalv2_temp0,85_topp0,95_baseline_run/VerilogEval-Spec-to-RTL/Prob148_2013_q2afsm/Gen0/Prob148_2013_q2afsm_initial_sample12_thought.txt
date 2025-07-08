@@ -1,0 +1,18 @@
+Implement a 4-state FSM with states A, B, C, D encoded as needed.
+- State A: No grant, check requests on input r[2:0]
+  - If r[0]=1: go to B, grant g=001
+  - else if r[1]=1: go to C, grant g=010
+  - else if r[2]=1: go to D, grant g=100
+  - else remain in A, no grant (g=000)
+- State B: grant g=001, stay in B if r[0]=1, else go to A
+- State C: grant g=010, stay in C if r[1]=1, else go to A
+- State D: grant g=100, stay in D if r[2]=1, else go to A
+
+Use synchronous active-low reset to set state to A.
+
+Separate always blocks for:
+- State register (sequential logic)
+- Next state logic (combinational)
+- Outputs (combinational, from state)
+
+Assign state codes as parameter constants.

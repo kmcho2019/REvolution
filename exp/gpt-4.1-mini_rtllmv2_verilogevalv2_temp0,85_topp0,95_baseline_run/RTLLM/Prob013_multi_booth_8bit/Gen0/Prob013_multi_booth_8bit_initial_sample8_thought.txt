@@ -1,0 +1,30 @@
+Implement a Radix-4 Booth multiplier for 8-bit inputs by encoding pairs of bits from the multiplier and extending the multiplicand accordingly. Use a 5-bit counter to track the number of cycles, performing one booth recoding and addition/subtraction per cycle. The product register accumulates partial results. The multiplicand and multiplier are sign-extended and stored in registers. On reset, initialize registers and clear ready. On each clock cycle, perform Booth operation based on the current Booth bits from the multiplier and update the product. When the counter reaches 8 (since Radix-4 processes 2 bits per cycle for 8 bits multiplier, total 4 cycles; but as per original request we can perform 16 cycles, interpreting single bit shifts), set ready signal high.
+
+However, the original instructions mention checking multiplier[ctr] bit and shifting multiplicand left by 1 each time up to 16 cycles, which resembles a simple shift-add multiplier, not Radix-4 Booth.
+
+To implement Radix-4 Booth properly:
+
+- Extend multiplier by one bit at LSB as zero for Booth encoding.
+- At each cycle, look at three bits: current bit, previous bit, and the bit before previous (overlapping groups).
+- Depending on the 3-bit pattern, add, subtract, or do nothing with multiplicand shifted accordingly.
+- Since multiplier is 8-bit, need 4 cycles (processing 2 bits per cycle).
+- Use a product register wide enough to hold 16 bits.
+- After 4 cycles, set ready high.
+
+But since the prompt mentions a 16-cycle process, checking multiplier[ctr] bit, and left-shifting multiplicand each time, I will implement the described process faithfully (which is a shift-add multiplier using Booth-like logic on single bits, not Radix-4). 
+
+I will:
+
+- On reset: sign-extend and load a and b into multiplicand and multiplier registers.
+- Use 5-bit counter ctr.
+- If ctr < 16:
+   - If multiplier[ctr] == 1, add multiplicand to product.
+   - Left-shift multiplicand by 1.
+   - Increment ctr.
+- When ctr == 16, set ready signal to 1.
+
+This matches the instructions exactly.
+
+Note: This is a shift-add multiplier with sequential addition, not a Radix-4 booth multiplier. Radix-4 booth reduces cycles by processing 2 bits at a time.
+
+But per instructions, I will do as specified.

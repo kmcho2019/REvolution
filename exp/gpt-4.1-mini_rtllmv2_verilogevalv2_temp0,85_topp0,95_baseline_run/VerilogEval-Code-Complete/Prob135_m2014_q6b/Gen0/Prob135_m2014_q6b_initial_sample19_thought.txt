@@ -1,0 +1,40 @@
+We are given a state machine with states A to F encoded as 3-bit states y[3:1]:
+A=000, B=001, C=010, D=011, E=100, F=101.
+
+We need to implement the next-state logic for y[2], i.e. Y2, given current state y and input w.
+
+To find the next Y2 value, for each current state and input w, we look at the next state and extract the bit y[2] of that next state.
+
+The transitions:
+
+A(000):
+  w=0 -> B(001) y2=0
+  w=1 -> A(000) y2=0
+
+B(001):
+  w=0 -> C(010) y2=1
+  w=1 -> D(011) y2=1
+
+C(010):
+  w=0 -> E(100) y2=0
+  w=1 -> D(011) y2=1
+
+D(011):
+  w=0 -> F(101) y2=0
+  w=1 -> A(000) y2=0
+
+E(100):
+  w=0 -> E(100) y2=0
+  w=1 -> D(011) y2=1
+
+F(101):
+  w=0 -> C(010) y2=1
+  w=1 -> D(011) y2=1
+
+We can implement this either using a combinational always block or assign statement with case.
+
+For clarity, use an always @* block with a case on y and then w inside.
+
+Note that y is 3 bits y[3:1].
+
+Finally, output reg Y2.

@@ -1,0 +1,90 @@
+We have inputs c and d for TopModule, and outputs mux_in[3:0] connected to the 4-to-1 mux inputs. The 4-to-1 mux selects one of mux_in based on selector inputs a,b which are not inputs of TopModule but used inside.
+
+Our goal is to implement the K-map function f(a,b,c,d) using one 4-to-1 mux with selector a,b, and as many 2-to-1 muxes as needed, but as few as possible, and only multiplexers are allowed (no logic gates).
+
+The 4-to-1 mux uses a,b as selectors, so for each ab value (00,01,11,10), the corresponding mux_in input (mux_in[0]..mux_in[3]) is the function f when a,b are fixed.
+
+We rewrite the function for each ab:
+
+From the K-map:
+
+       ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+For ab=00 (mux_in[0]):
+
+cd: 00->0, 01->1, 11->1, 10->1
+
+So for ab=00:
+
+f = 1 when cd=01,11,10 and 0 when cd=00
+
+Hence, mux_in[0] = (c & d) + (c & ~d) + (~c & d) = c + d (OR of c and d)
+
+For ab=01 (mux_in[1]):
+
+cd: 00->0, 01->0, 11->0, 10->0
+
+Always 0.
+
+mux_in[1] = 0
+
+For ab=11 (mux_in[2]):
+
+cd: 00->0, 01->0, 11->1, 10->0
+
+Only 1 when cd=11 (c=1,d=1)
+
+mux_in[2] = c & d
+
+For ab=10 (mux_in[3]):
+
+cd: 00->1, 01->0, 11->1, 10->1
+
+So when cd=00(0,0)->1, 01(0,1)->0, 11(1,1)->1, 10(1,0)->1
+
+Equivalent to: (c & ~d) + (~c & ~d) + (c & d) = (~d & (c + ~c)) + (c & d) = ~d + (c & d)
+
+So mux_in[3] = ~d + (c & d)
+
+We need to implement mux_in[0], mux_in[1], mux_in[2], mux_in[3] using only 2-to-1 muxes and no logic gates.
+
+We can implement OR, AND and NOT using multiplexers:
+
+- NOT x = mux(sel=x, 1,0)
+
+- AND x,y = mux(sel=x, 0,y)
+
+- OR x,y = mux(sel=x, y,1)
+
+We will define helper functions for AND, OR, NOT using 2-to-1 mux.
+
+Implementing mux_in[0] = c + d (OR)
+
+Implement OR:
+
+OR(c,d) = mux(sel=c, y=d,1)
+
+mux_in[1] = 0
+
+mux_in[2] = c & d = mux(sel=c, 0, d)
+
+mux_in[3] = ~d + (c & d)
+
+First, ~d = mux(sel=d,1,0)
+
+Then compute c & d = mux(sel=c, 0, d)
+
+Then OR of ~d and (c&d):
+
+OR(~d, c&d) = mux(sel=~d, (c&d), 1)
+
+So we need to instantiate 2-to-1 mux modules to build NOT, AND, OR.
+
+Finally, assign mux_in with these 4 bits.
+
+We only instantiate one 4-to-1 mux outside TopModule (not in this code), but here we just output mux_in inputs.

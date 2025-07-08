@@ -1,0 +1,12 @@
+Implement a synchronous 16x16 Game of Life variant on a toroidal grid. On each clock edge:
+- If load is high, load the input data directly into q.
+- Otherwise, compute the next state of each cell based on its 8 neighbors with wrap-around addressing:
+  For each cell (r,c):
+    - Compute indices of all 8 neighbors with wrap-around.
+    - Sum neighbor values.
+    - Apply rules:
+       0-1 neighbors: cell = 0
+       2 neighbors: cell unchanged
+       3 neighbors: cell = 1
+       4+ neighbors: cell = 0
+Use modular arithmetic to wrap row and column indices for neighbors. Store the current grid in a 256-bit vector q where each 16 bits represent a row. Since this is combinational logic before the clock edge, create a temporary next_q vector computed from q, then on clock edge assign next_q to q.

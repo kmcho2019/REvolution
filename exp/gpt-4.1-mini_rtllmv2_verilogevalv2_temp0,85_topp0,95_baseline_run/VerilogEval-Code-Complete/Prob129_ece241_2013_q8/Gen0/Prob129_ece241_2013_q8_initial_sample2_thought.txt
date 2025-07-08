@@ -1,0 +1,23 @@
+To implement a Mealy FSM that detects the sequence "101" with overlapping recognition and only 3 states, we can define the states as follows:
+
+- State S0: Initial state, no bits matched yet.
+- State S1: Matched '1'
+- State S2: Matched "10"
+
+The transitions:
+
+- From S0:
+  - If x=1, go to S1 (matched first '1')
+  - Else stay in S0
+- From S1:
+  - If x=0, go to S2 (matched '10')
+  - If x=1, stay in S1 (because we got another '1', which could start a new sequence)
+- From S2:
+  - If x=1, output z=1 (matched '101'), and go to S1 (since last input '1' could start a new sequence)
+  - If x=0, go to S0
+
+Output z is asserted on the transition when the third input '1' is received in state S2.
+
+The FSM is negative edge triggered asynchronous reset (aresetn). On reset, state goes to S0.
+
+This solution uses a Mealy machine so the output z depends on the current state and input.

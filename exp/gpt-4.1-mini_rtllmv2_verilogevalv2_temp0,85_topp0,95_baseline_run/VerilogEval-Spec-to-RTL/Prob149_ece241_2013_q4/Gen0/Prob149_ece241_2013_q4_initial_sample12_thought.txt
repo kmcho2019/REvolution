@@ -1,0 +1,13 @@
+The design keeps track of the current sensor inputs (3 bits) and the previous "sensor level" to determine if the water level is rising or falling. The sensor levels can be interpreted as how many sensors are asserted (number of 1s in s) or more simply by checking which sensors are asserted in priority order.
+
+Outputs fr0, fr1, fr2, and dfr are controlled based on current sensor state and whether water level is rising (previous sensor level lower than current sensor level) or not.
+
+Steps:
+1. Define sensor levels from 0 (none asserted) to 3 (all asserted).
+2. On reset, assume water level below s[0] (sensor level 0), so all outputs asserted.
+3. On each clock:
+   - Determine current sensor level based on s.
+   - Compare with previous sensor level to detect rising or falling.
+   - According to the table, set fr2, fr1, fr0 nominal flow outputs.
+   - If rising (previous level < current level), also assert dfr (supplemental flow valve).
+4. Update previous sensor level for next cycle.

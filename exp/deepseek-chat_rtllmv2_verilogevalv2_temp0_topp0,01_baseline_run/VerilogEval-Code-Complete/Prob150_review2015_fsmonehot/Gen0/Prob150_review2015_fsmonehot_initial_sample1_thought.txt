@@ -1,0 +1,17 @@
+To implement the Moore state machine with one-hot encoding, we need to:
+1. Derive next-state logic equations based on current state and inputs
+2. Implement output logic based solely on current state (Moore machine)
+3. Use one-hot encoding where each state is represented by a single bit in a 10-bit vector
+
+For next-state logic:
+- Each next state signal is asserted when current state and inputs match transition conditions
+- For example, S_next is asserted when:
+  - In S state and d=0
+  - In S1 state and d=0
+  - In S110 state and d=0
+  - In Wait state and ack=1
+
+For output logic:
+- shift_ena is 1 in B0, B1, B2, B3 states
+- counting is 1 in Count state
+- done is 1 in Wait state

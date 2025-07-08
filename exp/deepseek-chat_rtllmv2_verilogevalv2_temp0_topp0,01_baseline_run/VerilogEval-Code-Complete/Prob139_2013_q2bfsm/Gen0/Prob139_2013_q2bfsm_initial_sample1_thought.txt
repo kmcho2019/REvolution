@@ -1,0 +1,15 @@
+The FSM will have four states:
+1. State A: Initial state (reset state)
+2. State B: Sets f=1 for one clock cycle after reset
+3. State C: Monitors x for pattern 1-0-1
+4. State D: Monitors y for 1 within two clock cycles after g=1
+
+State transitions:
+- A→B: When resetn goes high
+- B→C: Always after one clock cycle
+- C→D: When x pattern 1-0-1 is detected
+- D has two outcomes:
+  - Stay in D with g=1 permanently if y=1 within two cycles
+  - Stay in D with g=0 permanently if y≠1 for two cycles
+
+We'll use a shift register to track the last three x values for pattern detection.

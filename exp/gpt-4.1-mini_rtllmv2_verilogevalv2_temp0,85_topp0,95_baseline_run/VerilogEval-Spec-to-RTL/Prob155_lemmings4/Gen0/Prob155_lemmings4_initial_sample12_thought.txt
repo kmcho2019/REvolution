@@ -1,0 +1,63 @@
+We model the Lemming behavior with a Moore FSM having states to represent walking left, walking right, falling, digging, and splattered. The outputs depend only on the current state. The walking states encode direction. On areset, the FSM resets to walking left.
+
+Priority of events each clock when on ground and not falling or digging:
+- If ground=0, transition to falling (remember walking direction).
+- Else if dig=1, transition to digging.
+- Else if bumped (either side or both), switch walking direction.
+- Otherwise remain walking same direction.
+
+When falling:
+- Increment fall counter.
+- If ground=1:
+  - If fall counter > 20, transition to splattered.
+  - Else resume walking in stored walking direction.
+- Bumps and dig input ignored.
+
+When digging:
+- If ground=0, transition to falling (keep walking direction).
+- Else remain digging.
+- Bumps ignored.
+
+When splattered:
+- All outputs zero forever until reset.
+
+Implement asynchronous positive edge reset, synchronous FSM state update, and output logic from state.
+
+Use a 2-bit reg for walking direction: 0=left,1=right.
+Use a fall counter (at least 5 bits) to track how long falling.
+
+Outputs:
+walk_left=1 if walking left,
+walk_right=1 if walking right,
+aaah=1 if falling,
+digging=1 if digging,
+all 0 if splattered.
+
+FSM states:
+
+- WALKING (walking direction stored separately)
+- FALLING
+- DIGGING
+- SPLATTERED
+
+Store walking direction in separate reg so it can be recalled when falling/digging ends.
+
+Transitions:
+- On reset: walking left.
+- From walking:
+  - If ground=0 -> FALLING (fall counter=0)
+  - Else if dig=1 -> DIGGING
+  - Else if bump_left or bump_right -> switch direction
+- From falling:
+  - fall_counter++
+  - If ground=1:
+    - If fall_counter>20 -> SPLATTERED
+    - Else back to WALKING (same direction)
+- From digging:
+  - If ground=0 -> FALLING
+  - Else continue DIGGING
+- From splattered: stay splattered
+
+Outputs derived from state and direction.
+
+All synchronous updates on posedge clk except asynchronous posedge reset.

@@ -1,0 +1,30 @@
+Score: 4
+Justification: The code is syntactically correct and compiles, but it fails simulation with a large number of mismatches on key outputs, indicating significant functional errors in the branch prediction and history update logic.
+
+ANALYSIS:
+The code implements a gshare branch predictor with a 7-bit global history and a 128-entry pattern history table (PHT) of 2-bit saturating counters, consistent with the problem specification. However, several issues in the code cause functional mismatches during simulation:
+
+1. **Predict History Output on predict_valid**:  
+   The output `predict_history` is assigned as `predict_valid ? global_history : 7'b0;`. According to the problem statement, when a prediction is requested, the output should be the state of the branch history register *used to make the prediction*. The code uses the current `global_history` register directly, but this register is updated *at the positive clock edge* after the prediction. Due to this, the output may reflect the updated or incorrect history, not the exact history used for prediction, especially if the history was changed by training in the same cycle. This discrepancy could explain the large number of mismatches on `predict_history`.
+
+2. **Order and Timing of Global History Updates**:  
+   The problem states that if training and prediction requests happen simultaneously, training takes precedence for modifying the global history register because the prediction will be discarded. The code attempts to handle this by updating `global_history` conditionally in the clocked block with priority given to training when `train_valid` is high. However, the updates to `global_history` mix two different sources for the new bit:
+   - When `train_mispredicted` is true, it recovers the `global_history` to `train_history`.
+   - When `train_valid` is true but no misprediction, it does not update history unless `predict_valid` is also true.
+   - When only `predict_valid` is true, it updates history by shifting in the MSB of `predict_pht_entry`.
+   
+   This logic conflicts with the design intent:
+   - The global history should always shift in the predicted taken bit on a prediction request, but only after outputting the history *used* for that prediction.
+   - When training with misprediction occurs, history should be recovered to `train_history`, but the code’s timing and conditional structure may cause incorrect updates or no update at all in some scenarios.
+   - Also, the predicted bit used to update history is derived from `predict_pht_entry[1]` (the MSB of the saturating counter), but the problem states that the prediction should be made on the current PHT state before training updates, which might not be guaranteed here if training and prediction access overlapping entries.
+
+3. **Saturating Counter Update Function Usage**:  
+   The function `saturating_update` is used to update the PHT entry at `train_index` when `train_valid` is asserted. While the function seems logically correct, the code does not handle the case where training and prediction addresses coincide in the same cycle explicitly for PHT entries. This may cause race conditions or stale reads because the prediction output uses the PHT combinationally before the training update takes effect at the clock edge, which is consistent with the problem statement, but the logic does not explicitly confirm this behavior and could lead to unexpected results in simulation.
+
+4. **Initialization on Reset**:  
+   The simulation log hints that the reset is not working properly ("Your reset doesn't seem to be working"). The asynchronous reset logic in the `always` block sets all PHT entries to weakly taken (2'b10) and `global_history` to zero. However, it is possible the testbench or the design’s reset signal does not hold long enough or the reset logic does not properly initialize the memories in simulation, causing initial mismatches in `predict_taken` and `predict_history`.
+
+5. **No Explicit Handling of Pipeline Effects or Timing of History Used**:  
+   The design does not explicitly store or latch the global history state used for each prediction request to output it in subsequent cycles, which is required because the prediction interface demands outputting the history register *used* for the prediction, not the current or next global history state. The lack of this history snapshot causes output mismatches and indicates a misunderstanding or incomplete implementation of the specification.
+
+In summary, the key errors stem from incorrect handling and timing of the global history register updates and outputs, improper handling of simultaneous prediction and training (especially for history recovery during misprediction), and possibly incomplete reset initialization. These cause the majority of simulation mismatches on `predict_taken` and `predict_history`.

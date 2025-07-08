@@ -1,0 +1,13 @@
+To implement this FSM, we need:
+1. Two main states: A (reset state) and B (counting state)
+2. In state A, wait for s=1 to transition to B
+3. In state B, we need to track:
+   - A 3-bit shift register to store last 3 values of w
+   - A counter to know when we've seen 3 cycles
+4. After every 3 cycles in B:
+   - Check if exactly two 1's in the shift register
+   - Set z accordingly
+   - Reset the counter and shift register
+5. Synchronous reset returns to state A and clears all registers
+
+The FSM will use minimal states (just A and B) while tracking the necessary timing and w values using counters and shift registers.

@@ -1,0 +1,15 @@
+To achieve a fractional frequency division by 3.5 using double-edge clocking, we use a 7-cycle counter since 3.5 * 2 = 7. The idea is to generate two clocks:
+
+- One clock with a high period of 4 cycles and low of 3 cycles.
+- Another clock phase-shifted by half a period (half clock cycle), effectively generated on the opposite clock edge (the negative edge), with inverted timing.
+
+By OR-ing these two clocks, we get a clock with an effective division of 3.5 and a more balanced duty cycle.
+
+Implementation details:
+- Use a 3-bit counter (0 to 6) incrementing on each clk rising edge.
+- Generate clk_div_pos which goes high when counter < 4 (4 cycles high), low otherwise (3 cycles low).
+- Generate clk_div_neg similarly but triggered on falling edge, with the same logic but shifted by one count to represent the half cycle delay.
+- OR clk_div_pos and clk_div_neg to get the final clk_div output.
+- Synchronize reset and ensure outputs initialize properly.
+
+This approach leverages the double-edge clocking technique to simulate fractional division with a more balanced output clock.

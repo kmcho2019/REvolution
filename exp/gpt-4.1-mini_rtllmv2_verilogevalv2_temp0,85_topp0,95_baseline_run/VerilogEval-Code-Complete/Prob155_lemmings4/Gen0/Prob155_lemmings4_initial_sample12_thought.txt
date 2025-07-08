@@ -1,0 +1,48 @@
+We need to implement a Moore FSM with states representing the Lemming's behavior: walking left, walking right, falling, digging, and splattered (dead). The outputs depend only on the current state. The FSM transitions are triggered by inputs and internal counters.
+
+Key points:
+- Walking states: walk_left, walk_right.
+- Falling state: aaah = 1.
+- Digging state: digging = 1.
+- Splattered state: all outputs 0.
+- Direction is kept during falling and digging and restored after falling.
+- Bumps affect direction only when walking on ground.
+- Digging can start only when walking on ground and dig=1.
+- Fall has precedence over dig, which has precedence over bump direction change.
+- Falling duration is counted; if >20 cycles and ground hits, splatter.
+- Asynchronous reset initializes to walk_left.
+
+We define states:
+- WALK_LEFT
+- WALK_RIGHT
+- FALLING_LEFT
+- FALLING_RIGHT
+- DIGGING_LEFT
+- DIGGING_RIGHT
+- SPLATTERED
+
+We keep a fall counter which resets on walking or digging and increments during falling.
+
+Transitions:
+- From walking:
+  - if ground=0 -> fall in same direction
+  - else if dig=1 -> start digging same direction
+  - else if bump -> switch walking direction
+- From falling:
+  - increment fall counter
+  - if ground=1:
+    - if fall counter > 20 -> splatter
+    - else resume walking same direction
+- From digging:
+  - if ground=0 -> start falling same direction
+  - else continue digging
+- From splattered: remain splattered
+
+Outputs depend on state:
+- WALK_LEFT: walk_left=1
+- WALK_RIGHT: walk_right=1
+- FALLING_*: aaah=1
+- DIGGING_*: digging=1 and walk_* = 1 for direction
+- SPLATTERED: all 0
+
+Implement synchronous state and counter updates, asynchronous reset.

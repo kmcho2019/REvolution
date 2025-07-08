@@ -1,0 +1,13 @@
+Implement a Mealy FSM that detects the sequence 10011 on the input IN. The FSM transitions through states corresponding to how much of the sequence has been matched so far. Because it is a Mealy machine, the output MATCH is asserted on the input cycle where the last bit of the sequence is matched. The FSM supports overlapping detection, so after a full match, it transitions appropriately to allow detection of the next overlapping sequence.
+
+We will define states representing how many bits of the sequence have been matched:
+- S0: No match
+- S1: matched '1'
+- S2: matched '10'
+- S3: matched '100'
+- S4: matched '1001'
+When receiving the last '1' (from S4), MATCH is asserted.
+
+Transitions are designed to allow continuous input and overlapping matches.
+
+The module uses synchronous reset, transitions on the positive edge of CLK, and updates MATCH combinationally as a Mealy output.

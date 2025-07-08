@@ -1,0 +1,18 @@
+We start in state A and wait for s=1 to move to state B. In state B, we continuously examine w for groups of three clock cycles. We need to count how many times w=1 occurs in each group of three cycles. After counting three cycles, if exactly two of those are 1, then z=1 in the next clock cycle, else z=0. Then we repeat the counting for the next group of three cycles.
+
+To implement this efficiently with few states, we use:
+- One state for A
+- One state for B (the counting state)
+We can implement the counting of w=1 using a 2-bit counter since max count is 3.
+
+We use an internal counter (0 to 3) to count how many cycles have passed in the group, and another to count the number of w=1's.
+
+After three cycles, we set z accordingly in the next clock cycle.
+
+The output z will be registered, and active only after each 3-cycle window.
+
+Reset returns FSM to A, z=0.
+
+s is only used in state A.
+
+We implement synchronous reset.

@@ -1,0 +1,7 @@
+Implement a 7-bit global history register (GHR) and a 128-entry pattern history table (PHT) of 2-bit saturating counters. For prediction, XOR the 7-bit pc with the 7-bit GHR to index the PHT, output prediction and the history used for prediction. On predict_valid, update the GHR with predicted branch direction at next clock edge.
+
+For training, if train_valid is high, update the PHT entry indexed by train_pc XOR train_history using the actual outcome (train_taken). If the branch was mispredicted (train_mispredicted), restore GHR to train_history at next clock edge. If training and prediction happen in the same cycle, training takes precedence on GHR update. The PHT update happens on clock edge.
+
+Use asynchronous reset to clear GHR and initialize PHT entries to weakly not taken (2'b01).
+
+The module thus maintains and updates GHR and PHT according to the given rules.

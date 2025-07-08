@@ -1,0 +1,63 @@
+The function f is defined by a Karnaugh map with 4 variables, where x[3]x[4] form the row address and x[1]x[2] form the column address. The map entries are given with '0', '1', and don't-care 'd'. We can implement the function by converting the Karnaugh map into a minimized sum-of-products or directly using case statements or if-else constructs with the given values, choosing 0 or 1 for don't-care entries to simplify the logic.
+
+First, I'll rewrite the Karnaugh map with the variables labeled clearly:
+
+Rows: x[3]x[4]
+Cols: x[1]x[2]
+
+x[3]x[4] \ x[1]x[2] | 00 | 01 | 11 | 10
+---------------------|----|----|----|----
+00                   | d  | 0  | d  | d
+01                   | 0  | d  | 1  | 0
+11                   | 1  | 1  | d  | d
+10                   | 1  | 1  | 0  | d
+
+I will use the indices as (x[3], x[4], x[1], x[2]) with x[3] as MSB of row and x[1] as MSB of column. The input vector is x[3:0] = {x[3], x[2], x[1], x[0]}, but the problem states x is 4 bits but uses x[1], x[2], x[3], x[4]. To be consistent, I'll rename inputs as x[4:1], so x is input [4:1]. The problem states x is input (4 bits), so x[4], x[3], x[2], x[1].
+
+But the map uses x[1], x[2] as columns and x[3], x[4] as rows.
+
+Thus, inputs: x[4], x[3], x[2], x[1]
+
+Rows = x[3], x[4]
+Cols = x[1], x[2]
+
+To align indexing, I'll take x as [4:1], and for row use x[4], x[3], for col use x[2], x[1].
+
+This matches the Karnaugh map's labeling:
+
+Row = x[4], x[3]
+Col = x[2], x[1]
+
+Now the mapping:
+
+Row\Col | 00(x[2]=0,x[1]=0) | 01(0,1) | 11(1,1) | 10(1,0)
+--------|-------------------|---------|---------|---------
+00(x[4]=0,x[3]=0) | d | 0 | d | d
+01(0,1)           | 0 | d | 1 | 0
+11(1,1)           | 1 | 1 | d | d
+10(1,0)           | 1 | 1 | 0 | d
+
+We can create a function f = 1 for the mapped entries with 1, 0 for mapped 0, and for d choose convenient values to minimize logic.
+
+Assigning all d to 0 for simplicity.
+
+Entries with 1: 
+
+- Row=01, Col=11 -> x[4]=0, x[3]=1, x[2]=1, x[1]=1
+- Row=11, Col=00 -> x[4]=1, x[3]=1, x[2]=0, x[1]=0
+- Row=11, Col=01 -> x[4]=1, x[3]=1, x[2]=0, x[1]=1
+- Row=10, Col=00 -> x[4]=1, x[3]=0, x[2]=0, x[1]=0
+- Row=10, Col=01 -> x[4]=1, x[3]=0, x[2]=0, x[1]=1
+
+Entries with 0:
+
+- Row=00, Col=01
+- Row=01, Col=00
+- Row=01, Col=10
+- Row=10, Col=11
+
+Now write the sum of minterms for 1's and simplify.
+
+Alternatively, implement the function using a case statement on x.
+
+Hence, implement the function in combinational logic with the Karnaugh map logic directly using a case statement.

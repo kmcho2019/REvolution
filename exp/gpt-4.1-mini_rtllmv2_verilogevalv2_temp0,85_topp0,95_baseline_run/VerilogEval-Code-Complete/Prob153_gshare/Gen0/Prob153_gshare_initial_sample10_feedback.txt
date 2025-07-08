@@ -1,0 +1,65 @@
+Score: 5
+Justification: The code is syntactically correct and implements the basic structure of the gshare predictor, but it fails simulation with a large number of mismatches in both predicted branch directions and the predicted history outputs, indicating functional errors in the update logic and possibly the handling of the global history register updates and PHT indexing.
+
+ANALYSIS:
+The main issues stem from the update logic for the pattern history table (PHT) and the global history register, which do not fully conform to the design intent described:
+
+1. **Pattern History Table Update Logic:**
+   - The PHT update uses `PHT[train_index]` in a `case` statement directly inside the clocked always block. However, in Verilog, indexing into a memory array with a variable (train_index) inside an always block like this reads the memory at simulation time, but the update within the same cycle may not reflect the correct old value due to Verilog’s scheduling semantics.
+   - The code reads `PHT[train_index]` and writes to `PHT[train_index]` in the same cycle without any intermediate register or temporary variable, which could cause race conditions or read-after-write conflicts. This can lead to incorrect saturating counter updates, causing many prediction mismatches.
+   - Also, there is no explicit handling of the case where training and prediction address the same PHT entry in the same cycle. The problem description states prediction should see the PHT state before training, but the code does not handle this subtlety explicitly and may not simulate correctly.
+
+2. **Global History Register Update:**
+   - The global history update logic gives priority to training misprediction as required, but the code updates `global_history` based on `predict_taken`, which is combinationally derived from `predict_pht_entry`. Since the PHT update happens on the clock edge and the prediction uses the PHT state before training, the timing should be correct here.
+   - However, the prediction update uses the global history at the current cycle to compute the index (`predict_pc ^ global_history`) combinationally, but the global_history is updated only at the clock edge. This design implies predictions use the previous cycle’s global history.
+   - The output `predict_history` is assigned as `predict_valid ? global_history : 7'b0`, which likely outputs the current global history rather than the predicted history corresponding exactly to the prediction. This may cause mismatches since the history should reflect the state used to make the prediction, not necessarily the current global_history value at output time.
+
+3. **Reset Handling and Initialization:**
+   - The simulation log hints that the reset may not be working correctly. The asynchronous reset is implemented, but the simulation message "Your reset doesn't seem to be working" suggests the testbench may not be correctly applying reset or the module's async reset is not properly initializing the PHT and global history as intended.
+   - Because the initial state of the PHT is critical (weakly taken), any failure to properly reset leads to incorrect initial predictions, contributing to the large number of mismatches.
+
+4. **Miscellaneous:**
+   - The code does not explicitly consider the case when training and predicting the same PHT entry in the same cycle beyond the natural sequencing of updates at clock edges, which might cause subtle race conditions that affect prediction correctness.
+   - The use of the same `global_history` register for both prediction and training paths without staging or latching might cause timing mismatches in the history outputs versus what the predictor expects.
+
+In summary, the main cause of the simulation failure is the improper update sequencing of the PHT and global history register, especially around the simultaneous train/predict operations and their timing, resulting in many prediction and history mismatches noted in the simulation log. The reset may also not be functioning as expected, further exacerbating the mismatch issue.
+
+Relevant code sections:
+- PHT update in always block:
+  ```
+  if (train_valid) begin
+    case (PHT[train_index])
+      2'b00: PHT[train_index] <= train_taken ? 2'b01 : 2'b00;
+      2'b01: PHT[train_index] <= train_taken ? 2'b10 : 2'b00;
+      2'b10: PHT[train_index] <= train_taken ? 2'b11 : 2'b01;
+      2'b11: PHT[train_index] <= train_taken ? 2'b11 : 2'b10;
+      default: PHT[train_index] <= 2'b10;
+    endcase
+  end
+  ```
+- Global history update:
+  ```
+  if (train_valid && train_mispredicted) begin
+    global_history <= train_history;
+  end else if (predict_valid) begin
+    global_history <= {global_history[5:0], predict_taken};
+  end
+  ```
+- Prediction combinational outputs:
+  ```
+  wire [6:0] predict_index = predict_pc ^ global_history;
+  wire [1:0] predict_pht_entry = PHT[predict_index];
+  assign predict_taken = (predict_pht_entry[1] == 1'b1) && predict_valid;
+  assign predict_history = predict_valid ? global_history : 7'b0;
+  ```
+- Reset logic:
+  ```
+  if (areset) begin
+    global_history <= 7'b0;
+    for (i = 0; i < 128; i = i + 1) begin
+      PHT[i] <= 2'b10; // weakly taken
+    end
+  end
+  ```
+
+Overall, the code conceptually implements the architecture but lacks proper timing and update sequencing, causing functional mismatches in simulation.

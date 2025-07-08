@@ -1,0 +1,36 @@
+Design a Moore FSM with states representing the count of consecutive 1s seen so far since last 0, from 0 to 6 or error. On input 0, reset count to 0. On input 1, increment count of consecutive 1s. When reaching 5 consecutive 1s, if next bit is 0, detect disc (a stuffed zero after 5 ones); if next bit is 1, check if this is the 6th or 7th one to detect flag or error respectively. Outputs disc, flag, err are asserted for one cycle after detecting the pattern, hence output logic depends only on the current state. Synchronous reset sets state to 0 (no ones counted).
+
+States:
+S0: 0 consecutive ones
+S1: 1 consecutive one
+S2: 2 consecutive ones
+S3: 3 consecutive ones
+S4: 4 consecutive ones
+S5: 5 consecutive ones
+S6: 6 consecutive ones (flag)
+S7: 7 or more ones (error)
+
+Transitions:
+- From S0..S4 on input 1 go to next S+1
+- From S0..S5 on input 0 go to S0
+- From S5 on input 0: disc detected (since zero after five ones)
+- From S5 on input 1: go to S6 (flag candidate)
+- From S6 on input 0: flag detected (end of flag pattern)
+- From S6 on input 1: error (7 ones)
+- From S7 on any input: stay in S7, error persists
+
+The outputs disc, flag, err are asserted for one cycle in states following detection:
+- disc asserted in state S5 when input=0 is seen next cycle (means transition to S0 from S5 on zero)
+- flag asserted in state S6 on input=0 next cycle (transition to S0)
+- err asserted when in S7
+
+Because this is Moore FSM, outputs depend only on state, so to detect disc and flag on the cycle after detection, we assert disc when in S0 if previous state was S5 and input was 0, similarly flag in S0 if previous state was S6 and input 0. To do this cleanly, we can use a small combinational logic with current state and input to generate outputs for next cycle. Alternatively, we assign outputs based on current state and next input to create a pipeline effect.
+
+To keep it simple, we can have outputs asserted in states that follow the detection states:
+- disc output asserted in S0 if last transition was from S5 on 0 (i.e., a disc event)
+- flag output asserted in S0 if last transition was from S6 on 0 (flag event)
+- err output asserted in S7
+
+We implement this by having next_state logic, and outputs assigned based on current state and input.
+
+Reset synchronous active high sets state to S0.

@@ -1,0 +1,11 @@
+From the waveform, we observe that `state` always reflects the current flip-flop output (q). The flip-flop output `q` updates on the positive edge of `clk` based on inputs `a`, `b`, and the previous state `q`.
+
+By examining the transitions:
+- `q` seems to be set to 1 when either `b` is 1 and `q` is 0, or when `a` and `b` are 0 and the current state is 1, indicating some kind of toggle or set/reset logic.
+- More specifically, `q` at the next clock depends on `(~q & b) | (q & ~(a & b))`.
+  
+To simplify, the next state logic for `q` can be described as:
+  q_next = (q & ~(a & b)) | (~q & b)
+
+Implementing this logic in sequential form: on each rising clock edge, update q accordingly.
+Output `state` simply mirrors `q`.

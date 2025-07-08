@@ -1,0 +1,125 @@
+The 4-to-1 multiplexer is selected by inputs a and b, so the four inputs to the mux (mux_in[3:0]) correspond to ab = 00, 01, 11, 10 respectively. Each of these inputs is a function of c and d.
+
+From the Karnaugh map, for each ab combination, we extract the function f for all cd values:
+
+For ab=00 (mux_in[0]):
+cd: 00=0, 01=1, 11=1, 10=1
+So, mux_in[0] = f when a=0,b=0 = 0,1,1,1 for cd=00,01,11,10 respectively.
+
+For ab=01 (mux_in[1]):
+cd: 00=0, 01=0, 11=0, 10=0
+mux_in[1] = 0 for all cd
+
+For ab=11 (mux_in[3]):
+cd: 00=0, 01=0, 11=1, 10=0
+mux_in[3] = 0,0,1,0 for cd=00,01,11,10
+
+For ab=10 (mux_in[2]):
+cd: 00=1, 01=0, 11=1, 10=1
+mux_in[2] = 1,0,1,1 for cd=00,01,11,10
+
+We implement each mux_in[i] as a function of c and d using only 2-to-1 multiplexers.
+
+We observe that the inputs to the mux are functions of c and d only.
+
+Since only multiplexers are allowed, we implement the functions mux_in[0], mux_in[1], mux_in[2], mux_in[3] using 2-to-1 muxes selecting between c or d or constants.
+
+We can use the fact that a 2-to-1 mux can implement any function f = sel ? in1 : in0.
+
+For example, to implement mux_in[0], which is 0,1,1,1 for cd=00,01,11,10:
+
+Mapping cd as c is MSB, d is LSB:
+
+cd=00: c=0,d=0 => 0
+
+cd=01: c=0,d=1 =>1
+
+cd=11: c=1,d=1 =>1
+
+cd=10: c=1,d=0 =>1
+
+Notice that mux_in[0] can be implemented as mux with select c:
+
+If c=0 => mux_in[0] = d (0 when d=0,1 when d=1)
+
+If c=1 => mux_in[0] = 1
+
+So mux_in[0] = c ? 1 : d
+
+Similarly, mux_in[1] = 0
+
+mux_in[2]: 1,0,1,1 for cd=00,01,11,10
+
+cd:
+
+00: c=0,d=0 =>1
+
+01: c=0,d=1 =>0
+
+11: c=1,d=1 =>1
+
+10: c=1,d=0 =>1
+
+Try select d:
+
+If d=0 => mux_in[2] = c ? 1 :1 =1
+
+If d=1 => mux_in[2] = c ? 1 : 0 = c or 0 ?
+
+No, try select c:
+
+If c=0 => mux_in[2] = d ? 0 :1
+
+If c=1 => mux_in[2] = d ? 1 :1 =1
+
+So mux_in[2] = c ? 1 : (~d)
+
+Similarly, mux_in[3]:
+
+0,0,1,0 for cd=00,01,11,10
+
+Try select d:
+
+If d=0 => mux_in[3] = c ? 1 :0
+
+If d=1 => mux_in[3] = c ? 0 :0
+
+No, try select c:
+
+If c=0 => mux_in[3] = d ? 0 :0 =0
+
+If c=1 => mux_in[3] = d ? 1 :0 = d
+
+So mux_in[3] = c ? d : 0
+
+Summarizing:
+
+mux_in[0] = c ? 1 : d
+
+mux_in[1] = 0
+
+mux_in[2] = c ? 1 : ~d
+
+mux_in[3] = c ? d : 0
+
+We implement 1 and 0 as constants.
+
+We can only use 2-to-1 muxes and the 4-to-1 mux.
+
+So 1 and 0 are constants, d and ~d, c and constants.
+
+To implement ~d, we can use a mux selecting between 1 and 0 with d as selector:
+
+~d = d ? 0 :1
+
+So the plan:
+
+- Implement ~d with a 2-to-1 mux
+
+- Use 2-to-1 muxes to implement mux_in[0], mux_in[2], mux_in[3] accordingly.
+
+- mux_in[1] = 0 constant
+
+This approach uses the fewest 2-to-1 muxes and no other gates.
+
+Now the Verilog code will implement this accordingly.

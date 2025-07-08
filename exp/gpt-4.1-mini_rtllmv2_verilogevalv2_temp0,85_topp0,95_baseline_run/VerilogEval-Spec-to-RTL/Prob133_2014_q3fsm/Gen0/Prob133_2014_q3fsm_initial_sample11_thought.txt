@@ -1,0 +1,18 @@
+Implement a FSM with minimal states:
+
+- State A: initial/reset state, wait for s=1 to go to state B.
+- State B: collect w samples for three clock cycles, counting how many times w=1.
+- After three cycles in state B, transition to state C for one cycle to output z=1 if exactly two of the three w's were 1, else 0.
+- Then return to state B to begin next 3-cycle window.
+
+This requires three states:
+- A: wait for s=1
+- B: counting w samples (3 cycles), count how many w=1
+- C: output z, then back to B.
+
+Use a 2-bit counter to count w=1 occurrences in B.
+Use a 2-bit cycle counter to count cycles in B (0 to 2).
+Synchronous reset to state A and counters.
+Output z is 1 only in state C if count==2.
+
+This structure minimizes states and logic.

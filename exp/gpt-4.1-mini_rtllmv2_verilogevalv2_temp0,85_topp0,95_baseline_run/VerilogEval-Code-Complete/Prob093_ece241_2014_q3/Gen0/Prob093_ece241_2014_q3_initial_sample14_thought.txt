@@ -1,0 +1,173 @@
+The K-map has variables a,b as selector inputs of the 4-to-1 MUX, so for each value of (a,b), mux_in[i] must represent the function of c,d.
+
+Indexing mux_in by ab=00,01,11,10:
+
+- For ab=00 (mux_in[0]): The column where a=0,b=0: from K-map, the values for c,d rows 00,01,11,10 are 0,1,1,1. So function of c,d is: mux_in[0] = 0 (00),1 (01),1(11),1(10).
+
+- For ab=01 (mux_in[1]): a=0,b=1 column: values 0,0,0,0
+
+- For ab=11 (mux_in[3]): a=1,b=1 column: values 0,0,1,0
+
+- For ab=10 (mux_in[2]): a=1,b=0 column: values 1,0,1,1
+
+We assign mux_in[0] = f0(c,d), mux_in[1] = f1(c,d), mux_in[3] = f3(c,d), mux_in[2] = f2(c,d).
+
+Next, simplify each function f0,f1,f2,f3 as functions of c,d using only 2-to-1 muxes (and no other logic gates).
+
+We can implement each function as a 2-to-1 MUX tree, using c and d as selector inputs (since only those are allowed besides a,b for the 4-to-1 mux selectors).
+
+We'll implement each mux_in[i] as a 2-to-1 mux with inputs 0 or 1 or another mux, selecting on c or d.
+
+Finally, assign these mux_in outputs accordingly.
+
+Note: The 4-to-1 mux itself is external to top_module, so top_module only outputs mux_in.
+
+Approach:
+
+- For each mux_in[i], express as a mux tree using c and d as selectors.
+
+- Use as few muxes as possible by exploiting constants.
+
+- Use the fact that 2-to-1 mux: MUX(sel, in0, in1) = sel ? in1 : in0
+
+- We can hardcode constants 0 or 1 as mux inputs.
+
+Now process each mux_in[i]:
+
+1) mux_in[0] (ab=00):
+
+Values for c,d:
+
+cd=00 =>0
+
+cd=01 =>1
+
+cd=11 =>1
+
+cd=10 =>1
+
+Truth table:
+
+c d | f0
+
+0 0 | 0
+
+0 1 | 1
+
+1 1 | 1
+
+1 0 | 1
+
+Observe that f0 is 0 only when c=0 and d=0, otherwise 1.
+
+This is equivalent to f0 = ~(~c & ~d) = c + d
+
+In mux form:
+
+f0 = MUX(c, 1, d) or MUX(d, 1, c)
+
+Because when c=0,d=0 output 0, else 1.
+
+Implement as:
+
+f0 = MUX(c, d, 1)
+
+Check:
+
+c=0 => f0=d (so if d=0 output 0 else 1)
+
+c=1 => output 1
+
+It matches the table.
+
+So f0 = mux c { d , 1 }
+
+2) mux_in[1] (ab=01):
+
+All zeros => f1=0 constant
+
+No mux needed, set mux_in[1] = 0
+
+3) mux_in[3] (ab=11):
+
+Values:
+
+c d | f3
+
+0 0 | 0
+
+0 1 | 0
+
+1 1 | 1
+
+1 0 | 0
+
+Only 1 at c=1,d=1
+
+So f3 = c & d
+
+But no AND allowed, only muxes.
+
+Implement c&d using muxes:
+
+c & d = MUX(c,0,d)
+
+Check:
+
+c=0 => 0
+
+c=1 => d
+
+Matches AND.
+
+So f3 = MUX(c,0,d)
+
+4) mux_in[2] (ab=10):
+
+Values:
+
+c d | f2
+
+0 0 |1
+
+0 1 |0
+
+1 1 |1
+
+1 0 |1
+
+Truth table:
+
+Let's try to implement using muxes:
+
+Try selecting on c:
+
+If c=0 => f2 = 1 when d=0, 0 when d=1
+
+So for c=0: f2 = ~d
+
+If c=1 => f2=1 for both d=0 and d=1 => f2=1
+
+So f2 = MUX(c, 1, ~d)
+
+But we don't have NOT, only muxes and constants.
+
+We can implement ~d as MUX(d,1,0) (i.e., invert d):
+
+~d = MUX(d,1,0)
+
+So f2 = MUX(c, 1, ~d) = MUX(c,1, MUX(d,1,0))
+
+Implement step by step.
+
+Now compose all mux_in:
+
+mux_in[0] = MUX(c,d,1)
+
+mux_in[1] = 0
+
+mux_in[3] = MUX(c,0,d)
+
+mux_in[2] = MUX(c,1, MUX(d,1,0))
+
+We'll implement this in Verilog, building the mux_in outputs as per above.

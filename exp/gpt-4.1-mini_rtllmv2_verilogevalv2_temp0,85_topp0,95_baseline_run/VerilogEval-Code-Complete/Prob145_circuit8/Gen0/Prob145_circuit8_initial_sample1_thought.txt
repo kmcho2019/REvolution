@@ -1,0 +1,8 @@
+From the waveform table, we notice the following:
+
+- At clock=1, p updates to the value of a.
+- At clock=0, q updates to the previous value of p.
+- Initial values are p=0 and q=0.
+- p updates only at the positive clock edge (clock=1), q updates at the negative clock edge (clock=0).
+  
+Thus, p acts as a register capturing input 'a' at the rising clock level, and q latches p at the falling clock level. This behavior can be implemented using a clocked always block sensitive to both clock edges: on posedge clock, p <= a; on negedge clock, q <= p.

@@ -1,0 +1,22 @@
+The circuit has a single flip-flop storing the state 'state'. The output q equals the state. From the waveform, on each rising clock edge, the next state depends on the current inputs a and b and the current state.
+
+Analyzing the transitions on rising edges:
+- Initially state=0, q=0
+- At 45ns (clk=1), a=0,b=1,state=0 -> q=1, so state becomes 1
+- At 65ns (clk=1), a=1,b=1,state=0 -> q=0
+- At 75ns (clk=1), a=0,b=0,state=1 -> q=1
+- At 95ns (clk=1), a=1,b=1,state=1 -> q=1
+- At 115ns (clk=1), a=1,b=0,state=1 -> q=0
+
+Observing patterns:
+- If state=0, next state=1 if (a=0 and b=1)
+- If state=0 and (a=1,b=1) next state=0
+- If state=1, next state=1 if (a=1 and b=1) or (a=0,b=0)
+- Otherwise next state=0
+
+From this, the next state can be expressed as:
+next_state = (~state & ~a & b) | (state & ((a & b) | (~a & ~b)))
+
+Output q = state.
+
+Implement this logic in a sequential block triggered on the rising edge of clk.

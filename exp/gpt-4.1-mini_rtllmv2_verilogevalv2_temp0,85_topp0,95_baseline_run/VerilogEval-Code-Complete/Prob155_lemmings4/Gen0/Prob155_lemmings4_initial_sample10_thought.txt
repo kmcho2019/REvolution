@@ -1,0 +1,40 @@
+We need to design a Moore FSM with states encoding the Lemming's behavior: walking left or right, falling, digging, and splattered (dead). The walking states differ by direction (walk_left or walk_right). When falling, direction is remembered but output is aaah=1, no walk or dig. Digging states also remember direction and output digging=1. The splattered state outputs all zeros and is terminal.
+
+Inputs:
+- bump_left, bump_right: cause direction switch when walking on ground, but no effect if falling or digging.
+- ground: if 0 and currently walking or digging, start falling.
+- dig: starts digging if walking on ground.
+
+Priority on transitions from walking on ground:
+1. If ground=0: fall (regardless of bumps or dig).
+2. Else if dig=1: start digging.
+3. Else if bumped: switch direction.
+
+When digging and ground=0, start falling.
+
+When falling and ground=1, either splatter (if fall_time > 20) or resume walking in prior direction.
+
+We will track:
+- current state (with direction info)
+- fall_time counter to track how long falling
+
+States:
+- WALK_LEFT
+- WALK_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- SPLATTERED
+
+On async reset, go to WALK_LEFT.
+
+Outputs are determined solely by state (Moore machine).
+
+The fall_time counter increments while falling; reset on any other state.
+
+Transitions must handle edge cases as per the problem description.
+
+Implement all logic in a single always_ff block with async reset for state and counter.
+
+Finally, assign outputs based on current state.

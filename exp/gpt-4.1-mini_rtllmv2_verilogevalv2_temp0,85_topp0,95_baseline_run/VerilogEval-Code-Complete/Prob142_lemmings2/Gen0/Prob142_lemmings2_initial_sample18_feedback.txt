@@ -1,0 +1,48 @@
+Score: 7
+Justification: The code is syntactically correct and implements a Moore FSM with asynchronous reset as intended. However, the simulation log reports 154 mismatches in walk_left and walk_right outputs, indicating functional errors in direction switching logic, though the falling output (aaah) is correct.
+
+ANALYSIS:
+The problem involves modeling a Lemming's walking direction and falling state with correct transitions when bumped or ground disappears/reappears. The provided FSM has three states: WALK_LEFT, WALK_RIGHT, and FALLING, and tracks the last walking state before falling.
+
+Key issues causing simulation mismatches:
+
+1. **Direction switching logic on bump**:  
+   In the WALK_LEFT state, if bumped on either side (`bump_left || bump_right`), the next state unconditionally switches to WALK_RIGHT, and vice versa in WALK_RIGHT state. According to the problem description, if bumped on the left, the Lemming should walk right; if bumped on the right, it should walk left; if bumped on both sides simultaneously, it should also switch directions. The current code switches direction in both bump cases unconditionally, which does not differentiate between bump_left and bump_right. This means the direction switches incorrectly in some cases, leading to mismatches.
+
+2. **Direction updates in sequential block**:  
+   The update to `last_walk_state` occurs only when `state != FALLING`. Since `state` is the current state, but `next_state` is the next state to be loaded, this could cause `last_walk_state` to lag behind by one cycle or update incorrectly when entering or leaving FALLING state, violating the requirement that the walking direction before the fall is remembered accurately.
+
+3. **Timing of bump and ground signals**:  
+   The description states that being bumped while falling or during ground transitions does not affect direction. The code does not explicitly prevent bumps from affecting direction if `ground` changes in the same cycle; since the next state is determined combinationally from the current state and inputs, this could cause direction switching on the same cycle as ground goes low or high, which is against the specification. This timing nuance might cause the mismatches seen in walk_left and walk_right outputs.
+
+4. **FSM next state logic default cases**:  
+   The default case sets `next_state` to WALK_LEFT, which is fine, but any unexpected state transitions due to glitches might cause mismatches.
+
+In summary, the primary cause of mismatch is the incorrect handling of bump signals affecting direction changes, and the timing and tracking of the last walking direction before falling not strictly adhering to the problem's conditions.
+
+The aaah output is correct since the FALLING state is properly entered and exited when ground changes.
+
+Therefore, the code fails functional simulation due to incorrect direction switching logic and state tracking, reflected in the mismatches on walk_left and walk_right signals.
+
+Relevant code sections:  
+- Next state logic for WALK_LEFT and WALK_RIGHT states:  
+  ```verilog
+  if (ground == 0)
+    next_state = FALLING;
+  else if (bump_left || bump_right) // any bump switches direction
+    next_state = WALK_RIGHT; // or WALK_LEFT
+  ```
+- Update of last_walk_state in sequential always block:  
+  ```verilog
+  if (state != FALLING)
+    last_walk_state <= state;
+  ```
+- Output assignments:  
+  ```verilog
+  assign walk_left  = (state == WALK_LEFT);
+  assign walk_right = (state == WALK_RIGHT);
+  assign aaah       = (state == FALLING);
+  ```
+- The simulation log indicating mismatches on walk_left and walk_right only.
+
+These issues link directly to the problem's requirement for correct direction switching and state retention during falling phases, causing the simulation failures observed.

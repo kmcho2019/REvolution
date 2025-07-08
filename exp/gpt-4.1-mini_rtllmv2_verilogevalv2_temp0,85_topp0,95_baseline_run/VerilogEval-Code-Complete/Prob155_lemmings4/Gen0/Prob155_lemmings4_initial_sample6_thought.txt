@@ -1,0 +1,45 @@
+The problem describes a finite state machine (FSM) for a Lemming with three primary states: walking, falling, and digging. Walking has two substates: walk_left and walk_right. The Lemming falls when ground=0, and resumes walking in the same direction when ground=1. The Lemming can dig only when walking on ground and dig=1, continuing digging until ground=0 (then it falls). Direction switches only happen while walking and only if bumped (left bump makes it walk right, right bump makes it walk left, and bump on both sides also triggers switch). While falling or digging, bumps have no effect.
+
+Additionally, falling duration is counted; if it exceeds 20 cycles when the Lemming hits ground again, it splatters: all outputs zero, no further state changes until reset.
+
+The FSM outputs are walk_left, walk_right, aaah (falling), digging.
+
+We will model this FSM as a Moore machine with:
+
+- States:
+  - WALK_LEFT
+  - WALK_RIGHT
+  - FALL_LEFT
+  - FALL_RIGHT
+  - DIG_LEFT
+  - DIG_RIGHT
+  - SPLAT
+
+The fall and dig states are directional (to remember direction when ground returns).
+
+Inputs:
+- bump_left, bump_right, ground, dig, areset, clk
+
+Outputs (Moore):
+- walk_left (1 in WALK_LEFT state)
+- walk_right (1 in WALK_RIGHT state)
+- aaah (1 in FALL_* states)
+- digging (1 in DIG_* states)
+
+Logic:
+- On reset, go to WALK_LEFT.
+- Priority for transitions when walking and ground=1:
+  1. If ground=0 → fall
+  2. else if dig=1 → dig
+  3. else if bumped → switch direction
+  4. else stay walking in same direction
+- If falling and ground=0, continue falling, increment fall counter.
+- If falling and ground=1, check fall counter > 20 → SPLAT else go to walking same direction, reset fall counter.
+- When digging and ground=1 → continue digging.
+- When digging and ground=0 → start falling (same direction), reset fall counter.
+- While falling or digging, bumps ignored.
+- In SPLAT state, stay until reset.
+
+We will implement the FSM with synchronous state updates, async reset, a fall counter to count fall cycles. Outputs assigned combinationally from current state.
+
+This fully models the described behavior.

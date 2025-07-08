@@ -1,0 +1,29 @@
+Score: 0
+Justification: The code contains syntax errors, specifically related to the use of `wire` declarations inside an `always @*` block, which prevents compilation and simulation.
+
+ANALYSIS:
+The simulation log reports a syntax error at line 44, indicating an invalid syntax in an assignment statement's left-hand side (l-value). Analyzing the code, the issue arises in the `always @*` block for next state logic where the line `wire bumped = bump_left | bump_right;` is declared inside the procedural block. In Verilog, `wire` declarations cannot be placed inside procedural blocks; such declarations must be outside or at module level. This misuse causes the syntax error.
+
+Because `bumped` is needed as a combinational signal derived from inputs `bump_left` and `bump_right`, it should be declared as a `wire` at module scope or simply replaced with a direct expression in the procedural logic. The improper declaration inside the always block breaks the code compilation.
+
+Other than this, the rest of the code seems logically consistent with the problem description, implementing the required FSM states and transitions and outputs as a Moore machine. However, this critical syntax error prevents any simulation from running.
+
+Relevant code section causing the error:
+```verilog
+always @* begin
+    // Default values to hold current state
+    next_state = state;
+    next_prev_dir = prev_dir;
+
+    // Define bumps
+    wire bumped = bump_left | bump_right;  // <-- invalid declaration here
+
+    case(state)
+        ...
+    endcase
+end
+```
+
+This violates Verilog syntax rules and leads to the simulation failure.
+
+No other syntax errors are evident from the code or log, so this is the main blocking issue.

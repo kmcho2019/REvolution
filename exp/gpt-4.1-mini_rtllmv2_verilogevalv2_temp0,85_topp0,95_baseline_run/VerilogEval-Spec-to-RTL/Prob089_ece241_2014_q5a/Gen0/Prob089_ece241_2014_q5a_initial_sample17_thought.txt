@@ -1,0 +1,29 @@
+To implement a 2's complementer Moore FSM on a serial input stream starting from the LSB, the algorithm is:
+- Wait for reset to be deasserted to start.
+- The output z is generated based on the FSM state and input x.
+- 2's complement in binary serial form is obtained by:
+  1. Copying bits from the LSB up to (and including) the first '1' bit.
+  2. After the first '1' bit is output, invert all subsequent bits.
+  
+We will implement a FSM with two states:
+- WAIT_FOR_START: waiting for reset release to start processing.
+- COPY_AND_INVERT: copying bits until the first '1' is passed, then inverting all bits.
+
+On each clock:
+- If reset asserted, go back to WAIT_FOR_START.
+- Otherwise, if in WAIT_FOR_START, output zero and wait for reset release.
+- Once reset is released, start processing input bits:
+  - Before first '1' bit in input, output x as is.
+  - After first '1', invert x for output.
+
+Output z is generated from the state and input x, making it a Moore machine output depending only on the state.
+
+Because it's Moore, output depends only on state. To generate output correctly:
+- We need to store whether first '1' has been seen, i.e., states:
+  - BEFORE_FIRST_ONE: output x as is.
+  - AFTER_FIRST_ONE: output inverted x.
+- At reset, output 0.
+
+Asynchronous reset clears the FSM.
+
+This design uses two states and a bit flag inside state to track first '1'.

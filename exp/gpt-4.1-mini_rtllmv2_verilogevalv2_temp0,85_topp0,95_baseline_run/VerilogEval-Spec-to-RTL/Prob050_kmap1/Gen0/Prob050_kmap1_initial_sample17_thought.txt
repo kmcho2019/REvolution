@@ -1,0 +1,31 @@
+First, interpret the Karnaugh map to find the minimal Boolean expression for 'out' as a function of inputs a, b, and c.
+
+The Karnaugh map is:
+
+          a
+     bc   0   1
+     00 | 0 | 1 |
+     01 | 1 | 1 |
+     11 | 1 | 1 |
+     10 | 1 | 1 |
+
+So, for a=0:
+- bc=00 -> 0
+- bc=01 -> 1
+- bc=11 -> 1
+- bc=10 -> 1
+
+For a=1:
+- all entries = 1
+
+From this, the output is 1 except when a=0 and bc=00.
+
+Another way to write the function is:
+
+out = a + (b OR c)
+
+Because when a=1, output=1; when a=0, output=1 if b=1 or c=1 (since bc=00 means b=0 and c=0).
+
+Hence, the expression is out = a + b + c
+
+Implement this as a simple combinational logic in Verilog.

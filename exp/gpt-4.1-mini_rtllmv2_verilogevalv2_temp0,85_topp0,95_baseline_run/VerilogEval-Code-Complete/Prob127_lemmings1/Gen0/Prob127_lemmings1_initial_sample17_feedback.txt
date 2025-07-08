@@ -1,0 +1,35 @@
+Score: 7
+Justification: The code is syntactically correct and implements the FSM with asynchronous reset and correct next state logic; however, the simulation log shows significant mismatches on outputs, indicating functional errors in behavior or timing.
+
+ANALYSIS:
+The design intends to model a Moore FSM with two states (walking left or right), switching directions whenever bumped on either side, and asynchronously resetting to walk left.
+
+The code implements:
+- Asynchronous reset with posedge areset, setting `state` to WALK_LEFT.
+- Next state logic that flips the state if either bump_left or bump_right is asserted.
+- Output logic directly driven by the current state.
+
+The simulation log reports 83 mismatches out of 229 samples, with the first mismatch at time 120, meaning the outputs `walk_left` and `walk_right` are not matching expected values starting fairly early in simulation.
+
+Potential causes based on code and problem description:
+
+1. **Asynchronous reset timing with bump inputs:**  
+   The asynchronous reset is active high and triggers on posedge areset, correctly initializing the state. However, the bump signals are asynchronous inputs sampled in the combinational next state logic. If bump inputs change near clock edges or asynchronously, the Moore FSM’s next state logic could glitch or cause unexpected state transitions, leading to output mismatches.
+
+2. **State update and output timing mismatch:**  
+   The outputs `walk_left` and `walk_right` are purely combinational from `state`. Since the FSM is Moore, outputs depend only on the current state. But if bump inputs change asynchronously and cause glitches in `next_state` combinational logic, the sampled `state` on clock edge might not correspond correctly to expected outputs, causing mismatch in simulation.
+
+3. **No debouncing or synchronizing of bump inputs:**  
+   The bump signals come from outside and are not synchronized to `clk`. This can cause metastability or timing-related functional mismatches in simulation, as the next state logic uses these signals directly in a combinational block.
+
+4. **No explicit handling of the case when both bumps occur simultaneously:**  
+   While the code handles `bump_left || bump_right` by flipping state, the problem description says if both bumps are asserted simultaneously, the direction should still switch. The code’s logic matches this, so this is likely not the source of the problem.
+
+5. **Simulation testbench expectations vs. implementation:**  
+   The simulation hints at output mismatches, but the code matches the stated FSM logic. This suggests a timing or sampling issue rather than incorrect logic in next_state computation.
+
+In summary, the code’s main functional issue is related to timing assumptions about asynchronous inputs `bump_left` and `bump_right` being used directly in combinational logic driving next_state. This leads to output mismatches in simulation, as asynchronous inputs can cause transient or unexpected transitions not accounted for in the FSM design.
+
+The asynchronous reset and state register are correctly implemented and follow standard conventions, and the Moore output logic is consistent with the problem statement. The root cause of simulation failures is the unsafe handling of asynchronous bump inputs leading to mismatches between expected and actual outputs.
+
+No syntax errors exist; the code compiles fine but fails functional simulation checks on output signals due to the reasons above.

@@ -1,0 +1,17 @@
+From the Karnaugh map, the function output is 1 when the combination of inputs ab and cd are:
+ab=00, cd=01 or 10
+ab=01, cd=00 or 11
+ab=11, cd=01 or 10
+ab=10, cd=00 or 11
+
+Observing the pattern, the output is 1 whenever the two-bit inputs ab and cd differ in exactly one bit position (i.e., their Hamming distance is 1). This corresponds to the XOR of ab and cd having exactly one bit set.
+
+Since a,b,c,d are single bits, we can treat ab and cd as two 2-bit numbers: ab = {a,b}, cd = {c,d}
+
+We can find the XOR of ab and cd, and check if exactly one bit is set in this XOR. For 2-bit numbers, this means the XOR result is either 01 (1 decimal) or 10 (2 decimal).
+
+Hence, output = 1 if (ab ^ cd) == 1 or 2.
+
+We can implement this by calculating xor_ab_cd = {a,b} ^ {c,d}, then output = (xor_ab_cd == 2'b01) || (xor_ab_cd == 2'b10).
+
+This logic produces the output as defined by the K-map.

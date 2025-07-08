@@ -1,0 +1,6 @@
+To implement a 3.5x frequency divider, we double the division factor to 7 and count clock cycles from 0 to 6.
+We generate a divided clock toggling every 4 and 3 cycles alternately, forming an uneven duty cycle.
+To achieve fractional division with a more uniform output, we create two versions of this divided clock:
+one directly from the rising edge counter and the other shifted by half clock cycle (using negative edge).
+The final output clock is the OR of these two phase-shifted signals, which smooths the duty cycle and achieves the fractional division.
+The module resets with rst_n and outputs clk_div.

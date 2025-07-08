@@ -1,0 +1,9 @@
+Implement a 5-bit Galois LFSR with taps at bit positions 5 and 3 (1-based). In zero-based indexing for q[4:0], taps correspond to q[4] and q[2]. The LFSR shifts right on each clock edge. The input to the shift register at the MSB (q[4]) is the XOR of q[0] (LSB) and q[4] (tap). For tap at q[2], we XOR q[2] with q[0] for its next state if tapped; otherwise, bits simply shift right. The Galois LFSR update rule for each tapped bit is bit_next = bit_current XOR q[0]. For other bits, bit_next = bit of previous higher position. On synchronous active-high reset, q is set to 1. Initialize q as 5'b00001 on reset.
+
+Steps per clock:
+- Compute feedback = q[0]
+- For bits with taps (q[4], q[2]), next bit = q[bit] XOR feedback
+- For other bits, next bit = q[bit+1]
+- Shift right by one bit.
+
+This logic can be coded combinationally inside always @(posedge clk) block.

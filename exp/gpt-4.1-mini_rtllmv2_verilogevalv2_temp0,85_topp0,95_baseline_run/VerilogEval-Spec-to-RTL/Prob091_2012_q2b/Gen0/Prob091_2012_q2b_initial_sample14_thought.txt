@@ -1,0 +1,18 @@
+The FSM is one-hot encoded with states A-F corresponding to y[0] through y[5]. The outputs Y1 and Y3 correspond to the inputs of the flip-flops for y[1] (state B) and y[3] (state D), respectively.
+
+From the state transitions, determine the input logic for y[1] (B) and y[3] (D):
+
+- For Y1 (input to y[1], state B):
+  Transitions into B are:
+    - From A on input 1: A (y[0]) and w=1 --> Y1 = y[0] & w
+
+- For Y3 (input to y[3], state D):
+  Transitions into D are:
+    - From B on 0: y[1] & ~w
+    - From C on 0: y[2] & ~w
+    - From E on 0: y[4] & ~w
+    - From F on 0: y[5] & ~w
+
+  So, Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w
+
+This is direct combinational logic derived by inspection of the transitions and one-hot encoding.

@@ -1,0 +1,19 @@
+The outputs p and q are sequential and change only at the clock edges or when clock=0 based on input a and previous states. 
+
+- p and q are both undefined initially.
+- When clock is high, p follows input a but with a 1-clock cycle memory: at clock=1, if a=1, p=1; otherwise p=0.
+- q only updates at falling clock edges or when clock=0. q is set to p delayed by one falling edge. 
+- At clock=0, q = previous p value from last clock high phase.
+- When clock goes from high to low, q takes the value of p.
+- Also, when clock=0, if p=1, q is also 1 (maintains p value from previous clock cycle).
+- p is updated only on the rising edge of clock by sampling a.
+
+In summary:
+- p is a register updated on the rising edge of clock as p <= a.
+- q is a register updated on the falling edge of clock as q <= p.
+- At times when clock=0, q holds its value until next falling edge.
+- Initial values of p and q are 0.
+
+This matches the waveform behavior.
+
+Implement sequential logic with registers p and q, updated on clock edges accordingly.

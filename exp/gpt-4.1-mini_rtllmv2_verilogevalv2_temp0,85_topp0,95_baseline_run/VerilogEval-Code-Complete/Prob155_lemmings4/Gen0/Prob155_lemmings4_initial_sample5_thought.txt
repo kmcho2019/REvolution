@@ -1,0 +1,24 @@
+We will implement a Moore FSM with states representing the Lemming's behavior: walking left, walking right, falling, digging, and splattered. 
+
+- On reset, the state is walk_left.
+- The FSM tracks direction and behavior using states:
+  - WALK_LEFT, WALK_RIGHT
+  - FALL_LEFT, FALL_RIGHT (falling while heading left or right)
+  - DIG_LEFT, DIG_RIGHT (digging while heading left or right)
+  - SPLATTERED (dead state)
+
+- The direction is encoded in the walking, falling, or digging states.
+- The fall duration is tracked by a counter that increments while falling.
+- On ground disappearing (ground=0), Lemming enters falling state from walking or digging (if digging reaches no ground).
+- When ground reappears (ground=1) after falling:
+  - If fall duration > 20 cycles, transition to SPLATTERED.
+  - Else, return to walking in the same direction.
+- Digging can only start if on ground and walking, and dig input is asserted.
+- Bumping affects direction only while walking (not while falling or digging).
+- Precedence: falling > digging > direction change.
+- Outputs are asserted based on the current state (Moore).
+- Reset is asynchronous and positive edge triggered, sets to WALK_LEFT.
+
+We'll use parameters or enums for state encoding. The fall counter resets on non-falling states and increments on falling. Direction changes happen only on walking states and bumps, ignoring bumps while falling or digging.
+
+Implementation will be synchronous with asynchronous reset.

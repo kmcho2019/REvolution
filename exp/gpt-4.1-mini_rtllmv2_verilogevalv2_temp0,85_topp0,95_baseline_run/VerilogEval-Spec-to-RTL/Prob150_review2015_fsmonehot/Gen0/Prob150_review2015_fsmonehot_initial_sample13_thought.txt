@@ -1,0 +1,64 @@
+This is a one-hot encoded Moore FSM with 10 states represented by a 10-bit input 'state'. Each bit corresponds to one state: S is bit 0, S1 bit 1, S11 bit 2, S110 bit 3, B0 bit 4, B1 bit 5, B2 bit 6, B3 bit 7, Count bit 8, Wait bit 9.
+
+We derive the next-state logic by inspecting the transitions:
+
+- From S (bit0):
+  - d=0 -> S (bit0)
+  - d=1 -> S1 (bit1)
+- From S1 (bit1):
+  - d=0 -> S (bit0)
+  - d=1 -> S11 (bit2)
+- From S11 (bit2):
+  - d=0 -> S110 (bit3)
+  - d=1 -> S11 (bit2)
+- From S110 (bit3):
+  - d=0 -> S (bit0)
+  - d=1 -> B0 (bit4)
+- From B0 (bit4):
+  - always -> B1 (bit5)
+- From B1 (bit5):
+  - always -> B2 (bit6)
+- From B2 (bit6):
+  - always -> B3 (bit7)
+- From B3 (bit7):
+  - always -> Count (bit8)
+- From Count (bit8):
+  - done_counting=0 -> Count (bit8)
+  - done_counting=1 -> Wait (bit9)
+- From Wait (bit9):
+  - ack=0 -> Wait (bit9)
+  - ack=1 -> S (bit0)
+
+Next state outputs are one-hot signals indicating which state is next. For each next state (S_next, S1_next, B3_next, Count_next, Wait_next), we produce combinational logic.
+
+Output signals (Moore type, depending only on current state):
+
+- shift_ena = 1 for states B0, B1, B2, B3 (bits 4,5,6,7)
+- counting = 1 for Count (bit8)
+- done = 1 for Wait (bit9)
+
+Implementation: combinational logic assigning each next state signal by OR-ing conditions of current state and inputs. 
+
+Also outputs derived from current state bits.
+
+No clock or reset needed here, only combinational next state and outputs.
+
+Inputs:
+
+- d (1-bit)
+- done_counting (1-bit)
+- ack (1-bit)
+- state [9:0] (one-hot state vector)
+
+Outputs:
+
+- B3_next
+- S_next
+- S1_next
+- Count_next
+- Wait_next
+- done
+- counting
+- shift_ena
+
+We produce combinational logic equations based on the above analysis.

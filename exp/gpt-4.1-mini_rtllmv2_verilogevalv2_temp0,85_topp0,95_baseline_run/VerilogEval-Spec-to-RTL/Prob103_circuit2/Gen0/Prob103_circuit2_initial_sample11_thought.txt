@@ -1,0 +1,39 @@
+Analyze the truth table from the waveform data and derive a minimal boolean expression for q in terms of inputs a, b, c, d.
+From the waveform:
+q=1 when (a,b,c,d) = 
+0000, 0011, 0101, 0110, 1001, 1010, 1100, 1111
+Other input combinations yield q=0.
+
+Express q as sum of minterms:
+q = m0 + m3 + m5 + m6 + m9 + m10 + m12 + m15
+
+Use Karnaugh map or boolean algebra to simplify.
+
+K-map for q:
+
+     cd
+     00 01 11 10
+ab
+00   1  0  1  0
+01   0  1  0  1
+11   1  0  1  0
+10   0  1  0  1
+
+From this, we see a pattern that q=1 when number of 1's in input is even (parity) or more specifically, q=1 when parity of inputs (a,b,c,d) is even.
+
+Check parity:
+At 0000 (all zeros), number of ones=0 even => q=1
+At 0011 (two ones) => q=1
+At 0101 (two ones) => q=1
+At 0110 (two ones) => q=1
+At 1001 (two ones) => q=1
+At 1010 (two ones) => q=1
+At 1100 (two ones) => q=1
+At 1111 (four ones) => q=1
+
+All q=1 correspond to even parity of inputs. q=0 when odd parity.
+
+Thus, q is the even parity bit of inputs a,b,c,d (equivalently, the negation of XOR of a,b,c,d).
+
+Therefore:
+q = ~(a ^ b ^ c ^ d)

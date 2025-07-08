@@ -1,0 +1,8 @@
+To implement a dual-edge triggered flip-flop using only single-edge triggered primitives, we can use two positive edge-triggered flip-flops clocked on opposite clock phases. Specifically, one flip-flop triggers on the positive edge of clk, the other triggers on the negative edge of clk (by clocking on clk inverted). Then, a multiplexer selects the correct flip-flop output depending on the current clock level. This effectively samples 'd' on both edges and produces 'q' accordingly.
+
+In FPGAs, this is commonly done by:
+- FF1 triggered on posedge clk, sampling d
+- FF2 triggered on posedge (~clk) (i.e. negedge clk), sampling d
+- Output q = clk ? FF1_output : FF2_output
+
+This way, q updates on both edges of clk, emulating a dual-edge triggered flip-flop.

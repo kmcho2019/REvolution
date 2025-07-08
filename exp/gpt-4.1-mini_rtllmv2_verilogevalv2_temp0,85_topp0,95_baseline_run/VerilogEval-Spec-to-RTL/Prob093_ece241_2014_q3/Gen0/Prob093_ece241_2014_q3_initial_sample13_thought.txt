@@ -1,0 +1,25 @@
+We want to implement the given 4-variable function F(a,b,c,d) using a single 4-to-1 multiplexer with select inputs a and b, where the 4 inputs to the mux are mux_in[3:0]. The function is defined by the given K-map with variables a,b as select inputs, and c,d as the other inputs.
+
+Step 1: Break down the function into 4 functions based on a,b values:
+
+For each pair (a,b):
+- 00 (a=0,b=0): output = 0 0 0 1 for cd = 00 01 11 10
+- 01 (a=0,b=1): output = 1 0 0 0
+- 11 (a=1,b=1): output = 1 0 1 1
+- 10 (a=1,b=0): output = 1 0 0 1
+
+We need to implement each of these 4 functions of (c,d) using as few 2-to-1 muxes as possible, with only multiplexers allowed (no other logic gates).
+
+Step 2: Implement each 1-bit output mux_in[i] = function for (a,b) = i, as functions of (c,d) using 2-to-1 muxes only.
+
+We can consider c as the select input for the 2-to-1 muxes for the c,d inputs or d as select, choose the one that yields minimal muxes.
+
+For each function, implement logic with 2-to-1 muxes.
+
+Finally, assign mux_in = {mux_in[3], mux_in[2], mux_in[1], mux_in[0]}.
+
+This module has inputs c,d and outputs mux_in[3:0].
+
+Note: a,b are not inputs to this module; they are the select inputs of the external 4-to-1 mux, so this module outputs the 4 inputs (mux_in) to the 4-to-1 mux. So the module only inputs c,d, outputs mux_in[3:0] implementing the function for each (a,b).
+
+Therefore, the implementation is to produce 4 bits mux_in[3:0], where each bit is a function of c,d only, matching each row in the K-map for the corresponding (a,b).

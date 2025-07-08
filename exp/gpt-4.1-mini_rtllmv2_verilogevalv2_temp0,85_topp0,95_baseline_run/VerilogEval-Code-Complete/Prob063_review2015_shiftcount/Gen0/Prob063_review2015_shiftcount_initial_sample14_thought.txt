@@ -1,0 +1,11 @@
+The design is a 4-bit register with two modes controlled by shift_ena and count_ena. When shift_ena is high, shift data in from the MSB side, shifting the current bits right, and shifting in the new data bit into q[3]. When count_ena is high, decrement the register value by 1. Since shift_ena and count_ena are never both high at the same time in the system, no special priority is needed. On each rising clock edge, check shift_ena first and shift if enabled; else if count_ena is high, decrement q by 1. Initialize q to zero.
+
+The shifting is MSB first, so q[3] is the MSB where new data comes in. Shift operation is q <= {q[2:0], data} if MSB first shift right? The problem states MSB first data shifted in, so data goes to q[3], and the bits shift towards LSB. So the shift is q <= {data, q[3:1]}. That is, q[3] gets data, q[2] gets old q[3], q[1] gets old q[2], and q[0] gets old q[1]. This is a shift left logically, shifting bits towards LSB, data in MSB.
+
+Wait, to confirm direction: "Data is shifted in most-significant-bit first when shift_ena is 1." That means the new data bit comes into the MSB (q[3]). So the bits move towards LSB: q[2] <- q[3], q[1] <- q[2], q[0] <- q[1], q[3] <- data. So this is shift left with new bit at MSB.
+
+Therefore, shift operation is q <= {data, q[3:1]}.
+
+Counting operation decrements q by 1.
+
+Implement synchronous reset to 0 is optional (not specified), so assume power-on reset is not needed.

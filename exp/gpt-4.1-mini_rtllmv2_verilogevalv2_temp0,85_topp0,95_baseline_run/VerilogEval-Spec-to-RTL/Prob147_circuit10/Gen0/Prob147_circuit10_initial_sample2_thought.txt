@@ -1,0 +1,27 @@
+Analyze the waveform table to infer the behavior of the sequential circuit.
+
+Observations:
+- The flip-flop output 'state' initializes to 0 on the first positive edge where it is defined.
+- 'q' is combinational output derived from 'a', 'b', and 'state'.
+- The 'state' updates on every positive edge of clk.
+- At time 45ns (clk=1), inputs a=0, b=1, state=0, and q=1.
+- At 55ns (clk=1), a=1, b=0, state=0, q=1.
+- At 65ns (clk=1), a=1, b=1, state=0, q=0.
+- At 75ns (clk=1), a=0, b=0, state=1, q=1.
+- At 95ns (clk=1), a=1, b=1, state=1, q=1.
+- At 115ns (clk=1), a=1, b=0, state=1, q=0.
+
+From these, deduce:
+- q = (a & ~b) | (~a & b & ~state) | (state & a & b)
+- The next state logic: state_next = q (i.e., state follows q at next clock edge).
+
+So the circuit is a one-bit memory that updates state to q at each clock rising edge, and q depends on current inputs and state by the formula above.
+
+Implementation:
+- Use a flip-flop for state.
+- Use combinational logic for q.
+- On posedge clk, state <= q.
+
+Outputs:
+- state outputs the flip-flop.
+- q outputs the combinational logic.

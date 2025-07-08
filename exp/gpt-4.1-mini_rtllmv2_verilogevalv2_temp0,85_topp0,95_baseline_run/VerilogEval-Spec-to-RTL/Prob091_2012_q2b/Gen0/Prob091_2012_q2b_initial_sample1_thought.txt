@@ -1,0 +1,22 @@
+The module TopModule uses a one-hot encoded state vector y[5:0] representing states A to F. The next state logic for y[1] (state B) and y[3] (state D) is derived from the FSM transitions.
+
+- y[1] (B) next state = (A and w) or (C and w)
+  From FSM:
+    - A --1--> B means if y=A (y[0]) and w=1, next is B (y[1])
+    - C --1--> E, not B
+    - B --0--> D
+    - So next B is activated only from A or C on w=1? Actually, only from A on w=1, but B is also the next state from A on w=1.
+  Check transitions to B:
+    - Only from A on w=1.
+  So Y1 = y[0] & w.
+
+- y[3] (D) next state = (B and ~w) or (C and ~w) or (E and ~w) or (F and ~w) or (D and 0 or 1?)
+  From FSM transitions to D:
+    - B --0--> D: y[1] & ~w
+    - C --0--> D: y[2] & ~w
+    - E --0--> D: y[4] & ~w
+    - F --0--> D: y[5] & ~w
+    - D --0--> A: y[3] & ~w, so D on ~w goes to A, not D. So y[3] & ~w does not contribute to next D.
+  So Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w
+
+Implementing the outputs Y1 and Y3 accordingly.

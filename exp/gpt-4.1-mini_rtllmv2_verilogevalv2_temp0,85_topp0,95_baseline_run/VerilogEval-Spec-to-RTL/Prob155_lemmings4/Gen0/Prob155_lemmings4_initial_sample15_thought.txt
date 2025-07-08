@@ -1,0 +1,52 @@
+Model the Lemming behavior using a Moore FSM with the following states:
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- FALLING_LEFT: falling, previous direction left
+- FALLING_RIGHT: falling, previous direction right
+- DIGGING_LEFT: digging, previous direction left
+- DIGGING_RIGHT: digging, previous direction right
+- SPLATTER: splattered, no outputs active
+
+At reset (areset), the FSM goes to WALK_LEFT.
+
+Transitions:
+- From WALK_LEFT/RIGHT:
+  * If ground=0, transition to FALLING in current direction, reset fall counter.
+  * Else if dig=1, transition to DIGGING in current direction.
+  * Else if bumped (bump_left or bump_right) -> switch direction walking state.
+  * Else remain walking same direction.
+- From DIGGING_LEFT/RIGHT:
+  * If ground=0, transition to FALLING in current direction, reset fall counter.
+  * Else if dig=0 or still digging, remain digging.
+- From FALLING_LEFT/RIGHT:
+  * Increment fall counter if still falling.
+  * If ground=1, check fall counter:
+    - If fall counter > 20, transition to SPLATTER.
+    - Else return to WALK_LEFT/RIGHT depending on stored direction.
+  * Else remain falling.
+- SPLATTER is terminal.
+
+Outputs depend solely on the current state:
+- walk_left=1 in WALK_LEFT
+- walk_right=1 in WALK_RIGHT
+- aaah=1 in FALLING states
+- digging=1 in DIGGING states
+- all zero in SPLATTER
+
+Implement asynchronous posedge areset to WALK_LEFT state and reset fall counter.
+
+Fall counter increments every clock cycle while falling.
+
+Bump inputs only affect walking states and only if ground=1 and not digging or falling.
+
+Priority of conditions when walking: fall > dig > bump.
+
+In falling or digging states, bumps and dig signals are ignored.
+
+Use a reg to hold state and a reg for fall_count.
+
+Define state encoding using localparams.
+
+Update outputs in a combinational always block from state.
+
+Update state and fall_count on posedge clk or posedge areset.

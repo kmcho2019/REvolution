@@ -1,0 +1,41 @@
+First, interpret inputs a,b,c,d as a 4-bit binary number with 'a' as the MSB and 'd' as the LSB.  
+The module outputs logic 1 when the input number is 2, 7, or 15, and logic 0 when the number is 0,1,4,5,6,9,10,13, or 14. The inputs 3,8,11,12 do not occur.  
+We will derive minimal SOP and POS expressions for the output based on the given minterms and maxterms.  
+
+Input mapping: number = {a,b,c,d} (a is MSB)  
+- Numbers with output 1: 2(0010),7(0111),15(1111)  
+- Numbers with output 0: 0(0000),1(0001),4(0100),5(0101),6(0110),9(1001),10(1010),13(1101),14(1110)  
+- Numbers 3,8,11,12 never occur.  
+
+Minimal SOP (sum of minterms) for output=1:  
+Minterms for 2,7,15 are:  
+- 2 = a'b'c d' (0 0 1 0)  
+- 7 = a' b c d (0 1 1 1)  
+- 15 = a b c d (1 1 1 1)  
+
+From analysis and simplification, the minimal SOP is:  
+out_sop = a b c d + a' b c d + a' b' c d'  
+which is: (a b c d) + (a' b c d) + (a' b' c d')  
+
+Minimal POS (product of sums) can be derived from zeros (maxterms):  
+Zeros at 0,1,4,5,6,9,10,13,14 correspond to maxterms:  
+- 0 (0000) => (a + b + c + d)  
+- 1 (0001) => (a + b + c + d')  
+- 4 (0100) => (a + b' + c + d)  
+- 5 (0101) => (a + b' + c + d')  
+- 6 (0110) => (a + b' + c' + d)  
+- 9 (1001) => (a' + b + c + d')  
+- 10 (1010) => (a' + b + c' + d)  
+- 13 (1101) => (a' + b' + c + d')  
+- 14 (1110) => (a' + b' + c' + d)  
+
+Simplify these maxterms to get the minimal POS:  
+Out_pos = (a + d) (a' + c + d') (b + c' + d')  
+
+This is a minimal POS expression after Karnaugh map analysis.  
+
+The module will implement these two outputs:  
+- out_sop using the minimal SOP  
+- out_pos using the minimal POS  
+
+Implement both expressions combinationally.

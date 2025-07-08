@@ -1,0 +1,10 @@
+Implement an FSM with the following states: IDLE, START, DATA, STOP, and WAIT_STOP. 
+- IDLE: Wait for start bit (0). The line is normally 1 when idle.
+- START: Once start bit detected, move to DATA.
+- DATA: Shift in 8 data bits LSB first, counting bits.
+- STOP: Check the stop bit is 1.
+    - If correct, assert done for one clock cycle and go back to IDLE.
+    - If incorrect, go to WAIT_STOP to wait for stop bit.
+- WAIT_STOP: Wait until line goes to 1 (stop bit), then return to IDLE.
+
+All resets are synchronous and active-high. The done output is high for one clock cycle when a byte is correctly received.

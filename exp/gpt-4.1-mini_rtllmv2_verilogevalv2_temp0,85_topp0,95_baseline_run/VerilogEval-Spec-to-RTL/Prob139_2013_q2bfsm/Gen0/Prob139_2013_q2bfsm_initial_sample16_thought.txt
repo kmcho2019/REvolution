@@ -1,0 +1,16 @@
+Design a finite state machine with these main states:
+- State A: reset asserted, outputs f=0, g=0; upon reset de-assertion transition to State B.
+- State B: after reset is de-asserted, set f=1 for one clock cycle, then go to State C.
+- State C: monitor x input for the pattern 1,0,1 in three consecutive clocks; once detected, go to State D with g=1.
+- State D: keep g=1 and monitor y input for at most two clocks:
+  - If y==1 within two clocks, stay in State D with g=1 permanently.
+  - Else after 2 clocks without y==1, go to State E.
+- State E: g=0 permanently until reset.
+
+Use a synchronous process for state updates and outputs, triggered on posedge clk.
+The resetn is synchronous active low, so check it on clock edges.
+
+Implement a pattern detector for x input with a small shift register or state progression.
+Implement counters to track number of clocks in State D to monitor y.
+
+Outputs f and g are combinational from state (or registered if needed).

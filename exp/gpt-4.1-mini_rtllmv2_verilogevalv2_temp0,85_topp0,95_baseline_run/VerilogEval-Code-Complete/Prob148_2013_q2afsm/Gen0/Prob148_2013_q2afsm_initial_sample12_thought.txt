@@ -1,0 +1,10 @@
+Define a 4-state FSM: A (idle), B (grant device 1), C (grant device 2), D (grant device 3). 
+On reset (active low), go to state A.
+From A, grant priority: if r[1] == 1, go to B; else if r[2] == 1, go to C; else if r[3] == 1, go to D; else stay in A.
+In B, grant device 1 (g1=1), stay in B if r[1]==1 else go back to A.
+In C, grant device 2 (g2=1), stay in C if r[2]==1 else go back to A.
+In D, grant device 3 (g3=1), stay in D if r[3]==1 else go back to A.
+Outputs are based on state.
+Use separate always blocks for state register and next state combinational logic.
+Outputs assigned via continuous assignment.
+State encoding can be 2 bits.

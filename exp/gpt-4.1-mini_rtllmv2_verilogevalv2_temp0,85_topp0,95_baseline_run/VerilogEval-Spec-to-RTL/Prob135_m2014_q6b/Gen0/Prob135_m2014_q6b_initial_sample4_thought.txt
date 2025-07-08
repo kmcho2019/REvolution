@@ -1,0 +1,59 @@
+Implement a Moore FSM with 6 states (A to F) encoded as y = 3'b000 to 3'b101. Use three flip-flops for state register y. The output Y1 is just the middle bit of y (y[1]). The next state logic is computed based on the current state y and input w. Only y[1] next state logic is implemented; y[0] and y[2] flip-flops are updated but their next-state logic can be zero (or held constant) because the problem asks only for y[1] next state logic. The next state of y[1] will be implemented according to the FSM transitions, for each current state and input w.
+
+However, to properly transition between states, we need to implement next state logic for all bits of y, otherwise the FSM won't progress correctly. But the problem states: "Implement just the next-state logic for y[1]." So I will implement next y[1] based on current y and w, and for the other bits I will hold them constant (or reset to zero). The output Y1 = y[1].
+
+The state transitions (state code y, input w -> next state) can be used to derive the next value for y[1] bit:
+
+Let's tabulate current state (y), input w, next state (y_next):
+
+State codes:
+A = 000
+B = 001
+C = 010
+D = 011
+E = 100
+F = 101
+
+Transitions:
+A(000):
+  w=0 -> B(001)
+  w=1 -> A(000)
+B(001):
+  w=0 -> C(010)
+  w=1 -> D(011)
+C(010):
+  w=0 -> E(100)
+  w=1 -> D(011)
+D(011):
+  w=0 -> F(101)
+  w=1 -> A(000)
+E(100):
+  w=0 -> E(100)
+  w=1 -> D(011)
+F(101):
+  w=0 -> C(010)
+  w=1 -> D(011)
+
+Now, extract y[1] next state bit for each case:
+
+State  w  y_next      y_next[1]
+000    0  001(B)      0
+000    1  000(A)      0
+001    0  010(C)      1
+001    1  011(D)      1
+010    0  100(E)      0
+010    1  011(D)      1
+011    0  101(F)      0
+011    1  000(A)      0
+100    0  100(E)      0
+100    1  011(D)      1
+101    0  010(C)      1
+101    1  011(D)      1
+
+Implement a combinational logic block to compute next y[1].
+
+For other bits of y, hold them constant (or zero). The problem does not specify to implement their next state logic.
+
+Include a clock and synchronous reset to 0.
+
+Output Y1 = y[1].

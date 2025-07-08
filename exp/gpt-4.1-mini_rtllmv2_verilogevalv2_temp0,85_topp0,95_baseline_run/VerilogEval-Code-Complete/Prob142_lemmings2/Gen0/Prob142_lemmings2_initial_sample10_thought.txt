@@ -1,0 +1,17 @@
+We model the Lemming behavior with a Moore FSM having four states:
+1) Walk Left
+2) Walk Right
+3) Falling while previously walking left
+4) Falling while previously walking right
+
+Transitions:
+- From walk states, if ground=0, transition to falling state preserving direction.
+- From walk states, if bumped on either side (bump_left or bump_right is 1), switch direction.
+- From falling states, if ground=1, resume walking in the same direction.
+- During falling, bump inputs and ground changes do not change direction or state except when ground returns to 1.
+Asynchronous positive edge reset sets state to walk left.
+
+Outputs depend only on the current state:
+- walk_left=1 only in walk left state
+- walk_right=1 only in walk right state
+- aaah=1 only in either falling state

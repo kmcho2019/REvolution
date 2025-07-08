@@ -1,0 +1,10 @@
+The design requires a 4-bit register that can operate in two modes:
+1. Shift mode (when shift_ena=1): Data is shifted in MSB first, with each bit moving to the right on each clock edge.
+2. Count mode (when count_ena=1): The current value is decremented by 1.
+
+The implementation will use a 4-bit register with a multiplexer to select between:
+- Shift operation: Concatenate new data bit with current value[3:1]
+- Count operation: Current value minus 1
+- Hold operation: Keep current value when neither enable is active
+
+The priority between shift and count doesn't matter per requirements.

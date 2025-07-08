@@ -1,0 +1,14 @@
+To implement the fixed-point adder, I will parameterize the bit widths as per inputs N and Q. Since both operands are in signed fixed-point format (with MSB as sign bit), the addition rules depend on the sign bits:
+
+- If both operands have the same sign bit, add their absolute values and assign the result the same sign bit.
+- If their sign bits differ, subtract the smaller absolute value from the larger absolute value. The sign of the result matches the operand with the larger absolute value.
+  
+Absolute values are obtained by masking out the sign bit and handling two's complement for negative numbers. The arithmetic will be done on absolute values to determine magnitude.
+
+At the end, the result is reassembled as a signed fixed-point number with N bits.
+
+The internal register `res` will hold the final N-bit result.
+
+Overflow is implicitly handled by fitting the result within N bits; since we are doing fixed-point arithmetic, no saturation is implemented, but the sign bit and magnitude logic maintain correctness.
+
+This approach ensures precision consistency, sign correctness, and fixed-point arithmetic compliance.

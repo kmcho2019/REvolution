@@ -1,0 +1,28 @@
+Implement a gshare branch predictor with a 7-bit global history and a 128-entry 2-bit saturating counter PHT indexed by XOR of 7-bit PC and 7-bit global history. On prediction (predict_valid), output prediction from PHT indexed by XOR, output the current global history used for that prediction, and update a "next" global history register by shifting in the predicted bit at the next clock edge (only if no misprediction training takes precedence).
+
+On training (train_valid), update the PHT entry indexed by train_pc XOR train_history based on train_taken. If mispredicted, update global history register to train_history to recover the correct history after the flush. If both training (misprediction) and prediction occur in same cycle, training (mispredict) updates global history (overrides prediction update). The PHT update and global history updates happen on clock edge.
+
+To resolve simultaneous predict and train to same PHT entry, prediction reads PHT state before training update (training updates at clock edge, prediction is combinational output).
+
+Asynchronous active-high reset resets global history to 0 and PHT entries to weakly taken (2'b10).
+
+Ports:
+- Inputs: clk, areset, predict_valid, predict_pc[6:0], train_valid, train_taken, train_mispredicted, train_history[6:0], train_pc[6:0]
+- Outputs: predict_taken, predict_history[6:0]
+
+Implementation details:
+- PHT: reg [1:0] array [0:127]
+- Global history: reg [6:0]
+- On predict_valid: combinational read of PHT at XOR(predict_pc, global_history), output MSB as prediction, output predict_history = global_history
+- On clk edge:
+  - if areset: reset PHT and global_history to initial state
+  - else:
+    - if train_valid:
+      - update PHT entry at XOR(train_pc, train_history)
+      - if train_mispredicted: global_history <= train_history (recover)
+      - else if predict_valid: global_history <= {global_history[5:0], prediction_bit}
+    - else if predict_valid:
+      - global_history <= {global_history[5:0], prediction_bit}
+- Train update increments or decrements saturating counter in PHT accordingly (01 -> 00 if not taken, 10 -> 11 if taken etc.)
+
+This satisfies all requirements including priority of training global history update over prediction update, asynchronous reset, and outputting the history used for prediction.

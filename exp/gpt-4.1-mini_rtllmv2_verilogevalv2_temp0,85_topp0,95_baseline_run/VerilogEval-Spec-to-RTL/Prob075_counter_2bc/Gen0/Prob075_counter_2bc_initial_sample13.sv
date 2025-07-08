@@ -1,0 +1,25 @@
+module TopModule (
+    input clk,
+    input areset,
+    input train_valid,
+    input train_taken,
+    output reg [1:0] state
+);
+
+    // Asynchronous positive-edge reset and synchronous counter logic
+    always @(posedge clk or posedge areset) begin
+        if (areset) begin
+            state <= 2'b01; // weakly not-taken on reset
+        end else if (train_valid) begin
+            if (train_taken) begin
+                if (state != 2'b11)
+                    state <= state + 1;
+            end else begin
+                if (state != 2'b00)
+                    state <= state - 1;
+            end
+        end
+        // else keep state unchanged
+    end
+
+endmodule

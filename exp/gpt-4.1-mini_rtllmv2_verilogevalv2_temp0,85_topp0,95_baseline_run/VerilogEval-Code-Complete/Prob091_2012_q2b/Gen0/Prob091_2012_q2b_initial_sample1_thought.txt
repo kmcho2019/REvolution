@@ -1,0 +1,20 @@
+To find Y1 and Y3 (inputs of flip-flops y[1] and y[3], corresponding to states B and D respectively), we look at transitions that lead into these states.
+
+Y1 corresponds to state B, which is y[1]:
+From the state diagram:
+- A --1--> B
+This means Y1 is high if the current state is A (y[0]) and input w=1.
+
+Y3 corresponds to state D, which is y[3]:
+From the state diagram:
+- B --0--> D
+- C --0--> D
+- E --0--> D
+- F --0--> D
+All transitions to D happen on input w=0 from states B, C, E, F.
+
+Therefore,
+Y1 = (y[0] & w)
+Y3 = ( (y[1] | y[2] | y[4] | y[5]) & ~w )
+
+We implement this combinational logic in Verilog.

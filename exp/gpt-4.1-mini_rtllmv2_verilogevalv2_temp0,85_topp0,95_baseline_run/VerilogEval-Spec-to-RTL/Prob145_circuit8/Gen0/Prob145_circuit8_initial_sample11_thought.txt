@@ -1,0 +1,8 @@
+Analyze the given waveform to identify the behavior of outputs p and q relative to inputs clock and a. 
+- At time 25ns when clock rises to 1, p is 0 and q is unknown. 
+- When clock is 0, p and q hold stable values; at 115ns (clock=0) p=1 and q=1, and at 70ns (clock=0) p=0 and q=0.
+- p seems to latch 'a' on the rising edge of clock (observe at 90ns, 100ns, 110ns, 165ns where p matches 'a' sampled at clock rising edge).
+- q seems to latch p on falling edge of clock (observe at 115ns when clock falls to 0, q becomes 1 which matches prior p=1).
+- On falling edge of clock, q updates to the last value of p.
+- On rising edge of clock, p updates to the current input 'a'.
+This suggests p is a D flip-flop with input 'a' clocked on rising edge, q is a D flip-flop clocked on falling edge with input p.

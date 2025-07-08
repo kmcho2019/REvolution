@@ -1,0 +1,8 @@
+Design a finite state machine with states: IDLE, START, DATA (8 bits), STOP, and WAIT_STOP. 
+- In IDLE, wait for the start bit (0).
+- When start bit detected, move to DATA state and shift in 8 bits one per clock cycle.
+- After 8 data bits, check the stop bit; if stop bit == 1, assert done for one cycle and go back to IDLE.
+- If stop bit != 1, enter WAIT_STOP state and remain there until a '1' is observed on the input line (stop bit).
+- Once stop bit received in WAIT_STOP, return to IDLE.
+Use a synchronous reset to bring FSM back to IDLE and clear done.
+Output 'done' is asserted for one clock cycle after a successful byte reception.

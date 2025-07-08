@@ -1,0 +1,12 @@
+To implement a 32-bit global history shift register with rollback capability:
+1. Use a 32-bit register to store the current branch history (history_reg)
+2. On each clock edge:
+   - If areset is high, reset history_reg to 0
+   - If train_mispredicted is high (takes precedence), load history_reg with {train_history[30:0], train_taken}
+   - Else if predict_valid is high, shift in predict_taken from LSB (right shift)
+3. Continuously output history_reg as predict_history
+
+Key points:
+- Misprediction handling has higher priority than new predictions
+- Rollback uses the saved history (train_history) plus actual outcome (train_taken)
+- New predictions shift in the predicted direction

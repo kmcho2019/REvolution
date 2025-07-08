@@ -1,0 +1,99 @@
+First, assign variables for readability: x[1], x[2], x[3], x[4]. The Karnaugh map is given with rows representing x[1]x[2] and columns representing x[3]x[4]. The K-map is:
+
+       00  01  11  10  (x3 x4)
+00 |  1 | 0 | 0 | 1 |   (x1 x2 = 00)
+01 |  0 | 0 | 0 | 0 |   (01)
+11 |  1 | 1 | 1 | 0 |   (11)
+10 |  1 | 1 | 0 | 1 |   (10)
+
+We will write down the minterms where the function is 1:
+
+Row 00 (x1x2=00): columns 00 and 10 are 1
+ - x1=0, x2=0, x3=0, x4=0 -> 0000
+ - x1=0, x2=0, x3=1, x4=0 -> 0010
+
+Row 11 (x1x2=11): columns 00, 01, 11 are 1
+ - 1100
+ - 1101
+ - 1111
+
+Row 10 (x1x2=10): columns 00, 01, 10 are 1
+ - 1000
+ - 1001
+ - 1010
+
+We can try to simplify the function by grouping cells:
+
+Groups:
+
+1) Group of four 1's at (10,00),(10,01),(11,00),(11,01): 
+  - x1=1, x2= x (0 or 1), x3=0, x4= x
+  - This is x1=1, x3=0
+
+2) Group of three 1's at row 11, columns 00,01,11:
+  - x1=1, x2=1, x3= x, x4= 0 or 1
+  - Since the 1's are in 00,01,11 (x3x4 = 00, 01, 11)
+  - For these three cells, x1=1, x2=1 fixed, x4 varies, x3 varies (but column 10 at 11 row is 0)
+  - This group might be simplified as x1=1, x2=1, x4= x (since x4 varies from 0 to 1), but x3 can't be grouped fully
+  - Actually, 3 cells can't form a group of power of two for K-map grouping, so better to group pairs.
+
+3) Let's consider the single 1 at (00,00) and (00,10):
+
+  - (00,00): x1=0, x2=0, x3=0, x4=0
+  - (00,10): x1=0, x2=0, x3=1, x4=0
+
+  These two cells can be grouped horizontally:
+
+  - x1=0, x2=0, x4=0, x3= x (0 or 1)
+
+4) The single 1 at (10,10) (x1=1, x2=0, x3=1, x4=0)
+
+Let me write minterms explicitly:
+
+Minterms where f=1:
+
+m0: 0000
+
+m2: 0010
+
+m8: 1000
+
+m9: 1001
+
+m10: 1010
+
+m12: 1100
+
+m13: 1101
+
+m14: 1111
+
+Groupings:
+
+- Group 1: m8, m9, m12, m13 (1000,1001,1100,1101)
+  - x1=1, x4=0 or 1 (0 or 1), x3=0, x2= x (0 or 1)
+  - Actually, columns 00 and 01, rows 10 and 11
+
+- Group 2: m9, m10 (1001,1010)
+  - (10,01) and (10,10)
+  - x1=1, x2=0, x4=1 or 0, x3=0 or 1
+
+- Group 3: m0 and m2 (0000,0010)
+  - x1=0, x2=0, x4=0, x3= x
+
+- Group 4: m12, m13, m14 (1100,1101,1111)
+  - x1=1, x2=1, x4=0 or 1, x3= x except for (11,10) which is 0
+
+Due to the complexity, I'll write the function as sum of minterms or use the K-map to write the SOP form:
+
+f = (!x1 & !x2 & !x3 & !x4) + (!x1 & !x2 & x3 & !x4) + 
+    (x1 & !x2 & !x3 & !x4) + (x1 & !x2 & !x3 & x4) + (x1 & !x2 & x3 & !x4) + 
+    (x1 & x2 & !x3 & !x4) + (x1 & x2 & !x3 & x4) + (x1 & x2 & x3 & x4)
+
+This is a valid function implementation.
+
+Alternatively, the code can implement this directly as a boolean expression.
+
+In Verilog, we can implement this with an expression or case statement.
+
+For clarity and correctness, I will implement it with an expression derived from the minterms.

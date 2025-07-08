@@ -1,0 +1,91 @@
+First, analyze the Karnaugh map to find the simplified Boolean expression for the function f. The rows correspond to x[1]x[2], columns to x[3]x[4].
+
+K-map (rows x[1]x[2], cols x[3]x[4]):
+
+        00  01  11  10
+    00  1   0   0   1
+    01  0   0   0   0
+    11  1   1   1   0
+    10  1   1   0   1
+
+Mapping indexes:
+- row 00 = x[1]=0, x[2]=0
+- row 01 = x[1]=0, x[2]=1
+- row 11 = x[1]=1, x[2]=1
+- row 10 = x[1]=1, x[2]=0
+
+- col 00 = x[3]=0, x[4]=0
+- col 01 = x[3]=0, x[4]=1
+- col 11 = x[3]=1, x[4]=1
+- col 10 = x[3]=1, x[4]=0
+
+From the map:
+
+1) Group the four 1s in the bottom left corner (rows 10 and 11, cols 00 and 01):
+   Covers (10,00),(10,01),(11,00),(11,01)
+   This group corresponds to x[1] = 1 (since rows 10 and 11 have x[1]=1), x[3]=0 (cols 00 and 01 have x[3]=0)
+   So this group: x[1] & ~x[3]
+
+2) The 1s at (00,00) and (10,00):
+   Positions (x[1]x[2], x[3]x[4]) = (00,00), (10,00)
+   This covers x[3]=0 and x[4]=0, x[2] varies 0 or 1 in these groups, x[1] varies 0 or 1.
+   Actually only x[2]=0 (rows 00 and 10), so x[2]=0 and x[3]=0, x[4]=0
+   So this group: ~x[2] & ~x[3] & ~x[4]
+
+3) The 1 at (00,10):
+   (x[1]x[2], x[3]x[4]) = (00,10)
+   x[1]=0,x[2]=0,x[3]=1,x[4]=0
+
+4) The 1 at (10,11):
+   (x[1]x[2], x[3]x[4]) = (10,11)
+   x[1]=1,x[2]=0,x[3]=1,x[4]=1
+
+5) The 1 at (11,11):
+   (x[1]x[2], x[3]x[4]) = (11,11)
+   x[1]=1,x[2]=1,x[3]=1,x[4]=1
+
+6) The 1 at (11,01):
+   x[1]=1,x[2]=1,x[3]=0,x[4]=1
+
+7) The 1 at (10,10):
+   x[1]=1,x[2]=0,x[3]=1,x[4]=0
+
+To simplify, check possible groups for the remaining 1s.
+
+After grouping the big group (x[1]&~x[3]) and the small group (~x[2]&~x[3]&~x[4]), the rest can be covered by minterms.
+
+Alternatively, write the sum of minterms for each '1' and simplify.
+
+Minterms (1-based for x[1]..x[4]):
+
+- (00,00) = ~x[1]&~x[2]&~x[3]&~x[4]
+- (00,10) = ~x[1]&~x[2]&x[3]&~x[4]
+- (10,00) = x[1]&~x[2]&~x[3]&~x[4]
+- (10,01) = x[1]&~x[2]&~x[3]&x[4]
+- (10,10) = x[1]&~x[2]&x[3]&~x[4]
+- (11,00) = x[1]&x[2]&~x[3]&~x[4]
+- (11,01) = x[1]&x[2]&~x[3]&x[4]
+- (11,11) = x[1]&x[2]&x[3]&x[4]
+
+Using the big group x[1]&~x[3] covers all the 1s with x[1]=1 and x[3]=0:
+
+- x[1]&~x[3]: covers (10,00),(10,01),(11,00),(11,01)
+
+The remaining 1s outside this group are:
+
+- (00,00): ~x[1]&~x[2]&~x[3]&~x[4]
+- (00,10): ~x[1]&~x[2]&x[3]&~x[4]
+- (10,10): x[1]&~x[2]&x[3]&~x[4]
+- (11,11): x[1]&x[2]&x[3]&x[4]
+
+Notice (10,10) and (11,11) have x[3]=1 and x[4]=0 or 1 respectively, but these two do not share x[4]. Let's keep minterms for these.
+
+Final simplified expression:
+
+f = (x[1] & ~x[3]) 
+  | (~x[2] & ~x[3] & ~x[4]) 
+  | (~x[1] & ~x[2] & x[3] & ~x[4]) 
+  | (x[1] & ~x[2] & x[3] & ~x[4]) 
+  | (x[1] & x[2] & x[3] & x[4]);
+
+Implement this logic in Verilog.

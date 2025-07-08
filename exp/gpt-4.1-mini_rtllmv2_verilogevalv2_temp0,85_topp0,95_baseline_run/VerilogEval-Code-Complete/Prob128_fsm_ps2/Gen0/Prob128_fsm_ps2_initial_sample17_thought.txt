@@ -1,0 +1,12 @@
+We need a 3-state FSM to detect message boundaries in the PS/2 mouse byte stream. The states are:
+
+- IDLE: Discard bytes until a byte with in[3]=1 is found, which marks the start of a message.
+- BYTE2: Waiting for the second byte.
+- BYTE3: Waiting for the third byte.
+
+When we reach BYTE3 and receive the third byte, we signal done in the next clock cycle, then return to IDLE to look for the next message.
+
+The synchronous reset sets the FSM back to IDLE and clears done.
+
+We will use a 2-bit state register and a counter can be implicit in state transitions.
+The done signal will be high for one clock cycle immediately after the third byte is received.

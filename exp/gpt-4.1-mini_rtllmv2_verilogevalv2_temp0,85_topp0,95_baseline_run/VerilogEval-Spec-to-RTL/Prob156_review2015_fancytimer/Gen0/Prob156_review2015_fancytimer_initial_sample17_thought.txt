@@ -1,0 +1,23 @@
+Implement a finite state machine (FSM) with the following states:
+- SEARCH: look for the pattern 1101 on the serial data input, shifting in bits to detect it.
+- READ_DELAY: after detecting 1101, shift in the next 4 bits MSB first to form delay[3:0].
+- COUNTING: count down (delay+1)*1000 clock cycles. We use two counters: one for counting clock cycles (1000 cycles per unit) and one for the delay units. The count output shows the current remaining delay unit (starting from delay down to 0).
+- DONE: assert done output, wait for ack input to be 1 before going back to SEARCH.
+
+On reset, go to SEARCH state.
+
+Details:
+- To detect 1101, keep a 4-bit shift register shifting in data every clock in SEARCH state.
+- Once 1101 is detected, move to READ_DELAY state to shift in 4 bits (MSB first) to form delay.
+- Then go to COUNTING state, assert counting=1.
+- For counting, have two counters:
+  1. cycle_counter: counts from 0 to 999
+  2. unit_counter: counts from delay down to 0
+- Each 1000 clock cycles, decrement unit_counter.
+- When unit_counter reaches 0 and cycle_counter reaches 999, counting is done.
+- Then go to DONE state, assert done=1, counting=0.
+- Wait for ack=1, then return to SEARCH state.
+
+count output: during COUNTING output the current remaining time (unit_counter), otherwise don't care (we assign 4'bxxxx for clarity or just zero).
+
+All signals are registered on posedge clk, with synchronous reset.

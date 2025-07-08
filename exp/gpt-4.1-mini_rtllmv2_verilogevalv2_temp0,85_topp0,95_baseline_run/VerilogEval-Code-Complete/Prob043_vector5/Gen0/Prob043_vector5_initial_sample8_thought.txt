@@ -1,0 +1,18 @@
+To compute all 25 pairwise comparisons of the bits a, b, c, d, e, we will create a 5x5 grid of comparisons where each bit is compared with every bit (including itself). For each comparison, output is 1 if both bits are equal (both 0 or both 1), and 0 otherwise. 
+
+The equality can be checked using XNOR: out[i] = ~(x ^ y).
+
+The output vector 'out' is 25 bits wide, indexed from 24 down to 0. We will map the comparisons in row-major order: first row comparing 'a' with all (a,b,c,d,e), then second row comparing 'b' with all, etc.
+
+Index mapping:
+out[24] = a vs a
+out[23] = a vs b
+out[22] = a vs c
+out[21] = a vs d
+out[20] = a vs e
+out[19] = b vs a
+out[18] = b vs b
+...
+out[0] = e vs e
+
+We'll implement this mapping explicitly in an assign statement.

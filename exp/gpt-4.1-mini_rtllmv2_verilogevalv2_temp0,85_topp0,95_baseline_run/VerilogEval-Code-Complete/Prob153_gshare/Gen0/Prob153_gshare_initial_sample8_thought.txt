@@ -1,0 +1,29 @@
+Implement a gshare branch predictor with a 7-bit PC and 7-bit global history that are XORed to create a 7-bit index into a 128-entry table of 2-bit saturating counters.
+
+The global branch history register (7-bit) is updated after each prediction with the predicted branch outcome. On a prediction request (predict_valid=1), output the predicted direction (taken if saturating counter's MSB=1) and the history used for prediction.
+
+On training (train_valid=1), update the saturating counter indexed by XOR(train_pc, train_history) according to the actual outcome train_taken. If a misprediction occurs (train_mispredicted=1), recover the global history register to train_history (the history after the mispredicted branch finished executing), overriding any prediction update in the same cycle.
+
+If prediction and training requests happen simultaneously, training takes precedence on updating the global history register (since the mispredicted branch flushes younger instructions). However, the prediction uses the PHT state before training updates (training updates happen at posedge clk).
+
+All updates to PHT and global history register happen on posedge clk. Asynchronous active-high reset clears the global history to zero and PHT entries to weakly not taken (2'b01).
+
+We implement the 2-bit saturating counters with the common encoding:
+- 2'b00: Strongly not taken
+- 2'b01: Weakly not taken
+- 2'b10: Weakly taken
+- 2'b11: Strongly taken
+
+On prediction:
+- Use predict_pc XOR current global history as index to access PHT
+- Output prediction (MSB of counter)
+- Output the global history used for prediction (before update)
+- Schedule update of global history with predicted outcome
+
+On training:
+- Use train_pc XOR train_history as index to update PHT according to train_taken
+- If mispredicted, restore global history register to train_history (overriding prediction update)
+
+Handle simultaneous predict and train by updating PHT first on clock edge, but prediction output reads pre-update state.
+
+Use registers and combinational logic accordingly.

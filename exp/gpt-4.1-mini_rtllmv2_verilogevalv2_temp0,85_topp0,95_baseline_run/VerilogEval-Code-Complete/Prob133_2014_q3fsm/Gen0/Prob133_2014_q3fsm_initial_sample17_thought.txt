@@ -1,0 +1,11 @@
+The FSM starts in state A and stays there as long as s=0; when s=1, it moves to state B. In state B, it needs to count how many times w=1 in exactly three consecutive clock cycles. After these three cycles, output z=1 if w=1 was seen exactly twice, else z=0, then start counting again for the next three cycles. We only need to track the count of w=1 occurrences over these three cycles. 
+
+Implementation approach:
+- State A: wait for s=1 to move to B.
+- State B: implement a 2-bit counter (0 to 3) to count the number of cycles in the current 3-cycle window.
+- Use a 2-bit register to count the number of times w=1 in the current window.
+- After 3 cycles, output z=1 if count_w_ones == 2, else 0. Reset count and cycle counter.
+- Remain in state B indefinitely once entered.
+
+This uses only two states (A and B) and minimal additional registers.
+Reset clears all counters and returns to state A.

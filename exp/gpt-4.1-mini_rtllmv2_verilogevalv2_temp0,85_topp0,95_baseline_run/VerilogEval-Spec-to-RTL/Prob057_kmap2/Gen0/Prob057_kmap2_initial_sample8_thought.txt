@@ -1,0 +1,21 @@
+The module TopModule takes four inputs a, b, c, and d. According to the Karnaugh map, the rows correspond to cd and the columns to ab. The K-map is:
+
+       ab
+ cd  00 01 11 10
+00 | 1 | 1 | 0 | 1 |
+01 | 1 | 0 | 0 | 1 |
+11 | 0 | 1 | 1 | 1 |
+10 | 1 | 1 | 0 | 0 |
+
+We map the input combination (cd, ab) to the output based on the table. One way is to implement a combinational logic using a case statement for all 16 input combinations. Another way is to derive a simplified expression from the K-map, but since the problem only states implementing the circuit described by the K-map, the case statement method is straightforward and clear.
+
+Inputs a and b correspond to the columns (2 bits), and c and d correspond to the rows (2 bits).
+
+We can form a 4-bit vector from inputs to select output accordingly:
+index = {c, d, a, b}
+
+But given the map uses cd as rows and ab as columns, the bit ordering for indexing the 16 minterms would be:
+
+index = {c, d, a, b} with c most significant.
+
+We'll implement combinational logic to output the value from the K-map based on the inputs.

@@ -1,0 +1,54 @@
+Score: 7
+Justification: The code is syntactically correct and models the Moore FSM as intended, including remembering the previous walking direction during falling; however, the simulation log shows a significant number of mismatches in the walk_left and walk_right outputs, indicating functional errors in direction switching logic or state transitions.
+
+ANALYSIS:
+1. **Incorrect Direction Switching Logic in Next-State Logic**
+
+   In the next-state logic within the `always @(*)` block, the code switches direction upon any bump while on ground:
+
+   ```verilog
+   WALK_LEFT: begin
+     if (ground == 0)
+       next_state = FALLING;
+     else if ((bump_left || bump_right) && ground == 1)
+       next_state = WALK_RIGHT;
+   end
+   WALK_RIGHT: begin
+     if (ground == 0)
+       next_state = FALLING;
+     else if ((bump_left || bump_right) && ground == 1)
+       next_state = WALK_LEFT;
+   end
+   ```
+
+   This does not fully align with the problem statement. According to the problem, the Lemming should only switch directions **if bumped on its current walking side** — i.e., bump_left when walking left, bump_right when walking right, or if bumped on both sides simultaneously. The current code treats any bump on either side as a direction switch, which can cause premature or incorrect direction changes, leading to output mismatches.
+
+2. **Potential Missing Handling of "Bumped Both Sides" Condition**
+
+   The problem states: "If it's bumped on both sides at the same time, it will still switch directions." The code treats `(bump_left || bump_right)` together, but does not explicitly check if both are asserted. Although the code logically switches direction for any bump, this does not conflict with the requirement, but it may cause issues when only one side's bump should cause a switch.
+
+3. **prev_walk_dir Update Timing and Its Effect**
+
+   The `prev_walk_dir` register is updated only when transitioning from walking states to FALLING:
+
+   ```verilog
+   if (state != FALLING && next_state == FALLING) begin
+     prev_walk_dir <= state;
+   end
+   ```
+
+   This is correct in principle, but any asynchronous reset sets both `state` and `prev_walk_dir` to WALK_LEFT immediately. The simulation mismatches on direction outputs may suggest that `prev_walk_dir` is not always reflecting the walking direction before falling correctly, possibly leading to incorrect outputs during fall or after ground returns.
+
+4. **Output Logic Depends on `state` and `prev_walk_dir`**
+
+   The output logic is a pure Moore output based on `state` and `prev_walk_dir`. The mismatches in `walk_left` and `walk_right` but no mismatches in `aaah` suggest that the state machine is correctly detecting falling versus walking states, but the walking direction outputs do not match the expected behavior, likely due to the errors in next-state logic and prev_walk_dir updating.
+
+5. **No Explicit Reset of Outputs**
+
+   While outputs are assigned in the combinational block, there is no explicit reset condition; however, since the FSM is Moore, outputs depend solely on state, so this should be fine.
+
+6. **Simulation Log Analysis**
+
+   The simulation log shows 168 and 174 mismatches on `walk_left` and `walk_right`, respectively, but no mismatch on `aaah`, indicating that the fall detection and "aaah" output are behaving as expected, but the walking direction is often incorrect, probably due to logic errors in bump handling and direction switching.
+
+In summary, the core issue appears to be that the bump logic is overly simplified and does not correctly take into account which side is bumped relative to the current walking direction, causing the FSM to switch directions incorrectly and producing output mismatches.

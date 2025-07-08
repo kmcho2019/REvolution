@@ -1,0 +1,50 @@
+Analyze the waveform truth table and derive the Boolean function for q from inputs a, b, c, d.
+The input combinations and output q are:
+
+a b c d | q
+0 0 0 0 | 1
+0 0 0 1 | 0
+0 0 1 0 | 0
+0 0 1 1 | 1
+0 1 0 0 | 0
+0 1 0 1 | 1
+0 1 1 0 | 1
+0 1 1 1 | 0
+1 0 0 0 | 0
+1 0 0 1 | 1
+1 0 1 0 | 1
+1 0 1 1 | 0
+1 1 0 0 | 1
+1 1 0 1 | 0
+1 1 1 0 | 0
+1 1 1 1 | 1
+
+This gives the on-set (q=1) for minterms:
+
+0, 3, 5, 6, 9, 10, 12, 15 (decimal)
+
+Expressing these minterms in binary:
+
+0:  0000
+3:  0011
+5:  0101
+6:  0110
+9:  1001
+10: 1010
+12: 1100
+15: 1111
+
+From this, we can try to simplify using Boolean algebra or Karnaugh map:
+
+Observing the pattern, q = (a & b & c & d) + (~a & ~b & ~c & ~d) + 
+(a & ~b & (c ^ d)) + (~a & b & (c ^ d))
+
+Notice that when a=b=0 and c=d=0, q=1 (minterm 0).
+When a=b=1 and c=d=1, q=1 (minterm 15).
+Also, when a and b differ, and c and d differ in an xor manner, q=1.
+
+So the simplified expression:
+
+q = (a & b & c & d) | (~a & ~b & ~c & ~d) | (a ^ b) & (c ^ d)
+
+Implement this combinational logic directly.

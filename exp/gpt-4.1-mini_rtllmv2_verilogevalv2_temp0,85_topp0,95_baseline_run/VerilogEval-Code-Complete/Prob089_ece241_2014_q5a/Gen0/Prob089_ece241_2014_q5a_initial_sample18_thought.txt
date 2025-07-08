@@ -1,0 +1,15 @@
+The 2's complement of a binary number can be obtained by scanning the bits from LSB to MSB, copying bits unchanged until the first '1' is encountered, then inverting all subsequent bits. This can be implemented as a Moore FSM with two states:
+
+- S0: Initial state, output z = x (copy input). When x=1 is seen, transition to S1.
+- S1: Subsequent bits, output z = ~x (invert input).
+
+On asynchronous reset, the FSM returns to S0. The FSM processes one bit per clock cycle on rising edge of clk, outputting the 2's complement bit on z.
+
+We implement the FSM with states S0 and S1, and output logic depending on current state and input. The output z is determined solely by the current state and input (Moore machine output depends on state), so we can register output with the state to meet Moore machine requirements.
+
+In summary:
+- After reset, start in S0.
+- In S0, output z = x. If x==1, move to S1.
+- In S1, output z = ~x, stay in S1.
+
+This handles arbitrary length input bit streams, one bit per clock cycle.

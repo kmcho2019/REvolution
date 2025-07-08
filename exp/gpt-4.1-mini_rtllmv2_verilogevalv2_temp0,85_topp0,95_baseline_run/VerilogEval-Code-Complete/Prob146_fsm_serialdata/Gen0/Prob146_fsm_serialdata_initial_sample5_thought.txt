@@ -1,0 +1,20 @@
+I will design a synchronous FSM with the following states:
+- IDLE: Wait for start bit (0)
+- DATA: Collect 8 data bits, LSB first
+- STOP_WAIT: Wait for stop bit (1) to confirm byte end or synchronize after error
+
+On reset, FSM goes to IDLE. When detecting start bit (in==0 in IDLE), transition to DATA and start shifting in data bits. After 8 bits collected, transition to STOP_WAIT and check if stop bit is 1. If yes, output done=1 and out_byte with collected bits. If no, stay in STOP_WAIT until input is 1 (stop bit detected), then go back to IDLE.
+
+done is asserted for one clock cycle when a valid stop bit is found after data bits, signaling a correctly received byte. out_byte is valid when done=1.
+
+Data bits are shifted in LSB first, so bits are shifted right with new bit shifted in at MSB or shifted left with new bit at LSB depending on convention. The problem states LSB first, so I will shift right with new bit at MSB, then output is constructed correctly. Alternatively, just shift left and insert new bit at LSB each cycle.
+
+For clarity, shift left and insert new bit at LSB.
+
+Implementation details:
+- A 4-state FSM: IDLE, DATA(0-7), STOP_WAIT
+- A 3-bit counter for data bits (0 to 7)
+- A register to hold the data byte
+- done asserted 1-cycle when stop bit is detected correctly
+- in is sampled on rising edge of clk
+- synchronous active-high reset resets FSM and outputs

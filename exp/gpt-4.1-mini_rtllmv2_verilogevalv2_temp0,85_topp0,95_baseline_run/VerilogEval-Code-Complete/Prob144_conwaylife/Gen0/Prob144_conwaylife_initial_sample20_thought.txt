@@ -1,0 +1,18 @@
+To implement the Game of Life variant on a 16x16 toroidal grid:
+
+- Represent the grid as a 16x16 matrix indexed by row and column.
+- On each clock cycle, if `load` is high, load `data` into `q`.
+- Otherwise, compute the next state for each cell:
+  - Count the alive neighbors with wrap-around (toroidal addressing).
+  - Apply the rules:
+    - 0-1 neighbors: cell becomes 0
+    - 2 neighbors: cell stays the same
+    - 3 neighbors: cell becomes 1
+    - 4+ neighbors: cell becomes 0
+- Store the new states into `q` synchronously.
+
+We will:
+- Extract each cell bit from `q`.
+- Use modulo arithmetic for wrap-around.
+- Generate the next state in a combinational block for all cells, then update `q` on the clock edge.
+- This will be done using nested loops in a generate block or procedural code with for loops for clarity.

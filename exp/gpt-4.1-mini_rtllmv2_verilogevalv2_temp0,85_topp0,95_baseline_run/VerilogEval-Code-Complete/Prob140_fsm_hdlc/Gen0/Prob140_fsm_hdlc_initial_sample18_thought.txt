@@ -1,0 +1,13 @@
+Design a Moore FSM with states representing the count of consecutive 1s seen so far. On each clock cycle, input bit is examined:
+- If input is '1', move to the next state counting more consecutive ones.
+- If input is '0', check the count of consecutive ones before this zero:
+  - If count is 5, then next zero means a disc event (discard bit after 5 ones).
+  - If count is 6, then the zero completes a flag pattern.
+  - Otherwise, just reset to zero ones state.
+If we reach 7 or more consecutive ones (without a zero), signal error.
+
+Outputs are only asserted for one cycle, starting the cycle after detecting the pattern.
+
+We define states S0 to S7 representing how many consecutive ones have been seen (0 to 7), and outputs depend on the previous state and current input. Reset synchronous and active high, starts in S0 (no ones seen, as if previous input zero).
+
+Implement with a state register, next state logic, and output logic for disc, flag, err.

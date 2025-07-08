@@ -1,0 +1,28 @@
+Score: 4
+Justification: The code is syntactically correct and compiles without error, but it fails simulation with significant mismatches on outputs f and especially g. Multiple functional errors prevent correct FSM behavior as per the specification.
+
+ANALYSIS:
+1. **Reset Behavior and Output f**:  
+   The FSM should stay in state A while resetn is low and only move to ASSERT_F once resetn is high at the next clock edge, asserting f=1 for exactly one cycle. The code uses a synchronous active-low reset that sets state to A when resetn is low. However, in the combinational block, the default outputs f and g are zeroed at every cycle, and f is only asserted in ASSERT_F. The simulation reports 4 mismatches on f, with the first mismatch at time 20, indicating that f is not asserted exactly once after reset de-assertion as required. This suggests either the FSM transitions or output logic timing does not align precisely with the problem's specification about output f timing.
+
+2. **Monitoring x Input for Pattern 1,0,1**:  
+   The FSM attempts to detect the pattern of x=1, then x=0, then x=1 in three successive clock cycles by transitioning through MONITOR_X1, MONITOR_X2, and MONITOR_X3 states. However, the transition from MONITOR_X2 to MONITOR_X2 when x=1 (instead of going back to MONITOR_X1) may cause the FSM to get stuck in MONITOR_X2 if x fluctuates between 1s, which does not match the intended pattern detection logic. According to the problem, if the pattern is broken, the FSM should restart pattern detection. The code’s transition logic in MONITOR_X2 allows remaining in the same state on x=1, which contradicts the pattern "1,0,1" detection requirement.
+
+3. **Setting g=1 and Monitoring y Input**:  
+   After detecting the pattern, the FSM sets g=1 in state SET_G and then monitors y for two cycles (MONITOR_Y1 and MONITOR_Y2). If y=1 within those two cycles, g remains 1 permanently; otherwise, g=0 permanently. The code sets g=1 in SET_G and the two monitoring states, then maintains the permanent states accordingly.
+
+   However, the simulation log shows 544 mismatches on output g, starting early at time 60. This is substantial and indicates a major functional problem. One likely cause is that outputs f and g are only assigned in the combinational always @(*) block and default to zero, but the FSM outputs depend on the state only, and the code’s logic to hold g=1 or 0 permanently may not work correctly with the synchronous reset or the initial transition timings.
+
+4. **Output Assignments Tied to State in Combinational Block**:  
+   The code sets outputs f and g combinationally based on the current state, but the FSM state is only updated on the clock edge. Because outputs are updated combinationally, they may glitch or be incorrect during state transitions, causing outputs to mismatch simulation expectations. Also, the reset condition in the sequential block only resets the state but not the outputs directly; outputs rely on combinational logic from state. This can cause outputs to temporarily glitch or not hold expected values during reset or state transitions.
+
+5. **Implicit Assumptions on Input Values**:  
+   The FSM code has "else" branches in states MONITOR_X2 and MONITOR_X3 that cover unexpected input values by restarting the pattern. While this is defensive coding, in hardware x and y are 1-bit signals, so inputs can only be 0 or 1. The code is correct but may complicate simulation traceability.
+
+6. **Synchronous Reset Timing**:  
+   The problem states reset is synchronous active low and the FSM stays in A while reset asserted. The code correctly implements synchronous reset. However, outputs during reset are forced to zero by default combinational assignments, but the simulation mismatches suggest outputs may not be stable or correctly timed immediately after reset de-assertion.
+
+**Summary:**  
+The major issues are related to the FSM’s pattern detection transitions not correctly enforcing the 1,0,1 sequence (especially the logic in MONITOR_X2), and the output logic for f and g not aligning perfectly with the problem timing requirements, especially for asserting f once after reset release and holding g correctly depending on y input within two cycles. The large number of mismatches on g indicates a fundamental functional deviation from the spec. The output assignment methodology (combinational outputs tied to state variable updated on clock) may also contribute to timing mismatches observed in simulation.
+
+No syntax errors are present, so the code compiles but fails significant functional tests.

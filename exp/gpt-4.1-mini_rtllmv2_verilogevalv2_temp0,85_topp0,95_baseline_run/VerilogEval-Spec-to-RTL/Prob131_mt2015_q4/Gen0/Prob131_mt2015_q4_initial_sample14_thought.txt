@@ -1,0 +1,15 @@
+We first implement module A as given: z = (x ^ y) & x.
+Next, module B is implemented based on the provided waveform. By analyzing the waveform:
+- When (x,y)=(0,0), z=1
+- When (1,0), z=0
+- When (0,1), z=0
+- When (1,1), z=1
+So z is 1 when x=y or both zero. This matches z = x & y | ~x & ~y = XNOR function. So z = ~(x ^ y).
+
+Then the top module instantiates two A modules and two B modules, all with inputs x and y.
+
+- The output of A1 and B1 go into a 2-input OR gate (or1)
+- The output of A2 and B2 go into a 2-input AND gate (and1)
+- The outputs of or1 and and1 go to an XOR gate to produce final z.
+
+We implement this as specified.

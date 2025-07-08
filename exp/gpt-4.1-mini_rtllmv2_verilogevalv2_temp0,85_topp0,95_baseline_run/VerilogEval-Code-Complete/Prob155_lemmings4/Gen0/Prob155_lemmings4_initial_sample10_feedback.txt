@@ -1,0 +1,90 @@
+Score: 7
+Justification: The code is syntactically correct and produces mostly correct outputs for aaah and digging signals, but the walk_left and walk_right outputs have multiple mismatches, indicating functional errors in direction switching logic or state transitions related to walking states.
+
+ANALYSIS:
+The main issues appear related to incorrect direction switching in walking states, as shown by 46 mismatches in walk_left and walk_right outputs starting from time 800 ps. The aaah and digging signals match perfectly, indicating the falling and digging states and outputs are mostly implemented correctly.
+
+From the problem description, a Lemming switches direction if bumped on the left or right while walking, but not while falling or digging. Also, if bumped on both sides simultaneously, the direction should still switch. The code attempts this logic:
+
+```verilog
+WALK_LEFT: begin
+    if (ground == 0) begin
+        next_state = FALL_LEFT;
+        next_fall_time = 6'd1;
+    end else if (dig) begin
+        next_state = DIG_LEFT;
+        next_fall_time = 6'd0;
+    end else if (bump_left || bump_right) begin
+        next_state = WALK_RIGHT;
+        next_fall_time = 6'd0;
+    end else begin
+        next_state = WALK_LEFT;
+        next_fall_time = 6'd0;
+    end
+end
+```
+
+and similarly for WALK_RIGHT. This logic unconditionally switches direction upon any bump, regardless of which side was bumped. The problem states that if bumped on the left, the Lemming should walk right; if bumped on the right, walk left; if bumped both sides, switch direction as well. Here, the code lumps both bump inputs together, always flipping direction.
+
+This approach may cause the Lemming to sometimes switch direction incorrectly when only one side is bumped (e.g., when walking left and bump_right is 1, it switches to WALK_RIGHT, which is correct; but when walking left and bump_left is 1, it should switch to WALK_RIGHT as well; this is correct). So the code logic seems aligned with the direction switching requirement.
+
+However, the problem description states that switching direction occurs only when the Lemming is walking, not falling or digging, which the code respects.
+
+Another subtlety is that the problem says: "being bumped in the same cycle as ground disappears (but not yet falling), or when ground reappears while still falling, also does not affect walking direction." The code sets fall_time=1 immediately when ground==0 in walking or digging, moving to FALL states. This means any bump in the same cycle ground falls is ignored, which is correct.
+
+But the problem also states fall > dig > switching direction precedence. The code correctly orders if-else conditions in walking states.
+
+So why the mismatches?
+
+Potential cause is in the SPLATTERED state outputs: when splattered, all outputs should be 0 forever, but the code sets outputs only based on states WALK_LEFT, WALK_RIGHT, DIG_*, FALL_*, ignoring SPLATTERED state outputs. Since walk_left and walk_right are assigned as:
+
+```verilog
+assign walk_left  = (state == WALK_LEFT);
+assign walk_right = (state == WALK_RIGHT);
+```
+
+and not explicitly zeroed for SPLATTERED state, they will be 0 in SPLATTERED state, which is correct.
+
+The mismatch is timing-related, starting at 800 ps, which may correspond to a particular sequence of bumps and ground changes not handled perfectly in walk states.
+
+Another point is that fall_time is counted up to 63 and capped, but the problem states "if a Lemming falls for more than 20 clock cycles then hits ground, splatter." The code uses >20 (fall_time > 6'd20) for splatter check, which is correct.
+
+One possible cause is the lack of remembering walking direction after falling or digging. The problem says after falling and landing, the Lemming resumes walking in the same direction as before the fall. The code transitions from FALL_LEFT to WALK_LEFT and FALL_RIGHT to WALK_RIGHT, preserving direction.
+
+Similarly, for digging, the code transitions to FALL_LEFT or FALL_RIGHT when ground disappears, and then back to WALK_LEFT or WALK_RIGHT.
+
+Therefore, direction memory seems correct.
+
+A remaining possible cause is the handling of bump inputs during digging and falling states: the problem says bumps do not affect walking direction during digging or falling, which the code enforces by ignoring bumps in those states.
+
+However, the problem states that if bumped on both sides at the same time, it should still switch direction. The code uses `bump_left || bump_right` in walking states, so this logic is satisfied.
+
+The mismatches in walk_left and walk_right outputs, but not in aaah or digging, suggest that the walk direction sometimes does not switch properly or switches incorrectly.
+
+One subtlety is that the FSM is Moore style: outputs depend only on state. The code's outputs depend only on current state, which is correct.
+
+The simulation log shows 46 mismatches out of 1003 samples, with first mismatch at 800 ps, indicating the code is mostly correct but fails some specific transitions.
+
+Given the above, the most likely cause is the direction switching logic in walking states:
+
+- The code switches direction unconditionally if bumped on either side.
+
+- The problem states the Lemming switches direction when bumped on the left (walk right) or bumped on the right (walk left).
+
+- But the code does not check which bump occurred relative to current direction: e.g., if walking left and bump_left=1, it switches to walk right — correct.
+
+- But what if walking left and bump_right=1? Problem says switching direction still applies, so walking left to walk right — correct.
+
+- So the code matches the requirement.
+
+Hence, the error may be in the testbench or possibly in the timing of updates: maybe the bump signals are not synchronized properly, causing direction switching to lag or misalign.
+
+Alternatively, the priority order in walking states may be incorrect if dig or fall inputs are asserted simultaneously with bump signals, but the code enforces fall > dig > bump order.
+
+In summary, the code has mostly correct logic, but minor functional mismatches in walk_left and walk_right outputs indicate subtle timing or direction switch errors, possibly due to unconditional switching on any bump rather than evaluating precise bump direction in some corner cases.
+
+Finally, the code does not handle the scenario where bump signals arrive at the same time as ground goes to zero but the Lemming is not yet falling. The problem states bumps in that cycle do not affect direction, but the code immediately transitions to fall state if ground==0, losing bump information for that cycle. That may cause direction mismatches in the simulation.
+
+This subtle race may cause the 46 mismatches in walking outputs.
+
+In conclusion, the code design and implementation mostly adhere to the problem, but the exact bump handling around ground transitions and walking direction switching causes the simulation mismatches.

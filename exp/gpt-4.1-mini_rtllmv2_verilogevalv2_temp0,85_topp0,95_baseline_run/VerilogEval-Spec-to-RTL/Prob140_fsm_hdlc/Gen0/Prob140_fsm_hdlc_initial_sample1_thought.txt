@@ -1,0 +1,25 @@
+Design a Moore FSM that counts consecutive 1s seen in the input stream. Start at state S0 (no previous ones or previous zero). On each input bit, transition states according to the number of consecutive ones so far:
+
+- S0: previous bit 0
+- S1: one consecutive 1
+- S2: two consecutive 1s
+- S3: three consecutive 1s
+- S4: four consecutive 1s
+- S5: five consecutive 1s
+- S6: six consecutive 1s
+- S7: seven or more consecutive 1s (error state)
+
+On each clock cycle, depending on the current state and input bit, transition to next state and set the output flags (disc, flag, err) for the entire next cycle.
+
+- When moving from S5 with input 0, we have seen exactly five 1s followed by a 0 (bit-stuffing zero). This zero should be discarded -> assert disc.
+- When moving from S6 with input 0, we have seen exactly six 1s followed by a 0 -> this matches the flag pattern 01111110 -> assert flag.
+- When reaching S7 (7 or more ones), assert err.
+
+At reset, go to S0. Outputs are set according to the previous state and input, so outputs are registered (Moore).
+
+Implementation notes:
+
+- Use a state register to hold current state.
+- Use combinational logic for next state.
+- Outputs depend on next state and input as per the Moore design.
+- disc, flag, err are one clock cycle long pulses occurring one cycle after the pattern is detected.

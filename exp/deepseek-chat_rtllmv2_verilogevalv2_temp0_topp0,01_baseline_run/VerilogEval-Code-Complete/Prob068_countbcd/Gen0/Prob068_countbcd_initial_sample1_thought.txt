@@ -1,0 +1,11 @@
+To build a 4-digit BCD counter, we need to:
+1. Handle each digit (ones, tens, hundreds, thousands) separately
+2. Implement BCD counting logic (reset to 0, increment, and wrap around at 9)
+3. Generate enable signals for higher digits when lower digits wrap around
+4. Synchronize everything to the clock and reset
+
+The key is to cascade the digits with enable signals:
+- The ones digit increments every clock cycle (ena[1] is always 1)
+- The tens digit increments when ones digit wraps (ena[2] = q[3:0]==9)
+- The hundreds digit increments when tens digit wraps (ena[3] = q[7:4]==9 && q[3:0]==9)
+- The thousands digit increments when hundreds digit wraps (implicit)

@@ -1,0 +1,17 @@
+Using the given one-hot encoding, each state is a single bit in the 10-bit vector `state`.
+The next state signals are asserted based on current state and inputs as per the transition table.
+Outputs are derived directly from the current state, as it's a Moore machine.
+
+We will implement combinational logic for next states:
+- B3_next: next state is B3, meaning current state is B2.
+- S_next: next state is S, transitions from S (d=0), S1(d=0), S11(d=0), S110(d=0), Wait(ack=1)
+- S1_next: next state is S1, from S(d=1)
+- Count_next: next state is Count, from B3 (always next), and from Count(done_counting=0)
+- Wait_next: next state is Wait, from Count(done_counting=1)
+
+Outputs:
+- done = Wait
+- counting = Count
+- shift_ena = B0 | B1 | B2 | B3
+
+All assignments are combinational logic based on inputs and current state.

@@ -1,0 +1,38 @@
+Analyze the Karnaugh map to find a minimal expression for f. The map is given with inputs x[1]x[2] on columns and x[3]x[4] on rows, with some don't-care conditions 'd' that we can assign to either 0 or 1 to simplify the logic.
+
+From the Karnaugh map:
+x[3]x[4] \ x[1]x[2] | 00 | 01 | 11 | 10
+---------------------|----|----|----|----
+00                   | d  | 0  | d  | d
+01                   | 0  | d  | 1  | 0
+11                   | 1  | 1  | d  | d
+10                   | 1  | 1  | 0  | d
+
+Let's try to cover all 1s and include don't-cares as 1s if it helps.
+
+1) Grouping the 1s in the third and fourth rows for columns 00 and 01 (x[1]x[2] = 00 or 01) gives:
+x[3] = 1 (since rows 11 and 10) and x[1]x[2] = 0x (since 00 or 01)
+So first term: x[3] & ~x[2]
+
+2) For the 1 in row 01, column 11 (x[3]x[4]=01, x[1]x[2]=11) and 1 in row 11, column 01 (11,01), we can cover by using x[2] and x[3] or x[4].
+
+Look carefully:
+- At (01,11) = 1: x[3]=0, x[4]=1, x[1]=1, x[2]=1
+- At (11,01) = 1: x[3]=1, x[4]=1, x[1]=0, x[2]=1
+
+Common term is x[2]=1 and x[4]=1 in both cases.
+
+So second term: x[2] & x[4]
+
+3) Check if we covered all 1s:
+- (11,00) = 1: x[3]=1,x[4]=1,x[1]=0,x[2]=0, covered by first term? x[3]=1 & ~x[2]=1 &1=1
+- (10,00) =1: x[3]=1,x[4]=0,x[1]=0,x[2]=0, same coverage
+- (11,01)=1: covered by second term
+- (10,01)=1: covered by first term
+- (01,11)=1: covered by second term
+
+No conflicts.
+
+Hence, f = (x[3] & ~x[2]) | (x[2] & x[4])
+
+Implement this function in the module.

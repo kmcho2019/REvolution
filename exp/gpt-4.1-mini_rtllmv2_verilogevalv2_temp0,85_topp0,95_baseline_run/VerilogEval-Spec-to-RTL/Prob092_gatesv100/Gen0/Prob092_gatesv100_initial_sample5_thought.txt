@@ -1,0 +1,11 @@
+To implement TopModule, handle each output bit according to the description:
+
+1. out_both[i] = in[i] & in[i+1] for i=0 to 98; out_both[99] = 0.
+   Here, "neighbor to the left" means the next higher index bit, so for bit i, neighbor to the left is i+1.
+
+2. out_any[i] = in[i] | in[i-1] for i=1 to 99; out_any[0] = 0.
+   Here, "neighbor to the right" means the next lower index bit, so for bit i, neighbor to the right is i-1.
+
+3. out_different[i] = in[i] ^ in[(i+1) mod 100]; that is, neighbor to the left is (i+1), but wrapping around for i=99 neighbor is 0.
+
+Implement these using bitwise operations and concatenations for efficiency.

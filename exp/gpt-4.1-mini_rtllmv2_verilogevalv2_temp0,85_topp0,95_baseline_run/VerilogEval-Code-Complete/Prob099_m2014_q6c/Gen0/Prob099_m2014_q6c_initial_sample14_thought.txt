@@ -1,0 +1,22 @@
+We need to derive the next-state signals Y2 (state B) and Y4 (state D) based on current one-hot encoded states y[6:1] and input w.
+
+State encoding:
+A = y[1], B = y[2], C = y[3], D = y[4], E = y[5], F = y[6]
+
+From the transition table:
+
+For Y2 (next state B):
+- From A (y[1]) on input 0: next state B -> y[1] & ~w
+No other transitions go to B.
+
+So, Y2 = y[1] & ~w
+
+For Y4 (next state D):
+- From B (y[2]) on input 1: next state D -> y[2] & w
+- From C (y[3]) on input 1: next state D -> y[3] & w
+- From E (y[5]) on input 1: next state D -> y[5] & w
+- From F (y[6]) on input 1: next state D -> y[6] & w
+
+So, Y4 = w & (y[2] | y[3] | y[5] | y[6])
+
+We implement these equations directly in the module.

@@ -1,0 +1,21 @@
+The FSM is one-hot encoded with states A to F mapped to y[0] to y[5]. The input is w. We want to find next-state signals Y2 and Y4 corresponding to y[1] (state B) and y[3] (state D).
+
+By inspecting the transitions, we form next-state equations for states B (y[1]) and D (y[3]):
+
+- Y2 (next y[1]) is set when the next state is B.
+From transitions:
+  - From A (y[0]) to B (y[1]) on w=0 => Y2 += y[0] & ~w
+  - From C (y[2]) to B? No direct transition to B.
+  - From other states? No transitions to B.
+Therefore: Y2 = y[0] & ~w
+
+- Y4 (next y[3]) is set when the next state is D.
+From transitions:
+  - From B (y[1]) to D on w=1 => y[1] & w
+  - From C (y[2]) to D on w=1 => y[2] & w
+  - From E (y[4]) to D on w=1 => y[4] & w
+  - From F (y[5]) to D on w=1 => y[5] & w
+  - From D (y[3]) to A on w=1, so no
+So: Y4 = (y[1] | y[2] | y[4] | y[5]) & w
+
+We'll implement these two outputs combinationally from inputs y and w.

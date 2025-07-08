@@ -1,0 +1,8 @@
+From the waveform, p and q are outputs that depend on a state updated on clock edges. 
+- At clock=1 and a=1, p becomes 1, otherwise p becomes 0 at the next clock=1 cycle unless overridden.
+- q becomes 1 only after a falling clock edge (clock=1 to 0 transition) if p was previously 1.
+- q remains 1 as long as clock=0 and p=1 or after being set.
+- On clock rising edges, if a=1, p is set to 1.
+- On clock falling edges, q follows the previous value of p.
+The circuit appears to latch p based on a at clock rising edge and latch q on clock falling edge capturing p's state.
+Thus, implement p updating on posedge clock from a, q updating on negedge clock from p.

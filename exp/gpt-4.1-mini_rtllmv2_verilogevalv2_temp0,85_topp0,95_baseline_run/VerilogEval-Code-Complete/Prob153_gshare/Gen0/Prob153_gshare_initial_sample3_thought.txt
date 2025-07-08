@@ -1,0 +1,21 @@
+Implement a gshare branch predictor with 7-bit PC and 7-bit global history register (GHR). The GHR is updated speculatively on predictions and corrected on misprediction trainings. The index into the 128-entry PHT (pattern history table) is computed as XOR of PC and GHR.
+
+The PHT entries are 2-bit saturating counters to predict taken/not taken.
+
+Interfaces:
+- Prediction: when predict_valid=1, output predict_taken (from PHT MSB) and the GHR used for prediction. Update GHR speculatively on the next clock edge using the predicted branch direction.
+- Training: when train_valid=1, update PHT entry at index = train_pc XOR train_history using train_taken outcome. If train_mispredicted=1, restore GHR to train_history, overriding any speculative GHR update from prediction.
+
+If prediction and training occur in the same cycle:
+- Training has precedence in updating GHR.
+- Prediction uses PHT state before training (training updates at clock edge).
+- Prediction update of GHR is discarded if training mispredict and also update GHR to train_history.
+
+Implement asynchronous active-high reset for all registers.
+
+Internal signals:
+- PHT: reg [1:0] array[0:127]
+- GHR: reg [6:0]
+- Speculative GHR updates on prediction, corrected by training.
+
+Output predict_history is the GHR used for the prediction (before speculative update).

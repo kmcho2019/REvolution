@@ -1,0 +1,22 @@
+To design a Moore FSM that takes a serial input bit by bit (starting from LSB) and outputs the 2's complement of the input serially, we leverage the fact that 2's complement can be obtained by copying all bits up to and including the first '1' from the LSB, then inverting all bits thereafter.
+
+The FSM will have two states:
+- S0: Copy input bit as output until the first '1' is seen
+- S1: After first '1' is seen, output the inverted input bits
+
+When reset (areset) is asserted, the FSM is reset to S0 and output is 0. When reset is released, the FSM starts processing bits serially on each clock cycle. 
+
+Because it is a Moore machine, output depends only on the current state, so we need to register the output based on the current state and input.
+
+The output is:
+- In S0: Z = x (just copy input)
+- In S1: Z = ~x (invert input)
+
+Transition:
+- S0 -> S0 if x == 0
+- S0 -> S1 if x == 1
+- S1 -> S1 (stay there)
+
+The machine processes input bits continuously while reset is low, and stops when reset is asserted.
+
+We implement with an asynchronous reset (areset), positive edge triggered clock.

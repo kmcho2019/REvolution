@@ -1,0 +1,29 @@
+Score: 7
+Justification: The code is syntactically correct and implements the requested Moore FSM with asynchronous reset and state transitions mostly aligned with the specification. However, the simulation log reveals mismatches in the walk_left and walk_right outputs, indicating functional errors related to walking direction signaling, while the aaah output (falling signal) is correct.
+
+ANALYSIS:
+The provided design models a three-state Moore FSM with states WALK_LEFT, WALK_RIGHT, and FALLING, and uses a separate variable walk_dir to remember the walking direction while falling.
+
+1. **Walking Direction Flip Logic and Bumps:**
+   The specification states that if bumped on the left (bump_left=1), the Lemming will walk right, and if bumped on the right (bump_right=1), it will walk left. If bumped on both sides simultaneously, it still switches directions.
+
+   The code instead unconditionally flips the direction on *any* bump during WALK_LEFT or WALK_RIGHT states by setting next_state to the opposite walking state when `(bump_left || bump_right)` is true. This implementation ignores which side is bumped and therefore does not distinguish bump_left from bump_right.
+
+   This discrepancy likely causes output mismatches on walk_left and walk_right signals, because the FSM switches direction incorrectly according to the bump signals.
+
+2. **Bumps Ignored While Falling:**
+   The code correctly keeps state FALLING when ground=0 and ignores bumps during this time, as per the problem statement.
+
+3. **Walking Direction Memory (walk_dir):**
+   The walk_dir register remembers the last walking direction before falling and is updated only on transitions into WALK_LEFT or WALK_RIGHT states. This corresponds with the requirement to resume walking in the same direction after ground reappears.
+
+4. **Asynchronous Reset:**
+   The asynchronous reset sets state and walk_dir to WALK_LEFT, consistent with the requirement.
+
+5. **Output Logic:**
+   Outputs are purely a function of the current state, which matches the Moore FSM specification.
+
+6. **Simulation Mismatches:**
+   The simulation reports 154 mismatches for walk_left and walk_right, starting at time 270 ps, with no mismatches for aaah. This suggests that the FSM sometimes signals walking in the wrong direction. The cause is almost certainly the simplistic bump logic that ignores which bump signal is active and flips direction regardless, violating the problem’s direction switching conditions.
+
+Overall, the key issue is that the FSM transitions on bumps do not check which bump occurred and do not follow the problem's directional switching logic, leading to incorrect walk_left and walk_right outputs in simulation.

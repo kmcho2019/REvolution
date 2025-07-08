@@ -1,0 +1,47 @@
+Score: 4
+Justification: The code is syntactically correct and compiles, but it fails simulation with many output mismatches, indicating functional errors in the FSM behavior and output timing with respect to the problem specification.
+
+ANALYSIS:
+The design intent is to create a finite state machine starting in state A, waiting for s=1 to move to state B, where it samples input w for three clock cycles. After those three samples, if exactly two of them were '1', the output z should be asserted for one cycle. The FSM then continues checking w in subsequent 3-cycle windows.
+
+Examining the code:
+
+1. **State Encoding and Registers:**
+   - States A, B, and C are correctly encoded.
+   - `w_count` and `cycle_cnt` track the number of times w=1 and the number of samples taken.
+   - `z` is a registered output.
+
+2. **State Register and Output Logic:**
+   - On reset, state is A and counters and output z are cleared.
+   - In state A, counters and z are reset.
+   - In state B, w_count and cycle_cnt increment as expected.
+   - In state C, z is asserted if w_count==2; counters reset.
+
+3. **Next State Logic:**
+   - From A, if s=1, FSM moves to B; else stays in A.
+   - In B, after cycle_cnt==2 (which indicates 3 samples collected), FSM moves to C.
+   - In C, FSM returns to B for next window.
+
+**Issues leading to simulation mismatches:**
+
+- **Misalignment of output timing (z):**  
+  The problem states z should be asserted "in the following clock cycle" after collecting the three samples. In the code, z is asserted during state C, which immediately follows B, so timing seems correct. However, the counters and z are updated in the same clock cycle as state transitions, potentially causing timing glitches or z being asserted too early or late relative to samples.
+
+- **Counting and sampling logic in state B:**  
+  The `w_count` increments on every clock in B if w=1, and `cycle_cnt` increments every clock as well. But the sampling and counting happen in the same clock cycle as state update, which may cause off-by-one errors in counting cycles or samples, affecting correctness.
+
+- **Handling of counters and state transitions:**  
+  Resetting `w_count` and `cycle_cnt` in state A and C inside the sequential block alongside z may cause unintended overlap or reset timing, causing missed or extra counts.
+
+- **Use of three states when problem specifies "as few as possible":**  
+  Although not a functional error per se, the use of three states (A, B, C) when possibly two would suffice may introduce unnecessary complexity, but this is secondary.
+
+- **No explicit synchronous reset of `next_state`:**  
+  The `next_state` is combinational but depends on `state`. The reset logic only clears `state` and counters, but `next_state` is not explicitly reset. This is acceptable in FSM design, but could cause glitches if `state` and `next_state` are not aligned properly on reset.
+
+**Summary:**
+The main cause of simulation mismatches is likely the timing of sampling `w` and updating the counters and output `z`. The counters increment in the same clock cycle as the state changes, which may cause one extra or one fewer sample to be counted. The output z is assigned based on w_count in state C, but because counters are reset simultaneously, the count might not reflect the correct three-cycle window. This causes z output mismatches detected in simulation.
+
+Thus, the FSM does not correctly implement the required behavior of sampling three cycles of w, counting exactly how many are 1, and then asserting z on the next cycle if two of those samples were 1. This leads to 252 mismatches in simulation out of 1414 samples.
+
+No syntax errors are present, so the score reflects functional issues only.

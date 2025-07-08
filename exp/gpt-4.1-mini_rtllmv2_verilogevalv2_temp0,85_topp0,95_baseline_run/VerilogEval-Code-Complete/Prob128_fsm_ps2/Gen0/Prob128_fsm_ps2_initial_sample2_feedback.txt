@@ -1,0 +1,40 @@
+Score: 6
+Justification: The code is syntactically correct and simulates, but the output 'done' signal does not fully match expectations, indicating functional errors in detecting message boundaries and producing the 'done' pulse timing.
+
+ANALYSIS:
+The design intent is to detect the start of a three-byte PS/2 mouse message by monitoring the input byte stream for bytes where in[3] = 1, marking the first byte of a message. The FSM discards bytes until it sees in[3]=1, then expects two more bytes to complete the message, asserting 'done' immediately after the third byte.
+
+The FSM uses three states: IDLE (waiting for first byte with in[3]=1), BYTE2 (second byte), BYTE3 (third byte). The 'done' signal is asserted for one cycle immediately after the third byte is received, i.e., in the cycle when the state is BYTE3.
+
+Issues causing simulation mismatches:
+
+1. **Done assertion timing off by one cycle:**  
+   The 'done' output is assigned combinationally in the sequential always block as `done <= (state == BYTE3);`. This means 'done' is asserted when the FSM is in the BYTE3 state. However, according to the problem, 'done' should be asserted **immediately after** the third byte is received. The current code asserts 'done' during the third byte cycle, not the cycle after, which conflicts with the problem requirement.
+
+2. **Transition logic assumes input byte arrival at clock edge:**  
+   The FSM transitions from BYTE2 to BYTE3 unconditionally, assuming the next byte arrives every cycle. However, the problem states the byte stream is continuous, but no explicit handshake or byte valid signal is given. This might cause the FSM to misalign if input bytes do not arrive exactly every clock cycle.
+
+3. **Reset behavior and done signal:**  
+   'done' is reset synchronously on reset. However, since 'done' depends solely on the current state, if reset occurs mid-message, the FSM returns to IDLE but 'done' is immediately zeroed, which is correct. No explicit issue here but contributes to overall timing.
+
+4. **Handling consecutive messages:**  
+   When in BYTE3, if the next byte also has in[3]=1, the FSM transitions to BYTE2. This allows immediate detection of a new message. However, the 'done' signal is tied to the current state, so the 'done' assertion cycle overlaps with the start of the next message, which might cause the simulation to detect timing mismatches between 'done' and message boundaries.
+
+Summary: The core functional flaw lies in 'done' being asserted during the BYTE3 state rather than immediately after, violating the problem's requirement. This timing misalignment results in mismatches during simulation, as evidenced by 70 out of 400 samples not matching expected 'done' behavior. The FSM also assumes continuous input bytes every clock, which may cause errors if data arrival does not match clock cycles exactly.
+
+Key code sections linked to issues:  
+- Done signal assignment in sequential block: `done <= (state == BYTE3);`  
+- State transitions from BYTE3 to next state based on in[3]:  
+  ```verilog
+  BYTE3: begin
+    if (in[3])
+      next_state = BYTE2;
+    else
+      next_state = IDLE;
+  end
+  ```
+- Initial transition from IDLE on `if(in[3]) next_state = BYTE2;`  
+
+These combine to cause the misalignment and incorrect assertion timing of 'done', leading to simulation mismatches.
+
+No syntax errors are present, so the code compiles but fails functional verification per simulation logs.

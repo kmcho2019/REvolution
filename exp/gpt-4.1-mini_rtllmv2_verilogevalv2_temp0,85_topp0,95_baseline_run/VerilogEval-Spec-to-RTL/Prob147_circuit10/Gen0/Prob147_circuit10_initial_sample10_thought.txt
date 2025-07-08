@@ -1,0 +1,35 @@
+The circuit has one bit of state, updated on the positive edge of clk. The output q depends on inputs a, b, and the state.
+
+From the waveform:
+- Initially state is unknown.
+- State updates on posedge clk.
+- q output depends on current inputs and state.
+
+By inspection:
+- When b=1 and state=0, q=1 (e.g. time 45ns)
+- When b=1 and state=1, q=0 (e.g. time 65ns)
+- When b=0 and state=1, q=1 (e.g. time 75ns)
+- When b=0 and state=0, q=0 (e.g. time 15ns)
+
+So q = state XOR b
+
+For state update:
+From time 15 to 35, state stays 0 with inputs a=0,b=0
+At 45ns (posedge clk), with a=0,b=1,state=0, next state=0
+At 55ns (posedge clk), a=1,b=0,state=0,next state=1 (time 95ns state=1)
+At 65ns (posedge clk), a=1,b=1,state=0,next state=0
+At 75ns (posedge clk), a=0,b=0,state=1,next state=1
+At 85ns (posedge clk), a=1,b=1,state=0,next state=0
+At 95ns (posedge clk), a=1,b=1,state=1,next state=1
+At 115ns (posedge clk), a=1,b=0,state=1,next state=0
+
+Looks like the state update is: next_state = (state & ~a) | (~state & a & ~b)
+
+This can be simplified:
+next_state = state & ~a | ~state & a & ~b
+
+We implement this logic in the always block.
+
+Outputs:
+- state output is current state
+- q = state XOR b

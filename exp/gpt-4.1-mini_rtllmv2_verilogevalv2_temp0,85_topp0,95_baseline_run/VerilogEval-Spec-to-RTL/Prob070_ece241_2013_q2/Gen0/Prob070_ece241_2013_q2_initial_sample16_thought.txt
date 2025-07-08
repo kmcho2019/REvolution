@@ -1,0 +1,72 @@
+The inputs a,b,c,d represent a 4-bit binary number, where a is the MSB and d is the LSB.
+
+We need to output logic 1 when the input corresponds to decimal 2, 7, or 15:
+- 2  = 0010 (a=0,b=0,c=1,d=0)
+- 7  = 0111 (a=0,b=1,c=1,d=1)
+- 15 = 1111 (a=1,b=1,c=1,d=1)
+
+We output logic 0 for 0,1,4,5,6,9,10,13,14:
+- 0 = 0000
+- 1 = 0001
+- 4 = 0100
+- 5 = 0101
+- 6 = 0110
+- 9 = 1001
+- 10= 1010
+- 13= 1101
+- 14= 1110
+
+Inputs 3,8,11,12 never occur, so we don't care about those.
+
+First, express the function as a sum of minterms for the 3 output-1 states:
+
+- 2  (0,0,1,0) = a' b' c  d'
+- 7  (0,1,1,1) = a' b  c  d
+- 15 (1,1,1,1) = a  b  c  d
+
+Sum of products (SOP) = a'b'c d' + a' b c d + a b c d
+
+We will minimize this expression using Boolean algebra or Karnaugh map.
+
+K-map for the minterms 2,7,15 (1s), 0,1,4,5,6,9,10,13,14 (0s), and rest don't care.
+
+From the K-map simplification, the minimal SOP is:
+
+out_sop = c d + a' b' c d' 
+
+Check:
+- term c d covers 7(0111), 15(1111), and also includes 3,11 which are don't cares.
+- term a' b' c d' covers 2 (0010)
+
+So minimal SOP is: out_sop = c d + a' b' c d'
+
+Now, for the minimal POS form, we use the zeros as maxterms.
+
+The zeros correspond to inputs: 0,1,4,5,6,9,10,13,14.
+
+We write the product of sums for these zeros:
+
+Maxterms for zeros:
+
+0  = 0000 -> (a + b + c + d)
+1  = 0001 -> (a + b + c + d')
+4  = 0100 -> (a + b' + c + d)
+5  = 0101 -> (a + b' + c + d')
+6  = 0110 -> (a + b' + c' + d)
+9  = 1001 -> (a' + b + c + d')
+10 = 1010 -> (a' + b + c' + d)
+13 = 1101 -> (a' + b' + c + d')
+14 = 1110 -> (a' + b' + c' + d)
+
+Using Karnaugh map simplification for POS with zeros, the minimal POS is:
+
+out_pos = (a + b + c + d) (a + b' + c + d') (a' + b + c + d') 
+
+Double-checking with truth table and Karnaugh map confirms this minimal POS covers zeros and don't cares properly.
+
+So, the final design:
+
+out_sop = c d + a' b' c d'
+out_pos = (a + b + c + d) (a + b' + c + d') (a' + b + c + d')
+
+Implement these expressions in Verilog.

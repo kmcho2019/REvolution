@@ -1,0 +1,25 @@
+Implement a synchronous FSM with these states:
+- A: reset state, output f=0, g=0
+- B: after reset de-asserted, output f=1 for one cycle
+- C0, C1, C2: waiting for x sequence 1,0,1 respectively to detect the pattern
+- D0, D1, D2: g=1 set, monitoring y input for up to two cycles
+- E: g=0 permanently (after y not detected in time)
+- F: g=1 permanently (after y detected)
+
+Transitions:
+- From A, on resetn=0 stay in A
+- From A, on resetn=1 go to B (one cycle f=1)
+- From B, f=1 one cycle, then start monitoring x sequence in C0
+- In C states, detect x sequence 1,0,1 to transition to D0 and set g=1
+- In D states, monitor y for 2 cycles:
+  - If y=1 at any cycle, go to F (g=1 permanently)
+  - If after 2 cycles no y=1, go to E (g=0 permanently)
+
+Output logic:
+- f=1 only in B for one cycle after resetn=1 detected
+- g=1 in D states and F
+- g=0 otherwise
+
+Synchronous resetn (active low) resets FSM to A.
+
+Implement with a state register, next state logic, and output logic.

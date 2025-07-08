@@ -1,0 +1,9 @@
+Implement a Moore FSM with these states: WALK_LEFT, WALK_RIGHT, FALLING_LEFT, FALLING_RIGHT, DIGGING_LEFT, DIGGING_RIGHT. 
+- On reset, go to WALK_LEFT.
+- From WALK states, if ground=0, transition to corresponding FALLING state.
+- From WALK states, if dig=1 and ground=1, transition to DIGGING state.
+- From WALK states, if bumped (bump_left or bump_right), switch walking direction (with bump precedence) only if not falling or digging.
+- Falling states continue falling while ground=0, on ground=1 return to walking in original direction.
+- Digging states continue digging while ground=1, once ground=0 transition to falling in original direction.
+- While falling or digging, bumps and dig inputs are ignored.
+- Outputs depend only on state: walk_left, walk_right, aaah, digging.

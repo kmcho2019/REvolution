@@ -1,0 +1,22 @@
+The given state machine uses one-hot encoding with states A to F assigned to y[1] through y[6] as follows:
+A = y[1], B = y[2], C = y[3], D = y[4], E = y[5], F = y[6].
+
+We want to find next-state logic for Y2 (state B) and Y4 (state D) based on current state y and input w.
+
+From the transitions:
+
+- Next state B (Y2) is entered only from:
+  - A (y[1]) when w=0 → A(0)->B
+  - No other transitions lead directly to B.
+
+Thus, Y2 = y[1] & ~w
+
+- Next state D (Y4) is entered from multiple transitions:
+  - B (y[2]) when w=1 → B(1)->D
+  - C (y[3]) when w=1 → C(1)->D
+  - E (y[5]) when w=1 → E(1)->D
+  - F (y[6]) when w=1 → F(1)->D
+
+Thus, Y4 = (y[2] + y[3] + y[5] + y[6]) & w
+
+We implement these two outputs accordingly.

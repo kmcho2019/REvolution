@@ -1,0 +1,15 @@
+Implement a 3-state Mealy FSM that detects the sequence "101" on input x. The states represent the progress of matching the sequence:
+- S0: Initial state, no match yet.
+- S1: Detected '1' (first character matched).
+- S2: Detected '10' (first two characters matched).
+
+On each clock's positive edge, transition states based on x. Since it's Mealy, output z is determined by current state and input. The output z is asserted when the FSM sees the last '1' of "101" sequence.
+
+Use asynchronous negative-edge triggered reset (aresetn). If reset is asserted low, FSM returns to S0 immediately.
+
+Also, the FSM supports overlapping sequences. For example, input "10101" should detect two overlapping "101" sequences.
+
+The code includes:
+- state register with asynchronous negative-edge reset
+- combinational logic for next state and output z
+- output z is a combinational function of current state and input x.

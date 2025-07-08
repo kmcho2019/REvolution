@@ -1,0 +1,64 @@
+Score: 5
+Justification: The code is syntactically correct and compiles, but the simulation shows significant functional mismatches on both outputs, indicating incorrect branch prediction and history tracking behavior. The main errors arise from how the GHR is updated and PHT is indexed/updated during simultaneous training and prediction, which violates the problem's timing requirements.
+
+ANALYSIS:
+1. **Incorrect GHR Update Priority and Timing:**  
+   The problem states that when training for a misprediction and a prediction occur in the same cycle, training takes precedence for updating the GHR because the younger prediction will be discarded. The current code uses a single always block triggered on the clock edge, and updates GHR with a simple if-else structure:
+   ```verilog
+   if (train_valid && train_mispredicted) begin
+       GHR <= train_history;
+   end else if (predict_valid) begin
+       GHR <= {GHR[5:0], predict_outcome};
+   end
+   ```
+   This update structure technically follows the priority, but in reality, it does not properly reflect the timing diagram specified. The GHR update on a prediction should reflect the predicted outcome *at the next clock edge* after the prediction, but if training and prediction happen simultaneously, training's GHR recovery must override the prediction update. The code does not explicitly handle the case where both updates want to happen simultaneously in a way consistent with the timing diagram, leading to mismatches in `predict_history` output.
+
+2. **PHT Read and Update Timing Violation:**  
+   The problem specifies that if training and prediction happen for the same PHT entry in the same cycle, the prediction should see the PHT state *before* training updates it, because training updates occur on the clock edge but prediction reads are combinational. The code reads the PHT entry for prediction directly via:
+   ```verilog
+   wire [1:0] predict_counter = PHT[predict_index];
+   ```
+   This is combinational, which is correct, but the training update is applied inside the same always block:
+   ```verilog
+   if (train_valid) begin
+       case (PHT[train_index])
+           ...
+       endcase
+   end
+   ```
+   Because both happen on the same clock edge, the prediction logic will see the old PHT state, but this is only true if `predict_index` and `train_index` are equal. The code does not handle the case when `predict_index == train_index` explicitly, nor does it guarantee that the outputs reflect the PHT state *before* training update correctly in all cases. This timing subtlety can cause prediction mismatches, as seen in the simulation log.
+
+3. **Mismatch of `predict_history` Output:**  
+   The output `predict_history` is assigned directly from the current GHR:
+   ```verilog
+   assign predict_history = GHR;
+   ```
+   The problem states that the predictor should output the history state used to make the prediction (i.e., the global history before it is updated with the predicted outcome). However, since GHR is updated on the clock edge *after* prediction, this assignment is consistent only if the GHR remains unchanged during the cycle. But because GHR updates on the clock edge and is not double-buffered or latched for prediction, races might occur, causing mismatches in `predict_history`.
+
+4. **Reset Warning and Initialization:**  
+   The simulation log warns that the reset does not seem to be working. The asynchronous reset is implemented as:
+   ```verilog
+   always @(posedge clk or posedge areset)
+   ```
+   with:
+   ```verilog
+   if (areset) begin
+       GHR <= 7'b0;
+       for (i = 0; i < 128; i = i + 1) begin
+           PHT[i] <= 2'b10;
+       end
+   end else begin ...
+   end
+   ```
+   Although this looks correct, the simulation warning hints the reset may not be asserted properly in the testbench or the initial state of registers is not as expected. This can cause the initial PHT and GHR states to be invalid, causing early prediction mismatches.
+
+5. **Use of Blocking vs Non-blocking Assignment:**  
+   The code uses non-blocking assignments inside the clocked always block, which is correct. However, updating the PHT array entry inside the always block with:
+   ```verilog
+   PHT[train_index] <= ...
+   ```
+   is allowed but may cause unintended behavior if multiple writes occur or if the index changes within the same cycle. Also, the lack of a registered pipeline stage for prediction index or history may cause combinational loops or timing issues on complex FPGA or ASIC synthesis tools.
+
+Overall, these issues cause significant prediction output mismatches and history tracking errors visible in the simulation log, where hundreds of samples are mismatched for both `predict_taken` and `predict_history`.
+
+Hence, while the code compiles and has the correct structural elements, the timing and state update semantics do not fully match the problem specifications, leading to functional failures in simulation.

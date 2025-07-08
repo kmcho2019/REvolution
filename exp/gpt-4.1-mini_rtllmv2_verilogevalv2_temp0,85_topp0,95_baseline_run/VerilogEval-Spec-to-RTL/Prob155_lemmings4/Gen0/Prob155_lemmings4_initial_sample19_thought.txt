@@ -1,0 +1,47 @@
+Implement a Moore FSM with states representing walking direction (left/right), falling, digging, and splattered. The main states are:
+- WALK_LEFT
+- WALK_RIGHT
+- FALLING_LEFT
+- FALLING_RIGHT
+- DIGGING_LEFT
+- DIGGING_RIGHT
+- SPLATTERED
+
+The state encodes both direction and activity, enabling simpler output logic.
+
+Transitions:
+- From WALK states:
+  - If ground=0, transition to FALLING state with same direction, reset fall counter.
+  - Else if dig=1, transition to DIGGING state with same direction.
+  - Else if bumped (bump_left or bump_right) switch direction.
+  - Else remain in same WALK state.
+
+- From FALLING states:
+  - Increment fall counter every cycle.
+  - If ground=1:
+    - If fall counter > 20, transition to SPLATTERED.
+    - Else go back to WALK state in same direction.
+  - Else remain in FALLING state.
+
+- From DIGGING states:
+  - If ground=0, transition to FALLING state with same direction, reset fall counter.
+  - Else remain DIGGING.
+  - If dig=0 while ground=1, remain digging until ground=0 (not specified to stop digging early).
+
+- From SPLATTERED state:
+  - Remain in SPLATTERED forever until reset.
+
+Outputs are driven by current state:
+- walk_left = 1 if in WALK_LEFT or DIGGING_LEFT
+- walk_right = 1 if in WALK_RIGHT or DIGGING_RIGHT
+- aaah = 1 if in FALLING states
+- digging = 1 if in DIGGING states
+- all outputs 0 in SPLATTERED
+
+areset asynchronously sets state to WALK_LEFT, and fall counter to 0.
+
+Bumping affects direction only in WALK states, and only if not falling or digging.
+
+Fall counter increments only in FALLING state.
+
+This design follows Moore FSM with all outputs dependent only on current state.

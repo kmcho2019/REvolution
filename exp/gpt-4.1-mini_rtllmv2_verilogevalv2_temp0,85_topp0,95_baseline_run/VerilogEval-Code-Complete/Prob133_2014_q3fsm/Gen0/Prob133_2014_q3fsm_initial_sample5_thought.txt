@@ -1,0 +1,9 @@
+The FSM has two main phases: in state A, it waits for s=1 to transition to B; in B, it samples w for three clock cycles, counting how many times w=1. After three samples, it sets output z=1 if exactly two of those three w samples were 1; otherwise z=0. Then it repeats the three-cycle counting again. We can use a 2-bit counter to count the number of w=1s in each three-cycle window and a 2-bit counter to count the cycles (0 to 2). Once three cycles are done, output z accordingly and reset counters for the next window. The s input is ignored except in state A. Use synchronous reset to initialize to state A and counters zero.
+
+States: 
+- A: wait for s=1
+- B: sampling w for 3 cycles, counting w=1 occurrences
+
+We can implement this with a single state bit (0 = A, 1 = B), and counters for cycle count and w count. At the end of each 3-cycle window in B, output z accordingly and reset counters for the next window.
+
+This approach uses minimal states and simple counters.

@@ -1,0 +1,24 @@
+The module tracks the water level using the 3-bit input s, where each bit corresponds to a sensor. The output flow rates (fr0, fr1, fr2) and supplemental flow rate (dfr) depend on the current sensor state and the previous water level relative to the last sensor change.
+
+We will implement a state machine that stores the previous water level state, specifically whether the water was previously lower or higher compared to the current level to decide if the supplemental flow valve (dfr) should be opened.
+
+Since the sensor inputs are three bits (s[2], s[1], s[0]), we decode the water level state as follows:
+- Above s[2]: s == 3'b111 (all sensors asserted)
+- Between s[2] and s[1]: s == 3'b011 (s[1] and s[0] asserted)
+- Between s[1] and s[0]: s == 3'b001 (only s[0] asserted)
+- Below s[0]: s == 3'b000 (no sensor asserted)
+
+The nominal flow rates are:
+- Above s[2]: no flow valves open (fr0, fr1, fr2 = 0)
+- Between s[2] and s[1]: fr0 = 1
+- Between s[1] and s[0]: fr0 = 1, fr1 = 1
+- Below s[0]: fr0 = 1, fr1 = 1, fr2 = 1
+
+The supplemental flow valve (dfr) is opened if the water level has risen since the last sensor change, i.e., the previous level was lower than the current level.
+
+On reset, the machine assumes the water level was low for a long time: no sensors asserted (s == 0) and all flow valves asserted (fr0, fr1, fr2, dfr = 1).
+
+Implementation details:
+- We'll track a "prev_level" 2-bit state encoding the current water level category.
+- On each clock, if s changes level category, update prev_level and detect if level has risen.
+- Outputs are generated combinationally from s and the "rising" condition.

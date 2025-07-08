@@ -1,0 +1,26 @@
+We model the Lemming behavior as a Moore FSM with the following states:
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- DIG_LEFT: digging left (only when ground=1 and dig=1 while walking left)
+- DIG_RIGHT: digging right (same for right)
+- FALL_LEFT: falling after walking or digging left
+- FALL_RIGHT: falling after walking or digging right
+
+Transitions follow the priority:
+1. If ground=0 and not falling or digging, transition to FALL state corresponding to current direction.
+2. If currently digging and ground=0, transition to FALL state.
+3. If currently falling and ground=1, transition back to walking state in the same direction.
+4. If currently walking on ground (not digging or falling) and dig=1, transition to DIG state in current direction.
+5. If currently walking on ground and bumped (either bump_left or bump_right=1), switch walking directions.
+6. While falling or digging, bump signals have no effect.
+7. While falling or digging, dig signals are ignored.
+
+Outputs are driven by the current state:
+- walk_left = 1 when in WALK_LEFT
+- walk_right = 1 when in WALK_RIGHT
+- aaah = 1 when falling (FALL_LEFT or FALL_RIGHT)
+- digging = 1 when digging (DIG_LEFT or DIG_RIGHT)
+
+Asynchronous positive edge reset sets state to WALK_LEFT.
+
+We implement state encoding, synchronous state transitions on clk, asynchronous reset, and outputs derived from states.

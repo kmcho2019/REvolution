@@ -1,0 +1,20 @@
+The problem statement specifies an 8-bit radix-4 Booth multiplier but then describes a process more aligned with a simple shift-and-add multiplier, not radix-4 Booth. Also, the multiplication process described doesn't match radix-4 Booth encoding, which uses groups of 3 bits of the multiplier to decide whether to add, subtract, or do nothing with multiples of the multiplicand.
+
+To strictly follow the problem statement, I'll implement the described behavior: on reset, load sign-extended inputs into multiplicand and multiplier registers; during operation, check each bit of multiplier and add multiplicand to the product if that bit is 1, shifting multiplicand left each cycle, increment counter, and set ready when done.
+
+Note: The described operation is a classic shift-and-add multiplier, not radix-4 Booth. Since the user explicitly requests radix-4 Booth but describes a different operation, I'll implement exactly what they described (shift multiplicand left each cycle, add to product if multiplier bit set), and use the registers and signals as specified.
+
+Key points:
+- On reset: multiplicand <= sign-extended b, multiplier <= sign-extended a, p=0, ctr=0, rdy=0
+- On clk posedge (when not reset):
+    - if ctr < 16:
+       - if multiplier[ctr]==1, p += multiplicand
+       - multiplicand <<= 1
+       - ctr++
+    - else rdy=1
+
+Since multiplicand and multiplier are both 16-bit signed numbers (sign-extended from 8 bits), and p is 16-bit unsigned, the addition and shifting is straightforward.
+
+Implement synchronous reset and synchronous operation as described.
+
+This implementation aligns with the problem description exactly.

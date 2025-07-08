@@ -1,0 +1,12 @@
+To implement a fixed-point subtractor with parameters N and Q, we treat inputs a and b as signed fixed-point numbers with N bits total and Q fractional bits.
+
+The subtraction logic:
+- If signs are the same, subtract the magnitudes and keep the sign.
+- If signs differ, add the magnitudes and assign sign depending on which operand is larger.
+- Special case for zero result: explicitly set sign bit to 0.
+
+We first extract sign bits and magnitudes (absolute values), perform the arithmetic, then reassemble the fixed-point result.
+
+The output c and internal register res hold the N-bit result. The design works combinationally (no clock) and is purely arithmetic.
+
+The code uses signed arithmetic to ease magnitude comparisons and operations, but handles sign logic explicitly according to the problem statement.

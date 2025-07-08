@@ -1,0 +1,18 @@
+To find next-state signals Y2 (B) and Y4 (D), we analyze transitions into states B and D based on the current state (y) and input w. Since one-hot encoding is used, only one bit in y is high at a time.
+
+State B corresponds to y[2], state D corresponds to y[4].
+
+From the state transition table:
+- Transitions to B (y[2]):
+  - From A (y[1]) on input 0: A(0) -> B
+- Transitions to D (y[4]):
+  - From B (y[2]) on input 1: B(1) -> D
+  - From C (y[3]) on input 1: C(1) -> D
+  - From E (y[5]) on input 1: E(1) -> D
+  - From F (y[6]) on input 1: F(1) -> D
+
+Thus,
+Y2 = y[1] & ~w
+Y4 = (y[2] & w) | (y[3] & w) | (y[5] & w) | (y[6] & w)
+
+Simplify Y4 to w & (y[2] | y[3] | y[5] | y[6])

@@ -1,0 +1,16 @@
+Implement a gshare branch predictor with 7-bit PC and 7-bit global history XORed to form a 7-bit index into a 128-entry PHT of 2-bit saturating counters. Maintain a 7-bit global history register updated on predictions. On prediction (predict_valid), output predicted direction and the history used, then update global history with the predicted outcome on next clock. On training (train_valid), update the PHT entry corresponding to train_pc and train_history with actual branch outcome by saturating counters; if mispredicted, restore the global history to train_history (recovery). If both prediction and training occur in the same cycle, training takes precedence to update global history. The PHT update happens on the rising edge of clk. Prediction reads the PHT state before training update in the same cycle.
+
+Asynchronous reset initializes global history to 0 and PHT entries to weakly taken (e.g., 2'b10).
+
+The module has to output prediction and the history used for prediction, and update global history accordingly.
+
+Key points:
+- Index = PC[6:0] XOR global_history
+- PHT is 128 entries x 2 bits (2-bit saturating counters)
+- On prediction: read PHT, output taken if counter >= 2 (2 or 3)
+- On prediction: output the history used (global_history at prediction time)
+- On clock edge: if predict_valid and no training, update global_history with predicted direction
+- On clock edge: if train_valid, update PHT entry accordingly, and if misprediction, restore global_history to train_history
+- Training takes precedence for updating global_history if train_valid is true, even if predict_valid is also true.
+
+No pipeline stalls or flush signals except that the global history is recovered on misprediction training.

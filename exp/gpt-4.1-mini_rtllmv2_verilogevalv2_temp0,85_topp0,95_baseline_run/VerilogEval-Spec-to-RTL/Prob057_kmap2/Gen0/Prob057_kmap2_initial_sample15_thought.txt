@@ -1,0 +1,67 @@
+The Karnaugh map is a 4-variable map with variables c and d as row indices and a and b as column indices. I will decode the map into its minterms and then derive the boolean expression for the output. Alternatively, I can directly implement the logic by decoding the K-map.
+
+Mapping the K-map:
+
+cd\ab | 00 | 01 | 11 | 10
+-------------------------
+ 00   |  1 |  1 |  0 |  1
+ 01   |  1 |  0 |  0 |  1
+ 11   |  0 |  1 |  1 |  1
+ 10   |  1 |  1 |  0 |  0
+
+Variables: a,b,c,d (all one bit)
+
+First, let's write down the minterms where output is 1:
+
+1) cd=00 (c=0,d=0)
+   ab=00( a=0,b=0): 1 -> m0
+   ab=01( a=0,b=1): 1 -> m1
+   ab=10( a=1,b=0): 1 -> m2
+2) cd=01 (c=0,d=1)
+   ab=00( a=0,b=0): 1 -> m4
+   ab=10( a=1,b=0): 1 -> m6
+3) cd=11 (c=1,d=1)
+   ab=01( a=0,b=1): 1 -> m13
+   ab=11( a=1,b=1): 1 -> m15
+   ab=10( a=1,b=0): 1 -> m14
+4) cd=10 (c=1,d=0)
+   ab=00( a=0,b=0): 1 -> m8
+   ab=01( a=0,b=1): 1 -> m9
+
+So minterms: 0,1,2,4,6,8,9,13,14,15
+
+Let's write minterms in decimal:
+
+m0: a=0,b=0,c=0,d=0 -> decimal 0
+m1: a=0,b=1,c=0,d=0 -> decimal 1
+m2: a=1,b=0,c=0,d=0 -> decimal 2
+m4: a=0,b=0,c=0,d=1 -> decimal 4
+m6: a=1,b=0,c=0,d=1 -> decimal 6
+m8: a=0,b=0,c=1,d=0 -> decimal 8
+m9: a=0,b=1,c=1,d=0 -> decimal 9
+m13:a=0,b=1,c=1,d=1 -> decimal 13
+m14:a=1,b=0,c=1,d=1 -> decimal 14
+m15:a=1,b=1,c=1,d=1 -> decimal 15
+
+Now, to write the boolean expression in sum of minterms:
+
+out = Σ m(0,1,2,4,6,8,9,13,14,15)
+
+We can implement this by creating a 4-input lookup using the inputs a,b,c,d with suitable logic or using the minterm sum.
+
+Alternatively, a more compact form can be obtained by grouping in K-map, but since the problem didn't require simplification, I will directly implement the sum of minterms by writing the minterm expressions and OR them.
+
+Each minterm is:
+
+m0: !a & !b & !c & !d
+m1: !a & b & !c & !d
+m2: a & !b & !c & !d
+m4: !a & !b & !c & d
+m6: a & !b & !c & d
+m8: !a & !b & c & !d
+m9: !a & b & c & !d
+m13: !a & b & c & d
+m14: a & !b & c & d
+m15: a & b & c & d
+
+Implement this directly in Verilog.

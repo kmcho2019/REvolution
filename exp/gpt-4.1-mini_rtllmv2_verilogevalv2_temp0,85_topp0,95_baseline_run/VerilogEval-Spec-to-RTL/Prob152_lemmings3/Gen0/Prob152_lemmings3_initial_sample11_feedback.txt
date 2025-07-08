@@ -1,0 +1,43 @@
+Score: 5
+Justification: The code is syntactically correct and compiles, but it contains multiple functional errors causing significant output mismatches in the simulation, reflecting incomplete or inconsistent state transition logic and output behavior.
+
+ANALYSIS:
+The design intent is a Moore FSM modeling a Lemming's behavior with states for walking left, walking right, falling, and digging left or right. The FSM should switch directions when bumped, fall when ground disappears, dig when commanded and on ground, and maintain walking direction through falling and digging phases.
+
+Key issues found in the code causing functional errors are:
+
+1. **Incomplete and conflicting next_state logic for FALL state:**
+   - The code uses two separate always_comb blocks for next_state logic. One block handles the main state transitions including FALL, but leaves the FALL state's handling incomplete with only placeholder comments about remembering direction.
+   - Another always_comb block later tries to fix FALL state transitions by checking the dir_walk register and assigning next_state accordingly.
+   - This split and partial overlapping of next_state logic blocks is problematic because multiple always_comb blocks drive the same signal (next_state) without clear resolution. This can cause simulation mismatches due to non-deterministic or conflicting next_state assignments.
+   - The comments indicate awareness that FALL state alone does not store direction, so the design adds a separate dir_walk register to track walking direction. However, the integration of this logic into next_state computation is incomplete and inconsistent.
+
+2. **Direction updates during digging and walking states:**
+   - The dir_walk register is updated only when state is walking or digging (WL, DIG_L sets dir_walk=0; WR, DIG_R sets dir_walk=1).
+   - However, the problem description states that falling and digging states should not react to bump inputs or affect direction, and direction should persist through falling and digging.
+   - The code misses logic to prevent bump-induced direction changes when in digging or falling states.
+   - For example, in the WL state case, if bumped (bump_left or bump_right), next_state transitions to WR regardless of whether the Lemming is digging or falling, which contradicts the problem statement that bumps have no effect when falling or digging.
+
+3. **Precedence of fall > dig > bump missing or incorrectly implemented:**
+   - The problem states that if multiple conditions (fall, dig, bump) occur simultaneously, fall has the highest precedence, then dig, then bump.
+   - In the WR and WL cases, the code first checks for fall (!ground), then dig, then bump, which is correct in order.
+   - However, the implementation does not prevent bump-induced transitions when the Lemming is digging or falling, violating the stated precedence and ignoring the rule that bump has no effect during fall or dig.
+   - For example, in DIG_L and DIG_R states, the code only checks for ground disappearing to transition to FALL, but does not handle any other inputs or changes. This means dig continues unless ground disappears, but bump inputs during dig incorrectly do not cause transitions — which is correct. But bump inputs during walking states are always processed, even if the Lemming should be dig/walking in the same cycle as bump input.
+
+4. **Asynchronous reset sets state to WL and dir_walk to 0, but initial next_state and dir_walk updates may cause glitches:**
+   - The design resets dir_walk and state asynchronously on areset, but the interaction of the two always_ff blocks updating state and dir_walk could cause misalignment in transitions, especially on reset release.
+
+5. **Multiple always_comb blocks driving next_state:**
+   - The primary always_comb block handles most state transitions, including WL, WR, DIG_L, DIG_R, and partially FALL.
+   - A second always_comb block solely handles FALL next_state transitions, creating a race condition or last-driver-wins ambiguity.
+   - This non-unique driver for next_state is a synthesis and simulation risk and likely causes some mismatches observed on outputs.
+
+6. **Outputs only depend on current state, but some outputs (walk_left, walk_right) reflect only WL and WR states:**
+   - The output logic ignores digging states for walk_left and walk_right outputs, consistent with problem statement since only one of walk_left or walk_right should be asserted when walking, and digging is separate.
+   - This seems consistent, but the logic can produce mismatches if next_state transitions are wrong.
+
+The simulation log shows 88 mismatches over 443 samples, with initial mismatches in walk_left and walk_right around 280 time units, and later mismatches in aaah and digging outputs.
+
+Overall, the main cause of simulation failure is inconsistent and conflicting next_state logic especially around FALL state and incomplete handling of direction tracking and bump input precedence. The multiple always_comb blocks driving next_state create ambiguity, and logic does not fully implement the problem requirements for ignoring bumps during fall and dig, or correctly resuming walking direction after fall.
+
+These issues explain why output signals mismatched significantly during simulation, especially during transitions involving falling and digging states.

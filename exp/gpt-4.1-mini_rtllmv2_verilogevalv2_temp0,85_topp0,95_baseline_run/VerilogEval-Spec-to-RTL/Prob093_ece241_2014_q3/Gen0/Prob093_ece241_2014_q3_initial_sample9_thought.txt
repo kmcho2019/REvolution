@@ -1,0 +1,45 @@
+The problem requires implementing a 4-variable function f(a,b,c,d) using a 4-to-1 mux with selector inputs a,b, and inputs mux_in[3:0]. Inputs c and d are given, and the output f is obtained by selecting one bit from mux_in based on a,b. We must implement the mux_in[3:0] signals only using c,d inputs and 2-to-1 multiplexers, no other gates. The truth table for f with inputs a,b,c,d is given by the Karnaugh map:
+
+We observe the map values for each ab combination:
+
+- For ab=00 (mux_in[0]): function of c,d is 0 0 0 1 for cd=00,01,11,10
+- For ab=01 (mux_in[1]): 1 0 0 0
+- For ab=11 (mux_in[3]): 1 0 1 1
+- For ab=10 (mux_in[2]): 1 0 0 1
+
+We must implement each mux_in[i] as a function of c,d only, using only 2-to-1 multiplexers (mux2) and no other logic gates.
+
+Approach:
+1) Implement a 2-to-1 mux primitive.
+2) Implement each mux_in[i] as a function of c,d using only 2-to-1 muxes. Since c and d are single bit inputs, we can build any function by building a small mux tree.
+
+Each 2-to-1 mux selects between two inputs with one selector bit.
+
+Implement each mux_in[i] as a 2-bit mux tree:
+
+- For example, for mux_in[0]:
+
+From cd=00,01,11,10 the outputs are 0,0,0,1, respectively.
+
+Label inputs as: d=LSB selector, c=MSB selector (or vice versa).
+
+We can implement 4-input function f(c,d) by cascading 2-to-1 muxes:
+
+f = c ? f1 : f0, where f0 and f1 are functions of d.
+
+For mux_in[0]:
+cd: 00->0, 01->0, 11->0, 10->1
+So for c=0: d=0->0, d=1->0 => f0=0
+for c=1: d=0->1, d=1->0 => f1 = d' (inverter, but no gates allowed, so use mux2 with input 0 and 1 and d as selector)
+
+We can implement d' as mux2(1,0,d)
+
+Similarly for other mux_in[i].
+
+Repeat for all 4 mux_in[i].
+
+Finally, output mux_in[3:0].
+
+This satisfies the requirement: only 4-to-1 mux with inputs mux_in[3:0] and selectors a,b, and mux_in[i] implemented with only 2-to-1 muxes and inputs c,d.
+
+No other gates used.

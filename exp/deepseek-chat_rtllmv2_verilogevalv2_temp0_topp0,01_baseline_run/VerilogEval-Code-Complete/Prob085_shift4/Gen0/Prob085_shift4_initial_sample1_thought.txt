@@ -1,0 +1,9 @@
+The design requires a 4-bit shift register with specific control signals. Here's the approach:
+1. Asynchronous reset (areset) has highest priority - when asserted, clears all bits.
+2. If load is asserted (higher priority than ena), load the data input directly.
+3. If ena is asserted (and load isn't), perform a right shift by:
+   - Setting q[3] to 0
+   - Moving q[2] to q[1], q[1] to q[0], etc.
+   - q[0] is discarded
+4. If neither load nor ena is asserted, maintain current state.
+All operations except reset are synchronous to the positive clock edge.

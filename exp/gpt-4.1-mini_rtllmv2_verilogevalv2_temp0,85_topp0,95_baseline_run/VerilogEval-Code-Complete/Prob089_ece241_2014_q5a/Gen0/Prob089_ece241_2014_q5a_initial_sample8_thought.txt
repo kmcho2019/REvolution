@@ -1,0 +1,12 @@
+To design a one-input one-output serial 2's complement Moore state machine, we need to process the input bits starting from the LSB. The 2's complement operation can be done in two steps: copy all bits up to and including the first '1' bit, then invert all subsequent bits. Thus, the FSM has two states:
+
+- WAITING: before the first '1' bit is encountered, output is equal to input.
+- INVERTING: after the first '1' bit is encountered, output is the inverted input bit.
+
+The output depends only on the current state (Moore machine). On reset, the FSM goes back to WAITING state.
+
+The module accepts input bits serially (one per clock cycle), starting from LSB. The output bit is the corresponding bit of the 2's complement number.
+
+We implement a positive edge-triggered FSM with asynchronous active-high reset (areset). On reset, the state returns to WAITING.
+
+This design can handle arbitrary length numbers by continuing to process bits until reset is asserted again.

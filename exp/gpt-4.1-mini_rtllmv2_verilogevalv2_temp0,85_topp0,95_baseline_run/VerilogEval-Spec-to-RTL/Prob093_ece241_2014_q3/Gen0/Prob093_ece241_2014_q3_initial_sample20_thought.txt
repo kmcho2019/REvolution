@@ -1,0 +1,97 @@
+The 4-to-1 multiplexer has selector inputs a and b, and inputs mux_in[3:0]. The output of this 4-to-1 MUX is the desired function f(c,d,a,b) implementing the given K-map.
+
+Given the K-map with variables a,b as selectors of the 4-to-1 MUX, the inputs mux_in[3:0] are functions of c and d only.
+
+For each fixed ab (00, 01, 11, 10), the K-map provides a 2-variable function (over cd) that corresponds to mux_in[ab]. We must implement these functions of c,d using only 2-to-1 multiplexers (and no other gates) inside TopModule.
+
+First, write the 4 functions for mux_in[3:0]:
+
+ab=00 => mux_in[0] = f(00,cd):
+cd=00:0, 01:1, 11:1, 10:1
+Truth table for mux_in[0]:
+cd=00(0,0):0
+cd=01(0,1):1
+cd=11(1,1):1
+cd=10(1,0):1
+
+ab=01 => mux_in[1]:
+cd=00:0
+cd=01:0
+cd=11:0
+cd=10:0
+=> always 0
+
+ab=11 => mux_in[2]:
+cd=00:0
+cd=01:0
+cd=11:1
+cd=10:0
+
+ab=10 => mux_in[3]:
+cd=00:1
+cd=01:0
+cd=11:1
+cd=10:1
+
+Next, implement each mux_in[i] as a function of c,d with only 2-to-1 MUXes (using c or d as selectors). 
+
+A 2-to-1 MUX: output = sel ? in1 : in0.
+
+Implementations:
+
+- mux_in[0]:
+From cd:
+c=0,d=0 =>0
+c=0,d=1 =>1
+c=1,d=0 =>1
+c=1,d=1 =>1
+
+Try d as selector:
+if d=0 => c=0 =>0, c=1 =>1
+if d=1 =>1 always
+So mux_in[0] = d ? 1 : c
+
+- mux_in[1]: always 0
+
+- mux_in[2]:
+cd=00:0
+cd=01:0
+cd=11:1
+cd=10:0
+
+Try c as selector:
+if c=0 => d=0:0, d=1:0 =>0
+if c=1 => d=0:0, d=1:1
+So mux_in[2] = c ? d : 0
+
+- mux_in[3]:
+cd=00:1
+cd=01:0
+cd=11:1
+cd=10:1
+
+Try d as selector:
+if d=0 => c=0:1, c=1:1 =>1
+if d=1 => c=0:0, c=1:1
+
+So mux_in[3] = d ? c : 1
+
+We can implement 1 and 0 as constants.
+
+Hence, mux_in:
+
+mux_in[0] = d ? 1 : c
+
+mux_in[1] = 0
+
+mux_in[2] = c ? d : 0
+
+mux_in[3] = d ? c : 1
+
+We will implement these with 2-to-1 MUXes inside TopModule:
+
+Define a 2-to-1 mux module and instantiate it as needed, using c or d as selector and constants 0 or 1 as inputs.
+
+Return mux_in as a 4-bit bus with these signals.
+
+This satisfies the constraints: only 4-to-1 mux (outside TopModule), TopModule has inputs c,d and outputs mux_in[3:0], implemented only with 2-to-1 muxes and no logic gates.

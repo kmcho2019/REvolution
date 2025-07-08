@@ -1,0 +1,35 @@
+To implement the outputs Y1 and Y3 as the inputs to the state flip-flops y[1] and y[3] respectively, we need to derive the next-state logic for states B (y[1]) and D (y[3]) based on the current state y and input w, following the FSM transitions.
+
+State encoding (one-hot):
+A = y[0]
+B = y[1]
+C = y[2]
+D = y[3]
+E = y[4]
+F = y[5]
+
+From the FSM:
+- Next state B (y[1]) is reached from:
+  - A on w=1
+  - C on w=1 (because C --1--> E, but B is not next from C)
+  - Actually from FSM:
+    - A (0) --1--> B
+    - No other transitions lead to B.
+So B_next = A & w
+
+- Next state D (y[3]) is reached from:
+  - B on w=0
+  - C on w=0
+  - E on w=0
+  - F on w=0
+  - D on w=0 leads to A, so not D.
+
+So D_next = (B & ~w) | (C & ~w) | (E & ~w) | (F & ~w)
+
+Since y is 6-bit vector representing one-hot state,
+we can write:
+
+Y1 = A & w
+Y3 = (B | C | E | F) & ~w
+
+Implement these equations in Verilog.

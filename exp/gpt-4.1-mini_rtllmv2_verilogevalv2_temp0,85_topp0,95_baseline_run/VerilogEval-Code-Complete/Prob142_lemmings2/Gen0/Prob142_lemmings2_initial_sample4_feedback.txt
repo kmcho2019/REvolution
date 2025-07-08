@@ -1,0 +1,127 @@
+Score: 7
+Justification: The code is syntactically correct and models the main states and transitions, but the simulation log shows a significant number of output mismatches (154 out of 441) for walk_left and walk_right signals, indicating functional errors in state transitions or output logic, while the falling output (aaah) matches perfectly.
+
+ANALYSIS:
+The design intent is to implement a Moore FSM with three states: walking left, walking right, and falling, with specific rules on how to switch states based on bumps and ground signals. The code defines these states, maintains last walking direction, and updates states on clock with asynchronous reset.
+
+Key issues identified from the code compared to the problem description and simulation log:
+
+1. **Incorrect Direction Switching on Bumps in Walking States:**
+
+   - In the `WALK_LEFT` state, if a bump occurs (bump_left or bump_right is 1), the code switches to `WALK_RIGHT` unconditionally:
+     ```verilog
+     if (bump_left || bump_right) begin
+       next_state = WALK_RIGHT;
+     end
+     ```
+     This matches the problem description for bump_left or bump_right or both.
+
+   - In the `WALK_RIGHT` state, if a bump occurs (bump_left or bump_right), the code switches to `WALK_LEFT`:
+     ```verilog
+     if (bump_left || bump_right) begin
+       next_state = WALK_LEFT;
+     end
+     ```
+     This also matches the intended behaviour.
+
+   So this part is consistent with the problem statement.
+
+2. **Timing of Direction Change vs. Falling:**
+
+   - The problem states that if ground goes to zero (no ground), the Lemming falls (FALLING state), and bump signals in the same cycle as ground disappearing do not affect walking direction.
+   
+   - The code's next state logic for walking states first checks `if (!ground)` and then sets falling state:
+     ```verilog
+     if (!ground) begin
+       next_state = FALLING;
+     end else begin
+       // bump check here
+     end
+     ```
+     This means that if ground falls in the same cycle as bump signals are asserted, the bump signals are ignored because the code sets FALLING immediately.
+
+   This part aligns with the problem requirement.
+
+3. **Handling Bumps During Falling:**
+
+   - The problem specifies that bumps during falling do not affect direction.
+
+   - The code in `FALLING` state does:
+     ```verilog
+     if (ground) begin
+       next_state = last_walk_dir;
+     end else begin
+       next_state = FALLING;
+     end
+     ```
+     Bumps are ignored.
+
+   This is consistent with the requirement.
+
+4. **Updating last_walk_dir State Variable:**
+
+   - In the `always_ff` block, on clock edges when not resetting, `last_walk_dir` is updated only if the `next_state` is a walking state:
+     ```verilog
+     if (next_state == WALK_LEFT || next_state == WALK_RIGHT)
+       last_walk_dir <= next_state;
+     ```
+     This tracks the last walking direction correctly.
+
+5. **Potential Source of Mismatches:**
+
+   - The simulation log shows 154 mismatches for `walk_left` and `walk_right` starting at time 270.
+
+   - Since the `aaah` output matches perfectly, the FALLING state is likely handled well.
+
+   - A likely cause is that the `walk_left` and `walk_right` outputs are driven directly by the current `state`:
+     ```verilog
+     assign walk_left  = (state == WALK_LEFT);
+     assign walk_right = (state == WALK_RIGHT);
+     ```
+     Since these are Moore outputs driven from the current state, if the state machine transitions incorrectly or does not properly update `last_walk_dir` or next states on bump and ground signals, the outputs will mismatch.
+
+6. **Subtle Potential Cause – Missing State Transition on Both Bumps:**
+
+   - The problem states: "If it's bumped on both sides at the same time, it will still switch directions."
+
+   - The code treats bump_left or bump_right or both identically, so that should not cause a problem.
+
+7. **Other Possible Timing or State Update Issues:**
+
+   - The asynchronous reset initializes the `state` and `last_walk_dir` to WALK_LEFT, which is correct.
+
+   - The state updates and last_walk_dir updates occur in the same clock edge block.
+
+   - The `last_walk_dir` update happens after state update using `next_state`, which might cause a timing mismatch if `next_state` corresponds to FALLING when ground goes low.
+
+   - The code uses `next_state` for updating `last_walk_dir` rather than the current `state`, so on a transition to FALLING, `last_walk_dir` should remain the last walking direction.
+
+   - This logic appears consistent.
+
+8. **Potential Bug in Bump Logic for WALK_LEFT and WALK_RIGHT:**
+
+   - The problem states: "If bumped on the left, switch to walk right. If bumped on right, switch to walk left."
+
+   - But the code switches to walk right when bumped anywhere in `WALK_LEFT` state, and to walk left when bumped anywhere in `WALK_RIGHT` state:
+     - `WALK_LEFT` state bump → walk right (OK).
+     - `WALK_RIGHT` state bump → walk left (OK).
+   
+   - This matches the requirement.
+
+9. **No explicit priority between bump_left and bump_right:**
+
+   - The problem says if bumped both sides, still switch directions.
+
+   - The code uses `bump_left || bump_right`, so this also matches.
+
+Conclusion: The code logic matches the problem specification closely; however, the significant mismatches in `walk_left` and `walk_right` in simulation indicate an error in either state transitions or output assignments.
+
+Since the `aaah` output matches and it depends only on `state == FALLING`, it suggests that the FALLING state is correctly recognized, but the walking states may have wrong transitions or output assignments at certain times.
+
+The root cause is likely an incorrect update or use of `next_state` and `last_walk_dir` during the transition from FALLING back to walking states, leading to output mismatches in `walk_left` and `walk_right`.
+
+In summary, the code is structurally sound and syntactically correct, but the functional mismatch in walking direction outputs implies subtle errors in state transition or output logic related to walking states.
+
+No syntax errors are present, so a zero score is inappropriate.
+
+Because the `aaah` output is correct and many transitions are implemented properly, but 154 mismatches remain in walking outputs, the score is moderate (7 out of 10).

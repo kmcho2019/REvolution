@@ -1,0 +1,37 @@
+Implement combinational logic for the Moore FSM next state and outputs using the given one-hot state encoding. The current state vector is a 10-bit one-hot vector with bits in order: S (bit 0), S1 (bit1), S11 (bit2), S110 (bit3), B0 (bit4), B1 (bit5), B2 (bit6), B3 (bit7), Count (bit8), Wait (bit9).
+
+Next-state logic:
+- From S (bit0): if d=0 -> S (bit0), if d=1 -> S1 (bit1)
+- From S1 (bit1): d=0->S(bit0), d=1->S11(bit2)
+- From S11(bit2): d=0->S110(bit3), d=1->S11(bit2)
+- From S110(bit3): d=0->S(bit0), d=1->B0(bit4)
+- From B0(bit4): next always B1(bit5)
+- B1(bit5): next B2(bit6)
+- B2(bit6): next B3(bit7)
+- B3(bit7): next Count(bit8)
+- Count(bit8): done_counting=0 -> Count(bit8), done_counting=1 -> Wait(bit9)
+- Wait(bit9): ack=0 -> Wait(bit9), ack=1 -> S(bit0)
+
+Outputs (Moore): only depend on current state
+- shift_ena = 1 for B0, B1, B2, B3 (bits 4 to 7)
+- counting = 1 for Count (bit8)
+- done = 1 for Wait (bit9)
+
+Outputs indicating next state asserted: B3_next, S_next, S1_next, Count_next, Wait_next.
+
+Logic should be purely combinational, taking inputs d, done_counting, ack, and state to produce outputs. The 10-bit 'state' input is the current state one-hot vector. The other outputs are wires.
+
+Implement next-state signals (one-hot bits) and then derive the named next state outputs by ORing the respective next-state bit.
+
+Note: since only combinational logic is asked, no registers or flip-flops are included.
+
+The 10-bit input 'state' is indexed [9:0], with bit0 = S, bit1 = S1, ..., bit9 = Wait.
+
+The 'state' input is used to decode current state and generate next-state signals.
+
+The 'state' vector is 10 bits, each bit represents one state line.
+The next states are exclusive, so next state bits are mutually exclusive.
+
+For neatness, define wires for current states, and for next state bits.
+
+Finally, assign the outputs as per the problem statement.

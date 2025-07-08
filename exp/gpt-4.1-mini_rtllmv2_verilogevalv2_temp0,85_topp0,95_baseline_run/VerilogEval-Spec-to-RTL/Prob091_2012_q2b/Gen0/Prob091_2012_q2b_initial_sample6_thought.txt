@@ -1,0 +1,42 @@
+The FSM has six states encoded in one-hot format as y[5:0]. The next state logic depends on the current state and input w.
+
+Given the transition diagram and the one-hot encoding:
+
+- State A (y=000001): If w=1, next state B (000010), else A (000001)
+- State B (000010): If w=1, next state C (000100), else D (001000)
+- State C (000100): If w=1, next state E (010000), else D (001000)
+- State D (001000): If w=1, next state F (100000), else A (000001)
+- State E (010000): If w=1, stay E (010000), else D (001000)
+- State F (100000): If w=1, next state C (000100), else D (001000)
+
+Y1 is the input of flip-flop y[1], which corresponds to state B.
+
+Y3 is the input of flip-flop y[3], which corresponds to state D.
+
+We derive Y1 and Y3 as functions of current state bits y[5:0] and input w.
+
+By inspection:
+
+Y1 (next y[1]) is '1' when the next state is B:
+
+- From A if w=1: A = y[0] = 1, w=1 => Y1 = 1
+- No other transitions go to B
+
+So:
+
+Y1 = y[0] & w
+
+Y3 (next y[3]) is '1' when next state is D:
+
+- From B if w=0: y[1] & ~w
+- From C if w=0: y[2] & ~w
+- From E if w=0: y[4] & ~w
+- From F if w=0: y[5] & ~w
+
+So:
+
+Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+This yields the combinational logic for inputs to flip-flops y[1] and y[3].
+
+The module outputs Y1 and Y3 accordingly.

@@ -1,0 +1,72 @@
+The next-state logic for y[2] (Y2) depends on the current state y[3:1] and input w. We will analyze the state transitions given and extract the logic for the next value of y[2]. Using the state codes:
+A = 000
+B = 001
+C = 010
+D = 011
+E = 100
+F = 101
+
+We examine the transitions to determine when the next state's y[2] bit is 1.
+
+From the transitions:
+- A(000): 0->B(001), 1->A(000)
+  Next state y[2] = 0 for both
+- B(001): 0->C(010), 1->D(011)
+  Next y[2] = 1 (C=010, D=011)
+- C(010): 0->E(100), 1->D(011)
+  Next y[2] = 1 (E=100, D=011)
+- D(011): 0->F(101), 1->A(000)
+  Next y[2] = 1 (F=101), 0 (A=000)
+- E(100): 0->E(100), 1->D(011)
+  Next y[2] = 1 (E=100, D=011)
+- F(101): 0->C(010), 1->D(011)
+  Next y[2] = 1 (C=010, D=011)
+
+Summarize for next Y2:
+
+Next Y2 = 1 for:
+- From B (001), both w=0 and w=1
+- From C (010), both w=0 and w=1
+- From D (011), w=0 only
+- From E (100), both w=0 and w=1
+- From F (101), both w=0 and w=1
+
+Next Y2 = 0 for:
+- From A (000), both w=0 and w=1
+- From D (011), w=1 only
+
+Expressing y as y[3], y[2], y[1], and input w:
+
+Let's write a truth table or derive the logic expression.
+
+Conditions for next Y2 = 1:
+- y=001 (B): regardless of w
+- y=010 (C): regardless of w
+- y=011 (D): only w=0
+- y=100 (E): regardless of w
+- y=101 (F): regardless of w
+
+So:
+
+Next Y2 = 1 if
+( (y==B) ) OR ( (y==C) ) OR ( (y==E) ) OR ( (y==F) ) OR ( (y==D) and (w==0) )
+
+State codes in bits (y3 y2 y1):
+A: 0 0 0
+B: 0 0 1
+C: 0 1 0
+D: 0 1 1
+E: 1 0 0
+F: 1 0 1
+
+We can implement these checks using bitwise logic:
+
+- Check B: y3=0, y2=0, y1=1
+- Check C: y3=0, y2=1, y1=0
+- Check D: y3=0, y2=1, y1=1
+- Check E: y3=1, y2=0, y1=0
+- Check F: y3=1, y2=0, y1=1
+
+We can express each state's condition with ANDs and then OR them.
+
+Finally, assign Y2 accordingly.

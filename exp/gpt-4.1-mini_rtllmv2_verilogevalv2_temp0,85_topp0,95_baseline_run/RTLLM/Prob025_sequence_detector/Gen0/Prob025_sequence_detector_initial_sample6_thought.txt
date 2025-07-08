@@ -1,0 +1,13 @@
+Implement a Moore FSM with states IDLE, S1, S2, S3, and S4 to detect the 4-bit sequence 1001. 
+- The FSM transitions on the rising edge of clk.
+- On reset (active high), the FSM returns to IDLE.
+- sequence_detected is high only in state S4.
+- The FSM transitions are based on input bit data_in:
+    IDLE: Wait for '1' to move to S1, else stay in IDLE.
+    S1: If input is '0', go to S2; else stay in S1 (because sequence starts with '1', overlapping allowed).
+    S2: If input is '0', go to IDLE (since sequence is 1001, after 10, next bit should be '0' to move ahead), else if '1', go to S3.
+    S3: If input is '1', go to S4 (sequence complete), else if '0', go to S2 (because the last bit matched the second bit of sequence, allowing overlap).
+    S4: After sequence detected, check for overlapping sequences:
+          - If input is '1', go to S1.
+          - Else go to IDLE.
+- sequence_detected is asserted high only in S4.

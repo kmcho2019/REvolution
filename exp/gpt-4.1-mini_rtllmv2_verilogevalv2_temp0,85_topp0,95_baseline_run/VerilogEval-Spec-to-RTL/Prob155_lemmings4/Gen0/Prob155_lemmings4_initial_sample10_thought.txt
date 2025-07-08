@@ -1,0 +1,42 @@
+Implement a Moore FSM with these states:
+
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- FALLING_LEFT: falling while last walking left
+- FALLING_RIGHT: falling while last walking right
+- DIGGING_LEFT: digging while last walking left
+- DIGGING_RIGHT: digging while last walking right
+- SPLATTERED: dead, all outputs zero
+
+Transitions:
+- Reset: to WALK_LEFT
+- From walking states:
+  - If ground==0, go to FALLING (matching direction)
+  - else if dig==1, go to DIGGING (matching direction)
+  - else if bumped (either bump_left or bump_right) change direction walking
+  - else remain walking same direction
+- From digging states:
+  - If ground==0, go to FALLING same direction
+  - else remain digging same direction
+- From falling states:
+  - If ground==0, remain falling, increment fall counter
+  - If ground==1:
+    - If fall_counter > 20, go to SPLATTERED
+    - Else go to walking same direction, reset fall counter
+- From splattered state:
+  - Remain in splattered forever
+
+Outputs (Moore):
+- walk_left=1 if walking or digging left
+- walk_right=1 if walking or digging right
+- aaah=1 if falling
+- digging=1 if digging
+- all zero if splattered
+
+Fall counter increments only while falling, resets otherwise.
+
+Ignore bumps during falling or digging. Ignore dig during falling or no ground.
+
+Implement asynchronous positive edge reset to WALK_LEFT state.
+
+Use one-hot or encoded states. For clarity, encode states.

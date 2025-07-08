@@ -1,0 +1,69 @@
+Score: 7
+Justification: The code is syntactically correct and simulates, but the significant mismatches on the walk_left and walk_right outputs indicate functional errors in the walking direction logic and transitions, causing about 27% mismatch in outputs, while aaah and digging outputs match perfectly.
+
+ANALYSIS:
+The design intent is a Moore FSM controlling a Lemming that walks left or right, falls when no ground, digs on command, and can splatter if falling too long.
+
+1. **State Encoding & Reset**: The states are encoded using 3-bit values labeled WLK, WRG, FLL, FLR, DGL, DGR, SPL. However, the encoding used is actually binary-coded, not one-hot (e.g., WLK=0, WRG=1, etc.). The comment claims one-hot, but the values are sequential binary. This is not a direct cause of failure, but a mismatch between comment and code that might confuse maintenance.
+
+2. **Walking Direction Switching on Bump**:
+   - In WLK state, if bumped (bump_left or bump_right), code switches to WRG.
+   - In WRG state, if bumped, switches to WLK.
+   This matches the spec that bump on either side causes direction switch.
+   
+3. **Fall Priority Over Dig and Bump**:
+   - The code correctly prioritizes fall > dig > bump when ground is lost.
+   - For example, in WLK: if ~ground, go to FLL; else if dig, go to DGL; else if bumped, WRG.
+   
+4. **Fall Count and Splatter Logic**:
+   - The fall_count increments during falling states (FLL, FLR), capped at 31.
+   - Upon landing (ground=1), if fall_count>20, state SPL reached.
+   This matches the splatter spec.
+
+5. **Digging Behavior**:
+   - DGL and DGR states continue digging while ground=1.
+   - Falling occurs when ground=0 during digging.
+   - Bump and dig inputs ignored during falling and digging as per spec (no effect on direction).
+   
+6. **Outputs**:
+   - Walk outputs asserted only in walking and digging states.
+   - aaah asserted in falling states.
+   - digging asserted only in digging states.
+   - SPL state outputs all zero.
+   
+7. **Mismatch Sources (From Simulation Log)**:
+   - The simulation indicates 166 mismatches on walk_left and 150 on walk_right, but no mismatch on aaah or digging.
+   This suggests the walking direction signals are not matching expected outputs.
+   
+8. **Detailed Issues Leading to Walk Output Mismatches**:
+
+   - The bump logic uses `wire bumped = bump_left | bump_right;` and switches direction on any bump.
+     The problem is the spec states that being bumped while falling or digging has no effect on walking direction.
+     The code respects this by placing bump checks only in walking states.
+     But the spec states that being bumped in the same cycle as ground disappears or reappears does not affect direction.
+     The code only checks `~ground` in the current cycle; it does not explicitly handle bump timing relative to ground changes.
+     This subtle timing nuance might cause output mismatches.
+   
+   - The code uses `if (~ground)` to transition from walking to falling.
+     However, the spec says the Lemming falls when ground=0, and bumping during falling or same cycle ground disappears/reappears does not change direction.
+     The code does not record or remember the walking direction before falling except through the state transition back to WLK or WRG.
+     But the code does not handle the case when ground reappears in the same cycle as bump input (or dig input), possibly causing direction flips not expected by the testbench.
+   
+   - The code sets fall_count to 1 immediately when entering fall states (FLL or FLR).
+     This is consistent with counting time in fall.
+   
+   - The fall_count limit check uses `fall_count > 20` to splatter.
+     Since fall_count starts at 1 on entering fall, the timing might be slightly off compared to testbench expectations.
+   
+   - The code’s output logic uses the current `state` (Moore FSM) to drive outputs.
+     However, due to asynchronous reset and combinational next_state logic, there might be a one-cycle lag or mismatch with expected outputs in testbench.
+   
+   - The major cause of walk_left and walk_right mismatches seems related to direction changes on bumps at edges of falling or ground transitions, which are tricky timing-wise and might cause the FSM to generate walking signals not expected at those exact cycles.
+
+9. **Minor Discrepancies**:
+
+   - The comment "State encoding: one-hot for clarity" is inaccurate given the assigned values.
+   
+   - The default case in next_state logic resets to WLK, which could mask unexpected state values but is generally safe.
+
+In summary, the walking direction outputs do not fully conform to the spec timing nuances about bumps relative to ground transitions and falling, causing mismatches in walk_left and walk_right outputs. The falling (aaah) and digging outputs work correctly. No syntax errors present.

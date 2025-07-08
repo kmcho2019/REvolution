@@ -1,0 +1,9 @@
+Implement a synchronous state machine that:
+- Starts in a SEARCH state, shifting in bits on each clock to detect the pattern 1101.
+- Upon detecting 1101, transition to a LOAD_DELAY state where it shifts in 4 more bits (MSB first) to form delay[3:0].
+- Then transition to COUNT state where it counts down the timer for (delay+1)*1000 cycles.
+- During COUNT, output the remaining count value on count[3:0], updated every 1000 cycles.
+- When count reaches zero (after all intervals done), transition to DONE state, assert done signal, counting=0.
+- Wait for ack=1 to return to SEARCH state.
+Use internal registers to hold the shifted pattern, delay, and counters. The counting output is asserted only during the COUNT state. The count output shows the remaining 4-bit count value only during COUNT state; otherwise, it's don't-care (assigned zero here).
+All operations are synchronous with active-high reset.

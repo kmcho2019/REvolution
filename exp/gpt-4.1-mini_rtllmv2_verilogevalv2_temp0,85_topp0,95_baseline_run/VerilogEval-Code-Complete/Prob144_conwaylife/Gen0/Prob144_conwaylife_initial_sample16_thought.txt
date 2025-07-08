@@ -1,0 +1,7 @@
+To implement the Game of Life on a 16x16 toroidal grid, we need to:
+- Map the 1D input vector q to a 2D array for easier indexing.
+- For each cell at (r, c), calculate the number of alive neighbors by wrapping indices with modulo 16.
+- Apply the given rules based on the neighbor count to determine the next state of each cell.
+- Pack the updated 2D grid back to a 1D vector output.
+- On load signal, synchronously load the input data; otherwise, update q according to the rules on each clock edge.
+Since this is a synchronous design, we will use always @(posedge clk) and do the neighbor counting combinationally inside the always block for each cell.

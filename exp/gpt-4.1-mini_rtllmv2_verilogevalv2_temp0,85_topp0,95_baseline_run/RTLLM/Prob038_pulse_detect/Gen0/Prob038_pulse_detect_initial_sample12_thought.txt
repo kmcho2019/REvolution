@@ -1,0 +1,15 @@
+Use a finite state machine (FSM) with states representing the detection progress of the pulse pattern "0->1->0". The states can be:
+
+- IDLE: waiting for data_in to be 0 (start state)
+- WAIT_FOR_1: detected initial 0, now waiting for 1
+- WAIT_FOR_0: detected 1, waiting for 0 to complete the pulse
+
+On reset, go to IDLE and clear output. On each clock, transition based on data_in:
+
+- IDLE: if data_in == 0, move to WAIT_FOR_1; else stay
+- WAIT_FOR_1: if data_in == 1, move to WAIT_FOR_0; else if data_in == 0, stay in WAIT_FOR_1 (waiting for 1)
+- WAIT_FOR_0: if data_in == 0, output pulse detected (data_out=1), return to WAIT_FOR_1 (to detect next pulse), else if data_in == 1 stay in WAIT_FOR_0
+
+This detects exactly the 0->1->0 pattern with 3 cycles. Output data_out=1 only for the clock cycle when the pulse ends.
+
+Implement the FSM with a state register, next state logic, and output logic inside a synchronous always block triggered on clk and asynchronous reset rst_n.

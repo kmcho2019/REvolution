@@ -1,0 +1,30 @@
+First, interpret the Karnaugh map for the function f with inputs x[1]x[2] as row and x[3]x[4] as column. The K-map is:
+
+         00  01  11  10  (x3 x4)
+    00 | 1 | 0 | 0 | 1 |  (x1 x2 = 00)
+    01 | 0 | 0 | 0 | 0 |  (x1 x2 = 01)
+    11 | 1 | 1 | 1 | 0 |  (x1 x2 = 11)
+    10 | 1 | 1 | 0 | 1 |  (x1 x2 = 10)
+
+We'll find the minterms or groupings to simplify the expression.
+
+Minterms (1's) at:
+
+- (00,00): x1=0,x2=0,x3=0,x4=0 => m0
+- (00,10): x1=0,x2=0,x3=1,x4=0 => m2
+- (11,00): x1=1,x2=1,x3=0,x4=0 => m12
+- (11,01): x1=1,x2=1,x3=0,x4=1 => m13
+- (11,11): x1=1,x2=1,x3=1,x4=1 => m15
+- (10,00): x1=1,x2=0,x3=0,x4=0 => m8
+- (10,01): x1=1,x2=0,x3=0,x4=1 => m9
+- (10,10): x1=1,x2=0,x3=1,x4=0 => m10
+- (00,00), (10,00), (11,00) share x3=0,x4=0, covering m0,m8,m12
+- (10,00),(10,01) m8,m9 share x1=1,x2=0,x3=0
+- (11,01),(11,11) m13,m15 share x1=1,x2=1,x4=1
+- (10,10),(00,10) m2,m10 share x3=1,x4=0 and x1x2 differ (00 and 10)
+
+By carefully grouping, get the simplified expression and implement it.
+
+Implement the function f as a combinational logic using the derived expression.
+
+The code will assign f combinationally from x.

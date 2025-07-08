@@ -1,0 +1,28 @@
+From the waveform, the circuit has one flip-flop with output q and an internal state output. On every rising edge of clk, the state output reflects the current state of the flip-flop (q). The flip-flop updates based on inputs a, b, and the current state.
+
+By analyzing the transitions:
+- At 45ns rising edge, with a=0, b=1, q changes from 0 to 1.
+- At 65ns rising edge, with a=1, b=1, q changes from 1 to 0.
+- At 75ns rising edge, with a=0, b=0, and state=1, q becomes 1.
+- At 95ns rising edge, with a=1, b=1, state=1, q becomes 1.
+- At 115ns rising edge, with a=1, b=0, state=1, q becomes 0.
+- At 135ns rising edge, with a=0, b=0, state=1, q becomes 1.
+- At 145ns rising edge, with a=0, b=0, state=0, q becomes 0.
+
+The state output is just the current value of q.
+
+From the data, the next state logic seems to be:
+q_next = (b & ~a) | (state & ~b) | (~state & ~a & ~b)
+
+Breaking down transitions, and based on the observations, the likely next state logic is:
+
+- q_next = (b & ~a) | (state & ~(a & b))
+
+This matches observed behavior:
+- When b=1 and a=0, q_next=1 (seen at 45ns).
+- When both a and b are 1, and state=1, q_next=0 (at 65ns).
+- When state=1 and b=0, q_next=state & ~b = 1 & 1 = 1 or 0, depending on a.
+
+We will implement a D flip-flop with synchronous update of q on rising edge of clk, where D = (b & ~a) | (state & ~(a & b)), and assign state = q.
+
+This reasoning fits the observed waveforms and the state output.

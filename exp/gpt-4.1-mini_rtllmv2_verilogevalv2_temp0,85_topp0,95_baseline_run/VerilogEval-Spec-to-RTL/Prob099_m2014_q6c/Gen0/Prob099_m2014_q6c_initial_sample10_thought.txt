@@ -1,0 +1,26 @@
+The state machine uses one-hot encoding with states A to F assigned to y[0] to y[5] respectively. We need to compute next-state signals Y1 and Y3, which correspond to next state's y[1] and y[3] bits. By inspection, we analyze transitions for y[1] (state B) and y[3] (state D):
+
+- Next y[1] (B):
+  From A (y[0]): on 0 -> B (y[1])
+  From C (y[2]): on 0 -> E (y[4]), on 1 -> D (y[3]) no B
+  From others, B only comes from A on input 0.
+
+- Next y[3] (D):
+  D is y[3]
+  From B (y[1]): on 1 -> D (y[3])
+  From C (y[2]): on 1 -> D (y[3])
+  From D (y[3]): on 1 -> A (y[0]) no D
+  From E (y[4]): on 1 -> D (y[3])
+  From F (y[5]): on 1 -> D (y[3])
+
+Now, for Y1 (next y[1]):
+
+Y1 = (A & ~w)  // from A on 0 input
+
+For Y3 (next y[3]):
+
+Y3 = (B & w) | (C & w) | (E & w) | (F & w)
+
+Note that D on 1 goes to A, so no D to D transition.
+
+Implement the logic for Y1 and Y3 accordingly.

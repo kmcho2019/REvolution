@@ -1,0 +1,25 @@
+Design a Moore FSM with states representing walking left, walking right, falling, and digging. The Lemming starts walking left after reset. Transitions depend on inputs bump_left, bump_right, ground, and dig according to the priority: falling > digging > switching directions.
+
+- States:
+  - WALK_LEFT
+  - WALK_RIGHT
+  - FALLING_LEFT (falling but remember direction)
+  - FALLING_RIGHT
+  - DIGGING_LEFT
+  - DIGGING_RIGHT
+
+- Outputs depend only on states:
+  - walk_left: states WALK_LEFT, DIGGING_LEFT
+  - walk_right: states WALK_RIGHT, DIGGING_RIGHT
+  - aaah: FALLING_LEFT or FALLING_RIGHT
+  - digging: DIGGING_LEFT or DIGGING_RIGHT
+
+- On ground=0, from walking or digging states, transition to falling state that remembers direction.
+- On ground=1 from falling, go back to walking state in remembered direction.
+- From walking, if dig=1 and ground=1 and not falling, start digging in the current direction.
+- From digging, if ground=0, transition to falling state.
+- From walking (not falling or digging), bump_left or bump_right cause switching directions.
+- While falling or digging, bumps do not affect direction.
+- Bumps at the same cycle as ground changes or while falling/digging are ignored for direction change.
+
+Implement asynchronous posedge reset to WALK_LEFT.

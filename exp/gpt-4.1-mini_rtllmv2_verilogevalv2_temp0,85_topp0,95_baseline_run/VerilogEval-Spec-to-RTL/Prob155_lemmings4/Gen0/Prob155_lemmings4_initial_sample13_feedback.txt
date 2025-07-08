@@ -1,0 +1,43 @@
+Score: 6
+Justification: The code compiles and runs but shows significant functional errors causing 350 mismatches in 1003 samples during simulation, indicating flawed FSM behavior despite correct syntax.
+
+ANALYSIS:
+The design intent is to model a Lemming FSM with states for walking left/right, falling left/right, digging left/right, and splattered, respecting priority and direction retention rules. The code mostly follows this but with key issues linked to the mismatches:
+
+1. **Handling of direction switching on bump**:  
+   In the WALK_LEFT and WALK_RIGHT states, the code checks if either bump_left or bump_right is high to switch direction (lines:  
+   ```verilog
+   if (bump_left || bump_right) begin
+       next_state = WALK_RIGHT; // in WALK_LEFT  
+   ```  
+   and similarly in WALK_RIGHT).  
+   This matches the spec that bumping either side causes direction switch. However, it does not distinguish between which bump occurred, potentially causing incorrect direction toggling if both bumps occur or if bump_left and bump_right are treated the same without prioritization. This may contribute to early mismatches on walk_left/walk_right outputs (mismatches start as early as time 40 and 800 for walk_left and walk_right).
+
+2. **Digging and falling precedence logic**:  
+   The code correctly prioritizes fall over dig over bump (see WALK_LEFT and WALK_RIGHT cases). However, the condition for starting to dig (`if (dig == 1'b1)`) is checked only if ground is high and no falling occurs.  
+   Yet, the specification states that being told to dig when falling or when there is no ground is ignored, which appears handled correctly.  
+   Despite this, the simulation shows mismatches on digging output starting at time 1950, possibly indicating occasional violations of digging state transitions or missed exit conditions. The code transitions from DIG_LEFT/RIGHT to FALL_LEFT/RIGHT when ground goes low, which is correct, but no explicit handling for stopping digging if dig input goes low while on ground (which is allowed, but not mandated by spec). This might cause minor output glitches.
+
+3. **Fall count and splatter timing**:  
+   The fall counter increments during falling states (FALL_LEFT, FALL_RIGHT). Splatter occurs if fall_count exceeds 20 when ground returns (lines:  
+   ```verilog
+   if (fall_count > 5'd20) begin
+       next_state = SPLAT;
+   ```  
+   The logic seems correct.  
+   However, the simulation reports 10 mismatches on `aaah` output (falling indicator) and possibly related mismatches on walk outputs. If the counting or state switching to SPLAT is delayed or off by one clock cycle, the aaah or walk signals may be inconsistent at ground return. This subtle timing or off-by-one error in counting might cause some functional errors.
+
+4. **Asynchronous reset and initial state**:  
+   The async reset sets the state to WALK_LEFT and fall_count to zero, which is correct per spec.
+
+5. **Potential missing 'default' outputs in some states**:  
+   The SPLAT state is correctly set to output all zeros.  
+   All other states have explicit outputs assigned.  
+   However, because outputs are assigned combinationally each cycle, any unintentional latching or incomplete coverage could cause glitches, contributing to mismatch counts.
+
+6. **Neglect of bump inputs during transition edges**:  
+   The spec states bump inputs during falling or digging are ignored, which the code respects. However, the code does not explicitly check for bump inputs coincident with ground transitions that change state from walking to falling or falling to walking, which might cause glitches if bump inputs are sampled or affect state incorrectly during these boundary conditions.
+
+In summary, the major issues causing the simulation mismatches likely come from subtle mismanagement of direction switching logic on bumps (especially when both bumps occur), minor glitches in dig transitions, and potential off-by-one errors in fall_count or splatter logic. These cause frequent output mismatches particularly in walk_left, walk_right, digging, and aaah signals as reflected in the simulation logs.
+
+No syntax errors are present, but functional behavior deviates notably from the problem spec in key edge conditions, resulting in a moderate number of mismatches during simulation.

@@ -1,0 +1,37 @@
+Score: 7
+Justification: The code is syntactically correct and implements most transitions correctly, with correct outputs, but the simulation log shows errors specifically in next_state[7], next_state[8], and next_state[9], indicating partial functional errors in the state transition logic.
+
+ANALYSIS:
+The problem requires implementing the next state logic and output logic of a 10-state one-hot encoded FSM with the given transitions. The outputs are all zero except for states S7, S8, and S9 which have specified outputs.
+
+The code assigns next_state[0] through next_state[9] based on the current state and input, and assigns outputs out1 and out2 based on the current state.
+
+From the simulation log, next_state[0] through next_state[6] are correct, but next_state[7], next_state[8], and next_state[9] are incorrect. Out1 and out2 outputs are correct.
+
+Looking at the code:
+
+- next_state[7] = (state[5] & ~in) | (state[7] & in);
+- next_state[8] = (state[6] & ~in);
+- next_state[9] = (state[6] & in);
+
+Comparing these to the problem description:
+
+- From S5:
+  - on '0' input, next_state should be S8 → next_state[8]
+  - on '1' input, next_state should be S6 → next_state[6]
+
+- From S6:
+  - on '0' input, next_state should be S9 → next_state[9]
+  - on '1' input, next_state should be S7 → next_state[7]
+
+- From S7:
+  - on '0' input, next_state should be S0 → next_state[0]
+  - on '1' input, next_state should be S7 → next_state[7]
+
+The code incorrectly assigns next_state[7] as (state[5] & ~in) | (state[7] & in), which means when at S5 and input=0, the machine tries to go to S7 instead of S8, violating the state transitions. Similarly, next_state[8] is assigned only (state[6] & ~in) but should be from S5 on '0' input. Also, next_state[9] is assigned correctly from (state[6] & in) (S6 on '1'), but the problem description says S6 on '1' goes to S7, so this is inconsistent.
+
+This misassignment causes the simulation mismatches for next_state[7], [8], and [9]. The outputs are correct because they depend on the current state, which is properly encoded.
+
+In summary, the main issue is that the transitions involving states S5, S6, S7, S8, and S9 are incorrectly implemented in next_state logic, failing to match the problem's transition table precisely.
+
+No syntax errors are present, but these logical errors cause the simulation to fail for three next_state signals, generating 37 mismatches out of 224 samples, which is significant but not catastrophic.

@@ -1,0 +1,5 @@
+We implement a 2-state FSM in the datapath module. State 0 waits for a byte with bit 3 set (in[3] == 1), discarding all other bytes. When such a byte arrives, it is stored as the first byte of a 3-byte message and the FSM transitions to state 1. In state 1, the next two bytes are stored sequentially. After the third byte is stored, done is asserted for one cycle, and the FSM returns to state 0 to search for the next message.
+
+The 24-bit output concatenates the three bytes: out_bytes[23:16] = first byte, out_bytes[15:8] = second byte, out_bytes[7:0] = third byte. The done signal is asserted for one clock cycle immediately after the third byte is received. The synchronous reset clears state and output.
+
+This FSM only requires a 1-bit state variable, a 2-bit counter for received bytes within the message (0 to 2), and a 24-bit shift register (or three registers) to hold the message bytes.

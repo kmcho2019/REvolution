@@ -1,0 +1,5 @@
+The design implements a 4-bit unsigned multiplier with pipelining through two levels of registers to store intermediate sums and the final output. The inputs mul_a and mul_b are first extended by adding 'size' zero bits at the MSB side, resulting in 8-bit extended signals. A generate block iterates over each bit of mul_b to create partial products by left-shifting the multiplicand by the bit position if the bit is 1, else 0.
+
+Partial products are then added in two pipeline stages. The first pipeline stage sums partial products 0 and 1 into reg_stage1[0], and partial products 2 and 3 into reg_stage1[1]. The second pipeline stage sums these two registers to produce the final output register. All registers and output are synchronous with the clock and reset asynchronously with active low. On reset, all registers and outputs are cleared.
+
+This pipeline structure reduces combinational path delay by splitting addition into two stages, enabling better timing performance.

@@ -1,0 +1,28 @@
+Design a Moore FSM with states encoding the Lemming's mode: walking left, walking right, falling left, falling right, digging left, digging right, and splattered. Use a direction bit to track walk direction and distinguish walking/digging/falling modes. On reset, start walking left.
+
+Transitions:
+- If splattered, stay splattered (all outputs 0).
+- If falling:
+  - Increment fall timer.
+  - If ground reappears:
+    - If fall timer > 20, go to splattered.
+    - Else resume walking in original direction.
+  - Else stay falling.
+- Else if walking or digging:
+  - If ground lost, start falling (keep direction).
+  - Else if walking and dig=1, start digging.
+  - Else if walking and bumped (left or right), switch direction.
+  - Else if digging and ground lost, start falling.
+  - Else remain in current state.
+
+Outputs depend only on state:
+- walking left: walk_left=1, others=0
+- walking right: walk_right=1, others=0
+- digging left/right: digging=1, walk direction output 1
+- falling left/right: aaah=1, direction outputs 0
+- splattered: all 0
+
+Keep fall_counter register to track fall duration.
+Ignore bumps when falling or digging.
+Ignore dig=1 unless walking on ground.
+Implement a reset to walking left with fall_counter=0.

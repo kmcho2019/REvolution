@@ -1,0 +1,51 @@
+Score: 4
+Justification: The code is syntactically correct and mostly implements the intended gshare predictor structure but fails simulation due to incorrect handling of the global history register updates and PHT indexing logic, resulting in numerous prediction and history mismatches. The severity and frequency of mismatches indicate significant functional issues despite no syntax errors.
+
+ANALYSIS:
+1. **Global History Update Priority and Timing**  
+   The problem specifies that when both a training misprediction and a prediction occur in the same cycle, training takes precedence in updating the global history. The code attempts this with nested if-else logic inside the clocked always block, but it only updates `global_history` on one path per clock:
+   - When `train_valid` is high, it updates the PHT and, if mispredicted, sets `global_history` to `train_history`.
+   - Else if `predict_valid` is high (and no training), it updates global history based on the prediction.
+   
+   However, the design requires the global history to be updated for *every* prediction made (including when `predict_valid` is 1) except when training misprediction occurs and that update overrides prediction. This implies that prediction updates should happen on the next cycle *unless* training misprediction is present, with training taking precedence. The code’s logic, particularly the comment "`// Prediction update of global history happens only when no training or training is not mispredicted.`", does not fully handle the subtle timing nuances, causing inconsistency in the global history register's value when predictions and training occur simultaneously, as seen in simulation mismatches.
+
+2. **Predict History Output**  
+   The `predict_history` output is always driven directly from the current `global_history` register in the combinational block:
+   ```verilog
+   always @(*) begin
+       predict_taken = predict_outcome;
+       predict_history = global_history;
+   end
+   ```
+   The problem states that the predictor should output the branch history register state *used to make the prediction*, i.e., the global history before the update caused by the current prediction. Since the `global_history` updates on the clock edge and the combinational logic outputs the current global history (which may already be updated by training from the previous cycle), the outputs may not reflect the correct historical state correlated to the prediction request. This mismatch can cause the simulation errors observed in `predict_history`.
+
+3. **PHT Table Read and Write Behavior**  
+   The PHT is implemented as a synchronous memory updated only on clock edges:
+   ```verilog
+   PHT[train_index] <= saturating_counter_next(PHT[train_index], train_taken);
+   ```
+   The prediction reads the PHT entry combinationally:
+   ```verilog
+   wire [1:0] pht_predict_entry = PHT[predict_index];
+   ```
+   In real hardware, reading from a synchronous RAM combinationally is often not possible or results in a one-cycle delay. In simulation, this may cause the prediction to see the state of the PHT before the training update within the same cycle, which aligns with the problem statement. However, if there are multiple accesses or index conflicts (e.g., if predict and train indices coincide), the code does not explicitly handle the read-during-write hazards or use any read-before-write or forwarding logic. This could cause prediction to read stale or incorrect data.
+
+4. **Indexing and XOR Implementation**  
+   The code XORs the 7-bit PC and history to form the index:
+   ```verilog
+   wire [6:0] predict_index = predict_pc ^ global_history;
+   wire [6:0] train_index = train_pc ^ train_history;
+   ```
+   The problem statement matches this behavior, so this is correct in principle. However, if the `global_history` is not updated correctly in timing with predictions and training (as discussed above), the indexes may be stale or mismatched, which can cause wrong PHT entries to be accessed, amplifying the prediction errors.
+
+5. **Reset Behavior**  
+   The asynchronous reset is correctly implemented with the `areset` signal clearing the `global_history` and initializing all PHT entries to weakly taken (2'b10). The simulation log's hint "Your reset doesn't seem to be working." suggests either the testbench is not correctly asserting reset or the module is not responding as expected to reset. Given the code seems to handle reset correctly, this may be an external testbench issue or the asynchronous reset not asserted long enough, but it may contribute indirectly to the prediction mismatches early in simulation.
+
+In summary, the primary reasons for the functional errors appear to be:
+
+- Incorrect update and output timing of the global history register relative to predictions and training.
+- Lack of mechanism to ensure that the predict outputs correspond to the global history state at the time of prediction request.
+- Possible read/write hazards on PHT table accesses when prediction and training indices coincide.
+- Slight mismatch between design intent timing and actual register update ordering.
+
+These cause many `predict_taken` and `predict_history` output mismatches in simulation.

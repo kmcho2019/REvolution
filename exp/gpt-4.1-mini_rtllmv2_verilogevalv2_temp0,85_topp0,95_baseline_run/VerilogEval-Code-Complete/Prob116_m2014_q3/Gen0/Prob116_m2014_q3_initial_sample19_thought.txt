@@ -1,0 +1,46 @@
+To implement the function from the Karnaugh map with don't-care conditions, first interpret the map as follows:
+
+x[3]x[4] rows: 00, 01, 11, 10  
+x[1]x[2] columns: 00, 01, 11, 10  
+
+Fill in the values with d=don't care:
+
+       00  01  11  10
+00 |  d | 0 | d | d |
+01 | 0 | d | 1 | 0 |
+11 | 1 | 1 | d | d |
+10 | 1 | 1 | 0 | d |
+
+We want to find a minimal sum-of-products expression for f, using the don't-cares to simplify.
+
+Step 1: List all 1's (minterms):
+- (x3x4, x1x2) = (01,11) => x3=0,x4=1,x1=1,x2=1
+- (11,00), (11,01), (10,00), (10,01), (11,00) and (11,01) are 1's
+- Also (10,00)=1 and (10,01)=1
+
+From the map:
+- (11,00) = 1
+- (11,01) = 1
+- (10,00) = 1
+- (10,01) = 1
+- (01,11) = 1
+
+Step 2: Try to find groups:
+
+Group 1: (11,00),(11,01),(10,00),(10,01) -> Covers x3x4 = 1x, x1x2 = 00 or 01  
+- x3 = 1 (since rows 11 and 10 both have x3=1)
+- x4 varies (1 or 0)
+- x1 = 0 (since columns 00 and 01 have x1=0)
+- x2 varies (0 or 1)
+
+So group1: x3 & ~x1
+
+Group 2: (01,11) = x3=0,x4=1,x1=1,x2=1
+
+No other 1's nearby with don't care to group with, so single minterm: ~x3 & x4 & x1 & x2
+
+Step 3: Final expression:
+
+f = (x3 & ~x1) | (~x3 & x4 & x1 & x2)
+
+Implement this in Verilog.

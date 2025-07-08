@@ -1,0 +1,19 @@
+Score: 9
+Justification: The code is syntactically correct and implements the main logic of the FSM as described, with asynchronous reset and proper output assignment. However, the simulation log reports multiple mismatches on the output signals, indicating functional discrepancies under test conditions despite the generally correct structure.
+
+ANALYSIS:
+The design intent is to implement a Moore FSM with two states—walk_left and walk_right—where the Lemming switches direction when bumped on either side, and starts walking left after an asynchronous reset.
+
+The Verilog code uses a single-bit register `state` to represent the FSM state (0 for walk_left and 1 for walk_right). The asynchronous reset is triggered on the positive edge of `areset`, setting the state to walk_left as intended.
+
+The transition logic inside the clocked always block correctly toggles the state when either `bump_left` or `bump_right` is asserted. The outputs `walk_left` and `walk_right` are assigned combinationally from the state, consistent with a Moore machine.
+
+Despite this, the simulation log shows 83 mismatches on both outputs out of 229 samples, with the first mismatch at 120 ps. This suggests that, although the code captures the core FSM behavior, there may be timing or initialization issues causing incorrect output values.
+
+One possible cause is related to the timing of the asynchronous reset and input signals relative to the clock, which may cause the outputs to momentarily mismatch expected values if the inputs change close to clock edges or during reset deassertion. Since the state updates only on clock posedges or reset posedges, inputs might be sampled too late or too early relative to testbench stimulus changes, leading to output mismatches.
+
+Another subtle point is that the code uses a non-blocking assignment in an asynchronous reset block, which is correct, but the testbench might be assuming synchronous reset behavior or different sampling of inputs, causing output differences.
+
+There are no syntax errors or missing logic; the mismatches appear to be due to timing or simulation environment assumptions rather than structural coding mistakes.
+
+Hence, while the code closely matches the problem specification, the mismatch count indicates that the implementation did not fully meet the expected simulation behavior under all tested conditions.

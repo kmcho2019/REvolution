@@ -1,0 +1,17 @@
+The output 'state' is the current value of a one-bit flip-flop updated on the rising edge of clk. The output 'q' is combinational and depends on current inputs a, b, and the stored state. By analyzing the waveform, 'state' updates based on a function of (a, b, state) on each clk rising edge, and q is derived from these signals. From the waveforms:
+
+- At time 15ns (clk posedge), state=0
+- At time 45ns (clk posedge), inputs a=0, b=1, state=0, output q=1, next state=1 (since at 75ns state=1)
+- At time 65ns (clk posedge), a=1, b=1, state=0, q=0, next state=0
+- At time 75ns (clk posedge), a=0, b=0, state=1, q=1, next state=1
+- At time 85ns (clk posedge), a=1, b=1, state=0, q=0, next state=0
+- At time 95ns (clk posedge), a=1, b=1, state=1, q=1, next state=1
+- At time 115ns (clk posedge), a=1, b=0, state=1, q=0, next state=0
+
+From these and other points, we can deduce:
+- next state = (a & ~state) | (b & ~a & state)
+- q = (a & state) | (b & ~state)
+
+This matches observed transitions and outputs.
+
+So, the flip-flop updates state <= next_state on clk posedge, and q is combinational as above. Output 'state' exposes the stored flip-flop bit.

@@ -1,0 +1,14 @@
+To implement the Game of Life on a 16x16 toroidal grid with the given neighbor rules, we need to:
+
+1. Store the current grid state in a 256-bit register `q`.
+2. On `load` high, synchronously load `data` into `q`.
+3. Otherwise, on each clock cycle, compute the next state of each cell based on its 8 neighbors, considering toroidal wrap-around.
+4. For each cell (r, c), calculate the number of alive neighbors by summing the values of the eight neighbors, accounting for wrap-around using modulo 16 arithmetic.
+5. Apply the given rules to determine the next cell state:
+   - 0-1 neighbors => 0
+   - 2 neighbors => keep current state
+   - 3 neighbors => 1
+   - 4+ neighbors => 0
+6. Pack the new states into the `next_q` register and update `q` at the clock edge.
+
+This design will iterate over all 256 cells in a combinational block and calculate the next state based on neighbor counts with wrap-around indices.

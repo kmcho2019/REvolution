@@ -1,0 +1,6 @@
+Implement a 16x16 Game of Life on a toroidal grid with synchronous load. Store the current state in a 256-bit register q. On each clock edge: if load is high, load the input data; else update q based on neighbor counts. The neighbor calculation considers wrap-around by modulo 16 addressing. For each cell, count alive neighbors by summing the 8 neighbors' bits, applying rules:
+- neighbors <=1 -> cell=0
+- neighbors=2 -> cell unchanged
+- neighbors=3 -> cell=1
+- neighbors>=4 -> cell=0
+We will use nested generate loops to create combinational logic that counts neighbors for each cell, then determine the next state. Finally, on posedge clk, update q.

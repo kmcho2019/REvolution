@@ -1,0 +1,61 @@
+Score: 7
+Justification: The code compiles correctly but fails simulation due to timing and state machine control issues related to bit counting and output signaling, causing incorrect or delayed assertion of the done signal and potentially incorrect data reception sequencing.
+
+ANALYSIS:
+The design intent is to detect a start bit (0), receive 8 data bits LSB first, then verify a stop bit (1), asserting done with the received byte at the correct time. The code mostly follows this, but several issues cause the simulation mismatches observed:
+
+1. **Done Signal Timing and Assertion**  
+   In the sequential block, done is cleared to zero at every clock cycle except when the FSM is in the STOP state and detects the stop bit as 1. However, done is asserted only for one cycle when the stop bit is detected, which matches the design intent, but the simulation shows 28 mismatches on done over 905 samples. This implies either done is asserted too early/late or missed in some cases.
+
+2. **Bit Counting Logic Misalignment**  
+   The RECEIVE state increments bit_count each clock and shifts in the input bit with `shift_reg <= {in, shift_reg[7:1]};` which shifts in the most recent bit at bit 7 rather than LSB (bit 0). The problem description specifies LSB first, so this shift direction is reversed—new bits should shift into the least significant bit, not the most significant.
+
+3. **Next State Transition on Bit Count**  
+   The next_state logic moves from RECEIVE to STOP when `bit_count == 3'd7`. Since bit_count is zero-based, counting from 0 to 7 for 8 bits, the last data bit is shifted in when bit_count is 7. However, the code increments bit_count after shifting the bit, so by the time bit_count reaches 7, the eighth bit has just been received. This logic can cause off-by-one errors in state transitions.
+
+4. **Start Bit Handling**  
+   In IDLE state, the code resets bit_count and shift_reg upon detecting in==0 (start bit) but does not explicitly move to RECEIVE in the sequential block; that is controlled by next_state logic. The potential exists for glitches or misalignment if the input bit changes at clock edge.
+
+5. **Stop Bit Verification and Recovery**  
+   The STOP state waits for in==1 to confirm the stop bit. If the stop bit is incorrect, it remains in STOP until a stop bit is detected. This matches the requirement, but timing of done assertion depends on in being 1 exactly when in STOP state. Any signal latency or sampling mismatch could cause done mismatches.
+
+Together, these issues lead to timing problems with the done signal and possibly incorrect byte assembly. The hint that out_byte has no mismatches suggests the data capture is mostly correct, but done timing and possibly the order of bits shifted is not fully correct per the simulation expectations.
+
+In summary, the root causes are the shift register direction conflicting with LSB-first specification, off-by-one or misalignment in bit_count usage for state transitions, and done signal timing control that may not align perfectly with when data is valid and stop bit is confirmed.
+
+All relevant code sections demonstrating these issues:
+
+- Shift register in RECEIVE:
+  ```verilog
+  shift_reg <= {in, shift_reg[7:1]};
+  ```
+
+- Bit count increment and state transition:
+  ```verilog
+  bit_count <= bit_count + 1'b1;
+
+  if (bit_count == 3'd7)
+    next_state = STOP;
+  ```
+
+- Done signal assertion:
+  ```verilog
+  done <= 1'b0; // default low
+
+  ...
+
+  if (in == 1'b1) begin
+    out_byte <= shift_reg;
+    done <= 1'b1;
+  end
+  ```
+  
+- IDLE state start bit detection and reset of counters:
+  ```verilog
+  if (in == 1'b0) begin
+    bit_count <= 3'd0;
+    shift_reg <= 8'd0;
+  end
+  ```
+
+These collectively contribute to the simulation failures observed for the done output, while out_byte remains consistent.

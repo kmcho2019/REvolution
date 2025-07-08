@@ -1,0 +1,5 @@
+To detect edges on signal 'a', we will register the previous value of 'a' at every positive clock edge. On the next clock cycle, if the current value of 'a' is 1 and the previous value is 0, it's a rising edge; if the current value is 0 and the previous value is 1, it's a falling edge. We will generate single-cycle pulses for rise and down signals synchronized with the clock. Since the requirement states that rise or down will be set to 1 on the next clock when the corresponding edge appears and then return to 0 until the next edge, the rise and down outputs are one-clock-cycle wide pulses.
+
+The reset (active low) will initialize the previous signal register and outputs.
+
+Hence, the implementation uses a register to hold previous 'a' value and combinational logic to detect edges, updating rise and down outputs synchronously.

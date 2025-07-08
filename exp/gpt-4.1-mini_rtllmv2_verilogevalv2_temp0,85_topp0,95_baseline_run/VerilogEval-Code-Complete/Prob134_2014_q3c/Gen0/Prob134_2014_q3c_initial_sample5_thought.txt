@@ -1,0 +1,16 @@
+To implement Y0 (the next state's LSB) and output z based on the current state y[2:0] and input x, we first map the state transitions and outputs from the table. Y0 is the LSB of the next state Y[2:0].
+
+We can implement combinational logic using case statements or if-else to assign Y0 and z based on the current state and input x.
+
+The next states' LSBs (Y0) for each present state and input x are:
+- y=000: next state 000 (x=0) => Y0=0, 001 (x=1) => Y0=1
+- y=001: next state 001 (x=0) => Y0=1, 100 (x=1) => Y0=0
+- y=010: next state 010 (x=0) => Y0=0, 001 (x=1) => Y0=1
+- y=011: next state 001 (x=0) => Y0=1, 010 (x=1) => Y0=0
+- y=100: next state 011 (x=0) => Y0=1, 100 (x=1) => Y0=0
+
+The output z is also defined per current state y:
+- z=0 for states 000,001,010
+- z=1 for states 011,100
+
+We'll implement this logic combinationally inside an always block sensitive to y or x, assign Y0 and z accordingly.

@@ -1,0 +1,13 @@
+Implement a 16x16 Game of Life on a toroidal grid, stored as a 256-bit vector q.
+On each clock edge:
+- If load is high, load input data into q.
+- Otherwise, compute the next state from current q:
+  For each cell, sum the 8 neighbors (using modulo 16 wrap-around).
+  Apply the rules:
+    0-1 neighbor: dead (0)
+    2 neighbors: no change
+    3 neighbors: alive (1)
+    4+ neighbors: dead (0)
+Store the updated 16x16 grid back to q.
+Because the grid is relatively small, implement this computation combinationally, then register on clock edge.
+Neighbors will be indexed with wraparound via modulo arithmetic on row and column.

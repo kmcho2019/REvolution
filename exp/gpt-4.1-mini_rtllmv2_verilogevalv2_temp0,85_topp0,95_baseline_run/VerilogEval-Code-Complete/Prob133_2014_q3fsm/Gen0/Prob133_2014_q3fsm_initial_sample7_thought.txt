@@ -1,0 +1,25 @@
+We start in state A, where we wait for s=1 to transition to state B. In state B, we need to monitor the next three clock cycles of input w, counting how many times w=1 occurs. After three cycles, if exactly two of them are 1, output z=1 for one cycle, else z=0. Then repeat checking w for the next three cycles continuously.
+
+We can implement this with a simple counter for the three cycles and a counter for the number of times w=1 during these three cycles. 
+
+States:
+- A: wait for s=1
+- B: count w over 3 cycles
+
+Since the behavior in B is cyclical and depends only on counting, we can just use B and a counter for the three cycles + count of w=1.
+
+On reset, go to A. In A, wait for s=1 to move to B and start counting.
+
+In B:
+- On each clock, increment cycle counter (0 to 2)
+- Accumulate number of times w=1
+- When cycle counter == 2 (third cycle), check if count of w=1 == 2
+- Set z=1 if yes, else 0, for one cycle
+- Reset counters and repeat counting next 3 cycles
+
+This approach uses only 2 states: A and B. The counters handle the monitoring and output logic.
+
+Implementation notes:
+- z=1 only for one clock cycle immediately after the third w sample
+- counters reset after each 3-cycle window
+- synchronous reset is active high

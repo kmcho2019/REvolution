@@ -1,0 +1,36 @@
+Implement a Moore FSM with states representing how many consecutive 1s have been seen in a row after a 0 or reset. On each clock, based on the input bit 'in', transition states and set outputs accordingly.
+
+States:
+S0: No consecutive 1s detected (previous input was 0)
+S1..S5: 1 to 5 consecutive 1s detected
+S6: Six consecutive 1s detected
+
+Transitions:
+- From S0:
+  - in=1 -> S1
+  - in=0 -> stay S0
+
+- From S1..S4:
+  - in=1 -> next higher count state (S2..S5)
+  - in=0 -> S0 (reset count)
+
+- From S5:
+  - in=1 -> S6 (6 consecutive 1s)
+  - in=0 -> output disc=1 (discard zero after five consecutive ones), go to S0
+
+- From S6:
+  - in=1 -> error state (more than 6 ones): err=1, remain in error state or S6 error
+  - in=0 -> output flag=1 (6 consecutive ones ended by zero), go to S0
+
+Outputs:
+- disc: asserted one cycle after seeing 5 ones followed by 0 (i.e., input pattern 0111110)
+- flag: asserted one cycle after seeing 6 ones followed by 0 (pattern 01111110)
+- err: asserted one cycle after 7 or more consecutive ones (01111111..)
+
+Since outputs are Moore-type, the outputs depend only on the state.
+
+Implement synchronous reset; after reset, state is S0.
+
+Use parameters or localparams for states and register to hold state.
+
+Output signals are zero except in states that correspond to their asserted condition.

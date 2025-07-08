@@ -1,0 +1,27 @@
+Implement a synchronous FSM with the following states:
+
+- A (initial state, after reset, outputs f=0, g=0)
+- B (after reset de-asserted, output f=1 for one clock cycle)
+- C (monitoring x sequence 1,0,1)
+- D (g=1, monitoring y input for up to 2 cycles)
+- E (g=1 permanently)
+- F (g=0 permanently)
+
+Transitions:
+- On resetn=0, go to state A.
+- From A, when resetn=1, go to B.
+- B outputs f=1 one cycle, then go to C.
+- In C, track the x input sequence 1,0,1 over three cycles, then go to D and set g=1.
+- In D, count two cycles waiting for y=1.
+  - If y=1 within two cycles, go to E (g=1 permanently)
+  - Else after two cycles, go to F (g=0 permanently)
+- In E and F, outputs fixed (E: g=1, F: g=0), wait for reset.
+
+Outputs:
+- f is 1 only in state B for one cycle.
+- g is 1 in states D and E, 0 elsewhere except F (0).
+
+The x sequence detection in C will be done with a 2-bit shift register or state tracking.
+Counting y cycles in D with a counter.
+
+All state changes and output updates occur on posedge clk, synchronous resetn active low.

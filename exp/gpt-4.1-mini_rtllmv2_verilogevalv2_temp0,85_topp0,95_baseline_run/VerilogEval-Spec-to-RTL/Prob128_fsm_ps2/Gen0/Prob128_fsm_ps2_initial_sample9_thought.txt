@@ -1,0 +1,6 @@
+Implement a 3-state FSM to track message boundaries and byte counting:
+- State IDLE: Wait for a byte with in[3]=1 to indicate start of a message.
+- State BYTE2: After receiving first byte, expect second byte.
+- State BYTE3: After second byte, expect third byte.
+When in BYTE3 state and a byte arrives, assert done next cycle to indicate message completion, then return to IDLE to find next message.
+Use a synchronous reset to return to IDLE.

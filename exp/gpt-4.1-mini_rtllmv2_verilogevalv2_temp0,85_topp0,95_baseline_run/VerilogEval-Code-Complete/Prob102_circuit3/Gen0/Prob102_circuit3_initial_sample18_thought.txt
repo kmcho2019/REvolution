@@ -1,0 +1,30 @@
+Analyzing the waveform, q is 1 whenever either b or c or d is 1, provided a is 1 or b is 1. More specifically:
+
+- For a=0 and b=0, q=0 always.
+- For a=0 and b=1, q=1 if any of b, c, or d is 1.
+- For a=1 and b=0, q=1 if any of c or d is 1.
+- For a=1 and b=1, q=1 if any of b, c, or d is 1.
+
+But checking the table:
+- q=1 when (b=1 and (c=1 or d=1 or c=0 and d=0)) => q=1 always when b=1 except when b=1 and c=0 and d=0 (check at 35ns b=1 c=0 d=0 q=0)
+- So q=1 only if (b=1 and (c=1 or d=1)) or (a=1 and (c=1 or d=1)) or (a=1 and b=0 and (c=1 or d=1)).
+
+Looking closer:
+- q=1 when (b & (c | d)) | (a & (c | d)) | (a & b & (c | d)) - which is redundant.
+- Also, q=1 when (a & d) or (b & d) or (a & c) or (b & c).
+
+Looking at the table, q=1 if (b & (c|d)) or (a & (c|d)) or (a & b & d) or (a & b & c).
+
+But from examples, q=1 if either b or a is 1 and c or d is 1.
+
+Summarizing:
+q = ( (b | a) & (c | d) )
+
+Testing with 40ns: a=0, b=1, c=0, d=1 => q=1: (1 | 0) & (0 | 1) = 1 & 1 =1 OK
+Testing with 60ns: a=1,b=0,c=0,d=1 => q=1: (0 | 1) & (0 |1) =1 &1=1 OK
+Testing with 55ns: a=1,b=0,c=0,d=0 => q=0: (0|1)&(0|0)=1&0=0 OK
+Testing with 35ns: a=0,b=1,c=0,d=0 => q=0: (1|0)&(0|0)=1&0=0 OK
+
+Also q is 0 if c=d=0 regardless of a,b, consistent.
+
+Thus, the circuit implements q = (a OR b) AND (c OR d).

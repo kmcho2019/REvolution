@@ -1,0 +1,47 @@
+Design a Moore FSM with these states encoding direction and action:
+- WALK_LEFT
+- WALK_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- SPLATTER (terminal state)
+
+The outputs walk_left, walk_right, aaah, digging derive from the state:
+- WALK_LEFT: walk_left=1, others=0
+- WALK_RIGHT: walk_right=1, others=0
+- FALL_LEFT/FALL_RIGHT: aaah=1, others=0
+- DIG_LEFT/DIG_RIGHT: digging=1, others=0
+- SPLATTER: all 0
+
+State transitions:
+- On reset, go to WALK_LEFT.
+
+- When in walking states:
+  - If ground=0, transition to FALL with the same direction.
+  - Else if dig=1, transition to DIG with the same direction.
+  - Else if bump (left or right) occurs, switch direction walking state.
+  - Else remain in same walking state.
+
+- When in falling states:
+  - Increment a fall counter each clock cycle.
+  - If ground=1 (fall ended):
+    - If fall counter > 20, transition to SPLATTER.
+    - Else transition to WALK in same direction.
+    - Reset fall counter.
+  - Else remain falling.
+
+- When in digging states:
+  - If ground=0 (falling edge from digging), transition to FALL with same direction.
+  - Else remain digging.
+
+- When in SPLATTER: remain in SPLATTER.
+
+Note that bump signals and dig commands have no effect when falling or digging.
+Dig only starts when walking and ground=1.
+
+Implement asynchronous reset (areset) on posedge to WALK_LEFT, zero fall counter.
+
+Outputs assigned combinationally from state.
+
+Use an enum or parameters to define states.

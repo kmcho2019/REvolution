@@ -1,0 +1,44 @@
+The module implements the next-state logic and output logic of a Moore FSM with one-hot encoding for the states: S (0000000001), S1 (0000000010), S11 (0000000100), S110 (0000001000), B0 (0000010000), B1 (0000100000), B2 (0001000000), B3 (0010000000), Count (0100000000), Wait (1000000000).
+
+Next-state logic by inspection:
+
+- From S:
+  - d=0 -> S
+  - d=1 -> S1
+
+- From S1:
+  - d=0 -> S
+  - d=1 -> S11
+
+- From S11:
+  - d=0 -> S110
+  - d=1 -> S11
+
+- From S110:
+  - d=0 -> S
+  - d=1 -> B0
+
+- From B0 -> B1 (always)
+- B1 -> B2 (always)
+- B2 -> B3 (always)
+- B3 -> Count (always)
+- Count:
+  - done_counting=0 -> Count
+  - done_counting=1 -> Wait
+- Wait:
+  - ack=0 -> Wait
+  - ack=1 -> S
+
+Outputs (Moore, depend on current state):
+
+- shift_ena=1 for states B0, B1, B2, B3
+- counting=1 for Count
+- done=1 for Wait
+
+The inputs are: d, done_counting, ack; and current state is given as a one-hot 10-bit vector named state.
+
+We produce next-state signals (one-hot) for S, S1, B3, Count, and Wait (indicating the next state will be each), and output signals done, counting, shift_ena.
+
+The logic equations are derived by combining current state and inputs per the above rules.
+
+Implement combinational logic that takes inputs and current state and produces the next state signals and outputs.

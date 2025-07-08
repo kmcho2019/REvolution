@@ -1,0 +1,30 @@
+We need to generate all pairwise comparisons between the bits a, b, c, d, e. There are 5 bits, so 25 pairs (including comparing each bit with itself). The output vector `out` has 25 bits indexed from 24 down to 0. According to the example, the bits are arranged such that out[24] is the comparison of (~a) and a, out[23] is (~a) and b, out[22] is (~a) and c, and so on, presumably in a row-major order with the first bit in the pair being from {a,b,c,d,e} in order and the second bit in the pair also from {a,b,c,d,e} in order.
+
+The example shows the comparison is done by: `~X ^ Y`, which is equivalent to X XNOR Y, since:
+
+`~X ^ Y` = (~X) xor Y = (X NOR Y) or equivalently X XNOR Y.
+
+So the output bit is 1 when X == Y, 0 when different.
+
+We will map the pairs as follows:
+
+Index mapping for pair (i,j), where i,j in [0..4], mapping bits {a,b,c,d,e} to indices 0..4:
+
+- bit 24: (0,0) -> (~a) ^ a
+- bit 23: (0,1) -> (~a) ^ b
+- bit 22: (0,2) -> (~a) ^ c
+- bit 21: (0,3) -> (~a) ^ d
+- bit 20: (0,4) -> (~a) ^ e
+- bit 19: (1,0) -> (~b) ^ a
+- ...
+- bit 0:  (4,4) -> (~e) ^ e
+
+We will write a nested generate loop to assign the bits in the output vector accordingly.
+
+Alternatively, since Verilog does not allow generate inside module port declarations, and the signals are only 5 inputs, it's simpler to assign manually or via a concatenation.
+
+We will define an array of the inputs for easy indexing.
+
+The comparison is: `(~x) ^ y`
+
+We'll construct the output as concatenation from out[24] down to out[0].

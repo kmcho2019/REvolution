@@ -1,0 +1,5 @@
+Implement a Moore FSM with states representing walking left, walking right, falling, digging, and splattered. Use separate signals for current direction (left/right) and mode (walking, falling, digging, splattered). On asynchronous reset, start walking left. 
+
+Priority of actions when walking on ground: fall > dig > bump. When falling, count duration; if fall > 20 cycles and ground reappears, splatter. Digging only starts when walking on ground and dig=1, and continues until ground=0 (then falls). Bumps only affect walking states and cause direction switch. Falling and digging states ignore bumps. Outputs depend only on states: walk_left/right, aaah (falling), digging. Splattered state disables all outputs.
+
+Use registers for state, fall counter, and direction. Next state logic based on current state and inputs. State encoding can be separate mode and direction for clarity.

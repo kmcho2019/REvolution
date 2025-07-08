@@ -1,0 +1,43 @@
+Score: 5
+Justification: The code is syntactically correct and models the FSM as a Moore machine with the intended states, but the simulation reveals significant functional mismatches on all output signals, indicating logical errors in state transitions and output assignments that prevent correct behavior.
+
+ANALYSIS:
+The design intent is to implement a Moore FSM modeling a Lemming's behavior: walking left or right, switching directions on bumps, falling when ground disappears, and digging when dig is asserted and on ground. The main features are direction switching, falling with remembered walking direction, and digging states.
+
+1. **Handling of Direction Switching on Bumps:**
+   - According to the problem, if bumped on left, Lemming walks right; if bumped on right, walks left; if bumped on both sides, it still switches direction. The code for `WALK_LEFT` state handles bumps by switching to `WALK_RIGHT` if either bump is asserted (`if (bump_left || bump_right) next_state = WALK_RIGHT;`), and similarly in `WALK_RIGHT` it switches to `WALK_LEFT` on either bump.
+   - This unconditionally switches to the opposite direction irrespective of which side is bumped. This matches the problem's description, so no error here.
+
+2. **Falling and Walking Direction Memory:**
+   - The problem requires remembering walking direction while falling so that on ground reappearance, walking resumes in that direction.
+   - The code attempts to do this by a separate `walk_dir` register updated on transitions to walking or digging states.
+   - However, `walk_dir` is updated on the **next_state** in a synchronous always block, but the combinational logic uses `walk_dir` to decide the next state when falling and ground reappears.
+   - This creates a combinational loop or mismatch because `walk_dir` is updated only on clock edges, but `next_state` combinationally depends on `walk_dir` when in FALLING state.
+   - Moreover, the `next_state` is assigned twice in two separate always blocks: once in a big combinational block, and again in a separate always @(*) block that overrides `next_state` for FALLING when ground reappears. Two blocks driving `next_state` without any explicit priority or resolution can cause simulation ambiguity or undefined behavior.
+   - This is a major reason for mismatches in output signals after falling and resuming walking.
+
+3. **Digging Conditions and Transitions:**
+   - The problem states digging can start only when walking and on ground, and continues until ground disappears, then falling starts.
+   - The code correctly starts digging states from walking states if `dig` is asserted and `ground` is 1.
+   - While digging, bumps and dig inputs are ignored; code seems consistent here.
+   - However, the code does not seem to prevent starting digging if dig=1 while falling or not on ground, which matches the problem description.
+   - The code uses `next_state = FALLING;` when ground disappears in digging states, which is correct.
+
+4. **Output Assignments:**
+   - Outputs are assigned purely based on the current state, consistent with Moore FSM.
+   - The mismatch counts on outputs (`walk_left`, `walk_right`, `aaah`, `digging`) indicate that the FSM state transitions are not happening as expected, rather than incorrect output assignments per se.
+   - This likely stems from the `walk_dir` and `next_state` combinational logic interaction.
+
+5. **Reset Behavior:**
+   - Asynchronous reset sets state to `WALK_LEFT` and `walk_dir` to 0 (left), which is correct.
+
+6. **Additional Issues:**
+   - The code comments acknowledge the need to handle walking direction memory during falling but the implementation leaves the `next_state` update for FALLING state spread across two always blocks, causing likely simulation problems.
+   - The combinational override of `next_state` for FALLING on ground reappearance depends on `walk_dir`, a sequential register, causing a mismatch in combinational logic and likely simulation glitches.
+   - These coding style and structural issues cause major functional mismatches seen in the simulation logs.
+
+In summary, the code logically attempts to implement the requested FSM but suffers from structural flaws in `next_state` combinational logic, specifically the separation and overlapping of `next_state` assignments and the use of a sequential register in combinational logic to decide next state transitions for FALLING. This leads to unexpected state transitions and output mismatches during simulation.
+
+The mismatches in all outputs and the considerable number of mismatches (293 out of 443 samples) show the FSM does not behave as intended, especially concerning transitions from falling back to walking and handling digging.
+
+No syntax errors exist, so the score reflects functional correctness issues rather than compilation errors.

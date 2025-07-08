@@ -1,0 +1,22 @@
+Implement a 3-bit state register y that holds the current state. The next state depends on the current state and the input w. Only the next state bit y[1] is implemented in the next-state logic; y[0] and y[2] next-state logic is not specified and can be held or left unchanged. The output Y1 is simply y[1]. We'll implement the FSM with synchronous reset (reset not specified, so we can just allow asynchronous reset or none). The next-state logic for y[1] will be derived from the state transition table, but only for bit 1 of the next state.
+
+Given that the state encodings are:
+
+A = 000  
+B = 001  
+C = 010  
+D = 011  
+E = 100  
+F = 101
+
+and transitions as given.
+
+We will implement the next state as a combinational logic block, but only assign y[1] next-state. For y[0] and y[2], we hold them or leave unchanged (they can be assigned to the current state, or zero; the problem only asks for next state of y[1]). Since the problem only requests next state for y[1], the other bits of next state can be assigned as current state bits (or zero), as we want a runnable FSM.
+
+The output Y1 = y[1].
+
+We will code this with a clock and synchronous reset is optional, since not specified. We'll implement a simple synchronous FSM.
+
+On each clock posedge, y <= next_y, where next_y[1] is updated by next-state logic and other bits are unchanged.
+
+This meets the problem requirements.

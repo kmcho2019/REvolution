@@ -1,0 +1,16 @@
+Implement a finite state machine with the following states:
+- IDLE: searching for the start pattern 1101 serially on the data input.
+- READ_DELAY: shift in 4 bits MSB first after detecting the start pattern.
+- COUNTING: count down (delay+1)*1000 cycles, updating the output count every 1000 cycles.
+- DONE: assert done signal and wait for ack input to return to IDLE.
+
+Use a 4-bit shift register to detect the pattern 1101.
+Use a 4-bit register to store the delay value.
+Use a 10-bit counter (to count to 1000 cycles) and a 4-bit countdown register (for delay).
+The count output shows the current count value during counting and don't-care otherwise.
+All sequential logic triggered by posedge clk and synchronous reset.
+
+Output signals:
+- counting asserted only in COUNTING state.
+- done asserted only in DONE state.
+- count outputs remaining delay count (from delay down to 0) updated every 1000 clock cycles.

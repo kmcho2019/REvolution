@@ -1,0 +1,48 @@
+Score: 7
+Justification: The code is syntactically correct and models a Moore FSM as intended, but it fails simulation due to incorrect handling of bump inputs when transitioning out of WALK_LEFT and WALK_RIGHT states, causing wrong walking direction outputs for a significant portion of the test cases.
+
+ANALYSIS:
+The FSM code implements three states (WALK_LEFT, WALK_RIGHT, FALLING) with outputs set accordingly. The asynchronous reset properly initializes the state to WALK_LEFT. The FSM transitions to FALLING when ground is 0 and returns to the last walking direction upon ground reappearing, preserving the last walking direction before falling.
+
+However, the simulation log shows 154 mismatches in walk_left and walk_right outputs starting at time 270, meaning the walking direction transitions are not matching expectations for a substantial part of the simulation.
+
+Analyzing the next state logic for WALK_LEFT and WALK_RIGHT states reveals the root cause:
+
+```verilog
+WALK_LEFT: begin
+    if (!ground) begin
+        next_state = FALLING;
+    end else if (bump_left || bump_right) begin
+        next_state = WALK_RIGHT;
+    end
+end
+WALK_RIGHT: begin
+    if (!ground) begin
+        next_state = FALLING;
+    end else if (bump_left || bump_right) begin
+        next_state = WALK_LEFT;
+    end
+end
+```
+
+The problem lies in the treatment of bump inputs during walking states. According to the problem description, the Lemming should change direction if bumped on the left (bump_left==1), it will walk right; if bumped on the right (bump_right==1), it will walk left; if bumped on both sides simultaneously, it should still switch directions.
+
+The code uses `(bump_left || bump_right)` to switch direction, but does not distinguish which bump side is active. This causes incorrect behavior when only one bump input is active, as the code always flips the walking direction regardless of which bump side is asserted.
+
+For example, if the Lemming is walking left and bump_left=1 (bumped on left), it should start walking right, which matches the code's transition to WALK_RIGHT in that case. But if bump_right=1 (bumped on right) while walking left, the Lemming should walk left (no direction change). The current code ignores which bump is asserted and always flips direction when any bump is asserted, leading to mismatches.
+
+Similarly, when walking right, the Lemming should switch direction to walk left only if bumped on right (bump_right=1), but keep walking right if bumped on left (bump_left=1). The code again flips direction for any bump input, violating the problem specification.
+
+Furthermore, the code correctly ignores bump inputs when falling, and properly resumes the last walking direction after falling, so the mismatch is isolated to walking state bump handling.
+
+Thus, the fundamental issue is that the next_state logic for walking states does not check which bump side(s) caused the bump, resulting in incorrect walking direction transitions and causing many output mismatches during simulation.
+
+All other FSM behavior, including asynchronous reset, falling logic, and Moore output assignments, align with the problem requirements.
+
+In summary, the main bug is:
+
+- In the WALK_LEFT and WALK_RIGHT states, the code treats bump_left and bump_right inputs identically and always switches direction when either bump input is active, instead of only switching direction based on which bump side is active as per the problem specification.
+
+This causes the walk_left and walk_right outputs to be incorrect for many input conditions, explaining the 154 mismatches in simulation results.
+
+No syntax errors or asynchronous reset issues were found; the problem is purely functional. The aaah output matches perfectly, indicating falling state logic is correctly implemented.

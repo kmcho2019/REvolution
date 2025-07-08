@@ -1,0 +1,35 @@
+We will implement a Moore FSM with four main states to represent the Lemming's behavior:
+
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- FALLING: falling (aaah!)
+- DIGGING: digging while walking on ground
+
+On reset, we start at WALK_LEFT.
+
+Transitions follow the priority rules:
+1. If ground=0 (no ground), transition to FALLING regardless of other inputs.
+2. Else if dig=1 and currently walking on ground, transition to DIGGING.
+3. Else if bumped (bump_left or bump_right) and walking on ground (not falling or digging), switch direction.
+4. Else remain in the current walking state if ground=1.
+
+When falling (FALLING):
+- If ground=1, resume walking in the previous direction before falling.
+
+When digging (DIGGING):
+- If ground=0, transition to FALLING.
+- Else remain digging.
+
+Outputs:
+- walk_left = 1 in WALK_LEFT
+- walk_right = 1 in WALK_RIGHT
+- aaah = 1 in FALLING
+- digging = 1 in DIGGING
+
+We will store the previous walking direction when entering FALLING to resume correctly.
+
+`areset` is async positive edge reset to WALK_LEFT.
+
+All logic is on posedge clk.
+
+This Moore FSM implementation will have a state register and next state combinational logic, and output logic dependent on state only.

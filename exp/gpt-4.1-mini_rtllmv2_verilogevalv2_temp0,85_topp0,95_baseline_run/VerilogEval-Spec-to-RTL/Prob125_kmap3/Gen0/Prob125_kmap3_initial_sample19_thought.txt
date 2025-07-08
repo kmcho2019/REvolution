@@ -1,0 +1,135 @@
+We are given a Karnaugh map with inputs a,b on columns and c,d on rows. The map entries include 0,1, and don't-care (d). Since d can be chosen for simplification, we want to find a minimal expression.
+
+First, rewrite the K-map using inputs:
+
+Rows (cd): 00, 01, 11, 10 (note order is 01,00,10,11 for ab columns)
+Columns (ab): 01,00,10,11
+
+But the user gave the K-map as:
+
+          ab
+ cd   01  00  10  11
+ 00 | d | 0 | 1 | 1 |
+ 01 | 0 | 0 | d | d |
+ 11 | 0 | 1 | 1 | 1 |
+ 10 | 0 | 1 | 1 | 1 |
+
+So the rows are in order: 00, 01, 11, 10 (top to bottom), columns: 01,00,10,11 (left to right)
+
+Let's assign indices:
+
+Rows (cd):
+00 = c=0,d=0
+01 = c=0,d=1
+11 = c=1,d=1
+10 = c=1,d=0
+
+Columns (ab):
+01 = a=0,b=1
+00 = a=0,b=0
+10 = a=1,b=0
+11 = a=1,b=1
+
+To write the map as a 4x4 with inputs a,b,c,d:
+
+We'll list all 16 input combinations and their output values, using d for don't care.
+
+Input (a,b,c,d) and output:
+
+- cd=00 (c=0,d=0)
+  ab=01 (a=0,b=1): d
+  ab=00 (0,0): 0
+  ab=10 (1,0): 1
+  ab=11 (1,1): 1
+
+- cd=01 (c=0,d=1)
+  ab=01 (0,1): 0
+  ab=00 (0,0): 0
+  ab=10 (1,0): d
+  ab=11 (1,1): d
+
+- cd=11 (c=1,d=1)
+  ab=01 (0,1): 0
+  ab=00 (0,0): 1
+  ab=10 (1,0): 1
+  ab=11 (1,1): 1
+
+- cd=10 (c=1,d=0)
+  ab=01 (0,1): 0
+  ab=00 (0,0): 1
+  ab=10 (1,0): 1
+  ab=11 (1,1): 1
+
+Now, let's write the truth table (a,b,c,d,out):
+
+| a | b | c | d | out |
+|---|---|---|---|-----|
+| 0 | 1 | 0 | 0 | d   |
+| 0 | 0 | 0 | 0 | 0   |
+| 1 | 0 | 0 | 0 | 1   |
+| 1 | 1 | 0 | 0 | 1   |
+| 0 | 1 | 0 | 1 | 0   |
+| 0 | 0 | 0 | 1 | 0   |
+| 1 | 0 | 0 | 1 | d   |
+| 1 | 1 | 0 | 1 | d   |
+| 0 | 1 | 1 | 1 | 0   |
+| 0 | 0 | 1 | 1 | 1   |
+| 1 | 0 | 1 | 1 | 1   |
+| 1 | 1 | 1 | 1 | 1   |
+| 0 | 1 | 1 | 0 | 0   |
+| 0 | 0 | 1 | 0 | 1   |
+| 1 | 0 | 1 | 0 | 1   |
+| 1 | 1 | 1 | 0 | 1   |
+
+Now, use the don't cares to simplify the function.
+
+First, mark the minterms where output=1:
+
+- (1,0,0,0)
+- (1,1,0,0)
+- (0,0,1,1)
+- (1,0,1,1)
+- (1,1,1,1)
+- (0,0,1,0)
+- (1,0,1,0)
+- (1,1,1,0)
+
+Minimize function with don't care considered as 1 or 0 to help grouping.
+
+Let's try to find a sum-of-products expression by grouping:
+
+Observation:
+
+- All cases with a=1 and c=1 give output=1 (cases with a=1,c=1,...)
+
+- For c=1, output=1 when a=1, regardless of b,d.
+
+- For c=1, a=0, output=1 only when b=0,d=0 or b=0,d=1 (cases (0,0,1,0) and (0,0,1,1))
+
+- For c=0,d=0: output=1 when a=1,b=0 or a=1,b=1
+
+- For c=0,d=1: output=0 or don't care
+
+Try to write expression:
+
+- Group1: a=1,c=1 => a*c
+
+- Group2: c=1,b=0,a=0,d=don't care, output=1 at (0,0,1,0) and (0,0,1,1) => !a & !b & c
+
+- Group3: c=0,d=0,a=1,b=0 or b=1 => a & !c & !d
+
+Hence expression:
+
+out = (a & c) | (!a & !b & c) | (a & !c & !d)
+
+We can check if this covers all ones:
+
+- For a=1,c=1: output=1
+
+- For !a & !b & c: at (0,0,1,x) output=1
+
+- For a & !c & !d: covers cases with a=1, c=0,d=0 (b=0 or 1)
+
+Let's implement this in Verilog.
+
+Since d is don't care, we do not need to test it specially; just use the logic above.

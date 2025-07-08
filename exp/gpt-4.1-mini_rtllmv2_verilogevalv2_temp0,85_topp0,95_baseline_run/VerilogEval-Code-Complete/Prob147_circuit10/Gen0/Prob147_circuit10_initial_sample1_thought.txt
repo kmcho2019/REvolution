@@ -1,0 +1,34 @@
+The circuit has one bit of state (flip-flop). The output 'q' is the current state of the flip-flop, and 'state' is an output reflecting the stored bit. The inputs are 'a' and 'b'.
+
+By analyzing the waveform transitions at clock rising edges (when clk=1), the state updates as follows:
+
+- At 15ns (clk rising), a=0, b=0, state=0, q=0 (initially reset to 0)
+- At 45ns, a=0, b=1, state=0, q=1 (state set to 1)
+- At 65ns, a=1, b=1, state=0, q=0 (state cleared to 0)
+- At 75ns, a=0, b=0, state=1, q=1 (state set to 1)
+- At 95ns, a=1, b=1, state=1, q=1 (state remains 1)
+- At 115ns, a=1, b=0, state=1, q=0 (state cleared to 0)
+- At 135ns, a=0, b=0, state=1, q=1 (state set to 1 again)
+- Then state goes back to 0 on next cycles.
+
+From these observations, we can infer:
+
+- The next state depends on inputs a, b, and the current state.
+- When (a=0, b=1) and current state=0, next state=1.
+- When (a=1, b=1) and current state=0, next state=0.
+- When state=1 and a=1,b=0, next state=0.
+- When state=1 and a=0,b=0, next state=1.
+- For other inputs, next state remains same.
+
+This behavior can be captured by:
+
+next_state = (state & ~a) | (~state & (a ^ b));
+
+This formula matches the observed transitions:
+
+- If state=1 and a=0 => next_state=1
+- If state=1 and a=1 => next_state=0
+- If state=0 and a^b=1 => next_state=1
+- If state=0 and a^b=0 => next_state=0
+
+We implement a D flip-flop for state with synchronous update on the positive edge of clk and output q=state. The output 'state' is the current stored bit.

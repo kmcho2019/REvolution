@@ -1,0 +1,38 @@
+First, interpret the Karnaugh map to find the minterms where the function f is 1. The inputs are x[1], x[2], x[3], x[4], with the rows representing x[1]x[2] and columns representing x[3]x[4]. The Karnaugh map entries are as follows:
+
+Rows (x[1]x[2]): 00, 01, 11, 10
+Cols (x[3]x[4]): 00, 01, 11, 10
+
+Map:
+      00  01  11  10 (x[3]x[4])
+00 |  1 | 0 | 0 | 1 |  (x[1]x[2] = 00)
+01 |  0 | 0 | 0 | 0 |  (01)
+11 |  1 | 1 | 1 | 0 |  (11)
+10 |  1 | 1 | 0 | 1 |  (10)
+
+We can write the minterms for f=1:
+- Row 00 (x[1] =0, x[2]=0):
+  - Col 00 (x[3]=0, x[4]=0): 0000
+  - Col 10 (x[3]=1, x[4]=0): 0010
+
+- Row 11 (x[1]=1, x[2]=1):
+  - Col 00 (x[3]=0, x[4]=0): 1100
+  - Col 01 (x[3]=0, x[4]=1): 1101
+  - Col 11 (x[3]=1, x[4]=1): 1111
+
+- Row 10 (x[1]=1, x[2]=0):
+  - Col 00 (x[3]=0, x[4]=0): 1000
+  - Col 01 (x[3]=0, x[4]=1): 1001
+  - Col 10 (x[3]=1, x[4]=0): 1010
+
+Groupings can be made for minimal expression:
+- Group1: row 11 and row 10, col 00 and col 01 (1 1 X X where x[3]=0)
+- Group2: row 10 and row 00, col 00 (x[3]=0, x[4]=0)
+- Group3: row 10 and row 00, col 10 (x[3]=1, x[4]=0)
+- Single minterm at 1111 (row 11, col 11)
+
+Alternatively, we can write the sum of minterms directly or derive a simplified expression.
+
+For clarity and simplicity, the code below uses a direct combination of minterms using combinational logic to replicate the Karnaugh map. This ensures correctness and matches the function precisely.
+
+We will implement the logic using combinational always block or continuous assignment using the corresponding minterms.

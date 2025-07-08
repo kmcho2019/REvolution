@@ -1,0 +1,23 @@
+To model the Lemming's behavior, we need a Moore state machine with the following states:
+1. WALK_LEFT: Lemming is walking left.
+2. WALK_RIGHT: Lemming is walking right.
+3. FALL_LEFT: Lemming is falling, was walking left before.
+4. FALL_RIGHT: Lemming is falling, was walking right before.
+5. DIG_LEFT: Lemming is digging, was walking left before.
+6. DIG_RIGHT: Lemming is digging, was walking right before.
+
+The state transitions are as follows:
+- From WALK_LEFT/WALK_RIGHT:
+  - If ground=0, transition to FALL_LEFT/FALL_RIGHT.
+  - Else if dig=1, transition to DIG_LEFT/DIG_RIGHT.
+  - Else if bumped, switch direction.
+- From FALL_LEFT/FALL_RIGHT:
+  - If ground=1, transition back to WALK_LEFT/WALK_RIGHT.
+- From DIG_LEFT/DIG_RIGHT:
+  - If ground=0, transition to FALL_LEFT/FALL_RIGHT.
+
+Outputs are determined by the current state:
+- walk_left: in WALK_LEFT or DIG_LEFT states.
+- walk_right: in WALK_RIGHT or DIG_RIGHT states.
+- aaah: in FALL_LEFT or FALL_RIGHT states.
+- digging: in DIG_LEFT or DIG_RIGHT states.

@@ -1,0 +1,17 @@
+Implement a synchronous state machine that tracks the current water level based on the 3-bit sensor input s. The water level is encoded by which sensors are asserted. The output flow signals fr0, fr1, fr2 represent nominal flow valves, and dfr represents the supplemental flow valve. On reset, we set the state as "Below s[0]" (no sensors asserted, all flow outputs asserted).
+
+The key is to detect transitions between water levels and compare the previous level to the current level to decide if the supplemental flow valve dfr should be activated (if previous level was lower than current level).
+
+We define water levels as:
+- Level 3: Above s[2] (all sensors asserted)
+- Level 2: Between s[2] and s[1] (s[0] and s[1] asserted only)
+- Level 1: Between s[1] and s[0] (s[0] asserted only)
+- Level 0: Below s[0] (no sensors asserted)
+
+We decode s into these levels. Then, on each clock cycle, store the previous level and current level, and compare them:
+- If current_level > previous_level (water rising), enable dfr supplemental valve.
+- Otherwise, dfr is 0.
+
+Outputs fr0, fr1, fr2 are asserted depending on the current level as per the table.
+
+All signals are synchronous with clk and reset.

@@ -1,0 +1,21 @@
+To implement the FSM, we define states representing each step:
+
+- IDLE: searching for the start pattern 1101 bit-by-bit on 'data'.
+- SHIFT: after detecting the pattern, assert shift_ena for 4 cycles to shift in duration bits.
+- COUNT: assert counting and wait for done_counting to be asserted.
+- DONE: assert done and wait for ack to be asserted before returning to IDLE.
+
+For pattern detection, implement a 4-bit shift register to check the last 4 bits for '1101'.
+
+The synchronous reset takes the FSM back to IDLE.
+
+Outputs (shift_ena, counting, done) asserted only in their respective states.
+
+We implement a counter for the 4 cycles of shift_ena during SHIFT state.
+
+The FSM transitions:
+
+IDLE -> SHIFT when pattern detected (1101)
+SHIFT -> COUNT after 4 shift cycles
+COUNT -> DONE when done_counting is high
+DONE -> IDLE when ack is high

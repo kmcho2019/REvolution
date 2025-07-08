@@ -1,0 +1,20 @@
+Score: 7
+Justification: The code is syntactically correct and simulates without compilation errors, but it fails simulation with many mismatches indicating functional errors in the shift register behavior or update logic.
+
+ANALYSIS:
+The provided code implements a 32-bit global history register with asynchronous reset, update on prediction, and rollback on misprediction. The design intent is to shift in new branch outcomes on prediction, but overwrite history with the concatenation of previous history and actual result on misprediction, with misprediction taking precedence.
+
+The main issues are:
+
+1. **Incorrect concatenation in misprediction update:**  
+   The code uses `{train_history[30:0], train_taken}` to update `predict_history` when `train_mispredicted` is asserted. According to the problem statement, the new history after rollback should be the history *before* the mispredicted branch (train_history) concatenated with the actual branch result (train_taken). Since `predict_history[0]` is the youngest branch, the LSB should hold the actual branch result, and the upper bits should be the older history. The code is effectively discarding `train_history[31]`, truncating the history from 32 bits to 31 bits before concatenation, which causes incorrect history state.
+
+2. **Shift direction mismatch on prediction update:**  
+   The code does `{predict_taken, predict_history[31:1]}` when shifting in the prediction at `predict_valid`. The problem specifies that the youngest branch is at `predict_history[0]` (LSB). Shifting in `predict_taken` into the MSB (`[31]`) and shifting right does not align with inserting the new branch direction at the LSB. Instead, the new prediction should be shifted into the LSB, pushing older bits upward. This causes the branch history to shift in the wrong direction compared to the specification.
+
+3. **No explicit hold state:**  
+   The code relies on implied hold by not updating `predict_history` unless one of the conditions is true. While this is functionally correct, the simulation mismatches suggest that the update logic may not fully conform to the intended behavior, possibly in the order of precedence or timing of signals.
+
+Due to these points, the simulation results report a large number of mismatches (1907 out of 2055 samples), indicating that the branch history is not updating correctly per the specification.
+
+The code structure is otherwise clean and straightforward, but these fundamental errors in shift direction and concatenation cause functional failure in simulation.

@@ -1,0 +1,26 @@
+The design requires tracking the current and previous water level states based on the 3-bit sensor input s, which indicates water level intervals:
+
+- s=111 (all sensors asserted): Above s[2], flow rate zero (no outputs asserted)
+- s=110 (s[0], s[1] asserted): Between s[2] and s[1], nominal flow rate fr0 asserted
+- s=100 (only s[0] asserted): Between s[1] and s[0], nominal flow rate fr0, fr1 asserted
+- s=000 (no sensors asserted): Below s[0], maximum flow fr0, fr1, fr2 asserted
+
+Other sensor values like 010, 001, 011, 101 are not specified explicitly and should be treated as outside normal ranges or mapped logically.
+
+The key is to detect if the water level is rising (previous level lower than current level), then dfr (supplemental valve) is enabled.
+
+Implementation plan:
+
+1. Store previous sensor state on each clock cycle.
+2. Define a level encoding of the current and previous sensor inputs into a 2-bit level value:
+   - 3 (above s[2]) for s=111
+   - 2 (between s[2] and s[1]) for s=110
+   - 1 (between s[1] and s[0]) for s=100
+   - 0 (below s[0]) for s=000
+   - For other s values, map to closest or default to lowest (safe assumption).
+3. On each clock, update previous level with current level.
+4. Use current level to determine nominal outputs fr0, fr1, fr2 as per table.
+5. If current_level > previous_level, set dfr=1; else dfr=0.
+6. On reset, set previous level to 0 (lowest) and outputs fr0, fr1, fr2, dfr = 1.
+
+This can be implemented with a synchronous process and combinational logic for output decoding.

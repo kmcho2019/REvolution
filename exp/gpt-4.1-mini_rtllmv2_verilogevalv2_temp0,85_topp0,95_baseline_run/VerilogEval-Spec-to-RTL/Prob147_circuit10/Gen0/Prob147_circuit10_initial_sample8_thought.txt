@@ -1,0 +1,33 @@
+From the waveform, the state output is the stored flip-flop value updated on the rising edge of clk. The output q also updates on the rising edge of clk and depends on the current inputs a, b, and the stored state. By analyzing the transitions:
+
+- Initially, state is unknown.
+- When b=1 and state=0, q becomes 1.
+- When b=1 and state=1, q becomes 0.
+- When b=0, q remains equal to state.
+- When a=1 and b=0 and state=1, q=1.
+- When a=0 and b=0 and state=1, q=1.
+- When a=1 and b=0 and state=0, q=0.
+- When a=0 and b=0 and state=0, q=0.
+
+From this, the next state (state at next clock) is q, and q is computed as:
+
+q = (~state & b) | (state & ~b & a) | (state & ~b & ~a & 1) which simplifies to q = (~state & b) | (state & (~b))
+
+So q = (b & ~state) | (state & ~b) = state XOR b.
+
+But checking again with waveform values, it fits better if:
+
+next_state = (state & ~b) | (~state & a & b)
+
+But to simplify, the state updates as per q, and q = (state & (~b)) | ((~state) & b & a).
+
+Hence, the flip-flop stores state <= q at each rising edge. Output q is combinational logic of current state and inputs.
+
+Final equations:
+
+q = (state & ~b) | (~state & a & b)
+state <= q on clk rising edge
+
+Output q is this combinational logic, output state is stored flip-flop value.
+
+Implementing this logic.

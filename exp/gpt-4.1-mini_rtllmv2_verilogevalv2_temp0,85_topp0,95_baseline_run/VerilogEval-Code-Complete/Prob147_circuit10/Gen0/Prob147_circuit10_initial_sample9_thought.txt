@@ -1,0 +1,39 @@
+The circuit has one bit memory (a flip-flop) with output q and a next state logic. The state output is the stored flip-flop value. By examining the waveform, the q output updates on the rising edge of clk. The next state depends on inputs a, b, and current state.
+
+Observing the transitions:
+- At 45ns (clk rising), a=0, b=1, state=0, q goes from 0 to 1.
+- At 65ns (clk rising), a=1, b=1, state=0, q goes from 1 to 0.
+- At 75ns (clk rising), a=0, b=0, state=1, q goes from 0 to 1.
+- At 95ns (clk rising), a=1, b=1, state=1, q stays 1.
+- At 115ns (clk rising), a=1, b=0, state=1, q goes from 1 to 0.
+- At 135ns (clk rising), a=0, b=0, state=1, q goes from 0 to 1.
+- At 145ns (clk rising), a=0, b=0, state=0, q goes from 1 to 0.
+
+State appears to be the stored q value (same as q output).
+
+From this, the next state q depends on a, b and current q as:
+q_next = (b & ~q) | (a & ~b & q) | (~a & ~b & q)
+
+Simplify:
+- When b=1 and q=0 -> q_next=1
+- When b=0 and a=1 and q=1 -> q_next=1
+- When b=0 and a=0 and q=1 -> q_next=1
+- Else q_next=0
+
+So q_next = (b & ~q) | ((~b) & q)
+
+Further simplify: q_next = b & ~q | ~b & q = q ^ b
+
+Therefore q toggles when b=1 (since q_next = q XOR b).
+
+Check waveforms:
+- When b=1 at rising edge, q toggles.
+- When b=0, q stays same unless a=0 and b=0 and q=1 -> q=1 (consistent)
+
+Since a is sometimes 1 or 0 and does not affect toggle behavior clearly except in some cases, but from above, the simplest model fitting the waveform is q_next = q XOR b.
+
+So the circuit is a flip-flop storing q that toggles when b=1 at clock edge.
+
+The output 'state' is same as q.
+
+Implement a D flip-flop with next state = q XOR b.

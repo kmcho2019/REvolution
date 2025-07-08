@@ -1,0 +1,24 @@
+Design a Moore FSM with four states representing the Lemming's behavior: WALK_LEFT, WALK_RIGHT, DIGGING_LEFT, DIGGING_RIGHT, plus implicit falling state indicated by ground=0 and not digging (or digging ends when ground=0). However, since falling is indicated by ground=0, and walking or digging only happens when ground=1, we can model fall by checking ground=0 in outputs and ignoring bumps/dig commands when ground=0.
+
+- States: WALK_LEFT, WALK_RIGHT, DIGGING_LEFT, DIGGING_RIGHT
+- Reset: WALK_LEFT
+- Transitions:
+  * If ground=0: Lemming is falling (aaah=1), outputs walk_left and walk_right=0, digging=0
+  * If ground=1:
+    - If dig=1 and not currently digging, start digging in current direction (DIGGING_LEFT or DIGGING_RIGHT)
+    - If digging and ground=1 continue digging
+    - If digging and ground=0, fall (aaah=1), stop digging, then resume walking in original direction when ground=1 again
+    - If not digging and not falling:
+      * If bump_left or bump_right (or both) -> switch walking direction
+      * Else continue walking current direction
+
+- Outputs:
+  * walk_left=1 if walking or digging left and ground=1
+  * walk_right=1 if walking or digging right and ground=1
+  * digging=1 if in digging states and ground=1
+  * aaah=1 if ground=0
+
+- Bumps and dig commands are ignored while falling or digging (except starting dig only if walking on ground)
+- Use asynchronous posedge areset to reset to WALK_LEFT
+
+Implementation will use an enumerated type or parameters for states, synchronous state updates on posedge clk with asynchronous reset, outputs as per Moore style (based on state and inputs).

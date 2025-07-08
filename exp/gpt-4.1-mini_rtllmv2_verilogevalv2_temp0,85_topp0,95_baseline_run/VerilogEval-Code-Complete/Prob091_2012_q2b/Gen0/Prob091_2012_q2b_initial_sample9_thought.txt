@@ -1,0 +1,17 @@
+To find Y1 (next state input for y[1] representing state B) and Y3 (next state input for y[3] representing state D), analyze the transitions:
+
+Y1 corresponds to state B (y[1]). From the transitions:
+- A(0) --1--> B: So if currently in A (y[0]) and w=1, next state is B.
+No other state transitions to B, so:
+Y1 = y[0] & w
+
+Y3 corresponds to state D (y[3]). From the transitions, D is reached from:
+- B(0) --0--> D: from B with w=0
+- C(0) --0--> D: from C with w=0
+- E(1) --0--> D: from E with w=0
+- F(1) --0--> D: from F with w=0
+
+So Y3 = (y[1] & ~w) | (y[2] & ~w) | (y[4] & ~w) | (y[5] & ~w)
+Note: y[1]=B, y[2]=C, y[4]=E, y[5]=F
+
+Use bitwise operations accordingly.

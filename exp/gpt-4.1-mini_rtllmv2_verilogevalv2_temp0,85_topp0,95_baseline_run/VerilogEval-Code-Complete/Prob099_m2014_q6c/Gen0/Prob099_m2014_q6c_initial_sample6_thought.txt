@@ -1,0 +1,18 @@
+We need to implement combinational logic for next-state signals Y2 and Y4 (which correspond to states B and D respectively) based on the current one-hot encoded state y[6:1] and input w. By inspecting the state transitions:
+
+- Y2 (state B) is set next when:
+  - From A (y=000001): input w=0 → next state B (Y2=1)
+  
+- Y4 (state D) is set next when:
+  - From B (y=000010): w=1 → D
+  - From C (y=000100): w=1 → D
+  - From E (y=010000): w=1 → D
+  - From F (y=100000): w=1 → D
+
+So the logic for Y2 is:
+Y2 = (~w & y[1])
+
+The logic for Y4 is:
+Y4 = w & (y[2] | y[3] | y[5] | y[6])
+
+We will implement these directly.

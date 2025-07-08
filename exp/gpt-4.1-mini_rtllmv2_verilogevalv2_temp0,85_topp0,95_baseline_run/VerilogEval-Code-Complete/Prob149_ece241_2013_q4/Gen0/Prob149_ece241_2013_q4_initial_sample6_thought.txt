@@ -1,0 +1,18 @@
+The design is a finite state machine tracking the water level based on sensors s[1], s[2], s[3]. The outputs fr1, fr2, fr3 control nominal flow valves, and dfr controls supplemental flow valve. The water level states correspond to the sensors asserted, determining which outputs are active.
+
+State transitions depend on the current sensor inputs and the previous state. We need to detect if the level is rising (previous level lower than current) to set dfr.
+
+On reset, the state should correspond to "Below s[1]" (no sensors asserted) with all outputs asserted (fr1, fr2, fr3, dfr).
+
+We define states for the four water levels:
+
+- BELOW (no sensors asserted)
+- BETWEEN_1_2 (s[1] asserted only)
+- BETWEEN_2_3 (s[1] and s[2] asserted)
+- ABOVE (all s[1], s[2], s[3] asserted)
+
+Transitions occur based on s inputs. For each state, outputs are assigned accordingly. dfr is set if the transition was from a lower water level to a higher water level (i.e., rising level).
+
+The logic will be synchronous on clk and reset. We'll store current_state and previous_state to detect rising transitions.
+
+Implementing a state machine with states encoded as enums for clarity.

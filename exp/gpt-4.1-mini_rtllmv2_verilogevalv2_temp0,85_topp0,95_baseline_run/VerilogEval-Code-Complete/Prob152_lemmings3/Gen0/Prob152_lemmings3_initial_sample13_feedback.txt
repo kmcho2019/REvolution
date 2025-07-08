@@ -1,0 +1,59 @@
+Score: 7
+Justification: The code is syntactically correct and the simulation shows only output mismatches on walk_left and walk_right signals, with aaah and digging outputs correct. The errors suggest functional issues with walking direction logic and state transitions related to bumping and direction switching, but falling and digging behaviors appear to be implemented correctly.
+
+ANALYSIS:
+The main problem lies in how the walking direction (walk_left and walk_right) is updated, causing mismatches on those outputs. According to the problem, the Lemming should switch walking directions if bumped on either side while walking, and also remember its direction before falling to resume walking after falling.
+
+1. The `walk_dir` register is intended to remember the walking direction before falling. However, in the code’s sequential block:
+   ```verilog
+   if ((state == FALL || state == DIG_LEFT || state == DIG_RIGHT) && (next_state == WALK_LEFT))
+     walk_dir <= 0;
+   else if ((state == FALL || state == DIG_LEFT || state == DIG_RIGHT) && (next_state == WALK_RIGHT))
+     walk_dir <= 1;
+   else if ((state == WALK_LEFT && next_state == WALK_RIGHT) || (state == WALK_RIGHT && next_state == WALK_LEFT))
+     walk_dir <= (state == WALK_LEFT) ? 1'b1 : 1'b0;
+   ```
+   This means that `walk_dir` updates only when:
+   - Transitioning from FALL or DIG states to a walking state (WALK_LEFT or WALK_RIGHT), or
+   - When switching direction due to bumping in walking states.
+   
+   However, the problem description specifies that bumping while falling or digging should have no effect on walking direction, so updating walk_dir in those transitions is correct. But the logic might be incomplete or incorrectly timed.
+
+2. The problem states that being bumped while falling or digging does not affect walking direction, and bumping while ground disappears or reappears should not cause direction changes. The current combinational logic for next_state in WALK_LEFT and WALK_RIGHT states:
+   ```verilog
+   else if (bump_left || bump_right) begin
+     // Switch direction
+     next_state = WALK_RIGHT; // or WALK_LEFT
+   end
+   ```
+   does switch directions for any bump, but the logic does not differentiate between bump_left and bump_right; it switches direction regardless of which bump is received. This aligns with the problem (bumped on either side switches direction), so this is correct.
+
+3. The problem says the fall state should be entered immediately when ground=0, and the dig state only when digging command and ground=1 and not falling, which seems well implemented.
+
+4. The likely cause for mismatches on walk_left and walk_right outputs is the timing and updating of `walk_dir`. The code depends on `walk_dir` to resume correct walking direction after fall, but it may fail if `walk_dir` is not updated properly in all walking transitions:
+   - For example, when switching walking direction due to bump, `walk_dir` is updated.
+   - But when the machine starts walking from reset (`areset`), walk_dir is set to 0, matching WALK_LEFT.
+   - Potentially, a transition from walking left to walking right may not properly update `walk_dir` if the transition occurs combinationally but the sequential update does not catch it due to race or missing cases.
+   
+5. Additionally, the initial state assignment and the combinational next state logic for the walking states always sets next_state = WALK_RIGHT if bumped, regardless of which bump side. This is consistent with the problem but could cause confusion if the testbench expects bump_left to cause walking right and bump_right to cause walking left specifically. The problem states bump on left makes walk right and bump on right makes walk left, which the code ignores by merging both bump_left and bump_right as triggers to toggle direction. This could explain the mismatch in direction outputs if the testbench expects the Lemming to switch to the direction opposite of the bump side specifically (not just toggling to the other direction regardless of bump side).
+
+6. The output logic is straightforward:
+   ```verilog
+   assign walk_left = (state == WALK_LEFT);
+   assign walk_right = (state == WALK_RIGHT);
+   assign aaah = (state == FALL);
+   assign digging = (state == DIG_LEFT) || (state == DIG_RIGHT);
+   ```
+   Since aaah and digging outputs have no mismatches, the issue is isolated to walking direction states and transitions.
+
+In summary, the issues likely arise from:
+
+- The state transition logic for WALK_LEFT and WALK_RIGHT treats any bump (left or right) identically, always switching direction to the opposite walking state. The problem states the direction to switch depends on which side the bump occurs (bumped on left -> walk right, bumped on right -> walk left). The current code does not distinguish which bump is active.
+
+- The walk_dir register update logic may not perfectly align with all state transitions to remember direction before fall or after digging, potentially causing direction mismatches after falling and resuming walking.
+
+- The problem also implies that bumps occurring exactly when ground disappears or reappears should be ignored, but the combinational next_state logic does not check the timing of bumps relative to ground transitions. This could lead to direction changes occurring at the wrong time, causing mismatches.
+
+These issues together cause the walking direction outputs to mismatch the expected behavior, while falling and digging states match correctly, explaining the partial mismatches seen in simulation.
+
+No syntax errors are present, so the code compiles but fails functional simulation due to subtle state and direction logic bugs in walking states and bump handling.

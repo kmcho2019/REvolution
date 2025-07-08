@@ -1,0 +1,26 @@
+Using one-hot encoding (A=0001, B=0010, C=0100, D=1000), each next state bit can be derived by inspecting the table:
+
+For next_state[A]:
+- From A with in=0 -> A
+- From C with in=0 -> A
+So next_state[A] = (state[A] & ~in) | (state[C] & ~in)
+
+For next_state[B]:
+- From A with in=1 -> B
+- From B with in=1 -> B
+- From D with in=1 -> B
+So next_state[B] = (state[A] & in) | (state[B] & in) | (state[D] & in)
+
+For next_state[C]:
+- From B with in=0 -> C
+- From D with in=0 -> C
+So next_state[C] = (state[B] & ~in) | (state[D] & ~in)
+
+For next_state[D]:
+- From C with in=1 -> D
+So next_state[D] = state[C] & in
+
+Output is 1 only in state D, otherwise 0:
+out = state[D]
+
+This combinational logic implements the state transitions and output based on one-hot encoding.

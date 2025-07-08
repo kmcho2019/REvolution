@@ -1,0 +1,11 @@
+For one-hot encoding, the state bits correspond to states A, B, C, D as bits 0 to 3 respectively.
+We derive next_state bits from the current state bits and input as follows:
+
+- next_state[A] = (state[A] & ~in) | (state[C] & ~in)
+- next_state[B] = (state[A] & in) | (state[B] & in) | (state[D] & in)
+- next_state[C] = (state[B] & ~in) | (state[D] & ~in)
+- next_state[D] = (state[C] & in)
+
+Output logic: out = state[D] (since only in state D output=1)
+
+The combinational logic is implemented using simple assign statements.

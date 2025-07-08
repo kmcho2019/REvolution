@@ -1,0 +1,52 @@
+Score: 3
+Justification: The code is syntactically correct and compiles, but it fails the simulation with many mismatches on the outputs predict_taken and predict_history, indicating multiple functional errors in the branch predictor's implementation and control logic.
+
+ANALYSIS:
+1. **Reset behavior of global history register (ghist):**  
+   The simulation log hints "Your reset doesn't seem to be working," suggesting that the asynchronous reset of ghist may not be effective or consistent. In the code, ghist is cleared on `areset`, which is asynchronous, but there may be issues related to how this reset interacts with the synchronous logic updating ghist elsewhere. This could lead to ghist starting from an incorrect value, causing many downstream prediction mismatches.
+
+2. **Global history register update logic conflicts:**  
+   The code tries to handle simultaneous prediction and training updates to ghist with this conditional:  
+   ```verilog
+   if (train_valid) begin
+     ...
+     if (train_mispredicted) begin
+       ghist <= train_history;
+     end else if (!train_mispredicted && !(predict_valid && train_valid)) begin
+       ghist <= ghist; // no update here because train_valid takes precedence
+     end
+   end else if (predict_valid) begin
+     ghist <= {ghist[5:0], predict_taken};
+   end
+   ```  
+   This logic is problematic because:  
+   - It does not correctly handle the case when both `train_valid` and `predict_valid` are true but the training is not a misprediction. The comment suggests training has precedence, but the `else if` condition `!(predict_valid && train_valid)` will be false, so no update occurs, effectively stalling ghist update during such cycles.  
+   - The code also misses updating ghist when training is valid but not a misprediction and prediction is valid for a different entry. According to the problem, training takes precedence, so ghist should be recovered or updated accordingly, but here ghist remains unchanged (ghist <= ghist), which may desynchronize global history from the actual branch outcomes.  
+   - When `train_valid` is false and `predict_valid` is true, ghist updates by shifting in the predicted direction, which is correct, but the logic for concurrent updates is flawed.
+
+3. **Pattern History Table (PHT) update uses current state instead of next state:**  
+   In the always block, the PHT entry at `train_index` is updated as:  
+   ```verilog
+   PHT[train_index] <= next_counter(PHT[train_index], train_taken);
+   ```  
+   Since PHT is updated synchronously, and predictions read PHT combinationally, the problem states that when prediction and training occur simultaneously at the same entry, prediction sees the PHT state before training (i.e., training updates take effect next cycle). This is consistent, but the code does not ensure that training and prediction updates to the same PHT index are well coordinated or that prediction output reflects the correct state under race conditions.
+
+4. **Index computation for prediction and training:**  
+   The prediction and training indexes are computed as xor of pc and ghist or train_history respectively:  
+   ```verilog
+   wire [6:0] predict_index = predict_pc ^ ghist;
+   wire [6:0] train_index   = train_pc ^ train_history;
+   ```  
+   This matches the problem description. However, since ghist updates occur at the clock edge, the prediction index may not reflect the most up-to-date global history if ghist is stale or incorrectly updated, causing persistent mismatches in prediction outputs (predict_taken and predict_history).
+
+5. **Use of ghist output in predict_history:**  
+   The output `predict_history` is assigned directly from the current ghist:  
+   ```verilog
+   assign predict_history = ghist;
+   ```  
+   The problem states prediction outputs the branch history register used to make the prediction, which should be the global history before it is updated with the predicted outcome. Since ghist is updated only at the clock edge, this is consistent, but if ghist updates are incorrect or stalled, this output will mismatch expected values, as seen in simulation.
+
+6. **Potential initialization issues with PHT and ghist:**  
+   On reset, PHT entries are initialized to weakly taken (2'b10), which is correct. However, improper reset propagation or asynchronous reset behavior could cause inconsistent initial states, contributing to output mismatches.
+
+Overall, the core issues lie in the complicated update logic for ghist when training and prediction requests coincide, and improper handling of global history updates and reset conditions, resulting in large numbers of incorrect predictions and history outputs failing the simulation.

@@ -1,0 +1,19 @@
+Design a finite state machine with the following states:
+- IDLE: waiting for start bit (0)
+- DATA: receiving 8 data bits (counting bits received)
+- STOP_WAIT: expecting stop bit (1)
+- ERROR_WAIT_STOP: waiting for a stop bit after error
+
+On reset, go to IDLE.
+
+When in IDLE and 'in' is 0, start receiving data bits. Increment a bit counter each clock cycle in DATA state.
+
+After 8 bits are received, move to STOP_WAIT and check if 'in' is 1.
+
+If yes, assert 'done' for one clock cycle and return to IDLE.
+
+If no, go to ERROR_WAIT_STOP state and wait until 'in' is 1 to return to IDLE.
+
+'done' is asserted high for one clock cycle when a byte is correctly received.
+
+All transitions and outputs happen synchronously on clk posedge.

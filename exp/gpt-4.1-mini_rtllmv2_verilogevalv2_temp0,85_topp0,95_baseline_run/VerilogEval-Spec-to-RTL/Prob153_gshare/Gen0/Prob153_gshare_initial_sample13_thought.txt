@@ -1,0 +1,7 @@
+Implement a 7-bit global history register and a 128-entry Pattern History Table (PHT) of 2-bit saturating counters. Use XOR of 7-bit PC and 7-bit global history to index the PHT. On prediction (predict_valid=1), output prediction based on the PHT state at that index and output the current global history. Also update the global history at the next clock edge using the predicted direction, unless a training misprediction update takes precedence.
+
+On training (train_valid=1), update the PHT at the given index based on train_taken, saturating increment/decrement of the 2-bit counter. If train_mispredicted=1, restore the global history to train_history value instead of updating it based on prediction. If both predict_valid and train_valid are asserted in the same cycle, training update takes precedence on the global history update.
+
+Use asynchronous active-high reset (areset) to clear global history and initialize PHT counters to weakly taken (e.g., 2'b10).
+
+Follow the timing rules: outputs are combinational based on current PHT and global history; PHT and global history updates occur at posedge clk; training updates to PHT take effect at the clock edge; prediction outputs reflect PHT before training update in the same cycle.

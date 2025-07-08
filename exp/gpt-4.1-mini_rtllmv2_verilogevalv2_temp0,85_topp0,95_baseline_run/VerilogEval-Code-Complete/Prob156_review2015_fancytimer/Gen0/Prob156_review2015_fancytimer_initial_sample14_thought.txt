@@ -1,0 +1,17 @@
+We implement a finite state machine with the following states:
+
+- SEARCH: Shift in bits one by one to detect the pattern 1101 on the last 4 bits.
+- READ_DELAY: After detecting the pattern, shift in 4 bits MSB first as delay[3:0].
+- COUNT: Count down the delay, each delay value corresponds to 1000 clock cycles. The count output shows the current 4-bit count value, which decrements every 1000 cycles.
+- DONE: When counting finishes, assert done and wait for ack to be 1 before returning to SEARCH.
+
+We use a 4-bit shift register to detect pattern and read delay bits. We also use a 10-bit counter to count to 1000 clock cycles, and a 4-bit delay counter to track remaining delay values.
+
+Reset synchronously sets state to SEARCH and clears outputs.
+
+Outputs:
+- counting: high during COUNT state
+- done: high during DONE state
+- count: valid only during COUNT, shows current remaining delay count.
+
+The data input is only sampled during SEARCH and READ_DELAY states.

@@ -1,0 +1,17 @@
+To implement a 2's complementer for a serial input number starting from the LSB, we can design a Moore FSM with two states: before the first '1' bit is encountered (copy input bits directly) and after the first '1' bit is encountered (invert input bits). The output depends only on the state, not the input. 
+
+When the asynchronous reset is asserted, the FSM is in the initial state, waiting for the conversion to begin. When reset is deasserted, the FSM starts processing the bits serially on each clock cycle.
+
+The states:
+- STATE_COPY: Before the first '1' is encountered, output equals input x.
+- STATE_INVERT: After the first '1' is encountered, output equals inverted input (~x).
+
+On each clock edge:
+- If in STATE_COPY and input x is '1', transition to STATE_INVERT.
+- Otherwise, stay in current state.
+
+Output Z is determined by the current state and input x, as described.
+
+The FSM resets asynchronously on areset, going to STATE_COPY.
+
+This approach correctly produces the 2's complement output bit stream serially, starting from LSB.

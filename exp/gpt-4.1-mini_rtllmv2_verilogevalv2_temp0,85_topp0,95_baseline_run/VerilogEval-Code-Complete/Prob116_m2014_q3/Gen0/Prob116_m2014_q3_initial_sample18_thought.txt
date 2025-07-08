@@ -1,0 +1,37 @@
+First, map the Karnaugh map values to the input combinations explicitly. The inputs are x[4:1], with x[3]x[4] as row and x[1]x[2] as column. The K-map is:
+
+        x1x2
+x3x4   00  01  11  10
+00     d   0   d   d
+01     0   d   1   0
+11     1   1   d   d
+10     1   1   0   d
+
+We treat 'd' as don't care and can choose values to simplify the function.
+
+Let's assign the 'd' cells to values to simplify expression:
+
+By inspection, the function covers:
+
+- x=11 00 => f=1 (x4=1,x3=1,x2=0,x1=0)
+- x=11 01 => f=1 (x4=1,x3=1,x2=0,x1=1)
+- x=01 11 => f=1 (x4=0,x3=1,x2=1,x1=1)
+- x=10 00 => f=1 (x4=1,x3=0,x2=0,x1=0)
+- x=10 01 => f=1 (x4=1,x3=0,x2=0,x1=1)
+- Also, x=11 11 and x=11 10 are don't care but can be assigned 1 to simplify.
+
+From this, we can write the function as sum of minterms or try to find groups.
+
+Groups to consider:
+
+- Group 1: rows 11 and 10, cols 00 and 01 (4 ones) => covers x4=1, x2=0 (because cols 00 and 01 means x1=0 or 1, x2=0)
+- Group 2: row 11 cols 00 and 01 => same as above, but overlaps with group1
+- Group 3: row 01 col 11 (one cell) => (x4=0,x3=1,x2=1,x1=1)
+
+Group 1 covers: x4=1 and x2=0 (because cols 00 and 01 means x2=0, x1=don't care), rows 11 and 10 means x3=don't care.
+
+Group 3 is a single minterm: x4=0,x3=1,x2=1,x1=1
+
+So, f = (x4 & ~x2) + (~x4 & x3 & x2 & x1)
+
+Implement this in Verilog.

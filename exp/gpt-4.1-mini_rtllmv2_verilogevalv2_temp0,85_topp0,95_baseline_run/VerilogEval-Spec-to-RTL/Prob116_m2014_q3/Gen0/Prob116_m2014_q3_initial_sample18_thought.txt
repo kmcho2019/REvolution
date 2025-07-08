@@ -1,0 +1,43 @@
+Use the given Karnaugh map to derive a simplified Boolean expression for f in terms of x[3:0]. The input bits x correspond to x[3]x[2]x[1]x[0], but the Karnaugh map uses indices x[1]x[2] and x[3]x[4], so let's map the input bits accordingly:
+- x[3]x[4] are the row bits, but x is only 4 bits (x[3:0]), so presumably x[3] and x[2] are the row bits (since x[4] doesn't exist).
+- The Karnaugh map labels rows as x[3]x[4], columns as x[1]x[2]. Given inputs x[3:0], probably the naming is:
+  x = {x[3], x[2], x[1], x[0]}
+  So row = x[3]x[2], column = x[1]x[0].
+
+Rewrite the Karnaugh map with that assumption:
+         x[1]x[0]
+x[3]x[2]  00  01  11  10
+  00       d   0   d   d
+  01       0   d   1   0
+  11       1   1   d   d
+  10       1   1   0   d
+
+Now define the function f(x[3], x[2], x[1], x[0]) according to this table, choosing values for d (don't-cares) that simplify the expression.
+
+Construct the minterms where f=1:
+- (x[3]x[2] = 11, x[1]x[0] = 00) => 1
+- (x[3]x[2] = 11, x[1]x[0] = 01) => 1
+- (x[3]x[2] = 01, x[1]x[0] = 11) => 1
+- (x[3]x[2] = 10, x[1]x[0] = 00) => 1
+- (x[3]x[2] = 10, x[1]x[0] = 01) => 1
+
+Zeros:
+- (00, 01) = 0
+- (01, 00) = 0
+- (01, 10) = 0
+- (10, 11) = 0
+
+Other cells are d (don't care).
+
+From this, we can find a simplified expression using groups:
+Group 1: (x[3]x[2] = 11, x[1]x[0] = 00 or 01) = x[3] & x[2] & ~x[0]
+Group 2: (x[3]x[2] = 10, x[1]x[0] = 00 or 01) = x[3] & ~x[2] & ~x[0]
+Group 3: (x[3]x[2] = 01, x[1]x[0] = 11) = ~x[3] & x[2] & x[1] & x[0]
+
+Combine groups 1 and 2:
+x[3] & ~x[0] & (x[2] | ~x[2]) = x[3] & ~x[0]
+
+So the simplified expression is:
+f = x[3] & ~x[0] | (~x[3] & x[2] & x[1] & x[0])
+
+Implement this logic in Verilog.

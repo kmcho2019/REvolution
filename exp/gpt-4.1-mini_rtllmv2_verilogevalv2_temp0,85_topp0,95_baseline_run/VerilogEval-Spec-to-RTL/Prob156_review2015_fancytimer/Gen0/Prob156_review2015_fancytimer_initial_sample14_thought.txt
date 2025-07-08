@@ -1,0 +1,13 @@
+Implement a finite state machine (FSM) with these main states:
+- SEARCH: shift in serial bits, looking for the pattern 1101
+- SHIFT_DELAY: shift in 4 delay bits (MSB first)
+- COUNTING: count down the timer in 1000-cycle chunks, decrement delay count every 1000 cycles
+- DONE: assert done until ack is received
+
+Use a 4-bit shift register to detect the 1101 pattern during SEARCH.
+After detecting 1101, shift in 4 bits to form delay.
+During COUNTING, use a 10-bit counter to count 1000 cycles per delay decrement.
+Output the current remaining delay count on count[3:0].
+When done, assert done and wait for ack to return to SEARCH.
+The counting signal is asserted only during COUNTING.
+Implement synchronous reset that initializes FSM to SEARCH state.

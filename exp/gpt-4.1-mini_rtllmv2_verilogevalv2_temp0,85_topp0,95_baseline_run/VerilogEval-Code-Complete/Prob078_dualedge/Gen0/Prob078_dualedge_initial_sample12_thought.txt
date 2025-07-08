@@ -1,0 +1,19 @@
+To implement a dual-edge triggered flip-flop on an FPGA that only supports single-edge flip-flops, we can use two single-edge triggered flip-flops: one triggered on the rising edge of clk and one triggered on the falling edge of clk. Both capture the input 'd' on their respective edges. Then, we combine their outputs with a simple multiplexer or logic so that the output 'q' updates on both edges. In this example, we store the sampled values from both edges and update q accordingly.
+
+A common approach is to use one flip-flop clocked on posedge clk and another on negedge clk, and then use a mux or some logic that selects the latest sampled value. This behaves like a dual-edge triggered flip-flop.
+
+Because FPGAs do not support negedge clk flip-flops directly, to implement the negative-edge triggered FF, we can invert the clock and use posedge triggered FF on the inverted clock. However, the inverted clock is not a true clock but a derived clock, so this may cause timing issues. But for functional simulation or simple logic, it is acceptable.
+
+Alternatively, we can create a design using the double clock domain technique, but for simplicity, we will instantiate two flip-flops with posedge clk and posedge clk_bar (clk inverted), and update q accordingly.
+
+Here's the plan:
+- Generate clk_bar = ~clk.
+- On posedge clk, sample d in reg pos_d.
+- On posedge clk_bar (which is negedge clk), sample d in reg neg_d.
+- On every posedge clk, assign q = pos_d.
+- On every posedge clk_bar, assign q = neg_d.
+This way q updates on both edges.
+
+Since q is an output reg, we will drive it from both always blocks.
+
+This approach works functionally, although in FPGA synthesis the inverted clock might cause issues; but logically it mimics dual-edge triggered FF behavior.

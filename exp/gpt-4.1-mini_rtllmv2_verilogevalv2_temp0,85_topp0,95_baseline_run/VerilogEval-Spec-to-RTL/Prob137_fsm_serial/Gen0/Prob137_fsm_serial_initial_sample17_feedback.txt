@@ -1,0 +1,41 @@
+Score: 5
+Justification: The code is syntactically correct and compiles, but it fails simulation with numerous output mismatches (101 mismatches out of 905 samples). The fundamental FSM structure is mostly present, but the logic for counting bits and detecting the stop bit timing contains functional errors causing incorrect done signaling.
+
+ANALYSIS:
+The provided design intent is to implement a serial byte receiver FSM that waits for a start bit (0), then receives 8 data bits, and then checks for a stop bit (1). Upon correct reception, it asserts a one-clock-cycle 'done' output. If the stop bit is incorrect, the FSM waits until a correct stop bit is seen before restarting.
+
+Key issues based on the code and simulation log:
+
+1. **Bit counting off-by-one and timing mismatch:**
+   - In the code, the bit_count increments on every RECEIVE cycle.
+   - The RECEIVE state transition occurs while bit_count increments from 0 upwards.
+   - The code moves to WAIT_STOP when bit_count == 7, implying it expects the 8th data bit on that cycle.
+   - Since bit_count counts from 0, bit_count == 7 corresponds to the 8th bit (bits 0 to 7 are the eight bits).
+   - However, the comment says "After this clock, 8th bit received, next is stop bit," implying the stop bit checking is expected on the next cycle after bit_count == 7.
+   - The FSM immediately transitions to WAIT_STOP on bit_count == 7, which may cause the stop bit checking to be misaligned by one clock cycle.
+   - This misalignment can cause incorrect done assertions or missed done signals, which explains the mismatches.
+
+2. **'done' output driven in combinational block:**
+   - The output 'done' is declared as reg and updated synchronously in the state register always block as well as assigned in the combinational always @(*) block.
+   - In the synchronous block, done is cleared every cycle unless reset.
+   - In the combinational block, done is assigned 1'b1 only when the FSM is in WAIT_STOP and sees a stop bit (in == 1).
+   - This creates a conflicting driver condition where done is driven both synchronously and combinationally.
+   - This can cause simulation mismatches due to non-deterministic updates or timing differences, as done should be driven from a single always block or carefully synchronized.
+
+3. **No explicit sampling of 'in' bit at correct timing:**
+   - The protocol requires sampling bits at specific clock edges aligned with start, data bits, and stop bit.
+   - The code uses input 'in' directly in combinational next state logic without registering or aligning it.
+   - This can cause metastability or sampling errors in simulation.
+   - For example, the start bit detection happens combinationally on 'in', but in practice it should be sampled synchronously.
+   - Similarly, stop bit check is done combinationally, which may not match the sequential nature of the FSM.
+
+4. **WAIT_STOP state behavior:**
+   - The FSM remains in WAIT_STOP if the stop bit is wrong, waiting for a correct stop bit.
+   - However, no counter or timeout exists to avoid infinite stalls, which might be acceptable for the design but is worth noting.
+   - This likely does not cause simulation failures but may cause functional stalls.
+
+Overall, the main cause of the simulation mismatches is the improper handling of the bit count and done signal timing, combined with mixing synchronous and combinational assignments for 'done'. The FSM transitions and output assertions do not align precisely with the serial protocol timing requirements stated in the problem.
+
+The code's FSM states and transitions are mostly correct in intent, but the precise bit counting and done signaling timing is flawed, causing the 'done' output to mismatch expected behavior in the simulation.
+
+No syntax errors or compilation issues are reported, so the score reflects functional correctness issues only.

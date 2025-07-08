@@ -1,0 +1,9 @@
+Implement a 4-state FSM with states A, B, C, and D, encoded as 2 bits.
+State A is the idle state where no grant is given and the arbiter waits for requests.
+On requests, priority is r[0] > r[1] > r[2]. If none, stay in A.
+When granting device 0, go to B and set g=001; stay in B while r[0]=1, else back to A.
+When granting device 1, go to C and set g=010; stay in C while r[1]=1, else back to A.
+When granting device 2, go to D and set g=100; stay in D while r[2]=1, else back to A.
+Synchronous active-low reset to A.
+Use separate always blocks for the state register and the next-state logic.
+Output g is combinationally assigned based on the current state.

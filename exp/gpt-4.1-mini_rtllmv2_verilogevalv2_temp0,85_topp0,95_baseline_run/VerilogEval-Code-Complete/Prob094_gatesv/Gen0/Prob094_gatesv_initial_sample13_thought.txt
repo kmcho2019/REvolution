@@ -1,0 +1,12 @@
+For each output vector, compute bitwise operations between the input bits and their neighbors as specified:
+
+1) out_both[2:0]: for each bit i from 0 to 2, out_both[i] = in[i] & in[i+1]
+   Note: Since in[3] has no left neighbor, we only compute out_both[2:0].
+
+2) out_any[3:1]: for each bit i from 3 down to 1, out_any[i] = in[i] | in[i-1]
+   Note: in[0] has no right neighbor, so out_any[0] is not needed.
+
+3) out_different[3:0]: for each bit i, out_different[i] = in[i] ^ in[(i+1) % 4]
+   Here the vector wraps around, so neighbor to left of in[3] is in[0].
+
+Implement these using bitwise operators and careful indexing.

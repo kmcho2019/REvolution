@@ -1,0 +1,62 @@
+The inputs (a,b,c,d) form a 4-bit number, with a as the most significant bit and d as the least significant bit. We want to detect when the 4-bit input equals 2, 7, or 15 to output a logic-1; and detect when it equals 0,1,4,5,6,9,10,13, or 14 to output a logic-0. The inputs for 3,8,11,12 never occur.
+
+First, express the numbers in binary and identify minterms for 1 output:
+
+- 2  = 0010 (a=0,b=0,c=1,d=0)
+- 7  = 0111 (a=0,b=1,c=1,d=1)
+- 15 = 1111 (a=1,b=1,c=1,d=1)
+
+We will create the out_sop as the minimal sum of products (OR of AND terms) that cover these minterms.
+
+Then, for out_pos, express the logic as minimal product of sums (AND of OR terms).
+
+We can derive the minimal expressions using Karnaugh maps or Boolean algebra:
+
+For out_sop (Sum of Products):
+
+Minterms: m2(0010), m7(0111), m15(1111)
+
+Out_sop minimal expression (by inspection):
+
+- For m15: a b c d
+- For m7: a' b c d
+- For m2: a' b' c d'
+
+Check common factors:
+
+- m7 and m15 share b c d, only differ in a (0 and 1), so b c d is common to both.
+- m2 is separate.
+
+So out_sop = (b c d) + (a' b' c d')
+
+For out_pos (Product of Sums):
+
+The zeros occur at 0,1,4,5,6,9,10,13,14.
+
+We write maxterms for these and simplify.
+
+From minterms, zeros are:
+
+- 0: 0000
+- 1: 0001
+- 4: 0100
+- 5: 0101
+- 6: 0110
+- 9: 1001
+- 10: 1010
+- 13: 1101
+- 14: 1110
+
+Writing maxterms (each is sum of inputs or their inverses):
+
+For example, for 0 (0000), maxterm is (a + b + c + d)
+
+The minimal POS expression (found via K-map or Boolean simplification) is:
+
+out_pos = (a + b + c + d) (a + b' + c + d') (a' + b + c' + d') 
+
+Note: We can also check that out_pos is the complement of out_sop, but since some input combinations never occur, they are "don't cares" and minimal expressions differ.
+
+For clarity and correctness, implement out_sop and out_pos accordingly.
+
+Implementation will use simple combinational logic with assign statements.

@@ -1,0 +1,46 @@
+To implement the next-state logic and outputs for the given Moore machine with one-hot encoding, we observe the state transition table and encode next states accordingly:
+
+- From S (state[0]):
+  - d=0: next S
+  - d=1: next S1
+
+- From S1 (state[1]):
+  - d=0: next S
+  - d=1: next S11
+
+- From S11 (state[2]):
+  - d=0: next S110
+  - d=1: next S11
+
+- From S110 (state[3]):
+  - d=0: next S
+  - d=1: next B0
+
+- From B0 (state[4]):
+  - always next B1 (state[5])
+
+- From B1 (state[5]):
+  - always next B2 (state[6])
+
+- From B2 (state[6]):
+  - always next B3 (state[7])
+
+- From B3 (state[7]):
+  - always next Count (state[8])
+
+- From Count (state[8]):
+  - done_counting=0: stay Count
+  - done_counting=1: next Wait (state[9])
+
+- From Wait (state[9]):
+  - ack=0: stay Wait
+  - ack=1: next S (state[0])
+
+Outputs are Moore outputs (based on current state):
+- shift_ena = 1 in states B0, B1, B2, B3 (states[4..7])
+- counting = 1 in Count (state[8])
+- done = 1 in Wait (state[9])
+
+We create combinational logic for next states signals for S_next, S1_next, B3_next, Count_next, Wait_next by OR-ing all conditions leading to those states. The output signals are asserted based on current state.
+
+This approach directly encodes the given state transition diagram and output conditions.

@@ -1,0 +1,30 @@
+Design a Moore FSM with states representing how many consecutive 1s have been seen. On reset, start at state 0 (previous input treated as 0). For each input bit, transition to next state based on whether the bit is 1 or 0 and the count of consecutive 1s. Detect these patterns:
+
+- When a zero follows exactly five consecutive 1s (state 5 with input 0), assert disc on next cycle.
+- When a zero follows exactly six consecutive 1s (state 6 with input 0), assert flag on next cycle.
+- When seven or more consecutive 1s are seen (state 7 or more), assert err.
+
+Outputs are registered and asserted for exactly one cycle, starting on the cycle after the condition is detected.
+
+The FSM states (number represent count of consecutive 1s):
+
+- 0: zero consecutive 1s (or after 0 input)
+- 1 to 6: count of consecutive 1s seen so far
+- 7: error state (7 or more consecutive 1s)
+
+State transitions:
+
+- From state 0: input=1 -> state 1; input=0 -> state 0
+- From state n (1 to 5): input=1 -> state n+1; input=0 -> state 0 (but disc or flag depends on n)
+- From state 6: input=1 -> state 7 (error); input=0 -> state 0 (flag)
+- From state 7 (error): input=any -> stay in 7
+
+Outputs:
+
+- disc = 1 when in state 5 and input=0 (output registered next cycle)
+- flag = 1 when in state 6 and input=0 (output registered next cycle)
+- err = 1 when in state 7 (output registered in the error state)
+
+Because outputs are Moore type, outputs depend only on state, so we need to encode outputs in the states accordingly or use a separate registered output signals driven by previous state and input.
+
+Implementation detail: We'll update outputs based on previous cycle's state and input to assert signals on the next cycle, thus complying with Moore FSM output timing requirements.

@@ -1,0 +1,15 @@
+To implement the TopModule, we need to generate three output vectors each 100 bits wide from the input vector in[99:0]:
+
+1. out_both[i] = in[i] & in[i+1] for i=0 to 98; out_both[99] = 0 (since in[99] has no neighbor to left)
+   Note: The problem states the neighbor to the left, so the neighbor of bit i is bit i+1 (assuming MSB on left),
+   thus out_both[i] compares in[i] and in[i+1].
+2. out_any[i] = in[i] | in[i-1] for i=1 to 99; out_any[0] = 0 (since in[0] has no neighbor to right)
+   The neighbor to the right is bit i-1, so out_any[i] = in[i] | in[i-1].
+3. out_different[i] compares in[i] and its neighbor to the left with wrap around:
+   The left neighbor of bit i is bit (i+1) mod 100.
+   So out_different[i] = in[i] ^ in[(i+1) mod 100].
+
+We'll use generate loops for out_both and out_any for bits with neighbors, and handle boundary bits as specified.
+For out_different, we'll do a modular access for the neighbor.
+
+This approach uses simple combinational logic and indexing.

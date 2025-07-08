@@ -1,0 +1,34 @@
+To implement Y0 (the least significant bit of the next state Y[0]) and the output z based on the present state y[2:0] and input x, first write out the next state Y[0] values from the table for both x=0 and x=1. Then derive boolean expressions for Y0 and z. For z, use the given output column; for Y0, select the next state's bit 0 according to x and present state y.
+
+From the table:
+
+Present y | Next Y (x=0) | Next Y (x=1) | z
+000 (0)   | 000 (0)      | 001 (1)      | 0
+001 (1)   | 001 (1)      | 100 (0)      | 0
+010 (2)   | 010 (0)      | 001 (1)      | 0
+011 (3)   | 001 (1)      | 010 (0)      | 1
+100 (4)   | 011 (1)      | 100 (0)      | 1
+
+Y0 is the LSB of next state, so for each row:
+
+x=0:
+
+y=000: Y=000 -> Y0=0
+y=001: Y=001 -> Y0=1
+y=010: Y=010 -> Y0=0
+y=011: Y=001 -> Y0=1
+y=100: Y=011 -> Y0=1
+
+x=1:
+
+y=000: Y=001 -> Y0=1
+y=001: Y=100 -> Y0=0
+y=010: Y=001 -> Y0=1
+y=011: Y=010 -> Y0=0
+y=100: Y=100 -> Y0=0
+
+For z:
+
+z=1 when y=011 or y=100, else 0.
+
+Implement these functions in combinational logic.

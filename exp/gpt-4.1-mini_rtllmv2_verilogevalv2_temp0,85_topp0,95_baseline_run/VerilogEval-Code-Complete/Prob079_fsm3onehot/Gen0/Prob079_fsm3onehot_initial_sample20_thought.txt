@@ -1,0 +1,33 @@
+The state machine has four states encoded one-hot: A=0001, B=0010, C=0100, D=1000.
+
+From the table:
+- From A (0001): in=0 -> A (0001), in=1 -> B (0010)
+- From B (0010): in=0 -> C (0100), in=1 -> B (0010)
+- From C (0100): in=0 -> A (0001), in=1 -> D (1000)
+- From D (1000): in=0 -> C (0100), in=1 -> B (0010)
+
+Outputs:
+- A,B,C produce 0
+- D produces 1
+
+We will express next_state bits next_state[3:0] as logic functions of current state bits and input 'in'.
+
+For next_state[0] (A):
+- A is next state if (from A with in=0) or (from C with in=0)
+- So next_state[0] = state[0]&~in + state[2]&~in
+
+For next_state[1] (B):
+- B is next state if (from A with in=1) or (from B with in=1) or (from D with in=1)
+- So next_state[1] = state[0]&in + state[1]&in + state[3]&in
+
+For next_state[2] (C):
+- C is next state if (from B with in=0) or (from D with in=0)
+- So next_state[2] = state[1]&~in + state[3]&~in
+
+For next_state[3] (D):
+- D is next state if (from C with in=1)
+- So next_state[3] = state[2]&in
+
+Output is 1 only in state D, so out = state[3]
+
+We implement these combinational logic equations in Verilog.

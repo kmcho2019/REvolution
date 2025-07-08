@@ -1,0 +1,7 @@
+We need to compare every pair of the five input bits (a,b,c,d,e) including comparing each bit with itself, resulting in 5x5=25 comparisons. Each comparison outputs 1 if the two bits are equal, otherwise 0. The output is a 25-bit vector 'out' where bit indices run from 24 down to 0, representing the comparison results of pairs in some order.
+
+The example given is confusing because it uses '~a ^ a' which simplifies to 1, and '~a ^ b' does not represent equality. The correct equality check is (x == y).
+
+We will map the output bits as follows: the highest index 24 corresponds to a==a, 23 to a==b, 22 to a==c,... down to 0 which is e==e. This is a row-major order where the first index corresponds to the first bit (a) compared against all bits (a,b,c,d,e), then b against all, etc.
+
+We implement this by concatenating equality comparisons between each pair in order, and assign this to out.

@@ -1,0 +1,18 @@
+The Karnaugh map provides the output values for each combination of inputs a, b, c, d, where a and b form the column bits and c and d form the row bits. To implement this in Verilog, I will interpret the inputs as a 4-bit vector with (c,d,a,b) or (a,b,c,d). The map specifies output for each combination of (cd,ab). We can implement the function by matching the minterms where output is 1, or by deriving a sum-of-minterms expression. Alternatively, I can write the logic directly by using a combinational always block or a continuous assign with a case statement to map each (a,b,c,d) combination to its output.
+
+I will map the inputs as (c,d,a,b) so that cd selects rows, ab selects columns, consistent with the Karnaugh map. Inputs are single bits, so I'll combine them into a 4-bit vector and assign the output accordingly.
+
+For example, if inputs are (a,b,c,d), then the index into the map is {c,d,a,b}, with c as MSB and b as LSB. Then output is 1 for the listed combinations from the K-map.
+
+The 16 combinations and outputs (cd,ab) given are:
+
+ cd \ ab | 00 | 01 | 11 | 10
+ -------|----|----|----|----
+   00   | 1  | 1  | 0  | 1
+   01   | 1  | 0  | 0  | 1
+   11   | 0  | 1  | 1  | 1
+   10   | 1  | 1  | 0  | 0
+
+So for example, c=0,d=0,a=0,b=0 => output=1
+
+I will implement using a case statement on {c,d,a,b}, assigning output accordingly.

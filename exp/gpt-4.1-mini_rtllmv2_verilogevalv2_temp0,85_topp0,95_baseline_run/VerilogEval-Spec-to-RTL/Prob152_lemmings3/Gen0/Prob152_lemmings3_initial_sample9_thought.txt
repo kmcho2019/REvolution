@@ -1,0 +1,17 @@
+We implement a Moore FSM with four states representing the Lemming's behavior: WALK_LEFT, WALK_RIGHT, DIGGING_LEFT, and DIGGING_RIGHT. The Lemming starts walking left on reset. On each clock cycle, we update the state based on the inputs according to the priority rules:
+
+1. Falling (ground=0 and currently walking or digging) leads to aaah state (falling), which is implicitly modeled by the aaah output derived from ground=0 and not resetting state to walking or digging.
+
+2. Digging can start only when on ground, walking, and dig=1. The Lemming continues digging until ground=0, at which point it falls.
+
+3. When bumped left or right while walking and on ground, it switches direction accordingly. Bumps have no effect while falling or digging.
+
+4. The falling state is indicated by aaah=1 when ground=0, regardless of walking or digging states. When ground returns to 1, it resumes previous walking or digging state.
+
+We keep track of walking direction and digging with the state. The outputs are determined by the current state and the ground signal.
+
+The FSM transitions asynchronously reset to WALK_LEFT on areset.
+
+Because aaah depends only on ground=0, it is output combinationally. The digging output is high when in a digging state. Walking left and right outputs correspond to the FSM states.
+
+The design uses a synchronous clock with asynchronous reset.

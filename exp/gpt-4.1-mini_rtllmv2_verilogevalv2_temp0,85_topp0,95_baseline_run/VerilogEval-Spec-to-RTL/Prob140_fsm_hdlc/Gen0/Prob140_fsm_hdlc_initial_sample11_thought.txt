@@ -1,0 +1,14 @@
+Implement a Moore FSM that tracks the number of consecutive '1's seen in the input stream after a leading zero. The states will represent counts of consecutive ones from 0 to 6+, starting from an initial "zero" state after reset. On each clock cycle, based on the input bit and current state, transition accordingly. The FSM outputs disc, flag, and err are asserted for one cycle, starting the cycle after detecting the respective pattern:
+
+- disc (discarded bit) is asserted when a zero is detected immediately after 5 consecutive ones (indicating bit-stuffing zero),
+- flag is asserted when a zero is detected immediately after 6 consecutive ones (flag pattern 01111110),
+- err is asserted when the count of consecutive ones reaches 7 or more.
+
+All outputs are registered (Moore outputs). The FSM resets synchronously with active high reset, starting in the initial zero count state. The prior bit is conceptually zero on reset.
+
+The states can be encoded as numbers 0 to 7, where:
+- 0 means no preceding 1s (or last bit was zero),
+- 1 to 6 represent the count of consecutive 1s,
+- 7 represents error state (7 or more consecutive 1s).
+
+Transitions and outputs are handled accordingly.

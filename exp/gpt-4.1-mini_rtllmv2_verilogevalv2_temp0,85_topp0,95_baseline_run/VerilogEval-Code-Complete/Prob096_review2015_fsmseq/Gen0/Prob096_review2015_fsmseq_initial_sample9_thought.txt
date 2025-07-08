@@ -1,0 +1,28 @@
+Design a Moore FSM with states representing how much of the sequence "1101" has been matched so far. On each clock, depending on the input bit and current state, the FSM transitions to the next state. When the full sequence "1101" is detected, the FSM sets start_shifting output to 1 permanently (until reset). The reset is synchronous and active high, which resets the FSM to the initial state and clears start_shifting.
+
+States:
+S0: no match yet
+S1: matched '1'
+S2: matched "11"
+S3: matched "110"
+S4: matched "1101" (final, start_shifting = 1)
+
+From S4, stay in S4 with start_shifting = 1.
+
+Transitions:
+- From S0:
+  - input=1 -> S1
+  - input=0 -> S0
+- From S1:
+  - input=1 -> S2
+  - input=0 -> S0
+- From S2:
+  - input=1 -> S2 (since "11" prefix repeats)
+  - input=0 -> S3
+- From S3:
+  - input=1 -> S4 (sequence found)
+  - input=0 -> S0
+- From S4:
+  - stay in S4, start_shifting=1
+
+Implement with always @(posedge clk) with synchronous reset. Use a register for the state and another for start_shifting output.

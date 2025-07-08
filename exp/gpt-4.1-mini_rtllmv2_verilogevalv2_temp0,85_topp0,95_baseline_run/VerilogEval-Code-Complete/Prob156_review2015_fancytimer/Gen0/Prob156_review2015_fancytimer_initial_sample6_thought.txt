@@ -1,0 +1,31 @@
+We will design a finite state machine (FSM) with the following states:
+
+1. SEARCH: Looking for the 4-bit pattern 1101 serially on `data`. We will use a 4-bit shift register to hold the last 4 bits and compare it to 1101.
+
+2. SHIFT_DELAY: After detecting 1101, shift in 4 more bits MSB first to form the delay value.
+
+3. COUNTING: Count down the timer. The timer is (delay + 1) * 1000 cycles. For the output `count` (4 bits), it will start at `delay` and decrement by 1 every 1000 cycles until 0.
+
+4. DONE: Assert done to notify user timer is finished and wait for ack = 1 to reset FSM to SEARCH.
+
+Details:
+
+- We need a 4-bit shift register for pattern detection.
+
+- For delay, we shift in 4 bits MSB first, so we will shift left and add the new bit.
+
+- Use a 10-bit cycle counter (since 1000 < 1024) to count clock cycles within one "count" step.
+
+- Use a 4-bit count_down register initialized with `delay` and decrement every 1000 cycles.
+
+- Output `count` should be `count_down` when counting, and any value (e.g., 0) when not counting.
+
+- Use synchronous active-high reset.
+
+- `counting` is asserted during COUNTING state.
+
+- `done` asserted during DONE state.
+
+- The FSM transitions only when proper conditions are met.
+
+This approach cleanly separates functionality and meets all requirements.

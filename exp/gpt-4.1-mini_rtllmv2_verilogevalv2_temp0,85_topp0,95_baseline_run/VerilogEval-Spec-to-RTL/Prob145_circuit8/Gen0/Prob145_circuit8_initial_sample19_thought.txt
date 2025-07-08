@@ -1,0 +1,17 @@
+Analyze the waveform to infer the behavior of outputs p and q based on clock and input a.
+
+- p and q are initially unknown (x).
+- At the first rising clock edge (25ns), p is set to 0 and q is x.
+- q remains 0 until time 115ns, where on clock low q changes from 0 to 1 and p becomes 1.
+- p updates mostly on rising clock edges when a=1 (e.g., at 90ns, 100ns, 110ns, and 165ns).
+- q updates on falling clock edges, becoming 1 at 115ns and stays 1 until 175ns, then drops back to 0.
+- The output p is set to the input a sampled at the rising edge of clock when q=0.
+- When q=1, p follows the input a sampled at the rising edge of clock.
+- At falling clock edges, q is updated to p's value from the last rising edge.
+- Essentially, q is the delayed version of p updated on falling edge.
+- On falling edge, q <= p.
+- On rising edge, p <= a.
+- On falling edge, q <= p.
+- At start, p=0, q=0.
+
+Implement two registers p and q updated on clock edges accordingly.

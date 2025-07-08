@@ -1,0 +1,22 @@
+To implement a dual-edge triggered flip-flop using only single-edge triggered flip-flops (which are supported in FPGAs), we can use two flip-flops: one triggered on the positive edge of the clock and one triggered on the negative edge of the clock. Both will sample the input 'd' at their respective clock edges. Then, we combine their outputs using a simple toggle mechanism or a multiplexer that outputs the most recent sampled value.
+
+A straightforward approach is:
+
+- Use two flip-flops: one clocked on posedge clk (q_pos) and one clocked on negedge clk (q_neg).
+- At every posedge, q_pos samples d.
+- At every negedge, q_neg samples d.
+- Output q is assigned either to q_pos or q_neg depending on the clock edge. But since combinational logic cannot know the clock edge at all times, we can toggle a signal on every clock edge to select which sampled value is current.
+  
+Alternatively, since both flip-flops sample d at each edge, we can use a toggle flip-flop clocked on the clock to select the output between q_pos and q_neg on each edge.
+
+But a simpler approach is:
+
+- Use one flip-flop on posedge clk sampling d.
+- Use another flip-flop on negedge clk sampling d.
+- Combine the two outputs with a multiplexer controlled by the clock signal. When clk=1, q_pos is the latest sampled value; when clk=0, q_neg is the latest sampled value.
+
+This works because the clock is either high or low; the flip-flop sampling on posedge updated q_pos when clk rose to 1, so when clk=1, q_pos is newest. Similarly, q_neg updates at negedge, so when clk=0, q_neg is newest. So output q is assigned as q = clk ? q_pos : q_neg.
+
+This creates a dual-edge triggered flip-flop behavior without illegal sensitivity lists.
+
+We will implement this approach.

@@ -1,0 +1,19 @@
+Implement a 4-state FSM with states A, B, C, D encoded as 2-bit registers. On reset (active low, synchronous), state resets to A. The state transitions and grants are defined by priority: device 1 > device 2 > device 3.
+
+- State A: no grants, waits for requests.
+  - if r[1] == 1, go to B (grant g1)
+  - else if r[2] == 1, go to C (grant g2)
+  - else if r[3] == 1, go to D (grant g3)
+  - else remain in A
+
+- State B (g1=1): stays in B if r[1] == 1, else back to A
+- State C (g2=1): stays in C if r[2] == 1, else back to A
+- State D (g3=1): stays in D if r[3] == 1, else back to A
+
+Use one always block for state transitions, one always block for state register update on posedge clk and synchronous resetn, and continuous assignments for outputs g based on current state.
+
+Assign states as:
+A = 2'b00
+B = 2'b01
+C = 2'b10
+D = 2'b11

@@ -1,0 +1,5 @@
+The design is a 4-bit unsigned multiplier using a two-level pipeline with registers to hold intermediate sums. The inputs are extended by adding zeros to the MSB side to double the width, and partial products are generated using a generate block: for each bit of mul_b, if the bit is 1, mul_a shifted left by the bit index is the partial product; otherwise zero. The partial products are added in two stages with registers holding intermediate sums. On the first clock edge after reset, the first half of partial products are summed into registers; on the next clock edge, the second half are summed with the first stage registers to produce the final output. Reset asynchronously clears the registers and output.
+
+Because the pipeline is two-level, we can split the partial products into two groups (e.g. bits 0-1 and bits 2-3), add those groups separately to get two intermediate sums stored in registers, then add those two sums in the final stage to produce the output.
+
+The code follows the description with proper synchronous reset and pipelining.

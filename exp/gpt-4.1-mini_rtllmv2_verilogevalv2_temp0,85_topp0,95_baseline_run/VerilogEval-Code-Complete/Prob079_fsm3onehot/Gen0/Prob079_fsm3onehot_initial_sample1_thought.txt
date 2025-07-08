@@ -1,0 +1,15 @@
+Implement combinational logic for next_state and output based on one-hot encoding. For each current state bit (A,B,C,D), use 'in' to select next state bits accordingly:
+- A=0001: next_state = A if in=0, B if in=1
+- B=0010: next_state = C if in=0, B if in=1
+- C=0100: next_state = A if in=0, D if in=1
+- D=1000: next_state = C if in=0, B if in=1
+
+Output is 1 only for state D, else 0.
+
+Derive next_state bits as:
+next_state[0] (A) = (state[A] & ~in) | (state[C] & ~in)
+next_state[1] (B) = (state[A] & in) | (state[B] & in) | (state[D] & in)
+next_state[2] (C) = (state[B] & ~in) | (state[D] & ~in)
+next_state[3] (D) = (state[C] & in)
+
+Output = state[D]

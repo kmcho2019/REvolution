@@ -1,0 +1,11 @@
+Implement a finite state machine with the following states:
+- SEARCH: looking for pattern 1101 on the serial data input
+- SHIFT_DELAY: after detecting 1101, shift in 4 bits MSB first into delay register
+- COUNT: count down from delay value, each count lasting 1000 clock cycles; output current remaining count on count output and assert counting output
+- DONE: after counting completes, assert done output and wait for ack input to be high before returning to SEARCH
+
+For pattern detection, use a 4-bit shift register to compare incoming bits. After detecting 1101, read next 4 bits into delay[3:0]. Then start counting (delay+1)*1000 cycles with a nested cycle counter. The count output shows the current remaining delay value (from delay down to 0) during each 1000-cycle interval. The counting output is asserted during counting. After counting, assert done and wait for ack to proceed.
+
+All logic is synchronous with the positive clock edge. reset is synchronous active high, which returns the FSM to SEARCH state.
+
+Outputs when not counting: count is don't care, so will set to zero.

@@ -1,0 +1,39 @@
+Score: 7
+Justification: The code is syntactically correct and mostly models the intended FSM, with correct asynchronous reset and Moore outputs. However, the simulation log shows mismatches in walk_left and walk_right outputs, indicating functional errors in the walking direction logic that prevent it from fully conforming to the specification.
+
+ANALYSIS:
+The primary design intent is a Moore FSM with four states: WALK_LEFT, WALK_RIGHT, FALLING, and DIGGING. The Lemming walks left or right, switches directions on bump, falls when ground is lost, and digs if commanded while walking on ground. The code attempts to maintain previous walking direction across falls/digs in `prev_walk_dir`.
+
+Key points of analysis:
+
+1. **Walking Direction Switching on Bump**  
+   The FSM switches walking direction if bumped on either side or both. The code checks `(bump_left || bump_right)` and flips direction accordingly. However, this logic is symmetric in both WALK_LEFT and WALK_RIGHT states:
+   - From WALK_LEFT, bump causes switch to WALK_RIGHT
+   - From WALK_RIGHT, bump causes switch to WALK_LEFT
+
+   This matches specification, but the simulation log indicates mismatches in `walk_left` and `walk_right`, suggesting some cases where direction is not switching correctly.
+
+2. **Updating `prev_walk_dir`**  
+   The `prev_walk_dir` register is updated only on clock edge, when next_state is WALK_LEFT or WALK_RIGHT. This is intended to remember walking direction before falling or digging to resume it later.
+
+   However, `prev_walk_dir` is updated based on `next_state`, which may cause timing or state update issues, especially when transitioning from falling or digging states back to walking.
+
+3. **Fall and Dig Precedence and State Transitions**  
+   The code enforces priority order in the next_state logic inside WALK_LEFT and WALK_RIGHT states: falling > digging > bump. This matches the spec.
+
+   For FALLING and DIGGING states, the next_state logic looks correct:  
+   - FALLING transitions to `prev_walk_dir` once `ground` is regained.  
+   - DIGGING transitions to FALLING when `ground` disappears.  
+
+4. **Potential Issues Causing Walk Direction Mismatches**  
+   - The `prev_walk_dir` is a 2-bit state variable (state_t), but it is used without explicit resets beyond initialization on areset. The asynchronous reset sets `prev_walk_dir = WALK_LEFT`, which is correct.  
+   - The update of `prev_walk_dir` inside the clocked always block depends on `next_state` being WALK_LEFT or WALK_RIGHT. This may cause a cycle where `prev_walk_dir` changes prematurely or incorrectly if next_state changes multiple times before clock edge.  
+   - Bumping while falling or digging should not affect direction; the code respects this.  
+   - However, the code does not explicitly prevent bump from changing direction when bump signals arrive exactly as the ground disappears or reappears. The spec states bump should be ignored in these cases. The current code's ordering of checks in the next state logic for walking states respects this priority, but the state transition and prev_walk_dir update timing may cause subtle mismatches.
+
+5. **Mismatch count and outputs**  
+   The simulation log shows 56 mismatches out of 443 samples on `walk_left` and `walk_right` only. `aaah` and `digging` outputs have no mismatches, indicating FALLING and DIGGING states and outputs are likely handled correctly.
+
+Overall, the root cause appears related to the handling and updating of walking direction (`walk_left` and `walk_right`) outputs and `prev_walk_dir` register updates relative to bumps and state transitions. The finite state machine code matches the intended state transitions, but the timing or ordering of updates for `prev_walk_dir` and next_state in bump edge cases may cause the walking outputs to be incorrect for some cycles, leading to the reported simulation mismatches.
+
+No syntax or compilation errors are present, so the score reflects functional correctness issues rather than structural or syntax problems.

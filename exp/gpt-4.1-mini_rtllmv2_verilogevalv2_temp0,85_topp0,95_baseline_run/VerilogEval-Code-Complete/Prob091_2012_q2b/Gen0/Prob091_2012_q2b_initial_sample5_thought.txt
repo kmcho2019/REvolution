@@ -1,0 +1,10 @@
+To find Y1 (input for y[1], which represents state B) and Y3 (input for y[3], which represents state D), we analyze the transitions:
+
+- Y1 corresponds to state B: from the FSM, state B is reached only from state A with input w=1.
+
+- Y3 corresponds to state D: from the FSM, state D is reached from B (w=0), C (w=0), E (w=0), and F (w=0).
+
+Using the one-hot encoding, the inputs to these flip-flops can be expressed as:
+
+Y1 = y[0] & w       // from A to B if w=1
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w  // from B, C, E, F to D if w=0

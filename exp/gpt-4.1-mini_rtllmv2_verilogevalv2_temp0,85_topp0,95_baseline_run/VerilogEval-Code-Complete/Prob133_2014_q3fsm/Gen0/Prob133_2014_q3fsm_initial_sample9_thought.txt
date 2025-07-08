@@ -1,0 +1,18 @@
+The FSM starts in state A, waiting for s=1 to move to state B. Once in B, we need to count the number of clock cycles of w input for groups of three cycles and output z=1 if exactly two of these three cycles have w=1.
+
+Key points:
+- Only s affects the transition from A to B.
+- In state B, s is ignored.
+- In B, we process w for 3 cycles repeatedly.
+- We need to count how many times w=1 in each group of 3 clock cycles.
+- After counting the three w inputs, in the next cycle output z=1 if count==2, else 0.
+- Then start counting next group of three again.
+- Minimal states: A, B (with a 2-bit counter and 2-bit w_count inside B state).
+- Use synchronous reset (active high).
+
+We'll implement:
+- A state register with two states: A, B.
+- A 2-bit counter to count cycles in B (0 to 2).
+- A 2-bit counter to count how many times w=1 in current group.
+- On cycle 3 (when counter=2), output z=1 if count==2, else 0, then reset counters.
+- Output z registered and valid one cycle after the 3 input cycles.

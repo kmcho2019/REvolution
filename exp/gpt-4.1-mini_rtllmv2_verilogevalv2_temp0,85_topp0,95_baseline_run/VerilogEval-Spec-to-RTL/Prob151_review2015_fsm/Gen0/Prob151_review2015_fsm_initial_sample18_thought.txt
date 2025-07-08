@@ -1,0 +1,9 @@
+Design a Moore FSM with the following states:
+- IDLE: searching for pattern 1101 on serial data input.
+- SHIFT: assert shift_ena for 4 cycles while shifting in bits.
+- COUNT: assert counting while waiting for done_counting signal.
+- DONE: assert done and wait for ack.
+
+Use a 4-bit shift register to detect the pattern 1101. When detected, move to SHIFT state and assert shift_ena for 4 clock cycles using a counter. After shifting 4 bits, move to COUNT state asserting counting until done_counting is high. Then move to DONE state asserting done, wait for ack to return to IDLE.
+
+All state transitions and outputs are synchronous on posedge clk with active-high reset.

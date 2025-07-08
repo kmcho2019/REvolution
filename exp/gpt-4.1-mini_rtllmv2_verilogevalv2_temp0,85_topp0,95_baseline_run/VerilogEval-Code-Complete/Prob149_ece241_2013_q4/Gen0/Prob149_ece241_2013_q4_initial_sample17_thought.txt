@@ -1,0 +1,6 @@
+I will implement a synchronous FSM to track the previous sensor state and decide the flow rates according to the current sensor inputs and previous state. The FSM states represent the current water level: ABOVE_S3, BETWEEN_S3_S2, BETWEEN_S2_S1, BELOW_S1, corresponding to the sensor assertions. On each clock, the FSM updates its state based on the current sensors. The outputs fr1, fr2, fr3, and dfr are determined by the current state and whether the water level is rising (previous state lower than current state). On reset, the FSM will assume BELOW_S1 (lowest water level) with all flow rates asserted. The dfr signal is asserted only if the water level increased from previous state. The sensor input s is 3 bits, s[3] highest sensor, s[1] lowest sensor. The sensor states map to water levels as: 
+- None asserted: BELOW_S1 
+- s[1] asserted only: BETWEEN_S2_S1 
+- s[1], s[2] asserted: BETWEEN_S3_S2 
+- s[1], s[2], s[3] asserted: ABOVE_S3 
+We detect current level by checking s input, then compare with previous level to set dfr accordingly.

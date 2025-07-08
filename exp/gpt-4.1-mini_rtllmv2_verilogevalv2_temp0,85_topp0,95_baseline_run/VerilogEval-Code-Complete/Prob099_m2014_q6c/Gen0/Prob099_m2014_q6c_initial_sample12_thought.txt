@@ -1,0 +1,28 @@
+The state machine uses one-hot encoding where each state corresponds to one bit of y[6:1].
+
+States mapping:
+A = y[1]
+B = y[2]
+C = y[3]
+D = y[4]
+E = y[5]
+F = y[6]
+
+We need to write logic for Y2 (next B state) and Y4 (next D state) based on current state and input w.
+
+From the transitions:
+
+For Y2 (B = y[2]):
+- A (y[1]) --0--> B: when in A and w=0, go to B -> Y2 = y[1] & ~w
+
+No other transitions to B.
+
+For Y4 (D = y[4]):
+- B (y[2]) --1--> D: y[2] & w
+- C (y[3]) --1--> D: y[3] & w
+- E (y[5]) --1--> D: y[5] & w
+- F (y[6]) --1--> D: y[6] & w
+
+So Y4 = w & (y[2] | y[3] | y[5] | y[6])
+
+We'll implement these two outputs as combinational logic.

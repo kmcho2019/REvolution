@@ -1,0 +1,11 @@
+Implement a finite state machine with these states:
+
+1. SEARCH: continuously shift in bits to detect the pattern 1101 on data input.
+2. LOAD: after detecting 1101, shift in 4 bits MSB first into delay[3:0].
+3. COUNT: count (delay+1)*1000 clock cycles. Maintain a sub-counter for 1000 cycles and a count output that starts at delay and decrements every 1000 cycles until zero.
+4. DONE: assert done signal, wait for ack=1.
+Return to SEARCH after ack.
+
+Use a 4-bit shift register to detect pattern 1101. Use another 4-bit register to load delay. Use a 10-bit counter for counting 1000 cycles (since 2^10=1024>1000) and a 4-bit counter for count[3:0]. counting is high only in COUNT state, done is high only in DONE state. count output is updated only in COUNT state according to the remaining time blocks.
+
+Synchronous reset is active high. All state transitions and counters update on rising clock edge.

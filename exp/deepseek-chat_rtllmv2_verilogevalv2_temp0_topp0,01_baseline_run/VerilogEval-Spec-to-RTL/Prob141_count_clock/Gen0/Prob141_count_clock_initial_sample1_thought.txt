@@ -1,0 +1,9 @@
+To implement a 12-hour clock with AM/PM indicator, we need to create three counters for hours, minutes, and seconds. Each counter should:
+1. Use BCD encoding (each digit 0-9)
+2. Reset to 12:00:00 AM when reset is high
+3. Increment only when ena is high (once per second)
+4. Handle rollover correctly:
+   - Seconds: 59→00, increment minutes
+   - Minutes: 59→00, increment hours
+   - Hours: 12→01 (no 0 hour in 12-hour clock), toggle PM at 12→1 transition
+5. All sequential logic should be synchronous to the positive clock edge

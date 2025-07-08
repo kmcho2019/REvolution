@@ -1,0 +1,19 @@
+Since one-hot encoding is used, each state corresponds to a single bit in y being high. We want to find the logic equations for the next state bits Y1 and Y3 based on the current state y and input w.
+
+Y1 corresponds to state B (y[1]), Y3 corresponds to state D (y[3]).
+
+From the state diagram transitions:
+
+For Y1 (state B):
+- B is entered from A when w=1.
+So Y1 = y[0] & w
+
+For Y3 (state D):
+- D is entered from B when w=0
+- D is entered from C when w=0
+- D is entered from E when w=0
+- D is entered from F when w=0
+
+So Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+We can write these two equations directly in Verilog.

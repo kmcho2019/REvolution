@@ -1,0 +1,18 @@
+To implement a serial 2's complementer as a Moore FSM, we process the input bits serially starting from the least significant bit. The 2's complement operation can be done by:
+
+1. Copy all least significant bits until the first '1' bit is encountered (this is the "add one" step).
+2. After the first '1' is found and copied, invert all subsequent bits.
+
+In the FSM:
+
+- The initial state is WAIT (or IDLE) when reset is active.
+- When reset is released, the FSM starts processing input bits.
+- State ZERO: No '1' encountered yet, output equals input bit (copy).
+- State ONES: After first '1' bit, output is inverted input bit.
+- When reset is asserted again, the FSM goes back to WAIT.
+
+The output z depends only on the current state and input, matching the Moore machine definition (output determined by state).
+
+Because asynchronous reset is active high, on posedge clk or posedge areset, reset the FSM.
+
+This design enables processing of arbitrarily long numbers, and stops processing when reset is asserted.

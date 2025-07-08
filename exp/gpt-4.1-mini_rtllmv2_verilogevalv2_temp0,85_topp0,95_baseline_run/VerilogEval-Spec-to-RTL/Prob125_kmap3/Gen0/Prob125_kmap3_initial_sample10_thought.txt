@@ -1,0 +1,106 @@
+The Karnaugh map is given for inputs a, b, c, and d, with d as a don't-care input. To implement the logic, first map the Karnaugh table to minterms. Inputs a and b are the column variables, c and d are the row variables, but the rows and columns seem to be labeled with Gray code ordering:
+
+Columns (ab): 01, 00, 10, 11
+Rows (cd): 00, 01, 11, 10
+
+So the order is:
+- ab: 01(1), 00(0), 10(2), 11(3)
+- cd: 00(0), 01(1), 11(3), 10(2)
+
+We'll rewrite the K-map with indices:
+
+          ab
+      01 00 10 11
+  00| d | 0| 1| 1
+  01| 0 | 0| d| d
+  11| 0 | 1| 1| 1
+  10| 0 | 1| 1| 1
+
+Because d is don't-care input, we can choose outputs for d cells to simplify the expression.
+
+First, map the positions to input combinations:
+
+The variable assignments from the K-map:
+
+- For rows cd:
+  00 -> c=0, d=0
+  01 -> c=0, d=1
+  11 -> c=1, d=1
+  10 -> c=1, d=0
+
+- For columns ab:
+  01 -> a=0, b=1
+  00 -> a=0, b=0
+  10 -> a=1, b=0
+  11 -> a=1, b=1
+
+Now, we can list minterms with their input combinations and outputs:
+
+| c | d | a | b | out |
+|---|---|---|---|-----|
+| 0 | 0 | 0 | 1 | d   | (don't care)
+| 0 | 0 | 0 | 0 | 0   |
+| 0 | 0 | 1 | 0 | 1   |
+| 0 | 0 | 1 | 1 | 1   |
+| 0 | 1 | 0 | 1 | 0   |
+| 0 | 1 | 0 | 0 | 0   |
+| 0 | 1 | 1 | 0 | d   | (don't care)
+| 0 | 1 | 1 | 1 | d   | (don't care)
+| 1 | 1 | 0 | 1 | 0   |
+| 1 | 1 | 0 | 0 | 1   |
+| 1 | 1 | 1 | 0 | 1   |
+| 1 | 1 | 1 | 1 | 1   |
+| 1 | 0 | 0 | 1 | 0   |
+| 1 | 0 | 0 | 0 | 1   |
+| 1 | 0 | 1 | 0 | 1   |
+| 1 | 0 | 1 | 1 | 1   |
+
+We treat don't-care cells (marked d) as whichever output helps minimize the function.
+
+Looking at the K-map, many 1's cluster in the last two columns (10 and 11) for rows 00, 11, and 10.
+
+Analyzing the outputs for cells that are definitely 1:
+
+- When a=1 (a=1, b=0 or 1), out=1 except for (c=0,d=1,a=1,b=0/1) which are don't care or zero.
+
+- When b=0 and c=1 (row 11 or 10), out=1 (except some don't cares).
+
+Observing patterns:
+
+- out=1 when a=1 (regardless of other bits), except for one don't-care cell at (c=0,d=1,a=1,b=0).
+
+- out=1 when c=1 and b=0 (rows 11,10 and column 00)
+
+- out=1 when a=0,b=0,c=1,d=1 (cell (11,00)) is 1.
+
+- out=1 when a=0,b=0,c=1,d=0 (cell (10,00)) is 1.
+
+Using the don't-cares to simplify:
+
+- Let's set don't-care cells at (00,01) to 0 (doesn't affect), at (01,10) and (01,11) to 0.
+
+- With that, the logic reduces.
+
+Final simplified expression:
+
+- out = a + (c & ~b)
+
+Because:
+
+- If a=1, out=1
+
+- If a=0, out=1 when c=1 and b=0
+
+Check against the table:
+
+- For a=0,b=0,c=1, out=1 (matches)
+
+- For a=0,b=1,c=1, out=0 (matches)
+
+- For a=0,b=1,c=0, out=0
+
+- For a=1, out=1
+
+So the final logic is out = a OR (c AND NOT b)
+
+Implement this as combinational logic.

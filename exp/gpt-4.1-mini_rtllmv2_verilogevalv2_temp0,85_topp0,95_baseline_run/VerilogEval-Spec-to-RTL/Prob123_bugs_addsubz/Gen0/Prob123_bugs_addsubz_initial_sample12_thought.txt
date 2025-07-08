@@ -1,0 +1,1 @@
+The bug is that result_is_zero is only set to 1 when ~out is true, but not explicitly set to 0 otherwise, leading to latches. We must assign result_is_zero in all cases. Also, using if (~out) is correct, but it's better to write if (out == 0). So, fix by assigning result_is_zero to 1 if out is zero, else 0.

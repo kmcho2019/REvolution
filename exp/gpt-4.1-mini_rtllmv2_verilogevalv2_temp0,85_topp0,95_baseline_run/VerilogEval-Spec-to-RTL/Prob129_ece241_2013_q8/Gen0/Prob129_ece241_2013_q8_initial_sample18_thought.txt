@@ -1,0 +1,20 @@
+Implement a 3-state Mealy FSM to detect the "101" sequence on input x.
+States:
+S0: Initial state, no bits matched
+S1: Matched '1'
+S2: Matched '10'
+
+Transitions (on each clock positive edge):
+- From S0:
+  - x=1: go to S1, z=0
+  - x=0: stay at S0, z=0
+- From S1:
+  - x=0: go to S2, z=0
+  - x=1: stay at S1, z=0 (still matched '1')
+- From S2:
+  - x=1: go to S1, z=1 (sequence "101" detected)
+  - x=0: go to S0, z=0
+
+Use asynchronous negative edge reset (aresetn). The output z is combinational depending on current state and input (Mealy). All sequential logic triggered on positive clock edge.
+
+This design detects overlapping sequences, e.g. input "10101" will produce z=1 at the 3rd and 5th bits.

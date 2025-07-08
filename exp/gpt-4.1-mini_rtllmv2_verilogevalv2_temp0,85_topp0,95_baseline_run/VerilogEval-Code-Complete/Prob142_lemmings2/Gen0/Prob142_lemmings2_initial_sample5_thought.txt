@@ -1,0 +1,20 @@
+Model the Lemming's behavior as a finite state machine with three states:
+1. WALK_LEFT
+2. WALK_RIGHT
+3. FALLING
+
+On reset, start in WALK_LEFT. When on ground:
+- If bumped on either side, switch walking direction.
+- Otherwise, keep walking direction.
+
+When ground=0, transition to FALLING state, keeping track of the walking direction prior to falling.
+
+While falling, outputs aaah=1, walk_left=walk_right=0, and ignore bumps.
+
+When ground returns to 1, return to the walking state that was active before falling.
+
+Implement a Moore machine with state registers updated on clock and async reset, and outputs determined by state.
+
+Use an enum or parameter to define states, keep previous direction in state encoding for FALLING state.
+
+No direction changes occur when falling or during the transition cycles when ground changes.

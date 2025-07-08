@@ -1,0 +1,24 @@
+Implement a Moore FSM with states representing the Lemming's current behavior: walking left, walking right, falling (aaah), and digging. The direction state (left or right) is remembered even during falling and digging so that when the Lemming returns to ground walking resumes in the original direction. 
+
+Inputs bump_left and bump_right cause a direction change only if the Lemming is walking on ground and not falling or digging. If bumped on either side or both, the direction flips. Falling (ground=0) takes precedence over digging and bumping. Digging starts only if dig=1 while walking on ground and stops when ground=0, which causes falling.
+
+Output signals are driven based on the current state: walk_left or walk_right for walking states, aaah for falling, digging for digging.
+
+The FSM resets asynchronously on areset to walking left.
+
+States will be encoded explicitly, with stored direction as part of the state to keep the Moore outputs simple.
+
+State encoding proposal:
+
+- WALK_LEFT
+- WALK_RIGHT
+- FALL_LEFT (falling but originally walking left)
+- FALL_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+
+State transitions will follow the priority rules: fall > dig > bump direction change. Bump ignored when falling or digging.
+
+Implement all sequential logic on posedge clk with asynchronous posedge areset.
+
+Outputs are derived solely from current state.

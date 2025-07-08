@@ -1,0 +1,30 @@
+The circuit has one bit of state memory (flip-flop) updated on the positive clock edge. The output q depends combinationally on inputs a, b, and the current state. By analyzing the waveform:
+
+- Initially, state is undefined.
+- At 15ns (posedge clk), state becomes 0.
+- q matches the next state after clk edge.
+- The state updates depending on a and b inputs and current state.
+- From the waveform, we see the state flips or holds depending on a,b,state patterns.
+
+Observing the key transitions:
+
+- At 45ns (clk posedge), inputs (a=0,b=1,state=0) => q=1, state next=1
+- At 65ns (a=1,b=1,state=0) => q=0, state next=0
+- At 75ns (a=0,b=0,state=1) => q=1, state next=1
+- At 85ns (a=1,b=1,state=0) => q=0, state next=0
+- At 95ns (a=1,b=1,state=1) => q=1, state next=1
+- At 115ns (a=1,b=0,state=1) => q=0, state next=0
+- At 135ns (a=0,b=0,state=1) => q=1, state next=1
+
+From these, the next state logic resembles:
+next_state = (state AND NOT (a AND b)) OR (NOT state AND b)
+
+The output q equals next_state (from waveform q equals the next state value).
+
+Thus, the implementation is:
+- A D flip-flop holding state.
+- Combinational logic computing next_state as above.
+- q output is next_state.
+- state output is current flip-flop state.
+
+This matches the waveform behavior.

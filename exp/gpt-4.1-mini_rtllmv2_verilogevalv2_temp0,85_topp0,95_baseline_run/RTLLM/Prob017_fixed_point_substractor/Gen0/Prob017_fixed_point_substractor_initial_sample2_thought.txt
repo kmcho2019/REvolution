@@ -1,0 +1,21 @@
+To implement the fixed-point subtractor with parameters Q and N, we'll treat inputs a and b as signed fixed-point numbers represented in two's complement format. 
+
+The subtraction will be done by analyzing the signs of a and b (MSB bit):
+- If both have the same sign, we subtract their magnitudes and keep the sign the same.
+- If they have different signs, we add their absolute values, and assign the sign based on the relative magnitude of a and b as per the instructions.
+
+We will:
+- Extract sign bits.
+- Compute absolute values of inputs.
+- Perform the appropriate addition or subtraction.
+- Determine the sign of the result.
+- Reapply the sign to the result.
+- Set the output to zero with sign bit 0 if the result is zero.
+
+Using a register `res` for the intermediate result and output `c` to hold the final signed fixed-point subtraction result.
+
+This approach preserves the fixed-point format because we treat the entire bit-vector as a signed number. Adding or subtracting these signed numbers will maintain the fixed-point scaling implicitly. The parameter Q is informational here to clarify the fixed-point position but does not require special scaling manipulation during subtraction.
+
+The module will be combinational for immediate subtraction.
+
+We will use $signed conversions to handle signed arithmetic properly in Verilog.

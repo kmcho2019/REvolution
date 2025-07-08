@@ -1,0 +1,5 @@
+Analyzing the waveform table: q is 1 whenever either b or c or d is 1, except when a=0 and b=c=d=0 (q=0). Also, when a=1, q=1 if any of b, c, or d are 1. When a=0, q=1 only if b=1 or c=1 or d=1. However, at time 20ns and 25ns, when a=0 and only d=1 or c=1, q=0. Actually, at 20ns and 25ns, q=0, meaning q is not 1 for c=1 or d=1 when a=0, unless b=1. At 40ns (a=0,b=1,d=1) q=1; at 45ns (a=0,b=1,c=1) q=1; at 50ns (a=0,b=1,c=1,d=1) q=1. So b=1 is a key condition for q=1 when a=0. Also, when a=1 and b=0,c=1,d=0 at 65ns q=1; at 60ns (a=1,b=0,c=0,d=1) q=1. So when a=1, q=1 if c=1 or d=1 or b=1. At 75ns (a=1,b=1,c=0,d=0) q=0, but this conflicts with above. Actually, at 75ns (a=1,b=1,c=0,d=0) q=0, so q=0 when a=1 and b=1 only. So the pattern is:
+- q=1 when (a=0 and b=1) or (a=1 and (c=1 or d=1))
+- q=0 otherwise
+
+Hence, q = (~a & b) | (a & (c | d))

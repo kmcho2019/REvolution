@@ -1,0 +1,33 @@
+We will implement a Moore finite state machine with four main states representing the Lemming's behavior:
+
+1. WALK_LEFT: Lemming walking left on the ground.
+2. WALK_RIGHT: Lemming walking right on the ground.
+3. FALL: Lemming falling (aaah! = 1).
+4. DIG: Lemming digging on the ground.
+
+The state transitions will follow the priority rules:
+
+- If ground = 0 (no ground), Lemming falls regardless of other inputs.
+- If digging is requested (dig=1), and Lemming is walking on ground (ground=1, not falling), it transitions to DIG state.
+- If bumped (bump_left or bump_right), and currently walking on ground and not digging or falling, Lemming switches walking directions.
+
+During FALL and DIG states:
+
+- Bumping does not affect direction.
+- If in DIG and ground goes to 0, transition to FALL.
+- If in FALL and ground returns to 1, transition back to previous walking direction.
+
+The state machine will store the direction in state encoding. When falling, direction is saved and restored after fall.
+
+On asynchronous positive edge reset (areset=1), the machine resets to WALK_LEFT.
+
+Outputs:
+
+- walk_left = 1 in WALK_LEFT state.
+- walk_right = 1 in WALK_RIGHT state.
+- aaah = 1 in FALL state.
+- digging = 1 in DIG state.
+
+All outputs are 0 otherwise.
+
+Implementing synchronous state updates with asynchronous reset, and Moore outputs based on state.

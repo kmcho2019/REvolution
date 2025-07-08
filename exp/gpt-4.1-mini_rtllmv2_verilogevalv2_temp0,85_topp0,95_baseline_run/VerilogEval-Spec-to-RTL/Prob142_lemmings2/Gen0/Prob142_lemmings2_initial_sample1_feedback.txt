@@ -1,0 +1,69 @@
+Score: 7
+Justification: The code compiles and simulates but has functional mismatches on the walk_left and walk_right outputs, indicating incorrect state transitions or output assignments. The aaah output is correct. The errors suggest some logic problems in direction switching or state handling but no syntax issues.
+
+ANALYSIS:
+The provided code implements a Moore FSM with three states: WALK_LEFT, WALK_RIGHT, and FALLING, with asynchronous reset to WALK_LEFT. The intended behavior is that the Lemming walks left or right and changes direction when bumped on either side; when ground=0 it falls (aaah=1), and when ground=1 again it resumes walking in the previous direction. Bumps while falling or during transitions involving ground changes should not affect direction.
+
+Examining the code:
+
+1. **State Register and last_walk_state Update**  
+   ```verilog
+   always @(posedge clk or posedge areset) begin
+       if (areset) begin
+           state <= WALK_LEFT;
+           last_walk_state <= WALK_LEFT;
+       end else begin
+           state <= next_state;
+           if (state == WALK_LEFT || state == WALK_RIGHT)
+               last_walk_state <= state;
+       end
+   end
+   ```
+   Here, `last_walk_state` is updated with the current `state` if it is a walking state. However, this update happens *after* the state register update on the same clock edge, so `last_walk_state` latches the *old* state instead of the next state. This means that when transitioning from FALLING back to walking, `last_walk_state` may not reflect the most recent walking state correctly. This could cause the Lemming to resume walking in the wrong direction or fail to remember direction properly.
+
+2. **Next State Logic for Bumping and Ground**  
+   ```verilog
+   case(state)
+       WALK_LEFT: begin
+           if (!ground)
+               next_state = FALLING;
+           else if (bump_left || bump_right) begin
+               next_state = WALK_RIGHT;
+           end
+       end
+       WALK_RIGHT: begin
+           if (!ground)
+               next_state = FALLING;
+           else if (bump_left || bump_right) begin
+               next_state = WALK_LEFT;
+           end
+       end
+   ```
+   According to the problem, the Lemming switches direction if bumped on the left or right or both. The code implements this by switching from WALK_LEFT to WALK_RIGHT and vice versa if either bump_left or bump_right is 1. This matches the spec.
+
+3. **FALLING State Behavior**  
+   ```verilog
+   FALLING: begin
+       if (ground)
+           next_state = last_walk_state; // resume walking in previous direction
+       else
+           next_state = FALLING;
+   end
+   ```
+   This correctly resumes walking when ground returns. However, as noted above, the correctness of `last_walk_state` depends on its update logic.
+
+4. **Output Logic**  
+   The outputs walk_left, walk_right, and aaah are assigned according to the current state, matching the Moore FSM requirement.
+
+5. **Simulation Log Indications**  
+   The simulation log shows 154 mismatches out of 441 samples on walk_left and walk_right outputs starting at time 270ps. The aaah output has no mismatches, indicating that the FALLING state and its output are correctly recognized.
+
+6. **Implications**  
+   The mismatch on walk_left and walk_right outputs suggests that the FSM is sometimes walking in the wrong direction or not switching direction correctly. Since bump conditions and direction switching logic are straightforward and appear correct, the root cause likely lies in the `last_walk_state` tracking. Because `last_walk_state` latches the *current* state before it is updated, it may hold stale data during transitions from walking to falling and back, causing incorrect resumption direction.
+
+7. **Additional Note**  
+   The problem mentions that bumping while falling or during ground change cycles should not affect walking direction. The code does not modify the walking direction when in FALLING state, which aligns with this requirement.
+
+In summary, the main issue causing the simulation mismatches stems from the logic updating `last_walk_state` in the sequential block, which references `state` after updating it to `next_state`. This causes the Lemming to sometimes resume walking in the incorrect direction after falling, leading to output mismatches on walk_left and walk_right signals. All other aspects of the FSM and output logic appear consistent with the problem specification.
+
+No syntax errors are present, so compilation succeeds, but the simulation results reveal a functional bug in state tracking that affects walking direction resumption after falling.

@@ -1,0 +1,10 @@
+The 2's complement of a binary number can be obtained by scanning the bits from the least significant bit (LSB) upwards, copying all bits until the first '1' is encountered, then inverting all subsequent bits. This can be implemented with a simple Moore state machine with two states:
+
+- STATE_COPY: Before the first '1' is seen, output z = x.
+- STATE_INVERT: After the first '1' is seen, output z = ~x.
+
+The machine starts in STATE_COPY on reset release. When areset is asserted, the machine resets to STATE_COPY and output is reset.
+
+The output depends only on the current state and input (Moore machine), and state transitions depend on the input and current state.
+
+We will implement this with two states encoded as a single bit (0: COPY, 1: INVERT), synchronous state update on the positive clock edge, asynchronous active-high reset, and the corresponding output logic.

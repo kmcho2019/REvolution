@@ -1,0 +1,24 @@
+Implement a Moore FSM with states representing walking left, walking right, falling, and digging. The outputs depend only on the current state. On reset, the state is walking left. The transitions are as follows:
+
+- From walking states (walk_left or walk_right):
+  - If ground=0, transition to falling, keep the walking direction in a separate register to restore after fall.
+  - Else if dig=1, transition to digging.
+  - Else if bumped (either bump_left or bump_right), switch direction.
+  - Else remain in the current walking state.
+
+- From falling:
+  - If ground=1, return to the walking state stored before falling.
+  - Else remain falling.
+
+- From digging:
+  - If ground=0, transition to falling (falling overrides digging).
+  - Else if dig=0, return to walking state.
+  - Else remain digging.
+
+While falling or digging, bumps do not change direction.
+
+The outputs are assigned based on the state: walk_left=1 in walking left state, walk_right=1 in walking right state, aaah=1 in falling state, digging=1 in digging state.
+
+Use an asynchronous positive edge reset to reset to walk_left state. Keep a direction register to remember walking direction for transitions from falling or digging back to walking.
+
+Implement the FSM logic in always blocks triggered on posedge clk or posedge areset.

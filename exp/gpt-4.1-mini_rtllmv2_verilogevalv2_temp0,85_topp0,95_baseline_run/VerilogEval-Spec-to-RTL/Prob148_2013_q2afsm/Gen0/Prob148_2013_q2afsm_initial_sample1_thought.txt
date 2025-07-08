@@ -1,0 +1,50 @@
+Implement a three-state FSM with states A, B, C, and D. Since only states A, B, and C are defined in the transitions and output, and D is mentioned only once in the problem statement, but without further transitions or output, it seems D may be a typo or redundant. The problem states "A --r0=0,r1=0,r2=0--> A" twice and also "A --r0=0,r1=0,r2=0--> D" which is contradictory. Based on the description, the FSM has states A, B, C corresponding to no grant and grants to device 0 and device 1, respectively. Device 2 is lowest priority, so it is granted only if r[2]=1 and r[0]=0 and r[1]=0, which is missing from the transitions, but given the priority, the grant to device 2 is given only when no requests from device 0 or 1.
+
+I will assign state encodings as 2-bit codes:
+
+- A = 2'b00 (no grant)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+The state machine transitions:
+
+From A:
+
+- if r[0] == 1, go to B
+- else if r[1] == 1, go to C
+- else if r[2] == 1, go to D
+- else remain in A
+
+From B:
+
+- if r[0] == 1, stay in B
+- else go to A
+
+From C:
+
+- if r[1] == 1, stay in C
+- else go to A
+
+From D:
+
+- if r[2] == 1, stay in D
+- else go to A
+
+Outputs g:
+
+- g = 3'b000 in state A
+- g = 3'b001 in state B (grant to device 0)
+- g = 3'b010 in state C (grant to device 1)
+- g = 3'b100 in state D (grant to device 2)
+
+Implement synchronous active-low reset to state A.
+
+Two always blocks:
+
+- One for state register (sequential)
+- One for next state logic (combinational)
+
+Outputs assigned with continuous assignment.
+
+This design matches the priority and FSM requirements.

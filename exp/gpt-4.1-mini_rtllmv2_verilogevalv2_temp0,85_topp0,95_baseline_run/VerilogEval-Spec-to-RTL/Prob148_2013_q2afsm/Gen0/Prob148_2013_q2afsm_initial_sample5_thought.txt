@@ -1,0 +1,13 @@
+Implement a three-state FSM with states A, B, and C that correspond to no grant, grant to device 0, and grant to device 1 respectively. Since device 2 has the lowest priority, it gets a grant only if no higher priority requests exist. However, the state diagram mentions a D state but does not specify transitions or outputs for it clearly (and the transitions from A to D seem contradictory). The problem description focuses on devices 0 and 1 for granted states, so we infer that state D corresponds to granting device 2 (g2=1). We include D for device 2 grant, with its logic similar to B and C but for device 2. The transitions prioritize r[0], then r[1], then r[2]. Reset synchronously sets to A.
+
+We use one always block for state flip-flops, one for next state logic, and continuous assignments for output based on state. State encoding: A=2'b00, B=2'b01, C=2'b10, D=2'b11.
+
+The output g reflects which device is granted in states B, C, and D respectively.
+
+The FSM operates as follows:
+- In A (no grant), check r: if r[0]=1 -> B, else if r[1]=1 -> C, else if r[2]=1 -> D, else stay in A.
+- In B (grant device 0), if r[0]=1 stay in B, else go to A.
+- In C (grant device 1), if r[1]=1 stay in C, else go to A.
+- In D (grant device 2), if r[2]=1 stay in D, else go to A.
+
+Synchronous reset (active low) sets state to A.

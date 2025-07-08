@@ -1,0 +1,15 @@
+Implement a 7-bit global history register and a 128-entry pattern history table (PHT) of 2-bit saturating counters. The gshare index is computed as (pc ^ global_history). 
+
+On reset, clear global history and initialize PHT entries to weakly taken (2). 
+
+On prediction (predict_valid), output predicted branch direction from PHT entry indexed by (pc ^ global_history) and output the current global history as predict_history. Also, update global history at next clock edge with predicted direction (shift left and insert predicted bit), unless there is a misprediction training in the same cycle, in which case training update takes precedence.
+
+On training (train_valid), update the PHT entry indexed by train_pc ^ train_history using train_taken. If mispredicted, update global history to train_history at next clock edge, overriding any predicted update.
+
+Priority: training update of global history overrides prediction update when both occur simultaneously.
+
+The PHT update uses 2-bit saturating counters with states 0 (strongly not taken) to 3 (strongly taken), increment or decrement on taken/not taken outcome respectively. The predicted direction is MSB of counter (bit1).
+
+Asynchronous active-high reset clears global history and sets all PHT entries to weakly taken (2).
+
+All sequential logic triggers on posedge clk.

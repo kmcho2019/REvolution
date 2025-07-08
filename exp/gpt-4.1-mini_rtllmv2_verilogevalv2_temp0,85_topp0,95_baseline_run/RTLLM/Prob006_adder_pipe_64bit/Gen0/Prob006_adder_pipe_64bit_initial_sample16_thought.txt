@@ -1,0 +1,9 @@
+To implement a 64-bit ripple carry adder with pipelining, the addition is split into multiple stages. Each pipeline stage computes part of the sum and propagates the carry to the next stage register. We will use registers to hold partial sums, carries, and the enable signal to pipeline the operation across multiple clock cycles. This approach balances latency and throughput, providing an output result after several clock cycles with the o_en signal indicating the availability of a valid sum.
+
+For simplicity, split the 64-bit addition into 4 pipeline stages, each handling 16 bits. Each stage will take the 16-bit slice of the inputs and the carry-in, produce a 16-bit partial sum and a carry-out. Registers hold intermediate sums and carry signals. The final stage concatenates all partial sums and the last carry-out to form the 65-bit result.
+
+The i_en signal is also pipelined through registers to generate the o_en signal synchronized with the availability of the final sum.
+
+Reset (rst_n) asynchronously initializes pipeline registers to zero.
+
+This structure results in a 4-stage pipeline ripple carry adder with synchronized output and enable signals.

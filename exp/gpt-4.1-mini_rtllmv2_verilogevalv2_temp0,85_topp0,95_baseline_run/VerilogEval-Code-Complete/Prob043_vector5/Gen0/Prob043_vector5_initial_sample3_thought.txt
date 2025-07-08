@@ -1,0 +1,32 @@
+We need to compare each pair of the five input bits (a, b, c, d, e) for equality and output a 25-bit vector, where each bit indicates if the corresponding pair is equal. The pairs include all combinations with repetition, i.e., (a,a), (a,b), ..., (e,e). The order of bits in the output vector is from the pair (a,a) at the highest bit (24) down to (e,e) at bit 0. Each output bit is 1 if the two bits are equal, and 0 otherwise.
+
+Equality of two 1-bit signals can be done with XNOR (~^).
+
+We can systematically assign each bit in the output vector by mapping the pairs as described:
+- Bit 24: (a,a)
+- Bit 23: (a,b)
+- Bit 22: (a,c)
+- Bit 21: (a,d)
+- Bit 20: (a,e)
+- Bit 19: (b,a)
+- Bit 18: (b,b)
+- Bit 17: (b,c)
+- Bit 16: (b,d)
+- Bit 15: (b,e)
+- Bit 14: (c,a)
+- Bit 13: (c,b)
+- Bit 12: (c,c)
+- Bit 11: (c,d)
+- Bit 10: (c,e)
+- Bit 9:  (d,a)
+- Bit 8:  (d,b)
+- Bit 7:  (d,c)
+- Bit 6:  (d,d)
+- Bit 5:  (d,e)
+- Bit 4:  (e,a)
+- Bit 3:  (e,b)
+- Bit 2:  (e,c)
+- Bit 1:  (e,d)
+- Bit 0:  (e,e)
+
+We'll use a concatenation of XNOR operations following this order to form the output vector.

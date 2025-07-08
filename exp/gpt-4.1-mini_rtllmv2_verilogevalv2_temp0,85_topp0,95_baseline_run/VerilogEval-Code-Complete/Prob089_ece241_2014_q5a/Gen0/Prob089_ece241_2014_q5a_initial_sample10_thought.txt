@@ -1,0 +1,13 @@
+To design a one-input one-output serial 2's complementer Moore state machine, we process the input bits starting from the least significant bit. The 2's complement operation involves flipping all bits after the first '1' bit. 
+
+The Moore FSM will have two states:
+- STATE_WAIT (initial state after reset): Waiting for the first '1' bit.
+- STATE_FLIP: After the first '1' bit is found, flip all subsequent bits.
+
+Behavior:
+- On reset (asynchronous, active high), return to STATE_WAIT.
+- On each clock, 
+  - if in STATE_WAIT, output equals input bit directly until the first '1' bit is seen, then move to STATE_FLIP.
+  - if in STATE_FLIP, output equals inverted input bit.
+
+The output depends only on the state, so it's a Moore machine. Output z is registered and updated each clock cycle accordingly.

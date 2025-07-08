@@ -1,0 +1,22 @@
+To implement a dual-edge triggered flip-flop in an FPGA, which does not support always blocks sensitive to both edges directly, we can use two single-edge triggered flip-flops: one triggered on the positive edge and one on the negative edge of the clock. We then combine their outputs using a multiplexer or logic that selects the correct data on every clock edge. 
+
+A common approach is:
+1. Use two flip-flops:
+   - FF1 triggered on posedge clk, storing input d.
+   - FF2 triggered on negedge clk, storing input d.
+2. Use a toggling signal or edge detector to select output from FF1 or FF2 on respective edges.
+
+Since we cannot have a direct always block sensitive to negedge clk in some FPGA tools (although usually allowed), if that is a constraint, an alternative is to double the clock frequency and sample data on each posedge. But in this problem, we assume negedge triggered FFs are allowed.
+
+Finally, we can output q as the output of a multiplexer switching between FF1 and FF2 outputs, controlled by clk (or its complement), to get a dual-edge triggered output.
+
+This yields a functional equivalent of a dual-edge triggered flip-flop without a dual-edge triggered primitive.
+
+Alternatively, we can create a circuit where:
+- FF_pos is a positive-edge triggered flip-flop storing d on posedge clk.
+- FF_neg is a positive-edge triggered flip-flop triggered by inverted clk (i.e., posedge ~clk), storing d on negedge clk.
+- output q is selected by clk: when clk=1, q=FF_pos output; when clk=0, q=FF_neg output.
+
+This ensures q updates on both edges.
+
+We will implement the latter approach.

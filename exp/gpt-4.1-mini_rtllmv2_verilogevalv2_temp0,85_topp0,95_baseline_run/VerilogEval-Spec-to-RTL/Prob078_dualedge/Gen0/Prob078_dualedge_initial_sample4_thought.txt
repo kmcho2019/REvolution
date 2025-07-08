@@ -1,0 +1,10 @@
+To create a dual-edge triggered flip-flop without using an illegal sensitivity list, we can use two single-edge triggered flip-flops: one triggered on the positive edge and one triggered on the negative edge of the clock. The outputs of these two flip-flops can then be combined using a multiplexer controlled by the clock to produce the final output.
+
+Specifically:
+- On the positive edge of clk, capture the input d into pos_ff.
+- On the negative edge of clk, capture the input d into neg_ff.
+- The output q is selected from pos_ff or neg_ff based on the current clock value:
+  - When clk=1, q = pos_ff
+  - When clk=0, q = neg_ff
+
+This effectively emulates a flip-flop triggered on both edges.

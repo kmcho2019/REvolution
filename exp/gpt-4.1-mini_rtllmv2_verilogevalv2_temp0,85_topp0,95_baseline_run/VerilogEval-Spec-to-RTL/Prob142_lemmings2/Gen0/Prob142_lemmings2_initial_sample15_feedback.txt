@@ -1,0 +1,112 @@
+Score: 7
+Justification: The code is syntactically correct and simulates, but the outputs walk_left and walk_right have significant mismatches according to the simulation log, indicating functional issues. The aaah output is correct, which suggests partial correctness. The errors appear related to walking direction behavior during bumps and transitions.
+
+ANALYSIS:
+The design intent is a Moore FSM with three states: WALK_LEFT, WALK_RIGHT, and FALLING. The FSM should switch walking direction on bump events when on the ground, enter FALLING state when ground=0, and remember the walking direction before falling to restore it when ground=1.
+
+Key parts of the code affecting this logic:
+
+1. **Next State Logic:**
+
+```verilog
+case (state)
+    WALK_LEFT: begin
+        if (ground == 0) begin
+            next_state = FALLING;
+        end else if (bump_left || bump_right) begin
+            next_state = WALK_RIGHT;
+        end
+    end
+
+    WALK_RIGHT: begin
+        if (ground == 0) begin
+            next_state = FALLING;
+        end else if (bump_left || bump_right) begin
+            next_state = WALK_LEFT;
+        end
+    end
+
+    FALLING: begin
+        if (ground == 1) begin
+            next_state = walk_state_before_fall;
+        end
+    end
+```
+
+This code switches direction if either bump input is high, which aligns with the problem statement that any bump switches direction. It transitions to FALLING if ground=0, as required.
+
+2. **State Register and Remembering Walking Direction:**
+
+```verilog
+always @(posedge clk or posedge areset) begin
+    if (areset) begin
+        state <= WALK_LEFT;
+        walk_state_before_fall <= WALK_LEFT;
+    end else begin
+        if (state != FALLING && next_state == FALLING) begin
+            walk_state_before_fall <= state;
+        end
+        state <= next_state;
+    end
+end
+```
+
+This seems correct: when entering FALLING, it stores the walking direction.
+
+3. **Output Logic:**
+
+```verilog
+always @(*) begin
+    walk_left = 1'b0;
+    walk_right = 1'b0;
+    aaah = 1'b0;
+
+    case(state)
+        WALK_LEFT: walk_left = 1'b1;
+        WALK_RIGHT: walk_right = 1'b1;
+        FALLING: aaah = 1'b1;
+    endcase
+end
+```
+
+Again, looks consistent.
+
+---
+
+**Potential Causes of Simulation Mismatches:**
+
+- The simulation log indicates mismatches primarily on walk_left and walk_right outputs starting at time 270 (ps?), totaling 154 mismatches out of 441 samples. The aaah output is unaffected, suggesting the FALLING state and its output are handled correctly.
+
+- According to the problem, bumps received while falling or during ground transitions do NOT affect walking direction. The current implementation relies on the next_state logic in the combinational block and stores walking direction only when entering FALLING.
+
+- However, the FSM treats bump signals immediately even during the cycle when ground transitions from 1 to 0 or 0 to 1, except it does not change direction when in FALLING. The current next_state logic is combinational and does not consider bump signals during the cycle ground changes. The problem states bumps in the cycle ground disappears (but not yet falling) or when ground reappears while still falling should not affect walking direction. The code likely does not correctly handle this subtle timing nuance because the next_state logic only uses current state and inputs without explicit edge or timing checks.
+
+- The bump logic:
+
+```verilog
+if (bump_left || bump_right)
+```
+
+is unconditional when in WALK_LEFT or WALK_RIGHT states, which could cause direction flips at inappropriate times, for example, the same cycle ground disappears but before falling.
+
+- The code does not explicitly debounce or ignore bumps on the cycle ground transitions occur, which is a requirement per the problem statement.
+
+- Additionally, the storage of walk_state_before_fall only on the transition from walking to falling is correct, but the FSM could be entering and exiting states without proper handling of bump signals during these transitions.
+
+- The problem states "Being bumped while falling does not affect walking direction," but the code prevents bump logic only when state == FALLING. Bump signals in the cycle that ground disappears (before falling) or ground reappears (while still falling) also should not affect walking direction. The code does not have explicit conditions to block bumps in those borderline cycles.
+
+- Therefore, the FSM likely incorrectly changes direction in those edge cases, causing the simulation mismatches on walk_left and walk_right.
+
+---
+
+**Summary of the Code Issues in Relation to the Problem:**
+
+- The FSM changes walking direction whenever bump_left or bump_right is asserted in the WALK_LEFT or WALK_RIGHT states, without checking if the ground has just disappeared (not yet fallen) or just reappeared (still falling).
+
+- The code does not distinguish the cycle ground disappears or reappears from the steady states and does not suppress bump-induced direction changes during those cycles.
+
+- This causes mismatches in walk_left and walk_right outputs because the FSM switches direction incorrectly at bump events during critical ground transitions.
+
+- The FALLING state logic and aaah output are correct and match simulation.
+
+Hence, the main functional error is the incorrect treatment of bumps during ground transition cycles, leading to incorrect walking direction changes and output mismatches.

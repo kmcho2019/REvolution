@@ -1,0 +1,38 @@
+Score: 7
+Justification: The code is syntactically correct and simulates, but there are timing or logical errors causing directional walk outputs to mismatch the expected values in simulation, although falling and digging outputs are correct.
+
+ANALYSIS:
+The code implements a Moore FSM with states encoding walking left/right, falling left/right, digging left/right, and splattered. The problem statement requires that the Lemming switch walking directions when bumped on either side while walking, ignore bumps while falling or digging, fall when ground disappears, dig only if dig=1 while walking on ground, and splatter if falling for more than 20 cycles before hitting ground.
+
+From the simulation log, the aaah and digging outputs match perfectly, indicating the falling and digging states behave as expected. However, walk_left and walk_right outputs show 46 mismatches, starting at time 800, indicating errors in direction switching logic or state transitions related to walking.
+
+Examining the code:
+
+1. **Bumping detection and direction switching**:  
+   The `bumped` wire is defined as `bump_left | bump_right`, which correctly detects bumps on either side or both. The state transitions for WALK_LEFT and WALK_RIGHT states switch directions if bumped. However, the problem specifies that bumps during falling or digging should be ignored, which the FSM respects by not transitioning on bump during those states.
+
+2. **Direction restoration after falling**:  
+   Upon landing (ground=1 while falling), the Lemming returns to the walking state corresponding to the previous falling direction (`FALLING_LEFT` to `WALK_LEFT`, `FALLING_RIGHT` to `WALK_RIGHT`). This aligns with the problem requirement to resume walking in the original direction after falling.
+
+3. **Digging initiation and continuation**:  
+   The FSM moves from walking to digging only if `dig` is asserted while on ground and walking. It continues digging until ground disappears, then transitions to falling with the same direction. This matches the requirement.
+
+4. **Fall counter and splattering**:  
+   The fall counter increments on each clock during falling states, saturating at 31. Upon hitting ground, if the fall count is more than 20, the FSM transitions to SPLATTERED, where all outputs remain zero. This follows the problem rules.
+
+5. **Potential cause of walk direction mismatches**:  
+   Despite the logical correctness, the mismatches on walk_left and walk_right imply the FSM is sometimes outputting the wrong walking direction or failing to switch properly upon bump. Possible subtle issues include:  
+   - The `bumped` signal lumps bumps from both sides together, but the code does not explicitly check which side was bumped to determine direction. The problem states that if bumped on the left, walk right; if bumped on the right, walk left; and if both, still switch directions. The code switches direction regardless of which bump side is asserted, which should be correct logically.  
+   - However, the code for walking states unconditionally switches direction if bumped, which might cause an unintended immediate toggling of direction if both bumps are continuously asserted or if bumps occur simultaneously with ground changes or dig signals. The problem states bumps concurrent with ground changes or digging do not change direction. The code only checks for bump after verifying ground and dig conditions, so this is likely correct.  
+   - Another subtlety is that the problem says "being bumped in the same cycle as ground disappears (but not yet falling), or when ground reappears while still falling, does not affect walking direction." The code's combinational logic may treat bump and ground simultaneously within the same cycle without explicitly prioritizing fall over bump during transition evaluation, possibly causing direction switching too early or late relative to fall start or end.  
+   - The asynchronous reset sets state to WALK_LEFT and fall_count=0 correctly.
+
+6. **Fall count starting at 1**:  
+   When ground disappears from walking or digging, the next state is falling and fall_count is set to 1. This seems consistent.
+
+7. **No explicit handling of simultaneous bump and ground change in the same cycle**:  
+   The code uses a combinational `always @(*)` block to compute next state. If bump and ground change signals occur at the same time, the FSM might switch walking direction even though the problem states bumps at ground transitions do not affect direction. The FSM logic does not explicitly prevent bump-induced direction switching during the same cycle as ground disappearance or reappearance, potentially explaining the mismatches in walk direction outputs.
+
+Overall, the root cause of the walk_left and walk_right mismatches is the FSM's treatment of bumps coincident with ground changes, violating the problem's priority and ignoring conditions for bumps during fall start or ground reappearance. This causes wrong direction switching timing or spurious toggling of walk direction.
+
+Since the falling and digging outputs are correct, and the FSM otherwise follows the problem statement, this is a moderate functional error affecting walk direction correctness but not total system failure or syntax errors.

@@ -1,0 +1,17 @@
+Design a Moore finite-state machine with states representing how much of the sequence "1101" has been matched so far. The states will be:
+- S0: no match yet
+- S1: matched '1'
+- S2: matched '11'
+- S3: matched '110'
+- S4: matched '1101' (sequence found)
+
+Once the sequence is matched, assert start_shifting permanently until reset. On each clock edge, update state synchronously with reset active high synchronous. The output start_shifting will be 1 when in S4 or beyond (latching the output once sequence is found).
+
+Transitions:
+- From S0: if data=1 -> S1 else S0
+- From S1: if data=1 -> S2 else S0
+- From S2: if data=0 -> S3 else S2 (if data=1, stay in S2 since "11" can overlap)
+- From S3: if data=1 -> S4 else S0
+- From S4: stay in S4 forever
+
+This will handle overlapping sequences and latch start_shifting when sequence is detected.

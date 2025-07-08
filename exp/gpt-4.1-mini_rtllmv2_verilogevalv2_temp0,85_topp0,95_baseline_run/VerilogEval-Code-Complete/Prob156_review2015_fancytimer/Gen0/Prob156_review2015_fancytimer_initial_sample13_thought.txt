@@ -1,0 +1,17 @@
+To implement the timer, use a finite state machine (FSM) with these states:
+
+1. SEARCH: Shift in bits to detect pattern 1101 in the last 4 bits shifted.
+2. SHIFT_DELAY: Once 1101 detected, shift in next 4 bits MSB first as delay.
+3. COUNTING: Count down the timer for (delay+1)*1000 clock cycles. Output the count value (delay down to 0) for each 1000 cycles, assert counting=1.
+4. DONE: Assert done=1, wait for ack=1 from user to reset to SEARCH.
+
+The input data is shifted in one bit per clock. Use a shift register to detect the pattern 1101. After detection, shift in 4 bits as delay. For counting, use two counters: one to count 1000 clock cycles per decrement, and another to count down delay[3:0] from delay to 0. Output count as the current delay value (4 bits) while counting. Once done, assert done and wait for ack to reset the FSM.
+
+The reset is synchronous and active high, so FSM and counters reset on reset=1 at clk rising edge.
+
+Outputs:
+- count[3:0]: valid only during counting, otherwise don't-care.
+- counting: 1 during counting, else 0.
+- done: 1 when done counting and waiting for ack.
+
+Implement with appropriate registers and the FSM.

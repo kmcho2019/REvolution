@@ -1,0 +1,35 @@
+We implement a Moore FSM with states encoding direction and activity:
+- walking_left
+- walking_right
+- falling_left
+- falling_right
+- digging_left
+- digging_right
+- splattered
+
+On reset, go to walking_left.
+
+Transitions:
+- From walking states:
+  - If ground=0, transition to falling state with same direction.
+  - Else if dig=1 and ground=1, transition to digging with current direction.
+  - Else if bumped (bump_left or bump_right), change walking direction accordingly.
+- From falling states:
+  - Increment fall counter each clock.
+  - If ground=1, check fall counter:
+    - If fall counter > 20, go splattered.
+    - Else return to walking with the same direction.
+- From digging states:
+  - If ground=0, transition to falling with same direction.
+  - Else continue digging.
+- From splattered state, stay splattered.
+
+Outputs depend on state:
+- walk_left and walk_right indicate walking direction.
+- aaah is high when falling.
+- digging is high when digging.
+- all outputs zero in splattered.
+
+Fall counter resets on entering falling, increments while falling, and resets otherwise.
+
+Asynchronous positive edge reset sets state to walking_left and resets fall counter.

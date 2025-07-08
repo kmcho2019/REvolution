@@ -1,0 +1,21 @@
+I will implement a three-state FSM: A (idle, no grants), B (grant to device 0), and C (grant to device 1). Since device 2 has the lowest priority, and the problem description seems to omit a direct grant state for device 2, I will consider that state D grants device 2. The problem states transitions for state D only from state A with no requests, which seems conflicting, but I will include state D as grant to device 2.
+
+- State encoding: A=2'b00, B=2'b01, C=2'b10, D=2'b11
+- On reset, state = A.
+- From A, priority order for requests is checked:
+  - If r[0]==1, go to B (grant device 0)
+  - else if r[1]==1, go to C (grant device 1)
+  - else if r[2]==1, go to D (grant device 2)
+  - else stay in A
+- From B, if r[0]==1, stay in B; else go to A.
+- From C, if r[1]==1, stay in C; else go to A.
+- From D, if r[2]==1, stay in D; else go to A.
+
+Outputs g[2:0]:
+- In A, g=3'b000
+- In B, g=3'b001
+- In C, g=3'b010
+- In D, g=3'b100
+
+I will implement the FSM with two always blocks: one for state transitions (combinational), and one for state flip-flops (sequential). Outputs assigned via continuous assignment based on state.
+Reset is synchronous active low.

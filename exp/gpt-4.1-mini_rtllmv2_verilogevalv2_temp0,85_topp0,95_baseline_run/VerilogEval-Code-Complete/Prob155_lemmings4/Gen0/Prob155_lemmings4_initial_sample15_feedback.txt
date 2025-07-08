@@ -1,0 +1,46 @@
+Score: 7
+Justification: The code compiles correctly and implements a mostly correct FSM, but the simulation reveals multiple mismatches in outputs, indicating functional errors in handling state transitions and output logic, particularly related to direction switching and dig/fall precedence.
+
+ANALYSIS:
+The given Verilog code implements a Moore FSM for the Lemmings problem, with states for walking left/right, falling left/right, digging left/right, and splatting. The asynchronous reset sets the state to WALK_LEFT as required.
+
+1. **State Transition Precedence**:  
+   The problem states that fall has higher precedence than dig, which has higher precedence than switching directions. However, in the walking states (WALK_LEFT and WALK_RIGHT), the code checks conditions in order:  
+   - if (!ground) then fall  
+   - else if (dig) then dig  
+   - else if (bump_left || bump_right) then switch direction  
+   This matches the precedence rule, so no issue here.
+
+2. **Direction Switching on Bump**:  
+   The problem states:  
+   - If bumped on left, walk right  
+   - If bumped on right, walk left  
+   - If bumped on both sides, still switch directions (the exact direction presumably still switches).  
+   
+   The code currently treats any bump (bump_left || bump_right) as a trigger to switch direction to the *opposite* walking state. However, it does not differentiate which bump side occurred, so the direction switched might be incorrect. For example, when walking left and bump_right=1, the Lemming should walk left again (no switch), but the code switches to WALK_RIGHT. The problem wording implies the bump on left always causes walk right, bump on right causes walk left. The current implementation ignores which bump side is active and always switches direction to the opposite side, which likely causes mismatches on `walk_left` and `walk_right` outputs. This is supported by the simulation log showing first mismatches on walk_left at time 580 and walk_right at time 600.
+
+3. **Digging Start Condition**:  
+   The problem states a Lemming can start digging only if it is walking on ground (ground=1 and not falling). The code checks if dig input is high in WALK_LEFT or WALK_RIGHT and ground is present (implied by the else if after !ground), so this seems okay.
+
+4. **Dig to Fall Transition**:  
+   When digging and ground disappears, the Lemming falls. The code moves from DIG_LEFT to FALL_LEFT and DIG_RIGHT to FALL_RIGHT on !ground, which aligns with the problem.
+
+5. **Effect of Bumps During Dig or Falling**:  
+   The problem states bumps during fall or dig do not affect direction. The code does not check bumps in FALL or DIG states, so this is correct.
+
+6. **Fall Count and Splatter Logic**:  
+   The fall_count increments while falling and resets on ground hit or non-falling states. If fall_count > 20 on ground hit, the next state is SPLAT, which matches the problem.
+
+7. **Output Logic**:  
+   The outputs are assigned based solely on state, consistent with a Moore FSM. However, the simulation shows mismatches in outputs `aaah` and `digging` as well, indicating the FSM states may not be reached or left correctly.
+
+8. **Potential Reset of fall_count**:  
+   The fall_count logic resets to zero in any state besides falling, which is correct.
+
+9. **Possible Missing Condition on bump when both bump_left and bump_right are 1**:  
+   The problem explicitly says if bumped on both sides, direction still switches. The current code treats any bump the same and always switches direction. However, the ambiguity in bump side handling (point 2) remains the main issue.
+
+Summary:  
+The core functional flaw causing simulation mismatches is the handling of bump inputs—there is no distinction between bump_left and bump_right to decide the direction switch correctly. This misinterpretation leads to incorrect next states in walking conditions, causing mismatches in `walk_left` and `walk_right` outputs and related outputs (`aaah`, `digging`). The rest of the FSM design appears aligned with the problem requirements.
+
+Therefore, the errors in the code are primarily due to incorrect direction switching logic on bump inputs and subtle effects of this on output correctness.

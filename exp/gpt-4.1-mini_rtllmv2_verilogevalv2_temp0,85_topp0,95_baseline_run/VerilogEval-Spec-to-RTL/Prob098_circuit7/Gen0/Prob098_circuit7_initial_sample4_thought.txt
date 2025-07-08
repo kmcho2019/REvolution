@@ -1,0 +1,18 @@
+The output q is updated only on the rising edge of clk. Initially q is unknown (x). 
+From the waveform:
+- At 15ns (clk rising edge), a=0 -> q=1
+- At 35ns (clk rising edge), a=1 -> q=1
+- At 45ns (clk rising edge), a=1 -> q=0
+
+After the first rising edge where a=0, q becomes 1 and stays 1 on next rising edges with a=0 or a=1 until the clk rising edge at 45ns with a=1, when q becomes 0 and stays 0 for subsequent rising edges with a=1.
+
+This suggests q toggles its value on the rising edge of clk only when a=1; otherwise, it sets q=1 when a=0 on the first rising edge.
+
+So the behavior can be summarized as:
+- On positive edge of clk:
+  - If a=0, q is set to 1
+  - If a=1, q toggles
+
+Initial q can be set to 0 or unknown (x). The waveform starts with x at 0ns, so we can initialize q to 0.
+
+Hence, implement a flip-flop triggered on posedge clk, which sets q=1 if a=0, else toggles q if a=1.

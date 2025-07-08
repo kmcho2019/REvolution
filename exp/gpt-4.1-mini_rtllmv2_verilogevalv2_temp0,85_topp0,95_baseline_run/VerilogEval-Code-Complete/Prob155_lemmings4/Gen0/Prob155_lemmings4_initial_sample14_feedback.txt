@@ -1,0 +1,45 @@
+Score: 7
+Justification: The code compiles correctly and implements the FSM logic largely consistent with the problem description, but it has significant functional mismatches on the walk_left and walk_right outputs, indicating errors in the walking direction and transitions. The outputs aaah and digging are correct, so the main issue concerns direction switching and possibly state transitions for walking and digging.
+
+ANALYSIS:
+The FSM is designed to represent a Lemming that can walk left or right, dig, fall, and splatter, with priority of fall > dig > direction change on bumps.
+
+1. **Walking direction mismatches (walk_left and walk_right):**  
+   The simulation log reports 166 mismatches for walk_left and 150 for walk_right, suggesting incorrect walking direction signals at multiple time points. Since the walking outputs are derived from states WALK_LEFT/DIG_LEFT and WALK_RIGHT/DIG_RIGHT, mismatches imply that the FSM transitions between these states incorrectly or does not maintain the intended walking direction properly.
+
+2. **Direction switching logic on bump:**  
+   In WALK_LEFT and WALK_RIGHT states, the code switches direction upon bump_left or bump_right signals being 1. The problem states:  
+   > "If it's bumped on the left (bump_left=1), it will walk right. If bumped on the right (bump_right=1), it will walk left. If bumped on both sides, it will still switch directions."  
+   
+   The code combines bump_left and bump_right with OR in conditions like:  
+   ```
+   if (bump_left == 1 || bump_right == 1) begin
+       next_state = WALK_RIGHT;  // in WALK_LEFT state
+   ```
+   and symmetrically in WALK_RIGHT state switches to WALK_LEFT. However, this logic does not differentiate which side was bumped to determine the correct direction to switch to. Per the problem, bump_left should cause walking right, bump_right should cause walking left, and bump on both sides should cause switching as well (the problem does not specify which direction in the both bump case, but implies switching direction). The code simply switches direction regardless of which bump side is active.
+
+   This can cause the FSM to choose wrong walking direction in response to a bump on only one side, leading to walk_left and walk_right output mismatches.
+
+3. **Digging initiation conditions:**  
+   The code checks `if (dig == 1)` inside walking states and switches to DIG_LEFT or DIG_RIGHT accordingly. The problem states digging is allowed only if walking on ground (ground=1 and not falling). The code does this correctly by first checking ground==1 in WALK_LEFT/WALK_RIGHT states, so that is consistent.
+
+4. **Digging continuation and transition to falling:**  
+   DIG_LEFT and DIG_RIGHT states remain in digging while ground==1, and switch to FALL_LEFT/FALL_RIGHT when ground==0. This matches the problem description.
+
+5. **Fall duration counter and splatter conditions:**  
+   The code correctly increments `fall_count` when in FALL_LEFT or FALL_RIGHT and ground==0, and resets it or splatters when ground==1 and fall_count>20.
+
+6. **Outputs:**  
+   Outputs are derived only from state, consistent with a Moore FSM. `walk_left` and `walk_right` include digging states as walking in that direction, as required.
+
+7. **Possible cause of walk direction mismatch:**  
+   The main cause of mismatch is that the code switches walking direction indiscriminately on bump_left OR bump_right, rather than checking which bump side was activated and switching direction accordingly.
+
+8. **Other possible minor issues:**  
+   The problem mentions that bump signals during falling or digging do not affect direction, which the code respects by only considering bumps in walking states.
+
+In summary, the walking direction logic on bumps is not faithful to the problem requirements, causing direction outputs to be incorrect, which matches the mismatch errors in the simulation log.
+
+The rest of the code, including falling, digging, splattering, and outputs aaah and digging, seems to behave correctly since those signals had no mismatches.
+
+Therefore, the primary functional problem is the improper bump handling in walking states that leads to incorrect walking direction transitions.

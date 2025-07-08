@@ -1,0 +1,46 @@
+Score: 3
+Justification: The code compiles without syntax errors and generally handles BCD increments correctly, but the pm signal toggling logic is flawed, leading to frequent mismatches in simulation while hh, mm, and ss behave correctly.
+
+ANALYSIS:
+The simulation log indicates a very high number of mismatches on the pm output (177,947 out of 200,000 samples), while the hh, mm, and ss outputs have no mismatches. This means the main functional issue is with the pm signal behavior.
+
+From the problem description, pm should toggle when the clock transitions from 11:59:59 AM to 12:00:00 PM or vice versa — that is, on hour rollover from 11 to 12, or more specifically when the hour counter rolls over from 12 to 1.
+
+The code attempts to implement this toggle of pm here:
+
+```verilog
+if (hr_inc[8]) begin
+  // hours rolled over from 12 -> 1, toggle pm
+  pm <= ~pm;
+end
+```
+
+This logic assumes that the hour increment function `bcd_inc_12` returns a carry bit indicating rollover from 12 to 1. However, examining `bcd_inc_12`:
+
+- It increments the BCD hour.
+- If the result exceeds 0x12 or hits 00, it wraps to 0x01 and sets carry = 1.
+
+This means the carry signal is set when the hour wraps from 12 back to 1, which seems correct.
+
+However, the problem is that the pm toggling depends on the hour rollover *only* when minutes and seconds also roll over. The current code structure toggles pm only if seconds roll over, then minutes roll over, then hours roll over. This is structurally correct for a clock increment.
+
+Given that hh, mm, and ss have no mismatches, the incrementation logic seems stable.
+
+The large mismatch count for pm suggests pm toggles at incorrect times or fails to toggle at expected times.
+
+One likely issue is the use of the non-blocking assignment (`pm <= ~pm;`) inside the same clock edge as reading `pm` for toggling, combined with the fact that pm is toggled only when hour rollover occurs. If the hour rollover signal is somehow asynchronous or not aligned properly with the clock, or if the initial pm state is not correctly set, pm might mismatch.
+
+Another subtle point is that the initial pm is set to 0 on reset (AM), but the first hour increment might not toggle pm correctly due to the way carry is handled.
+
+Additionally, the reset condition has higher priority than enable, but all register updates including pm are inside the same always block, so the initial pm is reset correctly.
+
+In summary:
+
+- The code structure and BCD increment functions are mostly correct, as proven by no mismatches in hh, mm, ss.
+- The pm toggling logic is driven by the hour rollover carry but simulation shows many pm mismatches.
+- The problem likely comes from the design intent around the pm signal toggling not being perfectly implemented or properly synchronized in the code.
+- The toggling of pm only when hours roll over from 12->1 is correct, but the actual toggling behavior as coded causes frequent mismatches, perhaps due to timing or initialization issues.
+
+No syntax errors are present, so compilation succeeds.
+
+Hence, the code partially fulfills the requirements but fails on the pm output correctness.

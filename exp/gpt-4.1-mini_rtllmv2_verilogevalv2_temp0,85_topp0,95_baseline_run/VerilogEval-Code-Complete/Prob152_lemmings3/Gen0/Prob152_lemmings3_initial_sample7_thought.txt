@@ -1,0 +1,15 @@
+Design a Moore FSM with states representing the Lemming's mode: WALK_LEFT, WALK_RIGHT, FALLING_LEFT, FALLING_RIGHT, DIGGING_LEFT, DIGGING_RIGHT. The direction is encoded in the state name. On async reset, set state to WALK_LEFT.
+
+At each clock edge:
+- If ground=0, regardless of bump or dig, transition to FALLING_* corresponding to current direction.
+- If currently falling and ground=1, transition back to walking in the same direction.
+- If currently walking and dig=1 and ground=1, start DIGGING in current direction.
+- If currently digging and ground=0, transition to FALLING in current direction.
+- If currently walking and bumped (left or right or both), switch walking direction.
+- If currently digging or falling, bumps and dig inputs are ignored.
+- Outputs are derived from states:
+  - walk_left=1 if walking_left state
+  - walk_right=1 if walking_right state
+  - aaah=1 if falling states
+  - digging=1 if digging states
+This ensures precedence: fall > dig > bump switch directions.

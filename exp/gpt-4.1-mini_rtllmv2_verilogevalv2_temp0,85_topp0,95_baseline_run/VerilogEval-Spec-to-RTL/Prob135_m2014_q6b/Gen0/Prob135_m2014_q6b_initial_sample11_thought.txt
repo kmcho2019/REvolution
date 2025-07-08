@@ -1,0 +1,9 @@
+Implement a 3-bit state register y representing the current state with encoding: A=000, B=001, C=010, D=011, E=100, F=101. The input w is used for state transitions where specified. The next-state logic for y[1] is derived from the state transition table. Only y[1] next state logic is implemented (y[0] and y[2] remain unchanged in this module, as per the requirement). Output Y1 is y[1].
+
+Since only y[1] next state logic is implemented, we'll create the next state bit for y[1] based on current y and w, and update y[1] accordingly on clock edge. The rest of y bits are not updated here to satisfy the "just the next-state logic for y[1]" requirement. For simplicity, we assume synchronous reset zeroes the state to A=000.
+
+The transitions are mapped to find next y[1] bit from current y and w and input bit y[1] itself.
+
+Note: Because the problem states "Implement just the next-state logic for y[1]", we will update only y[1], and keep y[0] and y[2] stable (no change). We create a synchronous process that updates y[1] according to the next state logic.
+
+We will implement combinational logic for next y[1] based on current y and w using a case statement or ifs to follow transitions.

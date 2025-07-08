@@ -1,0 +1,42 @@
+Score: 5
+Justification: The code is syntactically correct and compiles, but it fails simulation due to incorrect detection timing and logic errors resulting in numerous output mismatches.
+
+ANALYSIS:
+The design intent is to detect a positive edge (0 to 1 transition) on each bit of the input vector `in`, and output a signal `pedge` that is set one clock cycle after such a transition is detected.
+
+Examining the code:
+
+```verilog
+reg [7:0] in_d;        // delayed input
+reg [7:0] pedge_next;  // next cycle pedge detection
+
+always @(posedge clk) begin
+  in_d <= in;
+  pedge_next <= (~in_d) & in; // detect 0->1 transitions on current cycle
+  pedge <= pedge_next;        // output set the cycle after detection
+end
+```
+
+The key problem lies in the way `pedge_next` is computed and used.
+
+1. **Timing and non-blocking assignments**
+
+   The variables `in_d`, `pedge_next`, and `pedge` are all updated in the same clock cycle using non-blocking assignments (`<=`). However, the calculation for `pedge_next` uses `in_d` (delayed input), which is also updated in this clock cycle. Due to non-blocking assignment semantics, `in_d` retains its old value during the right-hand side evaluation, so `(~in_d) & in` actually detects edges between the current cycle's `in` and the previous cycle's `in_d`. 
+
+   This may initially seem correct, but the next assignment `pedge <= pedge_next` causes `pedge` to reflect the detection delayed by two cycles (since `pedge_next` is also registered). This results in `pedge` being set not just one cycle after the transition, but after an additional cycle, thus causing a mismatch with the expected behavior.
+
+2. **Double-registering the detection signal**
+
+   The `pedge_next` register is used to store the detected transition, and then `pedge` is assigned from `pedge_next`. This means the output is delayed by two clock cycles from the actual transition: one cycle delay to detect the edge (`(~in_d) & in`) and another cycle delay to propagate to `pedge`. The problem states the output should be set the cycle *after* the transition, so this extra cycle delay is incorrect.
+
+3. **Possible incorrect transition detection**
+
+   Although the logic `(~in_d) & in` is the standard way to detect rising edges bitwise, due to the timing of registering and output assignment in the same clock cycle, the output signal `pedge` does not align properly with the input transitions.
+
+4. **Simulation mismatches**
+
+   The log indicates 208 mismatches out of 227 samples, starting very early at time 10. This strongly suggests the output timing or logic is consistently off, matching the above analysis of output delay and edge detection logic.
+
+In summary, the main cause of simulation failure is the extra register stage causing `pedge` to be delayed by two cycles instead of one cycle after the input transitions. The use of `pedge_next` as an intermediate registered signal introduces this unintended delay. The edge detection logic itself, based on `(~in_d) & in`, is correct in principle, but the timing of assignments and register usage conflicts with the problem's requirement to output in the cycle immediately following the 0->1 transition.
+
+No syntax errors exist, so the design compiles but functionally does not meet the problem specification, resulting in many mismatches during simulation.

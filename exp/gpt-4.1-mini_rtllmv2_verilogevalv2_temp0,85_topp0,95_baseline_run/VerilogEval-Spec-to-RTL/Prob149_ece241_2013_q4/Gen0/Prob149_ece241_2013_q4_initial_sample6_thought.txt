@@ -1,0 +1,30 @@
+The module monitors the 3-bit sensor input `s` indicating the water level at three sensor heights.
+- The outputs are flow control signals: fr0, fr1, fr2 (nominal flow valves) and dfr (supplemental valve).
+- The flow rate logic depends on the current level and the last sensor change direction (whether the water level increased or decreased).
+- A state variable stores the last sensor level to detect changes.
+- On reset, we assume the water level is low for a long time (no sensors asserted, all flow outputs asserted).
+- On each clock, detect if water level moves up or down by comparing current sensor status with previous.
+- The flow valves are asserted according to the table:
+  - Above s[2] (all sensors asserted): no flow valves asserted
+  - Between s[2] and s[1] (s[0], s[1] asserted): fr0
+  - Between s[1] and s[0] (s[0] asserted): fr0, fr1
+  - Below s[0] (no sensors asserted): fr0, fr1, fr2
+- dfr (supplemental flow valve) is asserted if water level is rising (previous level was lower).
+- Implement synchronous reset to set previous sensor state to none asserted and all valves on.
+
+Note:
+- Since s is 3 bits, the sensor states can be decoded as:
+  - s == 3'b111: Above s[2]
+  - s == 3'b110: Between s[2] and s[1]
+  - s == 3'b100 or s == 3'b101 or s == 3'b010 or 3'b011? The description is only about s[0], s[1], s[2], so interpret as exact sensor assertion sets:
+    - s[2] is highest, s[0] lowest. The problem states sensors are asserted when water level is above them, so:
+      - Sensors asserted: s[0], s[1], s[2] => Above s[2]
+      - Sensors asserted: s[0], s[1] only => Between s[2] and s[1]
+      - Sensors asserted: s[0] only => Between s[1] and s[0]
+      - Sensors asserted: none => Below s[0]
+
+So the only valid sensor states are 3'b111, 3'b011, 3'b001, and 3'b000. We will treat any other state as invalid or fallback to nearest valid.
+
+- Store previous level as encoded: 0=below s0, 1=between s1 and s0, 2=between s2 and s1, 3=above s2
+
+Implement the logic accordingly.

@@ -1,0 +1,51 @@
+We have a state machine with 6 states A to F encoded one-hot in y[5:0]. The transitions are given with input '0' or '1', but it's not fully explicit what the input signal controlling transitions is. The problem states input 'w' is the input.
+
+Given this, the transitions can be read as:
+
+- From A (y=000001) on w=0 -> B (000010)
+- From A on w=1 -> A
+- From B on w=0 -> C (000100)
+- From B on w=1 -> D (001000)
+- From C on w=0 -> E (010000)
+- From C on w=1 -> D
+- From D on w=0 -> F (100000)
+- From D on w=1 -> A
+- From E on w=0 -> E
+- From E on w=1 -> D
+- From F on w=0 -> C
+- From F on w=1 -> D
+
+We are to derive the next state signals corresponding to y[1] and y[3], i.e., Y2 = next y[1], Y4 = next y[3].
+
+Since y is one-hot, y[1] corresponds to state B, y[3] to state D.
+
+Let's write the next state equations for y[1] and y[3]:
+
+- y[1] (B) next is 1 when the next state is B.
+
+From transitions:
+
+Next state is B only when current state is A and w=0, because A->B on 0.
+
+So, Y2 = y[0] & ~w
+
+- y[3] (D) next is 1 when the next state is D.
+
+From transitions:
+
+- B->D on w=1: current y[1] & w
+- C->D on w=1: current y[2] & w
+- E->D on w=1: current y[4] & w
+- F->D on w=1: current y[5] & w
+
+Therefore:
+
+Y4 = w & (y[1] | y[2] | y[4] | y[5])
+
+We implement these two next state outputs as combinational logic.
+
+Note: The problem says "The module should implement the next-state signals Y2 and Y4 corresponding to signal y[1] and y[3]". The module interface has outputs Y1 and Y3, so I assume Y1 corresponds to next y[1] (Y2) and Y3 corresponds to next y[3] (Y4). So outputs Y1 and Y3 correspond to next state bits y[1] and y[3].
+
+Finally, the inputs are y[5:0] and w, outputs Y1 and Y3.
+
+This is a purely combinational logic module producing next state bits Y1 and Y3 from current state y and input w.

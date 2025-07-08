@@ -1,0 +1,15 @@
+The design implements a parameterized fixed-point adder for N-bit signed fixed-point numbers with Q fractional bits. 
+The inputs `a` and `b` are treated as two's complement fixed-point numbers. 
+Addition follows these rules:
+- If signs are the same, add the absolute values and keep the sign.
+- If signs differ, subtract the smaller absolute value from the larger and assign the sign of the larger magnitude operand.
+Because inputs are two's complement, absolute values are obtained by checking the sign bit and conditionally negating.
+To add/subtract absolute values, convert operands to positive numbers, perform arithmetic, then reapply sign.
+Finally, assign the result to the output register `res` and output it as `c`.
+The code uses combinational logic to compute the result without clock or reset.
+
+Overflow in fixed-point addition is inherently handled by two's complement arithmetic.
+If overflow occurs, the MSB and the next MSB differ, but this logic does not explicitly saturate or flag overflow — it just returns N-bit two's complement result.
+This meets the problem requirements.
+
+This approach ensures the sign bit and fractional bits are handled consistently.

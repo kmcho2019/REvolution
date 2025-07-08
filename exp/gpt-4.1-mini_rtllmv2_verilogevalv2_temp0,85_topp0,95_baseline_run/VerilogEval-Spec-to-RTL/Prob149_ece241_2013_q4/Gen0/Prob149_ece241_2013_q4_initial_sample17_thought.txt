@@ -1,0 +1,56 @@
+The problem describes a water level monitoring system with three sensors (s[2:0]) arranged vertically at 5-inch intervals. The system outputs flow rate control signals fr2, fr1, fr0, and dfr based on the current water level and the previous water level state. The flow rate control depends on the water level zone and the previous water level transition (whether the water level is rising or falling).
+
+We need to implement a state machine or memory to track the previous sensor state and compare it to the current sensor state to decide if the water level is rising or falling.
+
+Key points and approach:
+- Inputs: clk, reset, s[2:0]
+- Outputs: fr2, fr1, fr0, dfr
+- When reset is asserted, assume the water level was low for a long time → no sensors asserted (000), all outputs asserted (fr2=fr1=fr0=dfr=1).
+- Water level zones:
+  - Above s[2]: all sensors asserted (111), flow rate zero (fr2=fr1=fr0=dfr=0)
+  - Between s[2] and s[1]: sensors s[0], s[1] asserted (110 or exactly 110?), nominal flow fr0 asserted, dfr may be asserted if level rising
+  - Between s[1] and s[0]: sensor s[0] asserted (100), nominal flow fr0, fr1 asserted
+  - Below s[0]: no sensors asserted (000), maximum flow fr0, fr1, fr2 asserted
+- dfr is asserted if the water level is rising (previous level was lower than current level), otherwise 0
+- The water level is indicated by which sensors are asserted:
+  - Above s[2]: s=111
+  - Between s[2] and s[1]: s=110 (s[2] not asserted, s[1], s[0] asserted)
+  - Between s[1] and s[0]: s=100 (only s[0] asserted)
+  - Below s[0]: s=000 (no sensors asserted)
+
+We must store the previous water level state and detect if the level is rising (previous < current level) or falling (previous > current level). We'll encode the water level zones as a 2-bit level code:
+
+Level encoding:
+ 0 = below s[0]
+ 1 = between s[1] and s[0]
+ 2 = between s[2] and s[1]
+ 3 = above s[2]
+
+Deriving level from sensors:
+- If s == 3'b111 → level 3
+- else if s[2]==0 and s[1]==1 and s[0]==1 (110) → level 2
+- else if s == 3'b100 → level 1
+- else if s == 3'b000 → level 0
+- For any other input patterns, treat as no sensors (level 0) for safety.
+
+Then:
+- Compare previous_level and current_level:
+  - if current_level > previous_level → rising → dfr=1
+  - else dfr=0
+
+Outputs based on current level:
+- level 3 (above s[2]): fr2=0, fr1=0, fr0=0, dfr=0
+- level 2 (between s[2] and s[1]): fr0=1, fr1=0, fr2=0, dfr as above
+- level 1 (between s[1] and s[0]): fr0=1, fr1=1, fr2=0, dfr as above
+- level 0 (below s[0]): fr0=1, fr1=1, fr2=1, dfr as above
+
+At reset, set previous_level to 0 and outputs all asserted (fr2=fr1=fr0=dfr=1).
+
+Implementation plan:
+- Use a synchronous process triggered by clk
+- On reset: set previous_level=0; outputs = all 1
+- Otherwise:
+  - Decode current_level from s
+  - Compare previous_level and current_level for dfr
+  - Assign fr outputs based on current_level
+  - Store current_level in previous_level for next cycle

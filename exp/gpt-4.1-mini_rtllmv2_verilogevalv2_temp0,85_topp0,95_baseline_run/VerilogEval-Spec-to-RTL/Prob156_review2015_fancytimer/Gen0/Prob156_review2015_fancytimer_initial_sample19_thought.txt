@@ -1,0 +1,9 @@
+Implement a synchronous FSM with these states: SEARCH (looking for pattern 1101), SHIFT_DELAY (shifting in 4 bits of delay), COUNTING (counting down the timer), DONE (timer expired and waiting for ack).
+
+- Use a 4-bit shift register to detect the start pattern 1101 in SEARCH.
+- Once detected, go to SHIFT_DELAY state and shift in 4 bits MSB first to form delay.
+- Then go to COUNTING state, count (delay+1)*1000 cycles using a 10-bit cycle counter and a 4-bit delay counter to track remaining time.
+- Output 'count' as the current remaining time (from delay down to 0).
+- When done counting, assert done, deassert counting, and wait for ack to return to SEARCH.
+- During COUNTING and DONE states, data input ignored except ack in DONE.
+- Reset synchronously clears state and registers.

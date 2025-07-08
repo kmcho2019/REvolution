@@ -1,0 +1,9 @@
+To implement this FSM, we need to:
+1. Define states: A (initial state), B (after reset), C (waiting for 1-0-1 pattern), D (g=1, waiting for y=1 within 2 cycles), E (g=1 permanently), F (g=0 permanently)
+2. In state A: wait for resetn to go high
+3. In state B: set f=1 for one cycle then move to state C
+4. In state C: detect 1-0-1 pattern on x over 3 cycles, then move to state D
+5. In state D: check y for 1 within 2 cycles - if found go to E, else go to F
+6. Output g=1 in states D and E, g=0 otherwise
+7. Output f=1 only in state B
+8. Use sequential logic with synchronous reset

@@ -1,0 +1,15 @@
+Create a Moore FSM that tracks the count of consecutive 1s seen in the input stream since the last zero. On reset, it starts assuming the previous input was 0, so state 0 (no consecutive 1s). For each input bit, the FSM transitions through states representing the count of consecutive 1s (0 to 6 or more). When a zero is seen, the FSM resets to state 0. The specific sequences to detect are:
+
+- disc: After seeing exactly five 1s followed by a 0 (0111110), signal disc next cycle.
+- flag: After seeing six 1s followed by a 0 (01111110), signal flag next cycle.
+- err: After seeing seven or more 1s in a row (01111111...), signal err next cycle.
+
+Outputs are asserted for one full clock cycle starting on the cycle after the sequence is detected. The FSM transitions on each clock, synchronously with reset.
+
+We define states from S0 (0 consecutive 1s) up to S7+ (7 or more 1s). Outputs are defined per state:
+
+- disc asserted when previous state was S5 and input=0 occurs next cycle.
+- flag asserted when previous state was S6 and input=0 occurs next cycle.
+- err asserted when in S7+ state.
+
+Implement as a Moore machine with registered outputs, synchronous reset active high.

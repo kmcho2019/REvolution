@@ -1,0 +1,14 @@
+We have a one-hot encoded Moore machine with 4 states (A=0001, B=0010, C=0100, D=1000). The state transitions depend on the input 'in', and we need to implement the combinational logic for next_state and output.
+
+By inspection of the table:
+
+- For next_state:
+  - next_state[A] = (state[A] & ~in) | (state[C] & ~in)
+  - next_state[B] = (state[A] & in) | (state[B] & in) | (state[D] & in)
+  - next_state[C] = (state[B] & ~in) | (state[D] & ~in)
+  - next_state[D] = state[C] & in
+
+- For output:
+  - Only state D outputs 1, so out = state[D]
+
+This logic directly implements the next state and output for the given machine.

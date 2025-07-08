@@ -1,0 +1,31 @@
+Score: 4
+Justification: The code compiles without syntax errors, but the simulation shows a large number of mismatches (2039 out of 2055 samples), indicating significant functional errors. The main issue lies in how the history bits are shifted and concatenated during misprediction and prediction updates.
+
+ANALYSIS:
+The module is intended to maintain a 32-bit global branch history register, shifting in new branch results at the youngest bit (bit 0). On a misprediction, the history should be restored to the history before the mispredicted branch concatenated with the actual branch outcome.
+
+1. **Misprediction Handling:**
+   The code uses:
+   ```verilog
+   predict_history <= {train_taken, train_history[31:1]};
+   ```
+   Here, `train_history[31:1]` selects bits 31 down to 1, dropping bit 0, and concatenates `train_taken` as the MSB (bit 31). However, the problem statement specifies that `predict_history[0]` is the youngest branch, meaning the LSB should represent the most recent branch outcome. The concatenation in the code places the actual branch outcome (`train_taken`) at the MSB side, effectively reversing the intended bit order.
+
+   The intent is to restore the history such that the new LSB (bit 0) is the actual branch outcome (`train_taken`), and the remaining 31 bits are the history prior to the mispredicted branch. The current code reverses this by putting `train_taken` at the MSB, which contradicts the specification.
+
+2. **Prediction Handling:**
+   The code uses:
+   ```verilog
+   predict_history <= {predict_taken, predict_history[31:1]};
+   ```
+   Similarly, this shifts the history to the right and inserts `predict_taken` at the MSB side. Since the youngest branch should be at bit 0 (LSB), this again reverses the bit order of the shift operation. Shifting in the newest bit at MSB is inconsistent with the problem's specification.
+
+3. **Bit Order Consistency:**
+   Both during misprediction recovery and new prediction insertion, the code treats the history MSB as the youngest bit, which is the opposite of what the problem specifies. This fundamental misunderstanding of bit ordering causes the large number of mismatches seen in the simulation.
+
+4. **Reset Behavior:**
+   The reset is implemented correctly as an asynchronous positive edge reset setting the history to zero.
+
+Overall, the core logical error causing the simulation failures is the reversed bit ordering in the shift and concatenation operations for both prediction updates and misprediction recovery. This violates the problem requirement that bit 0 is the youngest branch, directly causing the observed simulation mismatches.
+
+No syntax errors are present, so the code compiles but fails functional verification due to the logic errors described.

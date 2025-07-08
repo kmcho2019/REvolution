@@ -1,0 +1,12 @@
+The problem requires a finite state machine (FSM) with the following states:
+1. IDLE: Waiting for the start pattern (1101)
+2. SHIFT: After detecting the pattern, enable shifting for 4 cycles
+3. COUNT: Wait for the counter to finish
+4. DONE: Notify user and wait for acknowledgment
+
+The FSM transitions:
+- From IDLE to SHIFT when 1101 is detected
+- From SHIFT to COUNT after 4 cycles
+- From COUNT to DONE when done_counting is high
+- From DONE back to IDLE when ack is received
+- Reset to IDLE state when reset is high

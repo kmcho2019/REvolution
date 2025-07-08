@@ -1,0 +1,109 @@
+The Karnaugh map uses inputs a and b as column indices (in the order 01,00,10,11) and c and d as row indices (00,01,11,10). The output is given for each cell, with 'd' indicating don't-care values. Since d is a don't-care input, we can choose output values for cells marked 'd' to simplify the expression.
+
+First, let's reorder the columns to standard ab order: 00,01,10,11 is standard, but here columns are labeled 01,00,10,11:
+
+Mapping columns:
+- col0: ab=01
+- col1: ab=00
+- col2: ab=10
+- col3: ab=11
+
+Similarly, rows are cd=00,01,11,10.
+
+We need to create a truth table mapping inputs a,b,c,d to output according to the Karnaugh map.
+
+Step 1: Map each cell to the corresponding input combination:
+
+For each cell:
+- row: cd
+- col: ab
+
+We will list all combinations and their outputs.
+
+Indexing inputs:
+
+- a,b,c,d are inputs (1-bit each).
+
+Column order (ab):
+- col0: a=0,b=1 (since ab=01)
+- col1: a=0,b=0 (ab=00)
+- col2: a=1,b=0 (ab=10)
+- col3: a=1,b=1 (ab=11)
+
+Row order (cd):
+- row0: c=0,d=0
+- row1: c=0,d=1
+- row2: c=1,d=1
+- row3: c=1,d=0
+
+Now, fill the truth table:
+
+| c d | a b=01 | 00  | 10  | 11  |
+|-----|--------|-----|-----|-----|
+| 0 0 | d      | 0   | 1   | 1   |
+| 0 1 | 0      | 0   | d   | d   |
+| 1 1 | 0      | 1   | 1   | 1   |
+| 1 0 | 0      | 1   | 1   | 1   |
+
+Now, substituting the values with inputs:
+
+For each combination of a,b,c,d, assign the output.
+
+Remember, 'd' means don't care, so we can assign 0 or 1 to minimize the expression.
+
+Step 2: Convert the K-map into SOP or POS form.
+
+Alternatively, since d is don't-care, we can assign those cells as convenient to simplify the logic.
+
+Approach:
+
+- Create a function f(a,b,c,d) matching the specified outputs and considering d as don't-care.
+
+- Implement the function in Verilog using combinational logic.
+
+Optionally, we can write a case statement covering all known outputs, assigning 0 or 1 to don't care to simplify.
+
+Summary of output (assigning 'd' to 0 for simplicity):
+
+| c d | a b=01 | 00 | 10 | 11 |
+|-----|--------|----|----|----|
+| 0 0 | 0      | 0  | 1  | 1  |
+| 0 1 | 0      | 0  | 0  | 0  |
+| 1 1 | 0      | 1  | 1  | 1  |
+| 1 0 | 0      | 1  | 1  | 1  |
+
+Now, for each input combination, we assign output:
+
+Let's list all 16 combinations:
+
+1. c=0,d=0,a=0,b=1 => out=0
+2. c=0,d=0,a=0,b=0 => out=0
+3. c=0,d=0,a=1,b=0 => out=1
+4. c=0,d=0,a=1,b=1 => out=1
+
+5. c=0,d=1,a=0,b=1 => 0
+6. c=0,d=1,a=0,b=0 => 0
+7. c=0,d=1,a=1,b=0 => 0
+8. c=0,d=1,a=1,b=1 => 0
+
+9. c=1,d=1,a=0,b=1 => 0
+10. c=1,d=1,a=0,b=0 =>1
+11. c=1,d=1,a=1,b=0 =>1
+12. c=1,d=1,a=1,b=1 =>1
+
+13. c=1,d=0,a=0,b=1 => 0
+14. c=1,d=0,a=0,b=0 =>1
+15. c=1,d=0,a=1,b=0 =>1
+16. c=1,d=0,a=1,b=1 =>1
+
+We can implement the logic as a combinational function or a lookup table.
+
+To simplify, we can write the expression in Verilog:
+
+- Use a case statement on inputs {c,d,a,b}.
+
+- Assign outputs accordingly.
+
+Alternatively, write the boolean expression.
+
+I will use a case statement for clarity.

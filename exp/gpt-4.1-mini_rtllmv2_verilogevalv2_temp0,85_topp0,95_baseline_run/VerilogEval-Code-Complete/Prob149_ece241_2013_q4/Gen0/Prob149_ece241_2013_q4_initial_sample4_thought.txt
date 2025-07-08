@@ -1,0 +1,21 @@
+The design is a synchronous FSM that monitors the water level via three sensors s[1], s[2], s[3]. Based on the sensor inputs, the water level falls into one of four states: above s[3], between s[3] and s[2], between s[2] and s[1], or below s[1]. Each state corresponds to a specific nominal flow valve output combination (fr1, fr2, fr3), and the supplemental flow valve dfr depends on whether the water level is rising compared to the previous state.
+
+We will encode states based on water level ranges:
+- STATE_ABOVE_S3: s[1], s[2], s[3] all asserted
+- STATE_BETWEEN_S3_S2: s[1], s[2] asserted, s[3] deasserted
+- STATE_BETWEEN_S2_S1: s[1] asserted, s[2], s[3] deasserted
+- STATE_BELOW_S1: none asserted
+
+We will keep track of the previous state to detect if the water level is rising (previous state lower in water level order than current) to control dfr.
+
+Reset sets the FSM to the lowest water level (below s[1]) and all outputs asserted.
+
+On each clock, inputs s are sampled, next state is determined. Outputs are assigned based on the current water level state and whether the level is rising.
+
+Flow outputs according to the table:
+- Above s[3]: no flow valves (fr1=0, fr2=0, fr3=0, dfr=0)
+- Between s[3] and s[2]: fr1=1, others 0, dfr depends on rising
+- Between s[2] and s[1]: fr1=1, fr2=1, fr3=0, dfr depends on rising
+- Below s[1]: fr1=1, fr2=1, fr3=1, dfr depends on rising
+
+We will implement this in a synchronous always block with reset, store previous water level state for comparison, and output the signals accordingly.

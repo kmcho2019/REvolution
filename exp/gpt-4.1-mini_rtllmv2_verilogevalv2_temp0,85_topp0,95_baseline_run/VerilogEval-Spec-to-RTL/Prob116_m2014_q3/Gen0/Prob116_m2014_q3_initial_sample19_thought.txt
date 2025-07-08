@@ -1,0 +1,75 @@
+The Karnaugh map is a 4-variable map with variables x[3], x[4] as row variables and x[1], x[2] as column variables.
+We are given the function values with some don't-cares. The goal is to find a minimal Boolean expression for f.
+
+Mapping indices:
+x = {x[3], x[4], x[1], x[2]}
+
+Rows (x[3]x[4]): 00, 01, 11, 10 (in that order)
+Columns (x[1]x[2]): 00, 01, 11, 10 (in that order)
+
+So each cell corresponds to:
+f[x3x4][x1x2]
+
+From the K-map (reproducing cells with their values):
+Row 00 (x3=0,x4=0): cols 00=d, 01=0, 11=d, 10=d
+Row 01 (x3=0,x4=1): cols 00=0, 01=d, 11=1, 10=0
+Row 11 (x3=1,x4=1): cols 00=1, 01=1, 11=d, 10=d
+Row 10 (x3=1,x4=0): cols 00=1, 01=1, 11=0, 10=d
+
+Don't-cares can be chosen to simplify the function.
+
+To synthesize f, we can write the minterms for 1s:
+- Row 01, col 11: x3=0,x4=1,x1=1,x2=1 => 0 1 1 1 = x[3]=0,x[4]=1,x[1]=1,x[2]=1
+- Row 11, col 00: x3=1,x4=1,x1=0,x2=0
+- Row 11, col 01: x3=1,x4=1,x1=0,x2=1
+- Row 10, col 00: x3=1,x4=0,x1=0,x2=0
+- Row 10, col 01: x3=1,x4=0,x1=0,x2=1
+
+Row 01, col 11 = x3'=0, x4=1, x1=1, x2=1
+Rows 11 and 10, cols 00 and 01 all have f=1, except 10 11=0 and some don't-cares.
+
+Let me try to find a simplified expression:
+
+Group 1:
+Rows 11 and 10, cols 00 and 01 have f=1:
+- Row 11 (x3=1, x4=1), cols 00(0,0), 01(0,1)
+- Row 10 (x3=1, x4=0), cols 00(0,0), 01(0,1)
+
+This corresponds to:
+x3=1
+x1=0
+x2=0 or 1 (since cols 00 and 01)
+x4=0 or 1 (rows 10 and 11)
+This simplifies to: x3 & ~x1
+
+Group 2:
+Row 01, col 11: x3=0,x4=1,x1=1,x2=1
+No other 1s nearby except some don't-cares.
+So this minterm: ~x3 & x4 & x1 & x2
+
+So, f = (x3 & ~x1) + (~x3 & x4 & x1 & x2)
+
+Implementing this expression in Verilog.
+
+Note: x[3] is MSB of input, x[0] is LSB by typical indexing but here we must be consistent with given x[1..4].
+We are told input x is 4 bits, x[1]..x[4], but in Verilog the vector indices start from 0. Let's assume:
+x[3] = x[3]
+x[4] = x[2]
+x[1] = x[0]
+x[2] = x[1]
+
+Wait, no, the user says x is 4 bits (input x (4 bits)) and the Karnaugh map uses x[1]..x[4].
+
+Probably they mean x[1] is the LSB and x[4] is the MSB, or vice versa.
+
+But the rows are labeled x[3] x[4], columns x[1] x[2], so the input is x[4:1].
+
+In Verilog, vectors are 0-based, so to match indexing cleanly, define input as input [4:1] x; or input [3:0] x and then map accordingly.
+
+We will declare input [4:1] x; so x[4] is MSB, x[1] LSB.
+
+Use that in expression.
+
+Final Verilog:
+
+f = (x[3] & ~x[1]) | (~x[3] & x[4] & x[1] & x[2]);

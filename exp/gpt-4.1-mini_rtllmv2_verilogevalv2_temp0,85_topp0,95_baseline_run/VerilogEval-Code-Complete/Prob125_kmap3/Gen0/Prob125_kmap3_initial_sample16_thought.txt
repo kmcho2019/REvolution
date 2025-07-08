@@ -1,0 +1,164 @@
+Analyze the Karnaugh map to find the minimal sum-of-products expression. Treat 'd' (don't-care) as either 0 or 1 to simplify the logic.
+
+The Karnaugh map (with rows cd and columns ab):
+
+       ab
+cd   01  00  10  11
+00 | d | 0 | 1 | 1 |
+01 | 0 | 0 | d | d |
+11 | 0 | 1 | 1 | 1 |
+10 | 0 | 1 | 1 | 1 |
+
+Rearranging the map for clarity (cd rows, ab columns):
+
+cd\ab | 00 | 01 | 10 | 11
+--------------------------------
+  00  |  0 | d  | 1  | 1
+  01  |  0 | 0  | d  | d
+  11  |  1 | 0  | 1  | 0
+  10  |  1 | 0  | 1  | 1
+
+But the problem statement has columns in order 01 00 10 11, so let's keep their order:
+
+Columns: 01, 00, 10, 11
+Rows: 00, 01, 11, 10
+
+So we have:
+
+          01  00  10  11 (ab)
+     00 | d | 0 | 1 | 1 | (cd)
+     01 | 0 | 0 | d | d |
+     11 | 0 | 1 | 1 | 1 |
+     10 | 0 | 1 | 1 | 1 |
+
+Let's map each cell as f(abcd):
+
+Indexing variables as a,b,c,d (a,b most significant bits):
+
+Using the order:
+
+ab: 01= a=0,b=1
+    00= a=0,b=0
+    10= a=1,b=0
+    11= a=1,b=1
+
+cd: 00= c=0,d=0
+    01= c=0,d=1
+    11= c=1,d=1
+    10= c=1,d=0
+
+Listing cells with their values:
+
+( c d ) ( a b ) : value
+
+(0 0)(0 1) = d (don't care)
+(0 0)(0 0) = 0
+(0 0)(1 0) = 1
+(0 0)(1 1) = 1
+
+(0 1)(0 1) = 0
+(0 1)(0 0) = 0
+(0 1)(1 0) = d
+(0 1)(1 1) = d
+
+(1 1)(0 1) = 0
+(1 1)(0 0) = 1
+(1 1)(1 0) = 1
+(1 1)(1 1) = 1
+
+(1 0)(0 1) = 0
+(1 0)(0 0) = 1
+(1 0)(1 0) = 1
+(1 0)(1 1) = 1
+
+Now, choosing 'd' to simplify the logic, let's see which groups can be formed:
+
+- The entire column ab=10 (a=1,b=0) is mostly 1's except a don't care at (0 1)(10)
+
+- The last row (cd=10) with ab=00,10,11 is all 1's except at (10)(01) =0
+
+- Also, the cells at (0 0)(1 0) and (0 0)(1 1) are 1
+
+Trying to find implicants:
+
+1) Group of all 1's where a=1: When a=1, b can be 0 or 1, c and d vary.
+
+Check all cells with a=1:
+
+(ab=10 or 11):
+
+- (00)(10) =1
+
+- (00)(11) =1
+
+- (01)(10)= d (can be 1)
+
+- (01)(11)= d (can be 1)
+
+- (11)(10)=1
+
+- (11)(11)=1
+
+- (10)(10)=1
+
+- (10)(11)=1
+
+So for all c,d with a=1, output is 1 or don't care which we choose as 1.
+
+So one implicant is a=1 (i.e., a)
+
+2) Check other 1's:
+
+At (1 1)(0 0)=1
+
+(ab=00,c d=11)
+
+This is a=0,b=0,c=1,d=1
+
+Is this covered by a=1? No.
+
+3) Check (1 0)(0 0)=1
+
+(ab=00, cd=10)
+
+a=0,b=0,c=1,d=0
+
+Again, no.
+
+Check if these two points can be grouped:
+
+At (cd=11 or 10), ab=00, value=1
+
+Two points:
+
+(11)(00) =1
+
+(10)(00) =1
+
+Can group these two with c=1, d= don't care (since d=1 and 0), a=0,b=0
+
+So group: a=0,b=0,c=1
+
+Expression: (~a & ~b & c)
+
+4) Now check if the don't cares at (0 0)(01) and (0 1)(10,11) can help merge groups.
+
+The only 0's at (0 0)(00), (0 1)(01,00) are zeros.
+
+Summary of implicants:
+
+- a
+
+- ~a & ~b & c
+
+This covers all 1's and uses don't cares as 1 where needed.
+
+Hence, output = a + (~a & ~b & c)
+
+Simplify:
+
+out = a + (~a & ~b & c)
+
+No further simplification.
+
+Implement this expression.

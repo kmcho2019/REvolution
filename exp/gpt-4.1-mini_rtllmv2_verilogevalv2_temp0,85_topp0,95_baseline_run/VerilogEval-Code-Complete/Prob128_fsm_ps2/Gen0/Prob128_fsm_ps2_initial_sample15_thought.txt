@@ -1,0 +1,7 @@
+Implement a 3-state FSM: IDLE, BYTE2, BYTE3.
+- Initially in IDLE state, discard bytes until a byte with in[3]=1 is found (start of message).
+- Move to BYTE2 after receiving the first byte.
+- On next byte, move to BYTE3.
+- On next byte, signal done for one cycle (next clock) and return to BYTE2 (assuming continuous messages).
+Reset synchronously sets FSM to IDLE and done to 0.
+done is asserted for one clock cycle immediately after the third byte is received.

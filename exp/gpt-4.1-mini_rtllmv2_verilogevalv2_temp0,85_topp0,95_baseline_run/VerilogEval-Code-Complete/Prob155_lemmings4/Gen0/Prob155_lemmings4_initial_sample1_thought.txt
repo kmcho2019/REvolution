@@ -1,0 +1,27 @@
+We will design a Moore FSM to model the Lemming's behavior with the following states:
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- FALLING_LEFT: falling while previously walking left
+- FALLING_RIGHT: falling while previously walking right
+- DIGGING_LEFT: digging while walking left on ground
+- DIGGING_RIGHT: digging while walking right on ground
+- SPLATTERED: once splattered, no outputs active forever
+
+The FSM transitions according to the priority:
+1. If on ground=0 and not already falling or splattered, transition to falling state corresponding to current walking direction.
+2. If dig=1 and currently walking on ground (not falling) and not splattered, transition to digging in current walking direction.
+3. If bumped on left or right while walking on ground, switch walking direction.
+4. Falling duration is counted by a counter; if it reaches >20 cycles and then ground=1, splatter and transition to SPLATTERED.
+
+During falling or digging, bumps and dig inputs are ignored. On ground re-appearance, falling transitions back to walking in the original direction.
+
+Outputs depend only on state:
+- WALK_LEFT: walk_left=1
+- WALK_RIGHT: walk_right=1
+- FALLING_LEFT or FALLING_RIGHT: aaah=1
+- DIGGING_LEFT or DIGGING_RIGHT: digging=1
+- SPLATTERED: all outputs=0
+
+We will implement asynchronous reset (areset) to WALK_LEFT state and clear counters.
+
+The state encoding will be one-hot for simplicity and clarity.

@@ -1,0 +1,6 @@
+To create a dual-edge triggered flip-flop on an FPGA that only supports single-edge triggered flip-flops, we can use two single-edge triggered flip-flops: one triggered on the rising edge and one triggered on the falling edge of the clock. Each captures the input 'd' on its respective edge. Then we multiplex their outputs to produce the final output 'q' that updates on both edges.
+
+Specifically:
+- Instantiate two flip-flops: one triggered on posedge clk and one on negedge clk, both capturing 'd'.
+- Use the clock as a selector to output one or the other flip-flop's output. For example, when clk=0, output the falling-edge captured value, when clk=1, output the rising-edge captured value.
+- This ensures the output 'q' changes on both edges of clk, mimicking a dual-edge triggered flip-flop.

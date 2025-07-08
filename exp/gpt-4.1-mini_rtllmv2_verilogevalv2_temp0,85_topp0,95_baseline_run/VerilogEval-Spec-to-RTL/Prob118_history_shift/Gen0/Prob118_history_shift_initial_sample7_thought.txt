@@ -1,0 +1,7 @@
+Implement a 32-bit shift register with asynchronous reset. On each positive clock edge:
+- If areset is asserted, reset the history to zero.
+- Else if train_mispredicted is asserted, load history with {train_history, train_taken}.
+- Else if predict_valid is asserted, shift history left by 1 and insert predict_taken at LSB.
+- Otherwise, retain current history.
+Output predict_history as the current history register value.
+Because misprediction takes precedence, check train_mispredicted before predict_valid.

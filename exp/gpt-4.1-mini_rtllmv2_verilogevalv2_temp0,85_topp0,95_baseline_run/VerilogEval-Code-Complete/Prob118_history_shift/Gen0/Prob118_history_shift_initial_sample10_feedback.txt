@@ -1,0 +1,25 @@
+Score: 3
+Justification: The code is syntactically correct and compiles, but the simulation reveals a large number of mismatches indicating functional errors in how the branch history is shifted and updated, leading to almost complete failure in matching expected outputs.
+
+ANALYSIS:
+The intent is to maintain a 32-bit global branch history with the youngest branch direction at bit 0, updating on prediction and allowing rollback on misprediction. The asynchronous reset correctly zeroes the history. However, the implementation of the shift and concatenations in the always_ff block contradicts the problem requirements.
+
+1. **Misprediction Handling (train_mispredicted)**:
+   - The comment states that `train_history` holds the history before the mispredicted branch and should occupy bits [31:1] after loading.
+   - The code assigns: `predict_history <= {train_history[31:1], train_taken};`
+   - This takes bits [31:1] of `train_history` and concatenates `train_taken` as LSB at bit 0.
+   - The problem states that `train_history` is 32 bits representing the history before the mispredicted branch, so it should fully occupy bits [31:1] plus `train_taken` at bit 0.
+   - By slicing `train_history[31:1]` (only 31 bits, excluding bit 0), the code discards the LSB (youngest branch) from `train_history`. This truncation causes the loaded history to be incorrect by losing the youngest branch direction, thereby not restoring the precise pre-misprediction state.
+   
+2. **Prediction Handling (predict_valid)**:
+   - The code shifts the history by right-shifting the register and inserting the new prediction at bit 31: `predict_history <= {predict_taken, predict_history[31:1]};`
+   - This contradicts the problem's description that the youngest branch is at bit 0 and that new predictions should be shifted in from the LSB side.
+   - Instead, the code inserts `predict_taken` at bit 31 (MSB) and shifts existing bits down, effectively reversing the order and violating the intended ordering.
+   - The correct behavior would be to shift left and insert the new bit at LSB (bit 0), preserving the youngest branch at LSB.
+   
+3. **Consequences**:
+   - Due to these reversed shifts and incorrect bit slicing, the `predict_history` output does not match the expected sequence of branch outcomes.
+   - The simulation log shows 2039 mismatches out of 2055 samples, which is a near-total failure to track history correctly.
+   - The code comments also incorrectly describe the operations, suggesting a misunderstanding of bit ordering.
+   
+Overall, the root cause is the reversed bit ordering in shifting and incorrect slicing during rollback, both conflicting with the problem's specification that the youngest branch is at bit 0 and that `train_history` represents a full 32-bit history before the mispredicted branch.

@@ -1,0 +1,15 @@
+Implement an FSM with these states:
+- SEARCH: look for pattern 1101 in serial data; use a 4-bit shift register to detect it.
+- SHIFT: once pattern detected, assert shift_ena for exactly 4 cycles to shift in the 4 duration bits.
+- COUNTING: assert counting and wait for done_counting to be asserted.
+- DONE: assert done and wait for ack to be asserted, then return to SEARCH.
+
+On reset, go to SEARCH state.
+
+Use a 4-bit shift register to detect the pattern 1101. On every clk, shift in data and compare. When pattern matches, move to SHIFT state.
+
+In SHIFT state, count 4 clock cycles asserting shift_ena, then move to COUNTING.
+
+In COUNTING, assert counting until done_counting is high.
+
+In DONE, assert done until ack is high, then go back to SEARCH.

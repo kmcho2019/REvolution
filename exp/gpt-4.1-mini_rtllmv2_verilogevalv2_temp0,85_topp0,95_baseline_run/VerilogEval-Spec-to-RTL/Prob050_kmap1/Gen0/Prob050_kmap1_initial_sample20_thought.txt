@@ -1,0 +1,28 @@
+First, let's write down the Karnaugh map more clearly with inputs a, b, c:
+
+The map is for variables b and c on rows and a on columns:
+
+      a=0  a=1
+bc=00 0     1
+bc=01 1     1
+bc=11 1     1
+bc=10 1     1
+
+From the map, when a=0:
+- bc=00 -> 0
+- bc=01,10,11 -> 1
+
+When a=1:
+- All bc combinations -> 1
+
+So the output is 1 when either a=1 or (a=0 and bc != 00).
+
+That means output = a OR (not a AND (b OR c))
+
+Simplify: output = a + (~a)(b + c) = a + b + c
+
+Because when a=1 output=1, or if a=0, output = b OR c.
+
+Thus output = a OR b OR c.
+
+Implement this as a simple OR gate.

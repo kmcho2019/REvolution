@@ -1,0 +1,23 @@
+Design a 3-state Mealy FSM to detect the sequence "101" on input x. 
+States:
+S0 - initial state, no bits matched
+S1 - matched '1'
+S2 - matched '10'
+
+On each clock rising edge, transition between states based on input x.
+Use asynchronous negative edge reset to return to S0.
+Output z is asserted when the last input bit completes the "101" sequence.
+Since it's a Mealy machine, z depends on current state and input x.
+
+State transitions:
+S0: 
+  if x=1 -> S1
+  else -> S0
+S1: 
+  if x=0 -> S2
+  else -> S1
+S2:
+  if x=1 -> output z=1 and go to S1 (since last '1' can start new sequence)
+  else -> S0
+
+Implement output z as combinational logic based on current state and input.

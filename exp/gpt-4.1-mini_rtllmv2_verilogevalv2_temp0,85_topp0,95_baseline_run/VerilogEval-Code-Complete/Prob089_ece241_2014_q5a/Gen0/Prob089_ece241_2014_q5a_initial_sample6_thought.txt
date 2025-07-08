@@ -1,0 +1,16 @@
+To design a Moore FSM for 2's complement conversion on a serial input stream starting from the LSB, the key observation is that 2's complement is formed by copying all trailing zeros and the first one unchanged, then inverting all subsequent bits. So the FSM will have two states:
+
+1. STATE_COPY: copy input bit to output as long as input bit is 0 (trailing zeros).
+2. STATE_INVERT: after encountering the first 1, output the inverted input bit.
+
+The machine resets asynchronously, starting in STATE_COPY. On each clock cycle, output depends only on the current state:
+
+- In STATE_COPY: output = input (copy trailing zeros and the first one)
+- When input is 1 in STATE_COPY, transition to STATE_INVERT next cycle
+- In STATE_INVERT: output = ~input (invert all remaining bits)
+
+This approach works for arbitrary length numbers input serially LSB first.
+
+We implement asynchronous reset to start in STATE_COPY.
+
+Note: Output is registered as per Moore FSM (depends on state only), so output logic depends on current state and input.

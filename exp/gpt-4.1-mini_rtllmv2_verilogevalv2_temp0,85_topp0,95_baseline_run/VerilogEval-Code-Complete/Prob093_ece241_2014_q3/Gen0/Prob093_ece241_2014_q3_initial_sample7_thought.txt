@@ -1,0 +1,165 @@
+We need to implement the function defined by the K-map using one 4-to-1 multiplexer with selector inputs a,b and inputs mux_in[3:0], which are functions of c,d only.
+
+The 4-to-1 mux selects one of mux_in[0], mux_in[1], mux_in[2], mux_in[3] based on {a,b} = 2-bit selector.
+
+Given the K-map with variables a,b,c,d and the outputs for each combination:
+
+K-map format (rows: cd, columns: ab):
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+We want to find mux_in[0], mux_in[1], mux_in[2], mux_in[3] such that:
+
+mux_in[0] = output for ab=00 with varying cd
+mux_in[1] = output for ab=01 with varying cd
+mux_in[2] = output for ab=11 with varying cd
+mux_in[3] = output for ab=10 with varying cd
+
+Let's extract the column values for each ab:
+
+ab=00 (mux_in[0]): rows cd=00,01,11,10 => outputs: 0,1,1,1
+ab=01 (mux_in[1]): outputs: 0,0,0,0
+ab=11 (mux_in[2]): outputs: 0,0,1,0
+ab=10 (mux_in[3]): outputs: 1,0,1,1
+
+Now, mux_in[x] is a function of c,d only:
+
+We write their truth tables and simplify with 2-to-1 muxes (selectors can be c or d) using only muxes.
+
+We want to express each mux_in[i] using only 2-to-1 muxes and no other gates.
+
+We choose one variable as selector (say c) and express mux_in[i] as:
+
+mux_in[i] = c ? f1(d) : f0(d)
+
+Similarly, f1(d) and f0(d) are 2-input functions.
+
+We implement 2-to-1 muxes using a standard mux module:
+
+module mux2 (
+  input sel,
+  input in0,
+  input in1,
+  output out
+);
+
+assign out = sel ? in1 : in0;
+
+endmodule
+
+We implement each mux_in as a combination of mux2.
+
+Finally, code only the TopModule that outputs mux_in[3:0] as signals of c,d, using internal mux2 instances, no other gates allowed.
+
+We must use as few 2-to-1 muxes as possible.
+
+Details:
+
+1) mux_in[0] (ab=00): outputs for cd=00:0,01:1,11:1,10:1
+
+Index cd in order: 00(c=0,d=0):0; 01(c=0,d=1):1; 11(c=1,d=1):1; 10(c=1,d=0):1
+
+We write mux_in[0]:
+
+mux_in[0] = c ? 1 : (d ? 1 : 0)
+
+If c=0:
+
+  d=0 -> 0
+
+  d=1 -> 1
+
+If c=1:
+
+  always 1
+
+So:
+
+mux_in[0] = c ? 1 : (d ? 1 : 0)
+
+Implement with mux2:
+
+temp0 = mux2(d,0,1); // d?1:0
+
+mux_in[0] = mux2(c,temp0,1);
+
+2) mux_in[1] (ab=01): outputs 0,0,0,0
+
+Constant 0
+
+mux_in[1] = 0
+
+3) mux_in[2] (ab=11): outputs 0,0,1,0
+
+cd=00(c=0,d=0):0
+
+cd=01(c=0,d=1):0
+
+cd=11(c=1,d=1):1
+
+cd=10(c=1,d=0):0
+
+Express mux_in[2]:
+
+When c=0: d=0->0, d=1->0 => 0
+
+When c=1: d=0->0, d=1->1
+
+So mux_in[2] = c ? d : 0
+
+Implement:
+
+temp1 = 0
+
+mux_in[2] = mux2(c,0,d)
+
+4) mux_in[3] (ab=10): outputs 1,0,1,1
+
+cd=00(c=0,d=0):1
+
+cd=01(c=0,d=1):0
+
+cd=11(c=1,d=1):1
+
+cd=10(c=1,d=0):1
+
+If c=0:
+
+  d=0 ->1
+
+  d=1 ->0
+
+If c=1:
+
+  always 1
+
+So mux_in[3] = c ? 1 : (d ? 0 : 1)
+
+Implement:
+
+temp2 = mux2(d,1,0); // d?0:1
+
+mux_in[3] = mux2(c,temp2,1);
+
+Thus, total mux2 instances:
+
+temp0 for mux_in[0]
+
+mux_in[0]
+
+mux_in[2] uses one mux2
+
+temp2 for mux_in[3]
+
+mux_in[3]
+
+So total 5 mux2 instances.
+
+mux_in[1] = 0 (constant)
+
+Finally, code the TopModule with these mux2 instances.

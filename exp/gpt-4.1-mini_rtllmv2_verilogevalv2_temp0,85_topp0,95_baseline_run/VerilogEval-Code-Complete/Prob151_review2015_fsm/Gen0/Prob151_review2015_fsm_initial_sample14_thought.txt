@@ -1,0 +1,9 @@
+Implement a finite state machine with the following states:
+- SEARCH: Look for the pattern 1101 on the serial data input, shifting bits each clock.
+- SHIFT: After detecting 1101, assert shift_ena for exactly 4 clock cycles to shift in duration bits.
+- COUNTING: Assert counting until done_counting signal is received.
+- DONE: Assert done to notify timer expired, wait for ack to clear.
+
+Use a 4-bit shift register to track the last 4 bits of data in SEARCH state to detect pattern 1101.
+Use a 2-bit counter to count 4 cycles in SHIFT state.
+On synchronous reset, return to SEARCH state and clear outputs.

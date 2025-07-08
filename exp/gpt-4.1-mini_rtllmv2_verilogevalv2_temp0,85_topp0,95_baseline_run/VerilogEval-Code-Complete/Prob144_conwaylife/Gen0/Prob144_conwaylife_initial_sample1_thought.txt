@@ -1,0 +1,13 @@
+To implement the 16x16 toroidal Game of Life variant, the main challenge is to compute the neighbor counts with wrap-around at the edges. We'll represent the grid as a 16x16 array internally for clarity, then flatten to and from the 256-bit vector. Each clock cycle, if load is high, we load the input data into q. Otherwise, we compute the next state for each cell based on the number of neighbors. Wrapping is done by modulo 16 indexing.
+
+The neighbor count is done by summing the 8 neighbors, considering the toroidal wrap-around by using modulo arithmetic for indices. According to the rules:
+- If neighbors <= 1, cell becomes 0
+- If neighbors == 2, cell stays the same
+- If neighbors == 3, cell becomes 1
+- If neighbors >= 4, cell becomes 0
+
+We'll store the grid in a 2D reg array for clarity in calculation, then flatten to q at the end of the always block. The design will be synchronous and combinational inside the always @(posedge clk).
+
+Note: Using loops in Verilog is acceptable for synthesis if bounds are static and small.
+
+This approach is simple and direct, suitable for a 16x16 fixed grid.

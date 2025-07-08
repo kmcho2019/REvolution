@@ -1,0 +1,17 @@
+To implement the Game of Life on a 16x16 toroidal grid, we will:
+
+1. Store the current state in a 256-bit register `q`.
+2. On a load signal, synchronously load the input `data` into `q`.
+3. Otherwise, on each clock cycle, update `q` by applying the rules to each cell.
+4. To handle the toroidal wrap-around, calculate neighbors with modular indexing.
+5. The 2D grid is flattened such that q[row*16 + col] corresponds to a cell.
+6. For each cell, count neighbors (8 neighbors) and apply the rules:
+   - 0-1 neighbors: cell dies (0)
+   - 2 neighbors: cell state unchanged
+   - 3 neighbors: cell becomes alive (1)
+   - 4+ neighbors: cell dies (0)
+7. To avoid combinational loops or excessive complexity, use generate loops for neighbor counting.
+8. Since the grid is small, nested loops can be unrolled by generate blocks.
+9. We create a next state vector and assign it to `q` on the clock edge.
+
+This approach balances clarity and correctness for a 16x16 grid.

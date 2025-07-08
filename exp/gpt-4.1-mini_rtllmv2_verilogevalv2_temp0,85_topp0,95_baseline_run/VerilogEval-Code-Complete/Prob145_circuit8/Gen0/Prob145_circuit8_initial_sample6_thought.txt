@@ -1,0 +1,15 @@
+The circuit behavior can be inferred from the waveform. The output p seems to reflect the value of input 'a' sampled on the rising edge of 'clock' when q is 1, otherwise p is held at 0. The output q acts as a state bit, set to 1 on the falling edge of clock when p was 1, and reset to 0 on the rising edge of clock when p is 0. 
+
+In summary:
+- On rising edge of clock:
+  - If q is 1, p follows input a.
+  - If q is 0, p is set to 0.
+  - If p is 0, q is cleared to 0.
+  - If p is 1, q remains 1.
+- On falling edge of clock:
+  - If p is 1, q is set to 1.
+  - Otherwise, q remains unchanged.
+
+This suggests q is a latch indicating if p was 1 on the previous clock edge, and p captures input a only when q is set.
+
+Implement this logic with synchronous processes sensitive to clock edges.

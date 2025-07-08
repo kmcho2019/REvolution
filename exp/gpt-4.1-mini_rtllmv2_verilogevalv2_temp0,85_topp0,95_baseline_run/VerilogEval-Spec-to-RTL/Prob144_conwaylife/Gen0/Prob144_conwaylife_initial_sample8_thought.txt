@@ -1,0 +1,8 @@
+Implement a 16x16 Game of Life with toroidal wrap-around and synchronous load. On each clock edge:
+- If load is high, load the 256-bit input data into the 16x16 grid register q.
+- Else, compute the next state for each cell based on the number of alive neighbors with wrap-around addressing.
+The 16x16 grid is stored in a 256-bit register q, with rows stacked in 16-bit slices. For neighbor counting, compute indices wrapping around using modulo 16 arithmetic. For each cell, sum its 8 neighbors and apply the rules:
+ 0-1 neighbors: cell=0
+ 2 neighbors: cell unchanged
+ 3 neighbors: cell=1
+ 4+ neighbors: cell=0

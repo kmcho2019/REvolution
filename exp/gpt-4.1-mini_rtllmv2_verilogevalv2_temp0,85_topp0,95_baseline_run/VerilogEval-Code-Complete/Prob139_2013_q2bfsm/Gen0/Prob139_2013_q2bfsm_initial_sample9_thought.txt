@@ -1,0 +1,14 @@
+Design a FSM with states to track each phase:
+- State A: reset state, outputs f=0, g=0; stays here if resetn=0.
+- On resetn deassertion, transition to State B for one cycle with f=1.
+- Then move to states to detect the sequence 1,0,1 on input x:
+  Use states S1, S2, S3 to track the sequence progress.
+- When sequence detected, move to state G_ON where g=1.
+- In G_ON, monitor y for up to two cycles:
+  If y=1 within two cycles, stay in G_ON permanently.
+  Otherwise, transition to G_OFF permanently (g=0).
+- Both G_ON and G_OFF maintain output until reset.
+
+Implement synchronous reset (active low). Use state encoding with parameters.
+Outputs f and g are combinational from state.
+Use counters or states to count clock cycles for y monitoring.

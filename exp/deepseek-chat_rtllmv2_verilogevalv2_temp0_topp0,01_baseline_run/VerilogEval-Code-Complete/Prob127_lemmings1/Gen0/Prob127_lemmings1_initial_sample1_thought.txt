@@ -1,0 +1,9 @@
+The problem requires implementing a Moore state machine for a Lemming that can walk left or right. The Lemming changes direction when it bumps into an obstacle on either side. The state machine has two states: WALK_LEFT and WALK_RIGHT. The transitions between these states are triggered by bump_left and bump_right inputs. The output (walk_left or walk_right) is determined by the current state. The machine should asynchronously reset to the WALK_LEFT state when areset is high.
+
+1. Define two states: WALK_LEFT and WALK_RIGHT.
+2. Use a state register to hold the current state.
+3. On each clock edge or areset, update the state:
+   - If areset is high, reset to WALK_LEFT.
+   - If in WALK_LEFT and bump_left is high, transition to WALK_RIGHT.
+   - If in WALK_RIGHT and bump_right is high, transition to WALK_LEFT.
+4. The outputs walk_left and walk_right are directly derived from the current state.

@@ -1,0 +1,19 @@
+Implement a state machine with the following states:
+- SEARCH: look for pattern 1101 on data input serially. Use a 4-bit shift register to detect it.
+- SHIFT_DELAY: once 1101 is detected, shift in 4 bits (MSB first) as delay.
+- COUNTING: count down the total cycles = (delay+1)*1000, output counting=1 and count as the current delay value (updated every 1000 cycles).
+- DONE: assert done=1, wait for ack=1 to return to SEARCH.
+
+The count[3:0] output shows the remaining delay value during counting, don't care otherwise.
+
+Implement synchronous reset that sets the state to SEARCH.
+
+Use a 4-bit shift register to detect the pattern in SEARCH state, shifting in each clock the data bit.
+
+In COUNTING, use two counters: one 10-bit counter for counting the 1000 cycles, and one 4-bit for the delay countdown.
+
+When 1000 cycles have passed, decrement delay counter by 1 until zero, then move to DONE.
+
+In DONE state, count and counting signals are zero, done=1, wait for ack=1 to move back to SEARCH.
+
+All state transitions and outputs are synchronous to clk.

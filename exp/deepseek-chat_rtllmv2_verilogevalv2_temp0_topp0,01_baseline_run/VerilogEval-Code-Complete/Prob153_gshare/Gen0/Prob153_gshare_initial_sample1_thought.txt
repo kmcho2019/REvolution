@@ -1,0 +1,12 @@
+To implement a gshare branch predictor with the given specifications, we need to:
+1. Maintain a 7-bit global history register (GHR) that tracks the outcomes of recent branches.
+2. Use a 128-entry pattern history table (PHT) of 2-bit saturating counters to predict branch directions.
+3. For prediction: XOR the 7-bit PC with the current GHR to index into the PHT. The MSB of the counter determines the prediction (taken/not taken).
+4. For training: Update the PHT based on the actual branch outcome (increment for taken, decrement for not taken, saturating at 0 and 3). If the branch was mispredicted, restore the GHR to the state it was in when the branch was predicted.
+5. Handle priority between concurrent predict and train operations (train takes precedence when both occur in the same cycle).
+
+The implementation will use:
+- A 128x2 PHT (initialized to weakly taken - 2'b01)
+- A 7-bit GHR
+- XOR-based indexing
+- Proper update logic for both prediction and training

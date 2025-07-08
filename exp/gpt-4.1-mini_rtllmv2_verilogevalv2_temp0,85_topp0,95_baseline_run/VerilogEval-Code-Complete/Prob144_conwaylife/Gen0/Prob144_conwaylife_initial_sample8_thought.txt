@@ -1,0 +1,8 @@
+To implement the Game of Life on a 16x16 toroidal grid, we must compute the number of alive neighbors for each cell, considering wrapping at the edges. We will store the 16x16 grid as a 256-bit vector `q`, where each 16-bit chunk corresponds to a row. For each clock cycle, if `load` is high, we load `data` into `q`. Otherwise, we compute the next state for every cell simultaneously. The neighbor count for each cell is the sum of the 8 neighbors' values. Depending on the count and the current cell value, we update the cell according to the rules:
+
+- 0 or 1 neighbor: cell becomes 0.
+- 2 neighbors: cell stays the same.
+- 3 neighbors: cell becomes 1.
+- 4 or more neighbors: cell becomes 0.
+
+To handle wrapping, we compute neighbors by modular indexing with wrap-around using `((index + delta) & 4'hF)` since 16 in binary is 4 bits, so modulo 16 is done via masking. We'll unpack `q` into a 16x16 array for ease of neighbor calculation, then pack the result back into the 256-bit vector. This approach will be done combinationally in an always block that updates `q` on the positive clock edge.

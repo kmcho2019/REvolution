@@ -1,0 +1,25 @@
+Implement a synchronous FSM with these states:
+- A: reset state, output f=0, g=0; upon resetn deasserted move to B.
+- B: output f=1 for one cycle; then move to C.
+- C: monitor x for pattern 1,0,1 in successive clocks:
+   Use a small pattern detector FSM that tracks received x bits to detect 1,0,1.
+   Once pattern detected, move to D and set g=1 for one cycle.
+- D: g=1, start monitoring y for up to 2 cycles.
+   If y=1 within 2 cycles, move to E (g=1 permanent)
+   Else after 2 cycles without y=1, move to F (g=0 permanent)
+- E: g=1 permanently until reset
+- F: g=0 permanently until reset
+
+All outputs (f,g) are registered, synchronous to clk.
+
+Use one-hot or encoded states. Maintain counters as needed for pattern detection and y monitoring.
+
+resetn is synchronous active low: when resetn=0 at clk edge, go to A.
+
+Output f is only 1 for one clock cycle after resetn deasserted (state B).
+
+Output g is initially 0, then 1 for one cycle (state D entry), then either permanent 1 or 0.
+
+Implement pattern detector for x=1,0,1: can be a small FSM or shift register and matching.
+
+Implement y monitor with a 2-cycle counter.

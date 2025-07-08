@@ -1,0 +1,39 @@
+First, map the Karnaugh table values according to the input bits x[4:1], where rows correspond to x[3]x[4] and columns to x[1]x[2]. The K-map is:
+
+        x[1]x[2]
+x[3]x[4] 00  01  11  10
+  00     d    0    d    d
+  01     0    d    1    0
+  11     1    1    d    d
+  10     1    1    0    d
+
+We can rewrite the minterms for f=1 and leverage don't-cares to simplify the expression:
+
+- 1s at positions:
+  - row 01, col 11: x[3]x[4]=01, x[1]x[2]=11 => x= 0 1 1 1 (x4=0,x3=1,x2=1,x1=1)
+  - row 11, col 00: 11 00 => x= 1 1 0 0
+  - row 11, col 01: 11 01 => x= 1 1 0 1
+  - row 10, col 00: 10 00 => x= 1 0 0 0
+  - row 10, col 01: 10 01 => x= 1 0 0 1
+
+Use don't-cares to create prime implicants covering 1s efficiently:
+
+- From columns 00 and 01 in rows 10 and 11 (4 cells) all 1 or d:
+  This corresponds to x[1]=0 (col 00 or 01 => x1=0), and x[4]=1 (row 10 or 11 => x4=1), and x2=0 (col 00 or 01 means x2=0).
+  So, implicant: x4 & ~x2
+
+- From row 11 and col 00 and 01, both 1s => x4=1, x3=1, x2=0, x1=0 or 1 (covered by above implicant).
+
+- From row 01, col 11 = 1 (x4=0,x3=1,x2=1,x1=1), unique minterm: ~x4 & x3 & x2 & x1
+
+- From row 11, col 00 and 01 (1s) covered by x4 & ~x2 implicant
+
+- From row 10, col 00 and 01 also covered by x4 & ~x2
+
+The zero in row 01 col 00 (0) breaks larger implicants, so we must keep the unique minterm at row 01, col 11.
+
+Final expression:
+
+f = (x4 & ~x2) | (~x4 & x3 & x2 & x1)
+
+Implement this in Verilog accordingly.

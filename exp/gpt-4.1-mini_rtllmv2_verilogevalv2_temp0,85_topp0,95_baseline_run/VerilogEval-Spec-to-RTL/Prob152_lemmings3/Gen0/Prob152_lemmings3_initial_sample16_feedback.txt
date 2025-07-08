@@ -1,0 +1,46 @@
+Score: 7
+Justification: The code is syntactically correct and models the Lemming FSM with Moore outputs, but simulation mismatches on walk_left and walk_right indicate functional errors likely related to direction switching logic or state updates, while aaah and digging outputs are correct.
+
+ANALYSIS:
+The simulation log indicates 56 mismatches for outputs walk_left and walk_right out of 443 samples, but no mismatches on aaah or digging. This suggests that the states FALLING and DIGGING and their corresponding outputs are functioning correctly, while the walking direction logic has issues.
+
+Examining the code:
+
+1. Direction switching on bumps in WALK_LEFT and WALK_RIGHT states:
+   - Both states use the condition `if (bump_left || bump_right)` to switch direction.
+   - According to the problem, if bumped on left, Lemming should walk right; if bumped on right, walk left; and if bumped on both sides, still switch direction. The code switches direction regardless of which bump is active, which aligns with requirements.
+
+2. The FSM priorities:
+   - The problem states fall > dig > switch directions.
+   - The code honors this in the next_state logic by first checking `if (!ground) next_state = FALLING; else if (dig) ...; else if (bump...)`.
+   - This appears correct.
+
+3. Walking direction memory (walk_dir_before_fall):
+   - The `walk_dir_before_fall` register is updated only when the next_state is WALK_LEFT or WALK_RIGHT, to remember the last walking direction before falling.
+   - This mechanism is important because after falling, Lemming resumes walking in the original direction.
+   - However, the update is done based on `next_state` inside the clocked block after updating `state <= next_state;`.
+   - This can cause a potential glitch if `next_state` changes in a way that does not reflect the "last actual walking direction" correctly, for example, if direction flips multiple times before falling.
+
+4. Possible subtlety in bump side logic:
+   - The problem specifies when bumped on left, go right; when bumped on right, go left.
+   - But the code uses the same condition `if (bump_left || bump_right)` to switch directions, but always toggles to the opposite fixed direction regardless of which bump is asserted.
+   - For example, in WALK_LEFT, it switches to WALK_RIGHT on any bump.
+   - In WALK_RIGHT, it switches to WALK_LEFT on any bump.
+   - This is consistent with the problem description.
+
+5. Digging conditions:
+   - Digging is only allowed when walking on ground.
+   - The code transitions to DIGGING only if `ground` is true and `dig` is asserted.
+   - Once in DIGGING, it transitions to FALLING when `ground` goes low, which is correct.
+
+6. Outputs are assigned in a Moore manner correctly.
+
+7. The mismatch on walk_left and walk_right outputs likely stems from the state transitions or walk_dir_before_fall register update logic, possibly due to timing of updating walk_dir_before_fall with next_state in the sequential block, which may cause state machine to "forget" the correct previous walking direction in some edge cases.
+
+8. The problem also states that bumps during falling and digging do not affect walking direction or state, which the code honors by ignoring bumps in those states.
+
+9. No syntax errors or warnings in compilation log.
+
+In summary, the design intent is mostly correct, but the 56 mismatches on walk_left and walk_right outputs indicate that the mechanism remembering the walking direction before fall or the transition logic for direction switches is not perfectly aligned with the expected behavior, causing incorrect walking directions in some cycles.
+
+The code is well-structured and close to a correct solution, with minor functional issues related to direction memory and transitions.

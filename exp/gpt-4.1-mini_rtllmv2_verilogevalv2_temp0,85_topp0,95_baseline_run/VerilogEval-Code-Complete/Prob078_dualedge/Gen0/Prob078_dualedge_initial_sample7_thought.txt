@@ -1,0 +1,7 @@
+To implement a dual-edge triggered flip-flop on an FPGA that only supports single-edge triggered flip-flops, we can use two single-edge triggered flip-flops: one triggered on the positive edge of the clock and one on the negative edge. We then combine their outputs using a multiplexer controlled by the clock to produce the final output. Specifically, on the rising edge, we capture the input in a register, and on the falling edge, we capture the input in another register. The final output q is updated to the latest data based on the clock level or by using a small logic that updates on both edges. 
+
+A common approach is:
+- Use two flip-flops: pos_edge_reg captures d on posedge clk, neg_edge_reg captures d on negedge clk.
+- Use an always_comb block or a continuous assignment that selects the output q based on the clk level, e.g., q = clk ? pos_edge_reg : neg_edge_reg.
+
+This simulates a dual-edge triggered flip-flop behavior.

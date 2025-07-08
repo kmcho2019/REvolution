@@ -1,0 +1,52 @@
+Implement combinational next-state logic and output logic for a one-hot encoded Moore FSM with 10 states named as described. 
+Use the 10-bit input 'state' to determine next state bits based on inputs d, done_counting, and ack according to the state diagram.
+Generate one-hot next-state signals (B3_next, S_next, S1_next, Count_next, Wait_next) by decoding the next state.
+Generate output signals done, counting, and shift_ena based on the current state bits.
+
+From the one-hot encoding:
+S = 10'b0000000001   (bit0)
+S1= 10'b0000000010   (bit1)
+S11=10'b0000000100   (bit2)
+S110=10'b0000001000  (bit3)
+B0= 10'b0000010000   (bit4)
+B1= 10'b0000100000   (bit5)
+B2= 10'b0001000000   (bit6)
+B3= 10'b0010000000   (bit7)
+Count=10'b0100000000 (bit8)
+Wait=10'b1000000000  (bit9)
+
+Next state logic by inspection:
+
+- From S (bit0):
+  if d=0 -> S (bit0)
+  if d=1 -> S1 (bit1)
+- From S1 (bit1):
+  if d=0 -> S (bit0)
+  if d=1 -> S11 (bit2)
+- From S11 (bit2):
+  if d=0 -> S110 (bit3)
+  if d=1 -> S11 (bit2)
+- From S110 (bit3):
+  if d=0 -> S (bit0)
+  if d=1 -> B0 (bit4)
+- From B0 (bit4):
+  -> B1 (bit5) always
+- From B1 (bit5):
+  -> B2 (bit6) always
+- From B2 (bit6):
+  -> B3 (bit7) always
+- From B3 (bit7):
+  -> Count (bit8) always
+- From Count (bit8):
+  if done_counting=0 -> Count (bit8)
+  if done_counting=1 -> Wait (bit9)
+- From Wait (bit9):
+  if ack=0 -> Wait (bit9)
+  if ack=1 -> S (bit0)
+
+Outputs (Moore):
+- done = 1 only in Wait state (bit9)
+- counting = 1 only in Count state (bit8)
+- shift_ena = 1 in B0, B1, B2, B3 states (bits 4 to 7)
+
+Implement combinational logic to produce the next state signals and outputs based on current 'state' and inputs.

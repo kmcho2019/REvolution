@@ -1,0 +1,14 @@
+Implement a Moore FSM with the following states:
+
+- IDLE: searching for the pattern 1101 in the serial data input.
+- SHIFT: after detecting 1101, assert shift_ena for exactly 4 clock cycles to shift in the next 4 bits.
+- COUNTING: assert counting output and wait for done_counting input to go high.
+- DONE: assert done output and wait for ack input to go high before returning to IDLE.
+
+To detect the pattern 1101 in serial data, use a 4-bit shift register. When the shift register matches 1101, move to SHIFT state.
+
+Use a 2-bit counter to count 4 shift cycles in SHIFT state.
+
+All outputs are registered (Moore FSM). Reset is synchronous and active high.
+
+Implement using a state register, next_state combinational logic, a 4-bit shift register for pattern detection, and a 2-bit counter for shift cycles.

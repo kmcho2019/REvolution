@@ -1,0 +1,21 @@
+I will design a synchronous finite state machine (FSM) with the following states:
+- SEARCH: look for the pattern 1101 on the serial data input, shifting in bits one by one.
+- LOAD_DELAY: after detecting the pattern, shift in the next 4 bits MSB first as the delay.
+- COUNT: count for (delay+1)*1000 clock cycles. Use a 10-bit counter for counting 1000 cycles, and a 4-bit counter for counting delay+1 intervals. Output the current remaining time (count) during counting.
+- DONE: when counting finishes, assert done and wait for ack to go high.
+On reset, FSM returns to SEARCH state.
+
+The pattern detection will be done by maintaining a 4-bit shift register of last bits and comparing to 4'b1101.
+
+After detecting pattern, load delay by shifting in 4 bits MSB first.
+
+During counting, decrement the output count every 1000 clock cycles. Initially, count = delay, after 1000 cycles count = delay-1, ..., until 0 for last 1000 cycles.
+
+When counting is done, assert done and wait for ack=1 to go back to SEARCH.
+
+Outputs:
+- counting: high during COUNT state.
+- done: high during DONE state.
+- count: current remaining time during COUNT, don't care otherwise.
+
+Implement synchronous reset and synchronous logic throughout.

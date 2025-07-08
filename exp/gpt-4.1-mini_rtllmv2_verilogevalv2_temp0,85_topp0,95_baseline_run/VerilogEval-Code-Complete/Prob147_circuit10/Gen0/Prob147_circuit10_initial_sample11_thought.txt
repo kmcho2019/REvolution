@@ -1,0 +1,49 @@
+From the waveform, the flip-flop output q updates only on the rising edge of clk. The output "state" reflects the current stored value q from the flip-flop.
+
+Analyzing changes on rising clk edges:
+- At 45ns rising clk, a=0, b=1, q changes from 0 to 1.
+- At 65ns rising clk, a=1, b=1, q changes from 1 to 0.
+- At 95ns rising clk, a=1, b=1, q changes from 0 to 1.
+- At 115ns rising clk, a=1, b=0, q changes from 1 to 0.
+- At 135ns rising clk, a=0, b=0, q changes from 0 to 1.
+- At 145ns rising clk, a=0, b=0, q changes from 1 to 0.
+
+The pattern indicates the next state depends on current a, b, and current q.
+
+Constructing a truth table for next q (q_next):
+
+| a | b | q | q_next |
+|---|---|---|---------|
+| 0 | 0 | 0 |   0     |
+| 0 | 0 | 1 |   0     |
+| 0 | 1 | 0 |   1     |
+| 0 | 1 | 1 |   ?     |
+| 1 | 0 | 0 |   ?     |
+| 1 | 0 | 1 |   0     |
+| 1 | 1 | 0 |   0     |
+| 1 | 1 | 1 |   1     |
+
+From waveforms:
+- At 45ns: a=0,b=1,q=0 -> q_next=1
+- At 65ns: a=1,b=1,q=1 -> q_next=0 (wave says q_next=0 but at 65ns q=0, so correct)
+- At 95ns: a=1,b=1,q=0 -> q_next=1
+- At 115ns: a=1,b=0,q=1 -> q_next=0
+- At 135ns: a=0,b=0,q=0 -> q_next=1 (actually q changes from 0 to 1 here)
+- At 145ns: a=0,b=0,q=1 -> q_next=0
+
+To summarize logic:
+
+- If a=0 and b=1, q_next=1
+- If a=1 and b=0, q_next=0
+- If a=1 and b=1, q_next = ~q (toggles q)
+- If a=0 and b=0, q_next = ~q
+
+So the next state logic can be expressed as:
+
+if (a & b) q_next = ~q;
+else if (~a & b) q_next = 1;
+else if (a & ~b) q_next = 0;
+else // a=0, b=0
+  q_next = ~q;
+
+We will implement this logic with one D flip-flop, and output q and state = q.

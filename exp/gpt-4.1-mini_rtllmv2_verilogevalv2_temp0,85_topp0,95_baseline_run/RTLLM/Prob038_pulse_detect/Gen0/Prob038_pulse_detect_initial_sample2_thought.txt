@@ -1,0 +1,12 @@
+Use a finite state machine with four states to detect the "0 -> 1 -> 0" pulse pattern over three cycles:
+- IDLE: waiting for data_in to be 0 (initial state)
+- WAIT_HIGH: detected first 0, waiting for data_in to become 1
+- WAIT_LOW: detected 1 after 0, waiting for data_in to go back to 0 to complete the pulse
+- PULSE_END: pulse detected at the end of this cycle, data_out=1 for one cycle
+
+On reset, start from IDLE state and data_out=0.
+On each clock cycle, transition states according to data_in:
+- From IDLE, if data_in==0, move to WAIT_HIGH, else remain in IDLE
+- From WAIT_HIGH, if data_in==1, move to WAIT_LOW, else stay or reset accordingly
+- From WAIT_LOW, if data_in==0, pulse complete: output data_out=1 and move to IDLE; else if data_in==1, stay in WAIT_LOW (to handle longer high pulses)
+data_out is asserted only in the cycle when the pulse completes, then cleared next cycle.

@@ -1,0 +1,17 @@
+Implement an 8-bit unsigned multiplier using pipelining to improve throughput. The pipeline stages are:
+
+1. Input stage: On clock edge, sample mul_en_in, mul_a, and mul_b into registers if mul_en_in is active. mul_en_out is a shift register of the enable signal to track pipeline validity.
+
+2. Partial product generation: Generate eight 8-bit partial products by ANDing mul_a with each bit of mul_b shifted appropriately.
+
+3. Partial sums calculation: Use registers to hold sums of partial products and add them progressively across multiple pipeline stages.
+
+4. Final product calculation: Sum all partial sums to produce the final 16-bit product, stored in mul_out_reg.
+
+The mul_en_out signal is the last stage enable bit indicating valid output data.
+
+If mul_en_out is not active, mul_out outputs zero.
+
+This design pipeline is done in several clock cycles, propagating data and control signals through registers.
+
+The code implements registers, combinational partial product generation, and pipelined summing, adhering strictly to the requirements.

@@ -1,0 +1,99 @@
+The Karnaugh map is given with inputs a, b, c, d and d is a don't-care input. We can interpret the map as a function of ab (2 bits) and cd (2 bits). The map shows output values for each ab, cd combination. Since d is a don't-care input, we can choose outputs for those cells to simplify the logic.
+
+First, let's map the K-map cells to their corresponding minterms:
+
+The map:
+          ab
+cd      01  00  10  11
+00      d    0    1    1
+01      0    0    d    d
+11      0    1    1    1
+10      0    1    1    1
+
+Let's write the values with indices:
+
+For cd=00 (c=0, d=0):
+ab=01 (a=0,b=1): d (don't-care)
+ab=00 (a=0,b=0): 0
+ab=10 (a=1,b=0): 1
+ab=11 (a=1,b=1): 1
+
+cd=01 (c=0, d=1):
+ab=01: 0
+ab=00: 0
+ab=10: d
+ab=11: d
+
+cd=11 (c=1, d=1):
+ab=01: 0
+ab=00: 1
+ab=10: 1
+ab=11: 1
+
+cd=10 (c=1, d=0):
+ab=01: 0
+ab=00: 1
+ab=10: 1
+ab=11: 1
+
+Because d is don't care, we can assign those values to minimize the expression.
+
+Let's rewrite the output function f(a,b,c,d):
+
+We try to find an expression for f.
+
+Approach:
+1. For (c=1), output is 1 when ab != 01 (i.e., when ab=00,10,11) regardless of d. So for c=1 and ab != 01, f=1.
+
+2. For c=0, d=0:
+   - ab=10,11: 1
+   - ab=00: 0
+   - ab=01: d (don't-care, assign 0 to simplify)
+
+3. For c=0, d=1:
+   - ab=00,01: 0
+   - ab=10,11: d (don't-care, assign 0 for simplicity)
+
+Also note that when c=0 and ab=10 or 11, output=1.
+
+Summarize:
+
+f=1 when:
+- c=1 and (ab=00 or 10 or 11) => c=1 and (b=0 or a=1 or b=1) except ab=01 (a=0,b=1)
+- c=0 and d=0 and ab=10 or 11 => c=0,d=0,a=1,b=x (for ab=10 and 11: a=1)
+- c=0 and d=0 and ab=11: (already covered)
+- c=0 and d=0 and ab=10 or 11 -> a=1 (b=0 or 1)
+
+Let's write the simplified expression.
+
+Let's define variables:
+
+- a, b, c, d inputs
+
+From the map:
+
+For c=1:
+
+- Output=1 if (ab != 01) => if !(a=0 and b=1) => !(~a & b) = a + ~b
+
+Therefore, for c=1:
+
+f = c & (a + ~b)
+
+For c=0 and d=0:
+
+- Output=1 when ab=10 or 11 => a=1
+
+Therefore:
+
+f = (~c & ~d & a) OR (c & (a + ~b))
+
+For other cases output=0.
+
+So the function is:
+
+out = (c & (a | ~b)) | (~c & ~d & a)
+
+This is the minimal expression.
+
+We'll implement this in Verilog.

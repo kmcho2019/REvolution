@@ -1,0 +1,11 @@
+We start in state A, waiting for s=1 to move to B. In state B, we need to count the number of times w=1 over three consecutive clock cycles, then output z=1 if exactly two out of three were ones, otherwise z=0. After producing z, the FSM should restart counting the next three cycles of w values. We can implement this by:
+
+- Using state A and state B only.
+- In state B, maintain a 2-bit counter to count the number of cycles processed (0 to 3).
+- Maintain a 2-bit sum to count the number of times w=1 in the current 3-cycle window.
+- After three cycles, check if sum==2, set z=1 next cycle, else 0.
+- Then reset count and sum and start next 3-cycle window.
+- z is registered and updated each clock cycle after three cycles of sampling w.
+- If reset is asserted, go back to A, z=0.
+
+This approach uses minimal states (2 states) and counters for counting cycles and sums.

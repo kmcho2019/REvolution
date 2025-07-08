@@ -1,0 +1,48 @@
+The function f is defined by a 4-variable Karnaugh map with variables x[3], x[2], x[1], x[0]. The row variables are x[3]x[2] and the column variables are x[1]x[0]. Each cell contains the function value f for that input combination.
+
+Given the K-map:
+
+           x[0]x[1]
+    x[2]x[3]  00  01  11  10
+      00     | 1 | 0 | 0 | 1 |
+      01     | 0 | 0 | 0 | 0 |
+      11     | 1 | 1 | 1 | 0 |
+      10     | 1 | 1 | 0 | 1 |
+
+We must be cautious about the order of bits. The problem states x is 4 bits, with bits named as x[0], x[1], x[2], x[3]. The Karnaugh map's labeling suggests x[2]x[3] on rows and x[0]x[1] on columns. To match the bit order correctly, let's interpret:
+
+- Row index = {x[3], x[2]}
+- Column index = {x[1], x[0]}
+
+This is standard for a 4-variable K-map, where rows correspond to the most significant bits and columns to the least significant bits.
+
+Therefore, to get the function value for input x, we find f(x) = value in K-map at row = {x[3], x[2]}, column = {x[1], x[0]}.
+
+We will implement the function by writing out its minterms directly based on the '1's in the K-map:
+
+List all input combinations where f=1:
+
+- Row 00 (x[3]=0, x[2]=0):
+  - col 00 (x[1]=0, x[0]=0): f=1 => x=0000
+  - col 10 (x[1]=1, x[0]=0): f=1 => x=0010
+
+- Row 01 (x[3]=0, x[2]=1): all zeros
+
+- Row 11 (x[3]=1, x[2]=1):
+  - col 00: f=1 => x=1100
+  - col 01: f=1 => x=1101
+  - col 11: f=1 => x=1111
+
+- Row 10 (x[3]=1, x[2]=0):
+  - col 00: f=1 => x=1000
+  - col 01: f=1 => x=1001
+  - col 10: f=1 => x=1010
+
+So the minterms (in binary) are:
+0000, 0010, 1100, 1101, 1111, 1000, 1001, 1010
+
+We can write a combinational always block or continuous assignment checking if the input x matches any of these minterms.
+
+Alternatively, we can simplify the function via boolean algebra or use a case statement.
+
+For clarity, I will implement using a case statement that returns 1 for the above minterms and 0 otherwise.

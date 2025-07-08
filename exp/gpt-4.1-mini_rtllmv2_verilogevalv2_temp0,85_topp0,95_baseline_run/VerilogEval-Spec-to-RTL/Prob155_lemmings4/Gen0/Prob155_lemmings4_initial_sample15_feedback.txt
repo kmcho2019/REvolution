@@ -1,0 +1,39 @@
+Score: 6
+Justification: The code is syntactically correct and implements the FSM with reasonable state encoding and transitions, but the significant number of output mismatches indicates functional errors that cause deviations from the expected behavior, notably in direction switching, digging, falling, and handling bumps during state transitions.
+
+ANALYSIS:
+1. **Fall Count Increment Timing:**  
+   The fall_count is incremented in the sequential always block only if the current state is falling. Because the next state is assigned combinationally, the increment of fall_count happens before the state update. However, the condition `if (state == FALLING_LEFT || state == FALLING_RIGHT)` uses the *current* state, not the next state. This means when transitioning *into* falling states, fall_count will not increment on the first falling cycle, potentially causing off-by-one errors in fall counting and thus splatter timing, which could cause mismatches in aaah and splatter outputs.
+
+2. **Direction Switching on Bumps:**  
+   The problem states that a Lemming switches direction if bumped on left or right, or both sides simultaneously, but only when walking on ground and not falling or digging. In the code, this is handled in the walk states by checking `bump_left || bump_right`. However, the code does not mask bumps during falling or digging because bumps during those states are ignored, but the FSM still changes states only when walking. The code appears to correctly restrict bumps' effect to walking states, but the condition `if (bump_left || bump_right)` in walking states switches direction regardless of which bump side is asserted. The problem states bump_left causes walk_right, bump_right causes walk_left, and both sides bumped also cause direction switch. The code switches to walk_right on any bump in WALK_LEFT, and to walk_left on any bump in WALK_RIGHT, which matches the description. Thus, this part seems correct.
+
+3. **Dig Initiation and Continuation:**  
+   The problem requires that dig can start only when walking on ground (ground=1 and not falling) and dig=1. The code correctly triggers digging states only from walking states when dig=1 and ground=1 (fall checked first). While digging, the code ignores further dig input and stays digging as long as ground=1, transitioning to falling when ground=0. This matches the spec. However, the problem states "being told to dig when falling or when there is no ground is ignored." The code respects this by only allowing dig transition from walking states and not falling or digging states. So no direct error here.  
+   However, the simulation mismatches suggest the output `digging` sometimes does not match expected behavior, potentially indicating issues in the output logic.
+
+4. **Output Logic and State Mapping:**  
+   The outputs are Moore outputs determined solely by the current state. According to the problem:  
+   - walk_left=1 only when walking left  
+   - walk_right=1 only when walking right  
+   - aaah=1 only when falling (ground=0)  
+   - digging=1 only when digging on ground  
+   The code assigns outputs accordingly in the `always @(*)` block by state. This is consistent with the problem spec. However, the simulation hints at mismatches in all outputs, suggesting possible issues in handling transitions or output assignments, especially in transient cycles or edge conditions.
+
+5. **Precedence of Fall > Dig > Bump:**  
+   The problem states precedence: fall > dig > bump when walking. The code’s next state logic respects this order in walking states: checks `!ground` first, then `dig`, then bumps. This matches the spec.
+
+6. **Splatter Condition:**  
+   The code transitions to SPLATTER state when `fall_count > 20` upon hitting ground. The fall_count is 5 bits, so can count beyond 20. The problem states "if a Lemming falls for more than 20 clock cycles then hits the ground, it will splatter." The code uses `fall_count > 20`, which matches.  
+   But because fall_count increment uses the current state rather than the next_state, the fall_count can be off by one cycle, potentially causing early or late splatter and output mismatches in simulation.
+
+7. **Reset Behavior:**  
+   The asynchronous reset sets state to WALK_LEFT and fall_count to 0, which matches the spec of resetting to walk left.
+
+8. **Potential Missing Handling for Bump During Dig or Fall:**  
+   The problem states bumps during fall or dig do not affect direction or state. The code does not check bumps in fall or dig states, so this matches. However, any bump signal received simultaneously with ground going low or high should not affect direction. The code’s use of combinational next state logic and priority ordering seems to respect this, but simulation mismatches suggest that edge cases in timing or precedence might cause incorrect state transitions or output glitches, especially in cycles when ground changes.
+
+9. **Default Case:**  
+   The default next_state is WALK_LEFT, which is safe to prevent invalid states.
+
+Overall, the major source of errors appears to be the fall_count increment conditioned on current state rather than next state, causing timing mismatches for splatter and fall duration counting, plus potential transient output mismatches during state transitions. This would explain the multiple mismatches in all outputs and the large number of total mismatches. The rest of the code aligns well with the problem description, indicating the design intent is generally correct, but subtle timing and state transition handling bugs degrade the simulation performance.

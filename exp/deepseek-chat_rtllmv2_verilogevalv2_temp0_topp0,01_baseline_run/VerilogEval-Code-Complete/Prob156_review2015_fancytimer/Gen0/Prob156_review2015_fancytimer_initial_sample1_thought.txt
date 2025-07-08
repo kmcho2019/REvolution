@@ -1,0 +1,14 @@
+The design involves a finite state machine (FSM) with the following states:
+1. IDLE: Waiting for the 1101 pattern
+2. SHIFT_DELAY: After detecting 1101, shift in 4-bit delay value
+3. COUNTING: Counting down the delay cycles
+4. DONE: Timer finished, waiting for acknowledgment
+
+We'll use a shift register to detect the 1101 pattern and another to capture the delay value. A counter will track the remaining time in COUNTING state, decrementing every 1000 cycles. The count output reflects the current delay value during counting.
+
+Key components:
+- Pattern detection shift register (4-bit)
+- Delay value shift register (4-bit)
+- Cycle counter (counts 1000 cycles per delay step)
+- Delay counter (tracks remaining delay steps)
+- FSM to control the sequence

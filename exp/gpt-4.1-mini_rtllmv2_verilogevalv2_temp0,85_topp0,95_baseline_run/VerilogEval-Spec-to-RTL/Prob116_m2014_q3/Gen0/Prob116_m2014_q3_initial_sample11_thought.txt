@@ -1,0 +1,72 @@
+The 4-bit input x can be mapped as x[3:0] with x[3]x[2] as the row address and x[1]x[0] as the column address of the K-map. However, the K-map provided uses x[1]x[2] for columns and x[3]x[4] for rows, but since x is only 4 bits (x[3:0]), I will assume x[3]x[2] as rows and x[1]x[0] as columns. To match the provided map, I will rename bits so that:
+
+- x[3] = x4 (row high bit)
+- x[2] = x3 (row low bit)
+- x[1] = x2 (col high bit)
+- x[0] = x1 (col low bit)
+
+The K-map:
+
+              x2 x1 (columns)
+     x4 x3  00 01 11 10
+     00    d  0  d  d
+     01    0  d  1  0
+     11    1  1  d  d
+     10    1  1  0  d
+
+Assigning rows and columns as:
+- row = x[3:2]
+- col = x[1:0]
+
+From the map, d is "don't care" (can be 0 or 1). We'll derive the simplified expression using the 1's and choosing d to minimize the expression.
+
+I will implement the function by mapping each minterm with output 1 or 0 and choose values for d to simplify the logic.
+
+List of inputs (x[3:0]) and outputs f:
+
+Index by row,col:
+
+row=00 (x[3:2]=00):
+col=00 (x[1:0]=00): d -> set to 0
+col=01: 0
+col=11: d->0
+col=10: d->0
+
+row=01:
+col=00: 0
+col=01: d->0
+col=11:1
+col=10:0
+
+row=11:
+col=00:1
+col=01:1
+col=11:d->1
+col=10:d->1
+
+row=10:
+col=00:1
+col=01:1
+col=11:0
+col=10:d->0
+
+Now summarizing all minterms with output 1:
+
+x[3:0] (row,col):
+- 01 11 = 0b0111 = 7
+- 11 00 = 0b1100 = 12
+- 11 01 = 0b1101 = 13
+- 11 11 = 0b1111 = 15 (d set to 1)
+- 11 10 = 0b1110 = 14 (d set to 1)
+- 10 00 = 0b1000 = 8
+- 10 01 = 0b1001 = 9
+
+Outputs 1 at 7,8,9,12,13,14,15
+
+Others are 0.
+
+We can write sum of minterms or use a case statement.
+
+Alternatively, implement with a combinational always block or assign statement with logic derived from the map.
+
+I will implement using a case statement for clarity.

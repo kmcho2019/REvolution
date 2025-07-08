@@ -1,0 +1,25 @@
+The given waveform suggests a sequential circuit with two registers p and q updated on the rising edge of clock.
+
+- At the first rising clock edge (around 25ns), p is initialized to 0, q is unknown.
+- p updates to 1 only when a is 1 at the rising clock edge, otherwise stays 0.
+- q updates on the falling edge of clock:
+  - At falling edges (e.g. 115ns), q becomes equal to p.
+  - After that, q remains at the last assigned value until next falling edge.
+- p updates only on rising edges of clock, q only on falling edges.
+- On rising edge, p = p OR a (meaning if a=1, p becomes 1)
+- On falling edge, q = p.
+- Both p and q start unknown and then get initialized accordingly.
+
+This matches the waveform.
+
+So the circuit has two registers:
+- p updates on posedge clock: p <= p | a
+- q updates on negedge clock: q <= p
+
+Outputs p and q are the values of those registers.
+
+Implementation:
+- Use two always blocks sensitive to posedge and negedge clock respectively.
+- Registers p_reg and q_reg hold internal values assigned to outputs p and q.
+
+This approach matches the behavior observed in the waveform.

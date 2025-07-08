@@ -1,0 +1,7 @@
+To implement a fractional frequency divider dividing the clock by 3.5 using double-edge clocking, we use a counter that counts from 0 to 6 (7 cycles total). We generate two pulse trains: one high for 4 cycles, the other for 3 cycles, alternating every 7 cycles to achieve the average division of 3.5.
+
+We generate two clock phases: one aligned with the input clock and the other shifted by half a clock cycle (using the negedge of clk). By OR-ing these two generated clocks, we synthesize a fractional clock with uniform frequency and improved duty cycle.
+
+The reset signal rst_n is used to asynchronously reset the counter and output clocks.
+
+This design uses two always blocks clocked on posedge and negedge respectively to generate two intermediate clocks, which are then OR-ed to produce the final output clk_div.

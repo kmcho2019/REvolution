@@ -1,0 +1,17 @@
+The circuit has two output registers p and q. Both are reset to 0 at the initial time (unknown at start). On the rising edge of clock, p becomes 'a' AND q. But looking at the waveform, p updates to 1 only when a=1 and q=1 on clock rising edge (e.g., at 165ns). However, q changes on clock falling edge: q becomes p (captures p at falling edge). On the falling edge of clock, q updates to p, and p updates to a & q on rising edge.
+
+At clock=0, p and q are stable until the first rising edge. On rising edge, p is updated as p <= a & q, and on falling edge, q <= p. Initially p and q are zero.
+
+This suggests a two-register sequential circuit where p is updated on the rising edge of clock and q is updated on the falling edge of clock.
+
+Because the waveform shows q updates only on falling edge, and p updates only on rising edge based on a and q.
+
+Thus:
+
+- At posedge clock: p <= a & q
+
+- At negedge clock: q <= p
+
+We initialize p and q to zero at start.
+
+This matches the waveform behavior.

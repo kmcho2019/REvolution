@@ -1,0 +1,37 @@
+We need to derive the next-state logic for bit y[2] (Y2) of the state register based on the current state y[3:1] and input w. First, assign the state codes:
+
+A = 3'b000
+B = 3'b001
+C = 3'b010
+D = 3'b011
+E = 3'b100
+F = 3'b101
+
+From the transition table and these encodings, we list the next states and determine the next y[2] bit (Y2) for each transition.
+
+For each current state and input w, find the next state and extract bit 2:
+
+- A(000)
+  w=0: next B(001) => y[2]=0
+  w=1: next A(000) => y[2]=0
+- B(001)
+  w=0: next C(010) => y[2]=1
+  w=1: next D(011) => y[2]=1
+- C(010)
+  w=0: next E(100) => y[2]=1
+  w=1: next D(011) => y[2]=1
+- D(011)
+  w=0: next F(101) => y[2]=0
+  w=1: next A(000) => y[2]=0
+- E(100)
+  w=0: next E(100) => y[2]=1
+  w=1: next D(011) => y[2]=0
+- F(101)
+  w=0: next C(010) => y[2]=1
+  w=1: next D(011) => y[2]=0
+
+Using y[3], y[2], y[1] as y[3:1], and input w, write the logic expression for Y2.
+
+We can implement this in combinational always block with case statements or directly with if-else.
+
+Below is the Verilog code implementing next Y2 logic.

@@ -1,0 +1,74 @@
+We need to implement the next-state logic for y[2] (Y2) based on the current state y[3:1] and input w. The states are encoded as:
+A=000, B=001, C=010, D=011, E=100, F=101.
+We analyze the transitions and determine when the next state's bit y[2] (middle bit) is 1.
+
+By mapping the transitions and extracting the next state's y[2], we can derive a logic expression for Y2.
+
+Step 1: Decode the current state and input to next state.
+Step 2: Extract next state's y[2].
+Step 3: Implement combinational logic for Y2 = next y[2].
+
+From the given transitions:
+
+- A(000):
+  w=0 -> B(001) y[2]=0
+  w=1 -> A(000) y[2]=0
+
+- B(001):
+  w=0 -> C(010) y[2]=1
+  w=1 -> D(011) y[2]=1
+
+- C(010):
+  w=0 -> E(100) y[2]=0
+  w=1 -> D(011) y[2]=1
+
+- D(011):
+  w=0 -> F(101) y[2]=0
+  w=1 -> A(000) y[2]=0
+
+- E(100):
+  w=0 -> E(100) y[2]=0
+  w=1 -> D(011) y[2]=1
+
+- F(101):
+  w=0 -> C(010) y[2]=1
+  w=1 -> D(011) y[2]=1
+
+Summary table (current y[3] y[2] y[1], input w, next y[2]):
+
+| y3 y2 y1 | w | next y2 |
+|----------|---|---------|
+| 0  0  0  | 0 |    0    | // A->B
+| 0  0  0  | 1 |    0    | // A->A
+| 0  0  1  | 0 |    1    | // B->C
+| 0  0  1  | 1 |    1    | // B->D
+| 0  1  0  | 0 |    0    | // C->E
+| 0  1  0  | 1 |    1    | // C->D
+| 0  1  1  | 0 |    0    | // D->F
+| 0  1  1  | 1 |    0    | // D->A
+| 1  0  0  | 0 |    0    | // E->E
+| 1  0  0  | 1 |    1    | // E->D
+| 1  0  1  | 0 |    1    | // F->C
+| 1  0  1  | 1 |    1    | // F->D
+
+Let's write Y2 in terms of y3,y2,y1,w.
+
+From the table:
+Y2=1 when:
+- B (001) and w=0 or 1 -> y3=0,y2=0,y1=1
+- C (010) and w=1 -> y3=0,y2=1,y1=0,w=1
+- E (100) and w=1 -> y3=1,y2=0,y1=0,w=1
+- F (101) and w=0 or 1 -> y3=1,y2=0,y1=1
+
+So Y2=1 when:
+ (y3=0,y2=0,y1=1) // B regardless of w
+ OR (y3=0,y2=1,y1=0,w=1) // C and w=1
+ OR (y3=1,y2=0,y1=0,w=1) // E and w=1
+ OR (y3=1,y2=0,y1=1)      // F regardless of w
+
+Expressed in Verilog terms:
+
+Y2 = (~y3 & ~y2 & y1)          // B
+     | (~y3 & y2 & ~y1 & w)    // C & w=1
+     | (y3 & ~y2 & ~y1 & w)    // E & w=1
+     | (y3 & ~y2 & y1);        // F

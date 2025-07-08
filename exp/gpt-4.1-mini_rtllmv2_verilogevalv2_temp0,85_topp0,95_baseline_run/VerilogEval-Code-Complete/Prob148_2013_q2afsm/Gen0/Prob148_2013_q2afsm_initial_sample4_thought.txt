@@ -1,0 +1,13 @@
+Define the FSM with four states: A (idle/no grant), B (grant device 1), C (grant device 2), D (grant device 3).
+On reset (active low synchronous), go to state A.
+In state A, check requests r[1], r[2], r[3] in priority order:
+- If r[1]=1, go to B (grant device 1)
+- Else if r[2]=1, go to C (grant device 2)
+- Else if r[3]=1, go to D (grant device 3)
+- Else stay in A
+In B, if r[1]=1, stay in B; else return to A
+In C, if r[2]=1, stay in C; else return to A
+In D, if r[3]=1, stay in D; else return to A
+Outputs g[1], g[2], g[3] asserted depending on state.
+Use separate always blocks for state register (flip-flops) and combinational next-state logic.
+Outputs assigned using continuous assignment based on current state.

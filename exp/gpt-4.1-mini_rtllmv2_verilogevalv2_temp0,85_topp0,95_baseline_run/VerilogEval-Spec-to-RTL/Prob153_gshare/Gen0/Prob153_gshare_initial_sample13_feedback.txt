@@ -1,0 +1,28 @@
+Score: 5
+Justification: The code is syntactically correct and mostly follows the problem requirements, but it has significant functional mismatches in simulation, notably in the outputs predict_taken and predict_history. These mismatches indicate incorrect prediction logic and/or incorrect updating of the global history and PHT, which are central to the gshare predictor design.
+
+ANALYSIS:
+1. **Prediction Output Mismatch (predict_taken and predict_history):**  
+   The simulation log shows 412 mismatches for predict_taken starting at time 20, and 588 mismatches for predict_history starting at time 110. Since predict_taken depends directly on the PHT entry indexed by the XOR of the current global_history and predict_pc, and predict_history is directly driven by the current global_history, these mismatches point to errors in either the prediction read logic or the update timing of global_history.
+
+2. **Reading PHT Entry for Prediction:**  
+   The code reads `pht[predict_index]` combinationally for prediction output. This is consistent with the problem statement that PHT updates occur on the positive clock edge and predictions see the PHT state before training updates within the same cycle. Hence, the combinational read here is appropriate.
+
+3. **Training PHT Update:**  
+   The training logic updates the PHT at the positive clock edge based on `train_valid`. However, the code reads `train_pht_entry` as a reg within the sequential block (assigned by `train_pht_entry = pht[train_index];`). This is a procedural assignment in the clocked block, which can cause issues because it reads the PHT entry at the clock edge and then immediately writes an updated value to the same PHT array. This may cause race conditions or mismatches if the simulator treats PHT as synchronous RAM. The comment says PHT is combinational read, but the assignment style conflicts with this.
+
+4. **Global History Updates Priority and Timing:**  
+   The global history update logic correctly gives priority to training misprediction recovery over prediction updates. However, the exact timing of updates may cause the global_history output (predict_history) to mismatch expected values. Because predict_history outputs the current global_history (not a delayed or latched value), if global_history updates at the clock edge but the testbench expects the previous cycle's history, mismatches may occur.
+
+5. **Reset Logic and Initialization:**  
+   The simulation hints that reset may not be working properly ("Hint: Your reset doesn't seem to be working."). The reset logic asynchronously sets global_history to zero and initializes all PHT entries to weakly taken (2'b10). This is consistent with the problem statement. If reset is not triggering properly in simulation, initial conditions would be wrong, causing early mismatches.
+
+6. **No Explicit Handling of Conflicts Between Training and Prediction on Same PHT Entry:**  
+   The problem states that if training and prediction occur for the same PHT entry simultaneously, prediction output should reflect the PHT before training update (which the combinational read achieves). The code does not explicitly handle this conflict, but the current read-before-write scheme may suffice. Still, subtle race conditions in the train_pht_entry capture and PHT update might cause inconsistencies.
+
+7. **No Pipeline or Multi-cycle Delays:**  
+   The problem and code assume a synchronous one-cycle update of PHT and global history. Any difference in expected timing between the testbench and design could cause mismatches.
+
+In summary, the major issues are with the timing and method of reading and updating the PHT entries during training, the asynchronous reset not working properly (per simulation hint), and the timing of the global_history update as seen at the outputs. These cause the functional mismatches in predict_taken and predict_history seen in simulation.
+
+The code correctly implements the general structure of a gshare predictor but fails to meet the expected timing behavior and has subtle race conditions in PHT updates and global history register usage that cause the simulation failures.

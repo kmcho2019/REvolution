@@ -1,0 +1,23 @@
+Implement a finite state machine with the following states:
+- A: initial state after reset, outputs f=0, g=0.
+- B: output f=1 for one clock cycle right after reset is de-asserted.
+- C0, C1, C2: states to detect the sequence x=1,0,1 over three consecutive clock cycles.
+- D0: g=1 asserted following detection of x sequence; start monitoring y for up to 2 cycles.
+- D1: second cycle of monitoring y.
+- E: g=1 permanently (if y=1 observed within 2 cycles).
+- F: g=0 permanently (if y=1 not observed within 2 cycles).
+
+Transitions:
+- On reset (active low), FSM goes to A.
+- From A, when resetn=1, go to B (set f=1 for one cycle).
+- From B, start monitoring x sequence with states C0, C1, C2.
+- Once sequence detected, go to D0, assert g=1.
+- If y=1 in D0 or D1, go to E (g=1 permanently).
+- Else after two cycles without y=1, go to F (g=0 permanently).
+- Both E and F hold states until reset.
+
+Outputs f and g depend on states:
+- f=1 only in B.
+- g=1 in D0, D1, E; g=0 otherwise.
+
+Implement synchronous reset (active low), synchronous state transitions and output logic.

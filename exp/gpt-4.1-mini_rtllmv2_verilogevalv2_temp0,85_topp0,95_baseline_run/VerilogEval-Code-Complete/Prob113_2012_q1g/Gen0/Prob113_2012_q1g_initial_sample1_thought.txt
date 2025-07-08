@@ -1,0 +1,68 @@
+The Karnaugh map rows and columns correspond to x[1]x[2] and x[3]x[4] respectively. The K-map is:
+
+       x3x4
+       00  01  11  10
+x1x2  ----------------
+00  | 1 | 0 | 0 | 1 |
+01  | 0 | 0 | 0 | 0 |
+11  | 1 | 1 | 1 | 0 |
+10  | 1 | 1 | 0 | 1 |
+
+From the map, express f as sum of minterms or simplified SOP.
+
+Minterms where f=1 (x1x2x3x4):
+
+x1x2=00(0,0):
+ - 00: f=1  -> 0000
+ - 10: f=1  -> 0010
+
+x1x2=01(0,1):
+ - all 0
+
+x1x2=11(1,1):
+ - 00:1 -> 1100
+ - 01:1 ->1101
+ - 11:1 ->1111
+
+x1x2=10(1,0):
+ - 00:1 -> 1000
+ - 01:1 -> 1001
+ - 10:1 -> 1010
+
+Now simplify groups:
+
+Group1: x1x2=11, x3x4=00,01,11 (1100,1101,1111) -> x1=1, x2=1, x3=don't care, x4=don't care except for 11 and 01, which differ in x4; so group includes 1100 and 1101 and 1111, but 1110 is 0, so cannot group 1111 with 1100/1101 fully; however, 1100 and 1101 differ in x4 only, so group x1=1, x2=1, x3=0 and x4=don't care for 1100 and 1101 (but 1100 and 1101 differ in x4). Also 1111 is separate.
+
+Group2: x1x2=10: 1000, 1001, 1010; 1011 is 0,  so can group 1000 and 1001 (differ in x4), and 1000 and 1010 differ in x3, so 1000,1001,1010 can be grouped as x1=1, x2=0, x4=don't care, x3=don't care?
+
+No, 1001 and 1010 differ in both x3 and x4; 1000 and 1001 differ in x4, so group (1000,1001) is x1=1,x2=0,x3=0,x4=don't care
+
+Group3: 0000 and 0010: differ in x4 only: group x1=0,x2=0,x3=0,x4=don't care
+
+Similarly 1111 is single; 1010 is single; 1111 is 1111, which is x1=1,x2=1,x3=1,x4=1
+
+So the groups:
+
+- G1: x1=1,x2=1,x3=0,x4=don't care: covers 1100,1101
+
+- G2: x1=1,x2=0,x3=0,x4=don't care: covers 1000,1001
+
+- G3: x1=0,x2=0,x3=0,x4=don't care: covers 0000,0010
+
+- Single 1111: x1=1,x2=1,x3=1,x4=1
+
+- Single 1010: x1=1,x2=0,x3=1,x4=0
+
+F can be written as:
+
+f = (x1 & x2 & ~x3) | (x1 & ~x2 & ~x3) | (~x1 & ~x2 & ~x3) | (x1 & x2 & x3 & x4) | (x1 & ~x2 & x3 & ~x4)
+
+Alternatively, factor:
+
+f = ~x3 & ( (x1 & x2) | (x1 & ~x2) | (~x1 & ~x2) ) | (x1 & x2 & x3 & x4) | (x1 & ~x2 & x3 & ~x4)
+
+Note that (x1 & x2) | (x1 & ~x2) | (~x1 & ~x2) = x1 | ~x2 (since (x1 & x2) | (x1 & ~x2) = x1, and together with ~x1 & ~x2 is ~x1 & ~x2)
+
+But to avoid complexity, just implement the direct SOP.
+
+Implement the logic as above.

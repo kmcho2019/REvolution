@@ -1,0 +1,21 @@
+Design a finite state machine (FSM) to implement the required timer:
+
+1. States:
+   - SEARCH: Look for the pattern 1101 on the serial data input.
+   - READ_DELAY: After detecting 1101, shift in 4 bits MSB first to form delay[3:0].
+   - COUNT: Count down from delay to 0, each count lasting 1000 clock cycles.
+   - DONE: Assert done and wait for ack=1 to restart.
+
+2. Implementation details:
+   - Use a shift register of length 4 to detect the start pattern.
+   - After detecting start pattern, shift in delay bits MSB first (4 bits).
+   - Use a 10-bit counter for counting 1000 clock cycles per delay count.
+   - Use a 4-bit counter to count down the delay from delay to 0.
+   - Output count = current remaining count during counting, don't-care otherwise.
+   - counting is asserted during counting state.
+   - done is asserted during done state, waiting for ack to restart.
+   - Reset synchronously sets state to SEARCH and clears counters.
+
+3. Inputs/outputs are synchronous to clk.
+
+4. The module TopModule as given.

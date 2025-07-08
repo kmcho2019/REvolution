@@ -1,0 +1,21 @@
+Implement a state machine that tracks the current water level based on sensor inputs. Since we need to know the previous level relative to the current one to decide on the supplemental flow valve (dfr), store the previous level state. Define water level states based on sensor inputs:
+
+- 3: Above s[3] (all sensors asserted)
+- 2: Between s[3] and s[2] (s[1], s[2] asserted)
+- 1: Between s[2] and s[1] (only s[1] asserted)
+- 0: Below s[1] (no sensors asserted)
+
+On each clock cycle, update the current level from sensors and compare with previous level. If current level > previous level, dfr is asserted; otherwise, it's zero.
+
+Set output flow valves accordingly:
+
+- Level 3: fr1=fr2=fr3=dfr=0
+- Level 2: fr1=1, fr2=fr3=0
+- Level 1: fr1=fr2=1, fr3=0
+- Level 0: fr1=fr2=fr3=1
+
+On reset, set state to level 0 (lowest), assert all flow valves and dfr.
+
+The sensor input s[3:1] is 3 bits, but indexed as [3:1]. For convenience, decode the water level by checking which sensors are asserted.
+
+Note: Use synchronous reset.

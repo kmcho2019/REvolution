@@ -1,0 +1,11 @@
+Define a 4-state FSM with states A (idle), B (grant device 1), C (grant device 2), and D (grant device 3). On synchronous active-low reset, state goes to A. State transitions:
+- From A: 
+  - if r[1]=1, go to B (grant device 1)
+  - else if r[2]=1, go to C (grant device 2)
+  - else if r[3]=1, go to D (grant device 3)
+  - else stay in A
+- From B: if r[1]=1 stay in B else go to A
+- From C: if r[2]=1 stay in C else go to A
+- From D: if r[3]=1 stay in D else go to A
+
+Outputs g[1], g[2], g[3] are 1 when in states B, C, D respectively. Use one always block for state registers, one always block for next state logic, and continuous assignments for outputs.

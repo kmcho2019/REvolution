@@ -1,0 +1,110 @@
+First, identify the minterms where output is 1 from the Karnaugh map. The map rows correspond to cd (00,01,11,10) and columns correspond to ab (00,01,11,10).
+
+Map (out=1):
+cd\ab:  00 01 11 10
+00      1   1  0   1
+01      1   0  0   1
+11      0   1  1   1
+10      1   1  0   0
+
+List all 1s with variables (a,b,c,d):
+
+(0,0,0,0)  a=0,b=0,c=0,d=0 -> m0 = !a & !b & !c & !d
+(0,1,0,0)  a=1,b=0,c=0,d=0 -> m4 = a & !b & !c & !d
+(1,0,0,0)  a=0,b=1,c=0,d=0 -> m2 = !a & b & !c & !d
+(1,1,0,0)  a=1,b=1,c=0,d=0 -> m6 = a & b & !c & !d (but map shows 0 here)
+Wait, at cd=00, ab=11 (11) value is 0, so no m6
+
+Check carefully:
+
+cd=00 (c=0,d=0)
+ab=00 (a=0,b=0): 1 -> m0
+ab=01 (a=0,b=1): 1 -> m2
+ab=11 (a=1,b=1): 0
+ab=10 (a=1,b=0): 1 -> m4
+
+cd=01 (c=0,d=1)
+ab=00 (a=0,b=0): 1 -> m1 = !a & !b & !c & d
+ab=01 (0,1): 0
+ab=11 (1,1): 0
+ab=10 (1,0): 1 -> m5 = a & !b & !c & d
+
+cd=11 (c=1,d=1)
+ab=00 (0,0): 0
+ab=01 (0,1): 1 -> m7 = !a & b & c & d
+ab=11 (1,1): 1 -> m15 = a & b & c & d
+ab=10 (1,0): 1 -> m14 = a & !b & c & d
+
+cd=10 (c=1,d=0)
+ab=00 (0,0): 1 -> m8 = !a & !b & c & !d
+ab=01 (0,1): 1 -> m10= !a & b & c & !d
+ab=11 (1,1): 0
+ab=10 (1,0): 0
+
+So minterms are: 0,1,2,4,5,7,8,10,14,15
+
+Now, find prime implicants by grouping:
+
+From the map, groupings:
+
+- Group1: all minterms where c=0, d=0 and b=0 (m0,m4) plus also m1,m5 (d=1 but c=0,b=0) : minterms 0,1,4,5
+
+Check if can group better:
+
+- Column ab=00 (a=0,b=0) has ones at cd=00,01,10 (m0,m1,m8)
+- Row cd=00 (c=0,d=0) has ones at ab=00,01,10 (m0,m2,m4)
+- Row cd=10 (c=1,d=0) has ones at ab=00,01 (m8,m10)
+
+Try to form groups of 4 or 8 to simplify:
+
+- Group of four ones at minterms 0,1,4,5 (cd=00 and 01 with ab=00 and 10) means b=0,c=0, a and d vary
+
+- Group of four ones at minterms 8,10,0,1 (cd=10 and 00 with ab=00 and 01) means a=0,b varies,c=don't care,d varies - needs careful check.
+
+Simplify using sum of products for clarity:
+
+Alternatively, implement the function as sum of minterms:
+
+out = Σm(0,1,2,4,5,7,8,10,14,15)
+
+Use a 4-input LUT like:
+
+out = (a,b,c,d) in above minterms
+
+Implement as:
+
+out = (!a & !b & !c & !d) | (!a & !b & !c & d) | (!a & b & !c & !d) | (a & !b & !c & !d) | (a & !b & !c & d) | (!a & b & c & d) | (!a & !b & c & !d) | (!a & b & c & !d) | (a & !b & c & d) | (a & b & c & d)
+
+Alternatively, write as sum of products from K-map groups:
+
+Group 1: (!b & !c & !d) covers m0,m1,m4,m5
+
+Group 2: (!a & c & !d) covers m8,m10
+
+Group 3: (b & c & d) covers m7
+
+Group 4: (a & c & d) covers m14,m15
+
+Group 5: (!a & b & !c & !d) covers m2
+
+Group 6: (a & !b & !c & !d) covers m4 (already in group 1)
+
+Check if groups cover all minterms:
+
+m0,m1,m4,m5 in group1
+
+m8,m10 in group2
+
+m7 in group3
+
+m14,m15 in group4
+
+m2 in group5
+
+Minterm 2 only covered by group5.
+
+Hence final expression:
+
+out = (!b & !c & !d) | (!a & c & !d) | (b & c & d) | (a & c & d) | (!a & b & !c & !d)
+
+Implement this final logic in Verilog.

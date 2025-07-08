@@ -1,0 +1,14 @@
+The design is a Mealy-type state machine that controls flow valves based on sensor inputs and previous water level states. We encode the water level based on which sensors are asserted and track the previous water level to determine if the flow rate should be increased (by asserting dfr). On reset, the system starts at the lowest level (no sensors asserted) with all outputs asserted. At each clock cycle, we:
+
+1. Determine the current level based on sensors s[3:1].
+2. Compare the current level to the previous level.
+3. Set outputs fr1, fr2, fr3, and dfr accordingly:
+   - When above s[3] (all sensors asserted), all outputs are zero.
+   - Between s[3] and s[2] (s[1], s[2] asserted), fr1=1, others zero.
+   - Between s[2] and s[1] (s[1] asserted), fr1=fr2=1, fr3=0.
+   - Below s[1] (no sensors asserted), fr1=fr2=fr3=1.
+   - dfr is asserted if the previous level was lower than current level.
+   
+The "level" will be encoded as 0: below s[1], 1: between s[2] and s[1], 2: between s[3] and s[2], 3: above s[3]. The previous level is stored in a register updated every clock cycle. Outputs are combinational based on current level and previous level comparison. The synchronous reset sets previous level to 0 and all outputs to 1.
+
+This approach cleanly separates state tracking and output logic, satisfies requirements, and is easily testable.

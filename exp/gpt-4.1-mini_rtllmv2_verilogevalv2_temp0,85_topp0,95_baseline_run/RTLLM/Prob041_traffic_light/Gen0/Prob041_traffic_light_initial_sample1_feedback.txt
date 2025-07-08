@@ -1,0 +1,38 @@
+Score: 3
+Justification: The code compiles and runs but fails the simulation due to incorrect timing and state transitions inconsistent with the problem specification; specifically, the red and yellow durations are too short, and the pedestrian button logic does not properly shorten the green light. These issues show partial but flawed functionality.
+
+ANALYSIS:
+1. **Incorrect timing values for states:**  
+   The problem specifies green = 60 clocks, yellow = 5 clocks, and red = 10 clocks. However, in the code:  
+   - The red state `s1_red` uses `cnt <= 10`, which matches the spec, but the comments and some transitions suggest counts of 3 or 10 inconsistently.  
+   - The yellow state `s2_yellow` sets `cnt <= 10` when transitioning from green (which is wrong), it should be 5 per spec. But in the code, yellow state's counter is set to 10 in default and transitions which is inconsistent.  
+   - The simulation log shows red state at clock = 1 (too short) and yellow state is not correctly shown at 5 clocks. This indicates the timing does not match the requirements.
+
+2. **State transition logic inconsistency:**  
+   According to the problem description, the states cycle as: red → green → yellow → red. However, in the code, transitions are:  
+   - `s1_red` → `s3_green`  
+   - `s3_green` → `s2_yellow`  
+   - `s2_yellow` → `s1_red`  
+   This order is correct, but the counter initial values and decrements do not match the durations given.
+
+3. **Pedestrian button logic is improperly implemented:**  
+   The problem states that when the pedestrian button is pressed, if remaining green time is greater than 10, it should be shortened to 10; otherwise, it remains unchanged.  
+   In the code's `s3_green` state:  
+   ```verilog
+   if(pass_request && cnt > 10) begin
+       cnt <= 10;
+   end
+   ```  
+   But this assignment happens synchronously on clock edge. If `pass_request` is continuously asserted, `cnt` is reset to 10 each clock cycle while `cnt` is greater than 10, effectively fixing `cnt` at 10 until it counts down. This might cause unexpected behavior or timing glitches in simulation.
+
+4. **The combinational always block for output signals uses the current state but does not affect state transitions:**  
+   The output signals `p_red`, `p_yellow`, `p_green` are assigned in a combinational block based on the current `state`. However, the initial `idle` state does not transition to `s1_red` within this block or in synchronous logic, but only in the sequential block. The `idle` state sets all lights to 0 but never explicitly sets `state` to `s1_red` except in the sequential block. The mismatch here could cause simulation glitches at startup.
+
+5. **Output counter assignment via combinational block:**  
+   The assignment to `clock` is done in a combinational always block from `cnt`. Since `cnt` is updated synchronously, this is acceptable but unconventional. This could cause simulation delta cycles or glitches but is not a primary cause of failure.
+
+6. **Simulation log shows unexpected timing and state values:**  
+   At time 890, clock = 1 with red = 1 is not consistent with a 10 clock red duration. Also, the transitions do not align with expected durations. The simulation terminates early (at 930) with a failure, indicating the design failed the testbench checks.
+
+**Summary:**  
+The core issues causing simulation failure are the mismatched timing values for states and the incorrect handling of the pedestrian button shortening logic, which cause the traffic light to not follow the required timing sequence. Additionally, the starting idle state handling and signal assignments contribute to these functional mismatches.
