@@ -1580,8 +1580,10 @@ class EoHEngine:
             for strat in available_strategies:
                 # If a strategy has 0 pulls, its exploration value is infinite.
                 # This prevents a ZeroDivisionError and correctly prioritizes it.
+                # Infinite seems to cause nan issues in softmax, so we set it to a very high value.
+                # This is a common trick in UCB to handle untried arms.
                 if stats_dict[strat]["count"] == 0:
-                    ucb_scores[strat] = float('inf')
+                    ucb_scores[strat] = 1000 # Use a large constant instead of infinity to avoid NaN issues in softmax
                     continue
                 
                 avg_reward = stats_dict[strat]["value"]
