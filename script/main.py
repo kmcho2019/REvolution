@@ -773,7 +773,7 @@ class VerilogEvaluator:
 
 class LLMInterface:
     def __init__(self, api_key=None, model_name="gpt-3.5-turbo", api_backend="openai", max_retries=10, base_delay=2):
-        if not api_key: 
+        if not api_key and api_backend != "vllm": 
             raise ValueError("API key is required for LLMInterface initialization.")
         
         self.api_backend = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
@@ -794,6 +794,9 @@ class LLMInterface:
             self.client_args["base_url"] = "https://openrouter.ai/api/v1"
         elif api_backend == "deepseek":
             self.client_args["base_url"] = "https://api.deepseek.com"
+        elif api_backend == "vllm":
+            self.client_args["base_url"] = "http://localhost:8000/v1"  # Assuming that vLLM server is running locally
+
         else:
             raise ValueError(f"Unsupported API backend: '{api_backend}'. Choose from 'openai', 'openrouter', 'deepseek'.")
 
@@ -1950,12 +1953,14 @@ def run_problem_worker(args_tuple):
             api_key = os.getenv("OPENROUTER_API_KEY")
         elif args.api_backend == 'deepseek':
             api_key = os.getenv("DEEPSEEK_API_KEY")
-        
-        if not api_key:
-            raise ValueError(
-                f"API key for backend '{args.api_backend}' not found. "
-                f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
-            )
+
+
+        if args.api_backend != 'vllm': # vllm does not require an API key
+            if not api_key:
+                raise ValueError(
+                    f"API key for backend '{args.api_backend}' not found. "
+                    f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
+                )
         llm_interface = LLMInterface(api_key=api_key, model_name=args.model_name, api_backend=args.api_backend)
         verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
         synthesis_evaluator = SynthesisEvaluator()
@@ -2000,7 +2005,7 @@ if __name__ == "__main__":
     parser.add_argument('--problems', nargs='+',
                         help='A list of specific problem names to run. If not provided, all problems in the suite will be run.')
     parser.add_argument('--api_backend', type=str, default='openai', 
-                        choices=['openai', 'openrouter', 'deepseek'], 
+                        choices=['openai', 'openrouter', 'deepseek', 'vllm'], 
                         help='The API backend to use for LLM calls.')
     parser.add_argument('--model_name', type=str, default="gpt-4.1-mini", help='Name of the OpenAI model to use.')
     parser.add_argument('--population_size', type=int, default=5, help='Number of candidates in each generation.')
@@ -2020,24 +2025,29 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Map backends to their required environment variables
-    api_key_env_vars = {
-        'openai': 'OPENAI_API_KEY',
-        'openrouter': 'OPENROUTER_API_KEY',
-        'deepseek': 'DEEPSEEK_API_KEY'
-    }
 
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    api_key = None
+    if args.api_backend != "vllm": # vllm does not require an API key
+        # Map backends to their required environment variables
+        api_key_env_vars = {
+            'openai': 'OPENAI_API_KEY',
+            'openrouter': 'OPENROUTER_API_KEY',
+            'deepseek': 'DEEPSEEK_API_KEY'
+        }
+        # Check for the correct key based on the selected backend
+        required_key_var = api_key_env_vars.get(args.api_backend, None)
+        if required_key_var:
+            api_key = os.getenv(required_key_var)
+            if not api_key:
+                print(f"LLM Initialization Error: The environment variable '{required_key_var}' must be set for the '{args.api_backend}' backend.")
+                exit(1)
+
+    # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     IVERILOG_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/iverilog"
     VVP_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/vvp"
     YOSYS_EXECUTABLE = "/project/cad-team/LX_Semicon/kmcho/yosys/yosys"
     OPENROAD_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/openroad/install/bin/openroad"
 
-    # Check for the correct key based on the selected backend
-    required_key_var = api_key_env_vars[args.api_backend]
-    if not os.getenv(required_key_var):
-        print(f"LLM Initialization Error: The environment variable '{required_key_var}' must be set for the '{args.api_backend}' backend.")
-        exit(1)
         
     # verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
     # synthesis_evaluator = SynthesisEvaluator()
