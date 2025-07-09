@@ -3,6 +3,7 @@ yosys -import
 set VERILOG_FILE __VERILOG_FILE__
 set MODULE_NAME __MODULE_NAME__
 set OUTPUT_DIR __OUTPUT_DIR__
+set OUTPUT_FILE __OUTPUT_FILE__
 set REF_DIR __REF_DIR__
 set PDK_DIR __PDK_DIR__
 set ABC_CLOCK_PERIOD_IN_PS __CLK_PERIOD__
@@ -82,5 +83,5 @@ set MIN_BUF_CELL_AND_PORTS "BUF_X1 A Z"
 insbuf -buf {*}$MIN_BUF_CELL_AND_PORTS
 
 # Write synthesized design
-write_verilog -noattr -noexpr -nohex -nodec ${OUTPUT_DIR}/${MODULE_NAME}.syn.v
+write_verilog -noattr -noexpr -nohex -nodec ${OUTPUT_FILE}
 

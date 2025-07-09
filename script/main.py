@@ -390,10 +390,11 @@ class SynthesisEvaluator:
 
         clk_period = self.clk_period # ns
 
+        output_file = verilog_file.replace(".sv", ".syn.v")
 
         sdc_file_path = self._create_sdc_file(verilog_file, synth_top_module_name, output_directory, clk_period=clk_period)
-        yosys_script_path = self._create_yosys_script(verilog_file, synth_top_module_name, output_directory, clk_period)
-        openroad_script_path = self._create_openroad_script(sdc_file_path, synth_top_module_name, output_directory)
+        yosys_script_path = self._create_yosys_script(verilog_file, synth_top_module_name, output_directory, clk_period, output_file)
+        openroad_script_path = self._create_openroad_script(sdc_file_path, synth_top_module_name, output_directory, output_file)
 
         report_path = report_base_path + "_synthesis_report.rpt" #os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
 
@@ -448,7 +449,7 @@ class SynthesisEvaluator:
 
         return sdc_gen
 
-    def _create_yosys_script(self, verilog_file, module_name, output_directory, clk_period):
+    def _create_yosys_script(self, verilog_file, module_name, output_directory, clk_period, output_file):
         yosys_ref = os.path.join(self.ref_dir_path, 'ref.yosys.tcl')
         yosys_gen = f'{output_directory}/{module_name}.yosys.tcl'
 
@@ -458,6 +459,7 @@ class SynthesisEvaluator:
                 text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
                 text = text.replace("__MODULE_NAME__", module_name) # Reverted to using module_name directly as we now extract it from the Verilog file
                 text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
+                text = text.replace("__OUTPUT_FILE__", output_file)
                 text = text.replace("__REF_DIR__", self.ref_dir_path)
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
                 text = text.replace("__CLK_PERIOD__", str(clk_period * 1000))
@@ -465,7 +467,7 @@ class SynthesisEvaluator:
 
         return yosys_gen
 
-    def _create_openroad_script(self, sdc_file_path, module_name, output_directory):
+    def _create_openroad_script(self, sdc_file_path, module_name, output_directory, output_file):
         # A simplified OpenROAD script. This may need to be adapted for your specific PDK and design.
         or_ref = os.path.join(self.ref_dir_path, 'ref.openroad.tcl')
         or_gen = f'{output_directory}/{module_name}.openroad.tcl'
@@ -477,7 +479,7 @@ class SynthesisEvaluator:
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
                 text = text.replace("__DESIGN_NAME__", module_name)
                 text = text.replace("__MODULE_NAME__", module_name) # Reverted to using module_name directly as we now extract it from the Verilog file
-                text = text.replace("__NETLIST__", os.path.abspath(f'{output_directory}/{module_name}.syn.v'))
+                text = text.replace("__NETLIST__", os.path.abspath(f'{output_file}'))
                 text = text.replace("__SDC__", sdc_file_path)
                 text = text.replace("__UTILIZATION__", str(0.5))
                 outfile.write(text)
@@ -742,7 +744,7 @@ class VerilogEvaluator:
         }
 
 class LLMInterface:
-    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", api_backend="openai", max_retries=5, base_delay=2):
+    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", api_backend="openai", max_retries=10, base_delay=2):
         if not api_key: 
             raise ValueError("API key is required for LLMInterface initialization.")
         
