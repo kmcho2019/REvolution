@@ -329,11 +329,13 @@ module DFF_X1 (CK, D, Q, QN);
    input CK;
    input D;
    output Q;
-   output QN;   
+   output QN;
+   reg Q_REG;   
    always @(posedge CK) begin
-      Q <= D;
-      QN <= ~D;
+      Q_REG <= D;
    end
+   assign Q = Q_REG;
+   assign QN = ~Q;
 endmodule // DFF_X1
 
 module DFF_X2 (CK, D, Q, QN);
@@ -341,10 +343,12 @@ module DFF_X2 (CK, D, Q, QN);
    input D;
    output Q;
    output QN;
+   reg Q_REG;   
    always @(posedge CK) begin
-      Q <= D;
-      Q <= ~D;
+      Q_REG <= D;
    end
+   assign Q = Q_REG;
+   assign QN = ~Q;
 endmodule // DFF_X2
 
 module DFFR_X1 (CK, D, RN, Q, QN);
@@ -353,11 +357,13 @@ module DFFR_X1 (CK, D, RN, Q, QN);
    input RN;
    output Q;
    output QN;
+   reg Q_REG;
    always @(posedge CK or negedge RN)
      if (RN==1'b0) 
-       Q <= 0;
+       Q_REG <= 0;
      else 
-       Q <= D;   
+       Q_REG <= D;
+   assign Q = Q_REG;
    assign QN = ~Q;
 endmodule // DFF_X1
 
@@ -367,11 +373,13 @@ module DFFR_X2 (CK, D, RN, Q, QN);
    input RN;
    output Q;
    output QN;
+   reg Q_REG;
    always @(posedge CK or negedge RN)
      if (RN==1'b0) 
-       Q <= 0;
+       Q_REG <= 0;
      else 
-       Q <= D;   
+       Q_REG <= D; 
+   assign Q = Q_REG;  
    assign QN = ~Q;
 endmodule // DFF_X2
 
@@ -381,11 +389,13 @@ module DFFS_X1 (D, SN, CK, Q, QN);
    input CK;
    output Q;
    output QN;
+   reg Q_REG;
    always @(posedge CK or negedge SN)
      if (SN==1'b0) 
-       Q <= 1;
+       Q_REG <= 1;
      else 
-       Q <= D;   
+       Q_REG <= D;
+   assign Q = Q_REG;   
    assign QN = ~Q;
 endmodule
 
@@ -395,11 +405,13 @@ module DFFS_X2 (D, SN, CK, Q, QN);
    input CK;
    output Q;
    output QN;
+   reg Q_REG;
    always @(posedge CK or negedge SN)
      if (SN==1'b0) 
-       Q <= 1;
+       Q_REG <= 1;
      else 
-       Q <= D;   
+       Q_REG <= D;
+   assign Q = Q_REG;
    assign QN = ~Q;
 endmodule
 

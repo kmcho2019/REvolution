@@ -383,21 +383,77 @@ class SynthesisEvaluator:
         # print(f"Reference Directory: {self.ref_dir_path}")
         # print(f"PDK Directory: {self.pdk_path}")
 
-    def evaluate(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path):
+    def evaluate(self, verilog_file, problem_name, synth_top_module_name, tb_dut_module_name, output_directory, report_base_path, verilog_evaluator, test_sv_file, ref_sv_file):
         """
         Performs synthesis and PPA analysis on a given Verilog file.
         The report files will be named based on `report_base_path`.
+        return format:
+        {
+            "synthesis_success": bool,  # True if synthesis was successful
+            "synthesis_functionality_success": bool,  # True if functionality test passed on the synthesized netlist
+            "ppa_success": bool,  # True if PPA analysis was successful
+            "synthesis_log": str, # Path to the synthesis report log file
+            "ppa_metrics": dict,  # PPA metrics dictionary with keys like "tns", "wns", "eff_clk_period", "power", "area", "report_path"
+        }
         """
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path)
+        synthesized_netlist_path = verilog_file.replace(".sv", ".syn.v")
+
+        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, synthesized_netlist_path)
 
         if not synthesis_success:
             return {
                 "synthesis_success": False,
+                "synthesis_functionality_success": False,  # No functionality test if synthesis failed
                 "ppa_success": False,
                 "synthesis_log": synthesis_log,
+                "ppa_metrics": None
+            }
+
+        # If the module name for synthesis is different from what the testbench expects,
+        # patch the synthesized file before simulation. This handles the RefModule case.
+        # Where for ref.sv files the module name is different from what is expected in the testbench.
+        if synth_top_module_name != tb_dut_module_name:
+            try:
+                print(f"INFO: Patching netlist module name from '{synth_top_module_name}' to '{tb_dut_module_name}' for simulation.")
+                with open(synthesized_netlist_path, 'r') as f:
+                    content = f.read()
+                
+                # Replace the module definition line
+                content = content.replace(f"module {synth_top_module_name}", f"module {tb_dut_module_name}", 1)
+                
+                with open(synthesized_netlist_path, 'w') as f:
+                    f.write(content)
+            except Exception as e:
+                print(f"ERROR: Failed to patch synthesized netlist file: {e}")
+                # Return failure if patching fails
+                return {
+                    "synthesis_success": True,
+                    "synthesis_functionality_success": False,
+                    "ppa_success": False,
+                    "synthesis_log": f"{synthesis_log}\n\n--- Netlist Patching Failed ---\n{e}",
+                    "ppa_metrics": None
+                }
+
+
+        # After synthesis add post-synthesis functionality test
+        synthesis_functionality_success, func_check_log = self._check_synthesis_functionality(
+            synthesized_netlist_path,
+            test_sv_file,
+            ref_sv_file,
+            "tb", # Assuming the top module name for the testbench is "tb"
+            output_directory,
+            verilog_evaluator
+        )
+
+        if not synthesis_functionality_success:
+            return {
+                "synthesis_success": True,
+                "synthesis_functionality_success": False,
+                "ppa_success": False,
+                "synthesis_log": f"{synthesis_log}\n\n--- Post-Synthesis Functional Verification Log ---\n{func_check_log}",
                 "ppa_metrics": None
             }
 
@@ -405,12 +461,13 @@ class SynthesisEvaluator:
 
         return {
             "synthesis_success": True,
+            "synthesis_functionality_success": True,
             "ppa_success": True,
             "synthesis_log": synthesis_log,
             "ppa_metrics": ppa_metrics
         }
 
-    def _run_synthesis(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path):
+    def _run_synthesis(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, synthesized_netlist_path):
         """
         Runs the Yosys synthesis script.
         Synthesis report saved based on report_base_path.
@@ -418,7 +475,7 @@ class SynthesisEvaluator:
 
         clk_period = self.clk_period # ns
 
-        output_file = verilog_file.replace(".sv", ".syn.v")
+        output_file = synthesized_netlist_path
 
         sdc_file_path = self._create_sdc_file(verilog_file, synth_top_module_name, output_directory, clk_period=clk_period)
         yosys_script_path = self._create_yosys_script(verilog_file, synth_top_module_name, output_directory, clk_period, output_file)
@@ -442,6 +499,45 @@ class SynthesisEvaluator:
                 f.write("\n\n--- SYNTHESIS FAILED ---\n")
                 f.write(process.stderr.decode())
             return False, report_path
+        
+    # Method for post-synthesis functionality check/verification
+    def _check_synthesis_functionality(self, synthesized_netlist, test_sv, ref_sv, tb_top_module, output_dir, verilog_evaluator):
+        """
+        Runs a functional simulation on the synthesized netlist using the provided testbench.
+        """
+        # need to include the verilog files from pdk for simulation of synthesized netlist
+        pdk_verilog_lib = os.path.join(self.pdk_path, "Nangate45", "work_around_yosys", "cells.v")
+        if not os.path.exists(pdk_verilog_lib):
+            error_msg = f"PDK Verilog library not found at: {pdk_verilog_lib}"
+            print(f"ERROR: {error_msg}")
+            return False, error_msg
+        
+        # The evaluator expects a list of files. The synthesized netlist replaces the original DUT.
+        # The VerilogEvaluator's evaluate method has been slightly adapted to accept a list of files
+        # Example: iverilog -Wall -Winfloop -Wno-timescale -g2012 -o compiled.vvp -s tb testbench.sv synthesized_netlist.syn.v pdk_verilog_lib.v
+        sim_results = verilog_evaluator.evaluate(
+            generated_sv_file=[synthesized_netlist, pdk_verilog_lib], # Pass synthesized netlist and PDK lib
+            test_sv_file=test_sv,
+            ref_sv_file=ref_sv,
+            top_module_name=tb_top_module 
+            # Don't use output_directory here, if we pass the synthesized_netlist its .syn suffix will differentiate it from the rtl simulation
+        )
+
+        if sim_results["status"] == "compilation_error":
+            print(f"Synthesis functionality check failed during compilation: {sim_results.get('compilation_stderr', 'Compilation log not available')}")
+        log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
+
+        if sim_results['status'] == 'success':
+            output = sim_results.get('simulation_stdout', '')
+            # Check for simulation output in two ways:
+            # Looks for "Mismatches: 0" in the output (VerilogEvalv2)
+            # or checks for "===========Your Design Passed===========" in the output (RTLLMv2)
+            m_match = re.search(r'^Mismatches: (\d+)', output, re.M)
+            if (m_match and int(m_match.group(1)) == 0) or "===========Your Design Passed===========" in output:
+                return True, log
+
+        return False, log
+
     
     def _create_sdc_file(self, verilog_file, module_name, output_directory, clk_period):
         """
@@ -590,9 +686,11 @@ class VerilogEvaluator:
         Compiles and simulates the given Verilog files.
 
         Args:
-            generated_sv_file (str): Path to the generated Verilog file (DUT).
+            generated_sv_file (str, list): Path to the generated Verilog file (or list of files consisting of actual test file and pdk verilog files when used for synthesis functionality check).
+                (Note when giving a list of files the first path should be the generated Verilog file, the rest are additional files to include in the compilation).
+                (This is important because the first file in the list is used to determine output_basename in case of a list and no output_directory is given).
             test_sv_file (str): Path to the testbench Verilog file.
-            ref_sv_file (str): Path to the reference Verilog file.
+            ref_sv_file (str, None): Path to the reference Verilog file. (Sometimes could be omitted by passing None)
             top_module_name (str, optional): Name of the top-level Verilog module in the testbench. Defaults to "tb".
             output_directory (str, optional): Directory to store compiled outputs and logs.
                                              Defaults to the directory of generated_sv_file.
@@ -611,23 +709,57 @@ class VerilogEvaluator:
                 }
         """
         # --- 1. Determine paths and prepare ---
-        if not os.path.isfile(generated_sv_file):
+        # Handl single file or list of files for test_sv_file
+        if isinstance(generated_sv_file, str):
+            dut_files = [generated_sv_file]
+            output_basename = os.path.splitext(os.path.basename(generated_sv_file))[0]
+            if not os.path.isfile(generated_sv_file):
+                return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
+                                         comp_stderr=f"Generated Verilog file not found: {generated_sv_file}")
+            # Determine paths using the string
+            if output_directory is None:
+                actual_output_dir = os.path.dirname(generated_sv_file)
+            else:
+                actual_output_dir = output_directory
+            output_basename = os.path.splitext(os.path.basename(generated_sv_file))[0]
+
+        elif isinstance(generated_sv_file, list):
+            dut_files = generated_sv_file
+            # The first file in the list is considered the generated Verilog file and used to determine the output basename
+            main_dut_file = dut_files[0]
+            # Check for duplicates within the list while ensuring the first file is always included first
+            dut_files = list(dict.fromkeys(dut_files))  # Removes duplicates while preserving order
+            for f in dut_files:
+                if not os.path.isfile(f):
+                    return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
+                                             comp_stderr=f"Additional Verilog file not found: {f}")
+                
+            # Determine paths using the FIRST element of the list
+            if output_directory is None:
+                actual_output_dir = os.path.dirname(main_dut_file)
+            else:
+                actual_output_dir = output_directory
+            output_basename = os.path.splitext(os.path.basename(main_dut_file))[0]   
+        else:
             return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
-                                     comp_stderr=f"Generated Verilog file not found: {generated_sv_file}")
+                                     comp_stderr="Invalid type for generated_sv_file. Expected str or list of str.")
+
         if not os.path.isfile(test_sv_file):
             return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
                                      comp_stderr=f"Test Verilog file not found: {test_sv_file}")
-        if not os.path.isfile(ref_sv_file):
+        # Check if the reference file is provided and exists
+        if ref_sv_file is None:
+            pass
+        elif not os.path.isfile(ref_sv_file):
+            # If ref_sv_file is not None, it should be a valid file path
+            # If it is None, we skip this check
             return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
                                      comp_stderr=f"Reference Verilog file not found: {ref_sv_file}")
 
-        if output_directory is None:
-            actual_output_dir = os.path.dirname(generated_sv_file)
-        else:
-            actual_output_dir = output_directory
-            os.makedirs(actual_output_dir, exist_ok=True)
 
-        output_basename = os.path.splitext(os.path.basename(generated_sv_file))[0]
+
+
+        os.makedirs(actual_output_dir, exist_ok=True)
         compiled_vvp_file = os.path.join(actual_output_dir, output_basename + "_compiled.vvp")
         log_file = os.path.join(actual_output_dir, output_basename + "_simulation.log")
 
@@ -640,9 +772,17 @@ class VerilogEvaluator:
         compile_cmd_list.extend(self.base_iverilog_flags)
         compile_cmd_list.extend(["-s", top_module_name]) # Specify top module
         compile_cmd_list.extend(["-o", compiled_vvp_file])
-        compile_cmd_list.append(generated_sv_file)
-        compile_cmd_list.append(test_sv_file)
-        compile_cmd_list.append(ref_sv_file)
+        compile_cmd_list.extend(dut_files)  # Add the generated Verilog file(s)
+        # Add logic for testing for duplicate files, if the same file is given multiple times, it should be added only once
+        # This guard is necessary as when applying this function for reference files ref_sv_file might be the same as generated_sv_file,
+        # So we need to ensure we don't add it multiple times. To avoid simulation errors.
+        if test_sv_file not in dut_files:
+            compile_cmd_list.append(test_sv_file)
+        if ref_sv_file not in dut_files:
+            # Skip adding ref_sv_file if it is None
+            # This is to avoid errors when the reference file is not provided
+            if ref_sv_file is not None:
+                compile_cmd_list.append(ref_sv_file)
 
         print(f"INFO: Compile command: {' '.join(compile_cmd_list)}")
         with open(log_file, "w", encoding="utf-8") as lf:
@@ -704,7 +844,7 @@ class VerilogEvaluator:
             # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt, 
             # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
             # Prob049_signal_generator_tri_gen.txt
-            simulation_working_dir = os.path.dirname(generated_sv_file)
+            simulation_working_dir = os.path.dirname(dut_files[0])
             print(f"INFO: Running simulation in directory: {simulation_working_dir}")
             lf.write(f"Working Directory: {simulation_working_dir}\n\n")
 
@@ -1174,8 +1314,9 @@ class Heuristic:
         self.generation = generation 
         self.parent_ids = parent_ids if parent_ids else [] 
         # New attributes for synthesis and PPA
-        self.status = status # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis'
+        self.status = status # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis', 'failed_synthesis_functionality'
         self.synthesis_success = False
+        self.synthesis_functionality = False
         self.ppa_success = False
         self.ppa_metrics = {}
         # File path to the code for evaluation purposes
@@ -1288,14 +1429,29 @@ class EoHEngine:
         ref_report_base_path = os.path.join(ref_output_dir, f"{self.problem_name}_ref")
         ref_top_module_name = "RefModule"  # Use a fixed name for the reference module, 
         # RTLLM originally used different names for each reference file, but we have standardized it to bring it in line with VerilogEvalv2.
-        synthesis_results = self.synthesis_evaluator.evaluate(ref_sv_file, self.problem_name, ref_top_module_name, ref_output_dir, ref_report_base_path)
+        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+
+        # Get the *original* module name that the testbench expects (which is different from the reference module name).
+        # This is used to ensure that the testbench can correctly instantiate the reference module.
+        top_module_name_file = os.path.join(self.benchmark_path, "synthesis_top_module_names.json")
+        if os.path.exists(top_module_name_file):
+            with open(top_module_name_file, "r") as f:
+                top_module_names = json.load(f)
+            tb_expects_name = top_module_names.get(self.problem_name, "RefModule")
+        else:
+            print(f"WARNING: Top module name file not found. Using default module name 'RefModule'.")
+            tb_expects_name = "RefModule"
+
+        synthesis_results = self.synthesis_evaluator.evaluate(ref_sv_file, self.problem_name, ref_top_module_name, tb_expects_name, ref_output_dir, ref_report_base_path,
+                                                              self.evaluator, test_sv_file, None) 
+        # ref_sv_file is added twice but, this is caught by the VerilogEvaluator.evaluate method, which checks for duplicate files.
 
         if synthesis_results and synthesis_results.get("ppa_success"):
             self.ref_ppa_metrics = synthesis_results["ppa_metrics"]
             print(f"Reference PPA calculated successfully: {self.ref_ppa_metrics}")
         else:
-            print("WARNING: Reference PPA synthesis failed. Using default high values.")
-            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e6, "power": 1.0}
+            print("WARNING: Reference PPA synthesis (or post-synthesis evaluation) failed. Using default high values.")
+            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e10, "power": 1e10}
 
     def _calculate_fitness_score(self, candidate):
         """Calculates a fitness score for a successful candidate based on PPA improvement."""
@@ -1347,7 +1503,8 @@ class EoHEngine:
         Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
         Updates each candidate object with its final status, feedback, and score.
         """
-        if not candidates_to_evaluate: return
+        if not candidates_to_evaluate: 
+            return
 
         print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
         test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
@@ -1411,20 +1568,32 @@ class EoHEngine:
                 with open(top_module_name_file, "r") as f:
                     top_module_names = json.load(f)
                 top_module_name = top_module_names.get(self.problem_name, "TopModule")
-            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, top_module_name, output_dir, report_base_path)
+            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, top_module_name, top_module_name, output_dir, report_base_path,
+                                                              self.evaluator, test_sv_file, ref_sv_file)
 
-            if synth_results["synthesis_success"] and synth_results["ppa_success"]:
+            if synth_results["synthesis_success"] and synth_results["synthesis_functionality_success"] and synth_results["ppa_success"]:
                 cand.status = 'success'
                 cand.synthesis_success = True
+                cand.synthesis_functionality = True
                 cand.ppa_success = True
                 cand.ppa_metrics = synth_results["ppa_metrics"]
                 cand.score = self._calculate_fitness_score(cand)
                 cand.feedback = f"Synthesis successful. PPA score: {cand.score:.4f}"
             else:
-                cand.status = 'failed_synthesis'
                 cand.score = -float('inf')
-                cand.synthesis_success = False
-                log = f"Functionality OK, but synthesis failed.\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
+                cand.synthesis_success = synth_results["synthesis_success"]
+                cand.synthesis_functionality = synth_results["synthesis_functionality_success"]
+                log = f"Synthesis or PPA failed.\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
+
+                if not synth_results["synthesis_success"]:
+                    cand.status = 'failed_synthesis'
+                    log = f"Functionality OK, but synthesis failed.\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
+                elif not synth_results["synthesis_functionality_success"]:
+                    cand.status = 'failed_synthesis_functionality'
+                    log = f"Functionality OK, Synthesis OK, but Post-Synthesis Functional Check failed (Yosys have trouble synthesizing the implementation try to improve synthesizability).\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
+                else: # PPA failed but synth was ok
+                    cand.status = 'failed_synthesis'
+
                 feedback_requests.append({'problem_def': self.problem_description, 'verilog_code': cand.code, 'simulation_log': log})
                 func_failed.append(cand)
 
@@ -1502,7 +1671,7 @@ class EoHEngine:
             print("WARNING: No valid candidates generated during initialization. Check LLM responses.")
             print(f"LLM Responses: {results}")
             raise RuntimeError("Failed to generate any valid candidates during initialization.")
-
+        print(f"Generated {len(initial_candidates)} initial candidates. Evaluating...")
         self._evaluate_candidates(initial_candidates)
         
         for cand in initial_candidates:
