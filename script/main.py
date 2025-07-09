@@ -92,8 +92,11 @@ class EoHLogger:
         self.all_synth_passed = set()
         self.total_llm_api_calls = 0
         self.strategy_counter = defaultdict(int)  # Accumulated across generations, count of how many times each strategy was used
-        self.strategy_counter_fail = defaultdict(int)  # Count of how many times each strategy was used in the fail pool
-        self.strategy_counter_success = defaultdict(int)  # Count of how many times each strategy was used in the success pool
+        self.strategy_counter_fail = defaultdict(int)  # Count of how many times each strategy resulted in a failure (syntax, functionality, or synthesis)
+        self.strategy_counter_success = defaultdict(int)  # Count of how many times each strategy resulted in a success (syntax, functionality, and synthesis)
+        self.strategy_counter_origin_pool_fail = defaultdict(int)  # Count of how many times each strategy was used in the fail pool
+        self.strategy_counter_origin_pool_success = defaultdict(int)  # Count of how many times each strategy was used in the success pool
+        self.strategy_counter_origin_pool_initial = defaultdict(int)  # Count of how many times each strategy was used in the initial pool
         # Add attributes for tracking rewards and meta-strategies
         # Initialize rewards for fail and success pools as dictionaries with default float values(0.0)
         self.fail_pool_strategy_rewards = defaultdict(float)
@@ -138,8 +141,14 @@ class EoHLogger:
         # 1. Group candidates by strategy
         candidates_by_strategy = defaultdict(list)
         strategy_count_this_gen = defaultdict(int)
+        # Track of strategies that lead to success or failure in this generation
+        # Success or failure means if the candidate was successful or failed in the syntax + functionality check + synthesis process
         strategy_count_this_gen_fail = defaultdict(int)
         strategy_count_this_gen_success = defaultdict(int)
+        # Track of strategies used in each type of pool
+        strategy_count_for_fail_pool = defaultdict(int)
+        strategy_count_for_success_pool = defaultdict(int)
+        strategy_count_for_initial_pool = defaultdict(int)
         for c in candidates_this_gen:
             candidates_by_strategy[c.strategy].append(c)
             strategy_count_this_gen[c.strategy] += 1
@@ -150,7 +159,16 @@ class EoHLogger:
             else:
                 self.strategy_counter_fail[c.strategy] += 1
                 strategy_count_this_gen_fail[c.strategy] += 1
-
+            # Update the strategy counts for each origin pool
+            if c.origin_pool == "fail_pool":
+                self.strategy_counter_origin_pool_fail[c.strategy] += 1
+                strategy_count_for_fail_pool[c.strategy] += 1
+            elif c.origin_pool == "success_pool":
+                self.strategy_counter_origin_pool_success[c.strategy] += 1
+                strategy_count_for_success_pool[c.strategy] += 1
+            elif c.origin_pool == "initial":
+                self.strategy_counter_origin_pool_initial[c.strategy] += 1
+                strategy_count_for_initial_pool[c.strategy] += 1
         # 2. Calculate total success rates
         total_syntax_success = sum(1 for c in candidates_this_gen if c.status != 'failed_syntax')
         total_func_success = sum(1 for c in candidates_this_gen if c.status != 'failed_syntax' and c.status != 'failed_functionality')
@@ -199,9 +217,14 @@ class EoHLogger:
             "runtime_seconds": runtime_sec,
             "llm_api_calls": llm_calls_this_gen,
             "strategy_counts_this_generation": dict(strategy_count_this_gen),
-            "strategy_counts_for_each_pool": {
-                "fail_pool": strategy_count_this_gen_fail,
-                "success_pool": strategy_count_this_gen_success
+            "strategy_counts_for_each_origin_pool": {
+                "fail_pool": strategy_count_for_fail_pool,
+                "success_pool": strategy_count_for_success_pool,
+                "initial_pool": strategy_count_for_initial_pool,
+            },
+            "strategy_counts_for_successful_synthesis_generation": {
+                "fail": strategy_count_this_gen_fail,
+                "success": strategy_count_this_gen_success,
             },
             "strategy_values_after_evolution": { 
                 # Use fail_strategy_stats and success_strategy_stats, actual Q-values used to select strategies next generation
@@ -303,8 +326,13 @@ class EoHLogger:
             "total_candidates_generated": total_unique_generated,
             "accumulated_strategy_counts:": dict(self.strategy_counter),
             "accumulated_strategy_counts_by_pool": {
-                "fail_pool": dict(self.strategy_counter_fail),
-                "success_pool": dict(self.strategy_counter_success)
+                "fail_pool": dict(self.strategy_counter_origin_pool_fail),
+                "success_pool": dict(self.strategy_counter_origin_pool_success),
+                "initial_pool": dict(self.strategy_counter_origin_pool_initial)
+            },
+            "accumulated_strategy_counts_by_result": { # Counts of strategies that resulted in success or failure of synthesis (i.e., syntax + functionality + synthesis)
+                "fail": dict(self.strategy_counter_fail),
+                "success": dict(self.strategy_counter_success)
             },
             "accumulated_strategy_rewards": {
                 "fail_pool": dict(self.fail_pool_strategy_rewards),
@@ -1133,7 +1161,8 @@ class LLMInterface:
 
 
 class Heuristic:
-    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax", strategy="initial"):
+    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax", strategy="initial", 
+                 origin_pool="initial"):
         self.id = str(uuid.uuid4()) # Use UUID for unique ID
         self.thought = thought 
         self.code = code
@@ -1150,6 +1179,7 @@ class Heuristic:
         self.code_file_path = ""
         self.strategy = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
         self.reward_from_parent = 0.0 # Reward obtained by the strategy that created this heuristic
+        self.origin_pool = origin_pool # "initial", "fail_pool", or "success_pool"
 
     def __repr__(self):
         thought_repr = self.thought[:50] 
@@ -1161,7 +1191,7 @@ class Heuristic:
             power = self.ppa_metrics.get('power')
             ppa_str = f"Eff. Clk: {clk:.4f}ns, Area: {area:.2f}, Power: {power:.4e}"
             ppa_info = f"PPA: ({ppa_str})"
-        return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
+        return (f"Heuristic(ID: {self.id}, Gen: {self.generation}, Origin: {self.origin_pool}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
                 f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})")
 
 # Entire class executing for the new REvolution framework for each problem in the benchmark.
@@ -1461,7 +1491,7 @@ class EoHEngine:
         for i, (thought, code) in enumerate(results):
             if thought and code:
                 code_path, _ = self._save_result_to_file(code, thought, 0, i + 1, "initial")
-                cand = Heuristic(thought, code, "", generation=0, strategy="initial")
+                cand = Heuristic(thought, code, "", generation=0, strategy="initial", origin_pool="initial")
                 cand.code_file_path = code_path
                 initial_candidates.append(cand)
         
@@ -1716,7 +1746,13 @@ class EoHEngine:
             if thought and code:
                 meta = metadata[i]
                 code_path, _ = self._save_result_to_file(code, thought, self.current_generation, i + 1, meta["strategy"])
-                cand = Heuristic(thought, code, "", self.current_generation, [p.id for p in meta["parents"]], strategy=meta["strategy"])
+                # pool_type
+                if meta["pool"] == "fail":
+                    candidate_origin_pool = "fail_pool"
+                else:
+                    candidate_origin_pool = "success_pool"
+                cand = Heuristic(thought, code, "", self.current_generation, [p.id for p in meta["parents"]], strategy=meta["strategy"],
+                                 origin_pool=candidate_origin_pool)
                 cand.code_file_path = code_path
                 new_offspring.append(cand)
 
