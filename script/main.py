@@ -1134,17 +1134,31 @@ class LLMInterface:
         # --- 시스템 프롬프트 수정 ---
         # 점수 채점 및 포맷팅 지침이 추가되었습니다.
         system_prompt_content = (
-            "You are a Verilog debugging expert. You will be given a problem description, Verilog code, and a simulation failure log.\n"
-            "First, use the problem description to understand the high-level design intent. "
-            "Then, analyze the Verilog code and simulation log to pinpoint the exact code sections causing the errors. "
-            "For each issue, explain the cause from the code's perspective, linking the low-level error back to the original design intent. "
-            "Cite all relevant code sections.\n\n"
+            # Role is expanded from a debugging expert to a broader Verilog expert.
+            "You are a Verilog expert specializing in design, debugging, and optimization. You will be given a problem description, Verilog code, and a simulation log.\n\n"
             
-            "**CRITICAL RULE: Under no circumstances should you provide any solutions, fixes, or corrected code snippets. Your sole purpose is to analyze the existing code and identify the problems, not to solve them.**\n\n"
+            # Logic is now conditional based on the simulation outcome.
+            "Your task is to analyze the submission. First, determine if the simulation log indicates a success or a failure.\n\n"
+
+            "**If the simulation log shows failures (functional or syntax errors):**\n"
+            "1. Use the problem description to understand the high-level design intent.\n"
+            "2. Analyze the Verilog code and simulation log to pinpoint the exact code sections causing the errors.\n"
+            "3. For each issue, explain the cause from the code's perspective, linking the low-level error back to the original design intent. Cite all relevant code sections.\n\n"
+
+            "**If the simulation log shows success:**\n"
+            "1. Confirm that the code is functionally correct according to the problem description and log.\n"
+            "2. Your analysis should then focus on providing feedback to improve the design's **Power, Performance, and Area (PPA)** metrics.\n"
+            "3. Suggest potential optimizations by commenting on:\n"
+            "   - **Performance (Timing):** Identify long critical paths, inefficient state machine encodings, or blocking assignments that could hinder high-frequency operation.\n"
+            "   - **Power:** Point out areas of high switching activity or redundant logic that could be optimized for lower power consumption.\n"
+            "   - **Area:** Comment on logic structures that might consume significant chip area and suggest more resource-efficient design patterns (e.g., using shifters instead of multipliers for powers of two, resource sharing).\n\n"
+            
+            "**CRITICAL RULE: Under no circumstances should you provide full, corrected code snippets. Your sole purpose is to analyze the existing code and provide high-level feedback, not to rewrite the solution.**\n\n"
             
             "After your analysis, you **must** provide a score for the code on a scale of 0 to 10 based on the following criteria:\n"
-            "* **10 points:** The code is perfect and passes all simulation tests.\n"
-            "* **1-9 points:** The code is syntactically correct but fails simulation. The score should reflect the severity and number of functional errors found in the log.\n"
+            # NEW: Definition for a score of 10 is updated to trigger PPA analysis.
+            "* **10 points:** The code is functionally correct and passes all simulation tests. Your analysis for this score **must** focus on PPA improvements.\n"
+            "* **1-9 points:** The code is syntactically correct but fails simulation. The score should reflect the severity and number of functional errors.\n"
             "* **0 points:** The code has syntax errors and would not compile.\n\n"
             
             "Your entire response **must** strictly follow this format, using the provided tags. Do not add any text outside the tags:\n"
@@ -1153,16 +1167,16 @@ class LLMInterface:
             "[Your score from 0 to 10]\n"
             "</SCORE>\n\n"
             "<JUSTIFICATION>\n"
-            "[A brief, one or two-sentence justification for your score]\n"
+            "[A brief, one or two-sentence justification for your score. If successful, state that it's functionally correct.]\n"
             "</JUSTIFICATION>\n\n"
             "<ANALYSIS>\n"
-            "[Your detailed analysis of the bug(s) as previously instructed. **Remember: Do NOT suggest any fixes or write corrected code in this section.**]\n"
+            "[Your detailed analysis. For failures, explain the bugs. For successes (score 10), provide PPA optimization feedback. **Remember: Do NOT suggest any fixes or write corrected code in this section.**]\n"
             "</ANALYSIS>\n"
             "```"
         )
                 
         user_prompt = (
-            "I wrote some Verilog code to solve a given problem, but it failed the simulation. "
+            "I wrote some Verilog code to solve a given problem. "
             "Please analyze the code and provide your feedback in the requested format.\n\n"
             "Problem Description:\n"
             "```problem\n"
@@ -1497,7 +1511,7 @@ class EoHEngine:
         test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
         ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
         
-        func_passed, func_failed, feedback_requests = [], [], []
+        func_passed, func_failed, feedback_requests, feedback_request_candidates = [], [], [], []
 
         # Stage 1: Functional Simulation
         for cand in candidates_to_evaluate:
@@ -1529,6 +1543,7 @@ class EoHEngine:
 
             # If we reach here, the candidate has failed syntax or functionality
             cand.score = -float('inf')
+            feedback_request_candidates.append(cand)
             feedback_requests.append({'problem_def': self.problem_description, 'verilog_code': cand.code, 'simulation_log': log})
             func_failed.append(cand)
 
@@ -1565,7 +1580,9 @@ class EoHEngine:
                 cand.ppa_success = True
                 cand.ppa_metrics = synth_results["ppa_metrics"]
                 cand.score = self._calculate_fitness_score(cand)
-                cand.feedback = f"Synthesis successful. PPA score: {cand.score:.4f}"
+                cand.feedback = f"Functionality OK and Synthesis OK. Now focus on improving PPA metrics while preserving functionality. PPA metrics (tns/wns/eff_clk_period: ns, power: W, area: um^2): {cand.ppa_metrics}, Reference PPA metrics: {self.ref_ppa_metrics},  PPA score: {cand.score:.4f}, Try to improve PPA metrics further. If effective clockspeed is close to 0.0, than focus on improving area and power metrics."
+                feedback_request_candidates.append(cand)
+                feedback_requests.append({'problem_def': self.problem_description, 'verilog_code': cand.code, 'simulation_log': cand.feedback})
             else:
                 cand.score = -float('inf')
                 cand.synthesis_success = synth_results["synthesis_success"]
@@ -1581,14 +1598,15 @@ class EoHEngine:
                 else: # PPA failed but synth was ok
                     cand.status = 'failed_synthesis'
 
+                feedback_request_candidates.append(cand)
                 feedback_requests.append({'problem_def': self.problem_description, 'verilog_code': cand.code, 'simulation_log': log})
                 func_failed.append(cand)
 
         # Stage 3: Batch LLM Feedback Generation for all failures
         if feedback_requests:
-            print(f"Requesting LLM feedback for {len(func_failed)} failed candidates...")
+            print(f"Requesting LLM feedback for {len(feedback_request_candidates)} candidates (both failed and successful)...")
             feedback_results = asyncio.run(self.llm.generate_batch_feedback(feedback_requests, self.default_llm_temp, self.default_llm_top_p, self.default_llm_max_tokens))
-            for cand, feedback_data in zip(func_failed, feedback_results):
+            for cand, feedback_data in zip(feedback_request_candidates, feedback_results):
                 cand.feedback = feedback_data.get('analysis', 'Feedback generation failed.')
                 self._save_feedback_files(cand, feedback_data)
 
