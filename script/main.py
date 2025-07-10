@@ -1370,7 +1370,7 @@ class EoHEngine:
             raise FileNotFoundError(f"Problem description file not found: {prompt_path}")
 
     def _copy_misc_files(self, output_directory):
-        misc_files = [f for f in os.listdir(self.benchmark_path) if f.startswith(self.problem_name) and not f.endswith(('_makefile','_ifc.txt', '_ppa.txt', '_prompt.txt', '_ref.sv', '_test.sv'))]
+        misc_files = [f for f in os.listdir(self.benchmark_path) if f.startswith(self.problem_name) and not f.endswith(('_makefile','_ifc.txt', '_ppa.txt', '_prompt.txt', '_ref.sv', '_test.sv', '_compiled.vvp', '_simulation.log', '_ref.syn.v'))]
         for file_name in misc_files:
             source_path = os.path.join(self.benchmark_path, file_name)
             dest_path = os.path.join(output_directory, file_name)
