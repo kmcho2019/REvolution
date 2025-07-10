@@ -153,6 +153,11 @@ def plot_pareto_evolution(problem_out_dir: Path,
     cmap = cm.get_cmap("viridis", max(1, len(generations)))
     gen_ids = [g for g in range(len(generations)) if generations[g] is not None]
 
+    # Debug
+    # print(f"All points collected: {len(all_points)} generations")
+    # print(f"All points: {all_points}")
+    # print(f"Best points: {best_points}")
+
     # 1) Pareto only
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111, projection=None if combinational else '3d')
@@ -263,7 +268,18 @@ def plot_best_score(problem_out_dir: Path, generations):
     """
     best = [gen["generation_ppa"]["best_score"] if gen else None
             for gen in generations]
-    xs, ys = zip(*[(i, v) for i, v in enumerate(best) if v is not None])
+    
+    # This list will be empty if no generation had a valid score.
+    valid_points = [(i, v) for i, v in enumerate(best) if v is not None]
+
+
+    # If there are no valid scores at all, skip creating the plot.
+    if not valid_points:
+        return
+
+
+
+    xs, ys = zip(*valid_points)
 
     plt.figure(figsize=(8, 4))
     plt.plot(xs, ys, marker='o')
@@ -275,6 +291,172 @@ def plot_best_score(problem_out_dir: Path, generations):
     plt.tight_layout()
     plt.savefig(problem_out_dir / "best_score.png", dpi=300)
     plt.close()
+
+def plot_best_score_monotonous(problem_out_dir: Path, generations):
+
+    """
+
+    Line plot of best_score per generation, ensuring monotonicity.
+
+    If the score for a generation drops, the previous best is kept.
+
+    Also plots the score distribution for each generation and marks the
+
+    actual best score for that generation.
+
+    """
+
+    if not any(generations):
+
+        return
+
+
+
+    # --- Data Collection ---
+
+    generation_indices = []
+
+    monotonous_scores = []
+
+    actual_best_scores = []
+
+    score_distributions = []
+
+
+
+    last_best_score = -np.inf  # Initialize with a very small number
+
+
+
+    for i, gen in enumerate(generations):
+
+        # Skip generation if it's missing or has no population data
+
+        if gen is None or not gen.get("population_ppa_details"):
+
+            # If we have previous scores, carry the last best score forward for the monotonic line
+
+            if monotonous_scores:
+
+                generation_indices.append(i)
+
+                monotonous_scores.append(last_best_score)
+
+                actual_best_scores.append(None)
+
+                score_distributions.append([])
+
+            continue
+
+
+
+        # Extract all scores for the distribution plot
+
+        scores = [p["score"] for p in gen["population_ppa_details"]]
+
+        if not scores:
+
+            if monotonous_scores:
+
+                generation_indices.append(i)
+
+                monotonous_scores.append(last_best_score)
+
+                actual_best_scores.append(None)
+
+                score_distributions.append([])
+
+            continue
+        # Get the actual best score for the current generation
+        actual_best = gen["generation_ppa"]["best_score"]
+        # Proceed only if there's a valid score for the generation
+        if actual_best is not None:
+            generation_indices.append(i)
+            score_distributions.append(scores)
+            actual_best_scores.append(actual_best)
+            # Update and store the monotonic best score
+
+            current_best = max(actual_best, last_best_score)
+
+            monotonous_scores.append(current_best)
+
+            last_best_score = current_best
+
+
+    # If after checking all generations, no valid scores were found,
+
+    # there's nothing to plot.
+
+    if not generation_indices:
+
+        return
+
+
+    # --- Plotting ---
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+
+
+
+    # Plot the score distributions as a background element
+
+    # Use a placeholder scatter for the legend entry
+
+    ax.scatter([], [], alpha=0.2, color='coral', label='Score Distribution')
+
+    for i, gen_idx in enumerate(generation_indices):
+
+        scores_dist = score_distributions[i]
+
+        if scores_dist:
+
+            # Add a small amount of horizontal jitter for better visibility
+
+            jitter = np.random.normal(0, 0.05, size=len(scores_dist))
+
+            ax.scatter(gen_idx + jitter, scores_dist, alpha=0.2, s=20, color='coral')
+
+
+
+    # Plot the monotonically increasing best score line
+
+    ax.plot(generation_indices, monotonous_scores, marker='o', markersize=5,
+
+            linestyle='-', color='firebrick', label='Monotonic Best Score')
+
+
+
+    # Mark the actual best score for each generation to show fluctuations
+
+    valid_indices = [idx for idx, score in zip(generation_indices, actual_best_scores) if score is not None]
+
+    valid_scores = [score for score in actual_best_scores if score is not None]
+
+    ax.scatter(valid_indices, valid_scores, marker='x', color='darkblue', s=60,
+
+               zorder=5, label='Actual Best Score of Generation')
+
+
+
+    ax.axhline(0, color='k', linewidth=0.8, linestyle='--')
+
+    ax.set_title("Monotonic Best Score and Score Distribution per Generation")
+
+    ax.set_xlabel("Generation")
+
+    ax.set_ylabel("Score (higher is better)")
+
+    ax.set_ylim(-1.1, 1.1)  # Set Y-axis limits based on expected score range
+
+    ax.legend()
+
+    ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.5)
+
+    fig.tight_layout()
+
+    fig.savefig(problem_out_dir / "best_score_monotonous.png", dpi=300)
+
+    plt.close(fig)
 
 
 def accumulate_strategy_avgs(per_problem_generations):
@@ -340,6 +522,19 @@ def handle_problem(problem_dir: Path, problem_out_dir: Path):
     summary = load_json(summary_path)
     generations = load_generation_logs(problem_dir)
 
+    # Check for valid reference PPA data before proceeding.
+
+    # This prevents crashes if the reference data is missing or empty.
+
+    ref_ppa = summary.get(ROOT_KEY_REF)
+
+    if not ref_ppa:  # This will be true for None or an empty dictionary {}
+
+        print(f"   ⚠️  Skipping {problem_dir.name}: `ref_ppa_metric` is missing or empty in summary.json.")
+
+        return None
+
+
     mkdir(problem_out_dir)
 
     combinational = is_combational(summary[ROOT_KEY_REF])
@@ -355,6 +550,9 @@ def handle_problem(problem_dir: Path, problem_out_dir: Path):
 
     # 3
     plot_best_score(problem_out_dir, generations)
+    
+    # 3a
+    plot_best_score_monotonous(problem_out_dir, generations)
 
     return generations   # needed later for benchmark-wide average
 
