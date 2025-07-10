@@ -1,8 +1,8 @@
 import os
-import re 
+import re
 import uuid
 import subprocess
-import shutil 
+import shutil
 import random
 from openai import OpenAI, AsyncOpenAI, APIConnectionError, RateLimitError, InternalServerError, APITimeoutError, BadRequestError # added for async support
 
@@ -226,11 +226,11 @@ class EoHLogger:
                 "fail": strategy_count_this_gen_fail,
                 "success": strategy_count_this_gen_success,
             },
-            "strategy_values_after_evolution": { 
+            "strategy_values_after_evolution": {
                 # Use fail_strategy_stats and success_strategy_stats, actual Q-values used to select strategies next generation
                 # fail_strategy_stats and success_strategy_stats structure:
                 # key: strategy name
-                # value: dictionary {"count": 0, "value": 0.0}, 
+                # value: dictionary {"count": 0, "value": 0.0},
                 # count is how many times this strategy was used, value is the Q-value to be used for next generation selection
                 # We want to only print the Q-values, not the counts.
                 "fail_pool": {k: v["value"] for k, v in fail_strategy_stats.items()},
@@ -369,7 +369,7 @@ class SynthesisEvaluator:
         self.clk_period = 0.01  # ns
 
         # Get the directory where this script (main.py) is located.
-        script_main_dir = os.path.dirname(os.path.abspath(__file__)) 
+        script_main_dir = os.path.dirname(os.path.abspath(__file__))
         # From there, construct the path to the 'script' directory (.../EoR/script)
         self.script_root_dir = os.path.abspath(os.path.join(script_main_dir, ".."))
         # The ref directory is inside the script root
@@ -473,7 +473,7 @@ class SynthesisEvaluator:
                 f.write("\n\n--- SYNTHESIS FAILED ---\n")
                 f.write(process.stderr.decode())
             return False, report_path
-        
+
     # Method for post-synthesis functionality check/verification
     def _check_synthesis_functionality(self, synthesized_netlist, test_sv, ref_sv, tb_top_module, output_dir, verilog_evaluator):
         """
@@ -485,7 +485,7 @@ class SynthesisEvaluator:
             error_msg = f"PDK Verilog library not found at: {pdk_verilog_lib}"
             print(f"ERROR: {error_msg}")
             return False, error_msg
-        
+
         # The evaluator expects a list of files. The synthesized netlist replaces the original DUT.
         # The VerilogEvaluator's evaluate method has been slightly adapted to accept a list of files
         # Example: iverilog -Wall -Winfloop -Wno-timescale -g2012 -o compiled.vvp -s tb testbench.sv synthesized_netlist.syn.v pdk_verilog_lib.v
@@ -493,7 +493,7 @@ class SynthesisEvaluator:
             generated_sv_file=[synthesized_netlist, pdk_verilog_lib], # Pass synthesized netlist and PDK lib
             test_sv_file=test_sv,
             ref_sv_file=ref_sv,
-            top_module_name=tb_top_module 
+            top_module_name=tb_top_module
             # Don't use output_directory here, if we pass the synthesized_netlist its .syn suffix will differentiate it from the rtl simulation
         )
 
@@ -512,7 +512,7 @@ class SynthesisEvaluator:
 
         return False, log
 
-    
+
     def _create_sdc_file(self, verilog_file, module_name, output_directory, clk_period):
         """
         Creates a simple SDC file for timing constraints.
@@ -710,13 +710,13 @@ class VerilogEvaluator:
                 if not os.path.isfile(f):
                     return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
                                              comp_stderr=f"Additional Verilog file not found: {f}")
-                
+
             # Determine paths using the FIRST element of the list
             if output_directory is None:
                 actual_output_dir = os.path.dirname(main_dut_file)
             else:
                 actual_output_dir = output_directory
-            output_basename = os.path.splitext(os.path.basename(main_dut_file))[0]   
+            output_basename = os.path.splitext(os.path.basename(main_dut_file))[0]
         else:
             return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
                                      comp_stderr="Invalid type for generated_sv_file. Expected str or list of str.")
@@ -818,7 +818,7 @@ class VerilogEvaluator:
 
             # Set the working directory to the location of the testbench file (this is to include the miscellaneous files sometimes required by the testbench)
             # Some modules in RTLLM have files that supply the input and output files for the testbench
-            # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt, 
+            # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt,
             # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
             # Prob049_signal_generator_tri_gen.txt
             simulation_working_dir = os.path.dirname(dut_files[0])
@@ -890,9 +890,9 @@ class VerilogEvaluator:
 
 class LLMInterface:
     def __init__(self, api_key=None, model_name="gpt-3.5-turbo", api_backend="openai", max_retries=10, base_delay=2):
-        if not api_key and api_backend != "vllm": 
+        if not api_key and api_backend != "vllm":
             raise ValueError("API key is required for LLMInterface initialization.")
-        
+
         self.api_backend = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
         self.model_name = model_name
         self.max_retries = max_retries  # Maximum number of retries
@@ -920,12 +920,12 @@ class LLMInterface:
         self.api_call_count = 0  # Initialize API call counter
         self.lock = asyncio.Lock()  # Make counter thread-safe with async calls
 
-        
+
     # Method for managing API call count in a thread-safe manner
     async def _increment_call_count(self, n=1):
         async with self.lock:
             self.api_call_count += n
-    
+
     # Synchronous method that will be called my main engine thread
     def get_and_reset_api_calls(self):
         count = self.api_call_count
@@ -966,7 +966,7 @@ class LLMInterface:
         # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
 
         full_response_text = ""
-        
+
         system_prompt_content = (
             "You are an expert Verilog design assistant. "
             "Your role is to address Verilog-related problems posed by the user. "
@@ -981,7 +981,7 @@ class LLMInterface:
             "[Your complete, runnable Verilog implementation of the thought here]\n"
             "```"
         )
-        
+
         # Use 'async with' to manage the client's lifecycle correctly
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
@@ -1002,7 +1002,7 @@ class LLMInterface:
                         model=self.model_name,
                         temperature=temperature,
                         max_tokens=max_tokens,
-                        top_p=top_p 
+                        top_p=top_p
                     )
                     full_response_text = chat_completion.choices[0].message.content.strip()
                     thought, code = self.parse_thought_and_code(full_response_text)
@@ -1013,7 +1013,7 @@ class LLMInterface:
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")
                         return None, None
-                    
+
                     delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
                     print(f"Waiting for {delay:.2f} seconds before retrying...")
                     await asyncio.sleep(delay)
@@ -1062,7 +1062,32 @@ class LLMInterface:
                         max_tokens=max_tokens,
                         top_p=top_p
                     )
-                    
+
+                    # *** START: WORKAROUND FOR OPENROUTER AND SIMILAR APIS ***
+                    # Check if the API returned fewer responses than requested. This handles
+                    # providers like OpenRouter that don't raise an error for n > 1 but only
+                    # return a single response.
+                    num_responses_received = len(chat_completion.choices)
+                    if num_responses_received < n:
+                        print(f"Warning: API backend '{self.api_backend}' returned {num_responses_received} response(s) for a batch request of {n}.")
+                        print("This indicates a lack of full support for the 'n' parameter.")
+
+                        # Parse the responses that were successfully received.
+                        parsed_results = [self.parse_thought_and_code(c.message.content.strip()) for c in chat_completion.choices]
+
+                        # Concurrently request the remaining responses.
+                        num_remaining = n - num_responses_received
+                        print(f"Falling back to {num_remaining} individual concurrent requests for the remainder.")
+
+                        tasks = [self.generate_response(prompt, temperature, top_p, max_tokens) for _ in range(num_remaining)]
+                        remaining_results = await asyncio.gather(*tasks)
+
+                        # Combine the initial results with the fallback results.
+                        parsed_results.extend(remaining_results)
+                        print(f"--- Fallback with {num_remaining} individual requests completed ---")
+                        return parsed_results
+                    # *** END: WORKAROUND ***
+
                     # Parse each of the 'n' choices in the response
                     parsed_results = []
                     for choice in chat_completion.choices:
@@ -1077,7 +1102,7 @@ class LLMInterface:
                             # print(f"\nUser prompt: \n{prompt}")
                             # print(f"\nFull response text: \n{full_response_text}...")  # Print the text for context
                             parsed_results.append((None, None)) # Add a failure marker
-                    
+
                     print("--- Single-Prompt Batch Response Received ---")
                     return parsed_results
 
@@ -1085,13 +1110,13 @@ class LLMInterface:
                     # Found that DeepSeek API does not support 'n' > 1, so we need to handle this case.
                     # As of 2025/07/08, OpenAI's API supports 'n' > 1, DeepSeek does not.
                     # This is a workaround for APIs that do not support 'n' > 1.
-                    # Example of error message: 
+                    # Example of error message:
                     # Error code: 400 - {'error': {'message': 'Invalid n value (currently only n = 1 is supported)', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}
                     # This is the key fallback logic and workaround for DeepSeek and potentially other APIs that do not support 'n' > 1.
                     error_message = str(e).lower()
                     if "invalid n value" in error_message or "only n = 1 is supported" in error_message:
                         print(f"Warning: API backend '{self.api_backend}' does not support n > 1. Falling back to {n} individual requests.")
-                        
+
                         # The individual 'generate_response' calls will handle their own retries and counting.
                         tasks = [
                             self.generate_response(prompt, temperature, top_p, max_tokens)
@@ -1110,12 +1135,12 @@ class LLMInterface:
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")
                         return [(None, None)] * n # Return failures
-                    
+
                     # Exponential backoff with jitter
                     delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
                     print(f"Waiting for {delay:.2f} seconds before retrying...")
                     await asyncio.sleep(delay)
-                    
+
                 except Exception as e:
                     print(f"An unexpected, non-retriable error occurred in generate_n_responses: {e}")
                     return [(None, None)] * n
@@ -1136,7 +1161,7 @@ class LLMInterface:
         system_prompt_content = (
             # Role is expanded from a debugging expert to a broader Verilog expert.
             "You are a Verilog expert specializing in design, debugging, and optimization. You will be given a problem description, Verilog code, and a simulation log.\n\n"
-            
+
             # Logic is now conditional based on the simulation outcome.
             "Your task is to analyze the submission. First, determine if the simulation log indicates a success or a failure.\n\n"
 
@@ -1152,15 +1177,15 @@ class LLMInterface:
             "   - **Performance (Timing):** Identify long critical paths, inefficient state machine encodings, or blocking assignments that could hinder high-frequency operation.\n"
             "   - **Power:** Point out areas of high switching activity or redundant logic that could be optimized for lower power consumption.\n"
             "   - **Area:** Comment on logic structures that might consume significant chip area and suggest more resource-efficient design patterns (e.g., using shifters instead of multipliers for powers of two, resource sharing).\n\n"
-            
+
             "**CRITICAL RULE: Under no circumstances should you provide full, corrected code snippets. Your sole purpose is to analyze the existing code and provide high-level feedback, not to rewrite the solution.**\n\n"
-            
+
             "After your analysis, you **must** provide a score for the code on a scale of 0 to 10 based on the following criteria:\n"
             # NEW: Definition for a score of 10 is updated to trigger PPA analysis.
             "* **10 points:** The code is functionally correct and passes all simulation tests. Your analysis for this score **must** focus on PPA improvements.\n"
             "* **1-9 points:** The code is syntactically correct but fails simulation. The score should reflect the severity and number of functional errors.\n"
             "* **0 points:** The code has syntax errors and would not compile.\n\n"
-            
+
             "Your entire response **must** strictly follow this format, using the provided tags. Do not add any text outside the tags:\n"
             "```text\n"
             "<SCORE>\n"
@@ -1174,7 +1199,7 @@ class LLMInterface:
             "</ANALYSIS>\n"
             "```"
         )
-                
+
         user_prompt = (
             "I wrote some Verilog code to solve a given problem. "
             "Please analyze the code and provide your feedback in the requested format.\n\n"
@@ -1219,7 +1244,7 @@ class LLMInterface:
                             'justification': 'LLM call for feedback failed after multiple retries.',
                             'analysis': f"Could not generate feedback due to a persistent API error: {e}"
                         }
-                    
+
                     delay = (self.base_delay * 2 ** attempt) + random.uniform(0, 1)
                     print(f"Waiting for {delay:.2f} seconds before retrying...")
                     await asyncio.sleep(delay)
@@ -1236,7 +1261,7 @@ class LLMInterface:
             'justification': 'LLM call for feedback failed.',
             'analysis': f"Could not generate feedback due to an API error: {e}"
         }
-    
+
     def _parse_feedback_response(self, feedback_text):
         # Helper to parse the structured feedback response
         # This function extracts the score, justification, and analysis from the LLM response
@@ -1295,15 +1320,15 @@ class LLMInterface:
 
 
 class Heuristic:
-    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax", strategy="initial", 
+    def __init__(self, thought, code, feedback, score=0.0, generation=0, parent_ids=None, status="syntax", strategy="initial",
                  origin_pool="initial"):
         self.id = str(uuid.uuid4()) # Use UUID for unique ID
-        self.thought = thought 
+        self.thought = thought
         self.code = code
         self.feedback = feedback # Feedback from LLM
         self.score = score
-        self.generation = generation 
-        self.parent_ids = parent_ids if parent_ids else [] 
+        self.generation = generation
+        self.parent_ids = parent_ids if parent_ids else []
         # New attributes for synthesis and PPA
         self.status = status # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis', 'failed_synthesis_functionality'
         self.synthesis_success = False
@@ -1317,7 +1342,7 @@ class Heuristic:
         self.origin_pool = origin_pool # "initial", "fail_pool", or "success_pool"
 
     def __repr__(self):
-        thought_repr = self.thought[:50] 
+        thought_repr = self.thought[:50]
         ppa_info = "PPA: Not run or failed"
         if self.ppa_success and self.ppa_metrics:
             # Format PPA metrics for cleaner display
@@ -1366,8 +1391,8 @@ class EoHEngine:
         self.success_strats = ["M-S", "M-E", "M-R", "M-I", "C-F"]
 
         self.fail_strategy_stats = {s: {'count': 0, 'value': 0.0} for s in self.fail_strats}
-        self.success_strategy_stats = {s: {'count': 0, 'value': 0.0} for s in self.success_strats} 
-        
+        self.success_strategy_stats = {s: {'count': 0, 'value': 0.0} for s in self.success_strats}
+
         self.current_generation = 0
         self.ref_ppa_metrics = {}
         self.logger = None
@@ -1395,14 +1420,14 @@ class EoHEngine:
         model_name_cleaned = self.llm.model_name.replace("/", "_")
         directory_path = os.path.join(self.base_save_path, model_name_cleaned, self.benchmark_name, self.problem_name, f"Gen{generation_num}")
         os.makedirs(directory_path, exist_ok=True)
-        
+
         base_name = f"{self.problem_name}_{strategy}_sample{sample_idx_in_generation}"
         code_file_path = os.path.join(directory_path, f"{base_name}.sv")
         thought_file_path = os.path.join(directory_path, f"{base_name}_thought.txt")
 
-        with open(code_file_path, "w") as f: 
+        with open(code_file_path, "w") as f:
             f.write(str(code_content))
-        with open(thought_file_path, "w") as f: 
+        with open(thought_file_path, "w") as f:
             f.write(str(thought_content))
 
         self._copy_misc_files(directory_path)
@@ -1436,7 +1461,7 @@ class EoHEngine:
                     print(f"WARNING: Reference PPA file {ref_ppa_file} does not contain enough values. Using default high PPA values.")
                     self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e4, "power": 1.0}
                     return
-                
+
                 # If area and power are zero, we also call warning and set it to high values
                 if float(values[3]) == 0.0 or float(values[4]) == 0.0:
                     print(f"WARNING: Reference PPA file {ref_ppa_file} has zero area or power. Using default high PPA values.")
@@ -1456,7 +1481,7 @@ class EoHEngine:
     def _calculate_fitness_score(self, candidate):
         """Calculates a fitness score for a successful candidate based on PPA improvement."""
         if not candidate.ppa_success or not self.ref_ppa_metrics:
-            return 0 
+            return 0
 
         P_gen = candidate.ppa_metrics.get("power")
         A_gen = candidate.ppa_metrics.get("area")
@@ -1473,7 +1498,7 @@ class EoHEngine:
         power_improvement = (P_gen - P_ref) / P_ref
         area_improvement = (A_gen - A_ref) / A_ref
         timing_improvement = None  # Default to None for combinational circuits
-        
+
         # A non-zero TNS or WNS in reference implies a sequential circuit for this calculation
         # Combinatorial circuits will have TNS and WNS as 0, and eff_clk_period of 0
         # If T_ref is 0.0 than it is a combinational circuit
@@ -1487,7 +1512,7 @@ class EoHEngine:
             total_improvement = (power_improvement + area_improvement + timing_improvement) / 3
         else: # Combinational
             total_improvement = (power_improvement + area_improvement) / 2
-            
+
 
         # Fitness is maximized, and lower improvement % is better. So, fitness = -improvement.
         return -total_improvement
@@ -1504,19 +1529,19 @@ class EoHEngine:
         Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
         Updates each candidate object with its final status, feedback, and score.
         """
-        if not candidates_to_evaluate: 
+        if not candidates_to_evaluate:
             return
 
         print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
         test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
         ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
-        
+
         func_passed, func_failed, feedback_requests, feedback_request_candidates = [], [], [], []
 
         # Stage 1: Functional Simulation
         for cand in candidates_to_evaluate:
             sim_results = self.evaluator.evaluate(cand.code_file_path, test_sv_file, ref_sv_file)
-            
+
             if sim_results['status'] == 'compilation_error':
                 cand.status = 'failed_syntax'
                 log = sim_results.get("compilation_stderr", "Compilation log not available.")
@@ -1533,7 +1558,7 @@ class EoHEngine:
                     # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
                     if (m_match and int(m_match.group(1)) == 0) or "===========Your Design Passed===========" in output:
                         is_success = True
-                
+
                 if is_success:
                     func_passed.append(cand)
                     continue
@@ -1554,7 +1579,7 @@ class EoHEngine:
 
             # Find the module name from the reference file (synthesis_top_module_names.json is expected to exist within the benchmark directory)
             # This is needed to ensure the synthesis evaluator knows which module to synthesize.
-            # Important as each benchmark may have a different top module name. 
+            # Important as each benchmark may have a different top module name.
             # (RTLLM uses individual problem name and VerilogEvalv2 uses TopModule)
             # And sometimes the LLM will generate multiple modules in the same file as part of hierarchical design.
             # In previous versions, we used the first module name found in the file.
@@ -1671,20 +1696,20 @@ class EoHEngine:
                 cand = Heuristic(thought, code, "", generation=0, strategy="initial", origin_pool="initial")
                 cand.code_file_path = code_path
                 initial_candidates.append(cand)
-        
+
         if not initial_candidates:
             print("WARNING: No valid candidates generated during initialization. Check LLM responses.")
             print(f"LLM Responses: {results}")
             raise RuntimeError("Failed to generate any valid candidates during initialization.")
         print(f"Generated {len(initial_candidates)} initial candidates. Evaluating...")
         self._evaluate_candidates(initial_candidates)
-        
+
         for cand in initial_candidates:
             if cand.status == 'success':
                 self.success_pool.append(cand)
             else:
                 self.fail_pool.append(cand)
-        
+
         gen0_runtime = time.time() - self.gen_start_time
         llm_calls = self.llm.get_and_reset_api_calls()
         self.logger.log_generation(0, initial_candidates, gen0_runtime, llm_calls, {}, {}, self.fail_strategy_stats, self.success_strategy_stats, strategy_avg_selection_probabilities) # No rewards for initial generation
@@ -1707,14 +1732,14 @@ class EoHEngine:
             pool_type (str): 'fail' or 'success' to indicate which pool.
             available_strategies (list): List of strategies available for the pool.
             selected_this_gen (set, optional): Strategies already selected in this generation's loop. Defaults to None.
-        
+
         Returns:
             tuple: The selected strategy name and a dictionary of selection probabilities.
         """
         if not available_strategies:
             print(f"No available strategies for pool type '{pool_type}'. Returning None.")
             return None, None
-        
+
         if selected_this_gen is None:
             selected_this_gen = set()
 
@@ -1734,7 +1759,7 @@ class EoHEngine:
             max_score = max(stats_dict[s]["value"] for s in available_strategies)
             best_strategies = [s for s in available_strategies if stats_dict[s]["value"] == max_score]
             k = len(best_strategies)
-            
+
             # Build probability distribution
             dist = {}
             for s in available_strategies:
@@ -1743,7 +1768,7 @@ class EoHEngine:
                     dist[s] = base_prob + (1 - self.epsilon) / k
                 else:
                     dist[s] = base_prob
-            
+
             # Select strategy
             if random.random() < self.epsilon:
                 selected = random.choice(available_strategies)
@@ -1755,7 +1780,7 @@ class EoHEngine:
             # --- Initialization Phase ---
             # Identify all strategies that have not been selected yet.
             untried_strategies = [
-                s for s in available_strategies 
+                s for s in available_strategies
                 if stats_dict[s]["count"] == 0 and s not in selected_this_gen
             ]
             print(f"Debug UCB: Untried strategies: {untried_strategies}")
@@ -1794,11 +1819,11 @@ class EoHEngine:
                 if stats_dict[strat]["count"] == 0:
                     ucb_scores[strat] = 1000 # Use a large constant instead of infinity to avoid NaN issues in softmax
                     continue
-                
+
                 avg_reward = stats_dict[strat]["value"]
                 exploration_term = self.ucb_c * math.sqrt(math.log(total_pulls) / stats_dict[strat]["count"])
                 ucb_scores[strat] = avg_reward + exploration_term
-            
+
             # Use softmax to choose a strategy based on UCB scores
             # This allows for a probabilistic selection based on the scores
             # We found that argmax can lead to premature convergence, so we use a softmax approach to encourage exploration
@@ -1811,7 +1836,7 @@ class EoHEngine:
             weights = [exp_score / sum_exp for exp_score in exp_scores]
             print(f"Debug UCB: Strategy scores: {ucb_scores}, Weights: {weights}, dist: {dict(zip(available_strategies, weights))}")
             dist = dict(zip(available_strategies, weights))
-            
+
             # Select strategy using softmax distribution
             selected = random.choices(available_strategies, weights=weights, k=1)[0]
             return selected, dist
@@ -1838,7 +1863,7 @@ class EoHEngine:
         # fail_strats, success_strats = ['M-F','M-S','M-E','M-R','M-I'], ['M-S','M-E','M-R','M-I','C-F']
 
         total_current_pop = len(self.fail_pool) + len(self.success_pool)
-        if total_current_pop == 0: 
+        if total_current_pop == 0:
             return "STOP"
 
         num_from_fail = round(self.num_offspring_lambda * len(self.fail_pool) / total_current_pop)
@@ -1913,11 +1938,11 @@ class EoHEngine:
             "success_pool": success_strategy_average_probabilities
         }
 
-        if not prompts: 
+        if not prompts:
             return "STOP"
 
         llm_results = asyncio.run(self.llm.generate_batch_responses(prompts, self.default_llm_temp, self.default_llm_top_p, self.default_llm_max_tokens))
-        
+
         new_offspring = []
         for i, (thought, code) in enumerate(llm_results):
             if thought and code:
@@ -1977,7 +2002,7 @@ class EoHEngine:
             else:
                 success_rewards_this_gen[strategy_name] += reward
 
-            # Update strategy stats 
+            # Update strategy stats
             # Use nonstationary bandit approach to update strategy statistics (Section 2.5 of Sutton and Barto book)
             # Q_(n+1) = Q_n + alpha * (R_n - Q_n)
             # where alpha = 1 / (n) is the learning rate,
@@ -2021,7 +2046,7 @@ class EoHEngine:
             if is_sequential:
                 best_by_delay = min(successful_candidates, key=lambda c: c.ppa_metrics.get('eff_clk_period') if c.ppa_metrics.get('eff_clk_period') is not None else float('inf'))
                 champions.append(best_by_delay)
-                
+
             # 3. Add unique champions to the next generation
             for champ in champions:
                 if champ.id not in added_ids:
@@ -2030,7 +2055,7 @@ class EoHEngine:
 
         # 4. Fill remaining spots with top-scoring candidates (elitism)
         candidate_pool.sort(key=lambda c: c.score, reverse=True)
-        
+
         for cand in candidate_pool:
             if len(next_gen_population) >= self.population_size:
                 break
@@ -2093,8 +2118,8 @@ class EoHEngine:
         else:
             print("No functionally correct and synthesizable solution found.")
             return f"{self.problem_name},failed"
-        
-    
+
+
 # Wrapper function for multiprocessing
 def run_problem_worker(args_tuple):
     """
@@ -2111,13 +2136,13 @@ def run_problem_worker(args_tuple):
     # The EoHEngine will create this directory, but we ensure it exists early.
     os.makedirs(problem_log_dir, exist_ok=True)
     individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
-    
+
 
     # Redirect all output from this worker to the individual log file
     with StreamRedirector(filepath=individual_log_path):
-            
+
         print(f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n")
-        
+
         # Initialize objects within the worker process to avoid pickling issues
         # Determine the API key based on the selected backend
         api_key = None
@@ -2163,12 +2188,12 @@ def run_problem_worker(args_tuple):
 if __name__ == "__main__":
     # Use argparse to make the script configurable
     parser = argparse.ArgumentParser(description="Run the EoH framework on specified Verilog benchmarks.")
-    
+
     # List of all available benchmarks in the 'bench' directory
     # Current benches: ['RTLLM', 'VerilogEval-Code-Complete', 'VerilogEval-Spec-to-RTL']
     benchmark_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bench')) # Assumes that the script is in script/main.py, and bench is in bench/
     available_benchmarks = [d for d in os.listdir(benchmark_root) if os.path.isdir(os.path.join(benchmark_root, d))]
-    
+
     parser.add_argument(
         '--benchmarks',
         nargs='+',
@@ -2178,8 +2203,8 @@ if __name__ == "__main__":
     )
     parser.add_argument('--problems', nargs='+',
                         help='A list of specific problem names to run. If not provided, all problems in the suite will be run.')
-    parser.add_argument('--api_backend', type=str, default='openai', 
-                        choices=['openai', 'openrouter', 'deepseek', 'vllm'], 
+    parser.add_argument('--api_backend', type=str, default='openai',
+                        choices=['openai', 'openrouter', 'deepseek', 'vllm'],
                         help='The API backend to use for LLM calls.')
     parser.add_argument('--model_name', type=str, default="gpt-4.1-mini", help='Name of the OpenAI model to use.')
     parser.add_argument('--population_size', type=int, default=5, help='Number of candidates in each generation.')
@@ -2217,12 +2242,12 @@ if __name__ == "__main__":
                 exit(1)
 
     # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    IVERILOG_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/iverilog"
-    VVP_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/iverilog/install/bin/vvp"
-    YOSYS_EXECUTABLE = "/project/cad-team/LX_Semicon/kmcho/yosys/yosys"
-    OPENROAD_EXECUTABLE = "/project/cad-team/LX_Semicon/kjmin/openroad/install/bin/openroad"
+    IVERILOG_EXECUTABLE = "iverilog"
+    VVP_EXECUTABLE = "vvp"
+    YOSYS_EXECUTABLE = "yosys"
+    OPENROAD_EXECUTABLE = "openroad"
 
-        
+
     # verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
     # synthesis_evaluator = SynthesisEvaluator()
 
@@ -2235,7 +2260,7 @@ if __name__ == "__main__":
     # Define path for the new comprehensive log file for the entire run
     master_log_dir = os.path.join(args.save_path, model_name_cleaned)
     comprehensive_log_path = os.path.join(master_log_dir, f"{run_datetime}_run_log.txt")
-    
+
     # Define path for the summary results file (similar to the original script's master log)
     summary_results_path = os.path.join(master_log_dir, f"{run_datetime}_summary_results.txt")
 
@@ -2262,7 +2287,7 @@ if __name__ == "__main__":
                     continue
                 with open(problems_file, "r") as f:
                     all_problems = [line.strip() for line in f if line.strip()]
-                
+
                 problems_to_process = args.problems if args.problems else all_problems
                 for problem in problems_to_process:
                     if problem in all_problems:
@@ -2273,7 +2298,7 @@ if __name__ == "__main__":
                 print("No valid problems found to run. Exiting.")
             else:
                 print(f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems.")
-                
+
                 with multiprocessing.Pool(processes=args.num_workers) as pool:
                     # This is the line that might fail
                     results_data = pool.map(run_problem_worker, tasks_to_run)
@@ -2284,11 +2309,11 @@ if __name__ == "__main__":
         end_time = time.time()
         # --- This block will ALWAYS run, even if the pool crashes ---
         print("\n--- Aggregation & Finalization Step ---")
-        
+
         # Re-open the comprehensive log in append mode to add aggregation results
         with open(comprehensive_log_path, "a", encoding='utf-8') as log_file:
             log_file.write("\n\n" + "="*20 + " AGGREGATED INDIVIDUAL LOGS " + "="*20 + "\n")
-            
+
             # Check if any results were produced before a potential crash
             if not results_data:
                 log_file.write("\nNo results were returned from worker processes. This may be due to an early crash.\nCheck individual problem directories for logs.\n")
@@ -2297,10 +2322,10 @@ if __name__ == "__main__":
                     try:
                         path_parts = individual_log_path.split(os.sep)
                         problem_identifier = os.path.join(path_parts[-3], path_parts[-2])
-                        
+
                         with open(individual_log_path, 'r', encoding='utf-8') as f_individual:
                             log_contents = f_individual.read()
-                        
+
                         log_file.write(f"\n{problem_identifier}:\n")
                         log_file.write(f"{{\n{log_contents}\n}}\n")
                         log_file.write("-" * 50 + "\n")
