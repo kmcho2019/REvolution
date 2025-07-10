@@ -383,7 +383,7 @@ class SynthesisEvaluator:
         # print(f"Reference Directory: {self.ref_dir_path}")
         # print(f"PDK Directory: {self.pdk_path}")
 
-    def evaluate(self, verilog_file, problem_name, synth_top_module_name, tb_dut_module_name, output_directory, report_base_path, verilog_evaluator, test_sv_file, ref_sv_file):
+    def evaluate(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, verilog_evaluator, test_sv_file, ref_sv_file):
         """
         Performs synthesis and PPA analysis on a given Verilog file.
         The report files will be named based on `report_base_path`.
@@ -411,32 +411,6 @@ class SynthesisEvaluator:
                 "synthesis_log": synthesis_log,
                 "ppa_metrics": None
             }
-
-        # If the module name for synthesis is different from what the testbench expects,
-        # patch the synthesized file before simulation. This handles the RefModule case.
-        # Where for ref.sv files the module name is different from what is expected in the testbench.
-        if synth_top_module_name != tb_dut_module_name:
-            try:
-                print(f"INFO: Patching netlist module name from '{synth_top_module_name}' to '{tb_dut_module_name}' for simulation.")
-                with open(synthesized_netlist_path, 'r') as f:
-                    content = f.read()
-                
-                # Replace the module definition line
-                content = content.replace(f"module {synth_top_module_name}", f"module {tb_dut_module_name}", 1)
-                
-                with open(synthesized_netlist_path, 'w') as f:
-                    f.write(content)
-            except Exception as e:
-                print(f"ERROR: Failed to patch synthesized netlist file: {e}")
-                # Return failure if patching fails
-                return {
-                    "synthesis_success": True,
-                    "synthesis_functionality_success": False,
-                    "ppa_success": False,
-                    "synthesis_log": f"{synthesis_log}\n\n--- Netlist Patching Failed ---\n{e}",
-                    "ppa_metrics": None
-                }
-
 
         # After synthesis add post-synthesis functionality test
         synthesis_functionality_success, func_check_log = self._check_synthesis_functionality(
@@ -644,7 +618,10 @@ class SynthesisEvaluator:
         # Calculate effective clock period only if wns was found
         eff_clk_period = None
         if wns is not None:
-            eff_clk_period = self.clk_period - wns
+            if wns < 0.0: # Indicates that it is a sequential design
+                eff_clk_period = self.clk_period - wns
+            else: # Indicates that it is a combinational design
+                eff_clk_period = 0.0
 
         ppa_path = report_path.replace(".rpt", ".ppa")
         with open(ppa_path, 'w') as f:
@@ -1419,39 +1396,48 @@ class EoHEngine:
 
     def _calculate_reference_ppa(self):
         print(f"\n--- Calculating Reference PPA for {self.problem_name} ---")
-        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
-        if not os.path.exists(ref_sv_file):
-            print(f"WARNING: Reference Verilog file not found. Using default high PPA values.")
-            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e6, "power": 1.0}
-            return
-        
-        ref_output_dir = os.path.join(self.base_save_path, "reference_synthesis", self.benchmark_name, self.problem_name)
-        ref_report_base_path = os.path.join(ref_output_dir, f"{self.problem_name}_ref")
-        ref_top_module_name = "RefModule"  # Use a fixed name for the reference module, 
-        # RTLLM originally used different names for each reference file, but we have standardized it to bring it in line with VerilogEvalv2.
-        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+        # Instead of synthesizing the reference Verilog file, we will use the pre-synthesized reference file.
+        # This is to ensure that we have a consistent reference PPA across all runs.
+        # The reference Verilog file is expected to be in the benchmark directory with the name <problem_name>_ppa.txt
+        # Format of the reference PPA file is:
+        # tns,wns,eff_clk_period,power,area
+        # value0,value1,value2,value3,value4
+        # Example:
+        # tns,wns,eff_clk_period,power,area
+        # 0.0,0.0,0.0,2.36e-08,1.0
+        # If the file does not exist, we will use default high PPA values.
 
-        # Get the *original* module name that the testbench expects (which is different from the reference module name).
-        # This is used to ensure that the testbench can correctly instantiate the reference module.
-        top_module_name_file = os.path.join(self.benchmark_path, "synthesis_top_module_names.json")
-        if os.path.exists(top_module_name_file):
-            with open(top_module_name_file, "r") as f:
-                top_module_names = json.load(f)
-            tb_expects_name = top_module_names.get(self.problem_name, "RefModule")
-        else:
-            print(f"WARNING: Top module name file not found. Using default module name 'RefModule'.")
-            tb_expects_name = "RefModule"
+        ref_ppa_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ppa.txt")
+        if os.path.exists(ref_ppa_file):
+            with open(ref_ppa_file, "r") as f:
+                lines = f.readlines()
+                if len(lines) < 2:
+                    print(f"WARNING: Reference PPA file {ref_ppa_file} is malformed. Using default high PPA values.")
+                    self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e4, "power": 1.0}
+                    return
 
-        synthesis_results = self.synthesis_evaluator.evaluate(ref_sv_file, self.problem_name, ref_top_module_name, tb_expects_name, ref_output_dir, ref_report_base_path,
-                                                              self.evaluator, test_sv_file, None) 
-        # ref_sv_file is added twice but, this is caught by the VerilogEvaluator.evaluate method, which checks for duplicate files.
+                # Parse the second line for metrics
+                values = lines[1].strip().split(',')
+                if len(values) < 5:
+                    print(f"WARNING: Reference PPA file {ref_ppa_file} does not contain enough values. Using default high PPA values.")
+                    self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e4, "power": 1.0}
+                    return
+                
+                # If area and power are zero, we also call warning and set it to high values
+                if float(values[3]) == 0.0 or float(values[4]) == 0.0:
+                    print(f"WARNING: Reference PPA file {ref_ppa_file} has zero area or power. Using default high PPA values.")
+                    self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e4, "power": 1.0}
+                    return
 
-        if synthesis_results and synthesis_results.get("ppa_success"):
-            self.ref_ppa_metrics = synthesis_results["ppa_metrics"]
-            print(f"Reference PPA calculated successfully: {self.ref_ppa_metrics}")
-        else:
-            print("WARNING: Reference PPA synthesis (or post-synthesis evaluation) failed. Using default high values.")
-            self.ref_ppa_metrics = {"tns": 0.0, "wns": 0.0, "eff_clk_period": self.clk_period, "area": 1e10, "power": 1e10}
+                self.ref_ppa_metrics = {
+                    "tns": float(values[0]),
+                    "wns": float(values[1]),
+                    "eff_clk_period": float(values[2]),
+                    "power": float(values[3]),
+                    "area": float(values[4])
+                }
+                print(f"Reference PPA loaded successfully: {self.ref_ppa_metrics}")
+
 
     def _calculate_fitness_score(self, candidate):
         """Calculates a fitness score for a successful candidate based on PPA improvement."""
@@ -1470,17 +1456,17 @@ class EoHEngine:
             print(f"Warning: Missing PPA values for {candidate.id} or reference. Assigning low fitness.")
             return 0
 
-        # Avoid division by zero for reference values
-        P_ref = P_ref if P_ref > 1e-12 else 1e-12
-        A_ref = A_ref if A_ref > 1e-12 else 1e-12
-        T_ref = T_ref if T_ref > 1e-12 else 1e-12
-
         power_improvement = (P_gen - P_ref) / P_ref
         area_improvement = (A_gen - A_ref) / A_ref
+        timing_improvement = None  # Default to None for combinational circuits
         
         # A non-zero TNS or WNS in reference implies a sequential circuit for this calculation
         # Combinatorial circuits will have TNS and WNS as 0, and eff_clk_period of 0
-        is_sequential = (self.ref_ppa_metrics.get("tns", 0) != 0 or self.ref_ppa_metrics.get("wns", 0) != 0 or self.ref_ppa_metrics.get("eff_clk_period", 0) != 0)
+        # If T_ref is 0.0 than it is a combinational circuit
+        if T_ref == 0.0:
+            is_sequential = False
+        else:
+            is_sequential = True
 
         if is_sequential:
             timing_improvement = (T_gen - T_ref) / T_ref
@@ -1488,6 +1474,7 @@ class EoHEngine:
         else: # Combinational
             total_improvement = (power_improvement + area_improvement) / 2
             
+
         # Fitness is maximized, and lower improvement % is better. So, fitness = -improvement.
         return -total_improvement
 
@@ -1568,7 +1555,7 @@ class EoHEngine:
                 with open(top_module_name_file, "r") as f:
                     top_module_names = json.load(f)
                 top_module_name = top_module_names.get(self.problem_name, "TopModule")
-            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, top_module_name, top_module_name, output_dir, report_base_path,
+            synth_results = self.synthesis_evaluator.evaluate(cand.code_file_path, self.problem_name, top_module_name, output_dir, report_base_path,
                                                               self.evaluator, test_sv_file, ref_sv_file)
 
             if synth_results["synthesis_success"] and synth_results["synthesis_functionality_success"] and synth_results["ppa_success"]:
@@ -2012,7 +1999,7 @@ class EoHEngine:
             # As combinatorial circuits do not have a meaningful clock period and eff_clk_period are set to 0.0
             # Current clk_period(0.01 ns) is used as a threshold to determine if the circuit is sequential
             # This is a heuristic, but it works well for most cases
-            is_sequential = (self.ref_ppa_metrics.get("eff_clk_period", 0) > 0.01)  # Threshold to determine if it's sequential
+            is_sequential = (self.ref_ppa_metrics.get("eff_clk_period") != 0.0)
             if is_sequential:
                 best_by_delay = min(successful_candidates, key=lambda c: c.ppa_metrics.get('eff_clk_period') if c.ppa_metrics.get('eff_clk_period') is not None else float('inf'))
                 champions.append(best_by_delay)
