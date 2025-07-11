@@ -5,6 +5,53 @@ import csv
 import sys
 from collections import defaultdict
 
+def load_gate_count_references(csv_paths: list[pathlib.Path]) -> dict[str, int]:
+    """
+    Loads reference gate counts from a list of CSV files.
+
+    Args:
+        csv_paths: A list of paths to the reference CSV files.
+
+    Returns:
+        A dictionary mapping problem names to their reference gate counts.
+    """
+    gate_count_data = {}
+    print("Attempting to load reference gate counts...")
+    for path in csv_paths:
+        if not path.exists():
+            print(f"⚠️ Reference CSV not found: {path}. Skipping.")
+            continue
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                # Assuming column names are 'Problem' and 'Reference Gate Count'
+                # These might need to be adjusted if the CSVs have different headers.
+                problem_col = next((col for col in reader.fieldnames if 'problem' in col.lower()), None)
+                gate_count_col = next((col for col in reader.fieldnames if 'gate count' in col.lower()), None)
+
+                if not problem_col or not gate_count_col:
+                    print(f"⚠️ Could not find 'Problem' or 'Reference Gate Count' columns in {path}. Skipping.")
+                    continue
+                
+                count = 0
+                for row in reader:
+                    try:
+                        problem_name = row[problem_col]
+                        gate_count = int(float(row[gate_count_col]))
+                        gate_count_data[problem_name] = gate_count
+                        count += 1
+                    except (ValueError, TypeError):
+                        # Handle cases where gate count is not a valid number
+                        continue
+                print(f"✅ Loaded {count} gate count entries from {path}.")
+        except Exception as e:
+            print(f"❌ Error reading {path}: {e}")
+            
+    if not gate_count_data:
+        print("⚠️ No reference gate count data was loaded. PPA calculations might be skipped.")
+        
+    return gate_count_data
+
 def calculate_improvement(new_val, ref_val):
     """
     Calculates the percentage improvement. A positive result is an improvement.
@@ -22,7 +69,13 @@ def calculate_improvement(new_val, ref_val):
     improvement = ((ref_val - new_val) / abs(ref_val)) * 100
     return f"{improvement:.2f}", improvement
 
-def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: float):
+# Updated function signature to accept new arguments
+def analyze_experiments_to_csv(
+    experiment_path: pathlib.Path, 
+    ref_area_cutoff: float, 
+    ref_gate_count_cutoff: int,
+    gate_count_data: dict
+):
     """
     Parses experiment summary files, calculates statistics, and generates a CSV report
     that includes both per-problem results and benchmark-level averages.
@@ -30,6 +83,8 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
     Args:
         experiment_path: Path to the root directory of the experiment results.
         ref_area_cutoff: The area cutoff for including a design in PPA analysis.
+        ref_gate_count_cutoff: The gate count cutoff for PPA analysis. Takes priority.
+        gate_count_data: Dictionary mapping problem names to reference gate counts.
     """
     if not experiment_path.is_dir():
         print(f"❌ Error: Experiment path not found -> {experiment_path}")
@@ -41,7 +96,7 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
         print(f"⚠️ No `_summary.json` files found matching the pattern: {experiment_path}/*/*/*_summary.json")
         return
 
-    print(f"Found {len(summary_files)} summary files to process for model '{model_name}'.")
+    print(f"\nFound {len(summary_files)} summary files to process for model '{model_name}'.")
 
     problem_rows = []
     # This dictionary will store the raw numerical data needed for averaging.
@@ -81,10 +136,8 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
                         if first_gen_data.get('generation') == 0:
                             init_func_pass_rate = first_gen_data.get('success_rates', {}).get('total_functionality', 0.0)
             
-            # For individual problems, "any pass" is binary (1.0 if > 0, else 0.0)
             init_func_any_pass = 1.0 if init_func_pass_rate > 0 else 0.0
             final_func_any_pass = 1.0 if final_func_pass_rate > 0 else 0.0
-
             runtime = data.get('total_runtime_seconds', 0.0)
 
             # Store all stats for averaging later
@@ -98,15 +151,36 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
             # --- PPA Improvement Calculation ---
             ref_ppa = data.get('ref_ppa_metric')
             best_ppa = data.get('final_population_ppa', {}).get('best_metrics')
+            
+
+            # New logic to determine if PPA calculation should be skipped
+            ref_gate_count = gate_count_data.get(problem_name)
+            skip_reason = None
+
+            if not ref_ppa or not best_ppa:
+                skip_reason = "Reference or Best PPA data not available"
+            elif ref_ppa.get('area') is None:
+                skip_reason = "Reference area is not available in summary"
+            elif ref_gate_count is None:
+                skip_reason = f"Reference gate count for '{problem_name}' not found in provided CSVs"
+            elif ref_gate_count == -1:
+                skip_reason = "Reference gate count is -1, excluding from PPA analysis"
+            else:
+                # Prioritize gate count cutoff if active
+                if ref_gate_count_cutoff > -1:
+                    if ref_gate_count < ref_gate_count_cutoff:
+                        skip_reason = f"Reference gate count ({ref_gate_count}) is below cutoff ({ref_gate_count_cutoff})"
+                # Fallback to area cutoff if active and gate cutoff was not
+                elif ref_area_cutoff > -1.0:
+                    if ref_ppa.get('area') < ref_area_cutoff:
+                        skip_reason = f"Reference area ({ref_ppa.get('area')}) is below cutoff ({ref_area_cutoff})"
 
             area_improv_str, area_improv_val = 'N/A', None
             power_improv_str, power_improv_val = 'N/A', None
             clk_improv_str, clk_improv_val = 'N/A', None
-
-            if not ref_ppa or not best_ppa:
-                print(f"  - Skipping PPA for {problem_name}: Reference or Best PPA data not available.")
-            elif ref_ppa.get('area') is None or ref_ppa.get('area') < ref_area_cutoff:
-                print(f"  - Skipping PPA for {problem_name}: Reference area ({ref_ppa.get('area')}) is below cutoff ({ref_area_cutoff}).")
+            
+            if skip_reason:
+                print(f"  - Skipping PPA for {problem_name}: {skip_reason}.")
             else:
                 area_improv_str, area_improv_val = calculate_improvement(best_ppa.get('area'), ref_ppa.get('area'))
                 power_improv_str, power_improv_val = calculate_improvement(best_ppa.get('power'), ref_ppa.get('power'))
@@ -152,7 +226,7 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
 
         summary_rows.append({
             "model": model_name,
-            "benchmark_name": benchmark_name, # Use just the benchmark name for the summary row
+            "benchmark_name": benchmark_name,
             "init_func_pass_rate": get_avg(stats['init_func_pass']),
             "final_func_pass_rate": get_avg(stats['final_func_pass']),
             "init_func_any_pass_rate": get_avg(stats['init_func_any_pass']),
@@ -169,14 +243,20 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
         return
         
     all_rows = problem_rows + summary_rows
-    # Sort by benchmark name to group related rows together.
     all_rows.sort(key=lambda x: x['benchmark_name'])
 
-    # Define file paths with the specified cutoff value in the name.
-    full_output_path = experiment_path / f"ppa_summary_cutoff_{ref_area_cutoff}.csv"
-    abridged_output_path = experiment_path / f"ppa_summary_cutoff_{ref_area_cutoff}_abridged.csv"
 
-    # Write the full CSV report (individual problems + benchmark averages)
+    # Create a dynamic filename based on which cutoff is active
+    cutoff_str = "no_cutoff"
+    if ref_gate_count_cutoff > -1:
+        cutoff_str = f"gate_cutoff_{ref_gate_count_cutoff}"
+    elif ref_area_cutoff > -1.0:
+        cutoff_str = f"area_cutoff_{ref_area_cutoff:.0f}"
+        
+    full_output_path = experiment_path / f"ppa_summary_{cutoff_str}.csv"
+    abridged_output_path = experiment_path / f"ppa_summary_{cutoff_str}_abridged.csv"
+
+    # Write the full CSV report
     try:
         with open(full_output_path, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=header)
@@ -186,7 +266,7 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
     except IOError as e:
         print(f"\n❌ Error saving full CSV file: {e}")
 
-    # Write the abridged CSV report (only benchmark averages)
+    # Write the abridged CSV report
     if summary_rows:
         summary_rows.sort(key=lambda x: x['benchmark_name'])
         try:
@@ -211,11 +291,35 @@ if __name__ == '__main__':
         help="Path to the root directory of a specific model's experiment results.\n"
              "Example: './exp/deepseek-chat/'"
     )
+    # Added new argument for gate count cutoff and updated help text.
+    # Set defaults to -1 to indicate they are inactive by default.
     parser.add_argument(
-        '--ref_area_cutoff', type=float, required=True,
+        '--ref_gate_count_cutoff', type=int, default=-1,
+        help="If the reference gate count is smaller than this value, exclude the design\n"
+             "from PPA calculations. This cutoff takes priority over the area cutoff.\n"
+             "(Default: -1, disabled)"
+    )
+    parser.add_argument(
+        '--ref_area_cutoff', type=float, default=-1.0,
         help="If the reference area is smaller than this value, exclude the design\n"
-             "from consideration when calculating PPA improvement percentages."
+             "from PPA calculations. This is only used if --ref_gate_count_cutoff is not set.\n"
+             "(Default: -1.0, disabled)"
     )
 
     args = parser.parse_args()
-    analyze_experiments_to_csv(args.experiment_path, args.ref_area_cutoff)
+    
+    # Load reference gate count data from the specified CSV files.
+    # Assumes the CSVs are in the same directory as the script.
+    script_dir = pathlib.Path(__file__).parent
+    ref_csv_paths = [
+        script_dir / "RTLLM.csv",
+        script_dir / "VerilogEval-Spec-to-RTL.csv"
+    ]
+    gate_count_data = load_gate_count_references(ref_csv_paths)
+    
+    analyze_experiments_to_csv(
+        args.experiment_path, 
+        args.ref_area_cutoff, 
+        args.ref_gate_count_cutoff,
+        gate_count_data
+    )
