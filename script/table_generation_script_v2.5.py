@@ -48,7 +48,8 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
     benchmark_stats = defaultdict(lambda: {
         'area': [], 'power': [], 'clk': [],
         'init_func_pass': [], 'final_func_pass': [],
-        'init_func_any_pass': [], 'final_func_any_pass': []
+        'init_func_any_pass': [], 'final_func_any_pass': [],
+        'runtimes': []
     })
 
     header = [
@@ -56,7 +57,8 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
         "init_func_any_pass_rate", "final_func_any_pass_rate",
         "area_improvement_percentage_compared_to_ref",
         "power_improvement_percentage_compared_to_ref",
-        "eff_clk_improvement_percentage_compared_to_ref"
+        "eff_clk_improvement_percentage_compared_to_ref",
+        "avg_runtime_seconds"
     ]
 
     for file_path in summary_files:
@@ -83,12 +85,15 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
             init_func_any_pass = 1.0 if init_func_pass_rate > 0 else 0.0
             final_func_any_pass = 1.0 if final_func_pass_rate > 0 else 0.0
 
+            runtime = data.get('total_runtime_seconds', 0.0)
+
             # Store all stats for averaging later
             stats = benchmark_stats[benchmark_name]
             stats['init_func_pass'].append(init_func_pass_rate)
             stats['final_func_pass'].append(final_func_pass_rate)
             stats['init_func_any_pass'].append(init_func_any_pass)
             stats['final_func_any_pass'].append(final_func_any_pass)
+            stats['runtimes'].append(runtime)
 
             # --- PPA Improvement Calculation ---
             ref_ppa = data.get('ref_ppa_metric')
@@ -127,6 +132,7 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
                 "area_improvement_percentage_compared_to_ref": area_improv_str,
                 "power_improvement_percentage_compared_to_ref": power_improv_str,
                 "eff_clk_improvement_percentage_compared_to_ref": clk_improv_str,
+                "avg_runtime_seconds": f"{runtime:.2f}"
             })
 
         except (json.JSONDecodeError, KeyError, IndexError, TypeError) as e:
@@ -154,6 +160,7 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
             "area_improvement_percentage_compared_to_ref": get_avg(stats['area']),
             "power_improvement_percentage_compared_to_ref": get_avg(stats['power']),
             "eff_clk_improvement_percentage_compared_to_ref": get_avg(stats['clk']),
+            "avg_runtime_seconds": get_avg(stats['runtimes']),
         })
 
     # --- Combine, Sort, and Write to CSV ---
@@ -165,15 +172,33 @@ def analyze_experiments_to_csv(experiment_path: pathlib.Path, ref_area_cutoff: f
     # Sort by benchmark name to group related rows together.
     all_rows.sort(key=lambda x: x['benchmark_name'])
 
-    output_file_path = experiment_path / "ppa_summary.csv"
+    # Define file paths with the specified cutoff value in the name.
+    full_output_path = experiment_path / f"ppa_summary_cutoff_{ref_area_cutoff}.csv"
+    abridged_output_path = experiment_path / f"ppa_summary_cutoff_{ref_area_cutoff}_abridged.csv"
+
+    # Write the full CSV report (individual problems + benchmark averages)
     try:
-        with open(output_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+        with open(full_output_path, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=header)
             writer.writeheader()
             writer.writerows(all_rows)
-        print(f"\n✅ Successfully generated CSV report with benchmark averages: {output_file_path}")
+        print(f"\n✅ Successfully generated full CSV report: {full_output_path}")
     except IOError as e:
-        print(f"\n❌ Error saving CSV file: {e}")
+        print(f"\n❌ Error saving full CSV file: {e}")
+
+    # Write the abridged CSV report (only benchmark averages)
+    if summary_rows:
+        summary_rows.sort(key=lambda x: x['benchmark_name'])
+        try:
+            with open(abridged_output_path, 'w', newline='', encoding='utf-8') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=header)
+                writer.writeheader()
+                writer.writerows(summary_rows)
+            print(f"✅ Successfully generated abridged CSV report: {abridged_output_path}")
+        except IOError as e:
+            print(f"\n❌ Error saving abridged CSV file: {e}")
+    else:
+        print("\n⚠️ No summary data available to create an abridged report.")
 
 
 if __name__ == '__main__':
