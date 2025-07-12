@@ -1,0 +1,13 @@
+The main issue in the provided solution is the insufficient bit width of the counters, which leads to incorrect counting and thus wrong toggling of clk_div1 and clk_div2. Also, careful attention is needed to toggle clk_div1 and clk_div2 exactly twice per full cycle: once at HALF and once at NUM_DIV-1 counts, to ensure the output clk_div achieves the correct frequency and duty cycle for an odd divisor.
+
+To fix this:
+1. Properly size counters with enough bits using $clog2(NUM_DIV), not minus 1.
+2. Carefully sequence the toggling and counter increment so the counters count from 0 up to NUM_DIV-1 inclusive.
+3. Use non-blocking assignments in always blocks to avoid race conditions.
+4. Keep clk_div1 and clk_div2 toggled at HALF and NUM_DIV-1 counts, as per design.
+5. Initialize clk_div1 and clk_div2 to 0 on reset for deterministic startup.
+6. OR clk_div1 and clk_div2 for final output, which effectively combines positive and negative edge toggles to generate a divided clock with a ~50% duty cycle for odd divisors.
+7. Add a compile-time check to ensure NUM_DIV is odd.
+8. Provide comments to clarify functionality.
+
+This approach ensures correct frequency division by odd numbers with a nearly 50% duty cycle and correct initial conditions.

@@ -1,0 +1,9 @@
+To meet the requirement that the first received serial bit becomes the most significant bit (MSB) in the parallel output, the serial data should be shifted into the register from MSB to LSB. That is, on each valid input, shift the register right by one and insert the new bit at the MSB position.
+
+This change ensures the bit ordering in dout_parallel matches the problem specification.
+
+The 4-bit counter logic remains unchanged, counting from 0 to 7. When 8 bits have been received, output the assembled byte and assert dout_valid for one cycle.
+
+Also, keep the asynchronous reset and synchronous data capture logic. This approach correctly accumulates bits in MSB-first order and generates the parallel output with proper timing.
+
+No major optimization is needed beyond fixing the bit ordering since the original code is already clean and straightforward.

@@ -1,0 +1,20 @@
+To improve the pipelined 4-bit multiplier, I'll implement a proper two-stage pipeline with correct accumulation timing:
+
+1. First Pipeline Stage:
+   - Generate all partial products in parallel
+   - Register the first two partial product additions (pp[0] + pp[1])
+   - Register the next two partial products (pp[2] and pp[3]) for use in next stage
+
+2. Second Pipeline Stage:
+   - Add the registered intermediate sum from stage1
+   - Add the registered pp[2] value
+   - Then add the registered pp[3] value
+   - Final result is registered at the output
+
+Key improvements:
+- Proper pipeline timing with correct intermediate value storage
+- Balanced operations between pipeline stages
+- All additions are properly registered
+- Maintains two pipeline stages as specified
+- Clear separation of computation between stages
+- Efficient use of resources with parallel partial product generation

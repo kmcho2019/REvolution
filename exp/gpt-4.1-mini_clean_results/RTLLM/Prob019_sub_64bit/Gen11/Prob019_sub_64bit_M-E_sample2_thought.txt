@@ -1,0 +1,7 @@
+Implement a 64-bit subtractor by dividing the operands into four 16-bit chunks and performing four chained 16-bit carry-lookahead subtractions. Each 16-bit subtractor will perform A_chunk - B_chunk - borrow_in, with borrow signals propagated between chunks. This chunked approach balances timing by limiting carry chain length per chunk, avoiding a long 64-bit ripple chain and reducing the complexity of the carry lookahead compared to a full 64-bit CLA. 
+
+Subtraction is done as A + (~B) + 1 internally in each chunk using a 16-bit carry-lookahead adder (CLA) module designed specifically for subtraction with borrow_in. Borrow-out from each chunk connects to borrow-in of the next chunk. The final borrow_out is not used since subtraction result is 64 bits.
+
+Overflow detection follows the given logic: overflow occurs if A and B have different signs and the result sign differs from A’s sign. This is checked at the top level using the sign bits.
+
+This modular, chunked approach allows more scalable timing and simpler carry lookahead design in each 16-bit block, maintaining correctness and clean overflow checking.

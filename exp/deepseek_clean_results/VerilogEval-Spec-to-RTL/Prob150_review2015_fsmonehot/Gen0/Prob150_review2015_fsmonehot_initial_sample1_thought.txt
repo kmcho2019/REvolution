@@ -1,0 +1,16 @@
+To implement this Moore state machine, we'll use one-hot encoding for the states. The next state logic will be derived by examining the current state and inputs, while the output logic will depend solely on the current state. Here's the approach:
+
+1. Next state logic:
+   - Each next state signal will be asserted based on current state and transition conditions
+   - For example, S_next is asserted when:
+     - Current state is S and d=0
+     - Current state is S1 and d=0
+     - Current state is S110 and d=0
+     - Current state is Wait and ack=1
+
+2. Output logic:
+   - shift_ena is 1 in states B0-B3
+   - counting is 1 in state Count
+   - done is 1 in state Wait
+
+The implementation will use combinational logic with case statements for clarity.

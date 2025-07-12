@@ -1,0 +1,11 @@
+The original code directly implements combinational logic using simple AND and OR gates for next state and output logic, which is already minimal and clear for a one-hot FSM. However, we can optimize the logic by factoring common terms to reduce the gate count and possibly reduce switching activity, thereby slightly improving power and area.
+
+Specifically:
+- next_state[0] = (A & ~in) | (C & ~in) can be factored as (~in) & (A | C)
+- next_state[1] = (A & in) | (B & in) | (D & in) can be factored as in & (A | B | D)
+- next_state[2] = (B & ~in) | (D & ~in) can be factored as (~in) & (B | D)
+- next_state[3] = (C & in)
+
+This reduces the total number of AND gates by sharing the in and ~in signals and grouping ORs over state bits, likely yielding fewer gates and reduced power consumption. Output remains D directly.
+
+This factoring provides the same functionality but helps synthesis tools generate more optimized logic, potentially improving timing, power, and area metrics without changing behavior.

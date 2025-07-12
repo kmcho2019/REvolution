@@ -1,0 +1,20 @@
+After carefully analyzing the feedback and re-examining the waveform, here's the corrected implementation approach:
+
+1. Key Insights:
+   - p follows 'a' when q is 0 (immediately)
+   - q becomes 1 in the next cycle after p was 1
+   - q resets to 0 only when 'a' is 1 during a positive clock edge AND q was already 1
+   - Need to track both current and previous states properly
+
+2. Corrected Implementation Strategy:
+   - Use single always block sensitive only to posedge clock
+   - Track previous p value (p_prev) to determine q transitions
+   - q only resets when both a is 1 and q was 1
+   - p updates immediately based on current a and q state
+   - q updates based on previous p state
+
+3. Improvements:
+   - Proper edge-sensitive design
+   - Correct state transition logic matching waveform
+   - Clear separation between p and q update conditions
+   - Handles all waveform cases precisely

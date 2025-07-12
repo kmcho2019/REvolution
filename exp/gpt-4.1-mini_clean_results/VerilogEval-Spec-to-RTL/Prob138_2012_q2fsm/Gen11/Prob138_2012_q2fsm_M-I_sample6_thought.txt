@@ -1,0 +1,7 @@
+To improve the original design's PPA, I will remove the conditional enable on the state register, as it may add unnecessary gating and delay on the clock path, potentially hurting timing. Instead, I will update the state register unconditionally on every clock cycle, which often yields better timing at the cost of slightly increased switching.
+
+I will maintain synchronous active-high reset and separate always blocks for sequential and combinational logic to keep clarity and synthesis friendliness.
+
+For the output logic, I will replace the equality comparisons with a single bitmask check on the encoded state bits to reduce combinational logic depth, potentially improving timing and area.
+
+This approach trades a minor increase in dynamic power from more frequent state updates for better timing and slightly simplified combinational logic, likely improving overall PPA.

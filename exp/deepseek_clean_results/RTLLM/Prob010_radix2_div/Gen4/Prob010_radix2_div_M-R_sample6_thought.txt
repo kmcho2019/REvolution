@@ -1,0 +1,13 @@
+The refactored design will maintain the same radix-2 division algorithm but implement it with these key structural changes:
+
+1. **Explicit State Machine**: Replace the implicit state control (start_cnt/cnt) with a clear 3-state FSM (IDLE, CALC, DONE) for better readability and control.
+
+2. **Combinational Logic**: Move sign handling and arithmetic operations to combinational always blocks and assigns for better timing.
+
+3. **Registered Outputs**: Keep all outputs registered for clean timing closure.
+
+4. **Simplified Data Path**: Streamline the shift register handling by using separate quotient and remainder registers.
+
+5. **Early Output Calculation**: Compute the final signed results in parallel rather than sequentially.
+
+The new structure makes the design more modular and easier to verify while maintaining the same functionality.

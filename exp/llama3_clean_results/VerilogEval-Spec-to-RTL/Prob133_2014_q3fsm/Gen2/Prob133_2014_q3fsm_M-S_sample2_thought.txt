@@ -1,0 +1,9 @@
+To simplify the solution, we need to maintain the core functionality of the finite state machine (FSM) while reducing unnecessary complexity. The primary goal is to accurately implement the required behavior based on inputs 's' and 'w'. 
+
+We will maintain two states: A and B. The transition from A to B occurs when 's' becomes 1. Once in state B, the FSM should check the input 'w' over a three-clock cycle window. To achieve this, we can use a counter to track the number of 'w' = 1 occurrences within this window. 
+
+The use of a counter simplifies the logic compared to a shift register approach, as it directly accumulates the count of 'w' = 1 without the need to shift and examine individual bits. 
+
+When the counter reaches the end of its three-cycle window, we check its value to determine if 'z' should be set to 1 (if 'w' was 1 exactly twice) or 0 (otherwise). After setting 'z' accordingly, the counter is reset for the next window.
+
+This approach minimizes the number of states and signals needed, reducing overall complexity and logic usage.

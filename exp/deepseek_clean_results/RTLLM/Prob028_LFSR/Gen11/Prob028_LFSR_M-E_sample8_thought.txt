@@ -1,0 +1,8 @@
+Novel approach: Implement a self-seeded LFSR with dynamic initialization
+1. Instead of resetting to all zeros (which would cause the LFSR to lock up), initialize to a non-zero seed value (4'b0001)
+2. Use a more standard feedback polynomial (XOR of bits 3 and 0) for better randomness properties
+3. Implement an additional 'seed' input port to allow external seeding
+4. Add a 'load' control signal to enable/disable seeding
+5. The LFSR will automatically re-seed itself if it ever reaches the all-zero state
+6. This makes the design more robust and prevents lock-up conditions
+7. The feedback is now standard (no inversion) for better compatibility with LFSR theory

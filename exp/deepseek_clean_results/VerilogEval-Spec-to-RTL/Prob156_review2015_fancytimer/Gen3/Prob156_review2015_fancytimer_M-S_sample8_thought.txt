@@ -1,0 +1,18 @@
+Here's a simplified approach that maintains all functionality while reducing complexity:
+
+1. **Streamlined State Machine**: Reduce to 4 clear states (IDLE, LOAD, COUNT, DONE) with straightforward transitions.
+
+2. **Simplified Counting Logic**: 
+   - Use a single 14-bit counter (enough for max 16*1000=16000 cycles)
+   - Calculate target count once when loading delay (delay+1)*1000
+   - Compare current count against target instead of tracking sub-cycles
+
+3. **Efficient Pattern Detection**:
+   - Shift register for 1101 pattern detection
+   - Simple bit counter for delay loading
+
+4. **Clean Output Logic**:
+   - Directly derive outputs from current state
+   - Calculate count output from remaining time
+
+This approach eliminates the dual-counter complexity while maintaining precise timing.

@@ -1,0 +1,24 @@
+To fuse the best ideas of both examples, I will design a 3-stage pipelined IEEE-754 single-precision floating-point multiplier with careful signal width optimization and efficient special-case handling.
+
+From Example 1:
+- Use pipelining for improved timing and to reduce critical path length.
+- Propagate only essential signals and combine special case flags to reduce power and area.
+- Move rounding and normalization into sequential stages to break combinational paths.
+- Implement rounding logic in clocked stages (rather than combinational) to improve timing.
+
+From Example 2:
+- Use clear combinational logic for special case detection and normalization.
+- Use signed arithmetic with minimal exponent width (9 bits) for exponent calculation.
+- Keep the output registered and synchronized.
+- Implement rounding to nearest even precisely, with guard, round, sticky bits.
+
+Fusion Strategy:
+- Stage 0: Input decode and special case detection, mantissa extraction with implicit bit.
+- Stage 1: Mantissa multiplication (24x24), exponent addition and bias correction, sign calculation, propagate special flags.
+- Stage 2: Normalization, rounding bits extraction, rounding logic in sequential block, exponent adjustment, and final output assembly.
+- Optimize exponent width to 9 bits, and use only necessary flags to minimize power and area.
+- Use non-blocking assignments throughout sequential logic.
+- Handle NaN, Inf, Zero, and invalid cases (Inf*0) with minimal extra logic.
+- This balanced approach yields good timing (short combinational paths per stage), good power (minimal propagated signals, clock gating potential), and moderate area.
+
+The following code fully implements this 3-stage pipelined multiplier with detailed IEEE-754 compliance.

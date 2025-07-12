@@ -1,0 +1,37 @@
+Instead of using a direct LUT, I will implement the function f by expressing it as a sum of product terms derived from the Karnaugh map groups with don't-cares utilized for simplification.
+
+- I will first rewrite the Karnaugh map with variables labeled as: x = {x4, x3, x2, x1} = {x[3], x[2], x[1], x[0]}.
+- The rows are given by x3x4, columns by x1x2.
+- I will map each 1 in the map to its minterm, then group them to minimize the expression.
+- For don't-care entries, I will use them to expand groups to simplify the logic.
+
+From the Karnaugh map:
+  
+          x1x2
+  x4x3  00  01  11  10
+  00    d   0   d   d
+  01    0   d   1   0
+  11    1   1   d   d
+  10    1   1   0   d
+
+Identifying 1's at positions (x4x3 x1x2):
+
+- (11,00): x4=1, x3=1, x1=0, x2=0
+- (11,01): x4=1, x3=1, x1=0, x2=1
+- (01,11): x4=0, x3=1, x1=1, x2=1
+- (10,00): x4=1, x3=0, x1=0, x2=0
+- (10,01): x4=1, x3=0, x1=0, x2=1
+
+Groupings with don't-cares:
+
+- Group1: Cells (11,00) and (11,01) and possibly adjacent don't-cares → x4=1, x3=1, x1=0 (since x2 varies)
+- Group2: Cells (10,00) and (10,01) → x4=1, x3=0, x1=0
+- Group3: Cell (01,11) alone → x4=0, x3=1, x1=1, x2=1
+
+Therefore, the simplified sum of products:
+
+f = (x4 & x3 & ~x1) | (x4 & ~x3 & ~x1) | (~x4 & x3 & x1 & x2)
+
+This logic can be directly implemented using bitwise AND, OR, and NOT operations in Verilog.
+
+This approach avoids the need for a LUT and indexing, uses boolean algebra derived from the Karnaugh map, and clearly implements the function with minimal gates.

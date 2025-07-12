@@ -1,0 +1,10 @@
+Refactor the design by using a simple state machine to count received valid inputs and accumulate data. Instead of combining counter increment and accumulation in one always block, separate combinational and sequential logic. Use an enable signal for the accumulator update and express the output valid signal as a registered pulse generated when count reaches 4. This improves code clarity and explicitly separates control and data path logic.
+
+Key points:
+- Use a state machine-like approach with an accumulation counter.
+- Accumulate data when valid_in is asserted.
+- When the 4th valid input is accumulated, output the sum and assert valid_out for one cycle.
+- Reset accumulator and counter afterward.
+- Use non-blocking assignments and synchronous reset.
+
+This approach restructures the logic without changing functionality but improves readability and modularity.

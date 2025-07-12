@@ -1,0 +1,7 @@
+Here's a simplified approach that reduces both area and power while maintaining functionality:
+1. Use a 3-bit shift register instead of 4-bit since we only need to track the last 3 bits (plus current input) to detect 1101
+2. Combine the shift and compare operations into a single always block
+3. Eliminate the separate 'found' register by making the output directly dependent on the comparison
+4. The pattern detection becomes: when previous 3 bits are 110 and current bit is 1
+
+This reduces storage by 1 bit and eliminates one register (the 'found' flag), while keeping the same functionality. The detection logic remains simple but now operates on fewer bits.

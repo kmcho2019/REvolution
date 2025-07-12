@@ -1,0 +1,7 @@
+The original solution uses 25 separate assignments for each pairwise comparison, which is straightforward but verbose. We can simplify this by:
+1. Recognizing that the comparisons follow a pattern where each input is compared against all inputs (including itself)
+2. Using a more compact assignment by concatenating the inputs into a vector and using nested loops (via generate blocks) to create the comparisons
+3. Maintaining the same comparison order (a->a to a->e, b->a to b->e, etc.)
+4. Using XNOR operations (~^) for equality checks which is more concise than ~(a ^ b)
+
+This reduces the code size while keeping the same functionality and potentially helping synthesis tools optimize better.

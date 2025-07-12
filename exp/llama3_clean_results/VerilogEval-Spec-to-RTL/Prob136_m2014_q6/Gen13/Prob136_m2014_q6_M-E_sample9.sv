@@ -1,0 +1,52 @@
+module TopModule(
+    input clk,
+    input reset,
+    input w,
+    output reg z
+);
+
+// Define the states as parameters using a hybrid encoding scheme
+parameter A = 3'b001;
+parameter B = 3'b010;
+parameter C = 3'b011;
+parameter D = 3'b100;
+parameter E = 3'b101;
+parameter F = 3'b110;
+
+// Define the state register using the hybrid encoding scheme
+reg [2:0] state;
+reg [2:0] next_state;
+
+// Combinational logic to determine the next state
+always @(*) begin
+    case (state)
+        A: next_state = w ? A : B;
+        B: next_state = w ? D : C;
+        C: next_state = w ? D : E;
+        D: next_state = w ? A : F;
+        E: next_state = w ? D : E;
+        F: next_state = w ? D : C;
+        default: next_state = A;
+    endcase
+end
+
+// Alternatively, use a combination of multiplexers and logic gates
+// wire [2:0] next_state_mux;
+// assign next_state_mux = (state == A) ? (w ? A : B) : 
+//                         (state == B) ? (w ? D : C) : 
+//                         (state == C) ? (w ? D : E) : 
+//                         (state == D) ? (w ? A : F) : 
+//                         (state == E) ? (w ? D : E) : 
+//                         (state == F) ? (w ? D : C) : A;
+// assign next_state = next_state_mux;
+
+// Combinational logic for output z
+assign z = (state == E) || (state == F);
+
+// Update the state on the positive edge of the clock
+always @(posedge clk) begin
+    if (reset) state <= A;
+    else state <= next_state;
+end
+
+endmodule

@@ -1,0 +1,5 @@
+To improve the priority encoder for better performance and potentially reduce area and power, I will refactor the code using a combinational `casez` statement instead of a long if-else chain. The `casez` with one-hot patterns enables synthesis tools to infer a more optimized priority encoder structure, typically implemented using parallel logic rather than a long priority chain.
+
+Additionally, I will explicitly specify `always @(*)` to ensure combinational logic. This approach is equally synthesizable but often leads to better optimized hardware because it allows the synthesis tool to generate a priority encoder primitive or optimized logic.
+
+The output defaults to zero when no input bit is set, fulfilling the requirement. This style will keep the same functional behavior but can reduce the critical path and area by enabling parallel evaluation rather than sequential priority checking.

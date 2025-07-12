@@ -1,0 +1,20 @@
+Refactoring approach using direct sum-of-products implementation:
+
+1. Key Observations:
+   - The original multiplexer approach is logical but may not be optimal for PPA
+   - Looking at the K-map, we can identify essential prime implicants:
+     * x[3]x[4]=11 covers two 1's (when x[1]x[2]=00 and 01)
+     * x[3]x[4]x[2]=101 covers another 1 (when x[1]x[2]=11)
+     * x[3]x[1]x[0]=110 covers the remaining 1's
+
+2. Refactoring Strategy:
+   - Replace the mux structure with a direct sum-of-products implementation
+   - Combine the essential implicants using OR operations
+   - Carefully select don't-care values to minimize the logic expression
+   - This should reduce gate count and potentially improve timing
+
+3. Benefits:
+   - Simpler combinatorial logic
+   - Fewer logic levels (better timing)
+   - Reduced area (fewer gates)
+   - More straightforward implementation

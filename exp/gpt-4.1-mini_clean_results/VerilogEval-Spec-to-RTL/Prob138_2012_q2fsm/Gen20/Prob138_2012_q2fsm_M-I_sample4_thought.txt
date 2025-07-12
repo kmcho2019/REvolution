@@ -1,0 +1,11 @@
+To improve timing (reduce critical path delay), I will rewrite the combinational next-state logic as a `case` statement inside a combinational `always @(*)` block instead of chained ternary operators. This can help synthesis tools generate more balanced logic and better map the FSM transitions.
+
+Also, I'll use a one-hot encoding for the six states, which can reduce decoding complexity at the expense of more flip-flops. One-hot encoding often improves timing because state decoding is simpler and next-state logic can be direct.
+
+The synchronous reset remains active-high. The state register remains positive-edge triggered.
+
+The output `z` will be assigned combinationally with a continuous assign statement checking for states E and F.
+
+This approach may increase area slightly (6 flip-flops vs. 3), but should improve timing and possibly power due to simpler combinational logic. This balances the tradeoff for better PPA.
+
+Overall, this FSM uses one-hot encoding, `case`-based next-state logic, separate always blocks for state and next state combinational logic, and continuous assignment for output.

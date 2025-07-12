@@ -1,0 +1,57 @@
+module mux2to1 (
+    input sel,
+    input d0,
+    input d1,
+    output y
+);
+    assign y = sel ? d1 : d0;
+endmodule
+
+module TopModule (
+    input c,
+    input d,
+    output [3:0] mux_in
+);
+    // Given K-map outputs per ab (fixed) and cd (variables c,d):
+    //
+    // ab=00 (mux_in[0]): cd=00->0, 01->1, 11->1, 10->1
+    //   For c=0: d=0->0, d=1->1
+    //   For c=1: d=0->1, d=1->1
+    //
+    // ab=01 (mux_in[1]): all zero
+    //
+    // ab=11 (mux_in[2]): cd=00->0, 01->0, 11->1, 10->0
+    //   For c=0: d=0->0, d=1->0
+    //   For c=1: d=0->0, d=1->1
+    //
+    // ab=10 (mux_in[3]): cd=00->1, 01->0, 11->1, 10->1
+    //   For c=0: d=0->1, d=1->0
+    //   For c=1: d=0->1, d=1->1
+
+    // mux_in[0] implementation:
+    // When c=0: d ? 1 : 0
+    // When c=1: 1 (both d=0 and d=1)
+    wire m0_c0;
+    mux2to1 mux0_c0 (.sel(d), .d0(1'b0), .d1(1'b1), .y(m0_c0));
+    wire m0_c1 = 1'b1;
+    mux2to1 mux0 (.sel(c), .d0(m0_c0), .d1(m0_c1), .y(mux_in[0]));
+
+    // mux_in[1] implementation: constant 0
+    assign mux_in[1] = 1'b0;
+
+    // mux_in[2] implementation:
+    // c=0: 0 regardless of d
+    // c=1: d ? 1 : 0
+    wire m2_c1;
+    mux2to1 mux2_c1 (.sel(d), .d0(1'b0), .d1(1'b1), .y(m2_c1));
+    mux2to1 mux2 (.sel(c), .d0(1'b0), .d1(m2_c1), .y(mux_in[2]));
+
+    // mux_in[3] implementation:
+    // c=0: d ? 0 : 1
+    // c=1: 1 regardless of d
+    wire m3_c0;
+    mux2to1 mux3_c0 (.sel(d), .d0(1'b1), .d1(1'b0), .y(m3_c0));
+    wire m3_c1 = 1'b1;
+    mux2to1 mux3 (.sel(c), .d0(m3_c0), .d1(m3_c1), .y(mux_in[3]));
+
+endmodule

@@ -1,0 +1,16 @@
+The original solution is already minimal and functionally correct: it uses a single register to hold the previous state of 'a' and combinational logic to detect edges. However, the requirement states that rise and down signals should be set to 1 on the clock cycle *after* the edge is detected, then return to zero until the next edge appears. The existing design produces pulse outputs exactly when the edge happens (combinationally after the register update), not delayed by one clock cycle.
+
+To strictly meet this timing requirement, I will register the outputs rise and down, so they become high on the clock after the edge was detected and stay high for one cycle before returning to zero. This can be done by:
+
+- Registering the previous 'a' value as before,
+- Generating combinational signals for edges,
+- On each clock cycle, setting rise and down registers to the edge signals,
+- The rise and down outputs become pulses synchronous to clk delayed by one cycle relative to edge occurrence.
+
+This approach adds minimal registers but aligns exactly with the specification: "rise or down will be set to 1 on the next clock when the corresponding edge appears, and then return to 0 until the corresponding edge appears again."
+
+This only incurs one clock cycle latency on the output pulses, which is often acceptable and is clearly requested.
+
+No extra logic or clock gating is needed because the design is already simple and power-efficient. This small change improves timing correctness per requirements without adding complexity.
+
+Therefore, the improved solution will have 2 additional registers for rise and down outputs to ensure correct timing alignment.

@@ -1,0 +1,12 @@
+To optimize the design for better Power, Performance, and Area (PPA), I will eliminate the separate nand4 submodule and instantiate the two 4-input NAND gates directly in TopModule using simple continuous assignments. This reduces module overhead and flattening the hierarchy can help synthesis tools optimize delay and area better.
+
+Moreover, since a 4-input NAND gate can be realized by cascading 2-input NAND gates (which might be better supported in some standard cell libraries), I will implement each 4-input NAND as two 2-input NANDs feeding a final 2-input NAND, potentially improving delay and power by leveraging more efficient gates.
+
+This approach:
+- Removes extra module instantiation overhead for area savings.
+- May improve timing by allowing synthesis to optimize intermediate signals.
+- Can reduce power by allowing better gate-level optimizations.
+- Keeps the design fully combinational and easily synthesizable.
+- Maintains clear naming and comments for maintainability.
+
+This hierarchical 2-input NAND implementation replicates the 4-input NAND logically but possibly better maps to physical gates, optimizing PPA overall.

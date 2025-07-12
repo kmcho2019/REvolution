@@ -1,0 +1,18 @@
+Refactoring Approach:
+1. Convert the state machine implementation from procedural (always block) to fully continuous assignment style
+2. Represent state transitions using combinational logic with assign statements
+3. Use a single state register with one-hot encoding (maintaining original behavior)
+4. Keep the same Mealy output logic but express it purely with continuous assignments
+5. Maintain asynchronous reset functionality
+6. Benefits of this approach:
+   - More explicit combinational logic relationships
+   - Easier to see direct signal dependencies
+   - Potentially better for synthesis optimization
+   - Maintains same timing characteristics
+   - Same power/area profile as original
+
+Key Changes:
+- State transitions now expressed with continuous assignments
+- Output logic remains combinational but written differently
+- Same one-hot encoding preserved
+- Asynchronous reset handled through initial state assignment

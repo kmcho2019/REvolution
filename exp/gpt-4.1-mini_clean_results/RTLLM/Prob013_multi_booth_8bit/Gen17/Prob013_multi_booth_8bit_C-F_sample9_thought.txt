@@ -1,0 +1,21 @@
+Fuse Example 1's clear, minimal three-state FSM with Example 2's explicit control signals and better separation of datapath and control logic for clarity and maintainability. 
+
+Enhancements and fusion strategy:
+- Use three states: IDLE (waiting reset release), LOAD (load inputs with sign extension), CALC (perform multiplication over 16 cycles).
+- In CALC, process one bit of the multiplier per cycle; if multiplier bit = 1, add multiplicand to product.
+- Shift multiplicand left by 1 bit each cycle, aligning with the Booth radix-2 multiplication approach (note: radix-4 encoding is complex but here we effectively do radix-2 by checking multiplier bits).
+- Use signed 16-bit registers for multiplicand, multiplier, and product to handle sign extension properly.
+- Use a 5-bit counter counting from 0 to 15 (16 cycles total).
+- Control signals for load, add_enable, and shift controlled from FSM state and multiplier bit to reduce switching.
+- Update all registers and outputs synchronously with nonblocking assignments.
+- Assert ready (rdy) only after completion (ctr=16).
+- Output registered product updated at completion.
+- Reset synchronously to IDLE and zero registers.
+- Maintain modularity and clear separation of control (FSM + control signals) and datapath (arithmetic and shifting).
+- Keep combinational always blocks for next-state and control signals with blocking assignments.
+- Keep sequential always block with nonblocking assignments.
+- Simplify logic by eliminating redundant assignments and ensuring no logic is mixed inside reset.
+- The design trades the radix-4 complexity for clarity and correctness per problem statement (radix-4 Booth multiplier is complicated; here we implement radix-2 approach exactly as the problem describes).
+- The design is synthesizable, clean, and optimized for clarity, maintainability, and correctness.
+
+This fusion yields a clean, well-structured, fully synchronous design that meets the problem requirements while maintaining good design practices.

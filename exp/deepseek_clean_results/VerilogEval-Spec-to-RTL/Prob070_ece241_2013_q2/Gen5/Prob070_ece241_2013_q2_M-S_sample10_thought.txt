@@ -1,0 +1,23 @@
+Simplified Correct Approach:
+
+1. Truth Table Analysis:
+   - Output is 1 for inputs: 2 (0010), 7 (0111), 15 (1111)
+   - Output is 0 for inputs: 0,1,4,5,6,9,10,13,14
+   - Don't-cares: 3,8,11,12
+
+2. SOP Simplification:
+   - Directly implement the three required minterms:
+     - 2: ~a & ~b & c & ~d
+     - 7: ~a & b & c & d
+     - 15: a & b & c & d
+   - No need for don't-care optimization since the terms are already minimal
+
+3. POS Simplification:
+   - Instead of complex optimization, implement the complement of SOP terms:
+     - out_pos = ~((~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d))
+   - This guarantees correct functionality while being straightforward
+
+4. Implementation:
+   - Use direct assignments for clarity
+   - Avoid unnecessary optimization that might introduce errors
+   - Keep both forms functionally equivalent

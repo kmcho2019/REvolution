@@ -1,0 +1,17 @@
+To improve the provided fixed-point adder, we focus on:
+
+1. Explicit signed port declarations to simplify signed arithmetic and avoid implicit casting.
+2. Streamlining the overflow detection logic for addition by using wider signed arithmetic and direct two's complement computations rather than saturating manually. Since the adder adds or subtracts signed operands directly, the risk of overflow can be managed naturally by using one extra bit internally.
+3. Simplifying the absolute value calculation and arithmetic by using signed types and leveraging Verilog's native signed operators instead of manual sign/abs handling.
+4. Removing redundant zero-extension wires and using signed arithmetic variables internally for cleaner code.
+5. Retaining parameterization for flexibility, and keeping output width fixed at N bits.
+6. Doing the entire logic in a single combinational always @* block with clear comments.
+7. Since fixed-point addition does not shift bits, there's no need to separately manage integer and fractional parts beyond preserving bit widths.
+8. By using signed arithmetic internally, the overflow detection can be done by checking that the result fits in N bits by sign extension (result within range), but in many practical fixed-point adders overflow is either wrapped or saturates. Here, we keep two's complement wrap-around behavior as common in fixed-point addition; saturation can be added if desired but is not requested explicitly.
+9. Thus, the module operates by interpreting inputs as signed fixed-point numbers (two's complement), performing addition or subtraction depending on signs, directly using signed addition, and outputs the result as two's complement.
+
+This method reduces code complexity, improves synthesis friendliness, and respects the functional requirements. The explicit signed port definition also removes the need for manual sign extraction and magnitude computation, using signed arithmetic directly instead.
+
+If saturation is desired (as in the example), it can be added optionally. Since the problem's main concern is correct sign handling and absolute value based addition/subtraction, this approach respects the semantics while simplifying the implementation.
+
+No testbench issues are addressed here, but parameterized ports and default parameters make instantiation straightforward.

@@ -1,0 +1,8 @@
+Refactor the recursive popcount into a purely combinational function using a local recursive function inside a single module, removing generate blocks and submodule instantiations.  
+- Implement the popcount as a function that recursively sums halves of the input until 8 or fewer bits remain, then use an explicit balanced adder tree inside the function for the base case.  
+- This avoids multiple module instantiations and generate blocks, leading to potentially simpler elaboration and easier synthesis.  
+- The TopModule directly calls this function, keeping the interface the same.  
+- The popcount8 logic is embedded in the function, making the code self-contained.  
+- All sums are computed with properly sized vectors and minimal zero-padding inside the function.  
+- The result width is exactly $clog2(WIDTH+1), matching the original specification.  
+This structure favors synthesis tools that optimize from functions and assignments, may simplify debugging, and retains the balanced addition tree principle without separate module overhead.

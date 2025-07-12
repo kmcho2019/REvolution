@@ -1,0 +1,9 @@
+A novel approach to designing a Triangle Wave signal generator module is to utilize a hybrid architecture that combines a simple counter with a multiplexed selector to control the direction of the waveform. The idea revolves around using a single 5-bit counter and a multiplexer to select whether the counter should increment or decrement based on the current count value.
+
+In this design, the counter is always incremented, but the output of the counter is selectively inverted and then fed back into the counter based on the direction signal. This is achieved using a multiplexer that selects between the original counter output and its inverted version.
+
+The direction signal is generated using a simple comparator that checks if the counter has reached its maximum value (31) or its minimum value (0). When the counter reaches 31, the direction signal is set to 1, indicating that the waveform should start decrementing, and vice versa.
+
+This approach allows for a more efficient and compact implementation, as it eliminates the need for separate increment and decrement logic. The output waveform, wave, is directly assigned the value of the counter, providing a straightforward interface to the generated triangle wave.
+
+The use of a multiplexer to control the direction of the counter provides a flexible and scalable solution, as it can be easily extended to support different waveform patterns or frequencies. Additionally, the design includes an active-low reset signal, rst_n, to initialize the counter and direction signal to their default values when asserted low.

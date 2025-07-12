@@ -1,0 +1,11 @@
+The syntax errors come from declaring and using integer variables and performing division inside a synchronous always block, which is not allowed in Verilog RTL. To fix this:
+
+- Move the count calculation to a separate combinational always block or use a wire with continuous assignment.
+
+- Precompute the division result as a wire using the division operator (which is synthesizable for constants).
+
+- Compute count as delay_reg minus the division result, clamping at zero if necessary.
+
+- Keep all procedural assignments synchronous and simple.
+
+This approach avoids illegal procedural variable declarations and complex logic inside synchronous blocks, eliminating syntax errors and improving clarity.

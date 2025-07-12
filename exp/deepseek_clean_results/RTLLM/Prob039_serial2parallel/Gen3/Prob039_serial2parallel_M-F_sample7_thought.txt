@@ -1,0 +1,13 @@
+Optimized implementation addressing PPA feedback:
+1. Maintain the circular buffer approach but optimize the critical path by:
+   - Removing the subtraction operation (7-wr_ptr) by reversing the bit order in data_buf
+   - Using direct indexing to eliminate arithmetic operations
+2. Keep power efficiency by:
+   - Maintaining minimal register updates (only when din_valid is high)
+   - Preserving the single-cycle dout_valid pulse
+3. Improve area efficiency by:
+   - Using simple sequential logic without complex arithmetic
+   - Minimizing control logic
+4. The design now writes incoming bits from left to right (MSB first) by using data_buf[wr_ptr] directly
+5. Reset clears all registers synchronously
+6. Output is registered for better timing

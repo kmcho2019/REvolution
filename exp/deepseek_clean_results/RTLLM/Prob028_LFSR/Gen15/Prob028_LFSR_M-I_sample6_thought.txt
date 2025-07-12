@@ -1,0 +1,16 @@
+**Optimized LFSR with Better Initial State and Reduced Logic:**
+
+1. **Improved Initial State**: Initialize to 4'b0001 (non-zero) to avoid lock-up at all-zeros state. This ensures the LFSR will always generate a pseudo-random sequence.
+
+2. **Simplified Feedback Logic**: The original uses XOR followed by inversion (~(out[3]^out[2])). This can be optimized to XNOR (out[3] ~^ out[2]) which is logically equivalent but uses a single gate operation.
+
+3. **Registered Output**: Keep output registered for better timing characteristics.
+
+4. **PPA Optimization**: The XNOR operation reduces gate count compared to XOR+INV combination, improving both power and area.
+
+Key Benefits:
+- Guaranteed non-zero sequence generation
+- Single gate operation for feedback (XNOR vs XOR+INV)
+- Maintains same sequence pattern
+- Better timing with registered output
+- Lower power consumption

@@ -1,0 +1,16 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. State Encoding Optimization: Use Gray coding for state transitions to minimize bit changes between consecutive states, improving timing (reducing TNS/WNS).
+
+2. Output Registering: Register the output z to reduce glitches and dynamic power, though this adds 1 cycle latency.
+
+3. State Machine Simplification: Remove the default case since we can guarantee all states are covered, reducing unnecessary transitions.
+
+4. Clock Gating Consideration: For power optimization, we could add clock gating for the state register when in idle states, but this would complicate the design and may not be worth the area overhead for such a small FSM.
+
+The Gray code state assignment will be:
+000 -> 000
+001 -> 001
+010 -> 011
+011 -> 010
+100 -> 110

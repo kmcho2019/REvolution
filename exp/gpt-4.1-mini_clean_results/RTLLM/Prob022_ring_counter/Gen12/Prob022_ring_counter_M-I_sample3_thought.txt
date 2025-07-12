@@ -1,0 +1,10 @@
+To improve compatibility and possibly synthesis robustness, separate the state update and output logic. Use a registered position that updates on the clock edge with reset, but derive the one-hot `out` output combinationally from the current position. This avoids variable shifts inside the clocked process and allows synthesis tools to infer a decoder easily.
+
+This approach keeps the position update simple and synchronous while making the output assignment purely combinational, which is optimal for area and timing. It also sidesteps tool issues with variable shifts inside always blocks that update registers.
+
+Thus:
+- On reset, set position to 0.
+- On every clock, increment position modulo 8.
+- Assign `out` as `8'b1 << position` in a continuous assignment or combinational always block.
+
+This maintains the same function, avoids the problematic assignment to `out` inside the clocked block, and improves clarity and PPA.

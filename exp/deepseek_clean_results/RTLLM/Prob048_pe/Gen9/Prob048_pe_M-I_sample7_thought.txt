@@ -1,0 +1,11 @@
+The initial implementation works correctly but has optimization opportunities. My improvement strategy focuses on:
+1. Pipelining: Split the MAC into two stages (multiply and accumulate) to improve timing
+2. Overflow handling: Add saturation logic to prevent undefined behavior
+3. Power optimization: Add enable signal to disable operations during reset
+4. Area optimization: Remove unused upper bits of product when not needed for saturation
+
+Key changes:
+- 2-stage pipeline with registered intermediate product
+- Saturation logic that clamps at max/min 32-bit signed values
+- Reset-aware enable signal
+- Maintains signed arithmetic correctness

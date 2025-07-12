@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove intermediate signals (bit_gt, bit_eq) and compute comparisons directly in the output logic
+2. Use a single subtraction operation (A - B) to determine all three conditions
+3. Leverage the subtraction's borrow bit for A_less and zero-detect for A_equal
+4. Make A_greater simply the case when neither equal nor less is true
+5. Maintain mutual exclusivity through this natural encoding
+
+Key Benefits:
+- Eliminates redundant intermediate signals and logic
+- Single arithmetic operation handles all comparison cases
+- Clear and straightforward implementation
+- Maintains correct functionality with minimal logic

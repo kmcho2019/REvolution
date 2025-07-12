@@ -1,0 +1,21 @@
+To improve correctness and simplify the design, precisely decode the water level from the sensor inputs following the strict mapping given by the problem:
+
+- s=111 → level 3 (above s[2])
+- s=011 → level 2 (between s[2] and s[1])
+- s=001 → level 1 (between s[1] and s[0])
+- s=000 → level 0 (below s[0])
+
+Any other sensor pattern is considered invalid or treated as the closest lower valid level (optional).
+
+Track the previous level only when a sensor state change occurs (i.e., current sensors differ from previous sensors). This ensures `prev_level` reflects the level before the last sensor change, as required.
+
+Implement a synchronous reset that sets the outputs and internal previous level state to the "lowest water level for a long time" condition: no sensors asserted, all valves (fr2, fr1, fr0, dfr) asserted.
+
+Outputs are combinational based on current and previous levels:
+
+- Nominal flows (fr2, fr1, fr0) depend strictly on current level.
+- Supplemental flow (dfr) is asserted if current level > previous level, indicating rising water.
+
+This approach guarantees correctness in level decoding, previous level tracking only on changes, and proper synchronous reset handling, meeting the original problem specifications fully.
+
+Additionally, use simple combinational logic for outputs and registers for state tracking to keep the design PPA friendly.

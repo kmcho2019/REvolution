@@ -1,0 +1,8 @@
+To optimize the existing FSM for better PPA:
+
+- Reduce unnecessary toggling of the `done` output by generating a one-cycle pulse only when the stop bit is valid, and keep it low otherwise without re-asserting zero each cycle.
+- Avoid resetting the shift register and bit counter redundantly in multiple states; reset them only when transitioning to IDLE or on reset, minimizing register toggles.
+- Use a simple synchronous done pulse generation triggered on stop bit reception, avoiding default clearing every cycle.
+- Keep the state encoding binary for small area but separate the state transitions and output logic for clearer timing and potential optimization.
+- Shift the shift register with LSB-first as before, but only update it in DATA state to reduce switching in other states.
+- Overall, minimize transitions in registers to save dynamic power without adding complexity.

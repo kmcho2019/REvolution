@@ -1,0 +1,13 @@
+The original solution uses a magnitude comparator (raw_sum > 9) and a conditional addition of 6 for BCD correction, which involves a second addition and a 5-bit comparison, increasing delay and area.
+
+To optimize, replace the comparator with a simple logic expression that detects when correction is needed by examining sum bits directly. A known condition for BCD correction is when:
+- The carry out of the 4-bit addition is 1 (raw_sum[4]), or
+- The sum's upper bits indicate a value > 9, which can be detected by (raw_sum[3] & (raw_sum[2] | raw_sum[1])).
+
+Use this logical expression for correction_needed without a magnitude comparator.
+
+Next, implement the correction addition by selectively adding 6 (0110) using simple bitwise operations and multiplexers to avoid a full second adder. This reduces area and delay.
+
+Finally, assign Sum and Cout accordingly.
+
+This approach reduces comparator and addition overhead, improving timing, area, and power while maintaining functionality.

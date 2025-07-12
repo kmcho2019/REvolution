@@ -1,0 +1,21 @@
+The key issues to address are:
+1. Pattern detection must only trigger on exact 1101 sequence
+2. Counting duration must be exactly (delay+1)*1000 cycles
+3. State transitions must occur at correct cycle counts
+4. Output signals must match expected behavior
+
+Key fixes:
+1. Restructure pattern detection to properly track 1101 sequence
+2. Implement precise cycle counting with separate counters:
+   - 10-bit counter for 1000 cycles
+   - 4-bit counter for delay periods
+3. Ensure state transitions occur at correct boundaries
+4. Maintain proper output values in each state
+5. Fix reset conditions to properly initialize all registers
+
+The new design will:
+- Use a shift register for pattern detection
+- Track bit count separately for pattern and delay capture
+- Implement accurate (delay+1)*1000 counting
+- Maintain correct output values in all states
+- Ensure clean state transitions

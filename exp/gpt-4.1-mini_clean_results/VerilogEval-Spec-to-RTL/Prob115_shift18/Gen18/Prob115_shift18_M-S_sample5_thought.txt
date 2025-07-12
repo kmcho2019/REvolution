@@ -1,0 +1,11 @@
+Simplify the shift selection logic by directly decoding the 2-bit 'amount' signal with a single 4-way mux instead of two 2-way muxes. This eliminates one mux stage and simplifies the combinational logic.
+
+Keep the shift computations explicit and straightforward:
+- Left shift by 1 and 8 bits with zero fill.
+- Arithmetic right shift by 1 and 8 bits with sign bit fill.
+
+Compute all four shifted versions as before, but use a case statement to select the shifted output directly based on 'amount', reducing mux complexity.
+
+Also, remove the redundant q <= q assignment in the always block; when neither load nor ena is asserted, the register naturally holds its value.
+
+This maintains full functionality but with cleaner and simpler combinational logic.

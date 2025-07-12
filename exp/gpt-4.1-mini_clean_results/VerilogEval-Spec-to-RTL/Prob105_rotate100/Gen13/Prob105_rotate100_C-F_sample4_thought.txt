@@ -1,0 +1,18 @@
+Fuse the explicit bitwise rotation indexing from Example 1 with the parallel combinational next-value selection logic of Example 2 to achieve a solution that is both clear and efficient.
+
+Specifically:
+- Use a combinational always block to compute the next value of the register bits, explicitly indexing each bit for rotation, avoiding generating both full rotated vectors unconditionally (like in Example 2) to save power and area.
+- Implement rotation logic using a single for-loop inside the combinational block, conditionally assigning each bit from q based on ena, replicating the modular indexing from Example 1 for clear and synthesis-friendly rotation.
+- Keep a priority for loading: if load is high, next value is data.
+- Otherwise, if ena=01 or ena=10, rotate right or left respectively by assigning next_q bits explicitly.
+- Otherwise, hold the current value (q).
+- Then synchronously update the register q on posedge clk.
+
+This fusion avoids synthesizing two full rotated signals unconditionally (power saving), while also using explicit bitwise indexing (clarity and possibly better synthesis mapping). It uses a combinational intermediate signal next_q, separated from the always @(posedge clk) block, easing timing. This style merges the clarity of Example 1’s rotation logic with the structural and power advantages of Example 2’s next-state calculation style.
+
+Also:
+- Use non-blocking assignments in sequential block.
+- Use a combinational always @* block for next_q.
+- Provide comments for clarity.
+
+This approach aims to improve power by avoiding both full rotate_left and rotate_right signals generated simultaneously, improves area by explicit combinational logic that synthesis can optimize well, and maintains or improves timing by avoiding complex mux trees in favor of simple index-based assignments.

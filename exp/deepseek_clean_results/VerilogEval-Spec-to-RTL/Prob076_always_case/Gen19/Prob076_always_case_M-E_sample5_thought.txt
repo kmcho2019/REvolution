@@ -1,0 +1,12 @@
+Here's a novel approach using a bitwise operation-based multiplexer instead of the traditional case statement. The key idea is:
+
+1. Treat the 4-bit outputs as parallel 1-bit multiplexers
+2. Use the sel bits to generate enable signals for each data input
+3. Bitwise OR all the enabled data inputs (only one will be active at a time)
+4. For invalid sel values, all enables will be zero resulting in zero output
+
+This approach:
+- Eliminates the need for a case statement
+- Uses simple AND-OR logic that may synthesize more efficiently
+- Handles invalid sel cases naturally through the enable generation
+- Can potentially have better timing characteristics due to parallel bit operations

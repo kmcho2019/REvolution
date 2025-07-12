@@ -1,0 +1,7 @@
+To refactor the given Verilog code for the TopModule, we will focus on simplifying the structure and reducing the use of `always` blocks where possible. One approach is to utilize `assign` statements for combinational logic that doesn't depend on clock edges, which can make the code more concise and potentially improve synthesis results. Additionally, we can refactor the state machine's next-state logic and output logic to use a more explicit encoding and decoding approach.
+
+Instead of using a `case` statement inside an `always` block for the next-state logic and output logic, we can define the next states and outputs directly using `assign` statements with conditional operators (`?:`) to handle the dependency on input `x`. This approach eliminates the need for the `default` case in the `case` statement, making the code cleaner and reducing the chance of overlooked or unintentional state transitions.
+
+Moreover, to maintain the separation of concerns, we will keep the sequential logic for updating the `current_state` within an `always` block at the positive edge of `clk`, ensuring that the state update is properly synchronized with the clock.
+
+By using `assign` for combinational logic and minimizing the use of `always` blocks, the refactored code aims to be more readable and potentially more efficient in terms of area and power consumption after synthesis.

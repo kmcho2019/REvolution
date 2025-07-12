@@ -1,0 +1,12 @@
+The waveform reveals a more complex state machine behavior:
+1. The state (flip-flop) toggles when a=1 and b=1 (at 95ns)
+2. The state also sets to 1 when a=0 and b=1 (at 75ns)
+3. The output q is 1 when either:
+   - b=1 and state=0 (at 45ns)
+   - b=0 and state=1 (at 115ns)
+   - a=1 and b=1 (at 95ns)
+
+This suggests:
+- State updates when (a & b) or (~a & b)
+- Output q is (b ^ state) | (a & b)
+We'll implement this as a simple state machine with combinational next-state and output logic.

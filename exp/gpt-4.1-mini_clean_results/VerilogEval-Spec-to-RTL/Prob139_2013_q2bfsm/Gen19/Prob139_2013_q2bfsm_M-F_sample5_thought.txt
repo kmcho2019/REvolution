@@ -1,0 +1,19 @@
+The primary issue is improper handling of the pattern detection for input `x`: the FSM stops incrementing the sample count after 3 samples and thus does not detect the pattern on a rolling basis.
+
+To fix this:
+
+- Remove the sample count register altogether and always shift in the latest `x` sample every cycle during STATE_C. This allows continuous detection of the 3-bit pattern sliding over `x` inputs.
+
+- Check for pattern `1,0,1` at every cycle once three samples are available (which we can assume after at least two shifts).
+
+- Use a small flag `pattern_ready` to indicate when pattern detection can start (after 3 samples). To simplify, assume the shift register is valid after two clock cycles of shifting and simply start checking from then on.
+
+- For the synchronous reset (active low), ensure FSM stays in STATE_A when `resetn` is low, transitions to STATE_B after release, where `f` pulses high for one cycle.
+
+- Outputs are Moore type, driven purely by state.
+
+- Keep counting `y_timer` during STATE_E to monitor `y` input for up to 2 cycles and determine permanent g=1 or g=0 state accordingly.
+
+- All registers update on rising clock edge with synchronous active low reset.
+
+This approach allows continuous pattern detection and correct output timing, fixing the main FSM logic causing the mismatch in `f` and `g` outputs.

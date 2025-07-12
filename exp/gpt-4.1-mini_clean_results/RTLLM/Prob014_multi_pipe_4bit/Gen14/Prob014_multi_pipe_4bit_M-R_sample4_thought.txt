@@ -1,0 +1,8 @@
+Refactor the design by eliminating the explicit register arrays for each partial product and instead use a single packed vector for stage1 partial products, storing all partial products collectively in one register stage. Use continuous assignments for partial product generation and then register the entire vector in one go. Then, sum the registered partial products by adding each element from the packed vector inside an always block and register the final output product. This approach keeps two pipeline stages but reduces the complexity of multiple always blocks for each partial product register.
+
+Key changes:
+- Represent all stage1 partial products as a single 2D packed vector.
+- Use a single always block for stage1 pipeline registers updating all partial products together.
+- Sum partial products in a sequential loop inside the stage2 pipeline always block, instead of a static balanced adder tree combinational logic.
+- Keep asynchronous active low reset and synchronous register updates.
+- This structure simplifies code and enhances readability, while keeping the pipeline structure and functionality intact.

@@ -1,0 +1,39 @@
+The input vector (a,b,c,d) forms a 4-bit binary number with a as MSB and d as LSB.
+
+The output should be 1 for decimal inputs 2 (0010), 7 (0111), and 15 (1111), and 0 for specified others. Inputs 3,8,11,12 never occur and can be treated as don't-cares in minimization.
+
+The original SOP expression is correct and matches the required minterms exactly:
+out_sop = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+The product-of-sums expression was oversimplified and incorrect.
+
+To fix the POS, derive it directly from the truth table with don't-cares, and obtain the minimal POS covering the required 1s and ignoring the don't-cares.
+
+The minimal POS for these minterms with don't-cares is:
+out_pos = (c + d) & (b + c + ~a)
+
+But since the simulation showed mismatches, the POS expression might have been misinterpreted or improperly implemented.
+
+Carefully re-implement and verify the POS expression.
+
+To avoid confusion, explicitly use the numerical values in a 4-bit vector for testing and expressions.
+
+Also, consider implementing the outputs using a case statement or direct comparison with 4-bit input vector, since the specified numbers are few and fixed.
+
+For completeness, include the vector `in = {a,b,c,d}`, and assign out_sop and out_pos accordingly.
+
+Finally, confirm logic equivalence with simple combinational assignments.
+
+This approach avoids ambiguity and ensures correctness.
+
+Hence:
+
+- Define a 4-bit vector in = {a,b,c,d}.
+
+- For out_sop: assign 1 if in == 2,7,15, else 0.
+
+- For out_pos: implement POS from minterms.
+
+Alternatively, implement minimal SOP for out_sop, and generate out_pos by complementing out_sop and applying DeMorgan, but simpler to implement directly.
+
+This will ensure correctness and clarity.

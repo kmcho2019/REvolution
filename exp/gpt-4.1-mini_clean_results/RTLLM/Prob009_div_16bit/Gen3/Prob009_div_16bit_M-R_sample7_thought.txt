@@ -1,0 +1,19 @@
+Refactor the division logic by removing unnecessary intermediate input registers and the two always blocks that latch inputs. Instead, implement the division as a purely combinational function inside a single always @(*) block, to clarify the logic flow and avoid ambiguity.
+
+Use a single combinational block that performs the bit-by-bit division with:
+
+- a remainder register sized to 8 bits (matching divisor width),
+
+- a quotient register sized 16 bits,
+
+- iterating from MSB to LSB of the dividend,
+
+- in each step shift in the dividend bit into the remainder,
+
+- compare remainder and divisor, subtract if possible, and set quotient bit accordingly.
+
+Output ports remain reg to hold the combinational result.
+
+This refactoring simplifies the design, removes unnecessary input registers, and makes the logic clearer and easier to verify. It also explicitly handles divisor zero (outputs zero quotient and remainder if divisor is zero).
+
+This approach remains fully combinational and does not use state machines, aligning with the original problem statement while improving code clarity and correctness.

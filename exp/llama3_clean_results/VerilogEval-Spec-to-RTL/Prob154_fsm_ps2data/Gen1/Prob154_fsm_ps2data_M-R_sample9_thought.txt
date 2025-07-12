@@ -1,0 +1,9 @@
+To refactor the provided code, we will modify the state machine's structure and implementation. Instead of using a single `always` block with a `case` statement to handle state transitions, we will use a combination of `always` blocks and `assign` statements to simplify the logic and improve readability. 
+
+The `always` block will handle the state transitions and register updates, while the `assign` statements will handle the combinational logic for the `done` signal and the `out_bytes` output.
+
+Additionally, we will introduce a new register `state_next` to hold the next state value, which will be updated based on the current state and input conditions. This will help to decouple the state transition logic from the register update logic.
+
+We will also add an additional condition to the `IDLE` state to handle cases where the input byte does not have `in[3]` set to 1. This will prevent the state machine from transitioning to an invalid state in such cases.
+
+By restructuring the code in this way, we can improve the readability and maintainability of the design, while also reducing the complexity of the state machine logic.

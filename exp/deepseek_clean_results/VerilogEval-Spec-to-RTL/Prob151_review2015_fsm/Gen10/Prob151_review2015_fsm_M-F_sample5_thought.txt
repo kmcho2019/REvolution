@@ -1,0 +1,18 @@
+Key fixes needed based on feedback:
+1. Immediate pattern detection: Make pattern_valid combinational to detect 1101 in the same cycle it appears
+2. Precise shift counting: Initialize counter to 0 and count to 3 (not 11) for exactly 4 cycles
+3. Explicit DONE state: Add proper state encoding and handling
+4. Synchronous state transitions: Ensure all transitions happen on clock edges with proper conditions
+
+New approach:
+1. Use combinational logic for pattern matching (shift_reg == 4'b1101)
+2. Add explicit DONE state with proper encoding
+3. Fix shift counter to count 0-3 (4 cycles)
+4. Make all outputs purely combinational based on current state
+5. Clear all registers on reset and when returning to IDLE
+
+State machine flow:
+- IDLE: Wait for 1101 pattern
+- SHIFT: Enable shifting for exactly 4 cycles
+- COUNT: Wait for done_counting
+- DONE: Assert done until ack

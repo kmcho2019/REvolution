@@ -1,0 +1,9 @@
+Both prior implementations are logically equivalent and minimal in logic depth. Example 2 implements q = (a | b) & (c | d) directly, which is simple and clear. Example 1 applies De Morgan's law to write q = ~((~a & ~b) | (~c & ~d)), which may help synthesis target NAND/NOR optimizations.
+
+To fuse these strengths:  
+- Maintain the straightforward expression q = (a | b) & (c | d) for clarity and minimal logical depth.  
+- Add local signals for (a | b) and (c | d) to improve readability and allow synthesis tools to optimize them separately if beneficial.  
+- Use continuous assignments for combinational logic ensuring minimal depth and no unnecessary inversions, thus reducing switching activity.  
+- This fusion preserves minimal delay and area from example 2, while structure assists synthesis and debugging from example 1.
+
+Therefore, implement q as the AND of two intermediate OR signals, with no explicit inversions or De Morgan transformations, to keep a clean and efficient structure ideal for synthesis and PPA.

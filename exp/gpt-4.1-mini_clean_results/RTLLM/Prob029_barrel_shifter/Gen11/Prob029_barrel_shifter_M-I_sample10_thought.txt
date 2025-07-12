@@ -1,0 +1,11 @@
+To avoid module name collisions that cause compilation failures in environments where `mux2X1` is already defined, we rename the multiplexer module to a unique name (`mux2to1_unique`). This prevents conflicts without changing the design logic.
+
+For optimization, since this is a barrel rotator with fixed 8-bit width, the staged mux approach is efficient and suitable for synthesis, providing good performance and area. Using generate loops and modular muxes supports a clear structural design and scalability.
+
+The improved solution:
+- Renames the mux module to `mux2to1_unique` to prevent naming collisions.
+- Keeps the staged rotate-by-4, rotate-by-2, and rotate-by-1 design controlled by the `ctrl` bits.
+- Maintains the generate loops for concise and modular code.
+- Keeps the modulo indexing for rotation logic.
+
+This solution is clean, synthesizable, and PPA-friendly with minimal overhead.

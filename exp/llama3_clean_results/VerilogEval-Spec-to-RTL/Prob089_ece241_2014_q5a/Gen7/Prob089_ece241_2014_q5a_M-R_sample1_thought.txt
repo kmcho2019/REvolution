@@ -1,0 +1,7 @@
+To refactor the given Verilog code for a serial 2's complementer Moore state machine, we can consider an alternative structure that achieves the same functionality but with potential improvements in readability, maintainability, or performance. One approach is to use a combination of combinational logic and sequential elements to implement the state machine.
+
+The core idea remains the same: track when the first '1' is seen in the input sequence and start inverting the output bits from that point onwards. However, instead of embedding all the logic within an `always` block, we can utilize `assign` statements for combinational logic where possible and reserve the `always` block for sequential logic updates.
+
+For the state machine, we maintain a register `first_one_seen` to track whether the first '1' has been encountered. Once this condition is met, we can use combinational logic to determine the output `z` based on the current input `x` and the state of `first_one_seen`.
+
+This refactoring aims to improve code clarity by separating the combinational logic from the sequential updates, potentially making it easier to understand and modify the design. Additionally, this structure might offer opportunities for optimization during synthesis, as the combinational logic is explicitly defined, allowing the synthesizer to optimize these paths more effectively.

@@ -1,0 +1,11 @@
+Refactor the design by explicitly modeling p and q as state bits of a simple 2-bit shift-register-like state machine. Instead of a single always block updating both p and q simultaneously, use two separate always blocks or a shift-register style approach to capture the state transitions.
+
+Use a state vector to hold {p,q} and update them synchronously on the positive clock edge. Define next state logic explicitly based on current state and input a to reflect the waveform behavior:
+
+- On posedge clock, q takes the old p value.
+- p updates to 1 if input a is 1 or if both p and q are 1, else 0.
+- Initialize both p and q to 0 at the start to avoid 'x'.
+
+Implementing it as a two-bit state register with next_state logic separates the combinational next state calculation from the sequential state update, improving clarity while preserving the original logic. Use continuous assignments or intermediate variables to compute next states, then assign them on clock edge.
+
+This refactoring clarifies the sequential logic as a simple state machine with explicit next state computations and synchronous register updates, improving readability and maintainability while matching the original waveform behavior.

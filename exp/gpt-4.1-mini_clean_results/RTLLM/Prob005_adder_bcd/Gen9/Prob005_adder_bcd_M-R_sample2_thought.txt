@@ -1,0 +1,7 @@
+Refactor the original design by separating the addition and correction logic into clearly delineated steps using purely combinational assignments with intermediate wires. Perform the initial 5-bit binary addition of A, B, and Cin into a raw_sum. Then, create a combinational comparator-style boolean condition to check whether correction is needed by inspecting the raw_sum bits.
+
+Instead of a conditional multiplexing of the corrected sum, implement the BCD correction addition as a 5-bit adder that adds 6 (0110) only when correction_needed is asserted; otherwise, add 0. This allows us to reuse the full adder logic with a selective correction input instead of branching logic per bit.
+
+Finally, assign the corrected sum and carry-out directly from this corrected adder result. This approach simplifies the code by leveraging a single conditional 5-bit addition for the correction, enhances readability, and maintains the same functional behavior with straightforward combinational logic.
+
+This refactoring preserves the original behavior but uses a cleaner, more modular combinational addition approach without bit-level manual carry propagation, improving maintainability without affecting performance or area significantly.

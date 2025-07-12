@@ -1,0 +1,7 @@
+The best approach is to fuse the compact and clear two's complement adder-subtractor logic from Example 1 with the registered output and zero flag assignment style for glitch reduction and improved timing from Example 2.  
+- Use conditional bitwise inversion of B and carry_in = do_sub to implement subtraction within a single adder operation, which is area and power efficient.  
+- Register the output and zero flag signals to reduce glitches and improve stability and timing, which helps lower dynamic power and improves integration with downstream logic.  
+- Compute the zero flag directly from the registered output using the reduction NOR (~|out) to avoid recomputing from combinational signals and reduce logic duplication.  
+- Use a single always @(*) block for combinational logic to minimize logic duplication and make synthesis clearer.
+
+This fusion combines the optimal architecture of Example 1 with the robust output registering and stable zero flag generation style of Example 2. It results in a glitch-reduced, power-friendly, area-efficient, and timing-optimized adder-subtractor with a correct zero flag.

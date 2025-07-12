@@ -1,0 +1,9 @@
+Implement the 4-bit shift register as a register `q` where bit 3 is the MSB and bit 0 the LSB. On `shift_ena`, shift left by one bit (towards the MSB), inserting the new `data` at the LSB, effectively shifting bits so that bit 0 receives the new data and bits move towards MSB side. This is an alternate but equivalent way to implement a "MSB first" shift: we can reinterpret "MSB first" shifting as serial input being loaded into the MSB side, so shifting the register left with `data` loaded into LSB is not correct here. To strictly implement MSB-first shifting, shift right by one bit and load `data` at MSB (bit 3).
+
+However, to offer a novel architecture, implement the shift register as a chain of 4 flip-flops instantiated as separate DFF modules connected in series, with a combinational down-counter logic that decrements the entire 4-bit register when `count_ena` is high. Use a MUX before each flip-flop to select between shifted input or decremented value bits based on `shift_ena` and `count_ena`. This modular approach separates shifting and counting logic inside the datapath.
+
+Priority is given by control inputs: If `shift_ena` is asserted, do shifting; else if `count_ena` asserted, do counting; else hold.
+
+This approach provides better modularity, clarity, and explicit per-bit logic and can avoid indexing errors. Initialization to zero is done via reset signal which we assume internally as synchronous reset active on first clock cycle (implemented via a register to generate a one-cycle reset).
+
+This design will be fully synthesizable and clear.

@@ -1,0 +1,16 @@
+Fuse the robust FSM structure and clear control signals of Example 2 with the simplicity and clarity of Example 1, while correcting the naming: the algorithm implemented is radix-2 Booth multiplication (not radix-4), processing one multiplier bit per cycle over 16 cycles. 
+
+Improvements from fusion:
+- Use a two-state FSM (IDLE and CALC) like Example 1 for simpler control.
+- On reset, load sign-extended multiplicand (b) and multiplier (a) into 16-bit signed registers.
+- Use a 5-bit counter iterating 16 times, each cycle:
+  - If multiplier bit at counter is 1, add multiplicand to product.
+  - Shift multiplicand left by 1 each cycle.
+  - Increment counter.
+- When count reaches 16, set ready and latch output.
+- Employ fully synchronous registers with nonblocking assignments.
+- Separate combinational next-state and control logic for clarity.
+- Generate control signals add_en and cnt_en combinationally for cleaner datapath control.
+- Output ready (rdy) only on completion cycle.
+- Maintain consistent sign extension and correct input naming per problem spec (a = multiplicand, b = multiplier).
+- This fusion yields a clear, maintainable, and efficient radix-2 Booth multiplier matching all specs, with simplified FSM and clear control flow.

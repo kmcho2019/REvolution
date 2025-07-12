@@ -1,0 +1,43 @@
+The original code intended to implement mux_in[3:0] as functions of inputs c and d that represent each column of the K-map for fixed (a,b) values 00,01,11,10 respectively. However, the assignments and mux input order caused logic mismatches.
+
+Key corrections:
+1. Ensure mux_in[0] corresponds to (a,b)=00, mux_in[1] to (a,b)=01, mux_in[2] to (a,b)=11, mux_in[3] to (a,b)=10 as specified.
+
+2. Carefully re-derive the functions for each mux_in[i] based on the K-map:
+
+   For ab=00 (mux_in[0]):
+   cd: 00=0, 01=1, 11=1, 10=1
+   Implement as:
+     - When c=0: d=0 →0, d=1 →1
+     - When c=1: output=1 (both d=0,1)
+   So mux2 with c as select:
+       in0 = mux2(d): in0=0, in1=1
+       in1 = 1
+
+   For ab=01 (mux_in[1]):
+   All zero → assign 0
+
+   For ab=11 (mux_in[2]):
+   cd: 00=0, 01=0, 11=1, 10=0
+   So when c=0 (cd=00,01): output=0
+       c=1 (cd=11,10): output depends on d
+           d=1 (cd=11):1
+           d=0 (cd=10):0
+   So mux2 with c select:
+       in0=0
+       in1=mux2 with d: in0=0, in1=1
+
+   For ab=10 (mux_in[3]):
+   cd: 00=1, 01=0, 11=1, 10=1
+   For c=0 (cd=00,01): depends on d
+       d=0 →1, d=1→0
+   For c=1 (cd=11,10): both 1
+   So mux2 with c select:
+       in0 = mux2 with d: in0=1, in1=0
+       in1 = 1
+
+3. After computing these signals, assign mux_in with mux_in[3] = ab=10, mux_in[2]=ab=11, mux_in[1]=ab=01, mux_in[0]=ab=00 as per problem statement.
+
+This corrects the logic and order, ensuring the 4-to-1 mux outside (selected by a,b) receives the correct inputs to implement the given K-map function using only 2-to-1 multiplexers.
+
+Note: The 2-to-1 mux module remains unchanged, providing a reusable primitive for clean logic expression.

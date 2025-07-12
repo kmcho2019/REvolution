@@ -1,0 +1,18 @@
+Instead of maintaining a 32-bit previous input register and comparing it directly with the current input, a new approach is to separately detect falling edges bit by bit using a one-bit flip-flop per bit that remembers whether that bit has experienced a falling edge.
+
+We implement a bitwise approach:
+
+1. For each bit in `in`, maintain a flip-flop storing the previous bit value.
+2. On each clock, detect if the bit changed from 1 to 0 (prev=1 and current=0).
+3. Maintain an "edge capture" bit flip-flop per bit that is set once a falling edge is detected and remains set until reset.
+4. Initialize all flip-flops (prev bits and captured bits) to zero on reset.
+
+This approach avoids wide vector comparisons in a single register by splitting into bitwise operations, which might help synthesis tools better optimize. It also explicitly separates previous state tracking and output capturing logic, avoiding glitches and timing races.
+
+Additionally, the use of bitwise sequential logic simplifies synthesis and improves clarity.
+
+Because `in` is 32 bits, we implement this as a vectorized always block with bitwise operations instead of looping explicitly.
+
+The result is the output `out` captures falling edges of `in` and holds them until synchronous reset.
+
+This method is functionally equivalent but structurally distinct from the prior solution.

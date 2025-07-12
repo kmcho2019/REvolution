@@ -1,0 +1,28 @@
+Novel Architecture: Hybrid Carry-Select with Conditional Sum Adder for Subtraction
+
+Key Innovations:
+1. **Hybrid Carry-Select Structure**:
+   - Divides the 64-bit operation into 8-bit blocks
+   - Each block computes both possible results (carry=0 and carry=1)
+   - Uses multiplexers to select correct result based on actual carry-in
+
+2. **Conditional Sum Optimization**:
+   - Within each 8-bit block, implements conditional sum logic
+   - Pre-computes sum for both carry scenarios in parallel
+   - Reduces critical path by eliminating carry propagation within blocks
+
+3. **Early Overflow Detection**:
+   - Performs overflow check in parallel with subtraction
+   - Uses sign bit analysis of input operands to predict potential overflow
+   - Combines with result sign for final overflow determination
+
+4. **Power-Aware Design**:
+   - Only activates necessary 8-bit blocks based on operand magnitude
+   - Uses operand isolation for unused blocks
+   - Minimizes switching activity in carry chain
+
+Advantages:
+- Faster than traditional carry-lookahead (O(log n) vs O(n))
+- Better power efficiency through block-level gating
+- Scalable architecture for wider datapaths
+- Clear separation of computation and selection phases

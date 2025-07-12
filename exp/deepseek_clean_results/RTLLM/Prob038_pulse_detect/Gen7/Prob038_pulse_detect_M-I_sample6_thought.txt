@@ -1,0 +1,14 @@
+To properly detect a full pulse sequence (0->1->0 over 3 cycles), we need to:
+
+1. Track the last three input values using a 3-bit shift register
+2. Implement explicit state checking for the complete sequence
+3. Only assert data_out when we see the exact pattern 0->1->0
+4. Maintain proper reset behavior
+5. Optimize by using minimal state tracking (just the last two values plus current)
+
+Key improvements:
+- Correctly detects full pulse sequence (0->1->0)
+- Uses efficient shift register implementation
+- Clear state transition logic
+- Single-cycle output assertion
+- Maintains low hardware complexity

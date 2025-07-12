@@ -1,0 +1,11 @@
+The provided Verilog code implements a 4-digit BCD counter as required. To improve the Power, Performance, and Area (PPA) metrics, several areas can be considered.
+
+Firstly, the current design uses four separate BCD counters, each with its own enable signal and carry propagation. This modular approach is beneficial for readability and maintainability but may result in higher area and power consumption due to the instantiation of multiple modules.
+
+To improve the area metric, we can consider a more compact representation of the counter logic. Instead of instantiating four separate BCD counters, we can implement a single module that handles all four digits and their respective enable signals and carry propagations.
+
+For the power metric, reducing switching activity can help. In this context, the counters only switch when they are enabled and reach the count of 9. The current implementation already seems efficient in this regard.
+
+For the performance metric, the critical path is likely through the counters and their enable signals. To improve timing, non-blocking assignments could be utilized to reduce race conditions, though the code already seems to handle this well by using non-blocking assignments in the always block of the BCD_Counter module.
+
+Overall, our improvement strategy will focus on implementing a more compact and efficient counter logic while maintaining the correct functionality and optimizing for better PPA metrics.

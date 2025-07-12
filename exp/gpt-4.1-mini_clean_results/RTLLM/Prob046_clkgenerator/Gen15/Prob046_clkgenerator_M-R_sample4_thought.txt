@@ -1,0 +1,31 @@
+To fix the simulation issues caused by using a real-valued delay, I will refactor the clock generator to avoid delays altogether and instead use an always block triggered by a time-based event. Specifically, I will implement a simple counter that counts clock cycles of a faster clock (e.g., the simulator's time granularity) or use an always block with a nonblocking toggle at each half period using integer delays.
+
+Since the problem is simulation only and we want a clean periodic clock with integer delay, I'll replace the initial + forever + delay approach with an always block driven by a simulation time counter. 
+
+However, Verilog has no native time-driven always block except always @ (posedge clk) or similar. Without an input clock, to generate a clock signal purely from delays, the usual way is an initial block with delays.
+
+But to avoid real-valued delays, I can compute half_period as an integer. For odd PERIODs, integer division truncates, but it's the best we can do with only integer delays.
+
+Alternatively, I can use a `parameter integer HALF_PERIOD = PERIOD / 2;` and then do `#HALF_PERIOD` delays in the initial block.
+
+To change structure significantly as requested, I can implement a simple toggling using an always block with a timer variable that counts simulation time, using a `#1` delay loop, or a generate block with a `posedge` of an internal oscillator.
+
+Given the constraints, a good refactor is to implement the clock generator using a self-starting always block with integer delay, e.g.,:
+
+- Declare a reg clk initialized to 0.
+- Use a parameter integer HALF_PERIOD = PERIOD / 2.
+- Use an always block with a nonblocking delay of HALF_PERIOD.
+
+This approach avoids fractional delay, guarantees simulation compatibility, and preserves original behavior.
+
+Hence, refactor by:
+
+1. Define parameter integer HALF_PERIOD = PERIOD / 2;
+2. Use an initial block to initialize clk to 0.
+3. Use an always block with an integer delay #(HALF_PERIOD) to toggle clk periodically.
+
+This maintains the simplicity but changes the structure from "initial forever" to "always" block style.
+
+Note: Always blocks cannot contain delay controls in synthesizable code, but here it's for simulation stimulus only.
+
+This approach produces a clean, integer-delay-based clock generator, avoiding real-valued delay issues and aligning with testbench expectations.

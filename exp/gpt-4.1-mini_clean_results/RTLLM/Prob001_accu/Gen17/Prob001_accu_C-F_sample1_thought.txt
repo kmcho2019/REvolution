@@ -1,0 +1,13 @@
+Fusion strategy for an optimized accumulator module:
+
+1. Retain synchronous active-low reset for predictable initialization.
+2. Update accumulator and count registers only on valid_in pulses to minimize switching activity and reduce dynamic power.
+3. Use a combinational wire for the next accumulator value, separating combinational logic from sequential logic, improving timing clarity.
+4. On the fourth valid input (count == 3), output the sum of accumulator + current data_in and assert valid_out for one cycle.
+5. Reset accumulator and counter immediately after output to prepare for the next set of inputs.
+6. Default valid_out to 0 on other cycles to ensure a one-cycle pulse.
+7. Keep accumulator width at 10 bits to avoid overflow while summing four 8-bit inputs.
+8. Add clear comments for maintainability and clarity.
+9. This approach combines the clarity and timing benefits of a separate combinational addition with the power benefit of updating registers only when valid_in is high, ensuring minimal switching, efficient resource use, and clean timing.
+
+This fused design leverages the low-power update scheme from Example 2 and the combinational clarity from Example 1, ensuring a minimal critical path and a clean, reliable valid_out pulse signal.

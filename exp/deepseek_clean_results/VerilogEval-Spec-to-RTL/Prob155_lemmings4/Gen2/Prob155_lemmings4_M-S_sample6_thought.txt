@@ -1,0 +1,20 @@
+To simplify the Lemming state machine while maintaining all functionality:
+
+1. State representation:
+   - Use 4 states: WALK, FALL, DIG, SPLAT
+   - Track walking direction with a separate register (dir)
+
+2. Priority handling:
+   - Fall has highest priority (when ground=0)
+   - Then dig (when ground=1 and dig=1)
+   - Finally direction change (bump)
+
+3. Key simplifications:
+   - Remove redundant state checks by using clear priority order
+   - Combine direction logic into simple register updates
+   - Simplify fall counter to only increment during FALL state
+   - Make outputs directly dependent on state and direction
+
+4. Reset behavior:
+   - Initialize to WALK left on reset
+   - Clear fall counter on reset

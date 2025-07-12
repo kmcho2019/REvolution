@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace the hierarchical comparison with a direct 10-bit equality check (q == 10'd999) to reduce logic levels
+   - This simplifies the critical path from two 5-bit comparators + AND to a single 10-bit comparator
+   - The direct comparison should improve WNS by eliminating intermediate logic
+
+2. Power Optimization:
+   - Keep the simple incrementer since power impact is minimal (only toggles LSBs frequently)
+   - The terminal_count signal remains low-power as it toggles rarely
+
+3. Area Optimization:
+   - Single comparator should reduce area compared to two smaller comparators + AND
+   - Maintain simple adder structure since area impact is minimal
+
+The implementation will maintain the same functionality (0-999 counter with 1000-cycle period) while improving timing and potentially reducing area.

@@ -1,0 +1,14 @@
+To improve the design for better PPA without changing functionality, we can eliminate the always block and represent the next_state logic entirely using continuous assignments with combinational logic expressions or with a simple lookup table using a function. This reduces unnecessary reg signals and simplifies combinational logic inference, potentially improving area and power by enabling better logic optimization during synthesis.
+
+We will implement next_state as a combinational function that returns the 3-bit next state based on inputs y and x. This avoids the explicit reg and always block, making the logic more transparent to the synthesis tool.
+
+Outputs remain the same: z depends on y only, and Y0 is LSB of next_state.
+
+This approach can reduce logic levels and resource usage while keeping the code clean, succinct, and synthesis-friendly. Also, removing the always block can improve power efficiency by minimizing inferred flip-flops or latches (none expected but good practice).
+
+No internal state register is added since the problem states y is input as present state.
+
+In summary:
+- Replace always block with a pure combinational function.
+- Use assign statements for outputs.
+- Keep logic minimal and clear for optimization.

@@ -1,0 +1,15 @@
+The original code implements a Mealy FSM detection circuit using a 5-bit shift register to capture the input sequence and directly compares the shift register's content with the target sequence "10011" to assert the MATCH signal. To refactor this code, we can maintain the same core idea but implement it with a different structure. 
+
+One possible refactoring is to use a state machine with five distinct states, each representing a position in the input sequence "10011". This approach allows us to explicitly define the states and transitions, making the code more readable and easier to understand.
+
+We will define the states as follows:
+- S0: Initial state
+- S1: First '1' detected
+- S2: First '0' detected after '1'
+- S3: Second '0' detected
+- S4: Second '1' detected
+- S5: Third '1' detected ( MATCH = 1 )
+
+The state machine will transition between these states based on the input signal IN and the current state. When the state machine reaches the final state S5, the MATCH signal will be asserted.
+
+This refactored code will use `always` blocks for the state machine and `assign` statements for the output logic, providing a clear separation of concerns and improving readability.

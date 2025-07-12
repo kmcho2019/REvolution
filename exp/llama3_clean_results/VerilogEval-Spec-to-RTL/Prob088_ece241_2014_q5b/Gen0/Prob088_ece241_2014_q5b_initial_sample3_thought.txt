@@ -1,0 +1,11 @@
+To implement the given Mealy finite-state machine, we will use a one-hot encoding scheme, where each state is represented by a single bit. Since there are two states (A and B), we will use two bits to represent the state. The initial state will be state A, which means the bit corresponding to state A will be 1 and the bit corresponding to state B will be 0.
+
+We will use a 2-to-1 multiplexer to determine the next state and the output z based on the current state and the input x. We will also include an asynchronous reset that resets the state to A when the reset signal is high.
+
+We will describe the state machine using the following encoding: 
+- State A: 2'b01
+- State B: 2'b10
+
+The state machine can be described by the following next state and output equations:
+- Next state: If current state is A and x is 0, stay in A; if current state is A and x is 1, go to B; if current state is B, stay in B regardless of x.
+- Output z: If current state is A and x is 0, z is 0; if current state is A and x is 1, z is 1; if current state is B, z is the inverse of x.

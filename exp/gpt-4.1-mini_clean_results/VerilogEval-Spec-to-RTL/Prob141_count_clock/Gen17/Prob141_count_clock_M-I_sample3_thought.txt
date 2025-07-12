@@ -1,0 +1,15 @@
+To optimize the original design for better PPA (Performance, Power, Area), the key is to reduce the long nested conditional logic inside the sequential always block, which creates a critical timing path and potential glitches.
+
+**Improvement Strategy:**
+
+1. Use a **binary counter for seconds** from 0 to 59 instead of separate BCD digits. This reduces the complexity of increment logic and ripple conditions.
+2. Similarly, use **binary counters for minutes** from 0 to 59.
+3. Keep the **hour counter as a binary 1–12 counter**, as it is already efficient.
+4. Convert binary seconds and minutes to BCD outputs combinationally. This moves the complex BCD rollover logic from the clocked process to simpler combinational logic that does not affect timing criticality.
+5. The seconds and minutes counters will roll over naturally by comparing against 59 and resetting to zero, reducing nested conditions.
+6. PM toggling logic remains unchanged, toggling when hour rolls from 11 to 12.
+7. Reset remains synchronous and highest priority.
+8. This approach reduces the combinational logic inside the clocked process drastically, improving timing and potentially reducing power by limiting toggling and glitching inside the sequential logic.
+9. Area impact is balanced by moving to binary counters but adding combinational BCD converters for outputs, which are lightweight.
+
+Overall, this design balances clarity, correctness, and PPA by minimizing critical path logic inside clocked processes and leveraging combinational conversion for outputs.

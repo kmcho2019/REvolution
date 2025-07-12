@@ -1,0 +1,12 @@
+Refactoring idea:
+1. Use continuous assignments (assign) for combinational logic instead of procedural blocks
+2. Split the design into combinational next-state logic and sequential state update
+3. Create a separate wire for the next state value (next_q)
+4. Maintain the same synchronous reset behavior and decade counting functionality
+5. The advantage is clearer separation of combinational and sequential logic, which can help with synthesis and verification
+
+Key changes:
+- Combinational logic calculates next_q based on current state
+- Sequential block simply updates q with next_q or reset value
+- Same optimized condition for detecting 10 (q[3] && q[1])
+- Reset still synchronous and active high

@@ -1,0 +1,14 @@
+I will fuse the best ideas from both examples to create a clear, efficient, and synthesizable Moore FSM. From Example 1, I adopt the continuous assignment for next state logic using simple, minimal boolean expressions to reduce combinational logic complexity and potentially improve timing. From Example 2, I retain the use of localparam for state encoding and a straightforward state register update inside a synchronous reset always block, ensuring maximal tool compatibility and clarity.
+
+For output, I use a continuous assignment rather than an always block, since output depends only on the current state (D), which simplifies the design and reduces logic. The next state logic is simplified to use minimal boolean equations directly derived from the state transition table, avoiding equality checks or case statements to enhance synthesis friendliness and possibly reduce critical path length.
+
+This fusion strategy maintains functional correctness, tool compatibility, and leverages simpler combinational logic to optimize performance and area while keeping power low through minimal logic toggling and simple output logic.
+
+Thus, the FSM uses:
+- Localparam for state encoding (2-bit).
+- reg for state register.
+- combinational next_state logic as continuous assignments with minimal boolean expressions.
+- output as a simple continuous assignment.
+- synchronous, active-high reset.
+
+This approach balances clarity, simplicity, and synthesis efficiency.

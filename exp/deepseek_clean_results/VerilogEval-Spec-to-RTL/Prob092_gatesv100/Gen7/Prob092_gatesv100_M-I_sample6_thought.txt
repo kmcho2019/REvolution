@@ -1,0 +1,23 @@
+Improvement Strategy:
+
+1. Timing Optimization:
+   - Break the circular dependency in out_different by computing it in two steps:
+     - First compute differences for bits 98:0 (normal left neighbor)
+     - Then compute bit 99 separately (wrap-around case)
+   - This reduces the critical path by eliminating the full circular dependency
+
+2. Power Optimization:
+   - Add enable signals for each output to allow selective computation
+   - Only compute outputs when their enable is active
+   - Default enables to 1'b1 for backward compatibility
+
+3. Area Optimization:
+   - Share common subexpressions between outputs where possible
+   - Use more efficient bit selection patterns
+   - Remove redundant register declarations by using continuous assignments
+
+Key Changes:
+- Split out_different computation to break timing loop
+- Added enable controls for power gating
+- Used wire outputs with continuous assignments
+- Optimized bit selection patterns

@@ -1,0 +1,11 @@
+To fix the issue with multiple simultaneous assignments to bits of the same register and ensure synthesizability, assign the entire 8-bit vector 'out' at once.
+
+We can implement the 1-bit rotation by concatenating the bits shifted left by one and wrapping the MSB back to the LSB.
+
+Specifically:
+- On reset, initialize out to 8'b00000001.
+- On each clock rising edge, update out by rotating it left by one: {out[6:0], out[7]}.
+
+This single-vector assignment avoids multiple non-blocking assignments to bits of the same register and is synthesizable in all standard tools.
+
+The code remains simple and efficient for PPA while meeting the functionality requirement.

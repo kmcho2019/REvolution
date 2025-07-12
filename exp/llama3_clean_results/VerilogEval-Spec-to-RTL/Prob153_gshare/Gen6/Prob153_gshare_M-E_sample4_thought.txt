@@ -1,0 +1,15 @@
+To create a novel architectural idea for the branch predictor, we will implement a hybrid approach that combines the benefits of both gshare and gselect predictors. We will use a 7-bit global branch history register (GBHR) and a 128-entry pattern history table (PHT) with two-bit saturating counters.
+
+The key insight here is to use a hierarchical approach to update the GBHR and PHT. We will divide the 7-bit GBHR into two parts: a 4-bit lower part and a 3-bit upper part. The lower part will be updated based on the prediction outcome, and the upper part will be updated based on the training outcome.
+
+We will use a simple threshold-based approach for prediction, where a counter value of 2 or 3 indicates a taken branch, and a counter value of 0 or 1 indicates a not-taken branch.
+
+When training, we will update the PHT entry corresponding to the training PC and GBHR. If the training outcome indicates a misprediction, we will recover the GBHR to its previous state.
+
+To improve the accuracy of the branch predictor, we will use a confidence-based approach to select the prediction outcome. We will assign a confidence score to each prediction based on the counter value, and select the prediction with the highest confidence score.
+
+The main advantages of this approach are:
+
+* Improved accuracy of the branch predictor due to the hierarchical update approach.
+* Simplified logic and improved performance due to the threshold-based prediction approach.
+* Improved confidence in the prediction outcome due to the confidence-based selection approach.

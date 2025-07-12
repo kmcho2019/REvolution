@@ -1,0 +1,7 @@
+To implement the finite state machine (FSM) as described, we can use a Moore machine approach. The FSM starts in state A and moves to state B when s = 1. After transitioning to state B, we need to monitor the input w for the next three clock cycles. This implies we need a counter to keep track of the clock cycles and a variable to count the number of times w = 1 during these cycles. 
+
+We will have two states: A and B. In state A, we stay in A if s = 0 and move to B if s = 1. In state B, we monitor w for three clock cycles. To simplify, we can divide state B into sub-states (though not explicitly as separate states but through the use of internal variables) to count the clock cycles and the number of times w = 1.
+
+The output z will be determined based on the count of w = 1 in the three clock cycles. If the count is exactly 2, then in the next clock cycle, z should be 1; otherwise, z should be 0. This implies we need to delay the output decision by one clock cycle after the three-cycle monitoring period.
+
+The reset will asynchronously reset the FSM to state A. All logic is synchronous, triggered on the positive edge of the clock.

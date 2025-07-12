@@ -1,0 +1,9 @@
+To create a novel architectural solution for the problem, we can utilize a single, unified approach for calculating all three output vectors: out_both, out_any, and out_different. This can be achieved by leveraging a set of shift registers to efficiently handle the neighbor relationships and a custom combinational logic block to compute the outputs.
+
+The idea involves first shifting the input vector to create two additional vectors: one shifted left (to facilitate the out_both and out_different calculations with respect to the left neighbor) and one shifted right (for out_any calculation with respect to the right neighbor). 
+
+Then, we apply the necessary logical operations (& for out_both, | for out_any, and ^ for out_different) between the appropriate bits of the original input vector and the shifted vectors. 
+
+For the wrap-around condition in out_different, instead of using conditional statements within the generate loop, we can pre-process the input vector by concatenating it with its own first bit at the end, effectively creating a circular shift. This way, the left neighbor of the last bit (in[99]) is naturally the first bit (in[0]), simplifying the out_different calculation.
+
+By using shift registers and custom combinational logic, we aim to create a design that is not only functionally correct but also optimized for PPA metrics.

@@ -1,0 +1,7 @@
+Refactor the design to use continuous assignments with vector slicing and concatenation instead of an always block and loops.  
+This approach exploits the vector nature of the input signals, computing each output by bitwise operations on appropriately shifted versions of `in`.  
+Explicitly set boundary bits as per the spec by concatenating zero bits.  
+Declare outputs as wires, making it fully combinational with simpler and more efficient synthesis.  
+This style reduces code verbosity and enables synthesis tools to better optimize timing, area, and power by eliminating procedural logic.  
+Wrap-around for out_different is handled by concatenating the MSB of `in` at the LSB position before XOR.  
+Overall, this method is clearer, more idiomatic for vector logic, and efficient.

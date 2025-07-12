@@ -1,0 +1,12 @@
+Instead of a carry lookahead adder, I will use a simple ripple carry adder built from a chain of full adders. Each full adder adds corresponding bits of inputs a and b and the carry-in from the previous bit. This approach trades off speed for simplicity and minimal combinational logic per stage. Although slower than a CLA, it is easy to understand and synthesize efficiently.
+
+To detect signed overflow, I will use the classic rule that overflow occurs if the carry into the most significant bit (bit 7) differs from the carry out of the most significant bit. These carries are produced naturally by the ripple carry chain, so I can directly detect overflow.
+
+This approach:
+- Uses a simple 1-bit full adder instantiated 8 times in series.
+- Keeps all logic structural and modular.
+- Computes sum bits and carries in a ripple fashion.
+- Computes overflow as XOR of carry into and out of MSB.
+- Does not rely on any complex carry lookahead logic, so it's novel compared to the example.
+
+This is suitable when minimal gate-level complexity is preferred over high speed.

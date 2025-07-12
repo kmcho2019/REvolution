@@ -1,0 +1,19 @@
+Refactor the FSM to use a more modular structure with a clear Moore FSM style, separating state registers, combinational next-state logic, and combinational output logic explicitly. Use an enumerated localparam for states with meaningful names.
+
+To avoid subtle timing issues:
+- Update the x-shift register only on the clock edge, synchronously.
+- Detect the pattern by comparing the registered shift register after update.
+- Implement the synchronous reset with the reset condition only inside the sequential block.
+- Use combinational always block for next-state logic that uses registered inputs and states.
+- Use a separate combinational block for output generation purely from current state.
+- Implement the y-monitor counter carefully with clear boundaries and increments.
+- Use non-blocking assignments consistently in sequential logic.
+- Keep the synchronous reset properly synchronized with clock.
+
+Also, to reduce complexity:
+- Instead of keeping the shift register and next_x_shift_reg in the combinational block, update it only synchronously on clock.
+- The pattern detection becomes a simple condition on the registered shift register, avoiding combinational hazards.
+
+This style clarifies timing, separates concerns, and ensures outputs depend strictly on current states, minimizing glitches and timing mismatches.
+
+Overall, this refactoring preserves original FSM behavior but with a cleaner, more robust, and simulation-friendly structure.

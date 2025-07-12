@@ -1,0 +1,7 @@
+The provided code implements an adder-subtractor with a zero flag, utilizing a carry lookahead adder for efficient addition and subtraction. The current implementation uses a combinational logic design, with modules `twos_complement`, `carry_lookahead_adder`, `alu`, and `TopModule`. 
+
+To refactor this code, we can simplify the design by removing the `twos_complement` and `carry_lookahead_adder` modules, and directly implement the addition and subtraction logic within the `alu` module. 
+
+Instead of using separate modules for two's complement and carry lookahead adder, we can use Verilog's built-in operators to simplify the design. For two's complement, we can use the bitwise NOT operator `~` and addition `+ 1`. For the adder, we can directly use the `+` operator, which will be optimized by the synthesis tool to use the most efficient adder architecture available.
+
+Additionally, we can replace the `assign` statements within the `always` block in the original `TopModule` with a single `always` block that handles both the addition/subtraction and the zero flag detection. This refactored design should have the same functionality as the original code but with a simplified structure.

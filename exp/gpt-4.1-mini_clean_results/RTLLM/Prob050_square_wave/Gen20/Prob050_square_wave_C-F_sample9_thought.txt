@@ -1,0 +1,13 @@
+Fuse the benefits of both designs by implementing a synchronous square wave generator with a toggle-based approach (from Example 1) to keep wave_out registered and reduce combinational output delay, while incorporating conditional counting to avoid unnecessary switching and power usage when freq <= 1. We'll also avoid unnecessary resets of the counter when freq is low by holding the count steady rather than resetting to zero, saving switching activity.
+
+Add a synchronous active-low reset for initialization and proper control.
+
+Implement the toggle condition by comparing count against (freq - 1), which is simpler and likely faster than a 9-bit adder with carry detection, improving timing.
+
+Use a clock enable (clk_en) active only when freq > 1 to control counting and toggling, reducing switching at very low or zero freq.
+
+This approach ensures wave_out only toggles at the correct intervals, minimizing output glitches and combinational delays, improving timing performance over Example 2.
+
+Also, keep the toggling logic straightforward with non-blocking assignments, and avoid unnecessary resets of count when not toggling to reduce power and area.
+
+Overall, this fused design achieves the stable registered output of Example 1, with reduced dynamic power and simplified logic, avoiding combinational output paths of Example 2.

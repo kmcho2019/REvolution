@@ -1,0 +1,5 @@
+I will refactor the BCD counter by using a single 16-bit register for the entire 4-digit BCD value instead of separate digit registers. The counter increments the combined 16-bit BCD number by adding 1 to the least significant digit, with a ripple carry implemented by checking each digit's value and rolling over from 9 to 0, incrementing the next digit accordingly.
+
+The enable signals for the upper three digits will be generated based on whether the lower digits have just rolled over, indicating that the next digit should increment. This eliminates separate digit registers and consolidates the counting logic into a single always block with intermediate wires for digit extraction and carry signals.
+
+This approach changes the structure by operating on a combined 16-bit register and ripple carry logic, but the behavior and output remain consistent with the original. It also showcases a different style of implementing BCD counting and enable generation while preserving synchronous reset and positive-edge clocking.

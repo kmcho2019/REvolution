@@ -1,0 +1,14 @@
+The existing pulse detection module can be refactored to utilize a finite state machine (FSM) with three states: idle, pulse_start, and pulse_end. This approach simplifies the detection logic and reduces the number of conditional statements. The main components of this design include:
+
+1. A FSM to track the current state of the pulse detection process.
+2. A transition logic to move between the states based on the current state and the input signal data_in.
+3. A data_out generation logic to set the output signal to 1 when a pulse is detected.
+
+This approach provides a more modular and scalable way to detect pulses in the input signal, with a reduced number of logic gates and a simpler implementation.
+
+The FSM will operate as follows:
+- Idle state: Wait for data_in to go high.
+- Pulse_start state: Wait for data_in to go low.
+- Pulse_end state: Set data_out to 1 and transition back to idle state.
+
+The refactoring involves using a case statement to handle the different states and transition logic, making the code more concise and easier to understand.

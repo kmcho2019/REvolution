@@ -1,0 +1,13 @@
+Implement a gshare branch predictor with a 7-bit global branch history register and a 128-entry 2-bit saturating counter PHT indexed by XOR of 7-bit PC and 7-bit history. 
+
+- Prediction: On predict_valid, compute index = pc ^ history, output prediction based on MSB of counter, output current history as predict_history, and update global history on next clock edge by shifting in the predicted taken bit. If train_valid with mispredicted is also asserted on the same cycle, training takes precedence for updating the global history, using the train_history value instead.
+
+- Training: On train_valid, update PHT entry indexed by train_pc ^ train_history, saturating counters adjusted according to train_taken. If mispredicted, update global history register to train_history (recover state).
+
+- On asynchronous reset (areset high), reset PHT counters to weakly not taken (e.g., 2'b01) and global history to zero.
+
+- Timing: PHT updates and history updates happen on positive clock edge. Prediction reads current PHT state before training update.
+
+- Handle simultaneous prediction and training with priority given to training for history update.
+
+This satisfies the interface and behavior requirements.

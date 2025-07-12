@@ -1,0 +1,15 @@
+To refactor the fractional frequency divider by 3.5x, we keep the core idea: creating two phase-shifted clocks with uneven high times (4 and 3 counts in a 7-count cycle) and ORing them to get the fractional output.
+
+Instead of using two independent counters clocked on rising and falling edges, we'll use a single counter clocked on the rising edge that runs modulo 7 (TOTAL_COUNT). The phase shift for the second clock (clk_B) is achieved by indexing the counter with an offset (a delayed version of the counter). This avoids asynchronous counters and the tricky reset synchronization issues.
+
+Specifically:
+
+1. Use a single counter `count` incremented at rising edge of clk from 0 to 6.
+2. Generate clk_A by defining it high when count < 4 (4 counts high).
+3. Generate clk_B by sampling the same counter, but shifted by an offset of 3 counts modulo 7 (to emulate a half-cycle delay). For this, calculate `(count + 3) % 7` and define clk_B high when that value < 3 (3 counts high).
+4. The phase shift of clk_B relative to clk_A is emulated by this offset instead of a separate counter on the falling edge.
+5. The final clk_div is the OR of clk_A and clk_B.
+
+This approach is fully synchronous, avoids asynchronous resets across clock edges, and uses modular arithmetic to implement the half-cycle phase shift, ensuring proper timing and avoiding glitches.
+
+This structure is cleaner and more robust for simulation and synthesis.

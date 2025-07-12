@@ -1,0 +1,7 @@
+To optimize the FSM for better timing while maintaining minimal area and power, I will switch from binary encoding to one-hot encoding. One-hot encoding reduces combinational logic depth in next-state logic, which typically improves timing (tns and wns) at the expense of slightly more flip-flops. Given the FSM has only 5 states, the area and power overhead will be minimal and likely outweighed by the timing benefits.
+
+The FSM remains Moore style with synchronous active-high reset on clock's positive edge. The output start_shifting is asserted when the FSM enters the detected state (S4) and remains asserted (sticky) until reset.
+
+Next state logic will be combinational with blocking assignments for clarity, with each state represented by a single flip-flop bit, making transitions simple AND/OR conditions.
+
+This approach targets reducing logic depth, improving slack while keeping power and area close to the original.

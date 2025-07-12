@@ -1,0 +1,7 @@
+Since the problem requires asserting shift_ena for exactly 4 clock cycles immediately after a synchronous reset and then keeping it low forever until the next reset, we can use a simple 3-bit counter counting from 3 down to 0.
+
+- On the clock's rising edge, if reset is asserted, load the counter with 3 and assert shift_ena.
+- For the next 3 cycles (counter = 3,2,1), keep shift_ena asserted and decrement the counter.
+- When counter reaches 0, deassert shift_ena and hold it low until next reset.
+
+This approach ensures shift_ena is asserted exactly 4 cycles (counter=3 down to 0) starting from the reset cycle, simplifies the logic, and cleanly matches the required timing.

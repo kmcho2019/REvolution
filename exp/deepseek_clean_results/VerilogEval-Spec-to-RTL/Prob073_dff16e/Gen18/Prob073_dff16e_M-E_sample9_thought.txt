@@ -1,0 +1,11 @@
+Novel Architectural Idea: Bit-Sliced Conditional Update
+1. Instead of byte-level granularity, implement bit-level conditional updates using a mask pattern
+2. Generate a 16-bit write mask from byteena signals (replicate each byteena bit 8 times)
+3. Use this mask to selectively update each flip-flop - only bits with mask=1 will update
+4. Implement all 16 DFFs in a single always block for compactness
+5. Use bitwise operations for efficient mask generation and conditional update
+6. Benefits:
+   - More flexible than byte-level control (can easily extend to arbitrary bit patterns)
+   - Single always block reduces hierarchical overhead
+   - Efficient mask generation using replication operator
+   - Clear visualization of update conditions

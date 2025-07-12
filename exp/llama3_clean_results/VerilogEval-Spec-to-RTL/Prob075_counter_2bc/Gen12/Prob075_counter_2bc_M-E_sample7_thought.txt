@@ -1,0 +1,7 @@
+To implement a two-bit saturating counter, we can utilize a different approach by employing a separate increment and decrement logic, along with a saturation detection mechanism. This novel architectural idea involves the following components:
+1. Increment Logic: This module increments the counter when `train_valid` and `train_taken` are both high. It checks if the current state is less than 3 (the maximum value) before incrementing.
+2. Decrement Logic: This module decrements the counter when `train_valid` is high and `train_taken` is low. It checks if the current state is greater than 0 (the minimum value) before decrementing.
+3. Saturation Detection: This mechanism prevents the counter from exceeding the maximum value (3) or going below the minimum value (0).
+4. Asynchronous Reset: The counter is reset to 2'b01 (weakly not-taken) when `areset` is asserted.
+
+By using separate logic blocks for increment, decrement, and saturation detection, we can simplify the design and improve its readability and maintainability.

@@ -1,0 +1,19 @@
+Refactoring Strategy:
+1. **Logic Restructuring**:
+   - Replace nested ternary operators with a case statement for clearer shift selection logic
+   - Move shift calculations into an always block to avoid continuous assignments
+   - Maintain the same priority order (load > ena > shift)
+
+2. **Power Optimization**:
+   - Compute shift operations only when needed (inside the always block)
+   - Keep the enable gating (do_shift) to prevent unnecessary computations
+
+3. **Readability Improvement**:
+   - Use explicit case statement for shift amount decoding
+   - Separate shift calculations from selection logic
+   - Keep arithmetic right shift behavior (sign extension) intact
+
+4. **Synthesis Considerations**:
+   - Case statements often synthesize well to multiplexers
+   - Localized shift calculations may help with logic optimization
+   - Maintain same register structure for predictable timing

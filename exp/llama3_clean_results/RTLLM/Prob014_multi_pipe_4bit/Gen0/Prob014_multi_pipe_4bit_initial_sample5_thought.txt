@@ -1,0 +1,12 @@
+To implement a 4-bit unsigned pipeline multiplier, we need to follow these steps:
+1. Extend the input signals (mul_a and mul_b) by adding "size" number of zero bits at the most significant bit positions.
+2. Use a generate block to perform multiplication for each bit position of the multiplier (mul_b) and generate the partial products.
+3. For each bit position i from 0 to size-1, the partial product is calculated as follows:
+   - If the corresponding bit in the multiplier is 1, the multiplicand is left-shifted by i positions.
+   - If the corresponding bit in the multiplier is 0, the partial product is set to 0 ('d0).
+4. Use registers to store the intermediate sum values and perform add operations on the positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n).
+5. Update the registers with the sum of the corresponding partial products when the reset signal (rst_n) is high.
+6. Calculate the final product on the positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n).
+7. Update the product output (mul_out) with the sum of registers when the reset signal (rst_n) is high.
+
+We will implement the above steps using Verilog HDL.

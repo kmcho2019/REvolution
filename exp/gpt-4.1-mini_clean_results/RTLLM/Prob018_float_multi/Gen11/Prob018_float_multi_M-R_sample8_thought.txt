@@ -1,0 +1,16 @@
+Refactor the floating-point multiplier as a multi-cycle sequential design controlled by a small state machine using the counter variable. This approach breaks down the multiplication into smaller steps over multiple clock cycles to reduce combinational path delay and improve timing closure.
+
+Key points of the refactoring:
+- Use the counter as a 3-bit state machine that advances each clock cycle when not in reset.
+- On the first cycle, extract and store inputs' sign, exponent, and mantissa parts.
+- Detect special cases early and flag them for quick output.
+- On the second cycle, perform mantissa multiplication (using registers to store intermediate results).
+- On the third cycle, normalize and adjust the product, set rounding bits.
+- On the fourth cycle, perform rounding and final exponent adjustment.
+- On the fifth cycle, generate the final IEEE-754 output.
+- Keep all intermediate signals as registers updated sequentially.
+- Reset output to zero when rst is high.
+- Use non-blocking assignments consistently for registers in sequential logic.
+- This sequential multi-cycle approach reduces combinational complexity per cycle, allowing higher clock speeds.
+
+This preserves the original algorithmic flow but breaks it into discrete steps controlled by the counter, providing more timing-friendly hardware and clearer signal sequencing.

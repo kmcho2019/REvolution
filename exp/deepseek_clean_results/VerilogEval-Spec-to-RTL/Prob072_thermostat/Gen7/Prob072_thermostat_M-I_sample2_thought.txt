@@ -1,0 +1,20 @@
+The current implementation is already highly optimized for PPA, but we can make a few minor improvements:
+
+1. Power Optimization:
+   - Reorder the fan logic to potentially reduce switching activity (fan = heater | aircon | fan_on)
+   - This puts the heater/aircon signals first which may be more stable than fan_on
+
+2. Area Optimization:
+   - Use a single NOT gate for mode inversion shared between aircon and any potential future logic
+   - Though minimal, this prevents duplicate inversion logic
+
+3. Maintainability:
+   - Keep the simple combinational structure
+   - Use clear signal names and minimal logic
+
+The improvements will:
+- Maintain identical functionality
+- Slightly reduce potential power consumption
+- Keep the same excellent timing characteristics
+- Potentially save a tiny amount of area
+- Remain just as readable

@@ -1,0 +1,5 @@
+Refactor the FSM by explicitly defining states to improve readability and structure. Use a simple state machine with three states: IDLE (waiting for first byte with in[3]=1), BYTE2 (second byte), BYTE3 (third byte). Signal 'done' combinationally as a pulse right after receiving the third byte by asserting it in the state transition cycle to IDLE.
+
+Keep reset synchronous and positive edge triggered as required. Using a state machine rather than a counter provides clear state semantics while keeping logic minimal. This structure may aid debugging and maintainability without adding extra registers. The done output is combinationally derived from the state and input, which reduces register toggling and potentially lowers power.
+
+This also separates state and output logic cleanly, helping downstream synthesis and verification.

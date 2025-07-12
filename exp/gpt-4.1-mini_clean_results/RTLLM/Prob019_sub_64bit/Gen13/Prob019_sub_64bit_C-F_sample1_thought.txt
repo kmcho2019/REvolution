@@ -1,0 +1,15 @@
+To achieve a superior 64-bit subtractor with overflow detection, fuse the modular chunking strategy from Example 2 with the full 64-bit carry-lookahead architecture and simple overflow logic of Example 1.
+
+Key points of fusion:
+- Use four 16-bit CLA blocks chained via carry-out to carry-in instead of borrow chaining for subtraction (carry-in semantics).
+- Perform subtraction as A + (~B) + 1 globally, but implemented chunk-wise for manageable CLA complexity and improved PPA.
+- Each 16-bit block is a CLA adder that takes a carry-in and outputs sum and carry-out.
+- Connect carry-out of each 16-bit CLA block as carry-in to the next higher block.
+- The initial carry-in is 1 for two’s complement subtraction (adding 1).
+- Assemble the final 64-bit result from the four 16-bit sums.
+- Detect overflow by checking sign bits (MSB of A, B, and result) exactly as described.
+- This fusion keeps carry chains short within 16-bit blocks, reducing delay and complexity inside each block, but removes the ripple borrow chain by directly using carry propagation consistent with addition semantics.
+- This improves timing over Example 2's borrow ripple, and area/power over Example 1’s monolithic 64-bit CLA by reusing smaller blocks.
+- The overflow logic remains minimal and clean.
+
+This architecture balances hierarchical decomposition, fast carry propagation, and minimal overflow detection logic yielding better PPA without loss of clarity or correctness.

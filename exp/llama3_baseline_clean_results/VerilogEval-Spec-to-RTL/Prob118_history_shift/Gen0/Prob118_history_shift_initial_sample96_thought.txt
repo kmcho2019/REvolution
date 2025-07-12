@@ -1,0 +1,5 @@
+To implement the TopModule, we will first define a 32-bit register to store the branch history. 
+On the positive edge of the clock, we check if there is an asynchronous reset. If there is, we reset the branch history register to zero. 
+If there is no reset, we then check if a misprediction has occurred. If a misprediction has occurred, we update the branch history register by concatenating the train_history with the train_taken. 
+If there is no misprediction, we then check if a branch prediction is valid. If it is, we shift in the predict_taken from the LSB side to update the branch history. 
+Finally, we assign the value of the branch history register to the predict_history output.

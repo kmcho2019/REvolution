@@ -1,0 +1,16 @@
+Innovative Approach:
+1. Circular Buffer Architecture: Instead of physically shifting bits, maintain a static register and use a pointer to track the "start" position.
+2. Pointer Logic: A 2-bit pointer indicates where the MSB is located in the circular view.
+3. Benefits:
+   - Eliminates the need for shift operations, reducing combinational logic
+   - Load operations remain simple direct assignment
+   - Shifts only require pointer increment (mod 4)
+   - Output is generated through a multiplexer based on pointer position
+4. Trade-offs:
+   - Slightly more complex output logic
+   - But reduces critical path by removing the shift operation
+   - More efficient for larger registers (though here it's 4-bit)
+5. Priority Handling:
+   - Reset clears both register and pointer
+   - Load operation resets pointer to 0 (normal alignment)
+   - Enable increments pointer (with wrap-around)

@@ -1,0 +1,16 @@
+The original Verilog code correctly infers a D latch using a level-sensitive always block with blocking assignments and an incomplete else branch to hold the value. The synthesis failure is due to the tool trying to instantiate an unknown technology-specific latch cell (`DLH_X1`) not present in the cell library.
+
+Since this is a tooling issue rather than a Verilog RTL issue, one common approach is to explicitly describe the latch behavior without relying on synthesis tool inference that maps to unavailable cells. 
+
+To avoid this, I will implement the latch behavior explicitly with a process that uses a register (`reg q`) and control the latch transparent behavior by clock gating style: update `q` only when `ena` is high, otherwise hold `q`. This code still uses blocking assignment and sensitivity to both `ena` and `d`. 
+
+But to further improve synthesis compatibility, especially for tools lacking proper latch cell libraries, I will:
+
+- Use an asynchronous control style, e.g., model the latch as a transparent latch with a conditional assignment in the always block.
+- Also provide a default assignment for `q` to itself in the always block to avoid inference of unknown cells or complex primitives.
+
+If synthesis still fails due to missing cells, the synthesis environment or cell library must be fixed, but this is the cleanest, portable RTL style.
+
+Hence, the fix is a minimal style adjustment to explicitly hold `q` in the else clause by assigning `q = q;` which hints to synthesis tools not to infer latches with unknown cells but standard latches.
+
+This coding style is very safe and synthesizes correctly in many tools without creating mysterious unknown cells.

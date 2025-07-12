@@ -1,0 +1,11 @@
+To implement a 64-bit Johnson counter, we first need to understand the basic principle of the Johnson counter, which is a type of ring counter where the most significant bit (MSB) is fed back to the least significant bit (LSB) position, either directly or inverted, depending on the current state of the counter.
+
+The given 4-bit Johnson counter example states (0000, 1000, 1100, 1110, 1111, 0111, 0011, 0001, 0000) demonstrate the operation where the counter value is shifted right and either a 1 or a 0 is appended at the MSB position based on the LSB's value.
+
+For a 64-bit implementation, we follow similar logic:
+1. On reset, the counter is set to 0.
+2. On every rising edge of the clock, the counter updates its value based on the LSB's value.
+   - If the LSB is 0, the counter increments by shifting the current value (Q[63:1]) to the right and appending a 1 at the MSB position.
+   - If the LSB is 1, the counter decrements by shifting the current value (Q[63:1]) to the right and appending a 0 at the MSB position.
+
+This logic ensures the counter traverses through all possible states in a cyclical manner, similar to the provided 4-bit example but for 64 bits.

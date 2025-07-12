@@ -1,0 +1,25 @@
+Novel Radix-4 Booth Multiplier Architecture:
+
+1. Parallel Partial Product Generation:
+   - Generate all 4 possible partial products simultaneously (0, +A, +2A, -2A)
+   - Use multiplexers to select the correct partial product based on Booth encoding
+   - Eliminates sequential dependency between steps
+
+2. Tree Reduction Structure:
+   - Implement Wallace tree for efficient partial product reduction
+   - Uses carry-save adders in a balanced tree structure
+   - Reduces critical path compared to sequential accumulation
+
+3. Early Completion Detection:
+   - Monitors multiplier bits to detect completion before full 16 cycles
+   - Sets ready signal when remaining bits are all 0 or 1 (sign extension)
+
+4. Optimized Control Logic:
+   - Simplified state machine with only 3 states (IDLE, PROCESSING, DONE)
+   - Uses shift counter to track progress through multiplier bits
+
+Key Advantages:
+- Parallel processing reduces latency
+- Wallace tree improves timing
+- Early completion saves power
+- Simplified control logic reduces area

@@ -1,0 +1,23 @@
+Refactored design approach:
+
+1. State representation:
+   - Use combinational logic to determine current water level state based on sensor inputs
+   - Define four distinct states based on sensor patterns (above s[2], between s[2]-s[1], between s[1]-s[0], below s[0])
+
+2. Output logic:
+   - Implement nominal flow rates (fr2, fr1, fr0) as direct combinational functions of current state
+   - Generate supplemental flow (dfr) by comparing current and previous states
+
+3. Reset handling:
+   - Force all outputs high during reset
+   - Initialize previous state to "below s[0]" (no sensors active)
+
+4. Rising edge detection:
+   - Track previous state rather than raw sensor values
+   - Detect rising condition when current state is higher than previous state
+
+Key improvements:
+- Clear state-based implementation matches specification better
+- Simplified rising edge detection using state comparison
+- More readable output logic tied directly to water level states
+- Maintains synchronous reset behavior

@@ -1,0 +1,17 @@
+Fix the FSM by clarifying the sequence detection logic and eliminating unreachable branches. Since input `x` is 1-bit (only 0 or 1), remove unnecessary else cases in state transitions and ensure sequence detection properly handles overlapping sequences.
+
+Specifically:
+
+1. Refine the sequence detection states (C0, C1, C2) to only test for `x` equal to 0 or 1 with clear transitions, no redundant else branches.
+
+2. Correct the transitions to support overlapping sequences: for example, in C1 if `x=1`, stay in C1 (since repeated 1's could start a new sequence), in C2 if `x=0`, go back to C1 because the last input is a '0' which can be part of a new sequence start.
+
+3. Adjust the `y_counter` increment and checking for monitoring `y` in state D to strictly count 0 and 1, and only after the second cycle with no `y=1`, transition to failure state F.
+
+4. Make the outputs (`f` and `g`) registered (updated on clock edge) to avoid glitches and match synchronous reset behavior.
+
+5. Maintain all synchronous logic with non-blocking assignments.
+
+6. Ensure that on reset (resetn low), the FSM goes to state A with outputs zero.
+
+This approach should eliminate mismatches and match the specification precisely.

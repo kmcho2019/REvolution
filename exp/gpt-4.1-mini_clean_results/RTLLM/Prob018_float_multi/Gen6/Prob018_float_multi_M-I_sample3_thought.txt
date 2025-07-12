@@ -1,0 +1,12 @@
+The original design is well-structured with a clear FSM and covers all IEEE-754 special cases and rounding behavior. The main problem is the use of variable part-select (`mant_out[shift_amt-1:0]`) which is illegal in Verilog and causes syntax errors.
+
+To fix this:
+- Replace the variable-width bit slicing and OR-reduction used for the sticky bit calculation with a loop that performs a bitwise OR over the bits shifted out.
+- Since the maximum shift amount for subnormals can be up to 24, implement a small loop that checks bits 0 through (shift_amt-1) in a for loop and ORs them to generate the sticky bit.
+- This way, all part selects are fixed-width or single-bit and compliant with Verilog.
+- Also, declare needed integers and temporaries properly in the always block.
+- Keep the rest of the design unchanged for clarity, correctness, and IEEE-754 compliance.
+
+This change fixes the syntax error and preserves functionality. The sticky bit calculation is critical to correct rounding for subnormals, and this approach is synthesizable and accepted by Verilog simulators and synthesis tools.
+
+No other significant optimizations are done to keep clarity and correctness the priority.

@@ -1,0 +1,30 @@
+Improvement Strategy:
+
+1. **Cycle Counting Correction**:
+   - Fix the off-by-one error by counting 999 cycles (0-999) for each delay unit
+   - Implement exact (delay+1)*1000 cycle counting by properly initializing counters
+
+2. **State Machine Enhancement**:
+   - Add explicit DONE state to properly handle acknowledgment
+   - Separate done assertion and acknowledgment handling
+   - Ensure clean state transitions with no overlap
+
+3. **Pattern Detection Optimization**:
+   - Maintain shift register only in IDLE state
+   - Clear immediately after pattern match to prevent false detection
+
+4. **Counter Logic Simplification**:
+   - Use single always block for all counters
+   - Explicit terminal count signals for better readability
+   - Direct count output assignment from coarse counter
+
+5. **Output Timing Fixes**:
+   - Ensure counting is only asserted during active counting
+   - Pulse done for exactly one cycle before waiting for ack
+   - Maintain count output validity throughout operation
+
+Key Improvements:
+- Precise cycle counting meeting exact requirements
+- Clean state transitions with proper handshaking
+- Reduced logic complexity through better organization
+- Correct output timing behavior

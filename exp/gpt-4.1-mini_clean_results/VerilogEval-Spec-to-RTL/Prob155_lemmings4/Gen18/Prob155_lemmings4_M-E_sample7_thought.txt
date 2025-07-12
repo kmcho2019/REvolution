@@ -1,0 +1,11 @@
+Use a single enumerated FSM state register that encodes both mode and direction together to simplify state encoding and logic. Define separate states for walking left, walking right, digging left, digging right, falling left, falling right, and splattered. This fully encodes mode+direction in one state variable, eliminating separate direction storage. 
+
+Use a synchronous active-high reset that asynchronously resets the FSM to walking left. 
+
+Implement prioritized next state logic as combinational with fall > dig > bump, with bumps only effective in walking states. While falling, increment a fall counter each cycle; when landing on ground, check the counter and transition to splattered state if >20 cycles. Falling and digging ignore bump inputs. Digging continues until ground disappears, then fall. On ground recovery, transition from falling back to the previous walking direction state. 
+
+Outputs are decoded directly from the FSM state (Moore outputs), simplifying output logic.
+
+This design reduces the number of state registers to one vector, tightly coupling direction and mode in the state. This reduces state decoding logic and simplifies transitions by knowing the exact mode+direction state. The fall counter is maintained separately and reset on mode changes away from falling. The splattered state is a single terminal state with all outputs low.
+
+This approach differs from separate mode/direction storage and uses an enumerated combined state machine that is fully Moore with clear, direct output decoding.

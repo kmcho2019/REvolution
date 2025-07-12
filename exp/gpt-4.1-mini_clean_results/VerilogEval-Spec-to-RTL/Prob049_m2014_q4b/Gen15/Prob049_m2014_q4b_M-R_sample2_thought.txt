@@ -1,0 +1,10 @@
+Since a D flip-flop with asynchronous reset is fundamentally sequential logic, it cannot be implemented purely with continuous assignment (`assign`). However, I can refactor the code by separating the asynchronous reset logic into a combinational block that generates an internal reset signal, and then use a simpler always block triggered only on the positive edge of the clock to update the output. This method mimics asynchronous reset behavior by asynchronously forcing the flip-flop output to zero when the reset is asserted, and otherwise updates q on the clock edge.
+
+The main difference is that the reset condition is checked combinationally, and the always block is sensitive only to `posedge clk`. This approach sometimes improves synthesis tool compatibility or code readability by explicitly decoupling reset detection and data latching.
+
+This approach is logically equivalent, preserves asynchronous reset semantics, and maintains clean, simulation-friendly design.
+
+Specifically:
+- Use a wire (internal reset) driven asynchronously by ar.
+- Use an always block sensitive only to posedge clk to latch d or reset q to 0 when internal reset is active.
+- Still use a reg output q and no initial block (optional).

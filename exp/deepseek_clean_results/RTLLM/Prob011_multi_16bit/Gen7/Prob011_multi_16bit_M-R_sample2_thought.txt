@@ -1,0 +1,25 @@
+Refactoring Strategy:
+1. State Machine Simplification:
+   - Replace explicit state machine with implicit state tracking using counters
+   - Use a single `running` flag instead of multiple states
+   - Eliminate separate state registers to reduce area
+
+2. Combinational Logic:
+   - Move shift-and-accumulate logic to combinational always blocks
+   - Use continuous assignments (`assign`) for outputs where possible
+   - Simplify control logic by directly using counter values
+
+3. Timing Optimization:
+   - Pre-compute shifted values in parallel using barrel shifter approach
+   - Remove intermediate registered shifted_val to reduce pipeline latency
+   - Combine shift and add operations in single cycle when possible
+
+4. Power Optimization:
+   - Maintain output gating but make it more explicit
+   - Reduce unnecessary register toggles by better control of enable signals
+
+Key Changes:
+- Eliminated explicit state machine in favor of counter-based control
+- Barrel shifter replaces sequential shifting
+- More combinational logic but with better timing characteristics
+- Simplified control flow with clearer data path

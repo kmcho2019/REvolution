@@ -1,0 +1,20 @@
+To improve the PPA metrics (timing, power, and area), I will optimize the combinational shift logic to reduce the critical path and switching activity:
+
+1. Use hierarchical shifting: perform shift by 1 bit and shift by 8 bits in separate steps rather than separate full 64-bit multiplexers for each case. This reduces logic duplication and mux sizes.
+
+2. Implement a two-step shift approach:
+   - First, shift either by 8 bits or keep original.
+   - Then, shift either by 1 bit or keep result of previous stage.
+   - The direction is applied once after composing these shifts.
+   
+   Since shift amount is only 1 or 8 bits, this approach can be done via multiplexing with smaller muxes, reducing logic depth.
+
+3. Since the directions and amounts are limited, split left and right shifts and use smaller intermediate wires.
+
+4. Also, introduce clock enable gating by only updating the register when (load | ena) is high, reducing unnecessary toggling in q.
+
+5. By chaining shifts, we reduce the size of multiplexers and combinational fan-in, improving timing and power.
+
+Overall, this modular approach reduces the critical path mux complexity and switching power.
+
+Note: The output remains registered on clk's rising edge, and synchronous load has highest priority.

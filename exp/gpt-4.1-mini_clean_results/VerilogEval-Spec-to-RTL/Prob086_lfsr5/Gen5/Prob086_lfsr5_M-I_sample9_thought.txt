@@ -1,0 +1,11 @@
+To optimize the given 5-bit maximal-length Galois LFSR for better PPA (timing, power, and area), we can simplify the feedback and next state logic further. The current implementation uses separate assignments for each next state bit, but a more compact formulation may reduce fanout and critical path delay.
+
+Improvement strategy:
+- Inline the feedback and next state assignments directly in the sequential always block to remove the separate wire vector. This reduces signal fanout and can help the synthesis tool optimize registers and logic better.
+- Compute the feedback inside the sequential block, using a local variable. This can improve timing by localizing XOR gates close to the registers.
+- Maintain the same synchronous reset to 5'b00001.
+- Use non-blocking assignments consistently.
+- As the XOR is only one gate, this simplification may reduce routing complexity and power slightly.
+- This style aligns well with typical RTL best practices for small shift-register-based state machines and eases mapping to flip-flops with enable and XOR feedback.
+
+This approach should maintain correctness and maximal-length properties while improving timing and power due to fewer intermediate wires and better synthesis optimization opportunities.

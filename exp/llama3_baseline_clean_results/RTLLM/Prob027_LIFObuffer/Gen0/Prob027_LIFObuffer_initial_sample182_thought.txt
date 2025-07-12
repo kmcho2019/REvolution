@@ -1,0 +1,7 @@
+The LIFObuffer module will utilize a stack memory array to store data and a stack pointer to track the current position. The module will operate on the rising edge of the clock and will handle read and write operations based on the RW signal. The EMPTY and FULL flags will be updated based on the stack pointer's status. The reset signal will clear the stack and reset the stack pointer. 
+The module's behavior can be described as follows:
+- If the reset signal is high, clear the stack, reset the stack pointer, and initialize all memory locations to 0.
+- If the enable signal is high and the reset signal is low, check if the buffer is full or empty and perform the corresponding action:
+  - If the buffer is not full and RW is low, push data onto the stack and decrement the stack pointer.
+  - If the buffer is not empty and RW is high, pop data from the stack, clear the corresponding memory location, and increment the stack pointer.
+- Update the EMPTY and FULL flags based on the stack pointer's status.

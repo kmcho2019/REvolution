@@ -1,0 +1,9 @@
+Refactor the 64-bit subtractor to use direct two's complement subtraction with a simple ripple-carry adder structure implemented as a bitwise loop using generate constructs without instantiating a separate CLA module. The subtraction is performed by inverting B and adding 1, implemented inline. The carry propagation is explicitly chained through the bits. This removes the dependency on a separate CLA module and showcases the subtraction logic more explicitly in one module. Overflow detection remains the same, based on the sign bits of A, B, and the result.
+
+This structure simplifies the design by collapsing addition and subtraction logic in a single module using a generate block for the ripple carry, which is straightforward and easy to understand. While the ripple-carry method is slower than CLA, the refactoring illustrates a clear alternative structural style with continuous assignments and no always blocks.
+
+Key points:
+- Implement subtraction as A + (~B + 1) explicitly in the module.
+- Use a generate-for loop to propagate carry signals.
+- Overflow flag logic remains unchanged.
+- Remove the separate cla_64bit module, integrating addition inline.

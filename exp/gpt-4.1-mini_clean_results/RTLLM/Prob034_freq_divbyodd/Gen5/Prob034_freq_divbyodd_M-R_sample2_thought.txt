@@ -1,0 +1,13 @@
+The original implementation toggles clk_div1 and clk_div2 twice per cycle (at half count and full count), causing incorrect frequency and glitches. To correct this, we can change the approach to toggle clk_div1 and clk_div2 only once per complete count cycle.
+
+We will count separately on posedge and negedge clocks, increment counters cnt1 and cnt2 respectively from 0 up to NUM_DIV-1. When each counter reaches NUM_DIV-1, its corresponding clk_div signal toggles and counter resets.
+
+This approach means each clk_div1 and clk_div2 toggles at one count event per half period of output clock, ensuring each toggle is spaced equally and only once per cycle, producing a reliable odd divider.
+
+The final divided clock output clk_div is the OR of clk_div1 and clk_div2, combining both edges to approximate 50% duty cycle for odd division.
+
+This refactor avoids toggling at half counts and ensures clean, symmetrical toggle edges.
+
+We will maintain asynchronous reset, parameter checks, and use separate always blocks for posedge and negedge clocks for clarity and proper synchronization.
+
+This refactor fixes timing glitches and delivers the correct odd frequency division.

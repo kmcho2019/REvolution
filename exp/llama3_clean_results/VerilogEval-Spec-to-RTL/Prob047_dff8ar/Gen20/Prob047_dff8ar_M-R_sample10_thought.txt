@@ -1,0 +1,9 @@
+To refactor the given code, we will utilize a different structure while maintaining the core functionality of an 8-bit D flip-flop with active high asynchronous reset. The main idea is to use a single `always` block for the sequential logic and assign the output directly to the internal register (`q_reg`) without using a continuous assignment.
+
+Instead of instantiating a separate module for the 8-bit D flip-flop (`DFF_8bit`), we will integrate this functionality directly into the `TopModule`. This refactoring approach simplifies the code structure while preserving the original functionality.
+
+Another key aspect of the refactoring is to ensure that the `always` block correctly handles both the positive edge of the clock (`clk`) and the asynchronous reset (`areset`). The non-blocking assignment operator (`<=`) will be used inside the `always` block to update the internal register (`q_reg`).
+
+Additionally, the code will maintain explicit sizing for the internal register (`q_reg`) to match the output width (8 bits), ensuring clarity and avoiding potential synthesis issues.
+
+The overall goal of this refactoring is to achieve a more streamlined and efficient implementation of the 8-bit D flip-flop with active high asynchronous reset, while adhering to best practices for Verilog design.

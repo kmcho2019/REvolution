@@ -1,0 +1,11 @@
+To implement a 4-digit BCD counter:
+1. Use a 16-bit register (q) to store the 4 BCD digits (4 bits each)
+2. On each clock edge:
+   - If reset is high, clear all digits to 0
+   - Else increment the ones digit (q[3:0])
+   - If ones digit overflows (reaches 10), reset it to 0 and increment tens digit
+   - Similarly cascade the overflow logic through all digits
+3. Generate enable signals (ena) for upper three digits:
+   - ena[0] (tens) when ones digit overflows
+   - ena[1] (hundreds) when tens digit overflows
+   - ena[2] (thousands) when hundreds digit overflows

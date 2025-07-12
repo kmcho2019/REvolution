@@ -1,0 +1,7 @@
+The existing code implements a combinational circuit with 4-input AND, OR, and XOR gates using a hierarchical approach with 2-input gates. To refactor this code, we will simplify the structure by directly implementing the 4-input gates in the `TopModule` using `assign` statements instead of instantiating separate modules for each gate. This approach reduces the overhead of module instantiations and can potentially improve area efficiency.
+
+We will use the bitwise operators in Verilog to directly implement the 4-input AND, OR, and XOR operations in a single `assign` statement for each output. This method eliminates the need for intermediate wires and modules, making the code more concise and potentially more efficient in terms of area and power consumption.
+
+The XOR operation for 4 inputs can be optimized by using the property that `a ^ b ^ c ^ d` is equivalent to `(a ^ b) ^ (c ^ d)`, which allows us to use the bitwise XOR operator to implement the 4-input XOR gate efficiently.
+
+By directly implementing the gates in the `TopModule`, we also reduce the latency introduced by the hierarchical approach, potentially improving the performance of the circuit.

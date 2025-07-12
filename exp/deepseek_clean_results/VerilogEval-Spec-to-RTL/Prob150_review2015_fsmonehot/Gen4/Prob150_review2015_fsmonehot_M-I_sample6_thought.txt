@@ -1,0 +1,17 @@
+The feedback reveals two key issues that need to be addressed:
+
+1. S1_next incorrectly handles the S1->S11 transition - it should not set S1_next for this case since S11 is a separate state (bit 2)
+2. Wait_next needs to account for the Wait->Wait transition when ack=0
+
+Improvement strategy:
+1. Fix S1_next to only assert for S->S1 transition (not S1->S11)
+2. Add Wait->Wait condition to Wait_next logic
+3. Keep all other correct logic (B3_next, S_next, Count_next, outputs)
+4. Maintain clean one-hot encoding approach
+5. Add comments to clarify state transitions
+
+The improved version will:
+- Correctly handle all state transitions
+- Maintain efficient one-hot encoding
+- Keep outputs properly synchronized with states
+- Be more explicit about state transitions in comments

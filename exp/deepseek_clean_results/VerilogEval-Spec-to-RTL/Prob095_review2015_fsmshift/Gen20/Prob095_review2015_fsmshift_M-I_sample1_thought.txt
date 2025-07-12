@@ -1,0 +1,10 @@
+Improved solution addressing the issues in the original implementation:
+1. Correct state encoding: Use proper 4-bit one-hot encoding for 4 active states plus IDLE
+2. Clear state transitions: Ensure exactly 4 cycles of shift_ena after reset
+3. Simplified logic: Remove unnecessary IDLE state by using state count directly
+4. Reset behavior: Guarantee shift_ena is asserted for exactly 4 cycles after reset
+5. Optimized implementation:
+   - Use a 2-bit counter instead of one-hot for better PPA (smaller area, lower power)
+   - Counter counts from 0 to 3 (4 cycles) after reset
+   - Clear shift_ena when counter reaches 3 (after 4 cycles)
+   - Reset synchronously initializes counter to 0

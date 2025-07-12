@@ -1,0 +1,7 @@
+The existing Verilog code for the TopModule is functionally correct but can be refactored for better readability, maintainability, and potentially improved synthesis results. The current implementation uses an always block with a large if-else structure to handle different conditions for updating the history register. 
+
+One approach to refactor this code is to use a combinational logic approach where possible, leveraging the assign statement for continuous assignments, and maintaining the always block primarily for sequential logic updates. This can improve the clarity of the code by separating the combinational logic from the sequential updates.
+
+To achieve this, we can calculate the next state of the history register using combinational logic, considering the inputs predict_valid, predict_taken, train_mispredicted, train_taken, and train_history. The always block then simply updates the history register based on the calculated next state and the current state of the system.
+
+This refactoring maintains the core functionality of the original design but rearranges the logic to potentially improve the synthesis outcome, especially in terms of area and timing. It also makes the code easier to understand and maintain, as the combinational logic and sequential updates are clearly separated.

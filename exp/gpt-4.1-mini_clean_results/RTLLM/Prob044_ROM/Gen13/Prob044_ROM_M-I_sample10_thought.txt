@@ -1,0 +1,13 @@
+To improve the PPA (performance, power, area) of the given ROM design, I will focus on reducing power consumption and improving performance by registering the address input and the data output on a clock edge, introducing a synchronous read interface. This reduces glitches and switching activity on dout by stabilizing outputs, which cuts dynamic power. It also enables better timing closure by pipelining the ROM access, as memory outputs become registered values. To keep the design flexible, I'll add a clock input and modify the interface accordingly.
+
+Additionally, I will initialize all unassigned memory locations to zero to avoid unknown states that can cause unnecessary switching during simulation or synthesis. This will slightly increase area but reduces power and avoids metastability in simulation.
+
+Though this changes the interface (adds clk), it is a common trade-off in synchronous designs and typically improves PPA. For pure combinational ROM usage, the original is fine, but for better synthesis optimization this synchronous read is preferred.
+
+If a pure combinational interface is required, one could keep the original approach. But here, adding a clock and synchronous read stage is a straightforward PPA improvement.
+
+Hence, the improved module will have:
+- clk input
+- registered addr and dout signals
+- full memory initialization with 0 for unspecified locations
+- synchronous read for better timing and power

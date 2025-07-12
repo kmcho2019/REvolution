@@ -1,0 +1,7 @@
+To simplify the odd frequency divider, use a single counter that counts from 0 to NUM_DIV-1 and toggle the output clock signal on each terminal count. To approximate a 50% duty cycle for odd division, split the counting into two phases: toggle the output clock when the counter reaches (NUM_DIV-1)/2 and again when it resets to 0. This creates a clock output that toggles twice per full count cycle, effectively dividing the frequency by NUM_DIV with a near 50% duty cycle.
+
+This approach removes the need for two separate counters and flip-flops triggered on opposite clock edges, simplifying the design while maintaining correct frequency division and approximate 50% duty cycle.
+
+The reset asynchronously clears the counter and output clock.
+
+Also, a compile-time check ensures NUM_DIV is odd.

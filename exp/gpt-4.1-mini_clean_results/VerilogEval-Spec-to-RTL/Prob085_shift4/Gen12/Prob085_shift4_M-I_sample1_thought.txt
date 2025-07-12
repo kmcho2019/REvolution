@@ -1,0 +1,9 @@
+To optimize for better PPA, especially power and timing, reduce unnecessary register updates by updating q only when its value changes, effectively implementing a conditional register enable. This can minimize switching activity and help timing by avoiding unnecessary toggling.
+
+Merge the combinational next-state logic into the sequential always block to reduce logic levels, improving critical path delay.
+
+Use a local variable for next_q within the clocked always block, removing the separate combinational always block, thus simplifying the logic structure.
+
+Prioritize asynchronous reset first, then synchronous load and enable with proper priority, matching original functionality.
+
+This approach optimizes power by reducing switching, potentially improves timing by fewer logic levels, and has minimal or no area overhead.

@@ -1,0 +1,13 @@
+Instead of directly implementing the minimal logic with an OR gate, I will implement the logic by decoding the zero case explicitly. The output is zero only when a=0, b=0, and c=0; otherwise output is 1.
+
+Thus, I will implement the function as the negation of the AND of the inverted inputs:
+
+out = ~(~a & ~b & ~c)
+
+This effectively means out = a | b | c, but implemented through a small internal gate hierarchy:
+
+1. Invert inputs a, b, c.
+2. AND the inverted inputs.
+3. Invert the AND output to generate final out.
+
+This architectural approach uses only inverters and an AND gate internally, illustrating the logical derivation with basic gates instead of directly assigning an OR operation. This could be beneficial for a technology where certain gate types are more efficient, or for educational clarity on how the logic comes from the K-map minimal form.

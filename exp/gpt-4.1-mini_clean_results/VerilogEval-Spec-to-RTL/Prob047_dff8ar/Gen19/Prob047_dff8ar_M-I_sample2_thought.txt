@@ -1,0 +1,11 @@
+The current design is already clean, using a single vector register for all 8 bits with asynchronous reset, which is efficient for area and timing. However, asynchronous resets can cause power spikes due to toggling on the reset signal, and it might complicate timing closure. 
+
+To improve power and possibly ease timing without changing the functional behavior, I will add an enable signal that allows the register to load new data only when enabled. This can reduce switching activity on the output when input data doesn't change or isn't needed to be latched every cycle.
+
+Since the original spec doesn't mention an enable input, we can derive it internally by comparing input 'd' to the current output 'q'. Updates to 'q' happen only if input 'd' differs from 'q', thus avoiding unnecessary toggles.
+
+This modification maintains the asynchronous reset and positive edge clock triggering as specified, keeps the design minimal, but reduces dynamic power by lowering switching activity on the flop outputs when data doesn't change.
+
+If the user wants, they can further add an explicit enable port for better system-level gating, but here the comparator suffices for power optimization.
+
+No area or timing penalties arise, and power improves by avoiding redundant toggles.

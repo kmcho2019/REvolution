@@ -1,0 +1,24 @@
+Revised design approach:
+
+1. State Encoding:
+   - Define 4 distinct states based on sensor patterns (above s[2], between s[2]-s[1], between s[1]-s[0], below s[0])
+   - Use one-hot encoding for clarity (4 states = 4 bits)
+
+2. State Transition Logic:
+   - Current state determined by sensor inputs
+   - Previous state stored in register for comparison
+   - Synchronous reset forces state to "below s[0]" (all outputs high)
+
+3. Output Logic:
+   - fr0, fr1, fr2 outputs follow truth table from specification
+   - dfr asserted when transitioning to a higher water level state
+
+4. Synchronous Operation:
+   - All state changes and outputs updated on clock edges
+   - Reset fully synchronous to clock
+
+Key improvements:
+- Proper state encoding matches specification
+- Correct output logic for each water level
+- Accurate rising level detection for dfr
+- Fully synchronous design

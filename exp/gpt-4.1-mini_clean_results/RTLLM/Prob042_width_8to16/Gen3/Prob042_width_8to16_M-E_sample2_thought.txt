@@ -1,0 +1,14 @@
+Implement a design using a small finite state machine (FSM) with two states: IDLE and WAIT_SECOND. 
+
+- In IDLE, the module waits for the first valid input. When valid_in is asserted, it stores this first byte in a register and transitions to WAIT_SECOND.
+- In WAIT_SECOND, it waits for the second valid input. Upon arrival, it concatenates the stored first byte (as the upper 8 bits) and the second byte (as the lower 8 bits), stores it in data_out register, asserts valid_out in the *next* clock cycle, then transitions back to IDLE.
+- valid_out is registered and asserted only one cycle after receiving the second valid data.
+- When reset (active low), all registers and FSM return to IDLE and outputs cleared.
+
+This approach uses a simple FSM to clearly separate waiting states and make timing explicit. The valid_out signal is only asserted after data_out is updated, exactly one cycle after the second input. This ensures that partial data is not output prematurely. The design is fully synchronous, easy to understand, and easily extendable if needed.
+
+Unlike the previous design that used flags and pipelining, this FSM cleanly expresses the sequence of operations, which should improve readability and robustness.
+
+The state encoding is one-hot for simplicity, but could be binary if desired.
+
+All signals are registered with non-blocking assignments and reset is asynchronous active low.

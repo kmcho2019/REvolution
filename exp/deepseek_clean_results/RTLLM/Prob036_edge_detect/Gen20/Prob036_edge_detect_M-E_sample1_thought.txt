@@ -1,0 +1,15 @@
+This implementation uses a Moore state machine with 3 states:
+1. IDLE: No edge detected
+2. RISE_DETECTED: Rising edge detected (outputs rise=1)
+3. FALL_DETECTED: Falling edge detected (outputs down=1)
+
+The state machine transitions:
+- From IDLE to RISE_DETECTED when a rising edge is detected
+- From IDLE to FALL_DETECTED when a falling edge is detected
+- Always returns to IDLE on the next cycle
+
+Advantages:
+1. Explicit state representation makes the design more maintainable
+2. Easier to add new features (like edge filtering or debouncing)
+3. Clear separation of edge detection and output generation
+4. More robust against metastability in asynchronous input cases

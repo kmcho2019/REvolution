@@ -1,0 +1,23 @@
+My novel approach implements a fully pipelined Radix-4 Booth multiplier with optimized state machine control. Key innovations:
+
+1. **Three-Stage Pipeline**:
+   - Stage 1: Operand preparation and sign extension
+   - Stage 2: Radix-4 Booth encoding and partial product generation
+   - Stage 3: Accumulation and final result computation
+
+2. **Optimized Booth Encoding**:
+   - Uses overlapping 3-bit groups for proper Radix-4 encoding
+   - Implements all 5 possible operations (0, ±1, ±2)
+   - Includes sign extension handling for negative multiplicands
+
+3. **Smart State Control**:
+   - 4-cycle multiplication (8 bits / 2 bits per cycle)
+   - Early termination detection for zero operands
+   - Precise ready signal generation
+
+4. **Resource Optimization**:
+   - Shared arithmetic units between stages
+   - Minimal register usage
+   - Parallel partial product computation
+
+This design achieves both high performance (one result per 4 cycles) and area efficiency while maintaining correct signed arithmetic behavior.

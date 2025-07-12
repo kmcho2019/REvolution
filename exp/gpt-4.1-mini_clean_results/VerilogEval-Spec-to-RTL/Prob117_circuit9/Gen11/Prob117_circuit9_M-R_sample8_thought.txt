@@ -1,0 +1,5 @@
+Refactor the design by separating the next state logic into a combinational function and updating the state register in a clocked always block. This uses a standard synchronous state machine structure: a sequential always block for state updates and a combinational always block (or continuous assignment) to compute next state. 
+
+When 'a' is 1, next state is 4. When 'a' is 0, next state follows the modulo-7 counting sequence (4->5->6->0->1->2->3->4). This separation clarifies the design and facilitates further modifications or optimizations. The initial value remains undefined (no reset) matching the waveform.
+
+This approach also avoids a large case inside the sequential block, potentially improving timing and synthesis results.

@@ -1,0 +1,7 @@
+The original solution uses a combinational block to compute next_q and then registers it on the clock edge, with a synchronous reset. While clear, this introduces an extra combinational stage and an additional register (next_q) which may add to critical path and power consumption.
+
+An optimization is to simplify the design by directly updating the counter register q on the positive clock edge without a separate next_q signal. The counter increments by 1 on each clock cycle unless it reaches 999, then it rolls over to 0. The synchronous reset clears q to 0. This single always block approach reduces logic complexity and switching activity slightly, improving timing and power.
+
+This approach reduces one register stage and removes the combinational next_q signal. It also minimizes switching during reset because assignments happen only on clock edges. The single-block coding style is typical for counters and supports better synthesis optimization for PPA.
+
+Thus, the improvement is to merge combinational next-state logic directly into the clocked process, eliminating the extra reg and combinational block.

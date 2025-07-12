@@ -1,0 +1,14 @@
+Novel Circular Buffer Architecture:
+1. Instead of traditional shifting, implement a 4-word circular buffer with a write pointer
+2. The pointer indicates the current "end" of the shift register
+3. For shifting:
+   - Move the pointer right (circularly)
+   - Always write 0 to the new position
+4. For loading:
+   - Reset pointer to position 0
+   - Write all 4 data bits
+5. Key advantages:
+   - Eliminates the need for shift operations (just pointer movement)
+   - More efficient for larger registers (though minimal benefit for 4-bit)
+   - Interesting alternative approach that could be extended to more complex operations
+6. Reset behavior remains the same (clear all bits and reset pointer)

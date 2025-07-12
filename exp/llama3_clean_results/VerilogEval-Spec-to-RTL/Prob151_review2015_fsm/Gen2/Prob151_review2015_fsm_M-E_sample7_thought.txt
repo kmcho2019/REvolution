@@ -1,0 +1,7 @@
+The new solution involves designing a finite-state machine (FSM) with a simpler state transition diagram. The idea is to have fewer states and utilize counters and flags to manage the timer's behavior. The FSM will start by searching for the pattern '1101' in the input data stream. Once the pattern is detected, it will enter a shifting phase where it shifts in 4 more bits to determine the duration. After shifting, it enters a waiting phase where it waits for the counters to finish counting. Finally, it enters a notification phase where it notifies the user and waits for acknowledgement before resetting.
+
+The new architectural idea involves using a single counter to manage both the shifting phase and the waiting phase. The counter will be used to count the number of shifts during the shifting phase and will be used to wait for the counters to finish counting during the waiting phase. This simplifies the FSM and reduces the number of states.
+
+Additionally, instead of using separate signals for `shift_ena`, `counting`, and `done`, we can use a single signal for each phase and use the FSM's state to determine which signal to assert. This reduces the complexity of the FSM and makes it easier to manage.
+
+The new solution also involves using a more efficient way to detect the pattern '1101' in the input data stream. Instead of using a 4-bit shift register to store the pattern, we can use a simple counter to count the number of bits that match the pattern. This reduces the number of flip-flops required and makes the FSM more efficient.

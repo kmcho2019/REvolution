@@ -1,0 +1,5 @@
+Refactor the bit reversal by using a single continuous assign statement that directly assigns the output vector as the input vector indexed in reverse. This avoids the generate loop and uses a Verilog vector slice and concatenation to express the reversal succinctly. Since the vector is not a power of two length, we can generate a reversed vector using a for-loop inside a function that builds a reversed vector, or simply use a bitwise index expression in a for-generate block with a packed output.
+
+To stay within the scope of standard Verilog syntax and clarity, I'll implement a combinational always block with a for-loop that reverses the bits at once, instead of using generates or parallel assigns. This also shows a different style of writing purely combinational logic.
+
+This approach keeps the logic combinational and synthesizable, but differs structurally by using an always block and a procedural loop to assign reversed bits instead of per-bit continuous assignments.

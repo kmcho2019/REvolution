@@ -1,0 +1,7 @@
+To simplify the design while maintaining functionality, I will:
+
+- Use a 32-bit accumulator register since the output is 32-bit and no requirement was specified to handle full 64-bit accumulation.
+- Perform multiplication as a 32x32 operation producing a 64-bit result, but truncate to the lower 32 bits for accumulation. This simplifies the accumulator size and arithmetic logic.
+- Use synchronous reset and update the accumulator on the positive clock edge.
+- Use non-blocking assignments in the always block.
+- This design reduces register width and complexity at the cost of possible overflow, which is acceptable for simplification.

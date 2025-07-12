@@ -1,0 +1,15 @@
+After carefully analyzing the waveform patterns, the correct behavior is:
+1. State toggles when (a XOR b) is true at the clock edge
+2. Output q equals:
+   - state when (a == b)
+   - ~state when (a != b)
+3. Initial state is 0
+
+This matches all waveform transitions:
+- State changes occur when a and b differ (XOR condition)
+- q follows state when inputs match, complements when they differ
+- Examples from waveform:
+  - At 45ns: a=0,b=1 (XOR) -> state toggles to 1, q=~state=1
+  - At 55ns: a=1,b=0 (XOR) -> state stays 0, q=~state=1
+  - At 65ns: a=1,b=1 -> state stays 0, q=state=0
+  - At 95ns: a=1,b=1 -> state toggles to 1 (from previous XOR condition), q=state=1

@@ -1,0 +1,17 @@
+To improve PPA (performance, power, and area) beyond the original solution, the strategy is:
+
+1. Combine all synchronous counters into a single always @(posedge clk) block to reduce control logic and improve timing by eliminating multiple sequential blocks and redundant checks.
+
+2. Use non-blocking assignments consistently in all sequential logic for synthesis correctness and predictable timing.
+
+3. Gate all counter updates under the single enable "ena" signal inside the clocked block to minimize switching activity.
+
+4. Optimize PM toggling by checking hour rollover conditions more simply and only updating PM when hour transitions from 11 to 12.
+
+5. Replace the combinational function with inline combinational logic for hour BCD conversion, to reduce combinational logic depth and improve timing.
+
+6. Keep seconds and minutes counters as two BCD digits each, but update them synchronously and sequentially in a cascade within the same always block to reduce logic complexity.
+
+7. Register outputs directly without a separate combinational always block, further reducing logic depth and ensuring outputs update synchronously.
+
+This consolidation reduces clock-to-output delay, lowers dynamic power by gating updates behind ena, and reduces area by eliminating redundant logic. It also maintains functional correctness with synchronous reset and clean hierarchical enable logic.

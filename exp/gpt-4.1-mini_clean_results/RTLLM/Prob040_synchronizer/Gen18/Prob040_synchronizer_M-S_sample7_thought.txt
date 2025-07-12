@@ -1,0 +1,5 @@
+Simplify by using only two flip-flops in the clk_b domain to delay and synchronize the enable signal (en_data_reg) as per the requirement (two cycle delay). In clk_a domain, always latch data_in into data_reg and data_en into en_data_reg on every clk_a rising edge (with async reset), since data_en is stable for at least 3 clk_b cycles and data_in is constant during data_en high. This avoids conditional updates and simplifies logic while meeting specs.
+
+In clk_b domain, delay en_data_reg by two cycles using two flip-flops (en_clap_one and en_clap_two). Use en_clap_two as the enable to update dataout from data_reg. When en_clap_two is low, hold the previous output. Use asynchronous resets on both domains for fast and safe reset.
+
+This two-stage synchronizer for the enable signal respects the problem requirement, simplifies code by removing extra synchronizer stages, and retains all functional behaviors with minimal complexity.

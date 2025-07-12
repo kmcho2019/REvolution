@@ -1,0 +1,11 @@
+Use two separate counters, cnt1 and cnt2, each counting from 0 to NUM_DIV-1 but clocked on opposite edges of the input clock (cnt1 on posedge clk, cnt2 on negedge clk).
+
+Both counters toggle their respective clock divides (clk_div1 and clk_div2) when their counter reaches (NUM_DIV-1)/2, effectively toggling at half the divisor count on their respective clock edges.
+
+Because NUM_DIV is odd, the (NUM_DIV-1)/2 count corresponds to the midpoint for toggling, ensuring the combined output clk_div (OR of clk_div1 and clk_div2) achieves the exact frequency division by the odd number with balanced duty cycle.
+
+The design synchronizes toggling to both edges, allowing the divided clock to toggle twice per input clock cycle, thus effectively dividing frequency by the odd number.
+
+An asynchronous active low reset clears counters and output registers.
+
+This approach explicitly uses two counters and two toggles on separate clock edges as originally requested, providing clean, phase-aligned toggling for the odd division.

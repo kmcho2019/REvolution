@@ -1,0 +1,6 @@
+To improve PPA, reduce power and improve timing by inserting a clock enable signal that only updates the counter when needed. Since a Johnson counter cycles through 2*N states for N bits, we can add logic to update the counter only if Q is not at the terminal states, but this would complicate logic. Instead, keep the simple logic but replace the asynchronous reset with a synchronous reset to improve timing closure, as asynchronous resets often slow down the design and increase area and power. Also, explicitly declaring Q as a shift register with an attribute might help synthesis tools optimize area and speed. Lastly, simplify the feedback bit logic by directly assigning it from Q[0] (invert if 0 then 1 else 0), keeping the code clean and concise.
+
+Summary:
+- Change asynchronous reset (posedge clk or negedge rst_n) to synchronous reset (posedge clk).
+- Keep the same feedback logic (feedback_bit = ~Q[0]).
+- Add synthesis-friendly shift register attribute for better area and timing optimization.

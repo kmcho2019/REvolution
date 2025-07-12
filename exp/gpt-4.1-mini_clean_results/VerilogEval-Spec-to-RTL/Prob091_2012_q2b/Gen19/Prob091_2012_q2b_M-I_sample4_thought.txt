@@ -1,0 +1,9 @@
+The current implementation is already minimal and functionally correct, with straightforward combinational logic. To optimize power and area slightly:
+
+- Instead of generating ~w as a separate wire, integrate it directly in the expressions to reduce inverters.
+- Avoid redundant negations by rewriting expressions using De Morgan's laws, maintaining the minimal number of gates.
+- For Y3, the current expression Y3 = (~w) & ~(y[0] | y[3]) is already compact, using only two inputs in the OR gate, which is optimal for area and power.
+- For Y1, y[0] & w is minimal.
+- Remove the NextStateInput module instantiation to slightly reduce overhead by merging logic directly into TopModule, making a flatter hierarchy with fewer nets, which can improve synthesis efficiency on area and power for such a small design.
+  
+This yields the same functionality with slightly simpler hierarchy and marginally better PPA.

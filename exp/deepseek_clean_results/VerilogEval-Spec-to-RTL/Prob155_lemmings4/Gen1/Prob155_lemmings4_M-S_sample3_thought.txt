@@ -1,0 +1,18 @@
+To simplify the Lemming state machine while maintaining functionality:
+
+1. Key simplifications:
+   - Remove $past() usage by tracking previous walking direction with a register
+   - Combine walking states into one state with a direction flag
+   - Simplify fall counter logic by counting only during fall state
+   - Remove redundant state transitions by prioritizing conditions
+
+2. State representation:
+   - Use a direction register (dir) for left/right instead of separate states
+   - Main states: WALK, FALL, DIG, SPLAT
+
+3. Priority handling:
+   - Fall has highest priority (ground=0)
+   - Then dig (when ground=1 and dig=1)
+   - Finally direction change (bump)
+
+4. Output logic remains straightforward Moore style

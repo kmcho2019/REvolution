@@ -1,0 +1,11 @@
+Refactor the design to separate the next state computation and state storage more clearly. Instead of a dedicated register module with clock enable, implement the state register inside TopModule using an always block with explicit load and state update logic. Use a combinational function for Rule 110 logic that directly computes the next state vector. This approach simplifies the code structure, avoiding an extra module and removing the explicit clock enable signal to reduce complexity.
+
+The next state is computed combinationally on each cycle from the current state (including zero padding boundaries). On each clock's rising edge:
+- If load is high, load the data input directly into the state.
+- Otherwise, update the state to the computed next state.
+
+This method is simpler and more straightforward while maintaining the same functionality. The logic expression for Rule 110 is preserved, and boundaries are handled with zero padding. The design is modular and easy to understand, suitable for synthesis tools.
+
+This restructuring eliminates the separate clock enable logic and comparator, potentially simplifying timing analysis, though switching power might be slightly higher without clock gating.
+
+Overall, this refactoring focuses on clarity and simplicity rather than adding clock enable gating.

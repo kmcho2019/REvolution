@@ -1,0 +1,25 @@
+To fix the FSM and ensure correct sequence detection, output timing, and reliable operation:
+
+1. **Fix the x_shift update and reset:**
+   - Keep the x_shift register updated on every clock cycle after reset is released (i.e., whenever not in reset), regardless of current state.
+   - Do not reset x_shift outside reset to avoid losing sequence history.
+   This ensures a sliding window of last 3 x samples is always maintained, enabling correct detection of the 1,0,1 pattern immediately when it occurs.
+
+2. **Correct monitor_count update and state transitions:**
+   - Update monitor_count synchronously in the clocked block, but based on current state (not next_state).
+   - Only increment monitor_count in MONITOR_Y state; reset it to zero in all other states.
+   - In combinational next state logic, use the *current* value of monitor_count (which reflects last clock's count) to decide transitions.
+   This synchronization avoids combinational-synchronous race and timing errors between combinational transition logic and synchronous counter updates.
+
+3. **Maintain outputs strictly Moore style:**
+   - f=1 only in PULSEF state (one cycle pulse).
+   - g=1 in MONITOR_Y and HOLD_G1 states.
+   - g=0 otherwise.
+   
+4. **State and reset handling:**
+   - Keep synchronous active low reset inside clocked block.
+   - Use one-hot encoding states, as before.
+   - On reset, clear x_shift and monitor_count.
+   - On release of resetn, move from RESET to WAIT_REL state, then PULSEF (f=1), then SEQ_DETECT to detect pattern using the sliding window (x_shift).
+
+This fixed approach removes resetting x_shift outside reset, allowing immediate, continuous detection of the x sequence; synchronizes monitor_count updates properly; and aligns the FSM outputs and transitions with the problem specification and timing requirements.

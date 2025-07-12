@@ -1,0 +1,14 @@
+To address the issues mentioned in the feedback, we need to revise the design of the branch predictor. The main problems identified were:
+
+1.  Incorrect updates of the GHP history: The GHP history was being updated based on the `train_taken` signal, but it did not account for the `train_mispredicted` signal. To fix this, we should update the GHP history based on the predicted branch direction, and recover the history register when a misprediction occurs.
+2.  Incorrect updates of the meta-predictor confidence: The confidence values were being updated based on the `train_mispredicted` signal, but they did not account for the actual prediction outcome. Since we are implementing a gshare branch predictor, we can simplify the design by removing the meta-predictor and using a single prediction table.
+3.  Incorrect handling of the asynchronous reset signal: The reset signal should be used to initialize the predictor tables and history registers correctly.
+
+Here is the revised design:
+
+*   Remove the local history predictor (LHP) and meta-predictor, and use a single global history predictor (GHP) table.
+*   Update the GHP history based on the predicted branch direction, and recover the history register when a misprediction occurs.
+*   Use the `train_valid` and `train_mispredicted` signals to update the GHP table correctly.
+*   Handle the asynchronous reset signal to initialize the predictor tables and history registers correctly.
+
+By simplifying the design and fixing the issues mentioned in the feedback, we can improve the accuracy and efficiency of the branch predictor.

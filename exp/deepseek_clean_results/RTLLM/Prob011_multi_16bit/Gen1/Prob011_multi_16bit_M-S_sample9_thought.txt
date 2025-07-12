@@ -1,0 +1,12 @@
+The simplified design maintains the same functionality while optimizing for PPA:
+1. Reduce counter width to 4 bits (0-15) by checking i==15 for completion
+2. Eliminate redundant i==17 state by clearing done flag when start is deasserted
+3. Combine register updates into single always block
+4. Use fixed shifts by pre-calculating all possible shifted versions of breg
+5. Simplify control logic by removing intermediate states
+
+Key optimizations:
+- Fixed shifts reduce multiplexer complexity
+- Smaller counter saves area
+- Simplified state machine improves timing
+- Combined always block reduces power from unnecessary toggles

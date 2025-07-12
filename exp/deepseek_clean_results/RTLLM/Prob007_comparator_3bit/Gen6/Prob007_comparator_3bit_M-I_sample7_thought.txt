@@ -1,0 +1,11 @@
+To optimize the comparator further, I'll implement these improvements:
+1. Replace the generate block with direct bit comparisons since we only have 3 bits - this reduces hierarchy overhead
+2. Implement A_less as direct comparison (A < B) instead of derived from other outputs - saves one logic gate
+3. Use local buffers for shared signals (bit_equal) to reduce fanout and switching power
+4. Structure the logic to minimize critical path depth while maintaining clean mutually exclusive outputs
+5. Use parallel comparison for all bits since the design is small enough that the power overhead is negligible
+
+The optimized version will maintain the same functionality but with better PPA metrics through:
+- Reduced gate count (area)
+- Lower fanout on shared signals (power)
+- Balanced critical paths (performance)

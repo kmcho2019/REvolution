@@ -1,0 +1,11 @@
+To optimize the pipelined unsigned 8-bit multiplier for better performance, power, and area (PPA), I will restructure the partial product summation into a balanced 3-stage adder tree pipeline. This divides the wide combinational addition into smaller 16-bit additions spread over multiple clock cycles, reducing the critical path and improving timing (WNS). 
+
+Specifically, pipeline stage 1 generates partial products and sums pairs of them into 4 intermediate sums. Pipeline stage 2 sums those 4 sums into 2 intermediate sums. Pipeline stage 3 adds the last 2 sums to get the final product.
+
+This deeper pipelining improves max clock frequency by reducing combinational depth per cycle. It also reduces glitching and switching in large adders, thus lowering power. Registering intermediate sums suppresses glitches.
+
+The enable signal is propagated through a 4-bit shift register to align with the 4-stage pipeline latency.
+
+Overall, this pipeline uses more registers but a smaller and faster combinational addition per stage, enhancing timing without significantly increasing area or power.
+
+Input registers latch operands only when input enable is asserted. Output is zeroed if output enable is low.

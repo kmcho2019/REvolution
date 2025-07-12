@@ -1,0 +1,5 @@
+Implement the behavior using a simple synchronous process where q is updated only on the rising edge of clk. When 'a' is high, set q directly to 4. When 'a' is low, increment q modulo 7 (0 through 6) with a wrap-around from 6 back to 0, but offset such that the sequence starts effectively from 4. Initialize q to 4 on reset.
+
+This design uses arithmetic operations (addition with modulo) for state transitions rather than a case statement, relying on the modulo-7 count sequence when a=0, and forced 4 when a=1. This approach reduces combinational logic complexity and may simplify synthesis and area.
+
+We will add an asynchronous reset signal for defined initialization, initializing q to 4, which matches the waveform that holds q at 4 at start.

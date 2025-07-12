@@ -1,0 +1,7 @@
+Analyzing the waveform, q depends on c for values 0 to 3 to select inputs b, e, a, and d respectively; for c >= 4, q is always 4'hF.
+
+Instead of using a case statement directly on c, we can implement this behavior by creating a small 4-entry lookup table of inputs {b, e, a, d} indexed by the 2 LSBs of c when c < 4, else output 4'hF.
+
+This can be done by using a mux tree controlled by (c < 4) and the 2-bit index c[1:0], yielding q = 4'hF if c >= 4, or else one of the 4 inputs selected by the 2 LSBs of c.
+
+This structure explicitly encodes the selection logic in a multiplexing structure and the range check, giving a distinct architectural approach from the original case statement solution.

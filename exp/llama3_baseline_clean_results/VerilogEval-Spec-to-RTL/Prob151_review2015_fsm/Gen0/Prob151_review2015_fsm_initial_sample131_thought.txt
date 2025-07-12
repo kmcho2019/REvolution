@@ -1,0 +1,6 @@
+To solve this problem, we need to design a finite-state machine (FSM) that can detect the pattern 1101, shift in 4 more bits, wait for the counters to finish counting, and then notify the user and wait for acknowledgment. The FSM should have the following states:
+- Idle: search for the pattern 1101
+- Pattern Detected: assert shift_ena for 4 clock cycles
+- Waiting for Counters: assert counting and wait for done_counting
+- Waiting for Acknowledgment: assert done and wait for ack
+We can use a 4-state FSM to implement this behavior, with each state corresponding to one of the above steps. We will use a counter to keep track of the number of clock cycles for which shift_ena is asserted.

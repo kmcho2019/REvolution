@@ -1,0 +1,22 @@
+Novel Architecture Idea: Shift Register with Embedded State Control
+
+Instead of using a traditional state machine, this design leverages the shift register itself to track progress through the sequence detection and timing phases. The key innovations are:
+
+1. Unified Shift Register: Combines pattern detection and shift counting in a single 8-bit register
+   - Bits [7:4] store the detected pattern (1101)
+   - Bits [3:0] count the 4 shift cycles after detection
+
+2. Dynamic State Encoding: The register content directly represents the system state:
+   - 00000000: IDLE (waiting for pattern)
+   - 1101xxxx: Pattern detected, shifting in duration
+   - 11011111: Shift complete, ready for counting
+
+3. Smart Reset Logic: Partial resets maintain pattern detection while clearing other states
+
+4. Output Generation: Direct decoding from register contents eliminates separate state variables
+
+Benefits:
+- Reduced logic complexity (no explicit state machine)
+- Natural alignment between pattern detection and shift counting
+- Self-timing shift duration (4 cycles)
+- Clear visibility into current operation through register value

@@ -1,0 +1,11 @@
+To improve the original design and ensure correct functionality without timing or control flow issues, we explicitly separate the shift register update from output assignment to avoid race conditions. The shift register always shifts in the new bit at the MSB. The 4-bit counter increments only when din_valid is asserted, counting from 0 to 7 for 8 bits received. When the counter reaches 7 (indicating the 8th bit), we output the complete 8-bit parallel data stored in the shift register and assert dout_valid for exactly one clock cycle. 
+
+This approach guarantees that dout_parallel is stable and valid immediately after receiving 8 serial bits. Also, we default dout_valid to zero each clock cycle to generate a single-cycle pulse. All registers are synchronous to clk and asynchronous reset is active low. Nonblocking assignments are consistently used. This solution aligns with best synchronous design practices, simplifying timing and guaranteeing functional correctness.
+
+For better PPA:  
+- The design uses a simple 8-bit shift register and 4-bit counter, which is minimal and efficient.  
+- Since dout_parallel outputs the shift register content directly, no extra registers are needed.  
+- The single-cycle pulse on dout_valid prevents glitches and unnecessary toggling, saving power.  
+- This simplicity also reduces area and critical path delays.
+
+The resulting module is robust, clear, and efficient, fully meeting the requirements.

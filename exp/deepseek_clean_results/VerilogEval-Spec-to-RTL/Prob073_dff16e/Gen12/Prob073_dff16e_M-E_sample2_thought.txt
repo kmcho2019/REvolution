@@ -1,0 +1,19 @@
+Novel Architecture Idea:
+1. Hierarchical Byte Grouping:
+   - Instead of individual bit control, group the 16 bits into two 8-bit registers
+   - Each 8-bit register has its own enable signal derived from byteena
+   - This reduces control signal fanout and enables better synthesis optimization
+
+2. Optimized Reset Implementation:
+   - Use a single reset condition check for each byte group
+   - Avoid redundant reset logic for each individual bit
+
+3. Direct Register Inference:
+   - Use always blocks to infer registers directly rather than instantiating DFF modules
+   - This allows the synthesis tool to optimize the implementation better
+
+4. Benefits:
+   - Reduced control signal fanout (only 2 enable signals instead of 16)
+   - Better area utilization through byte grouping
+   - Clearer hierarchy for synthesis tools to optimize
+   - Maintains same functionality while improving PPA metrics

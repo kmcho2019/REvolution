@@ -1,0 +1,8 @@
+To refactor the clock generator while keeping the core idea—producing a periodic clock toggling every half PERIOD using simulation delays—we can replace the initial block with an always block triggered by a dummy event or an always block starting at time zero. Since delays (#) are allowed only in initial or always blocks, an always block is a suitable choice.
+
+We will:
+- Declare clk as a reg output.
+- Initialize clk to 0 using an initial block.
+- Use an always block without sensitivity list that runs forever, toggling clk every half PERIOD time units using delays.
+- This approach is still non-synthesizable, intended for simulation only.
+- This refactoring avoids the initial block with forever, instead using initial to set clk and always for toggling, which some simulators might handle more predictably.

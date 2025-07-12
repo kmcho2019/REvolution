@@ -1,0 +1,13 @@
+Fuse the compact single 3-bit state encoding from Example 1 with the straightforward, clean, and concise priority and assignment style from Example 2. Use a single always block for both state and direction updates, with asynchronous reset, and minimal combinational logic for next state calculation.
+
+Specifically:
+- Keep the 3-bit state: [2:1]=mode (00=walk, 01=fall, 10=dig), [0]=direction (0=left,1=right).
+- On each clock edge or async reset, update state according to clear priority: if falling condition (ground=0) met, enter falling; else if dig requested on walking and ground, enter digging; else if walking and bump detected, switch direction accordingly.
+- When falling or digging, ignore bumps.
+- When ground returns from falling or digging, resume walking in previous direction.
+- This uses Example 1's encoding and Moore outputs, but Example 2's single always block style that directly updates the entire state register.
+- This approach reduces logic fanout and separates the combinational next state logic into a small, clear always_comb block, improving synthesis optimization and timing.
+- Avoid unnecessary direction updates when bumps don't occur.
+- Maintain the asynchronous reset initializing to walk left.
+
+This hybrid strategy combines clarity, compact encoding, simple priority logic, and efficient sequential update to maximize performance, power, and area efficiency.

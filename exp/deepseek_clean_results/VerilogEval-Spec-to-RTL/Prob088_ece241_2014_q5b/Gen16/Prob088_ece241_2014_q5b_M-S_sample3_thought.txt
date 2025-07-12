@@ -1,0 +1,19 @@
+Simplification Strategy:
+1. State Transition Optimization:
+   - Recognize that state_B is a "sticky" state - once entered, we never leave it
+   - Therefore, next_state_B can simply be (state_B | (state_A & x))
+   - This eliminates one OR operation compared to previous solution
+
+2. Output Logic Optimization:
+   - The output z is simply x when in state_A, and ~x when in state_B
+   - This can be expressed concisely as z = state_A ? x : ~x
+
+3. Reset Logic:
+   - Maintain simple asynchronous reset to state_A
+   - Only need to reset state_A to 1 and state_B to 0
+
+Key Improvements:
+- Reduced logic complexity for next_state_B
+- Maintained clear one-hot encoding
+- Kept minimal and efficient output logic
+- All transitions and outputs match specification

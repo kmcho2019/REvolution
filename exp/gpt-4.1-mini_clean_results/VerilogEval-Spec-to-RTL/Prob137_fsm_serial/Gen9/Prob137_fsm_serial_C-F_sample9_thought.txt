@@ -1,0 +1,7 @@
+Fuse the best aspects of both examples by using a clean, binary-encoded FSM with separate combinational next-state and output logic and synchronous state/data updates to improve readability and maintainability. Maintain LSB-first bit reception by shifting the shift register right and inserting the new bit at MSB, as done in both examples, since this aligns with serial input order and synthesis-friendly shifting.
+
+Optimize power by only resetting the bit counter and shift register on transitions or reset (not every clock cycle) to reduce toggling. Generate the done signal combinationally to be asserted only for one cycle immediately after verifying the stop bit, improving output timing clarity.
+
+Use a typedef enum for states to leverage SystemVerilog clarity, keep state and data path updates in a single always_ff block with synchronous reset, and separate next_state and done combinational logic in an always_comb block. This approach combines clarity and efficiency from Example 1 and succinctness from Example 2.
+
+Overall, this fusion yields a highly readable FSM that cleanly separates concerns, uses minimal registers, reduces unnecessary resets, and asserts done precisely and cleanly, meeting all problem requirements with good PPA balance.

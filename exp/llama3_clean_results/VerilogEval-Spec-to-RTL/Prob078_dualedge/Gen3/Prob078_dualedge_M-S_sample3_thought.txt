@@ -1,0 +1,9 @@
+To simplify the existing solution, we can directly utilize a single D-type flip-flop and use the clock edge detection to decide whether to capture the input data on the rising or falling edge of the clock. This can be achieved by using two separate D-type flip-flops, one triggered on the rising edge and the other on the falling edge, and then selecting the output based on the clock edge.
+
+A more straightforward approach is to use a 2-stage shift register with one flip-flop triggered on the rising edge and the next on the falling edge. However, an even simpler solution is to directly use the input data `d` as the basis for setting or resetting the output `q` upon detecting either edge of the clock.
+
+The key insight here is recognizing that the complex asynchronous set/reset logic can be simplified by focusing on the basic principle of a dual-edge triggered flip-flop: it should capture the input data `d` on both rising and falling edges of the clock `clk`. This simplification avoids unnecessary complexity and potential issues with asynchronous set/reset signals.
+
+We can achieve the desired functionality by using a single always block that detects both edges of the clock and updates the output `q` accordingly. This approach ensures that the flip-flop behaves as a dual-edge triggered flip-flop without the need for explicit asynchronous set and reset signals.
+
+By directly using the detected clock edges to update the output `q` with the input `d`, we eliminate the need for additional logic and simplify the implementation.

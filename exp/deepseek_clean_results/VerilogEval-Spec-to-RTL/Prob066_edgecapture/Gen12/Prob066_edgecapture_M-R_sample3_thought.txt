@@ -1,0 +1,13 @@
+Refactored solution using continuous assignment for edge detection:
+
+1. **Immediate Edge Detection**: Use an `assign` statement to continuously monitor for 1→0 transitions by comparing the current input with a registered version of the previous input. This eliminates any pipeline delay in detection.
+
+2. **Sticky Capture Logic**: Maintain the sticky behavior using a register that gets set by any falling edge and only clears on reset. This is implemented in the always block.
+
+3. **Simplified Structure**: The edge detection becomes combinational logic while the capture remains sequential, making the design more modular and easier to understand.
+
+Key improvements:
+- Immediate detection of falling edges without pipeline delay
+- Clear separation of combinational (edge detect) and sequential (capture) logic
+- Maintains all original functionality with simpler structure
+- More transparent timing behavior

@@ -1,0 +1,20 @@
+1. **Simplified Pattern Detection**:
+   - Use a 4-bit shift register to detect the 1101 pattern sequentially
+   - Transition to delay capture state immediately after pattern match
+
+2. **Single Counter Approach**:
+   - Replace the two-stage counter with a single 16-bit counter
+   - Calculate total cycles as (delay + 1) * 1000 upfront
+   - Count down from this value directly
+
+3. **Streamlined State Machine**:
+   - Reduce to 4 clear states: IDLE, CAPTURE, COUNT, DONE
+   - Eliminate intermediate counters and complex calculations
+
+4. **Direct Output Generation**:
+   - Calculate remaining time by dividing counter by 1000
+   - Output counting/done signals directly from state
+
+5. **Simplified Reset Handling**:
+   - Clear all registers on reset
+   - Return to IDLE state immediately

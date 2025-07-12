@@ -1,0 +1,11 @@
+Use a one-hot encoded FSM with five states to explicitly separate the detection of the start bit, each of the 8 data bits, the stop bit check, and an error recovery state. Each data bit is received in its own unique state, simplifying bit counting and control logic without a separate counter. 
+
+Shift in bits LSB first by placing the input bit at the LSB and shifting the previous bits left, building the byte naturally as bits arrive.
+
+Assert done for one cycle when the stop bit is verified as correct, updating out_byte simultaneously.
+
+If the stop bit is incorrect, transition to an error recovery state that waits for the line to idle (in == 1) before returning to waiting for a start bit.
+
+Use an active-high synchronous reset that initializes all registers and FSM state to idle (waiting for start bit).
+
+This design avoids the need for a separate bit counter by using separate states for each data bit, simplifying control logic at the expense of more state bits, which is acceptable given the small number of states and can improve timing by removing counters and combinational logic for counting.

@@ -1,0 +1,8 @@
+To optimize the original hierarchical 256-to-1 4-bit multiplexer implementation for better power, performance, and area (PPA), we will eliminate intermediate unpacking arrays and hierarchical mux stages. Instead, we will use a direct indexed part-select expression `out = in[sel*4 +: 4]`. This approach:
+
+1. Reduces combinational delay by implementing a flat, single-level mux, minimizing logic depth.
+2. Lowers switching activity and net capacitance by avoiding unpacking into arrays and intermediate signals.
+3. Decreases area by synthesizing fewer logic elements, as most synthesis tools efficiently handle indexed part-selects.
+4. Simplifies code, improving readability and maintainability.
+
+Given that the input vector is fully packed and the select controls a contiguous 4-bit slice, this direct indexing provides an equivalent and more efficient implementation.

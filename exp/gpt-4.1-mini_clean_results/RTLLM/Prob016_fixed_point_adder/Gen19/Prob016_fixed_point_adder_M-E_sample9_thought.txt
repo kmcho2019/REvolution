@@ -1,0 +1,16 @@
+Implement the fixed-point adder by explicitly extracting sign bits and absolute values of the inputs, performing addition or subtraction on the absolute values depending on sign combinations, and then reconstructing the result with the correct sign bit.
+
+Idea:
+- Extract sign bit (MSB) and absolute magnitude of inputs:
+  - If sign bit is 1 (negative), compute absolute value as two's complement of input.
+  - Else, absolute value is input as is.
+- If signs are equal, add absolute values and assign the same sign to the result.
+- If signs differ, subtract smaller absolute value from larger absolute value.
+  - The result sign is sign of operand with larger absolute magnitude.
+  - If result is zero, sign bit is zero (positive zero).
+- After addition or subtraction, convert the magnitude back to two's complement with the determined sign.
+- Assign to output.
+- Use internal register res to store intermediate result.
+- Parameterized to support arbitrary fractional bits Q and total bits N.
+- This approach cleanly implements fixed-point addition respecting signs and absolute values and explicitly handles sign determination.
+- Overflow is implicitly handled by truncation to N bits.

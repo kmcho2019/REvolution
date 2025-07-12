@@ -1,0 +1,16 @@
+Here's a novel approach using a lookup table (LUT) implementation instead of logic gates. The idea is to:
+
+1. Concatenate all four inputs to form a 4-bit address (dcba)
+2. Use this address to index into a pre-programmed 16-entry ROM
+3. Each ROM entry corresponds to the output value for that specific input combination
+4. The ROM is implemented as a case statement in Verilog
+
+Advantages:
+- Completely different architecture from XOR-based solutions
+- Easy to modify if the truth table changes
+- Clear mapping from K-map to implementation
+- No gate-level optimizations needed - the case statement handles all combinations explicitly
+
+Disadvantages:
+- May use more area than minimal gate implementation
+- Less efficient for simple patterns (though equivalent for this case)

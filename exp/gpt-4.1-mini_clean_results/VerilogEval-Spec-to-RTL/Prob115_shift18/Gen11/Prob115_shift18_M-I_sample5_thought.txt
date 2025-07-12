@@ -1,0 +1,17 @@
+To optimize the existing 64-bit arithmetic shift register for better PPA (performance, power, area), we focus on reducing the large 64-bit multiplexers and expensive arithmetic shifts.
+
+Key improvements:
+
+1. Implement shifts by 1 and 8 bits using simple wiring and concatenations rather than arithmetic shift operators. Since shifting by powers of two corresponds to wiring, this reduces synthesis complexity.
+
+2. Instead of precomputing four 64-bit shifted values and then selecting via 64-bit muxes, we apply a hierarchical approach:
+   - Use the direction bit to decide left or right shift logic first.
+   - Within each direction, select shift amount (1 or 8) with a smaller mux (only 64 bits wide, but less mux logic because only one mux is needed at a time).
+   
+3. For arithmetic right shift, replicate the MSB as sign extension on the shifted-in bits explicitly using concatenation, avoiding arithmetic shifts or operators that might produce inefficient logic.
+
+4. Combine shift operations with fewer mux layers using case statements to allow synthesis tools to optimize mux trees better.
+
+5. Additionally, we gate shifting behind ena to minimize switching — the output register updates only if ena or load is asserted.
+
+These improvements reduce mux fanout, logic complexity, and can improve timing, power, and area. The functionality remains the same, and synchronous load is preserved.

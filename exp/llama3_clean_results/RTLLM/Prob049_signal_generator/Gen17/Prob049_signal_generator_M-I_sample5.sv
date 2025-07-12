@@ -1,0 +1,35 @@
+module signal_generator(
+    input clk,
+    input rst_n,
+    output reg [4:0] wave
+);
+
+reg [4:0] counter;
+reg incrementing;
+
+always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        counter <= 0;
+        incrementing <= 1;
+    end else begin
+        if (incrementing) begin
+            if (counter == 31) begin
+                counter <= counter;
+                incrementing <= 0;
+            end else begin
+                counter <= counter + 1;
+            end
+        end else begin
+            if (counter == 0) begin
+                counter <= counter;
+                incrementing <= 1;
+            end else begin
+                counter <= counter - 1;
+            end
+        end
+    end
+end
+
+assign wave = counter;
+
+endmodule

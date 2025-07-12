@@ -1,0 +1,16 @@
+To implement this finite state machine, we'll define the possible states as follows:
+- LEFT: walking left
+- RIGHT: walking right
+- FALLING_LEFT: falling after walking left
+- FALLING_RIGHT: falling after walking right
+
+The initial state will be LEFT. We'll use a reset signal to reset the state machine to LEFT when areset is high.
+
+When the Lemming is walking and hits an obstacle (bump_left or bump_right), we'll change its direction.
+If the Lemming is walking left and bump_left is high, it will switch to the RIGHT state.
+If the Lemming is walking right and bump_right is high, it will switch to the LEFT state.
+
+When the ground disappears (ground=0), the Lemming will fall, and we'll switch to the FALLING_LEFT or FALLING_RIGHT state, depending on the previous direction.
+When the ground reappears (ground=1), the Lemming will resume walking in the same direction as before the fall.
+
+We'll use a Moore state machine, so the output will be determined solely by the current state.

@@ -1,0 +1,9 @@
+To optimize the PPA metrics while maintaining functionality:
+1. Remove the parameterized approach since it's overkill for this simple case
+2. Implement both AND gates directly in TopModule to eliminate module instantiation overhead
+3. For the always block version, use direct assignment without a temporary register
+4. This reduces:
+   - Power by eliminating redundant logic
+   - Area by removing unnecessary hierarchy and registers
+   - Maintains zero timing impact
+5. The solution remains clean and readable while being more efficient

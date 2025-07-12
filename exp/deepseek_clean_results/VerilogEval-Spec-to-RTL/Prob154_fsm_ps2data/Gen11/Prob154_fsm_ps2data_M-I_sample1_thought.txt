@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. State Machine Optimization:
+   - Replace one-hot encoding with binary encoding (2 bits) since we only have 3 states
+   - This reduces flip-flop count and associated power/area overhead
+
+2. Output Register Optimization:
+   - Only update out_bytes when needed (during state transitions)
+   - Remove unnecessary reset of out_bytes since it's don't-care when not done
+
+3. Timing Improvement:
+   - Make 'done' signal combinational to break the critical path
+   - Simplify state transition logic by removing default case (covered by reset)
+
+4. Power Reduction:
+   - Reduce switching activity by only updating registers when necessary
+   - Use binary state encoding to minimize state bit toggling
+
+Key Changes:
+- Binary state encoding (00: IDLE, 01: BYTE2, 10: BYTE3)
+- Combinational done signal for better timing
+- Conditional output register updates
+- Simplified state machine structure

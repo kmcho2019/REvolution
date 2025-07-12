@@ -1,0 +1,7 @@
+The original implementation uses the equality operator (==) which synthesizes into two XNOR gates and an AND gate, providing minimal logic and delay. For such a small width (2 bits), this is already optimal for performance and area.
+
+To slightly improve power, we can manually instantiate the XNOR and AND gates explicitly to ensure minimal gate usage and possibly help the synthesis tool with gate-level optimization. Using gate primitives could also enable more fine-grained control or gate-level optimizations such as gate sharing or input gating in downstream tools.
+
+Thus, the improvement involves explicitly instantiating the XNOR gates and AND gate instead of relying on the equality operator. This does not increase complexity but can potentially reduce glitching and switching activity, leading to marginal power benefits.
+
+No change in functionality or interface occurs.

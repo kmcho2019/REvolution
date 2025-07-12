@@ -1,0 +1,12 @@
+The problem requires a finite state machine (FSM) to manage the different states of the timer. The states can be defined as follows:
+- IDLE: searching for the input sequence 1101
+- SHIFT: shifting in the delay bits after the sequence is detected
+- COUNT: counting down the delay
+- DONE: waiting for the user to acknowledge the timer
+The FSM will be implemented using a case statement in Verilog.
+
+To keep track of the current state of the FSM, a variable `state` will be used. This variable will be updated based on the current state and the inputs to the FSM.
+
+The counting functionality will be implemented using a counter `count` that will decrement every 1000 clock cycles. The current remaining time will be displayed on the `count` output.
+
+When the `count` reaches 0, the `done` output will be asserted to notify the user. The FSM will then wait for the `ack` input to be asserted before resetting to the IDLE state.

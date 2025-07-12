@@ -1,0 +1,7 @@
+To improve the solution, we need to correct the logic for handling the 'tc' signal when the counter reaches 0. The 'tc' signal should remain asserted until the counter is reloaded. This can be achieved by setting 'tc_reg' to 1 when 'count' is 0 and not reloading the counter. Additionally, we can optimize the design by reducing unnecessary logic and minimizing transitions to improve power consumption.
+
+The key improvement is to introduce a separate condition to check if the counter has reached 0 and the load signal is 0, in which case, we do not reset 'tc_reg' but instead, let it retain its previous value, which would have been set to 1 when the counter first reached 0. This ensures 'tc' remains asserted until the counter is reloaded.
+
+Furthermore, we should only decrement the counter when it is greater than 0, to prevent it from going into negative values. Once the counter reaches 0, it should stop decrementing.
+
+To optimize for better PPA, we keep the design simple and focused on the required functionality, minimizing the number of logic gates and transitions.

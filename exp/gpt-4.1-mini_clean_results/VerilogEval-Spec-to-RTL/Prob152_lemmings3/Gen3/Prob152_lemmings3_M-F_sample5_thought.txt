@@ -1,0 +1,19 @@
+The bug is in the bump logic during walking on stable ground: it toggles direction regardless of which bump signal is active, but the spec requires direction to be set explicitly:
+- If bumped on the left (bump_left=1), walk right (direction=1).
+- If bumped on the right (bump_right=1), walk left (direction=0).
+- If bumped on both sides simultaneously, toggle direction.
+
+Also, bumps only affect direction when walking and ground is stable (ground=1 and previous ground=1).
+
+To fix this, the bump logic must explicitly handle these cases:
+
+- Both bumps: flip direction.
+- Only bump_left: direction = right (1).
+- Only bump_right: direction = left (0).
+- No bump: direction unchanged.
+
+This ensures the FSM behavior matches the specification exactly and prevents direction glitches or mismatches.
+
+The rest of the FSM, including fall and dig priorities, stays the same.
+
+Implement this in the next_state calculation for the walking state, keeping stable_ground logic unchanged to ensure bumps during ground transitions are ignored.

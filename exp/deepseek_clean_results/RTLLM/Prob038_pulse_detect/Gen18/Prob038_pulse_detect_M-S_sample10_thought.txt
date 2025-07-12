@@ -1,0 +1,20 @@
+To further simplify the pulse detection module while maintaining the same functionality, I'll use the following approach:
+
+1. Single-cycle state tracking:
+   - Instead of tracking two previous states, we only need to track if we've seen the rising edge (0->1 transition)
+   - This reduces the state storage from 2 bits to 1 bit
+
+2. Edge detection logic:
+   - Detect rising edge (0->1) to set a flag
+   - Detect falling edge (1->0) when flag is set to trigger output
+   - Clear flag after detection
+
+3. Simplified output:
+   - Output is high only when we detect falling edge after a rising edge
+   - No need to store full history of states
+
+Benefits:
+- Reduced to just 1 state bit (50% less storage)
+- Simpler state transitions
+- Same detection capability for 010 pattern
+- Lower power and area

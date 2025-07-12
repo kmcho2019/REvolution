@@ -1,0 +1,29 @@
+Improvement Strategy:
+1. State Encoding Optimization: Maintain the Gray-like encoding but adjust to make output logic even simpler. New encoding:
+   A:000, B:001, C:011, D:010, E:111, F:101
+   - Keeps single-bit transitions between adjacent states
+   - Makes output z = current_state[2] OR current_state[1] (E and F both have at least one of these bits set)
+   - Reduces output logic complexity
+
+2. State Transition Logic:
+   - Flatten nested conditionals into direct ternary operations
+   - Combine common transitions (like defaulting to D for many cases)
+   - Use parallel case synthesis directive for better optimization
+
+3. Output Logic:
+   - Simplify to just checking two bits instead of one
+   - Use continuous assignment for minimal delay
+
+4. Reset Handling:
+   - Keep synchronous reset but optimize the reset-to-A path
+
+5. Power Optimization:
+   - Add explicit synthesis attributes for state encoding
+   - Use blocking assignments for next_state to potentially help synthesis
+
+Key Improvements:
+- More optimal state encoding reduces switching power further
+- Simplified output logic with same functionality
+- Flattened state transition logic improves timing
+- Explicit synthesis attributes help tools optimize better
+- Maintains all original functionality while improving PPA

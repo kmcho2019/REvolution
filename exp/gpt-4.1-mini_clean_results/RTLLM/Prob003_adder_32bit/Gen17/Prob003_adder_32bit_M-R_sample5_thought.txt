@@ -1,0 +1,15 @@
+Refactor the 32-bit carry-lookahead adder by decomposing the 16-bit CLA block into four 4-bit CLA sub-blocks hierarchically within each 16-bit block. 
+
+Each 4-bit CLA block computes local propagate, generate, sum, and carry-out signals with true carry-lookahead logic, reducing the carry chain delay inside the 16-bit block.
+
+At the 16-bit level, combine the 4-bit blocks' block propagate and generate signals to produce carries between these blocks in a hierarchical fashion.
+
+This hierarchical structure improves timing by reducing carry chain length and increases modularity.
+
+At the 32-bit top module level, instantiate two of these 16-bit CLA blocks similarly to before, connecting the carry-out of the lower 16-bit block as the carry-in of the upper 16-bit block.
+
+Keep the input/output bit indexing as [32:1], internally mapping to [0:31].
+
+The implementation uses only `assign` statements with combinational logic and avoids any always blocks, producing fully combinational, synthesizable logic.
+
+This change keeps the same core idea but replaces the single-level carry computation in 16-bit CLA with a hierarchical 4-bit block CLA for better performance and clarity.

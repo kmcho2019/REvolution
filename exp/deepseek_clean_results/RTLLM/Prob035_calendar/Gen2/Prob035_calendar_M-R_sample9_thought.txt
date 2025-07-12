@@ -1,0 +1,6 @@
+The refactored design will use a single always block with enable signals for minutes and hours updates to improve timing and reduce power consumption. Instead of separate always blocks, we'll:
+1. Generate enable signals when seconds reach 59 (min_en) and when both minutes and seconds reach 59 (hour_en)
+2. Use these enables to conditionally update minutes and hours
+3. Maintain the same rollover behavior but with cleaner logic
+4. Remove reset from the sensitivity list to reduce power during normal operation
+This approach reduces redundant comparisons and creates a more streamlined data path.

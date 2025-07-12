@@ -1,0 +1,11 @@
+The provided design is already clean and meets the functional requirements well. To optimize for better Power, Performance, and Area (PPA), we can focus on a few minor improvements:
+
+1. **Combine the state and next_wave logic into a single always block**: This reduces the number of always blocks and potential synthesis overhead.
+2. **Use non-blocking assignments consistently**: For clarity and synthesis friendliness within sequential logic.
+3. **Remove the separate combinational always block**: Instead, compute next_wave and state transitions inside the sequential block, which can lead to more optimal hardware generation since the logic is localized.
+4. **Use a single bit `state` and simple comparisons as before**: These are already optimal.
+5. **Add comments for clarity**: This helps maintainability without impacting PPA.
+
+The waveform changes every clock cycle, so the toggling itself cannot be reduced without changing functionality. The critical path remains minimal due to simple increment/decrement and comparisons.
+
+Thus, the revised design merges combinational and sequential logic into one block for a simpler and potentially more efficient synthesis result, while maintaining the correct and stable functionality.

@@ -1,0 +1,18 @@
+This alternative approach uses a bitwise priority comparison tree to decide the result without explicitly performing borrow calculations or subtraction. The comparator starts from the most significant bit (MSB) and compares bits of A and B at each position:
+
+- If A[i] > B[i], then A > B, and we stop.
+- If A[i] < B[i], then A < B, and we stop.
+- If A[i] == B[i], proceed to the next lower bit.
+
+This logic cascades down through bits 3 to 0 using combinational logic to produce mutually exclusive outputs A_greater, A_equal, and A_less.
+
+The equality check is done by a reduction XNOR across all bits to confirm all bits are equal.
+
+Advantages:
+- No subtraction or borrow logic needed.
+- Simple priority encoder style comparison, suitable for combinational logic.
+- Easy to extend to wider widths.
+- Minimal logic depth (just a chain of comparators).
+- Outputs are mutually exclusive by construction.
+
+This design strictly follows the problem requirements and avoids subtraction logic while producing the same outcomes.

@@ -1,0 +1,24 @@
+Simplified Approach for 3.5x Fractional Division:
+
+1. **Basic Counting**:
+   - Use a 3-bit counter to count 7 clock cycles (0-6) for 3.5x division
+   - Simple rollover at count 6 maintains the division ratio
+
+2. **Single Phase Generation**:
+   - Generate primary clock with 50% duty cycle (high for 3.5 cycles)
+   - Instead of two separate phases, use direct counter comparison
+   - Clock goes high at count 0 and low at count 4 (halfway point)
+
+3. **Simplified Output**:
+   - Single always block generates the output directly
+   - Eliminates need for separate phase generation and combination
+
+4. **Reset Handling**:
+   - Clean initialization of counter and output
+   - Output starts low after reset
+
+Key Simplifications:
+- Removed secondary phase generation entirely
+- Single always block for both counting and output generation
+- Direct counter comparison for output generation
+- Maintains same 3.5x division ratio with simpler logic

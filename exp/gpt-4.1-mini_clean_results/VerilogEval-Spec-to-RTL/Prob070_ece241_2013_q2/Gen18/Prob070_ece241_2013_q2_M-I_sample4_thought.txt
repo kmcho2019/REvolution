@@ -1,0 +1,48 @@
+Derive and implement the minimal sum-of-products (SOP) and product-of-sums (POS) expressions based on the given numbers.
+
+Inputs: a (MSB), b, c, d (LSB)
+Outputs:
+- out_sop = 1 for inputs 2, 7, 15
+- out_sop = 0 for inputs 0,1,4,5,6,9,10,13,14
+- Inputs 3,8,11,12 never occur (don't cares)
+
+Step 1: Convert numbers to binary (a,b,c,d):
+
+ 2  = 0010
+ 7  = 0111
+15  = 1111
+
+Zero outputs:
+
+ 0  = 0000
+ 1  = 0001
+ 4  = 0100
+ 5  = 0101
+ 6  = 0110
+ 9  = 1001
+10  = 1010
+13  = 1101
+14  = 1110
+
+Step 2: Use Karnaugh maps or algebraic minimization with don't cares (3,8,11,12) to find minimal expressions.
+
+Minimal SOP for out_sop (using K-map simplification with don't cares 3,8,11,12):
+
+out_sop = (~a & b & c & d) + (~a & b & ~c & d) + (a & b & c & d)
+        = (a'bcd) + (a'bc'd) + (abcd)
+
+Minimal POS for out_pos: output 1 for all inputs except zeros; zeros at the listed numbers correspond to output 0.
+
+Finding minimal POS is equivalent to writing product of sums where zero minterms define the maxterms:
+
+Minimal POS expression after simplification is:
+
+out_pos = (a + b + ~c + d) & (a + b + c + ~d) & (a + ~b + c + d)
+
+This corresponds to three maxterms derived from zeros that cover all zeros.
+
+Step 3: Implement these minimal expressions in Verilog.
+
+This approach ensures correct minimal SOP and POS forms, meets the problem requirements, and matches expected outputs precisely.
+
+The code uses straightforward Boolean expressions with complemented and uncomplemented signals to represent the minimal forms.

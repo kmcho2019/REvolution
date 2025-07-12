@@ -1,0 +1,5 @@
+I will refactor the original modular D flip-flop implementation by merging the flip-flop logic directly into the TopModule without a separate submodule. Instead of a dedicated module, I will implement the D flip-flop using an always block inside TopModule with a reg output. This removes one level of hierarchy while keeping correct sequential semantics via a nonblocking assignment on the positive edge of clk.
+
+To distinguish input and output clearly, I will declare q as reg internally and drive it directly as an output port, making TopModule self-contained. This simplifies the hierarchy while maintaining the same behavior and synthesis friendliness.
+
+This approach avoids the synthesis attribute and separate instance but still cleanly expresses a positive-edge triggered D flip-flop with nonblocking assignment. It is minimal, synthesis-friendly, and functionally equivalent. It demonstrates an alternative clean style where the flip-flop is part of the top-level module instead of a submodule.

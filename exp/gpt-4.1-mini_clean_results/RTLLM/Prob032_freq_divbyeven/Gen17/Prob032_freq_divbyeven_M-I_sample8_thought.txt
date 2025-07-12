@@ -1,0 +1,12 @@
+The original design uses an up-down counter and toggles the output at the peak and bottom counts to achieve a 50% duty cycle. While correct, this approach is more complex than necessary for an even frequency divider.
+
+Improvement strategy:
+- Simplify the design by using a simple up-counter that counts from 0 to (NUM_DIV/2 - 1).
+- Toggle the output clock (clk_div) each time the counter reaches (NUM_DIV/2 - 1).
+- Reset the counter to zero after toggling.
+- This straightforward method guarantees the output frequency is input frequency divided by NUM_DIV (even number).
+- Use a 4-bit counter as required.
+- Add compile-time check for even NUM_DIV parameter.
+- Initialize registers on async reset (active low).
+
+This simpler approach reduces logic complexity and toggling activity, which benefits power, performance, and area (PPA).

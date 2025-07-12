@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. Clock Domain Separation: Maintain robust two-stage synchronization from clk_a to clk_b domains (from both examples)
+2. Power Optimization: Use conditional data capture only when data_en changes (from Example 1) but implement it more efficiently
+3. Output Logic: Use explicit register-based output with conditional update (from Example 2) for better timing control
+4. Reset Handling: Use clean asynchronous resets for both domains (from both examples)
+5. Enable Path: Simplify enable path while maintaining robustness (from Example 2)
+6. Metastability Protection: Keep two-stage synchronizer but optimize register usage
+
+Key Improvements:
+- More efficient clock gating implementation that only captures data when needed
+- Clean two-stage synchronization with minimal logic
+- Power-efficient output updates only when enabled
+- Clear reset hierarchy with proper domain separation
+- Reduced switching activity in both data and enable paths
+- Maintained robust metastability protection
+
+Optimizations:
+1. Eliminated redundant data_en_prev register by using en_data_reg directly
+2. Simplified clock gating logic to only capture when data_en is high
+3. Combined reset conditions for cleaner code
+4. Maintained minimal register usage while ensuring proper synchronization

@@ -1,0 +1,7 @@
+To implement the frequency divider with a novel approach, I will use a single shared main counter that counts clock cycles of the 100 MHz input clock. From this main counter, I will derive all three output clocks by toggling their respective flip-flops when the main counter reaches specific terminal counts corresponding to half-periods of each desired output frequency.
+
+Specifically, the main counter counts from 0 up to 99 (for 100 cycles, covering the slowest clock division), then resets to 0. The 50 MHz output toggles every 1 cycle (half period of 50 MHz), the 10 MHz output toggles every 5 cycles, and the 1 MHz output toggles every 50 cycles. By comparing the counter value against these toggle points and toggling the outputs accordingly, this eliminates the need for multiple counters and avoids redundant increment logic.
+
+This architecture reduces hardware resources by using one counter and combinational checks to generate all clocks. It centralizes counting logic and synchronizes output toggling exactly on count matches, keeping the design clean and synchronous with minimal flip-flops.
+
+The reset synchronously resets the counter and output clocks. This approach also simplifies timing and eases synthesis since there's a single counter and conditional toggles.

@@ -1,0 +1,12 @@
+To simplify the solution while maintaining functionality:
+1. For out_both: We only need to check current bit and left neighbor (except for MSB which is always 0)
+2. For out_any: We only need to check current bit and right neighbor (except for LSB which is always 0)
+3. For out_different: We can use XOR between current bit and left neighbor with wrap-around
+4. Eliminate the mask wires since we can handle edge cases directly in the assignments
+5. Use simple concatenation for neighbor relationships instead of full circular shifts where possible
+
+Key simplifications:
+- Remove mask wires and handle edges directly
+- Use simpler shift operations where full circularity isn't needed
+- Maintain parallel bitwise operations for efficiency
+- Reduce total number of intermediate wires

@@ -1,0 +1,31 @@
+Fix the code by correcting the bit shift directions to properly detect the pattern and load delay bits MSB-first as specified:
+
+1. **Pattern detection shift direction:**  
+   Since bits arrive MSB-first, shift pattern_shift left by 1 and insert new bit at LSB. This way, the first received bit will be at pattern_shift[3], and the last at pattern_shift[0], allowing direct comparison to 4'b1101.
+
+2. **Delay bits loading shift direction:**  
+   Similarly, shift delay_reg left by 1, inserting new bit at LSB, building the 4-bit delay MSB-first correctly.
+
+3. **Simplify counters and count output logic:**  
+   - Initialize `tick_counter = delay_reg + 1` at COUNT entry.  
+   - Use a 10-bit `cycle_counter` counting from 0 to 999 cycles per tick.  
+   - Update `count` only once every 1000 cycles, showing the current remaining ticks minus one (starting at delay_reg). This count remains stable throughout the 1000 cycles.  
+   - On cycle_counter rollover, decrement tick_counter.  
+   - When tick_counter reaches zero after last cycle, move to WAIT_ACK.
+
+4. **FSM transitions:**  
+   Keep states: SEARCH, DELAY_LOAD, COUNT, WAIT_ACK.  
+   Pattern detection immediately when pattern_shift matches 1101.  
+   Wait for all 4 delay bits to load before moving to COUNT.
+
+5. **Outputs:**  
+   When counting, `count` shows current remaining ticks minus one (as per spec).  
+   When not counting, count output is don't-care; drive zero for clarity.  
+   Assert counting during COUNT state.  
+   Assert done in WAIT_ACK state and hold until ack received.
+
+6. **Reset synchronous and consistent.**  
+   Use a registered previous_state to detect transitions and initialize counters properly.
+
+This fixes the main functional bugs: correct bit order in shift registers, proper delay value loaded, and correct timing for counting.  
+Thus the timer runs exactly `(delay+1)*1000` cycles, count output stable during each 1000-cycle interval, and FSM transitions as expected.

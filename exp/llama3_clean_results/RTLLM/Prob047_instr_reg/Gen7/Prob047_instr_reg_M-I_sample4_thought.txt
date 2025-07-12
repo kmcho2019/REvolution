@@ -1,0 +1,11 @@
+The provided Verilog code for the instruction register module seems to be a good starting point, but it has room for improvement, especially considering the PPA metrics. To optimize the design for better performance, area, and power consumption, several strategies can be employed. 
+
+First, the current reset logic uses an `assign` statement with a conditional expression involving the `rst` signal. This can be improved by using a more traditional synchronous reset approach within a clocked `always` block, which might reduce the combinational logic's complexity and potentially decrease power consumption.
+
+Second, the design uses two separate 8-bit registers (`ins_p1` and `ins_p2`) to store instructions from different sources. While this is straightforward, it's essential to ensure that the registers are only updated when necessary, based on the `fetch` signal, to minimize unnecessary switching activity and reduce power consumption.
+
+Lastly, the output logic derives `ins`, `ad1`, and `ad2` from the stored instructions. This logic seems straightforward and doesn't immediately offer areas for optimization. However, ensuring that the outputs are only updated when the inputs change can help in reducing unnecessary switching activity.
+
+To improve the PPA metrics, especially the area and power consumption, the focus will be on simplifying the logic, minimizing unnecessary updates to the registers, and ensuring that the reset and clock synchronization are handled efficiently.
+
+Given the current PPA metrics, where `tns` and `wns` are 0.0 (indicating no timing issues), the `power` consumption is 0.00198, and the `area` is 77.0, the optimization efforts will be directed towards reducing the `power` and `area` while maintaining the current performance.

@@ -1,0 +1,11 @@
+To improve the PPA (performance, power, and area), I will optimize the FSM as follows:
+
+1. Use one-hot state encoding since there are only four states; this can improve timing by simplifying next-state decoding logic and reducing combinational depth.
+2. Register outputs to reduce glitches and switching power, as outputs will only change on clock edges.
+3. Separate output logic into a small registered block, which typically helps timing and power by reducing combinational toggling on outputs.
+4. Keep synchronous active-low reset and positive-edge clocking as per original spec.
+5. Use non-blocking assignments consistently in sequential blocks.
+6. Maintain priority logic in the next state combinational block but simplify conditions using explicit boolean variables for clarity and minor optimization.
+7. The state D was missing in the original user text (referred in the problem but no transitions), now handled as per lowest priority request device 2.
+
+These changes should enhance timing (reduced critical path delay), lower power (fewer glitches), and maintain a minimal area footprint with one-hot encoding and clear logic separation.

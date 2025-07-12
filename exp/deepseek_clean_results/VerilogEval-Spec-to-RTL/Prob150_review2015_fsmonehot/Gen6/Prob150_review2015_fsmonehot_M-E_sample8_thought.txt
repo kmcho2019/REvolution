@@ -1,0 +1,13 @@
+Instead of using pure one-hot encoding, I'll implement a hybrid approach that:
+1. Uses priority encoding for the sequence detection states (S, S1, S11, S110)
+2. Maintains one-hot for the operational states (B0-B3, Count, Wait)
+3. Implements output pipelining registers to break timing paths
+4. Uses a dedicated decoder for next-state signals
+5. Optimizes the shift_ena generation using a counter-like approach
+
+This approach should:
+- Reduce combinational logic depth for sequence detection
+- Maintain fast transitions for operational states
+- Potentially improve timing closure
+- Reduce power by minimizing unnecessary toggles in sequence detection
+- Keep area reasonable by selective encoding

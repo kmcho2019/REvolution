@@ -1,0 +1,24 @@
+To solve this problem, we need to design a finite state machine (FSM) with the following states: 
+1) walking left
+2) walking right
+3) falling
+
+The state transitions are as follows:
+- If the Lemming is walking left and gets bumped on the left, it will start walking right. 
+- If the Lemming is walking right and gets bumped on the right, it will start walking left.
+- If the Lemming is bumped on both sides at the same time, it will still switch directions.
+- If the ground disappears (ground=0), the Lemming will start falling, regardless of the current walking direction.
+- If the ground reappears (ground=1), the Lemming will resume walking in the same direction as before the fall.
+
+To implement this FSM, we can use two state variables: direction (to store the walking direction) and falling (to indicate if the Lemming is falling). We can use a Moore state machine, where the outputs are determined by the current state.
+
+We will use the following encoding for the state variables:
+- direction: 0 for walking left, 1 for walking right
+- falling: 0 for not falling, 1 for falling
+
+We will implement the state transitions using combinational logic, and the state will be updated on the positive edge of the clock.
+
+The output logic will be determined by the current state:
+- walk_left: 1 if direction is 0 and falling is 0
+- walk_right: 1 if direction is 1 and falling is 0
+- aaah: 1 if falling is 1

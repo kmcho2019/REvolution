@@ -1,0 +1,5 @@
+Implement the 8-bit shift register as a single 8-bit reg vector instead of individual flip-flops to compactly represent the register. On each clock edge when enable is high, shift the register left by one bit and insert S into the least significant bit position (Q[0] is the LSB here for shifting in S first). To align with the problem's requirement that S is input to Q[0] and MSB is shifted in first, treat Q[0] as the MSB, so shift right and insert S into Q[0]. 
+
+For the random access read of Z based on ABC, instead of a mux tree, use the 3-bit ABC as an index to directly select a bit from the shift register vector using a vector index. This reduces mux logic complexity and improves code clarity.
+
+This design uses a single vector shift register and direct indexing for the multiplexer, making it succinct, efficient, and synthesizable.

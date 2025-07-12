@@ -1,0 +1,11 @@
+Refactoring to keep the same fundamental approach—dual single-edge FFs sampled on posedge and negedge, then multiplexed based on clk level—but changing the structure as follows:
+
+- Remove the parameterized EdgeFF module.
+- Directly implement two separate flip-flops inside TopModule using two always blocks: one sensitive to posedge clk, one to negedge clk.
+- Store the sampled data in separate reg variables for posedge and negedge samples.
+- Use a continuous assign for output mux as before, selecting posedge sample when clk is high, negedge sample when clk is low.
+- This approach simplifies hierarchy by removing the submodule and clearly separates positive and negative edge sampling logic.
+- The code remains synthesis-friendly, avoids dual-edge sensitivity lists, and uses straightforward always blocks per edge.
+- This might help readability for some users by showing the dual-edge behavior in a single module without submodules.
+
+The core functional behavior is preserved, but the structural approach is simplified.

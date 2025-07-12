@@ -1,0 +1,5 @@
+The original issue was that 'out' was declared as a single bit while inputs 'a' and 'b' are 8-bit vectors. Since the intent is to implement an 8-bit 2-to-1 mux, the output should also be 8 bits wide. Thus, the fix is to declare 'out' as an 8-bit output and select the entire 8-bit input 'a' or 'b' based on the select signal 'sel'.
+
+For optimization, using the ternary operator as 'assign out = sel ? b : a;' is both concise and synthesizes efficiently in hardware for an 8-bit 2-to-1 mux. This approach ensures minimal logic and clean synthesis.
+
+Hence, the improved design explicitly declares the width of 'out' as 8 bits and correctly assigns it using the ternary operator.

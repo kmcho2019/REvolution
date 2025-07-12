@@ -1,0 +1,15 @@
+A different architecture is to explicitly track sensor pattern changes rather than just level changes, and to store the water level *before* the last sensor pattern change separately from the current level.
+
+Specifically:
+
+- Store the previous sensor pattern in a register.
+- When the sensor pattern changes (i.e., s != prev_s), update previous_level_before_change to the decoded level from prev_s, and update current level to the decoded level from s.
+- dfr is asserted if current level > previous_level_before_change, indicating water level rose relative to before last sensor change.
+- Otherwise, dfr is deasserted.
+- Nominal flow valves are determined combinationally from the current level.
+- On reset, initialize the sensor pattern to all zeros (no sensors asserted) and flow valves to maximum flow (fr0, fr1, fr2, dfr all asserted).
+- This approach cleanly tracks transitions at sensor pattern granularity, preventing glitches and ambiguity from rapid sensor input changes.
+- The dfr pulse lasts one clock cycle whenever a sensor pattern change indicates a rising level.
+- This approach simplifies logic and cleanly separates current and previous states.
+
+This architecture ensures dfr is asserted only on rising water level detected via sensor pattern changes, consistent with the requirement.

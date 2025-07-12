@@ -1,0 +1,20 @@
+The original approach uses explicit sign-magnitude arithmetic and custom absolute value and sign reconstructions, causing complexity, potential bit-width mismatches, and synthesis issues. 
+
+A much more synthesis-friendly and clean approach is to leverage the inherent properties of two's complement arithmetic for fixed-point subtraction directly. Two's complement subtraction inherently handles sign and magnitude correctly, including zero result sign bits.
+
+To address the problem statement precisely (especially the explicit zero-sign bit), the subtraction can be done using standard two's complement subtraction, and then the sign bit can be forced to zero when the result is exactly zero.
+
+This simplifies the logic, reduces combinational logic depth, avoids tricky sign-magnitude conversions, and easily synthesizes on hardware.
+
+Key improvements:
+
+- Perform direct two's complement subtraction: `res = a - b`.
+- Detect zero result and force sign bit zero explicitly.
+- Parameterized precision is implicitly supported by two's complement arithmetic.
+- No intermediate sign-magnitude conversions or magnitude additions/subtractions.
+- This approach guarantees correct handling of all cases including same-sign and different-sign inputs inherently.
+- Internal register `res` implemented as a wire for combinational logic, but can be a register if sequential logic is desired.
+
+This simplification improves synthesis success, reduces area and power, and enhances clarity and maintainability.
+
+The provided testbench from the original example can be reused for verification.

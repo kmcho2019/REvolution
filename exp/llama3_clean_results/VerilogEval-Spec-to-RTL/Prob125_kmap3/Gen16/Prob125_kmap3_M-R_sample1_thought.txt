@@ -1,0 +1,7 @@
+The existing solution can be refactored to use a continuous assignment instead of an always block. This change simplifies the code and can potentially lead to better optimization results from the synthesis tool, as continuous assignments are directly translated into combinational logic. The core idea remains the same, implementing the Karnaugh map logic directly. However, by using `assign`, we explicitly convey to the synthesis tool that this is a combinational logic block, which might result in more efficient area and power utilization.
+
+Additionally, the use of `assign` makes the code more concise and easier to read, as it directly assigns the result of the expression to the output without the need for an `always` block. This refactoring maintains the simplicity and efficiency of the original solution while presenting the logic in a more straightforward manner.
+
+The PPA metrics, such as power consumption and area usage, are likely to remain comparable or even improve slightly due to the synthesis tool's ability to optimize continuous assignments. The performance, in terms of timing, should also remain unaffected, as the critical path through the logic remains the same.
+
+In summary, the refactoring involves replacing the `always` block with a continuous assignment using `assign`, which can lead to more efficient synthesis and potentially better PPA metrics without altering the functionality of the module.

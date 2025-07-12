@@ -1,0 +1,13 @@
+Novel architectural approach:
+1. Use a dual-ported PHT to allow simultaneous read (for prediction) and write (for training) operations in the same cycle
+2. Implement a speculative GHR update mechanism that tracks both current and next state
+3. Add a bypass path for training updates to immediately affect predictions when targeting the same entry
+4. Use a priority encoder to handle concurrent training and prediction conflicts
+5. Optimize the saturating counter update logic with a single arithmetic operation
+
+Key innovations:
+- Dual-ported PHT eliminates read-write conflicts
+- Speculative GHR tracking improves timing
+- Bypass path reduces prediction latency for recently trained branches
+- Unified counter update logic reduces area
+- Explicit conflict resolution maintains correctness

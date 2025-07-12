@@ -1,0 +1,14 @@
+My novel approach uses a hierarchical tree structure to implement the 256-to-1 multiplexer, which offers better PPA characteristics:
+
+1. Divide the 256 inputs into 16 groups of 16 inputs each (16x16=256)
+2. First stage: 16 parallel 16-to-1 muxes (each selecting one bit from their group)
+3. Second stage: 1 final 16-to-1 mux that selects between the outputs of the first stage
+4. Use the upper 4 bits of sel to choose between groups (second stage)
+5. Use the lower 4 bits of sel to choose within each group (first stage)
+
+This approach:
+- Reduces critical path by breaking the large mux into two smaller stages
+- Potentially saves power by only activating one 16-to-1 mux in each stage
+- May reduce area through better resource sharing
+- Maintains the same functionality while being more scalable
+- Can be easily pipelined if needed

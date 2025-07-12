@@ -1,0 +1,12 @@
+To model the Lemming's behavior, we can use a Moore state machine with two states: walking left and walking right. We also need to consider the state of falling. Since the direction of walking should be maintained when falling and when the ground reappears, we can use two separate state variables: one for the walking direction and one for the falling state.
+
+The state machine should have the following states:
+- Walking left
+- Walking right
+- Falling
+
+The walking direction can be changed based on the bump_left and bump_right signals. When the ground disappears, the state machine should transition to the falling state and set aaah to 1. When the ground reappears, the state machine should transition back to the previous walking state and clear aaah.
+
+We can use two registers to keep track of the current state: one for the walking direction and one for the falling state. The output signals walk_left, walk_right, and aaah can be generated based on the current state.
+
+The state machine should be reset to the walking left state when areset is asserted.

@@ -1,0 +1,16 @@
+The prior design used an internal reset signal toggled at simulation time 0 to initialize the flip-flops to zero, but this method can cause simulation mismatches due to non-ideal initialization timing or simulator differences.
+
+A clearer and more robust approach is to leverage Verilog's synchronous reset pattern by adding an explicit synchronous reset input port. However, since the problem does not specify a reset port, we can instead use an explicit reset synchronizer technique by asserting reset during the first clock cycle using a power-on-reset register that stays asserted until the first positive clock edge.
+
+Alternatively, we can eliminate the internal reset logic and rely on Verilog's reg initialization with initial blocks, which are generally supported for simulation and synthesis tools nowadays. Initializing the flip-flops to zero at declaration ensures they start with zero at simulation start, matching the problem assumptions.
+
+Since the problem explicitly states the flip-flops are initially zero before the machine begins, initializing the state registers to zero at declaration is a valid and simpler solution.
+
+We'll:
+
+1. Initialize q_xor, q_and, and q_or to zero at declaration.
+2. Remove the internal reset signal completely.
+3. Keep the combinational gate assignments and clocked state updates as is.
+4. This guarantees all flip-flops start from zero and the FSM behaves correctly without complex reset logic.
+
+This should resolve simulation mismatches caused by unclear or improper reset handling while keeping the logic consistent with the problem statement.

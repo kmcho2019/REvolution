@@ -1,0 +1,20 @@
+To optimize the pipeline multiplier for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. Performance Optimization:
+   - Add another pipeline stage to break the critical path of the final addition
+   - This allows higher clock frequencies at the cost of one additional cycle latency
+
+2. Power Optimization:
+   - Implement clock gating for partial product generation when multiplier bits are zero
+   - This reduces dynamic power consumption in the partial product generation logic
+
+3. Area Optimization:
+   - Use narrower registers in early pipeline stages since upper bits are known to be zero
+   - Implement carry-save addition in first stage to reduce adder sizes
+
+4. Implementation Strategy:
+   - 3-stage pipeline (was 2-stage) for better performance
+   - Clock gating cells for power reduction
+   - Optimized register widths based on bit growth
+   - Carry-save addition in first stage
+   - Maintain same functionality with improved metrics

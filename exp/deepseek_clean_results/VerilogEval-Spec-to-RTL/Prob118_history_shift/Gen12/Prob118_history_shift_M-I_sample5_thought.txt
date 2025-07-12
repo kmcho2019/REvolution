@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Simplify the priority logic by separating misprediction and prediction paths
+   - Use parallel load for both cases to reduce mux depth
+   - Pre-compute next state values to reduce critical path
+
+2. Power Optimization:
+   - Add clock gating for idle cycles (when neither predict_valid nor train_mispredicted)
+   - Reduce unnecessary toggling by only updating when needed
+
+3. Area Optimization:
+   - Share common logic between misprediction and prediction paths
+   - Use more efficient bit manipulation for shift operations
+   - Remove redundant logic
+
+Key Changes:
+- Separate next state computation from register update
+- Explicit clock gating control
+- Optimized shift operation using bit slicing
+- Simplified priority handling

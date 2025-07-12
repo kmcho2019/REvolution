@@ -1,0 +1,14 @@
+To simplify the solution, we can reduce the number of states and registers used in the finite state machine. We can achieve this by removing the `disc_reg`, `flag_reg`, and `err_reg` registers and instead drive the output signals directly from the state machine. Additionally, we can merge some of the states to reduce the overall number of states. 
+
+We can have the following states:
+- IDLE (0 consecutive 1s)
+- ONE (1 consecutive 1)
+- TWO (2 consecutive 1s)
+- THREE (3 consecutive 1s)
+- FOUR (4 consecutive 1s)
+- FIVE (5 consecutive 1s)
+- SIX (6 consecutive 1s)
+
+The state machine will transition between these states based on the input signal `in`. If `in` is 1, the state machine will move to the next state. If `in` is 0, the state machine will move back to IDLE. If the state machine reaches the FIVE state and the next input is 0, it will set the `disc` signal. If the state machine reaches the SIX state and the next input is 0, it will set the `flag` signal. If the state machine reaches the SIX state and the next input is 1, it will set the `err` signal.
+
+We can also remove the `SEVEN` state as it is not necessary. Instead, we can check for the error condition when the state machine is in the SIX state and the next input is 1.

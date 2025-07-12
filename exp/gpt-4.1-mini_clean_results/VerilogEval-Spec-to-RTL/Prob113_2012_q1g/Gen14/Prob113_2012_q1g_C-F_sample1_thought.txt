@@ -1,0 +1,14 @@
+Fuse the strengths of both examples by combining minimal logic with gate-level decomposition to optimize power, area, and performance:
+
+- Keep the factored minimal expression from Example 2 for clarity and minimal literals:
+  f = (~x3 & ~x1) 
+    | (~x3 & x2 & x1 & ~x0) 
+    | (x3 & x2 & (~x0 | (x1 & x0)))
+
+- Apply gate decomposition from Example 1 to break down 4-input AND terms into smaller 2-input AND gates, reducing gate fan-in and potentially improving timing and area.
+
+- Simplify the inner OR term (~x0 | (x1 & x0)) to (~x0 | x1) because (x1 & x0) ⊆ x0, so the term is equivalent, reducing gate count and switching.
+
+- Use common complementary signals to avoid redundant negations.
+
+This hybrid design maintains minimal expressions, improves gate structure, and reduces redundant logic, thereby enhancing PPA metrics while retaining clarity.

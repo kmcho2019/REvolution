@@ -1,0 +1,11 @@
+The provided code uses an always block with non-blocking assignment to implement 8 D flip-flops, which are triggered by the positive edge of the clock. However, the issue of uninitialized output 'q' leads to undefined behavior at the start of the simulation. To refactor the code, we will focus on addressing the initialization issue while maintaining the core functionality. 
+
+A potential refactoring approach is to use a different structure, such as utilizing a clocked always block with initial values assigned to the output 'q'. We can also consider using the `initial` block for initialization. However, since we aim for a more significant structural change, an alternative is to use a `reg` declaration with an initial value. This approach will directly address the initialization issue and provide a more explicit and straightforward way to define the flip-flops' initial state.
+
+Moreover, we will use an array of D flip-flops (DFFs) to directly implement the required functionality. Each DFF will be triggered by the positive edge of the clock, and their outputs will be collected in the output 'q'. This approach will maintain the simplicity and readability of the code while ensuring the correct initialization and functionality.
+
+In terms of PPA optimization, our refactored code should maintain a minimalistic approach, directly implementing the required 8 D flip-flops without introducing unnecessary logic or overhead. The use of non-blocking assignments within the always block will ensure edge-triggered behavior, which is crucial for correct functionality in digital design.
+
+Additionally, we will consider the optimization of the clocking scheme and the application of clock gating to minimize power consumption. These optimizations can be achieved through the use of synthesis directives or attributes that guide the synthesis tool to optimize the design for area or power, depending on the specific requirements and constraints of the project.
+
+By addressing the initialization issue and maintaining a focus on PPA optimization, our refactored code will ensure correct functionality, efficient area utilization, and minimal power consumption.

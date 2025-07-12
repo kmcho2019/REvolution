@@ -1,0 +1,48 @@
+To correctly implement the Karnaugh map using one 4-to-1 mux (with selector inputs a and b) and additional 2-to-1 muxes controlled by c and d, we must express each mux_in[i] as a function of c and d matching the corresponding column in the K-map.
+
+The K-map is:
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+Here, mux_in[0] corresponds to ab=00 column: outputs at cd=00,01,11,10 are 0,1,1,1 respectively.
+
+We use c and d as select lines for 2-to-1 muxes to compose these outputs using only muxes and constants, no direct logic gates.
+
+Step-by-step:
+
+- For mux_in[0] (ab=00), outputs by cd:
+  cd=00(0,0): 0
+  cd=01(0,1): 1
+  cd=11(1,1): 1
+  cd=10(1,0): 1
+We can implement this as mux with d selecting between 0 and 1, then c selecting between the result and 1:
+  If d=0: output = 0 if c=0 else 1
+  If d=1: output = 1
+Expressed: mux_in[0] = c ? 1 : d
+
+- mux_in[1] (ab=01): all zeros from the K-map, so assign 0.
+
+- mux_in[2] (ab=11), outputs: cd=00:0, cd=01:0, cd=11:1, cd=10:0
+This is only 1 when c=1 and d=1. This is c AND d, implemented as a mux:
+  If c=1, output d else 0
+mux_in[2] = c ? d : 0
+
+- mux_in[3] (ab=10), outputs: cd=00:1, cd=01:0, cd=11:1, cd=10:1
+Notice it's 0 only at cd=01 (c=0,d=1), 1 otherwise.
+
+This can be implemented as a mux with d select:
+ If d=0, output 1
+ If d=1, output c
+
+Which is: mux_in[3] = d ? c : 1
+
+This form only uses 2-to-1 muxes controlled by c or d, plus constants, matches exactly the K-map entries for each column, and uses minimal logic as required.
+
+Hence the final improved implementation uses these mux assignments for mux_in.
+
+Note: This approach strictly uses mux-based conditional expressions and matches the given Karnaugh map exactly.

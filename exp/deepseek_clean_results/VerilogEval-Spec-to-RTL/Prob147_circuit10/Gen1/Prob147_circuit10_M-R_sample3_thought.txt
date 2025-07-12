@@ -1,0 +1,17 @@
+After carefully re-examining the waveform, I realize the behavior is more complex than initially thought. The key observations are:
+
+1. The state (flip-flop) toggles when:
+   - a=1 and b=1 (as seen at 95ns)
+   - Also when a=0 and b=0 for multiple cycles (as seen at 75ns)
+
+2. The q output depends on:
+   - Current state
+   - Current inputs a and b
+   - Appears to be state XOR b when a=0
+   - But has special cases when a=1
+
+Refactoring approach:
+- Use a combinational always block to calculate next state and output
+- Make state transitions explicit for all input combinations
+- Separate the output logic to handle all cases
+- Use non-blocking assignment for the flip-flop

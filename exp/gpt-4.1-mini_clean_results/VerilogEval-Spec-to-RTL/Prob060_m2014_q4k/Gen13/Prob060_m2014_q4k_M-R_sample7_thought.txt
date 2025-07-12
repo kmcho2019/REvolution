@@ -1,0 +1,8 @@
+Refactor the shift register by implementing it as a single always block that holds a 4-bit register vector representing all stages, instead of instantiating separate DFF modules. Use synchronous active-low reset inside this always block to clear the entire shift register at once. Shift in the input bit on each positive clock edge. Assign the most significant bit of the register vector to the output.
+
+This approach:
+
+- Uses a compact vector register instead of multiple module instantiations, reducing code verbosity.
+- Keeps synchronous active-low reset semantics inside the always block.
+- Simplifies wiring since the entire shift register is handled within one register variable.
+- Maintains the same functionality and timing behavior, ensuring the input bit is shifted through four stages before appearing at output.

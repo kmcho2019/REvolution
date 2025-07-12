@@ -1,0 +1,8 @@
+Implement the triangle wave generator using a counter approach with a signed direction increment variable. 
+Instead of tracking a state, use a signed 6-bit accumulator (extended from 5 bits) that increments/decrements by 1 each clock cycle.
+When the output hits the upper or lower bound (0 or 31), the direction flips by negating the increment.
+This approach reduces logic by avoiding explicit state and conditional branching: update wave and direction in a single always block.
+Use synchronous active-low reset to initialize wave and direction.
+The direction is represented as a signed 6-bit variable (+1 or -1), which is added directly to the wave value.
+Bounds are checked after addition, and direction flips accordingly.
+This method results in minimal logic and clean, compact code with smooth waveform generation.

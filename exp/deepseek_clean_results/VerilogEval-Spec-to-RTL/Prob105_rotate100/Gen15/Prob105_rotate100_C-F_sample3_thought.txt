@@ -1,0 +1,18 @@
+Optimized Fusion Strategy:
+1. Combine the parallel computation concept from Example 1 with the clear priority structure from Example 2
+2. Key improvements:
+   - Maintain load priority (like Example 2) for clean control flow
+   - Use parallel rotation computation (like Example 1) but only when needed
+   - Optimize mux structure by eliminating unnecessary paths
+   - Simplify control logic by combining load and ena signals efficiently
+3. Specific optimizations:
+   - Compute rotation directions only when their ena signal is active
+   - Use a more efficient 3:1 mux instead of 4:1 (since load has priority)
+   - Remove redundant no_rot path by using default case
+   - Minimize switching activity by not computing unused rotations
+
+The fused solution provides:
+- Better timing from reduced mux depth
+- Lower power from minimized switching
+- Cleaner control flow from priority-based structure
+- Maintained readability with case statement

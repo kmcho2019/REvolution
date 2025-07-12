@@ -1,0 +1,10 @@
+To improve PPA (Performance, Power, and Area) while maintaining correctness and clarity:
+
+- Use binary encoding instead of one-hot for states. The FSM has 5 states, so 3 bits are enough to encode states, reducing flip-flop count from 5 to 3, which reduces area and power.
+- Implement the next-state logic with a clean case statement for clarity and synthesis friendliness.
+- Keep the synchronous active-high reset.
+- Use Moore output derived from the current state to keep output glitch-free.
+- Since binary encoding increases combinational logic complexity slightly, write concise next-state logic to minimize logic depth.
+- Maintain blocking assignments in combinational always blocks and non-blocking in sequential.
+- The sticky detected state will still latch start_shifting high forever until reset.
+This approach reduces flip-flop count by 40% and should reduce switching activity and routing overhead, improving power and area, while still achieving good timing.

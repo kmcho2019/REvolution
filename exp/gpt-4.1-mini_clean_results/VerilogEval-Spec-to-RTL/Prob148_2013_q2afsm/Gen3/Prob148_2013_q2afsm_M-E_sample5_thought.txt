@@ -1,0 +1,19 @@
+Instead of encoding the states as simple 2-bit values representing idle or granted states, this design will use a 3-bit one-hot style encoding where each state corresponds to a bit in the state register representing the current grant. This approach uses four states (A, B, C, D) where only one bit is set at a time:
+
+- State A (idle): 3'b000 (no bit set)
+- State B (grant device 0): state_bit[0] = 1
+- State C (grant device 1): state_bit[1] = 1
+- State D (grant device 2): state_bit[2] = 1
+
+By doing so, grants correspond directly to the one-hot state bits, simplifying output logic.
+
+The next state logic is simplified as follows:
+
+- In idle (all zeros), if any request is asserted, select the highest priority request (device 0, then 1, then 2).
+- In grant state (one of bits set), stay in that state if the request for that device remains asserted; otherwise return to idle.
+
+We use synchronous active-low reset to go to idle (all zeros).
+
+This one-hot style encoding may help with easier synthesis in some flows, and the output logic is trivially the state bits themselves.
+
+This solution uses three state bits (plus an implicit idle state of all zeros), separate combinational next-state logic, and synchronous state update. Output is direct from state bits.

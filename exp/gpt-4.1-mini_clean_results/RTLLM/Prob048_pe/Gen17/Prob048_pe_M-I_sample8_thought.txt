@@ -1,0 +1,15 @@
+To optimize the given multiplying accumulator (MAC) design for better PPA (Performance, Power, Area), the key bottleneck is the direct 32x32 multiplier on the critical path combined with accumulation and saturation logic in a single clock cycle. This limits max frequency and power efficiency.
+
+Improvement strategy:
+1. Pipeline the multiplier and accumulator to split the long combinational path into two shorter stages. This reduces critical path delay and allows higher clock frequencies.
+2. Use a registered pipeline stage for the product result before accumulation.
+3. Retain synchronous reset and saturation logic but perform saturation check after accumulation stage.
+4. By introducing a two-stage pipeline (multiplier stage and accumulator stage), the critical path is halved, which improves timing (tns and wns).
+5. Power can improve as the multiplier input registers reduce glitching, and the adder path is shorter.
+6. The area overhead of pipeline registers is minor compared to multiplier and adder delay improvement.
+
+The output c is updated on every clk cycle with the accumulated sum from the previous product stage, ensuring correct operation with one cycle latency but increased throughput.
+
+This pipelined approach fits well for high-frequency designs requiring continuous MAC operations.
+
+The code below implements this 2-stage pipeline with synchronous reset and saturation, preserving 32-bit output width with saturation at max unsigned 32-bit value.

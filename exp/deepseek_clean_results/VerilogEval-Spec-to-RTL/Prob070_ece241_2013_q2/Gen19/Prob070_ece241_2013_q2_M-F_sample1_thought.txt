@@ -1,0 +1,23 @@
+Optimized Design Strategy:
+
+1. Truth Table Analysis with Don't-Cares:
+   - Output=1 cases (minterms): 2(0010), 7(0111), 15(1111)
+   - Output=0 cases (maxterms): 0(0000), 1(0001), 4(0100), 5(0101), 6(0110), 9(1001), 10(1010), 13(1101), 14(1110)
+   - Don't-cares: 3(0011), 8(1000), 11(1011), 12(1100) - can be used for optimization
+
+2. Optimized SOP:
+   - Original minterms: ~a~bc~d (2), ~abcd (7), abcd (15)
+   - Adding don't-care 3 (0011) allows combining with term 2: ~a~bc
+   - Adding don't-care 11 (1011) allows combining with term 7: ~acd
+   - Final SOP: ~a~bc + ~acd + abcd
+
+3. Optimized POS:
+   - Original maxterms cover all output=0 cases
+   - Using don't-care 8 (1000) to combine terms 9 and 10: ~a | b | d
+   - Using don't-care 12 (1100) to combine terms 13 and 14: ~a | ~b | d
+   - Final POS: (a|b|c|d) & (a|b|c) & (a|~b|c) & (a|~b|~c) & (~a|b|d) & (~a|~b|d)
+
+4. Implementation:
+   - Use optimized SOP and POS forms
+   - Both forms now leverage don't-cares for better minimization
+   - Maintains correct functionality for specified cases while being more optimal

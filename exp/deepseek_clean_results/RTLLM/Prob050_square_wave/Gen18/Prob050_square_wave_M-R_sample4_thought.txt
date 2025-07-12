@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. Simplify clock domain: Remove gated clock and use single always block for synchronous operation
+2. Use combinational assign for output when freq=0 (constant low) to reduce sequential logic
+3. Merge all frequency control logic into one always block for cleaner implementation
+4. Maintain same functionality but with reduced logic complexity
+5. Use synchronous reset-like behavior for freq=0 case
+
+Key Changes:
+1. Eliminate gated_clk and related combinational logic
+2. Use assign statement for constant low output when freq=0
+3. Single always block handles all counting and normal operation
+4. More straightforward state transitions
+5. Reduced power consumption by minimizing redundant evaluations

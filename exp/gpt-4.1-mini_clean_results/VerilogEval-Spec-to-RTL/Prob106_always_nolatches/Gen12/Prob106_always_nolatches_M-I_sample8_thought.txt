@@ -1,0 +1,11 @@
+To improve the existing design for better power and clarity, I will remove redundant default assignments inside the case statement since outputs are already defaulted to zero at the start of the always block. This reduces unnecessary toggling and switching activity in synthesis, which can slightly improve power efficiency.
+
+Additionally, I will group the four one-bit outputs into a single 4-bit one-hot vector internally and then assign each output from the bits of that vector. This reduces the number of separate registers and can simplify the output logic, potentially improving area and power.
+
+The combinational decoding logic remains the same: check the upper byte prefix once, then decode the lower byte with a case statement. This keeps the design clean, synthesizable, and maintains the zero-latch guarantee.
+
+Overall, this results in:
+- Reduced toggling by eliminating redundant default inside case
+- Slightly more compact and structured output logic
+- Preserved clarity and maintainability
+- Minimal, incremental improvements in power and area

@@ -1,0 +1,11 @@
+To fix the functional mismatch and improve synthesis compatibility, explicitly add a synchronous reset input to initialize the flip-flops to zero, as required by the problem statement. This removes reliance on the initial block, which is non-synthesizable in many tools and causes simulation-synthesis mismatches.
+
+Also, separate the flip-flop outputs into individual 1-bit registers rather than using a packed 3-bit vector, clarifying each flip-flop’s output and its complemented signals for the gate inputs.
+
+Maintain the same combinational logic feeding each flip-flop D input using the respective gates (XOR, AND, OR) with the specified second inputs from the current flip-flop outputs or their complements.
+
+Update the outputs synchronously on the positive clock edge or reset them to zero when reset is asserted.
+
+Finally, assign output z as the NOR of all three flip-flop outputs combinationally.
+
+This design meets the original requirement that flip-flops start at zero and provides explicit reset logic, improving simulation and synthesis matching while keeping the intended FSM behavior intact.

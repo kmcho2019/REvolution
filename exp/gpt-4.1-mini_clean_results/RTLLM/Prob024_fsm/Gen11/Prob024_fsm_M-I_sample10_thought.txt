@@ -1,0 +1,19 @@
+The original FSM is already quite efficient with a compact 3-bit binary encoding and a clear next-state logic. To optimize for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. Use one-hot encoding instead of binary encoding. 
+   - This may increase flip-flop count but usually reduces combinational logic complexity and improves maximum frequency (better timing).
+   - One-hot states produce faster transitions and potentially lower dynamic power due to simpler state decoding logic.
+
+2. Implement fully synchronous reset only on state registers; the output MATCH will be purely combinational from current state and input.
+
+3. Use explicit non-blocking assignments in sequential logic and combinational logic for next state and output.
+
+4. Add comments for maintainability and clarity.
+
+5. Keep the combinational next state logic straightforward with a case statement.
+
+This one-hot encoding approach should improve timing slack (WNS), reduce power by simplifying combinational logic, and area is acceptable tradeoff for timing and power gains.
+
+Note: The sequence is "10011", and the state machine tracks progress step-by-step, asserting MATCH on the last '1' input when in final state.
+
+Below is the improved Verilog code using one-hot state encoding.

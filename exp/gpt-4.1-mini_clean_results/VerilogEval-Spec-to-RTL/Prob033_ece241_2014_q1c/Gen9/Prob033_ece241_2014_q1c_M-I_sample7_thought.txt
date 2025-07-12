@@ -1,0 +1,11 @@
+The original design uses a carry-lookahead scheme that is optimal for performance but may be overkill for just 8 bits, increasing power due to switching on all carry signals. Given the metrics show a very low power already (0.00183) and small area (34), we can target a simpler design to reduce power and area slightly, trading a small amount of performance which is often acceptable at 8 bits.
+
+A ripple-carry adder with explicit bitwise addition and overflow detection will be more power and area efficient. It avoids generating all carry bits in parallel, limiting switching to carry propagation paths. Also, explicitly computing sum bits with straightforward XORs is clearer and potentially synthesizes to smaller logic on 8-bit width.
+
+Key changes:
+- Replace carry-lookahead with ripple-carry using a simple carry chain.
+- Calculate overflow as before by XOR'ing carry-in and carry-out of MSB.
+- Use a for-generate loop for cleaner code and better scalability.
+- This reduces switching and gate count, thus improving power and area slightly while maintaining correctness.
+
+This design is easy to understand and still synthesizes efficiently for 8-bit signed addition.

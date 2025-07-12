@@ -1,0 +1,7 @@
+Implement the 64-bit subtractor using a ripple borrow approach by cascading 64 1-bit subtractor units, each handling a single bit subtraction with borrow-in and borrow-out. This structural approach is more explicit and educational compared to a direct subtraction operator.
+
+For overflow detection, apply the same principle by examining the sign bits of A, B, and the final result. Since subtraction is A - B, overflow occurs if the sign of A differs from B and the sign of the result differs from A.
+
+This design breaks the 64-bit subtractor into a chain of 1-bit subtractors with borrow propagation, making the data path clear and modular. The downside is potentially higher delay due to ripple borrow, but it is a valid alternative architecture.
+
+The top module instantiates 64 1-bit subtractors, wires borrows between them, and finally outputs the 64-bit result and overflow flag.

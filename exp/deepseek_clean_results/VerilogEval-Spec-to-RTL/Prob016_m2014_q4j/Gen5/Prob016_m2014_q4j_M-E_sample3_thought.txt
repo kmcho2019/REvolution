@@ -1,0 +1,22 @@
+This solution implements a 4-bit carry-lookahead adder (CLA) with optimized lookahead logic:
+
+1. **Concept**: 
+   - Instead of waiting for carries to ripple through each stage, we compute all carry signals in parallel using generate (G) and propagate (P) terms
+   - For 4 bits, we can compute all carries directly without hierarchical lookahead
+   - The overflow bit naturally becomes the final carry-out
+
+2. **Advantages**:
+   - Constant-time carry computation regardless of bit width (for small adders)
+   - Eliminates the linear carry propagation delay of ripple-carry adders
+   - Clear separation of generate/propagate logic from sum computation
+
+3. **Implementation**:
+   - First compute all G (generate) and P (propagate) terms
+   - Then compute carries using the lookahead equations
+   - Finally compute sums using the precomputed carries
+   - The overflow is simply the final carry-out (C4)
+
+4. **Tradeoffs**:
+   - More gates than ripple-carry for small adders
+   - Excellent performance with predictable timing
+   - Scales better than ripple-carry for wider adders

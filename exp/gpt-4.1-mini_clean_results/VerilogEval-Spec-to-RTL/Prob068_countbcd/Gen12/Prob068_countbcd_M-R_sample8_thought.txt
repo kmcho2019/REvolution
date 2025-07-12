@@ -1,0 +1,7 @@
+Refactor the BCD counter to use separate 4-bit registers for each digit (ones, tens, hundreds, thousands) updated synchronously in a single always block. The increment and carry logic will be handled explicitly via flags rather than nested function calls. Enable signals (ena) will be directly tied to carry-out conditions from lower digits.
+
+This approach simplifies carry propagation by making it explicit and easier to follow, potentially improving timing by reducing nested function calls and combinational complexity inside the clocked block. It also cleanly separates logic for each digit, which can aid synthesis tools in optimization.
+
+The synchronous active-high reset resets all digits to zero. At each clock, the ones digit increments; if it rolls over, a carry increments the tens digit, and so on.
+
+This explicit carry management is a common pattern for multi-digit BCD counters and maintains clarity while potentially improving performance and power by limiting combinational depth and switching only where needed.

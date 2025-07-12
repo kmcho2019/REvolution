@@ -1,0 +1,15 @@
+Implement a Moore FSM with explicit separate registers for state and direction to simplify the design and enhance clarity. Use a 3-bit state encoding to distinctly represent WALK_LEFT, WALK_RIGHT, FALL_LEFT, FALL_RIGHT, DIG_LEFT, DIG_RIGHT, and SPLAT states—thereby combining direction and mode into the state encoding itself, avoiding direction toggling logic.
+
+This approach encodes both walking/digging/falling states and direction as distinct states, removing the need to track direction separately or toggle bits on bumps.
+
+Next state logic will handle bump signals only in walking states (WALK_LEFT, WALK_RIGHT). On bump(s), transition to the opposite walking direction.
+
+Fall state is entered from any walking or digging state upon ground=0. While falling, increment a saturating fall counter each cycle (max 31). Upon landing (ground=1), if fall_count > 20, transition to SPLAT; else return to walking in the same direction as before falling.
+
+Dig is only entered from walking on ground with dig=1. Digging continues while ground=1; if ground=0 during digging, transition to falling.
+
+Outputs are decoded purely from current state: walk_left for WALK_LEFT, walk_right for WALK_RIGHT, aaah for FALL_* states, digging for DIG_* states. SPLAT state outputs all zero.
+
+Asynchronous positive-edge reset sets state to WALK_LEFT and resets fall counter.
+
+This state-explicit design simplifies next-state logic by using a clear, flat state encoding scheme, eliminating conditional toggling of direction bits and improving readability and likely synthesis efficiency.

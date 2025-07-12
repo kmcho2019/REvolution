@@ -1,0 +1,19 @@
+The existing design already implements the Johnson counter efficiently by shifting right and inserting the inverted LSB at MSB. To further optimize PPA:
+
+- Performance: The critical path is minimal, involving only an inverter and a shift register operation. The current code already encourages synthesis tools to infer shift registers.
+
+- Power: Since the counter shifts every cycle, switching activity is inherent. To reduce power, we can implement clock enable gating inside the module so the counter updates only when enabled. This doesn't violate the problem statement, as it doesn't specify an enable input. To keep semantics identical, we can tie enable always high, but the structure facilitates easy power gating later.
+
+- Area: The design is minimal with only 64 flip-flops and one inverter.
+
+Given no enable input requested, adding enable logic would add overhead, so it is best to keep the design as simple as possible to minimize logic and area.
+
+Hence, the main improvement is code clarity and explicitly specifying that the shift register is the key concept, which may guide synthesis tools to optimal inference.
+
+To potentially improve the timing path, we can avoid concatenation by writing an explicit shift and assignment or by generating the next Q as a wire and then assigning it to the register.
+
+Overall, any PPA improvement in this trivial design is marginal. The best practice is the simple shift register with MSB = ~LSB.
+
+I will slightly rewrite the code to define a wire for the next state to improve readability and hint to synthesis tools the shift register nature.
+
+The asynchronous reset is kept as required.

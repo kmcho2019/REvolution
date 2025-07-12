@@ -1,0 +1,11 @@
+To solve this problem, we'll implement a Moore-type finite state machine (FSM) in Verilog. The FSM will have states to track the number of consecutive 1s received and transition based on the current input and the state. 
+
+The states we'll need are:
+- S0: Initial state or no consecutive 1s
+- S1 to S5: States for 1 to 5 consecutive 1s
+- S6: State for 6 consecutive 1s (potential flag)
+- S7: State for 7 or more consecutive 1s (error)
+
+We'll use the reset to initialize the FSM to S0. On each clock cycle, we'll update the state based on the current input and the current state. If we reach S6 and receive a 0, we signal disc. If we reach S6 and receive a 1, followed by a 0, we signal flag. If we reach S7, we signal err.
+
+We'll also need to handle the case where we're in the middle of a sequence and the reset occurs. In this case, the FSM will restart, and any current sequence will be lost.

@@ -1,0 +1,18 @@
+To fix the pulse detection module, we need to address the issues identified in the feedback:
+
+1. The shift register must update every clock cycle, not just when data_in changes, to properly track sequences.
+2. The output should only be high for one cycle when a complete 0-1-0 sequence is detected.
+3. The detection logic needs to precisely match the 3-cycle pattern.
+
+New approach:
+1. Use a 3-bit shift register that updates on every clock cycle
+2. Implement exact pattern matching for "010" in the shift register
+3. Generate output only when the full pattern is detected
+4. Maintain proper reset behavior
+5. Ensure the output is registered to prevent glitches
+
+This solution will:
+- Correctly detect the 0-1-0 pulse sequence
+- Generate a single-cycle pulse on data_out at the end of detection
+- Work reliably across all input patterns
+- Maintain clean timing characteristics

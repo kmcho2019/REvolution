@@ -1,0 +1,12 @@
+Novel Architectural Idea: Parallel-Load Johnson Counter
+1. Dual-Register Approach: Use two 32-bit registers instead of one 64-bit register to enable parallel loading of halves, reducing critical path.
+2. Phase-Shifted Operation: The upper and lower halves operate with opposite phases (inverted LSB feedback) to create natural symmetry.
+3. Optimized Shift Logic: Implement barrel-shifter style operation where we only need to compute the new MSB value rather than full shifts.
+4. Power Gating: Add enable signals for each half to reduce unnecessary toggles when not needed.
+5. Reset Optimization: Use synchronous reset only on the active half during operation to minimize reset power.
+
+Benefits:
+- Improved timing from reduced fanout (32-bit vs 64-bit paths)
+- Potential power savings from selective half-register operation
+- Maintains full Johnson counter sequence
+- Enables future partial-update optimizations

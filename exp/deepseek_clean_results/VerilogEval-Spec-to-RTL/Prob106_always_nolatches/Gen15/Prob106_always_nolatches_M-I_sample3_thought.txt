@@ -1,0 +1,13 @@
+The ROM-based solution works but is inefficient for this specific problem since we only need to detect 4 specific codes out of 65536 possibilities. We can optimize this by:
+
+1. Replacing the 64K-entry ROM with a simple combinational case statement
+2. Directly comparing the input scancode against the 4 known values
+3. Using parallel comparisons instead of sequential if-else
+4. Assigning outputs based on exact matches
+
+Advantages:
+- Eliminates the large ROM structure, reducing area significantly
+- Reduces power by avoiding unnecessary memory accesses
+- Maintains constant-time detection (same as ROM approach)
+- Simpler and more maintainable code
+- Still handles the "anything else" case naturally via default assignments

@@ -1,0 +1,9 @@
+Refactor the frequency divider by implementing a two-stage approach with a synchronous counter and a combinational assign for the divided clock output. The counter counts input clock cycles up to half of NUM_DIV, then resets. We generate clk_div by toggling a flip-flop each time the counter finishes counting.
+
+Instead of toggling clk_div directly inside the counter always block, use a separate register `toggle` that flips when the counter reaches the target count. Then assign clk_div directly to this `toggle` register.
+
+This separates counting logic from clock output logic for clearer timing and easier understanding.
+
+Use parameterized counter width and a compile-time assertion for even NUM_DIV, as before.
+
+This approach avoids mixing toggling and counting in one block and uses a clear combinational assignment for output.

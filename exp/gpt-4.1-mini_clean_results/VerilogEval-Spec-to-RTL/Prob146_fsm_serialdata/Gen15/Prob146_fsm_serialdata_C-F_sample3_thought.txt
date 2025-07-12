@@ -1,0 +1,11 @@
+Fuse the compact 2-bit FSM encoding and clear state separation from both examples for minimal area, with the power-saving enable gating of the shift register and bit counter updates from Example 2 to reduce unnecessary toggling. 
+
+Incorporate the done signal assertion logic from Example 1 by clearing done only once per clock cycle and only asserting it when a valid stop bit is detected, avoiding redundant toggling elsewhere.
+
+Use a single always block for all sequential logic (state, shift register, bit counter, done, and output) to minimize clock domain crossings and simplify timing analysis, while keeping combinational next-state logic clean.
+
+Hold shift register stable in non-RECEIVE states to reduce dynamic power, and increment bit counter only during RECEIVE.
+
+Implement FSM states: IDLE (wait for start bit = 0), RECEIVE (shift in 8 bits LSB first), CHECK_STOP (verify stop bit=1), and RECOVER (wait for line to return high if stop bit invalid).
+
+This fusion merges power efficiency, area compactness, and clear, minimal state transitions for better PPA and maintainability.

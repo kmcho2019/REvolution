@@ -1,0 +1,11 @@
+I will implement the sequence detector using a Mealy FSM rather than a Moore FSM, which can detect the sequence "1001" more promptly by reacting directly to the current input, allowing the detection output to assert within the same clock cycle when the last bit of the sequence arrives.
+
+Key aspects of this novel design:
+- The FSM is binary encoded with five states representing partial matches of the sequence.
+- The output `sequence_detected` is a combinational signal asserted immediately on detecting the complete sequence in the transition to the next state.
+- Use synchronous active-high reset for simplicity and clarity.
+- The FSM transitions consider overlapping sequences by transitioning to appropriate states on each input bit.
+- The design produces the detection pulse combinationally (Mealy output) without needing to wait for a state register update, yielding potentially faster detection.
+- All state transitions and output generation are in the same clocked process to ensure synchronous updates and clean timing.
+- The synchronous reset initializes the FSM to IDLE state and clears the output.
+- This Mealy FSM approach reduces latency between input arrival and output assertion compared to Moore FSMs.

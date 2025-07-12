@@ -1,0 +1,8 @@
+To introduce a novel architectural idea, we can leverage a finite state machine (FSM) to control the down-counter. The FSM will manage the states of the counter, including loading the initial value, decrementing, and indicating the terminal count. By using an FSM, we can encapsulate the control logic and the down-counter within a single module, simplifying the overall design and potentially reducing area and power consumption.
+
+The FSM will have three primary states:
+1. **Idle**: In this state, the counter is not counting down. It waits for the load signal to be asserted to transition into the Load state.
+2. **Load**: When the load signal is asserted, the FSM transitions into this state, where it loads the provided data into the down-counter. After loading, it transitions into the Counting state if the loaded value is not zero.
+3. **Counting**: In this state, the down-counter decrements on each clock cycle. The FSM remains in this state until the counter reaches zero, at which point it transitions back to the Idle state and asserts the terminal count signal.
+
+By integrating the FSM with the down-counter, we can ensure a clean and modular design that is easier to understand and maintain. The use of an FSM also provides a clear and structured approach to managing the different states of the timer, which can be beneficial for more complex timing requirements or when integrating this module into larger systems.

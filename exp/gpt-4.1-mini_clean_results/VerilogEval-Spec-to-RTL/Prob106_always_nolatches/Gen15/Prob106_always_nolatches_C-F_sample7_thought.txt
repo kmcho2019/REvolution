@@ -1,0 +1,10 @@
+I will fuse the best ideas from both examples by keeping the clean single always_comb block that assigns defaults once and uses a case statement on the low byte of scancode after verifying the high byte is 8'hE0. To improve clarity and slightly enhance power/area efficiency, I will pack the four outputs into a single 4-bit wire and then assign them individually at the module output. This reduces duplicated assignments and enables the synthesis tool to optimize the logic collectively.
+
+This approach combines:
+- Clarity and maintainability from the case statement decoding the low byte after prefix check
+- Eliminating multiple separate reg outputs inside the always block by using a single internal decoded wire vector
+- Using combinational logic only (outputs as wires driven by combinational decoding), which can help reduce toggling and area by avoiding unnecessary reg latches
+- Mutual exclusivity of outputs naturally enforced by one-hot encoding in the decoded vector
+- Single-source of decoding logic which is easy to extend or modify
+
+This design results in minimal, clean, and power-efficient combinational logic with easy synthesis optimizations and no risk of latches.

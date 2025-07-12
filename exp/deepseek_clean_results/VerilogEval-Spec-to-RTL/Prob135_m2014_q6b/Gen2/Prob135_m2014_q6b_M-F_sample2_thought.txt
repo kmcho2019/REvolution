@@ -1,0 +1,20 @@
+To correctly implement the next-state logic for y[1], we need to carefully analyze each state transition's effect on y[1]. The key insights are:
+
+1. y[1] becomes 1 when:
+   - Transitioning from B (001) to C (010) with w=0
+   - Transitioning from C (010) to D (011) with w=1 (maintains y[1]=1)
+   - Transitioning from D (011) to F (101) with w=0 (maintains y[1]=1)
+   - Transitioning from E (100) to D (011) with w=1
+   - Transitioning from F (101) to D (011) with w=1
+
+2. y[1] becomes 0 when:
+   - Transitioning from D (011) to A (000) with w=1
+   - Transitioning from F (101) to C (010) with w=0
+
+3. y[1] remains unchanged in other transitions.
+
+We'll implement this by:
+- Explicitly handling each state transition
+- Using state decoding to identify current state
+- Setting y1_next based on both current state and input w
+- Ensuring all transitions are properly covered

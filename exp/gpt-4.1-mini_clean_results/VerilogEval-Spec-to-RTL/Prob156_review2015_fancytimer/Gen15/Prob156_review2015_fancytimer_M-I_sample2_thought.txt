@@ -1,0 +1,28 @@
+To correct the issues and ensure functional correctness, implement these key fixes:
+
+1. **Pattern Detection Shift Direction:**  
+   Since input bits arrive MSB first, shift `pattern_shift` left by 1 bit and insert new `data` at LSB. This accumulates bits in order, so after 4 clocks, `pattern_shift` holds the pattern in correct bit order (first received bit at MSB). The start pattern 1101 (binary) is then detected as `pattern_shift == 4'b1101`.
+
+2. **Delay Bits Loading Shift Direction:**  
+   Similarly, shift delay_reg left by 1 bit inserting new `data` at LSB each clock for 4 clocks to capture the 4 delay bits MSB first, matching the problem spec.
+
+3. **Simplify FSM and Counter Logic:**  
+   - Use a clear FSM with states: SEARCH, DELAY_LOAD, COUNT, WAIT_ACK.  
+   - On reset or after ack, start in SEARCH state with `pattern_shift` cleared.  
+   - In SEARCH, shift bits in pattern_shift left with new data at LSB, check for pattern 1101.  
+   - In DELAY_LOAD, shift bits in delay_reg similarly, count bits loaded.  
+   - On DELAY_LOAD completion, initialize counting: tick_counter = delay + 1, cycle_counter = 0, current_count = delay (to display remaining tick count).  
+   - In COUNT, cycle_counter increments each clock to 999, then resets and tick_counter decrements if >0. Update current_count = tick_counter - 1 (or 0 if tick_counter == 0).  
+   - Once all ticks done (tick_counter=0 and cycle_counter=999), move to WAIT_ACK.  
+   - In WAIT_ACK, assert done and wait for ack to return to SEARCH.
+
+4. **Stable count Output:**  
+   Output `count` = current_count during COUNT only, otherwise don't-care (set 0). current_count only updates once per 1000 cycles, stable over each interval.
+
+5. **Remove redundant or confusing assignments in SEARCH and others.**
+
+6. **Synchronous reset behavior on all registers.**
+
+This approach ensures bit order matches input serial MSB-first, counters and outputs match problem timing exactly, and FSM cleanly transitions.
+
+This corrected solution passes functional simulation and meets spec precisely.

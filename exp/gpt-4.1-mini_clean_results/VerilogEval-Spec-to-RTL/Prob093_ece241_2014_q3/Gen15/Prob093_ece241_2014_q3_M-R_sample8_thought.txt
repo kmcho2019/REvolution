@@ -1,0 +1,16 @@
+The original code implements mux_in[3:0] as functions of c and d using 2-to-1 multiplexers to represent the K-map columns for each fixed (a,b). The key is to keep the logic functionally the same but restructure the code by using combinational `assign` statements with ternary operators instead of separate mux2to1 module instances.
+
+This refactoring eliminates explicit module instantiations of mux2to1 and uses direct assignments with nested ternary operators for better readability and potentially more straightforward synthesis.
+
+The logical expressions remain the same:
+
+- mux_in[0] = (c) ? 1 : d;       // If c=1 output 1 else output d
+- mux_in[1] = 0;                // all zero
+- mux_in[2] = (c) ? d : 0;      // If c=1 output d else 0
+- mux_in[3] = (c) ? 1 : (~d);   // If c=1 output 1 else ~d
+
+To implement ~d with no logic gate besides multiplexers, we use (d) ? 0 : 1, which is simply a ternary on d.
+
+Thus, the entire logic can be expressed in simple assign statements with ternaries, fulfilling the original constraints and preserving functionality.
+
+This approach is succinct, readable, and fits the problem statement without changing the core design.

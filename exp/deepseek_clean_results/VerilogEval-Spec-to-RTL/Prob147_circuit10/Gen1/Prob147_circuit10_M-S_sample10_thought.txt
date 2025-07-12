@@ -1,0 +1,10 @@
+After carefully analyzing the waveform, I notice a simpler pattern:
+1. The state simply follows input 'a' with a clock delay (state is a delayed version of 'a')
+2. The output 'q' is the XOR of current 'b' and previous state (which is delayed 'a')
+
+This explains all the waveform behavior:
+- When a=1 at 5ns, state becomes 1 at next clock (but initial state is 0 in waveform)
+- q = b ^ state at all times
+- State updates to current 'a' at each clock edge
+
+This is much simpler than the previous solution while matching all waveform behavior.

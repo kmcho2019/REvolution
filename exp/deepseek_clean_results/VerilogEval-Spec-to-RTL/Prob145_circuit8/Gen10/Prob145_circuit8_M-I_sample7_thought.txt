@@ -1,0 +1,14 @@
+After carefully analyzing the waveform and the feedback, here's the improved strategy:
+
+1. The outputs should only update when the clock is high (active period)
+2. p should directly follow input 'a' during the clock high period (transparent latch behavior)
+3. q should be set to 1 only if p was high during the previous clock high period
+4. Both outputs should maintain their values when clock is low
+5. Need to properly track the previous p state only during clock high periods
+
+Key improvements:
+- Use clock gating to control when outputs can change
+- Implement p as a transparent latch during clock high
+- Track previous p state only during active clock periods
+- Simplify the state tracking logic
+- Ensure proper initialization

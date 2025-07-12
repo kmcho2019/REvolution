@@ -1,0 +1,11 @@
+Optimization strategy:
+1. Replace case statement with increment-and-reset logic for better PPA:
+   - Use simple binary increment (q <= q + 1)
+   - Add modulo-10 reset condition (when q == 9)
+   - This reduces combinatorial logic complexity and critical path
+2. Remove default case since it's unreachable in normal operation
+3. The simpler logic will:
+   - Reduce area by eliminating large mux structure
+   - Improve timing with shorter critical path
+   - Lower power by reducing switching activity (only LSB toggles for 0-8 counts)
+4. Maintain synchronous reset functionality

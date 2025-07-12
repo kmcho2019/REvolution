@@ -1,0 +1,21 @@
+The key improvements needed are:
+
+1. **Precise Cycle Counting**:
+   - Use a 12-bit counter to handle up to 16,000 cycles (0-15999)
+   - Implement exact (delay+1)*1000 counting by comparing against (delay_reg+1)*1000-1
+   - Remove the dual counter approach for simpler cycle counting
+
+2. **Pattern Detection**:
+   - Clear pattern register after successful detection
+   - Ensure proper synchronization of state transitions
+
+3. **Output Timing**:
+   - Calculate count output as (cycles_remaining / 1000)
+   - Ensure done signal asserts exactly when counting completes
+
+4. **State Machine Optimization**:
+   - Simplify state transitions
+   - Remove redundant counters
+   - Ensure clean reset behavior
+
+The improved version will maintain exact cycle counts while reducing logic complexity.

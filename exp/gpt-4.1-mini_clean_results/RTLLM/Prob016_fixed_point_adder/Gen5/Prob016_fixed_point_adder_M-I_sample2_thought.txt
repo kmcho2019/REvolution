@@ -1,0 +1,11 @@
+The original design correctly implements the specified behavior but uses a combinational always block with some implicit width expansion that could be made clearer and safer. Also, converting negative inputs from two’s complement to magnitude is done manually, which is correct but can be slightly optimized for clarity and synthesis friendliness.
+
+Improvements:
+1. Use clear unsigned addition and subtraction with explicit widths, avoiding implicit concatenation for adding one extra bit.
+2. Use functions for two’s complement to magnitude and vice versa conversion for better readability and reuse.
+3. Keep all widths explicit, especially when adding or subtracting absolute values, to avoid any potential width mismatches or synthesis issues.
+4. Keep the logic fully combinational and avoid any unnecessary register (`res`) because the problem states internal registers are allowed but not mandatory; the output is a reg, so this is fine.
+5. Provide comments and separate steps clearly.
+6. Ensure no ambiguity on the sign bit assignment when result is zero (sign bit = 0).
+
+These improvements enhance clarity, synthesis predictability, and maintain the exact specified functionality, while slightly improving readability and maintainability, which can lead to better PPA indirectly by preventing unexpected tool behaviors.

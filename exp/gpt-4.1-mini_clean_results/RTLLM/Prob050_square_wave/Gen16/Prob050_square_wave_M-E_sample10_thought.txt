@@ -1,0 +1,9 @@
+Use a simple modulo counter that counts from 0 up to freq-1, then wraps around to 0 and toggles wave_out. To avoid subtracting freq-1, precompute a threshold as freq or handle zero freq as a special case. This time, implement an asynchronous reset and separate combinational logic to detect terminal count, improving readability.
+
+Also, instead of toggling wave_out inside the sequential block, generate a toggle enable signal combinationally, and apply it in the sequential block. This decouples counting logic and toggle logic, making timing clearer and potentially easier for synthesis tools.
+
+When freq is zero, hold wave_out steady without toggling and freeze the counter to zero.
+
+Use non-blocking assignments consistently and use an asynchronous active-low reset signal rst_n to demonstrate a different reset style.
+
+This approach is novel by splitting toggle detection into combinational logic, using asynchronous reset, and explicit freeze conditions on count and wave_out.

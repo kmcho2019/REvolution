@@ -1,0 +1,35 @@
+Implement the FSM as a Mealy machine where outputs f and g can depend on the current state and inputs to achieve precise output timing. Use explicit state encoding and a pattern detection sub-module for the x=1,0,1 sequence.
+
+Key points:
+
+- Use synchronous active-low reset that initializes the FSM in state A with outputs f=0, g=0.
+
+- When resetn goes high, produce a one-cycle pulse f=1 immediately in the next clock cycle by transitioning from state A to state B, where f=1.
+
+- Implement a dedicated three-bit shift register to track the last three x inputs, updated every clock cycle after leaving reset.
+
+- Use states to track detection steps of the pattern 1,0,1 on x:
+
+   - State C0: initial state waiting for x=1
+
+   - State C1: after seeing x=1, wait for x=0
+
+   - State C2: after 1,0 detected, wait for x=1
+
+- Upon successful detection of the pattern, immediately set g=1 for one cycle (state D).
+
+- Then move to state E, monitoring y for up to two cycles. Maintain g=1 during this period.
+
+- If y=1 detected within two cycles, transition to permanent g=1 state (F).
+
+- Else, after two cycles with no y=1, transition to permanent g=0 state (G).
+
+- Output f is only asserted high during state B for exactly one cycle.
+
+- Output g is asserted during states D, E, and F; zero elsewhere.
+
+- Separate sequential state and counters, combinational next state and outputs, keeping outputs synchronous and glitch-free.
+
+- Pattern detection uses FSM states rather than a shift register comparison, ensuring correct sequential pattern recognition with low complexity.
+
+This approach simplifies pattern detection logic with states, enables exact timing of outputs via Mealy FSM, and precisely controls y monitoring time window with a counter.

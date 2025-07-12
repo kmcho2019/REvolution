@@ -1,0 +1,11 @@
+To improve timing (performance) and reduce power and area, we can pipeline the design by splitting the neighbor sum computation and state update into two clock cycles. On the first clock edge, we calculate and register all neighbor sums for each cell; on the second, we compute and register the next state. This reduces the critical path from summing neighbors plus applying logic in one cycle to just one of these steps per cycle, effectively halving the combinational delay per clock.
+
+Additionally, by storing neighbor sums in a register array, the large combinational fan-in and fan-out are reduced, improving timing and possibly reducing switching power.
+
+To save area and power, we keep the 2D array approach but make it a registered intermediate stage. The load operation still directly loads q. When load is high, pipeline registers are reset to initial states accordingly. This approach balances clarity with better timing and power efficiency by pipelining the logic.
+
+We use two clocked stages:
+- Stage 1: Compute and register neighbor sums.
+- Stage 2: Compute next state from neighbor sums and current state.
+
+This keeps the interface unchanged but improves max clock frequency and potentially reduces power and area, as synthesis can optimize registers and logic depth better.

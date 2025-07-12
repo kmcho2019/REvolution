@@ -1,0 +1,7 @@
+To introduce a novel architectural idea for the counter design, we will focus on leveraging a finite state machine (FSM) to control the counting process. The FSM will have two main states: an idle state and a counting state. The idle state will be the default state where the counter remains unchanged, and the counting state will be active when the `valid_count` signal is high. The transition between these states will be controlled by the `valid_count` signal. 
+
+When in the counting state, the FSM will increment the counter on each clock cycle until it reaches the maximum value (4'd11), at which point it will wrap around to 0. The reset signal (`rst_n`) will force the FSM into the idle state and reset the counter to 0, regardless of the current state.
+
+To improve performance and reduce power consumption, we will utilize a gray encoding for the state machine's states, which reduces the number of bit transitions between states, thereby decreasing power consumption. Additionally, we will ensure that the combinational logic for the next state and output calculation is optimized for minimal area and power consumption.
+
+The use of an FSM provides a structured and maintainable approach to the counter design, making it easier to understand and modify the design as needed. This approach also allows for easy extension to more complex counting behaviors by simply adding more states or transitions to the FSM.

@@ -1,0 +1,7 @@
+Refactor the ALU to use combinational continuous assignments (`assign`) for all intermediate and final outputs, eliminating all always blocks. This approach simplifies the logic, avoids redundant registers, and reduces combinational path complexity by merging arithmetic, logical, shift, and comparison operations directly into wire assignments. 
+
+Carry and overflow are explicitly computed only when needed and set to zero otherwise, preventing unnecessary toggling. The `flag` output is assigned a stable value (0) when not used by SLT or SLTU to avoid high-impedance and improve power efficiency. Shift amounts are unified into a single wire to minimize naming and resource use. 
+
+Result selection is performed with a single combinational multiplexer expression, minimizing logic duplication and fanout. Signed arithmetic and comparisons use explicit signed casts on inputs to avoid runtime type conversions. Zero and negative flags are simple combinational conditions directly from the result. 
+
+This fully combinational, wire-based design improves clarity, reduces area and power by minimizing intermediate registers and unnecessary logic toggling, and potentially improves timing by limiting the logic depth and fanout of the multiplexers.

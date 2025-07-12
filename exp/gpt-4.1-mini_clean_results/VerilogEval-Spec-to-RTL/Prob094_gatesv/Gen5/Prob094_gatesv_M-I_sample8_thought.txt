@@ -1,0 +1,9 @@
+To optimize the given design for better PPA without changing the functional behavior, we can use vector operations and minimize the number of explicit bitwise assignments, which can slightly reduce the synthesized area and improve readability. The logical relationships between bits can be expressed as vector slices and shifts, enabling the synthesis tool to optimize the logic gates better.
+
+Key improvements:
+
+- Compute out_both[3] and out_any[0] as zero constants directly.
+- Use vector slicing and bitwise operations for out_both[0:2] and out_any[1:3].
+- For out_different, use a rotated version of the input vector (circular shift) and XOR it with the input vector to compute all bits at once.
+
+This approach can reduce code size and potentially improve power and area slightly due to more compact logic representation, while performance remains unchanged (pure combinational logic).

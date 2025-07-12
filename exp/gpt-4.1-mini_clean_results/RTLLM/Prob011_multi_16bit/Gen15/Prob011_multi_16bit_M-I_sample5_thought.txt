@@ -1,0 +1,14 @@
+Improvement Strategy:
+
+Building on the original well-structured solution, the focus is on reducing power consumption and slightly improving timing without increasing area significantly. Key points:
+
+1. Add clock enables for internal registers (`areg`, `breg`, `yout_r`, and counter `i`) so they only update when needed. This reduces toggling when idle or done.
+2. Use operand gating for the adder: compute the addition only when needed (`add_en`), and latch `yout_r` only when accumulation is necessary.
+3. Avoid shifting `areg` and `breg` when multiplication is not active (i.e., when `start` is not asserted or outside the valid count range).
+4. Keep synchronous active-low reset for stable timing.
+5. Hold registers and counter at idle or after done to reduce switching.
+6. Improve readability and maintain functional correctness identical to the original design.
+
+This approach minimizes unnecessary switching inside the datapath and control logic, potentially improving power and slightly easing timing closure without architectural changes.
+
+The done flag logic is kept as-is, as it is already efficient and clean.

@@ -1,0 +1,11 @@
+Refactor the design by combining state and input bit registers updates into a single always block for synchronous logic, and use continuous assignments for next_state and output. This style keeps the FSM logic clear and separates combinational next state and output logic with assign statements, showing a different coding style from the original always @(*) combinational blocks.
+
+The key changes:
+- One always block for state and input registering with async reset.
+- Use assign statements for next_state and z based on state and x_reg.
+- Remove the explicit next_state reg and next_state always block; instead, next_state is a wire driven by assign.
+- Output z is also a wire assigned by combinational logic from state and x_reg.
+
+This structure emphasizes the use of continuous assignments and reduces combinational always blocks, while maintaining the Moore machine functionality with a registered input and synchronous outputs.
+
+Asynchronous reset still initializes the FSM state and input register. The output z remains purely Moore-style, depending only on registered state and input bit.

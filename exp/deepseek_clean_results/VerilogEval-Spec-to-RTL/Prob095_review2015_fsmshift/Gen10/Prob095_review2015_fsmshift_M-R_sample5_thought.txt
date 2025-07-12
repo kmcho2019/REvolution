@@ -1,0 +1,12 @@
+Here's a refactored version that maintains the same core idea but with improved implementation:
+
+1. Still use a 2-bit counter (values 0-3) to count 4 cycles
+2. Make shift_ena active when counter is less than 4 (0-3)
+3. Reset behavior:
+   - On reset, immediately set counter to 0 (first cycle of enable)
+   - Keep incrementing until counter reaches 3
+4. After 4 cycles (counter=3), maintain this value and keep shift_ena low
+5. Key improvements:
+   - Clearer reset handling (counter starts at 0 on reset)
+   - Proper 4-cycle enable using counter < 4 comparison
+   - More straightforward state maintenance

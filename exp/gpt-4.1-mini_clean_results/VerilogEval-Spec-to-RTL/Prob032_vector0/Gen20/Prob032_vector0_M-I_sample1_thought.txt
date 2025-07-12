@@ -1,0 +1,9 @@
+Since the outputs o0, o1, and o2 directly correspond to specific bits of the input vector vec, the best approach for PPA optimization is to eliminate the parameterized BitSplitter module and the generate loop altogether. Direct continuous assignments at the top module level minimize logic, area, and switching power by avoiding extra nets or generate constructs. This results in zero-delay, wire-only connections that synthesis tools can optimize away to pure routing.
+
+The strategy:
+- Remove BitSplitter module and its generate logic.
+- Directly assign outv = vec.
+- Directly connect o0 = vec[0], o1 = vec[1], o2 = vec[2].
+- Add clear comments describing output bit mappings.
+
+This results in a minimal, flat, purely combinational module with optimal PPA characteristics.

@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. Use a single case statement for the 9-to-1 mux instead of hierarchical 2-to-1 muxes - simpler and more readable
+2. Handle all valid cases (sel=0-8) explicitly and use default for invalid cases (sel=9-15)
+3. Remove generate block since we can operate on the full 16-bit vectors at once
+4. Default case simply assigns all 1's when sel is invalid (>=9)
+5. This approach reduces intermediate wires and logic levels while maintaining functionality
+
+Key Benefits:
+- Single case statement is more concise and easier to understand
+- Eliminates unnecessary hierarchical mux structure
+- Reduces intermediate wiring
+- Maintains same functionality with simpler code
+- Allows synthesis tool more flexibility in optimization

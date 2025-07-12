@@ -1,0 +1,6 @@
+Fuse the modular clarity and separation of enable synchronization from Example 1 with the efficient, single-block clk_b domain logic from Example 2.  
+Use an explicit two-stage enable synchronizer module to isolate metastability handling and improve readability and testability.  
+Capture data and enable in clk_a domain with async reset, updating data_reg only when data_en is high, to reduce switching and power as in Example 2.  
+In clk_b domain, instantiate the enable synchronizer module and then use a single always block that updates both the synchronized enable signal and the output data register.  
+Use a combinational mux for data output assignment to avoid conditional register updates and potential data hazards, improving timing robustness and clarity.  
+This fusion provides modular design, clear clock domain boundaries, minimal switching, and clear logic for muxing output based on stable synchronized enable signal.

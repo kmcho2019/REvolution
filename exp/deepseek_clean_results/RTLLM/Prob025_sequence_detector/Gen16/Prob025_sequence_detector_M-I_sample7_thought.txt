@@ -1,0 +1,15 @@
+To optimize the sequence detector for better PPA metrics, I'll implement the following improvements:
+
+1. State Machine Optimization: Replace the shift register with a minimal state machine (Mealy machine) that only requires 3 states instead of tracking all 4 bits. This reduces area and power.
+
+2. Early Termination: Add logic to reset the state machine when an invalid bit is detected, preventing unnecessary state transitions.
+
+3. Output Optimization: Make the output purely combinatorial from the current state and input, reducing critical path.
+
+4. Clock Gating: Add conditional state updates to reduce unnecessary transitions when input doesn't affect the sequence.
+
+These changes should:
+- Reduce area by using fewer state bits (2 bits vs 4)
+- Lower power by minimizing state transitions
+- Maintain or improve timing by simplifying the detection logic
+- Keep the same functionality while being more efficient

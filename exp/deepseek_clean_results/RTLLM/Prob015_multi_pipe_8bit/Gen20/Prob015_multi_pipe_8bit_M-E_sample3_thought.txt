@@ -1,0 +1,24 @@
+Novel Architecture:
+1. Radix-4 Booth Encoding:
+   - Reduces number of partial products by half (from 8 to 4)
+   - Encodes multiplier bits in groups of 3 to detect sequences of 1s
+   - Generates partial products with possible values of 0, ±1, ±2
+
+2. Optimized 2-Stage Pipeline:
+   - Stage 1: Booth encoding and partial product generation
+   - Stage 2: Wallace tree compression and final addition
+   - Balanced pipeline stages for better timing
+
+3. Efficient Sign Handling:
+   - Uses sign extension optimization for negative partial products
+   - Implements efficient two's complement handling
+
+4. Compact Enable Logic:
+   - Single enable pipeline register
+   - Early termination when disabled
+
+Key Advantages:
+- 50% fewer partial products than conventional approach
+- Balanced pipeline stages for better timing
+- Reduced area due to fewer adders
+- Lower power from reduced switching activity

@@ -1,0 +1,12 @@
+To optimize the original design for better PPA (Timing, Power, and Area), focus on reducing combinational logic duplication and mux depth:
+
+- Instead of computing four separate shifts and then muxing, implement a 2-stage barrel shifter approach:
+  1. Shift by either 0 or 8 bits based on amount[0].
+  2. Then shift the result by 0 or 1 bit based on amount[1].
+- This reduces the number of parallel large shifters and muxes, lowering area and power.
+- For arithmetic right shifts, ensure sign-extension is applied properly during both shift stages.
+- Use a single always block with minimal logic inside, so that the shifting is fully combinational before clock edge.
+- This approach provides a balanced tradeoff between hardware complexity and critical path delay.
+- Additionally, gating shift logic with 'ena' avoids unnecessary switching.
+
+The improved design uses two-step shifting for both left and right directions with arithmetic sign extension for right shifts, enabling efficient logic reuse and reduced muxing.

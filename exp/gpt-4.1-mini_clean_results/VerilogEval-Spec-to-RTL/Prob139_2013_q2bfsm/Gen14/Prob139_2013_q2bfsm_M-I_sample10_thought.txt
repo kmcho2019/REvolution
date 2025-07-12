@@ -1,0 +1,25 @@
+The primary issue in the original solution is that outputs f and g are assigned based on the next_state rather than the current state, causing output misalignment by one cycle in this Moore FSM. Also, the y monitoring counter control signals can cause timing glitches due to being generated combinationally but applied synchronously after the state update.
+
+To fix these problems and improve clarity and correctness:
+
+1. **Output Assignment:**  
+   Assign f and g solely based on the current state, not next_state, ensuring outputs change exactly on the FSM state transitions and align properly in time.
+
+2. **Counter Control:**  
+   Move y_count_enable and y_count_reset control into the sequential block, derived from the state variable instead of combinational next_state logic. This avoids glitches and ensures synchronous, well-timed updates.
+
+3. **Pattern Detection Cleanup:**  
+   Simplify the pattern detection states transitions to explicitly handle each expected input and restart on mismatch. The original had redundant or unclear conditions.
+
+4. **Y Monitoring Counter:**  
+   Use clear logic to count cycles: start at zero when entering y-monitoring; increment once each cycle; after two cycles without y=1, transition to permanent g=0 state. Check for y==1 immediately each cycle. This ensures the 2-cycle time window is strictly enforced.
+
+5. **State Encoding:**  
+   Keep simple one-hot or binary encoding; here binary is fine for readability and synthesis.
+
+6. **Reset Behavior:**  
+   On synchronous active-low reset (resetn=0), FSM resets to initial state (ST_A) with outputs f=0, g=0 and y_count=0.
+
+By following these steps, the FSM will produce correct outputs aligned with states, and the 1-clock pulse of f and g will occur as specified. The y monitoring will be precise and robust.
+
+The improved design remains a Moore FSM but has cleaner state-to-output mapping and synchronous counter control.

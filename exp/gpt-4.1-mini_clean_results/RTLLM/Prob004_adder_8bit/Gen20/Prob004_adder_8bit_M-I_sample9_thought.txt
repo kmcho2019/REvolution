@@ -1,0 +1,23 @@
+To improve the existing 8-bit ripple carry adder design for better PPA (Performance, Power, Area):
+
+1. Performance:
+   - Implement a Carry Lookahead Adder (CLA) logic internally to reduce carry propagation delay, but still instantiate the same full adders for modularity.
+   - Alternatively, improve carry generation by using generate and propagate signals to precompute carry signals combinationally, effectively creating a carry lookahead structure, thus reducing the critical path.
+
+2. Power:
+   - Minimizing unnecessary carry toggling by precomputing carries combinationally reduces switching in carry lines.
+   - Keep logic simple to minimize gate count and switching.
+
+3. Area:
+   - Avoid excessive wiring by replacing wire arrays with vector logic for carry signals.
+   - Use compact logic expressions for generate and propagate signals.
+
+Given the constraints to use multiple bit-level adders, but also improve carry propagation, I will:
+
+- Keep the full_adder_1bit module.
+- Inside the 8-bit adder, compute generate (g) and propagate (p) signals for each bit.
+- Use these to compute carry signals in parallel using carry lookahead logic.
+- Pass the computed carry signals to each full adder module, which will just produce sum bits.
+- This reduces the carry chain delay from linear to logarithmic.
+
+This hybrid approach keeps the bit-level modularity while improving performance, and the combinational carry computation reduces switching, improving power.

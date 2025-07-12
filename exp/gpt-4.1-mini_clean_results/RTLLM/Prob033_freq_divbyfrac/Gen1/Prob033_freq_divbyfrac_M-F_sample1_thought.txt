@@ -1,0 +1,13 @@
+To fix the synchronization issue between the rising-edge and falling-edge counters, we use a single counter that runs on the rising edge only. This counter controls the timing of both phase-shifted clock signals. 
+
+For the half-cycle phase shift on the falling edge, we generate the second clock by sampling the first clock on the falling edge and delaying or advancing it appropriately without using an independent counter. 
+
+Specifically:
+- Use one counter incremented on the rising edge of clk, cycling through 0 to 6.
+- Generate div_clk_rise based on this counter (high for 4 counts, low for 3).
+- Generate div_clk_fall by sampling div_clk_rise at the falling edge, effectively creating the phase-shifted version delayed by half clock period.
+- OR these two signals to get clk_div with correct 3.5 division and improved duty cycle.
+
+This approach guarantees tight synchronization between the two phase-shifted clocks and avoids the mismatch caused by independent counters on posedge and negedge. The half-cycle phase shift is effectively created by toggling div_clk_fall on clk's falling edge based on the stable div_clk_rise signal.
+
+Reset is synchronous to posedge clk to avoid ambiguity. This design meets the fractional division and duty-cycle requirements while ensuring stable timing.

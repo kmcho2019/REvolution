@@ -1,0 +1,12 @@
+The original solution is functionally correct but computes all arithmetic and logical operations in parallel regardless of the selected opcode, causing unnecessary switching activity and increased area. To optimize for power and area without sacrificing timing significantly, I will:
+
+1. Compute only the arithmetic operation needed by the selected opcode, not all four add/sub operations at once.
+2. Similarly, compute only the required logical or shift operation per the opcode.
+3. Combine output flag assignments in a single always block for clarity and potentially better synthesis.
+4. Use a single 33-bit adder/subtractor unit for signed arithmetic operations with operand selection via mux.
+5. For unsigned operations, handle carry and borrow explicitly without redundant large adders.
+6. Avoid using high-impedance 'z' for flag; assign zero when flag is not valid.
+7. Maintain signed types for signed operations and logical shift operators for shifts.
+8. Keep combinational logic simple and minimize unnecessary parallel computations.
+
+This selective computation approach reduces unnecessary logic switching and resource utilization, optimizing power and area, while maintaining a straightforward, readable design. The critical path won't increase since only one arithmetic operation is performed at a time, and all logical/shifts are relatively fast. This balances PPA effectively.

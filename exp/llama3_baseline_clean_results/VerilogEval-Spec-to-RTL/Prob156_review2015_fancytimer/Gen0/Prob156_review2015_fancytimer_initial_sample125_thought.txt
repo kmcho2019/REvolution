@@ -1,0 +1,11 @@
+To solve this problem, we will design a finite state machine with several states: 
+- IDLE: searching for the start sequence 1101
+- SHIFT: shifting in the 4-bit delay after the start sequence is found
+- COUNT: counting down from the specified delay
+- DONE: waiting for the acknowledgement from the user
+- RESET: resetting the state machine
+
+We will use a 4-bit register to store the delay value and a 12-bit counter to count down from the calculated total cycles (delay+1) * 1000. 
+The counting output will be asserted when the state machine is in the COUNT state.
+The done output will be asserted when the countdown is finished.
+The state machine will wait for the ack input to be high before transitioning to the IDLE state to start searching for the next occurrence of the start sequence.

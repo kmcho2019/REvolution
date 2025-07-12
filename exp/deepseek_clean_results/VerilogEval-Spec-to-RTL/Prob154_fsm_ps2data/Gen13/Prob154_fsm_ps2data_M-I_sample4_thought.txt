@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the output assignments by registering out_bytes one cycle later
+   - Move done signal generation to a separate always block to break critical path
+
+2. Power Optimization:
+   - Only update out_bytes when actually storing a new byte (in BYTE1/BYTE2 states)
+   - Use don't-care values when not collecting bytes to minimize switching
+
+3. Area Optimization:
+   - Keep binary state encoding (most efficient for 3 states)
+   - Remove redundant registers by directly assigning bytes to their positions
+
+Key Changes:
+- Split the logic into two always blocks (state machine and output)
+- Minimize register updates to only necessary cycles
+- Maintain correct timing by properly synchronizing done signal
+- Keep output don't-care when not in done state

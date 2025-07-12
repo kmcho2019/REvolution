@@ -1,0 +1,13 @@
+Refactored Design Approach:
+1. Maintain same functional behavior (8-bit signed addition with overflow detection)
+2. Replace generate block with continuous assignments for better readability and potential synthesis optimization
+3. Unroll the carry chain explicitly to make the logic more visible
+4. Keep overflow detection identical (MSB carry-in vs carry-out comparison)
+5. Benefits:
+   - More straightforward code structure without generate blocks
+   - Explicitly shows the ripple-carry propagation
+   - Easier to modify individual bit operations if needed
+   - Maintains same PPA characteristics while being more readable
+6. Tradeoffs:
+   - Slightly more verbose code
+   - Same timing characteristics as original

@@ -1,0 +1,5 @@
+To improve the existing solution, we need to correct the logic for detecting falling edges in the input signal. The issue arises because `prev_in` is updated at the same clock edge as `out`, causing `prev_in` to always be the current value of `in` when the comparison is made. To fix this, we should update `prev_in` first, and then use the new value of `prev_in` to detect the transition. However, since both updates need to be synchronized with the clock edge, we'll use non-blocking assignments to ensure that `prev_in` is updated before `out`.
+
+Another optimization is to use a more efficient method for detecting the transition. Instead of using the bitwise AND operation with the current state of `out`, we can directly update `out` based on the detection of falling edges. If a falling edge is detected, we set the corresponding bit in `out` to 1. If `reset` is high, we reset `out` and `prev_in` to 0.
+
+To optimize for better PPA (Power, Performance, Area), we can minimize the number of operations required. In this case, the logic is already quite simple, but we can ensure that the synthesis tool optimizes the logic by avoiding unnecessary computations.

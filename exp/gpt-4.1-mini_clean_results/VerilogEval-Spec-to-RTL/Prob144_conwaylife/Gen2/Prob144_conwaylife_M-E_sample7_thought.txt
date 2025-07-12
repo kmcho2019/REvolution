@@ -1,0 +1,5 @@
+To reduce the large combinational logic and improve readability, implement the module using a row-based approach with 16 parallel 16-bit registers to represent the grid. On each clock cycle (if not loading), compute the next row by counting neighbors using circular shifts and wrapping neighbor rows, treating each row as a 16-bit vector. The toroidal addressing wraps both rows and columns modularly using bitwise rotations. Neighbor counting per cell is done by summing bits of neighboring rows shifted left, right, and unshifted, forming the eight neighbors. The result is a 3-bit neighbor count per cell, which is then used with the rules to compute the next state for each cell in a vectorized way.
+
+This approach partitions the grid state into 16 registers (rows), leverages bitwise rotations for toroidal column wrapping, and uses a pipelined, row-wise combinational logic that updates all cells simultaneously with less indexing overhead. The load operation updates the entire grid synchronously.
+
+This method reduces indexing overhead, avoids nested loops over cells, and uses bitwise operations to count neighbors efficiently.

@@ -1,0 +1,24 @@
+To correct and optimize the Radix-4 Booth multiplier, I'll implement these improvements:
+
+1. **Proper Booth Encoding**: 
+   - Process non-overlapping 3-bit groups (current pair + previous LSB)
+   - Handle sign extension correctly for negative numbers
+
+2. **Correct Shifting Logic**:
+   - Only shift the multiplier right to examine new bit pairs
+   - Maintain multiplicand value without shifting
+
+3. **Accurate Partial Product Accumulation**:
+   - Shift partial products by 2*iteration count to properly weight them
+   - Handle all Booth cases (±0, ±A, ±2A) with correct arithmetic
+
+4. **Efficient State Control**:
+   - Use a 2-bit counter (for 4 iterations of 2-bit groups)
+   - Generate ready signal after final accumulation
+
+5. **Optimized Datapath**:
+   - Precompute all possible partial products
+   - Use multiplexer for Booth case selection
+   - Simplify arithmetic operations
+
+This implementation will correctly perform 8-bit multiplication in 4 cycles (Radix-4) with proper pipelining and Booth algorithm compliance.

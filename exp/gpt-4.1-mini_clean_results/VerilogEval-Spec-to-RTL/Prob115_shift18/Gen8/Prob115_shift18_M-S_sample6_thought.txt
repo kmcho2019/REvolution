@@ -1,0 +1,5 @@
+Since the shift amounts and directions are limited and discrete, we can implement the shifts by simple wiring and concatenation instead of using large shift operators. Shifting left by 1 or 8 bits is done by concatenating zeros at the right. Shifting right by 1 or 8 bits arithmetically can be done by replicating the sign bit and concatenating shifted data accordingly.
+
+By using a case statement indexed by the amount signal, we simplify the combinational logic. On each clock, if load is high, load data; else if ena is high, perform the selected shift. This removes the multiple parallel shift computations and muxes, reducing the complexity while preserving functionality.
+
+This approach yields simpler, easier to synthesize combinational logic with fewer multiplexers and no reliance on shift operators.

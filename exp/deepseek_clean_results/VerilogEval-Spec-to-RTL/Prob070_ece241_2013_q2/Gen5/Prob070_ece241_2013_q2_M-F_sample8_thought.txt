@@ -1,0 +1,23 @@
+To fix the implementation, I'll:
+1. Re-examine the truth table requirements:
+   - Output 1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 cases: 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), 14 (1110)
+   - Don't care cases: 3,8,11,12
+
+2. For out_sop (Sum of Products):
+   - Keep the correct implementation since it properly covers the output 1 cases
+   - Don't cares will naturally default to 0 in SOP form
+
+3. For out_pos (Product of Sums):
+   - Realize that POS form needs to output 0 when any maxterm is 0
+   - Each maxterm should represent a condition where we want output to be 0
+   - For each 0-output case, create a maxterm where:
+     * Input is 0 → variable appears non-inverted
+     * Input is 1 → variable appears inverted
+   - This ensures the term becomes 0 only for that specific input combination
+   - The final POS is the AND of all these maxterms
+
+4. Verify the new implementation:
+   - out_sop remains correct for 2,7,15
+   - out_pos now correctly outputs 0 for all specified cases
+   - Don't care cases can output either 0 or 1 in both forms

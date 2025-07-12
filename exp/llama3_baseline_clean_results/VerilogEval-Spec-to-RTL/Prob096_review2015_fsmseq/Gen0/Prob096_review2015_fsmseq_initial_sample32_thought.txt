@@ -1,0 +1,6 @@
+To implement the TopModule, we will design a finite-state machine (FSM) that checks the input bit stream for the sequence 1101. The FSM will have states to track the progress of matching the sequence. When the sequence is found, it will set the start_shifting output to 1 until reset. We will use a Moore machine approach where the output is determined by the current state. The states will be defined as follows: 
+- IDLE: Initial state, waiting for the first '1' of the sequence.
+- GOT_11: First two bits of the sequence ('11') have been seen.
+- GOT_110: First three bits of the sequence ('110') have been seen.
+- FOUND: The sequence '1101' has been found, and start_shifting should be set to 1.
+We will also handle the reset condition to ensure the FSM returns to its initial state when reset is asserted.

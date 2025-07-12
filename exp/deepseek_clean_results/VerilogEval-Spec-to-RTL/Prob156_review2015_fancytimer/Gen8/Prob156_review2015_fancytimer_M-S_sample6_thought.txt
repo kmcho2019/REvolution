@@ -1,0 +1,22 @@
+Here's a simplified approach that maintains all functionality while reducing complexity:
+
+1. **Pattern Detection**: Use a 4-bit shift register to detect "1101" pattern. When found, transition to delay capture state.
+
+2. **Delay Capture**: Shift in next 4 bits to form delay value. Use a simple 2-bit counter to track bits received.
+
+3. **Counting Logic**: 
+   - Use a single 14-bit counter (since max count is 16*1000=16000 cycles)
+   - Calculate target cycles as (delay + 1)*1000
+   - Derive count output from remaining cycles (count = (remaining_cycles-1)/1000)
+
+4. **State Machine**: Simplify to just 4 states with clear transitions:
+   - IDLE: Pattern detection
+   - CAPTURE: Collecting delay bits
+   - COUNT: Active counting
+   - DONE: Waiting for ack
+
+Key simplifications:
+- Single counter for timing instead of two
+- Simplified count output calculation
+- Reduced state machine complexity
+- Fewer registers overall

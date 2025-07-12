@@ -1,0 +1,15 @@
+The original design uses two separate 5-bit additions: one for raw sum (A+B+Cin) and another for adding 6 when correction is needed. This doubles the adder hardware and adds to latency and power. To optimize PPA, merge the correction into the addition process by detecting when correction is needed and then conditionally adding 6 using minimal combinational logic instead of a full second adder. 
+
+A well-known minimal logic for BCD correction is:
+- correction_needed = carry_out_of_addition OR (sum > 9)
+- sum > 9 detection can be implemented as sum[3] & (sum[2] | sum[1]) 
+When correction_needed is true, add 6 (0110) to the 4-bit sum.
+
+To avoid a second full adder, implement the addition of 6 by a small combinational logic that toggles bits accordingly:
+- Bit 0 of output is sum[0]
+- Bit 1 of output is sum[1] ^ correction_needed
+- Bit 2 of output is sum[2] ^ correction_needed
+- Bit 3 of output is sum[3] | correction_needed
+The carry-out (Cout) equals correction_needed.
+
+This approach eliminates the second adder, reducing area and power, and shortens critical path by implementing correction with simple combinational gates. The design still uses a 5-bit adder for the initial sum but uses optimized correction logic for PPA improvements.

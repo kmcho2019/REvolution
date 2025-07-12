@@ -1,0 +1,15 @@
+Refactoring Strategy:
+1. Replace sequential always blocks with combinational logic and clocked flip-flops
+2. Use count-up counters instead of count-down for better timing and power
+3. Implement clock enables for each divided clock to reduce switching activity
+4. Use assign statements for clear combinatorial logic
+5. Maintain synchronous reset but simplify counter reset conditions
+6. Keep counter widths optimized but change to count-up style
+7. Use explicit terminal count comparisons for clarity
+
+Key Changes:
+- CLK_50 remains simple toggle flip-flop
+- CLK_10 and CLK_1 use clock enable signals generated from counters
+- Counters now count up to terminal value then reset
+- Output clocks toggle only when their enable is active
+- All logic remains synchronous to CLK_in

@@ -1,0 +1,9 @@
+To correctly implement Rule 90 with proper boundary conditions:
+1. Boundary cells (q[0] and q[511]) should XOR with their single neighbor and implicit zero
+2. Internal cells should XOR their left and right neighbors as before
+3. Use a generate block to efficiently handle all 512 bits without manual enumeration
+4. Maintain the load functionality for initialization
+5. Properly implement the boundary conditions where:
+   - q[0]'s left neighbor is 0 (so next state is 0 ^ q[1])
+   - q[511]'s right neighbor is 0 (so next state is q[510] ^ 0)
+6. Use non-blocking assignments for sequential updates

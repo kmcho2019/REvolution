@@ -1,0 +1,18 @@
+Instead of directly assigning Y1 and Y3 by inspecting transitions individually, we can represent the FSM transitions as logical expressions from each current state bit combined with input w, and then synthesize Y1 and Y3 by combining all transitions that lead to those states. For Y1 (next y[1]), examine all states that transition to B (y[1]):
+
+- A(0) -> B on w=1: y[0] & w
+
+No other transitions lead to B.
+
+For Y3 (next y[3]), which corresponds to state D, transitions come from:
+
+- B(0) -> D on w=0: y[1] & ~w
+- C(0) -> D on w=0: y[2] & ~w
+- E(1) -> D on w=0: y[4] & ~w
+- F(1) -> D on w=0: y[5] & ~w
+
+So Y3 = ~w & (y[1] + y[2] + y[4] + y[5])
+
+To demonstrate a novel architectural idea, we will use a small combinational function module "NextStateInput" which takes the current state y and input w and outputs the Y1 and Y3 values, separating combinational logic into a submodule to modularize the design. This encapsulation could help maintain and extend the FSM when the number of states or outputs grows.
+
+This modularization is new compared to a flat implementation.

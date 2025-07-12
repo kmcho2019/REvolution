@@ -1,0 +1,25 @@
+Here's a novel approach using a shift register and timer-based control:
+
+1. **Shift Register for Pattern Detection**:
+   - Use a 3-bit shift register to track the exact sequence of x values (1,0,1)
+   - This provides precise pattern matching without complex state transitions
+
+2. **Timer-Based Control**:
+   - Implement a 2-bit timer for the y detection window
+   - The timer starts when the pattern is detected and counts down
+   - This eliminates the need for separate timeout states
+
+3. **Output Control**:
+   - f is generated immediately after reset using a one-shot pulse generator
+   - g is controlled by a combination of pattern match and timer status
+   - Permanent g setting is handled by latching the decision
+
+4. **Simplified State Machine**:
+   - Only 3 states needed (RESET, ACTIVE, FINAL)
+   - Most logic handled by the shift register and timer
+
+Key advantages:
+- Precise pattern matching with shift register
+- Clear timeout mechanism with dedicated timer
+- Reduced state complexity
+- All requirements met with minimal states

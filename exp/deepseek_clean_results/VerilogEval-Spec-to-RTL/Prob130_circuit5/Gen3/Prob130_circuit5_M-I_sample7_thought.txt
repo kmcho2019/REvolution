@@ -1,0 +1,11 @@
+The current implementation works correctly but can be optimized for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. **Simplify the default case check**: Instead of checking both (c & 4'b1100) and (c > 4'b0011), we can just check (c > 3) since it covers all cases where c is out of range (0-3).
+
+2. **Use a more efficient multiplexer structure**: Instead of generating separate masks for each case, we can use a priority-encoded multiplexer that selects between the inputs based on c's value. This reduces the number of comparators needed.
+
+3. **Optimize the constant values**: Replace the hard-coded 4'b1111 with a parameter or make it more technology-friendly if possible.
+
+4. **Reduce logic levels**: The current implementation has multiple levels of logic (ANDs followed by ORs). We can flatten this to potentially improve timing.
+
+The improved version will use a cleaner case statement style that's more readable and likely to synthesize more efficiently.

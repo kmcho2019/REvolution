@@ -1,0 +1,7 @@
+The feedback indicates a potential race condition or initialization timing issue during synthesis. To fix this:
+
+1. Remove the initial value assignment in the reg declaration since synthesis tools may handle this differently
+2. Add an explicit reset (even though not originally specified) to ensure consistent initialization between simulation and synthesis
+3. Use an internal wire for the XOR output to maintain clean separation of combinational and sequential logic
+4. The reset will ensure deterministic behavior from power-on, matching simulation and synthesis
+5. The PPA impact is minimal since we're only adding a reset capability to the existing flip-flop

@@ -1,0 +1,13 @@
+To implement the Moore state machine that performs 2's complementation, we will need to track the current state of the input number and whether we are currently calculating the 2's complement or not. We can achieve this by using a finite state machine (FSM) with two states: idle and running. The FSM will start in the idle state and transition to the running state when the reset is released. In the running state, it will accept the input bits one by one, calculate the 2's complement, and output the result. The 2's complement can be calculated by inverting the bits of the input number and adding 1 to the result.
+
+The module will have the following components:
+- A flip-flop to store the current state (idle or running)
+- A flip-flop to store the current output bit
+- A register to store the input number being processed
+- A counter to keep track of the number of bits processed
+- Combinational logic to calculate the next state and output based on the current state and input
+- Combinational logic to calculate the 2's complement
+
+However, a simpler approach is to realize that the 2's complement of a binary number can be calculated by inverting all the bits to the right of the first 1 encountered and then inverting all the bits to the left of that first 1 including the first 1, and then add 1. This can be done by keeping track of the sign bit (the first 1 encountered) and the bits after that.
+
+In this case, we only need a single flip-flop to store whether the first 1 has been seen or not (i.e., we are now in the "invert" phase), another flip-flop to store whether we should invert the output bit, and a flip-flop to store the carry bit.

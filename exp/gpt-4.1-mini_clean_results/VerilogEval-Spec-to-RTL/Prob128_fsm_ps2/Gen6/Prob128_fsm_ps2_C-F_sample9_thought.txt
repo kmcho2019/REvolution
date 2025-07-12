@@ -1,0 +1,11 @@
+I will fuse the strengths of both examples to create a superior FSM implementation:
+
+- Use one-hot encoding for the FSM states to minimize switching and improve timing, as in Example 2.
+- Replace the done signal assignment from combinational logic in always block to a registered done signal asserted exactly one cycle after the third byte, ensuring a clean one-cycle pulse.
+- Implement the done signal as a gated pulse only asserted when the third byte is received, preventing unnecessary toggling.
+- Use a synchronous reset with non-blocking assignments consistently for safe initialization.
+- Add explicit default cases and carefully designed next_state logic to avoid glitches.
+- Keep the FSM simple with three states (WAIT_FOR_START, BYTE2, BYTE3) reflecting the message receipt process and allowing easy extensibility.
+- To reduce toggling of internal logic, update states only on valid inputs; idle in WAIT_FOR_START until a valid first byte (in[3] = 1) is detected.
+
+This combined approach leverages the low toggle power and clarity of one-hot FSM, while gating the done signal and ensuring stable timing. It improves on both timing and power, maintaining area efficiency and strict functionality adherence.

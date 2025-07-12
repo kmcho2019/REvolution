@@ -1,0 +1,24 @@
+Novel Architecture: "Bit-Serial Pipeline Multiplier with Carry-Save Addition"
+
+Key Innovations:
+1. **Bit-Serial Processing**: Process multiplier bits sequentially to reduce hardware complexity
+2. **Carry-Save Technique**: Use carry-save adders between pipeline stages to avoid carry propagation delays
+3. **Accumulation Pipeline**: Implement two-stage accumulation with intermediate result storage
+4. **Dynamic Partial Product Selection**: Generate partial products on-the-fly based on current multiplier bit
+5. **Efficient Resource Utilization**: Minimize hardware by reusing the same adder across pipeline stages
+
+Operation Flow:
+1. First Stage (Cycle 1):
+   - Process LSB of multiplier (mul_b[0])
+   - Generate partial product (mul_a or 0)
+   - Store in carry-save format (sum + carry)
+
+2. Second Stage (Cycle 2-4):
+   - Process next multiplier bit (mul_b[i])
+   - Generate shifted partial product
+   - Accumulate with previous result
+   - Maintain carry-save format between stages
+
+3. Final Stage (Cycle 5):
+   - Combine final sum and carry
+   - Output complete product

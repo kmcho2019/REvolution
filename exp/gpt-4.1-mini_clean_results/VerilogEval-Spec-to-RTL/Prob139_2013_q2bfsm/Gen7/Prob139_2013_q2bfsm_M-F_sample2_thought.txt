@@ -1,0 +1,11 @@
+The key fix is to make the sequence detection logic more robust by properly restarting detection upon incorrect inputs, enabling overlapping pattern matching. Specifically:
+
+- In S_SEQ1 (expecting x=0), if x=1 occurs, restart sequence detection by going back to S_SEQ0, since x=1 can start a new sequence.
+
+- In S_SEQ2 (expecting x=1), if x=0 occurs, restart sequence detection from S_SEQ0.
+
+This avoids FSM getting stuck and ensures proper detection of the 1,0,1 pattern including overlapping sequences.
+
+All other logic including synchronous reset, f pulse timing, and y monitoring remains unchanged.
+
+This fix resolves the functional mismatches in outputs f and g.

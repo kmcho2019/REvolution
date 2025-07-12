@@ -1,0 +1,11 @@
+To improve power and area efficiency, we can merge the two flip-flops into one by using a toggle flip-flop clocked only on the rising edge of a doubled clock frequency signal, effectively simulating dual-edge behavior. Since we can't double the actual clock frequency in pure RTL, we instead sample the input 'd' on both edges of 'clk' by using a single flip-flop triggered at the rising edge of 'clk' and one at a delayed phase of clk (90-degree phase shift is hard in RTL, so not feasible). Instead, a more practical and synthesis-friendly approach is to use a single flip-flop clocked at the positive edge of 'clk' and use a pulse generated on the falling edge to clock a latch that captures data at falling edges, then select between them based on clk. This reduces two flip-flops into one flip-flop plus one latch, reducing area and power.
+
+The implementation uses:
+- A positive edge flip-flop capturing d on posedge clk.
+- A transparent latch capturing d when clk is low (falling edge of clk implies clk goes low and latch transparent).
+- An output mux selects the latch output when clk is low and flip-flop output when clk is high.
+This setup mimics a dual-edge triggered flip-flop with one flip-flop and one latch.
+
+This saves one flip-flop, reducing area and power, and the multiplexer remains minimal. The latch is transparent when clk=0, which corresponds to the falling edge sampling window. Using non-blocking assignments only in flip-flop ensures correct simulation and synthesis.
+
+This approach is more power and area efficient while functionally equivalent.

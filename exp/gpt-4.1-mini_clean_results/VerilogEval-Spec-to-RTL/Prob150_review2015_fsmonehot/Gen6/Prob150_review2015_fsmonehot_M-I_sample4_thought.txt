@@ -1,0 +1,21 @@
+To optimize the FSM for better PPA while keeping one-hot encoding, we focus on reducing combinational gate count and simplifying next-state logic expressions. 
+
+Key improvements:
+
+1. Combine intermediate next-state signals explicitly assigned in the original code (like S11_next, S110_next, B0_next, B1_next, B2_next) into the outputs requested only, removing signals that are not outputs (since the problem only requires next-state signals for S, S1, B3, Count, Wait).
+
+2. Directly compute only the requested next-state signals (S_next, S1_next, B3_next, Count_next, Wait_next) based on inputs and current states.
+
+3. This reduces extra logic and gates, potentially lowering area and power.
+
+4. The output logic is already minimal and direct; no change there.
+
+5. Use explicit localparams for bit positions and use vector operations sparingly to keep clarity and simplicity.
+
+This targeted simplification avoids generating unnecessary intermediate signals and reduces overall combinational logic, improving area and power while keeping timing intact.
+
+Note: Since only these next-state signals are required as outputs, internal next states like S11, S110, B0, B1, B2 are not output and can be implicitly handled by the state register logic, which is outside this module's scope (this module only provides combinational next-state signals for the indicated states). Thus, we derive these next-state signals directly from given inputs and current states, excluding internal next states that are not outputs.
+
+Therefore, the design outputs only next states relevant as outputs: S_next, S1_next, B3_next, Count_next, Wait_next, and outputs done, counting, shift_ena as per the problem.
+
+This improves synthesis and reduces combinational logic and thus area and power.

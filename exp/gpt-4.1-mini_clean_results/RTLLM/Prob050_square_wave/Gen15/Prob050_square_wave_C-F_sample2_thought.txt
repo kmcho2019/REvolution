@@ -1,0 +1,12 @@
+Fuse the clean separation and clear flag generation of Example 1 with the power-conscious enable gating and reset style of Example 2, while simplifying and combining logic into a single always block for reduced area and improved timing.
+
+Key points in the fusion:
+1. Use synchronous active-high reset as in Example 1 for clarity and common convention.
+2. Generate a toggle_flag combinational signal for clear toggle timing, as in Example 1.
+3. Gate counting and toggling only when freq != 0 (enable signal), reducing power as in Example 2.
+4. Use the condition (count == freq - 1) for toggling to avoid off-by-one errors and match the expected behavior.
+5. Combine counting and toggling into a single always @(posedge clk) block to simplify logic and reduce flip-flop usage.
+6. Avoid unnecessary else branches that simply hold state to minimize inferred latches and clarify intent.
+7. Hold count and wave_out stable when freq = 0 by resetting count to zero and not toggling wave_out.
+
+This fusion provides a low-area, low-power, clear, and synchronous-reset design with good timing and power efficiency.

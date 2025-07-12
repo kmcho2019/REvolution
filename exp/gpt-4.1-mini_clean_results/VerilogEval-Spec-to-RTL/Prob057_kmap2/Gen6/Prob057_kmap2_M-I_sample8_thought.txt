@@ -1,0 +1,6 @@
+The current implementation is logically minimal, but it precomputes all four inverted inputs (na, nb, nc, nd) upfront, which increases the area and power marginally. To optimize further for power and area without sacrificing performance:
+
+- Remove unused inverted signals by computing the complements only where needed in expressions.
+- Inline the inversions directly in the expression rather than declaring extra wires, reducing net count.
+- Retain the minimized logic expression: out = (~d & ~a) | (~c & ~b) | (c & d & (a | b))
+- This reduces unnecessary gates and wiring, trimming area and power further.

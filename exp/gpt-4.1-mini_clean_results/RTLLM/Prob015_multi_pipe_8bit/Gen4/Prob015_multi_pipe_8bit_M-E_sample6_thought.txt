@@ -1,0 +1,15 @@
+Implement an 8-bit unsigned multiplier with a four-stage pipeline architecture dividing the multiplication into stages that progressively generate and accumulate partial products. The pipeline stages are:
+
+1. Input sampling and enable pipeline: registers to hold inputs and propagate enable signals.
+
+2. Partial product generation: Compute the 8 partial products by bitwise AND of multiplicand and each multiplier bit, then shift accordingly.
+
+3. Pairwise addition stage 1: Add partial products in pairs to reduce 8 partial products into 4 sums.
+
+4. Pairwise addition stage 2: Further add the 4 sums into 2 sums.
+
+5. Final addition and output register: Add the last two sums to produce the 16-bit product output.
+
+This pipeline approach breaks down the large combinational addition into smaller adders, reducing critical path delay and supporting a higher clock frequency. The enable signal is pipelined alongside data to indicate when outputs are valid. Registers at each stage hold intermediate results for proper pipelining. The multiplier uses synchronous active-low reset.
+
+This method offers a balanced tradeoff between performance (through pipelining and shorter combinational paths), power (smaller adders switching per stage), and area (using simple ripple/adders or fast adders as needed). It also allows the output enable to be synchronized with the final result availability.

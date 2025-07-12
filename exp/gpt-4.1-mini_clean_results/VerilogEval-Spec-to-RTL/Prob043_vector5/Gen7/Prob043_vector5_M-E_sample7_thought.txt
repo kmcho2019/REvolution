@@ -1,0 +1,7 @@
+Instead of using generate loops and localparams for indexing, this alternative approach explicitly encodes the inputs into a 5-bit vector and then performs all pairwise comparisons using nested loops inside a combinational always block. The logic accumulates the outputs into a reg vector based on direct XNOR evaluations of each input pair.
+
+This method demonstrates a procedural style using an always_comb block, which might be more intuitive in some contexts and easier to extend for larger input sets. The output bits are assigned in the same order (from index 24 down to 0) matching the pairwise comparisons of (i,j) mapped to the output bit index as 24 - (i*5 + j). This preserves the output ordering while showcasing a different architectural style.
+
+Using an always_comb block and procedural assignments ensures clean simulation semantics and works well for designs targeting FPGAs or ASICs with synthesis tools supporting this style.
+
+This design highlights a more algorithmic and readable approach compared to the previous purely structural generate block method.

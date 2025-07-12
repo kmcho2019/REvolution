@@ -1,0 +1,10 @@
+To implement the finite state machine (FSM) that identifies when bytes have been correctly received, we'll need to define several states and transition conditions. The states will include an idle state, a start bit detection state, a data reception state, and an error state to handle cases where a stop bit is not received as expected.
+
+1. **Idle State**: The FSM starts in an idle state, waiting for a start bit (0) on the input line. Upon detecting a start bit, it transitions to the start bit detection state.
+2. **Start Bit Detection State**: Once a start bit is detected, the FSM waits for the next clock cycle and then transitions to the data reception state.
+3. **Data Reception State**: In this state, the FSM collects 8 data bits. After each bit is collected, it waits for the next clock cycle to collect the next bit. The data bits are stored in a register.
+4. **Stop Bit Verification State**: After collecting all 8 data bits, the FSM checks for a stop bit (1) in the next clock cycle. If a stop bit is received, it transitions to the done state, indicating a byte has been correctly received. If not, it goes into an error state.
+5. **Error State**: The FSM stays in the error state until a stop bit (1) is detected on the input line. Once a stop bit is detected, it transitions back to the idle state, ready to start receiving the next byte.
+6. **Done State**: This is a transient state that flags the reception of a complete byte. It transitions back to the idle state after setting the done flag.
+
+The FSM will also have a synchronous reset that resets it to the idle state when asserted high.

@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Use 4-bit CLA blocks as base components for better granularity and timing optimization
+2. Implement hierarchical carry-lookahead by adding block-level Pg/Gg generation
+3. Replace sequential always blocks with continuous assignments for combinational logic
+4. Optimize carry propagation using two-level lookahead (4-bit local, 32-bit global)
+5. Simplify signal routing by computing intermediate carries directly
+6. Maintain same functionality while improving timing critical path
+
+Key Changes:
+- Base 4-bit CLA blocks with individual P/G generation
+- Second level 4-bit blocks with group P/G propagation
+- Top-level carry computation using block P/G terms
+- All combinational logic implemented with assign statements
+- Reduced fanout on critical carry paths

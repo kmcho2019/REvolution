@@ -1,0 +1,13 @@
+To implement this FSM, we'll need:
+1. A state machine with states: A (reset state), B (initial state after reset), C (waiting for 1-0-1 pattern), D (g=1 state), E (g=1 permanently), F (g=0 permanently)
+2. A shift register to track the last 3 values of x
+3. A counter to track the 2-clock timeout for y
+4. Output logic for f and g based on current state
+
+State transitions:
+- A→B on resetn=1 (with f=1 for one cycle)
+- B→C immediately (f returns to 0)
+- C→D when x pattern 1-0-1 is detected
+- D→E if y=1 within 2 clocks
+- D→F if y doesn't become 1 within 2 clocks
+- E and F stay until reset

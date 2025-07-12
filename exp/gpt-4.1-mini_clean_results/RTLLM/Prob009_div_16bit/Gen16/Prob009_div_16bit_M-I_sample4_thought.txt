@@ -1,0 +1,13 @@
+The original solution uses a combinational loop with 16 sequential subtraction and comparison steps chained via remainder wires, which leads to a long critical path and area overhead due to replication of subtractors and comparators. While the problem requires two combinational always blocks (one to latch inputs combinationally and another for division logic), the prior solution implements all division logic with generate blocks and continuous assignment, missing the second always block specification.
+
+To align strictly with the problem statement and optimize for power and area:
+
+- Implement the division logic inside a combinational always block instead of generate loops. This allows the synthesis tool to share arithmetic resources better, reducing area and power.
+- Keep the input registers updated combinationally in the first always block as required.
+- The division algorithm will perform a step-by-step shift-subtract in the always block, iteratively updating quotient and remainder variables.
+- This approach reduces the number of intermediate signals and nets, allowing the synthesis tool to better optimize the subtraction and comparison.
+- The combinational loop inside the always block does not incur a clock cycle but is allowed combinationally.
+- Outputs will be assigned from registers updated in the combinational always block.
+- This change improves PPA by reducing combinational logic duplication and potentially the critical path length.
+
+Overall, this respects the problem constraints and improves area and power, while keeping fully combinational behavior.

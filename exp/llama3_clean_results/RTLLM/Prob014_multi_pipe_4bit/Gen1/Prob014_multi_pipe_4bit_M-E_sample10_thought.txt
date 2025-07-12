@@ -1,0 +1,11 @@
+A novel approach to implementing a 4-bit unsigned pipeline multiplier is to utilize a tree-like architecture for the multiplication process. This architecture involves using a series of adders and shifters to generate the partial products and then summing these products in a hierarchical manner. The pipeline aspect can be maintained by using registers to store the intermediate results at each level of the tree.
+
+The process begins with extending the input signals (mul_a and mul_b) by adding "size" number of zero bits at the most significant bit positions. Then, for each bit position of the multiplier (mul_b), the multiplicand (mul_a) is left-shifted by the corresponding position if the bit is 1, or set to 0 if the bit is 0, to generate the partial products.
+
+The tree structure is implemented by arranging the adders in a way that the partial products are summed in pairs, and then these sums are further summed in pairs, and so on, until the final product is obtained. This hierarchical summing reduces the complexity of the circuit and can potentially improve the timing performance.
+
+The pipeline registers are placed at each level of the tree to store the intermediate sums, allowing the circuit to operate in a pipelined manner. The final product is obtained at the output of the last stage of the tree, after all the partial products have been summed.
+
+This approach can offer advantages in terms of area and performance compared to a straightforward implementation using a single large adder or a linear array of adders. The use of a tree structure can reduce the critical path length and thus potentially improve the clock speed of the circuit.
+
+The code for this novel architecture will involve defining the tree structure using Verilog's generate statement to create the adders and shifters, and using registers to store the intermediate results at each level of the tree. The extension of input signals and the generation of partial products will also be implemented in the code.

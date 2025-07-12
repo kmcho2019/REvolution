@@ -1,0 +1,5 @@
+Use a pair of registers to store both the current and previous input samples to explicitly track transitions. In one clock cycle, latch the current input into a "current" register; in the next clock cycle, move "current" to "prev". Generate the positive edge detection pedge output by comparing prev and current stored values. Register pedge to ensure output is stable and updated one cycle after a 0-to-1 transition.
+
+This approach adds an explicit pipeline stage and uses two flip-flop sets for input sampling, allowing pedge to be calculated with fully registered inputs, potentially improving timing by decoupling input sampling from edge detection logic. The latency is two clock cycles from actual input change to pedge assertion, but output synchronization is robust for timing closure.
+
+This design differs from the previous by using two staged registers for inputs, rather than one, providing a clean pipeline and clear state progression useful for timing optimization or optional future expansion.

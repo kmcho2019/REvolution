@@ -1,0 +1,9 @@
+The original code is logically correct in detecting 1-to-0 transitions and capturing them in 'out' until reset. However, the feedback indicates mismatches likely caused by the timing of reset and input sampling. To improve correctness and avoid these timing issues:
+
+1. Use an asynchronous reset to ensure all registers initialize instantly and synchronously reset logic after reset is de-asserted.
+2. Explicitly synchronize the input sampling to avoid any race conditions by registering 'in' twice (double-registering) before detecting transitions. This can prevent glitches or timing mismatches if 'in' changes close to the clock edge.
+3. Initialize prev_in to all ones at reset to avoid false positives.
+4. Only update 'out' when a new falling edge (1-to-0) is detected; keep the 'out' bits set afterward.
+5. These changes maintain minimal area and power usage but improve timing robustness, reducing potential glitches that cause simulation mismatches.
+
+This approach better aligns the output behavior with the testbench stimulus timing and reset release, eliminating mismatches while keeping PPA efficient.

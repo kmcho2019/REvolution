@@ -1,0 +1,10 @@
+Here's a novel approach using a barrel shifter implementation:
+1. Instead of traditional multiplexing, we'll treat the 1024-bit input as a circular buffer
+2. The selection logic will rotate the input vector by (sel * 4) bits
+3. The output is simply the first 4 bits after rotation
+4. This approach eliminates hierarchical muxes and uses simple shift operations
+5. Key advantages:
+   - Single operation for selection (simpler control logic)
+   - Potentially better timing as it avoids mux propagation delays
+   - More regular structure that may synthesize efficiently
+   - Easier to pipeline if needed for higher frequencies

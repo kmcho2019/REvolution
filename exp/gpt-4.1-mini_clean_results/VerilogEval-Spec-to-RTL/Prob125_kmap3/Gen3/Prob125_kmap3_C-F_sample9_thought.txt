@@ -1,0 +1,15 @@
+Fuse the strengths of both examples by using the minimal and fully simplified Boolean expression derived from the Karnaugh map:
+
+out = (~c & a) | (c & (~b | a))
+
+This expression covers all '1's in the map and treats 'd' as don't-care by ignoring it. It reduces redundant overlapping terms from Example 2 and groups c & (~b | a) into a single factor to minimize gates, improving area and power.
+
+Implementation details:
+
+- Generate not_c and not_b once for reuse.
+- Compute the OR term (~b | a) as a single wire.
+- Combine with c, then OR with (~c & a).
+- This reduces the number of AND gates from three to two and one OR inside, reducing gate count and switching.
+- Keep all signals in combinational style with meaningful intermediate signals for clarity and easy debugging.
+
+This approach yields a minimal, clear, and efficient implementation that merges explicit terms from Example 1 with the minimalism and factoring of Example 2.

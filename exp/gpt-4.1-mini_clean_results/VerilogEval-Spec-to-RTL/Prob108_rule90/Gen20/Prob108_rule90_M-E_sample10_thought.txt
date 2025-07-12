@@ -1,0 +1,13 @@
+Implement Rule 90 for 512 cells as a single 512-bit shift register with combinational logic to compute the next state based on neighbor XORs.
+
+- Store the current state in a 512-bit register `state`.
+- On each clock, update `state` with next state bits computed as XOR of left and right neighbors.
+- Since the boundaries outside q[-1] and q[512] are zero, pad both ends virtually with zero.
+- The entire next state is computed combinationally with a single XOR of shifted versions of `state`:
+    next_state = (state << 1) ^ (state >> 1)
+  with zero bits shifted in.
+- When `load` is asserted, load the input data directly into `state`.
+- Output `state` on `q`.
+- This approach reduces the logic significantly by avoiding block partitioning and boundary wiring, minimizing the combinational complexity to just two shifts and one XOR over 512 bits.
+- Non-blocking assignments are used to update the state on clock edges.
+- This design is simple, elegant, and efficient in area and timing.

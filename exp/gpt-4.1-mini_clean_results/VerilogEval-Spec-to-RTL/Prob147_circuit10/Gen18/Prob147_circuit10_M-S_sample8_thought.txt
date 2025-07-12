@@ -1,0 +1,15 @@
+From the waveform, the output q matches the stored state before the clock edge, and the next state update occurs on the positive clock edge based on inputs a and b and the current state.
+
+By analyzing the waveform transitions, the state only changes from 0 to 1 when b=1 and a=0, or it resets to 0 when a=1 and b=1, otherwise it mostly holds its current state.
+
+Simplify the state update logic to: 
+- next_state = (state & ~(a & b)) | (~state & (~a & b))
+
+This captures:
+- If currently in state=1, it stays 1 unless a and b are both 1 (then reset to 0).
+- If currently in state=0, it goes to 1 only when b=1 and a=0.
+Output q is just current state.
+
+Initialize state to 0 at start to avoid unknowns.
+
+This approach uses a single flip-flop with a straightforward next state logic that matches waveform behavior and outputs q=state.

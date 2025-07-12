@@ -1,0 +1,14 @@
+// TopModule: 1-bit 2-to-1 Multiplexer using continuous assignment
+// When sel=0, out = a; when sel=1, out = b.
+
+module TopModule (
+    input  wire a,
+    input  wire b,
+    input  wire sel,
+    output wire out
+);
+
+    // Mux selects between a and b based on sel
+    assign out = sel ? b : a;
+
+endmodule

@@ -1,0 +1,5 @@
+Simplify pattern detection by using a 4-bit shift register to hold recent serial bits, enabling direct pattern matching for "1101" without multiple SEARCH states. The FSM then only needs four states: IDLE (looking for pattern), SHIFT (assert shift_ena for 4 cycles), COUNT (wait for done_counting), and DONE (assert done until ack).
+
+Use a 2-bit counter for shift cycles. On detecting the pattern in the shift register, transition from IDLE to SHIFT.
+
+This reduces the FSM states and simplifies the next-state logic, while maintaining all specified functionality.

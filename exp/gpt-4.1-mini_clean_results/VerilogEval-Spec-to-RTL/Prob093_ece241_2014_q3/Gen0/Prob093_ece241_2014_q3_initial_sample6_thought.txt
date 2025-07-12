@@ -1,0 +1,28 @@
+We need to implement the K-map function F(c,d,a,b) using one 4-to-1 mux with selector inputs a,b and inputs mux_in[3:0]. The 4-to-1 mux selects mux_in based on ab=00,01,11,10.
+
+We want to express F as F = MUX_ab(mux_in).
+
+Thus, mux_in[0] = F when ab=00, mux_in[1] = F when ab=01, mux_in[3] = F when ab=10, mux_in[2] = F when ab=11 (note order from question: 00->mux_in[0], 01->mux_in[1], 11->mux_in[2], 10->mux_in[3])
+
+From the K-map:
+
+For ab=00 (mux_in[0]) and varying cd:
+
+cd=00 ->0
+cd=01 ->1
+cd=11 ->1
+cd=10 ->1
+
+So mux_in[0](c,d) = 0 1 1 1 on cd=00,01,11,10 respectively.
+
+Similarly for other mux inputs.
+
+We will simplify each mux_in bit in terms of c,d using only 2-to-1 multiplexers (no other logic gates).
+
+We can build 2-to-1 muxes controlled by c or d to implement each bit.
+
+Finally, in TopModule, given c,d inputs, we output mux_in[3:0]. The 4-to-1 mux with selector a,b outside uses these to implement the function.
+
+We focus only on generating mux_in[3:0] based on c,d.
+
+To minimize logic, we derive the boolean expressions for each mux_in bit from the given K-map slices and implement each with 2-to-1 muxes accordingly.

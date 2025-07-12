@@ -1,0 +1,18 @@
+I will implement a radix-2 divider using a simple iterative restoring division algorithm controlled by a 3-state FSM (IDLE, DIVIDE, DONE). 
+
+Key points of the new approach:
+- On a valid operation request (opn_valid), inputs are latched along with their signs if signed division.
+- Convert dividend and divisor to unsigned magnitudes.
+- A 16-bit shift register holds the intermediate remainder and quotient:
+  - Upper 9 bits for remainder (extra bit for subtraction borrow),
+  - Lower 8 bits for quotient.
+- For each of the 8 division iterations:
+  - Shift left the remainder and quotient combined register by 1 bit.
+  - Subtract divisor from remainder (trial subtraction).
+  - If result >= 0, keep subtraction result and set LSB of quotient to 1.
+  - Else, restore remainder and quotient LSB remains 0.
+- After division completes, if signed mode is set, apply sign correction on quotient and remainder.
+- Handle division-by-zero by outputting quotient = 0xFF and remainder = dividend.
+- res_valid is asserted when the result is ready and cleared when new operation begins.
+- The output result packs remainder (upper 8 bits) and quotient (lower 8 bits).
+- This design uses only synchronous logic, avoids partial nonblocking assignments, and neatly separates combinational and sequential logic.

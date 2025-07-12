@@ -1,0 +1,16 @@
+The key issues in the original implementation were:
+1. Incorrect handling of one-hot encoding in next_state calculation
+2. Redundant initialization of next_state_temp
+3. Improper combination of next state transitions that could violate one-hot encoding
+
+The fixed implementation will:
+1. Remove the unnecessary initialization of next_state_temp
+2. For each current state, compute its possible next state transitions
+3. Use OR operations to combine transitions from all active current states
+4. Ensure only one bit is set in next_state for each possible transition
+5. Maintain the correct output logic which was working properly
+
+The main changes are:
+- Simplify next_state calculation by directly computing each bit's value
+- Ensure one-hot encoding is preserved by proper bit-wise OR operations
+- Keep the correct output logic unchanged

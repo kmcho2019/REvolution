@@ -1,0 +1,19 @@
+To optimize the original design further for power, area, and performance while preserving correctness:
+
+1. Reduce the counter width from 7 bits to 6 bits, since the maximum timing needed is 60, which fits in 6 bits (0-63). This reduces register and logic area.
+
+2. Change the FSM state encoding to one-hot style (3 bits) for simpler logic and potentially faster transitions, which can slightly improve timing in FPGA and ASIC.
+
+3. Combine the ped_shortened flag reset logic with state transitions to minimize flip-flops toggling.
+
+4. Use synchronous reset for all flip-flops to simplify timing and reduce asynchronous reset-related glitches.
+
+5. Use a single always block for state, counter, and ped_shortened updating on the clock edge for better synthesis and less logic duplication.
+
+6. Drive outputs directly from state signals without extra registers or intermediate variables.
+
+7. Implement the counter decrement only when >0 to reduce unnecessary toggling.
+
+8. Use localparams consistently and keep output clock width at 6 bits for clarity and size.
+
+These changes reduce the number of registers (by 1 bit in counter), simplify logic, and maintain or improve timing and power efficiency.

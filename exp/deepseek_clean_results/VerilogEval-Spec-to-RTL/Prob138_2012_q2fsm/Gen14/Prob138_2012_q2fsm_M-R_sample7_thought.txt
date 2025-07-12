@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Use one-hot encoding (A:000001, B:000010, C:000100, D:001000, E:010000, F:100000) to potentially simplify decoding logic and improve timing.
+
+2. State Transition Logic: Implement as a continuous assignment using bitwise operations and masks for one-hot state transitions. This eliminates the need for a case statement while maintaining clarity.
+
+3. Output Logic: Simplify by OR-ing the relevant state bits (E and F) since we're using one-hot encoding.
+
+4. State Storage: Keep the sequential always block but modify it to work with the one-hot encoding scheme.
+
+Key Changes:
+- Changed to one-hot encoding for potentially better timing
+- Implemented state transitions using bitwise operations
+- Simplified output logic to just check E and F states
+- Maintained clear separation between combinational and sequential logic

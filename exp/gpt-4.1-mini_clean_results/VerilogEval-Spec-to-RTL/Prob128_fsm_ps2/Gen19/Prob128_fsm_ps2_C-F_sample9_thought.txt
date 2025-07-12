@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by implementing a 2-bit FSM counter with carefully gated count updates and a clean done pulse generation, optimizing for minimal toggling and simple logic.
+
+Fusion strategy:
+- Use a 2-bit counter to track byte position in the message: 0 = waiting for start byte, 1 and 2 = bytes 2 and 3.
+- Generate an enable signal that only allows count increments when a valid byte is received: either when waiting for a start byte (in[3] = 1) or while inside a message (count != 0).
+- Clear done every cycle by default and assert done only in the cycle immediately after receiving the third byte (count = 2).
+- Avoid unnecessary count toggling by gating updates with the enable signal.
+- Maintain synchronous active-high reset and positive edge clock triggering.
+- Simplify combinational logic to reduce critical path length and power.
+- Ensure done is glitch-free by driving it low in all other cycles.
+- This solution combines the effective enable gating of example 2 with the explicit done clearing and logic clarity from example 1, improving power and timing while keeping area small.

@@ -1,0 +1,16 @@
+To create a superior FSM design, fuse the area and power efficiency of the minimal 2-bit binary state encoding (Example 1) with the very simple output logic direct from state bits (Example 2).
+
+Strategy:
+- Use 2-bit binary encoding for the four states (A=00, B=01, C=10, D=11) to minimize flip-flop count and combinational logic area.
+- Implement the next state logic as in Example 1 to respect priority and the given state transitions.
+- Optimize output logic by deriving g[0..2] directly from the binary state bits via simple combinational logic, as in Example 1:
+  - g[0] = ~state[1] & state[0]  (state B)
+  - g[1] = state[1] & ~state[0]  (state C)
+  - g[2] = state[1] & state[0]   (state D)
+  
+This eliminates the case statement for output, reducing logic depth and LUT usage.
+- Keep separate always blocks for state registers and combinational next-state logic, maintaining clarity and synthesis friendliness.
+- Maintain synchronous active-low reset on the positive clock edge.
+- This fusion keeps area and power minimal (due to fewer flip-flops and simple logic), while ensuring clean, fast timing with minimal combinational depth on outputs.
+
+This solution yields the best balance of area, power, and timing, with clear and maintainable code.

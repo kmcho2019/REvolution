@@ -1,0 +1,11 @@
+Here's a novel approach using a circular shift register with a write pointer. Instead of the traditional linear shift, we'll:
+1. Use a 4-bit register with a 2-bit pointer to track the current write position
+2. Implement circular writing where new bits overwrite the oldest entry
+3. The output is always from position (write_ptr - 1) modulo 4
+4. Reset initializes all bits to 0 and pointer to 0
+
+This approach offers:
+- Same functionality as a shift register but with different internal implementation
+- Potential power savings since only one flip-flop toggles per cycle
+- Easier expansion to larger sizes (just increase pointer width)
+- Interesting metastability properties at the pointer wrap-around

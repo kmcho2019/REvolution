@@ -1,0 +1,41 @@
+To combine the strengths of both examples, I will:
+
+- Use a combinational next-state logic expression like in Example 2 for clarity and explicitness. However, instead of nested ternary operators, I will use direct Boolean expressions for nextQ, improving both synthesis quality and potentially reducing critical path delay and glitches.
+
+- Keep the sequential always block from Example 1 that updates Q on the posedge of clk with non-blocking assignment.
+
+- Avoid any explicit self-assignments (like Q <= Q;) and avoid "do-nothing" cases in the clocked block, ensuring the register holds state naturally without confusing synthesis tools.
+
+- This approach merges the clean separation of next state logic from Example 2 with the minimalistic edge-triggered block from Example 1, yielding concise, readable, and efficiently synthesizable code.
+
+The Boolean expression for nextQ derived from the truth table is:
+- When J=0 and K=0, nextQ = Q (hold)
+- When J=0 and K=1, nextQ = 0 (reset)
+- When J=1 and K=0, nextQ = 1 (set)
+- When J=1 and K=1, nextQ = ~Q (toggle)
+
+This can be written as:
+nextQ = (j & ~k) | (~k & ~j & Q) | (j & k & ~Q)
+which simplifies to:
+nextQ = (j & ~k) | (Q & ~j & ~k) | (j & k & ~Q)
+
+But notice (~k & ~j) is the hold condition, so can just use Q when hold:
+nextQ = (j & ~k) | ((~j) & k & 1'b0) | (j & k & ~Q) | ((~j) & (~k) & Q)
+
+Since ((~j)&k & 0) = 0, we can remove that term:
+nextQ = (j & ~k) | ((~j) & (~k) & Q) | (j & k & ~Q)
+
+Alternatively:
+- For set: j & ~k
+- For reset: ~j & k (goes to 0)
+- For toggle: j & k & ~Q
+- For hold: ~j & ~k & Q
+
+The reset condition forces nextQ to 0, so it's simpler to write:
+nextQ = (j & ~k) | ((~j) & (~k) & Q) | (j & k & ~Q)
+
+This expression covers all cases exactly.
+
+This logic avoids nested ternary operators and avoids any explicit "do-nothing" in the clock block.
+
+This fusion should enhance readability, synthesis, and performance.

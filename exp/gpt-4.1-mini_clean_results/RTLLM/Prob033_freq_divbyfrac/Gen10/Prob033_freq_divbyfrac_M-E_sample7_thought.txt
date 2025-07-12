@@ -1,0 +1,15 @@
+To achieve a stable and clean divide-by-3.5 fractional frequency divider, the idea is to generate a clock output whose period is 7 input clock cycles but composed of alternating high and low durations of 4 and 3 input clock cycles respectively, thus effectively dividing frequency by 3.5.
+
+Instead of relying on two counters on positive and negative edges, this design uses a single counter and generates the output clock by controlling the output signal directly with different high and low durations. This ensures synchronized control and removes phase misalignment.
+
+Key points:
+
+- Use a modulo-7 counter incrementing on the positive edge of the input clock.
+- The output clock toggles state with an uneven pattern: high for 4 cycles, low for 3 cycles, repeating.
+- This uneven duty cycle corresponds exactly to a divide-by-3.5 frequency division.
+- To improve the duty cycle toward 50%, double-edge clocking is exploited by producing an output clock signal that toggles on both edges of the input clock, thus effectively halving the output clock period, approximating the 3.5 division smoothly.
+- Implementing a 2-phase output clock enables us to generate a fractional output by interleaving the toggling events at positive and negative edges, producing an effective average divide of 3.5.
+- Combine these two half-period toggles through an output flip-flop updated on both edges, or by using an XOR of signals toggling on posedge and negedge respectively.
+- Reset synchronizes all counters and outputs.
+
+This architecture achieves a fractional frequency division by carefully scheduling the high and low times over the input clock cycles, exploiting both edges for phase interleaving and ensuring clean and glitch-free output transitions.

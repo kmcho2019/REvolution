@@ -1,0 +1,13 @@
+Here's a novel approach using a lookup table (LUT) implemented as a ROM. The key idea is:
+
+1. **ROM-based Decoding**: Pre-store all possible 16-bit scancode mappings in a 64Kx4 ROM (though only 4 entries are actually used)
+2. **Direct Mapping**: Each valid scancode maps to a specific 4-bit output pattern (one-hot encoded)
+3. **Efficiency**: The ROM will be optimized by synthesis tools to only implement the used entries
+4. **Scalability**: Easy to add more key mappings by simply expanding the ROM contents
+
+Advantages:
+- Extremely simple and clean implementation
+- No complex logic gates needed
+- Easily extensible for more keys
+- Synthesis tools will optimize away unused ROM entries
+- Constant-time decoding regardless of input

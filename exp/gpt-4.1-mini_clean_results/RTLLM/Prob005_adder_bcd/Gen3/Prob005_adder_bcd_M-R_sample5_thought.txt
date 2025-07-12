@@ -1,0 +1,9 @@
+Refactor the design by separating the initial 4-bit binary addition and BCD correction logic more clearly using intermediate signals. Use a fully combinational style with `assign` statements for all logic expressions, including the correction addition implemented as a 4-bit ripple carry adder for the constant 6. The correction detection logic remains the same but clearly assigned to a wire. 
+
+This style improves readability by isolating each functional block (raw sum, correction detection, correction addition) explicitly. The corrected sum and carry out signals are assigned from the correction adder output, selected by the correction flag, preserving the same functionality but with a simpler, more modular combinational structure without unnecessary conditional operators inside bit-level assignments.
+
+The 4-bit addition for correction uses a small ripple carry structure, which is intuitive and easy to understand and verify, in contrast to the manual bit-level XOR/AND expressions in the original code.
+
+The carry out includes the original carry out from raw_sum plus any carry out generated from the correction addition when correction is applied.
+
+This approach maintains performance and area efficiency while enhancing code clarity and maintainability.

@@ -1,0 +1,11 @@
+To address the functional errors in the provided Verilog code for the PS/2 mouse protocol message boundary detection, we need to revise the state transition logic and the use of the buffer index variable. 
+
+The main issue lies in the way the next state is determined and how the buffer is utilized. Currently, the state transitions and buffer updates are not properly synchronized, leading to incorrect behavior when a byte with in[3]=1 is received while not in the SEARCH state. 
+
+To fix this, we need to simplify the state transition logic and ensure that the buffer index is correctly updated. The FSM should transition through the states (SEARCH, BYTE1, BYTE2, BYTE3) based on the current state and the input byte, without unnecessary conditional checks that can cause incorrect state transitions.
+
+Additionally, the done signal should be generated correctly based on the state transitions, specifically when the FSM transitions from the BYTE3 state back to the SEARCH state, indicating that a full message has been received.
+
+The buffer index should be used to keep track of the current position in the buffer where the next byte should be stored. This will ensure that the input bytes are correctly stored in the buffer as the FSM transitions through the states.
+
+By revising the state transition logic, buffer index usage, and done signal generation, we can create a more robust and accurate FSM for detecting message boundaries in the PS/2 mouse protocol byte stream.

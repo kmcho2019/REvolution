@@ -1,0 +1,14 @@
+The novel architectural idea is to implement a fixed-point adder using a hybrid approach that combines the benefits of both arithmetic and bitwise operations. This approach involves breaking down the input operands into their integer and fractional parts, performing the addition or subtraction separately for each part, and then combining the results while ensuring proper alignment and handling of the fractional parts.
+
+To optimize for Power, Performance, and Area (PPA), the design will utilize a staged pipeline architecture, where each stage is responsible for a specific part of the operation (e.g., integer part addition, fractional part addition, and result alignment). This pipelining allows for improved timing, reduced power consumption due to lower capacitance switching, and more efficient area utilization by minimizing the complexity of each stage.
+
+Additionally, to address the precision (Q) and ensure accurate fixed-point arithmetic, the design will incorporate a precision handling module that adjusts the fractional parts of the input operands and the result to maintain consistency across the operations. This module will also handle overflow and underflow conditions by monitoring the integer part of the result and adjusting the sign bit accordingly.
+
+The implementation will be structured around the following key components:
+1. Operand Splitter: Separates the integer and fractional parts of the input operands.
+2. Integer Part Adder/Subtractor: Performs the arithmetic operation on the integer parts.
+3. Fractional Part Adder/Subtractor: Performs the arithmetic operation on the fractional parts.
+4. Precision Handling Module: Ensures the correct alignment and precision of the fractional parts and handles overflow/underflow.
+5. Result Combiner: Combines the results of the integer and fractional parts to form the final output.
+
+This staged architecture not only improves the performance and power efficiency but also provides a modular and scalable design that can be easily adapted for different precision requirements and bit widths.

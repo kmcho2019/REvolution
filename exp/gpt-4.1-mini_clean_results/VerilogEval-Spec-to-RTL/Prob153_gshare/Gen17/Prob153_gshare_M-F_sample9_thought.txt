@@ -1,0 +1,34 @@
+I will fix the code by clarifying and simplifying the global history register update logic and prediction history output timing:
+
+1. Maintain two GHRs:
+   - `ghr_committed`: Updated only on training with actual branch outcome, reflecting the true global history.
+   - `ghr_spec`: Speculative GHR used for prediction, updated on prediction (append predicted bit) or recovered on misprediction training.
+
+2. On misprediction training:
+   - Recover both `ghr_spec` and `ghr_committed` to the provided `train_history` immediately.
+   - This means the speculative history is rolled back to the correct state after misprediction.
+
+3. On correct training (no misprediction):
+   - Update only `ghr_committed` by shifting in the actual branch outcome.
+   - Do not update `ghr_spec` here, so speculative history remains consistent with the predictions made for younger branches.
+
+4. On prediction:
+   - Output the `ghr_spec` *before* updating it to the prediction history output register.
+   - Then, at the same clock edge, update `ghr_spec` by shifting in the predicted bit.
+   - This means `predict_history` output reflects the *previous* speculative history, matching the one used to index the PHT and produce the prediction.
+
+5. Handle priority and simultaneous events carefully:
+   - If both training (valid) and prediction (valid) occur on the same cycle, training takes precedence.
+   - Training updates (including recovery on mispredict) happen first (at clock edge).
+   - Prediction updates speculative GHR only if no training that cycle.
+   - This prevents conflicting updates and aligns with problem timing.
+
+6. For reading PHT:
+   - Use asynchronous reads for prediction and training indexes.
+   - Prediction reads happen before clock edge, so do not see updates made on the same cycle.
+
+7. Initialize PHT to weakly not taken (2'b01) on async reset.
+
+This resolves the mismatch issues by ensuring `predict_history` outputs the history actually used for prediction and keeps training updates consistent and higher priority, preventing overwriting of history registers in the same cycle.
+
+The coding style will be clearer and timing explicit with separate condition branches for training and prediction updates.

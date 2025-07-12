@@ -1,0 +1,7 @@
+The original design uses the vector equality operator (==) which is concise and synthesizes well. However, explicitly implementing the equality by bitwise XNOR and AND gates can sometimes allow the synthesis tool to optimize better at the gate level, potentially improving power and area by avoiding any extra synthesis overhead from vector comparisons.
+
+Thus, the improvement is to replace the single (A == B) equality check with bitwise comparisons: z = (A[1] XNOR B[1]) AND (A[0] XNOR B[0]). This logic is functionally identical but may give more explicit control for synthesis tools to optimize gate-level implementation, possibly reducing power and area marginally.
+
+This approach is especially relevant for small bit-width comparators like this 2-bit case, where explicit bitwise operations are straightforward and clear.
+
+In summary, replacing the equality operator with bitwise XNOR and AND operations may lead to slight PPA improvements.

@@ -1,0 +1,16 @@
+The new architecture employs a "sliding window" approach to reduce area and power while improving timing:
+
+1. **Serialized Computation**: Instead of computing all 512 bits in parallel, we process the array in 64-bit chunks (8 cycles per full update). This significantly reduces area and power.
+
+2. **Overlap Buffers**: Maintain 64-bit overlap buffers at each end to correctly compute boundary conditions when processing chunks.
+
+3. **Pipelined Processing**: Each chunk computation is pipelined across multiple clock cycles to improve timing.
+
+4. **Double-Buffering**: Use two 512-bit registers (current and next) to maintain state while computing updates.
+
+Key Benefits:
+- 8x reduction in combinational logic (64 bits vs 512)
+- Better timing due to pipelining
+- Lower power from reduced switching activity
+- Maintains correct boundary conditions through overlap buffers
+- Still completes full update in deterministic time (8 cycles)

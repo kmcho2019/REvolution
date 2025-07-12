@@ -1,0 +1,31 @@
+Implement the 4-bit unsigned multiplier using a two-stage pipeline with registers separating the stages, but change the architecture by performing the partial product generation and accumulation sequentially over pipeline stages:
+
+- Stage 1: Generate all partial products for each bit of mul_b and store them into registers individually.
+
+- Stage 2: Accumulate the partial products sequentially over multiple clock cycles using a simple adder and a pipeline register chain.
+
+This approach introduces a serial addition pipeline where each clock cycle adds one partial product shifted by its bit position to the running sum, stored in pipeline registers.
+
+The multiplier thus uses:
+
+- Extended multiplicand (with size MSB zeros)
+
+- Partial products generated combinationally
+
+- First pipeline stage stores partial products
+
+- Second pipeline stage uses a finite state machine-like counter (encoded as pipeline stage) to add partial products one by one into a pipeline register holding the accumulated sum
+
+- After the final addition, output the result
+
+This design achieves pipelining with two levels of registers, keeps control over addition sequencing, and spreads the addition logic over multiple cycles in stage 2, reducing combinational path length per cycle.
+
+Reset clears all pipeline registers and output.
+
+The input signals are extended with zeros at MSB as specified.
+
+This new design differs from the classical combinational summation approach by serializing the addition step in the pipeline.
+
+Note: For simplicity, the stage 2 pipeline length equals the number of multiplier bits (4). The pipeline output is valid after 5 clock cycles (1 for stage1 latching partial products, then 4 addition cycles). The mul_out output register captures the final result after the pipeline finishes.
+
+This approach is educational to demonstrate partial product accumulation pipelined over clock cycles.

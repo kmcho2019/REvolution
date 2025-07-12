@@ -1,0 +1,11 @@
+This implementation uses a radically different approach by:
+1. **LUT-based State Transition**: Instead of case statements, we use a pre-computed lookup table that encodes all possible transitions
+2. **Parallel Output Calculation**: Compute all possible outputs in parallel and select using multiplexers
+3. **Optimized Encoding**: 
+   - Use y[2:0] directly as LUT address
+   - Pack both x=0 and x=1 transitions into a single 6-bit LUT entry
+4. **Key Advantages**:
+   - More scalable for larger state machines
+   - Easier to modify transition behavior (just update LUT)
+   - Potentially better timing as it avoids deep case statement logic
+   - Clear separation between control (LUT) and datapath (selection)

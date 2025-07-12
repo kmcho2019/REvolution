@@ -1,0 +1,7 @@
+To implement the gshare branch predictor, we first need to create a 7-bit global branch history register. We will use a 7-bit register to store the history. The predict_valid signal will be used to trigger the prediction logic. The prediction logic will XOR the 7-bit pc with the global branch history to create a 7-bit index into the pattern history table (PHT). The PHT will be a 128-entry table of two-bit saturating counters. The counters will be used to determine the branch direction prediction. If the counter value is 2 or 3, the branch will be predicted taken, otherwise it will be predicted not taken. 
+
+The branch history register will be updated at the next positive clock edge for the predicted branch. 
+
+When training for a branch is requested, the PHT will be updated to train the branch predictor to predict this branch more accurately next time. If the branch being trained is mispredicted, the branch history register will be recovered to the state immediately after the mispredicting branch completes execution.
+
+We will also need to consider the case where training and prediction of the same PHT entry happen at the same time. In this case, the prediction will see the PHT state before training because training only modifies the PHT at the next positive clock edge.

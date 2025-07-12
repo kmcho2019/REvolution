@@ -1,0 +1,10 @@
+Fuse the two example designs by leveraging the clear pipeline stage enable signal propagation and input control from Example 2, with the simpler and more area-efficient partial product summation style of Example 1. Use a 3-stage pipeline:  
+1) Input register stage (sample inputs and mul_en_in)  
+2) Partial product generation and sum combinationally (balanced by pipelining enable signal)  
+3) Output register stage (register final product)  
+
+Propagate the enable signal through a 3-bit shift register to synchronize data flow and output validity. This fusion reduces pipeline registers and area compared to Example 2's multi-stage partial sums, while improving timing and power by registering only inputs and final outputs, and performing combinational partial product summation similar to Example 1.
+
+This design avoids the large multi-operand combinational addition of Example 1 by using balanced sequential partial product sums, but in a simpler manner by summing all partial products combinationally at once (like Example 1), thus reducing register count and latency. Input operands update only when `mul_en_in` is high, which reduces switching activity and power. Output is gated by `mul_en_out` to ensure valid product data. Reset is asynchronous active low.
+
+Overall, this design balances pipeline depth, timing, area, and power efficiently and matches the problem's requirements.

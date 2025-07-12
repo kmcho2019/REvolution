@@ -1,0 +1,10 @@
+Novel Architecture Idea:
+1. Instead of physically shifting bits, maintain a fixed register and track rotation position with a pointer
+2. Use a 7-bit pointer (since 100 positions need log2(100)=7 bits) to track the effective rotation offset
+3. Implement rotation by adjusting the pointer value modulo 100
+4. For output, use the pointer to select the appropriate bits through a barrel shifter-like mux
+5. Advantages:
+   - Only pointer arithmetic happens during rotation (saves power)
+   - Physical bits remain stationary (reduces switching activity)
+   - Load operation becomes simple parallel write
+   - Easily extensible to larger rotation amounts

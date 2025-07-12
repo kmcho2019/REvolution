@@ -1,0 +1,23 @@
+Improvement strategy:
+1. **Critical Path Optimization**:
+   - Pre-compute PHT next states to avoid saturation checks during updates
+   - Pipeline the index generation to break the critical path
+
+2. **Power Reduction**:
+   - Add entry-specific read/write enables for PHT
+   - Gate GHR updates with valid signals
+
+3. **Area Optimization**:
+   - Use block RAM for PHT if available
+   - Simplify saturation logic using arithmetic with overflow checks
+
+4. **Timing Closure**:
+   - Register the index computation to meet timing
+   - Separate combinational and sequential logic clearly
+
+Key changes:
+- Pipelined index computation
+- Optimized PHT update logic
+- Added PHT entry-specific enables
+- Simplified saturation arithmetic
+- Gated clock enables where possible

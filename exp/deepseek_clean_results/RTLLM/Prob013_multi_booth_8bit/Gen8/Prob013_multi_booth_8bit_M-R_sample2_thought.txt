@@ -1,0 +1,21 @@
+The refactored implementation maintains the Radix-4 Booth algorithm but with these structural improvements:
+
+1. **Explicit State Machine**: 
+   - Three states (IDLE, CALC, DONE) for clearer operation flow
+   - State transitions controlled by counter and reset
+
+2. **Optimized Booth Encoding**:
+   - Proper Radix-4 Booth encoding using 3-bit groups
+   - Separate combinational logic for Booth selection
+
+3. **Efficient Counter**:
+   - 2-bit counter for 4 Radix-4 iterations (8 bits / 2 bits per iteration)
+   - Clear completion condition
+
+4. **Parallel Operations**:
+   - Combined shift and add operations in single cycle
+   - Proper sign extension handling throughout
+
+5. **Clean Output Control**:
+   - Ready signal based purely on state
+   - Registered outputs for clean timing

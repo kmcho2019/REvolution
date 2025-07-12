@@ -1,0 +1,22 @@
+To optimize the original FSM for better PPA (timing, power, area), the following improvements are applied:
+
+1. Simplify the `start_shifting` update by directly setting it when sequence is found and then latching it high without redundant conditions. Use a non-blocking assignment with a single condition to reduce logic depth.
+
+2. Modify the next-state logic to use fewer states by encoding with a 3-bit one-hot scheme for better timing, but to keep area minimal and since the original state machine is already compact, retain binary encoding but merge some transitions to reduce combinational logic levels.
+
+3. Use a Moore FSM style: assert `start_shifting` only in the state where the sequence has been detected (e.g., an additional "done" state) and latch the output in that state.
+
+4. Use blocking assignments in combinational always block, keep non-blocking in sequential to avoid inferred latches.
+
+5. Reset signal remains synchronous and active high.
+
+This approach preserves functionality but slightly reduces combinational logic complexity and critical path delay, potentially improving WNS and power due to simpler control of the output signal.
+
+The FSM states become:
+- S0: No match
+- S1: matched '1'
+- S11: matched '11'
+- S110: matched '110'
+- S_DONE: sequence 1101 detected, latch start_shifting high forever
+
+On detection (when in S110 and data=1), transition to S_DONE. start_shifting is 1 only in S_DONE.

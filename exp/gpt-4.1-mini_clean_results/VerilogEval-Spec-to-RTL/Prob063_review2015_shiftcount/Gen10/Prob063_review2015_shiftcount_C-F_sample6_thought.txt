@@ -1,0 +1,9 @@
+Fuse the clean separation of combinational next-state logic from Example 2 with the clock enable gating and asynchronous reset from Example 1. Specifically, compute next_q combinationally with explicit priority for shift_ena over count_ena (though priority is arbitrary since both are never asserted together). Use a clock enable signal that activates only when either enable is asserted to reduce unnecessary register toggling and power.
+
+Add an asynchronous active-low reset to initialize the shift register safely. This provides safe startup and robust simulation behavior.
+
+This fusion combines Example 2's clarity in next-state computation and Example 1's practical clock gating and reset handling, improving power efficiency, design clarity, and initialization robustness without sacrificing simplicity or performance for this small 4-bit datapath.
+
+Also, avoid redundant explicit holds in the sequential block since registers inherently hold values if not assigned when enabled, keeping RTL clean.
+
+The shifting is MSB-first (shift left), inserting data at LSB, consistent with spec and examples.

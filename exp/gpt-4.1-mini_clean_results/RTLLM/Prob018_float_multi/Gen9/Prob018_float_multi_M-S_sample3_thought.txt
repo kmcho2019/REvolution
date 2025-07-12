@@ -1,0 +1,15 @@
+To simplify the 32-bit IEEE-754 floating-point multiplier while maintaining full functionality, I will:
+
+- Use a straightforward multi-cycle FSM controlled by a 3-bit counter.
+- Keep the overall flow: decode inputs, handle special cases, multiply mantissas, normalize, round, and pack the output.
+- Remove explicit named FSM states and just use the counter to sequence steps.
+- Combine special case checks succinctly.
+- Simplify exponent and mantissa width handling by sticking with fixed widths as required.
+- Perform mantissa multiplication in one cycle with a 24x24-bit multiplier.
+- Implement rounding to nearest even with guard, round, sticky bits.
+- Flush underflows to zero for simplicity.
+- Output final IEEE-754 format after rounding and normalization.
+- Keep logic fully synchronous with non-blocking assignments.
+- Avoid unnecessary intermediate signals and keep the pipeline linear and clean.
+
+This results in simpler, easy-to-read code with well-defined cycle stages, minimal internal signals, and complete IEEE-754 compliant multiplication with special cases, rounding, and normalization.

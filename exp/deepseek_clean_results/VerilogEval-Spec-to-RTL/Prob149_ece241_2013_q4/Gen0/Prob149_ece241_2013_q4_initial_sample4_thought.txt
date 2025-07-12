@@ -1,0 +1,9 @@
+To implement this water level control system, we need a state machine that tracks the current water level and the previous state to determine the appropriate flow rates. The system has four main states based on the sensor inputs:
+1. Above s[2] (all sensors on) - no flow
+2. Between s[2] and s[1] (s[0] and s[1] on) - nominal flow fr0
+3. Between s[1] and s[0] (only s[0] on) - nominal flow fr0 and fr1
+4. Below s[0] (no sensors on) - maximum flow (all outputs on)
+
+We'll use a Moore machine where outputs depend only on the current state. The dfr output (Supplemental flow valve) should be asserted when transitioning from a lower to higher water level. We'll need to store the previous sensor state to detect transitions.
+
+The synchronous reset will initialize the system to the "below s[0]" state with all outputs asserted.

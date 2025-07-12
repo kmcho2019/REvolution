@@ -1,0 +1,11 @@
+Fuse the two example designs by maintaining a clean 3-stage pipeline with input sampling, combinational partial product generation, and output registering. To improve timing and area over the full 8-operand combinational sum, implement a balanced two-stage adder tree to sum partial products:
+
+- Stage 1: Pairwise addition of partial products to produce four intermediate sums.
+- Stage 2: Sum these four intermediate sums in two pairs.
+- Stage 3: Final sum of two results registered as output.
+
+This breaks the wide combinational addition into shorter combinational paths, improving timing and reducing power due to decreased glitching. Keep the enable pipeline shift register to synchronize the output enable with the product.
+
+The enable signal mul_en_in controls sampling inputs; the enable pipeline shifts the enable to align with the final output. The output product is valid only when the output enable is asserted.
+
+This fusion keeps the pipeline simple with three stages but optimizes summation to reduce critical path and area, improving PPA over the original examples.

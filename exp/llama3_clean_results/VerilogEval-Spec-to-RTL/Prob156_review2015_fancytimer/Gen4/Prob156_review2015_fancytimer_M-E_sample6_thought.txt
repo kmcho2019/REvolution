@@ -1,0 +1,15 @@
+To implement the timer module, we can use a finite state machine (FSM) with a novel architectural approach. The FSM will have five states: IDLE, START_PATTERN, SHIFT_DELAY, COUNTDOWN, and DONE. 
+
+In the IDLE state, the FSM will continuously check for the start pattern (1101) on the input data. When the start pattern is detected, the FSM will transition to the START_PATTERN state. 
+
+In the START_PATTERN state, the FSM will shift in the next 4 bits from the input data to determine the delay value. 
+
+After the delay value is loaded, the FSM will transition to the COUNTDOWN state, where it will count down from the delay value multiplied by 1000. 
+
+During the countdown, the FSM will output the remaining time and assert the counting signal. 
+
+When the countdown reaches zero, the FSM will transition to the DONE state, where it will assert the done signal and wait for the acknowledgment signal (ack) from the user. 
+
+Once the acknowledgment signal is received, the FSM will transition back to the IDLE state and repeat the process.
+
+This novel approach simplifies the state machine by reducing the number of states and transitions, making it more efficient and easier to implement.

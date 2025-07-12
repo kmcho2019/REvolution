@@ -1,0 +1,15 @@
+The original solution uses a 2D wire array with symmetric assignments, which creates unnecessary intermediate nets and may cause slightly larger area and power due to duplicated logic or extra routing. Also, indexing with `inputs[4 - i]` makes the logic less straightforward for synthesis tools.
+
+To improve PPA, I will:
+
+1. Flatten the logic by directly assigning each output bit in a single continuous assignment, avoiding intermediate arrays and generate blocks. This reduces net count and simplifies the netlist.
+
+2. Use a 5-bit input vector with straightforward indexing (`inputs[0] = a` down to `inputs[4] = e`) to simplify code and help synthesis tools optimize.
+
+3. Compute each output bit as an XNOR of the corresponding input bits `(inputs[i], inputs[j])`.
+
+4. Assign the output bits starting from `out[24]` corresponding to pair `(a,a)` down to `out[0]` for `(e,e)` according to the problem statement, mapping the index as `out[24 - (5*i + j)]`.
+
+This approach removes the overhead of the 2D wire array and symmetric assignments, reducing area and power, and also clarifies bit indexing to aid synthesis in optimizing logic sharing. The logic is still purely combinational and fully specified.
+
+The output is computed directly from input bits without intermediate wires for each pairwise comparison, reducing net count and switching activity. This should provide better PPA while maintaining correctness.

@@ -1,0 +1,12 @@
+The current implementation is already quite efficient, but we can make small optimizations:
+
+1. Output optimization:
+   - The output is only high in state D (2'b11), so we can directly assign out using the MSB of state since D is the only state where both bits are 1
+   - This replaces the equality comparison with a simple AND operation
+
+2. Next state logic optimization:
+   - The case statement is already optimal, but we can use bitwise operations to potentially reduce logic
+   - For state D (11), the next state is same as state B (01) when in=1, and same as state C (10) when in=0
+   - This can be expressed as {~in, in} which gives 01 when in=1 and 10 when in=0
+
+These changes maintain the same functionality while potentially reducing power and area slightly.

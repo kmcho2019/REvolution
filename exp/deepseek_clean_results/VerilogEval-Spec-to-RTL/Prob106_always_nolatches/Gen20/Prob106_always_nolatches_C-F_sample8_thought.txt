@@ -1,0 +1,16 @@
+The optimal solution combines the simplicity of direct comparison with the scalability of a lookup approach, while avoiding the inefficiency of a full ROM. Here's the fusion strategy:
+
+1. **Combinational Logic**: Replace the ROM with a simple case statement for direct comparison, which is more area-efficient for this small number of cases (4 keys).
+
+2. **One-Hot Encoding**: Maintain the clean output structure from Example 1 where each arrow key has its own dedicated bit in a 4-bit vector.
+
+3. **Default Handling**: Explicitly handle the "anything else" case to ensure no latches are inferred.
+
+Advantages over both examples:
+- More area-efficient than ROM-based solutions (no wasted memory)
+- Clear and maintainable code structure
+- Better power profile (only evaluates relevant cases)
+- Maintains the same constant-time lookup benefit
+- Easily extensible if more keys need to be added
+
+This solution provides the best balance between simplicity, efficiency, and scalability for the given requirements.

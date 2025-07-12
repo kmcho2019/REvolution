@@ -1,0 +1,25 @@
+The problem arises because the Karnaugh map is labeled with rows as x[2]x[3] and columns as x[0]x[1], but the code assumed x[3] is the MSB of the entire input and x[0] the LSB, and assigned variables accordingly. This mismatch causes incorrect minterm identification.
+
+To fix this, we must reorder the bits when interpreting the Karnaugh map, i.e., treat the input vector as having rows indexed by x[2]x[3] (where x[2] is MSB of the row index, x[3] LSB) and columns indexed by x[0]x[1] (x[0] MSB of the column, x[1] LSB). 
+
+This means the Karnaugh map cell f[row][col] corresponds to f[{x[2],x[3]},{x[0],x[1]}].
+
+We should define local signals r1 = x[2], r0 = x[3], c1 = x[0], c0 = x[1].
+
+Then, enumerate all minterms where f=1 using the correct bit order for minterm numbers:
+
+minterm = {x[3], x[2], x[1], x[0]} is the standard minterm ordering.
+
+But since the Karnaugh map rows and columns are swapped, to translate f[row][col], we convert row and col to bits:
+
+- row = {x[2], x[3]} (x[2] MSB, x[3] LSB)
+
+- col = {x[0], x[1]} (x[0] MSB, x[1] LSB)
+
+Then minterm index is (x[3], x[2], x[1], x[0]) = (r0, r1, c0, c1), due to the ordering of bits in minterm.
+
+Using this, list all cells with 1 from the map, find the minterm numbers, and write a simplified expression or use a case statement.
+
+To be clear, final code will map input bits to variables representing the Karnaugh map indices and implement the function exactly as specified, ensuring correctness.
+
+This approach removes ambiguity and directly encodes the function, avoiding the previous indexing mistakes.

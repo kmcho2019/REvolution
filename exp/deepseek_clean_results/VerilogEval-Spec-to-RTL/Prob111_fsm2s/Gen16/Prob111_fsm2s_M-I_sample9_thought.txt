@@ -1,0 +1,24 @@
+Improvement Strategy:
+
+1. State Encoding Optimization:
+   - Maintain the efficient 1-bit state encoding (OFF=0, ON=1)
+   - Eliminate the separate DFF module by using direct register in main module
+
+2. Logic Simplification:
+   - Combine state transition logic into a single always block
+   - Use case statement for clearer state transition visibility
+   - Remove intermediate wire signals to reduce routing
+
+3. Reset Optimization:
+   - Keep synchronous reset but make it more explicit in the always block
+   - Place reset condition first for better synthesis priority
+
+4. Output Optimization:
+   - Maintain direct state-to-output assignment (Moore machine)
+   - Keep as continuous assignment for minimal logic
+
+Key Benefits:
+- Reduced module hierarchy by eliminating separate DFF
+- Clearer state transition logic with case statement
+- More compact implementation with same functionality
+- Potential slight improvement in PPA by reducing interconnect

@@ -1,0 +1,8 @@
+I'll refactor the code to use continuous assignments for the state transitions instead of an always block. This approach:
+1. Eliminates the explicit state register by using combinational feedback
+2. Maintains the same Moore machine behavior
+3. Uses a latch-like structure with asynchronous reset
+4. Simplifies the clock gating logic by making it inherent in the feedback path
+5. Keeps the same output assignments (walk_left/walk_right)
+
+The key insight is that we can model the state transition purely with combinational logic when we don't need to store history beyond the current state. The asynchronous reset ensures proper initialization.

@@ -1,0 +1,15 @@
+Design a 3-stage pipeline unsigned 8-bit multiplier by splitting the multiplication into:
+
+1. Input and partial product generation stage: Register inputs and simultaneously generate all 8 partial products (each 16 bits) directly using bit masking and shifts.
+
+2. Pairwise summation stage: Combine partial products using an adder tree style with three adders to sum pairs and one leftover partial product. This reduces the number of sums to two in one cycle.
+
+3. Final summation and output stage: Add the two remaining sums to produce the final product.
+
+This reduces pipeline stages to 3 (less latency) with a balanced and simple partial product adder tree, simplifying control and improving throughput. The mul_en signal is pipelined accordingly across stages.
+
+Partial products are generated combinationally only once and latched along with the inputs, reducing switching. The output product and enable are registered in the final stage.
+
+Outputs are cleared on reset and when the enable signal is inactive, ensuring glitch-free outputs.
+
+This design trades off slightly deeper combinational adders for fewer pipeline stages and simplified logic, providing a fresh architectural approach.

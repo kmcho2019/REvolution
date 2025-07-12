@@ -1,0 +1,13 @@
+To implement a novel radix-2 divider, we'll introduce a new architectural idea that leverages a hybrid approach combining both iterative and combinational logic techniques. The core idea is to utilize a lookup table (LUT) to accelerate the division process by precomputing and storing intermediate results for small divisor values.
+
+The proposed design, named `radix2_div_lut`, will consist of three main components:
+
+1. **Lookup Table (LUT) Module**: This module will be preloaded with division results for small divisor values (e.g., 1 to 16). The LUT will serve as a cache, allowing for rapid retrieval of division results for these common cases.
+
+2. **Iterative Division Module**: For divisor values not covered by the LUT, this module will perform iterative division using a radix-2 algorithm. This approach will involve a series of shift and subtract operations to compute the quotient and remainder.
+
+3. **Control and Multiplexing Logic**: This component will manage the interaction between the LUT and the iterative division module. It will determine whether to use the LUT or perform iterative division based on the divisor value and will multiplex the results accordingly.
+
+The `radix2_div_lut` module will accept the same input ports as the original `radix2_div` module, including `clk`, `rst`, `sign`, `dividend`, `divisor`, and `opn_valid`. The output ports will remain the same, consisting of `res_valid` and `result`.
+
+By leveraging the LUT to handle small divisor values and reserving the iterative division for larger divisors, the proposed design aims to achieve a balance between area efficiency and performance.

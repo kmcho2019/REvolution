@@ -1,0 +1,16 @@
+To implement the Lemming's behavior, we need a Moore state machine with several states to track the Lemming's current activity (walking, falling, digging, or splattered) and its direction (left or right). We'll use two separate state machines: one for the activity and one for the direction. The activity state machine will handle the transitions between walking, falling, digging, and splattered, while the direction state machine will handle the changes in direction due to bumps. We'll also use a counter to track the number of clock cycles the Lemming has been falling.
+
+The state machine will have the following states:
+- WALKING: The Lemming is walking on the ground.
+- FALLING: The Lemming is falling through the air.
+- DIGGING: The Lemming is digging through the ground.
+- SPLATTERED: The Lemming has splattered and is no longer active.
+- The direction state machine will have two states:
+- LEFT: The Lemming is walking or will walk to the left.
+- RIGHT: The Lemming is walking or will walk to the right.
+
+We'll use a 5-bit counter to track the number of clock cycles the Lemming has been falling, since it can splatter after 20 clock cycles.
+
+When the Lemming is walking and receives a bump, it will change direction. If the ground disappears, it will start falling. If it's told to dig and there is ground, it will start digging. If it's been falling for too long and hits the ground, it will splatter.
+
+The outputs will be determined by the current state and direction. For example, when walking, the walk_left or walk_right output will be set accordingly. When falling, the aaah output will be set. When digging, the digging output will be set.

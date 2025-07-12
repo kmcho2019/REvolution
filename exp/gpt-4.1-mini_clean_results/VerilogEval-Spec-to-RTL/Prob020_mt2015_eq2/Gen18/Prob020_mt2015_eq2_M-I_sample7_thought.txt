@@ -1,0 +1,6 @@
+The existing design already uses the most straightforward and minimal approach to compare two 2-bit inputs with a single equality operator. Given the extremely low power consumption and minimal area reported, there is little room for hardware optimization. However, to potentially reduce switching activity and gate count slightly, we can implement the equality as the AND of bitwise XNOR comparisons, which often maps efficiently in hardware (XNOR + AND). This can sometimes be preferred in synthesis tools for generating simpler gate-level implementations. This approach also explicitly shows the equality logic, which might help in low-level optimization or better mapping in some libraries.
+
+Therefore, the improvement is replacing the vector equality operator with explicit bitwise XNOR and AND of the bits:
+z = (A[1] XNOR B[1]) AND (A[0] XNOR B[0])
+
+This can improve or maintain PPA while making the design’s logic more explicit.

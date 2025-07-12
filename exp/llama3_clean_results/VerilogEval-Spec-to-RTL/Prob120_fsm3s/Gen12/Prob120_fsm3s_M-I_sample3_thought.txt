@@ -1,0 +1,9 @@
+To improve the given Verilog code for better PPA (Power, Performance, Area) metrics, we can focus on optimizing the state machine implementation. The current code uses a Moore state machine with explicit binary encoding for the states. 
+
+First, we will simplify the next state logic by removing the `default` case from the `case` statement, as the state machine only has four defined states (A, B, C, D). This reduces unnecessary logic and potentially minimizes area usage.
+
+Next, we will optimize the output logic. The current implementation uses an `assign` statement to directly set the output based on the current state. However, we can further simplify this by removing the conditional expression and using a simple comparison.
+
+Finally, to improve performance (timing), we will keep the `always @(posedge clk)` block as is, since it already handles the synchronous reset and state update efficiently. The `always @(*)` block for the next state logic is also suitable for the current implementation.
+
+The main improvement comes from analyzing the critical path through the state machine logic and minimizing unnecessary logic for better synthesis and area optimization. Since the current PPA metrics indicate room for improvement in area, our focus will be on simplifying the logic while maintaining the correct functionality.

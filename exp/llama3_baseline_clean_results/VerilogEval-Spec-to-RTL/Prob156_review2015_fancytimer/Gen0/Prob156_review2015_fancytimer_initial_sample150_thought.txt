@@ -1,0 +1,11 @@
+To solve this problem, we will design a finite state machine (FSM) with the following states:
+- IDLE: This is the initial state, where the FSM searches for the pattern 1101.
+- DELAY_LOAD: After detecting the pattern 1101, the FSM shifts in the next 4 bits to determine the delay duration.
+- COUNTING: The FSM counts for the specified duration and outputs the remaining time.
+- DONE: After counting, the FSM asserts the done signal and waits for the ack signal to reset.
+
+The FSM will use a counter to keep track of the remaining time and will decrement it every 1000 clock cycles. The current remaining time will be outputted on the count[3:0] pins.
+
+We will use a serial shift register to shift in the delay bits. The counting output will be asserted when the FSM is in the COUNTING state.
+
+The FSM will reset to the IDLE state when the reset signal is high or when the ack signal is asserted after the DONE state.

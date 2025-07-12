@@ -1,0 +1,9 @@
+To implement the TopModule, we will create a module that contains a 7-bit global branch history register, a 128-entry table of two-bit saturating counters, and logic to perform predictions and training. 
+
+The prediction interface will take the current PC and use it along with the global branch history to index into the saturating counter table to make a prediction. It will also update the global branch history register on the next positive clock edge based on the prediction.
+
+The training interface will update the saturating counter table entry based on the actual branch outcome and also recover the global branch history register if a misprediction occurred.
+
+We will use two always blocks, one for the prediction logic and one for the training logic, to ensure that the sequential logic is triggered on the positive edge of the clock. 
+
+We will also include an asynchronous reset to clear the global branch history register and the saturating counter table.

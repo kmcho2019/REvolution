@@ -1,0 +1,13 @@
+The original design is minimal and correct but can be optimized for better power and timing by separating the output logic from the state register update. Specifically:
+
+- Move the Moore output logic into a separate combinational always block that only updates the output register on the clock edge. This separation reduces logic depth inside the clocked always block, improving timing (worst negative slack).
+
+- Use non-blocking assignments consistently and avoid assigning output in the asynchronous reset branch of the clocked block; instead, reset the output register directly to avoid glitches.
+
+- Additionally, minimize unnecessary toggling of next_state by gating next_state assignment when reset is asserted.
+
+- This slight restructuring may help critical path delay (better WNS) and reduce power by cleaner logic organization.
+
+The two-state FSM and asynchronous reset are kept to satisfy functional and interface requirements.
+
+Overall, the change improves timing and power without affecting area or functionality.

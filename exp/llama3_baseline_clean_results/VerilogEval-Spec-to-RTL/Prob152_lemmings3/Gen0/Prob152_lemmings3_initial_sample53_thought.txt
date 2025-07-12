@@ -1,0 +1,14 @@
+To implement the Lemmings finite state machine, we can use a Moore state machine. We'll define the states as follows: 
+- IDLE_LEFT: walking left on ground
+- IDLE_RIGHT: walking right on ground
+- FALLING: falling
+- DIGGING_LEFT: digging while originally walking left
+- DIGGING_RIGHT: digging while originally walking right
+
+The state transitions will be based on the input signals (bump_left, bump_right, ground, dig). 
+- When on ground, the Lemming can switch directions if bumped or start digging if dig=1. 
+- When falling, the Lemming will continue falling until it hits ground again, then it will resume its original direction. 
+- When digging, the Lemming will continue digging until it reaches the other side (ground=0), then it will fall and eventually resume its original direction.
+
+We'll use a case statement to determine the next state based on the current state and input signals. 
+We'll also use a separate case statement to determine the output signals (walk_left, walk_right, aaah, digging) based on the current state.

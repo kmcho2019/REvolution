@@ -1,0 +1,13 @@
+To implement a Mealy-type finite state machine (FSM) in Verilog that recognizes the sequence "101" on an input signal x and asserts an output signal z to logic-1 when the sequence is detected, we can follow these steps:
+1. Define the states of the FSM. Since we need to recognize the sequence "101" and we can have only 3 states, we can define the states as follows: State 0 (initial state), State 1 (after seeing the first '1'), and State 2 (after seeing '10').
+2. Determine the next state logic based on the current state and the input x.
+3. Determine the output logic based on the current state and the input x. For a Mealy machine, the output depends on both the current state and the input.
+4. Implement the FSM with an asynchronous reset that resets the state to the initial state (State 0) on the negative edge of aresetn.
+5. Ensure that the FSM recognizes overlapping sequences. This means if the sequence "101" appears multiple times in the input stream, the FSM should assert z for each occurrence.
+
+For the states, let's encode them as follows: 
+- State 0: 2'b00 (initial state)
+- State 1: 2'b01 (after seeing '1')
+- State 2: 2'b10 (after seeing '10')
+
+The next state logic will be based on the current state and the input x. The output z will be asserted when the current state is State 2 and the input x is '1', indicating the sequence "101" has been detected.

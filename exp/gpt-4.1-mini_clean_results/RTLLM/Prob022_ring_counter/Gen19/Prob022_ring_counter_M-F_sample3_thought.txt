@@ -1,0 +1,9 @@
+To address the tool limitation that disallows assigning to the entire vector at once in the procedural block with asynchronous reset, the design can be changed to assign each bit of the 8-bit output 'out' individually.
+
+Instead of a single vector assignment like `out <= 8'b00000001;` or shifting, we will store the current position index of the '1' bit (0 to 7) in an internal 3-bit register, and then update the 'out' output bits one by one based on that index.
+
+This approach uses a small state variable to represent the position of the single '1' bit, avoiding vector assignments or shifts inside the procedural block. On reset, the position is set to 0, meaning the LSB is '1'. On each clock, the position increments modulo 8, rotating the '1' bit.
+
+Finally, the output vector bits are assigned in a combinational always block or continuous assignments, setting the bit at the current position to '1' and others to '0'.
+
+This method avoids unsupported vector assignments inside the sequential block, ensures tool compatibility, and maintains the cyclic 1-hot ring counter behavior.

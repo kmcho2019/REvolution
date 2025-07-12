@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. State Encoding: Use 2-bit encoding (from Example 1) for better area efficiency while maintaining clear state transitions.
+2. Shift Register: Keep the efficient right-shift implementation (from both examples) for LSB-first reception.
+3. Done Signal: Use Example 2's approach of asserting done only when stop bit is valid, but add one-cycle pulse behavior.
+4. Error Handling: Simplify by merging ERROR state behavior into IDLE (when stop bit is missing), reducing states.
+5. Timing Optimization: Register next_state logic to improve timing (suggested by feedback).
+6. Power Optimization: Add enable conditions for shift register updates.
+
+Key Improvements:
+- Reduced state machine complexity (3 states instead of 4)
+- Registered next_state for better timing
+- Conditional shift register updates for power savings
+- Clear one-cycle done pulse behavior

@@ -1,0 +1,12 @@
+The original logic is correct but has some redundant terms that can be factored to reduce the number of gates and thus improve power and area slightly. Specifically:
+
+- next_state[1] = (A & in) | (B & in) | (D & in) can be factored as in & (A | B | D).
+- next_state[0] = (A & ~in) | (C & ~in) can be factored as ~in & (A | C).
+- next_state[2] = (B & ~in) | (D & ~in) can be factored as ~in & (B | D).
+- next_state[3] = (C & in) remains the same.
+
+This sharing of common terms (~in, in) and grouping state bits reduces the number of logic gates and intermediate toggles, optimizing for area and power. It also simplifies the expressions, potentially improving timing.
+
+The output remains assigned to D.
+
+This optimization is straightforward, preserves correctness, and improves PPA by reducing gate count and fan-in.

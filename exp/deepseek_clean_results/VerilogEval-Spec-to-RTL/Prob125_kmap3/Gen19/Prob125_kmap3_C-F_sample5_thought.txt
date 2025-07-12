@@ -1,0 +1,15 @@
+After analyzing both examples, I'll create a superior solution by:
+1. Maintaining the core logic expression (a | (~a & ~b & c)) which correctly implements the K-map
+2. Adding a potential optimization by observing that when a=1, the output is always 1 regardless of other inputs
+3. This allows us to simplify the expression to (a | (~b & c)) which:
+   - Matches all required cases in the K-map
+   - Is functionally equivalent when a=1
+   - Correctly handles the a=0 cases where output should be 1 (when ~b & c is true)
+   - Uses don't-care conditions to our advantage
+4. This reduces the logic to just 1 OR and 1 AND operation, eliminating one NOT gate
+5. The simplification maintains correctness while potentially improving PPA metrics
+
+The new expression is functionally equivalent because:
+- When a=1: output is 1 (matches original)
+- When a=0: output is ~b & c, which covers all required 1's in the K-map (top-left corner)
+- Don't-care conditions allow this simplification

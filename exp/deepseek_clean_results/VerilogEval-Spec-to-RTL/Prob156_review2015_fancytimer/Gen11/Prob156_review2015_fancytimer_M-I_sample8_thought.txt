@@ -1,0 +1,23 @@
+Improvement Strategy:
+
+1. **Accurate Cycle Counting**: Implement precise (delay+1)*1000 cycle counting by:
+   - Using a 14-bit counter (can count up to 16*1000=16000 cycles)
+   - Separating the 1000-cycle subcounter and delay period counter
+
+2. **Correct Pattern Capture**: 
+   - Fix the delay value capture by properly shifting in 4 bits after pattern detection
+   - Ensure the bit counter correctly tracks captured bits
+
+3. **State Machine Refinement**:
+   - Add explicit WAIT state after pattern detection to properly capture delay bits
+   - Ensure proper state transitions with all edge cases handled
+
+4. **Output Generation**:
+   - Make count output show remaining delay periods only during COUNT state
+   - Ensure done asserts only after counting completes and stays until ack
+
+Key Changes:
+- More precise cycle counting logic
+- Fixed delay value capture
+- Clearer state transitions
+- Proper output behavior in all states

@@ -1,0 +1,24 @@
+Revised Approach: State Machine with Proper Level Tracking
+
+1. Core Fixes:
+   - Implement proper synchronous reset for all outputs
+   - Correct sensor pattern interpretation for water levels
+   - Accurate rising edge detection based on sensor transitions
+   - Proper output logic based on current level and previous state
+
+2. Key Improvements:
+   - Use registered outputs for synchronous reset compliance
+   - Explicit state encoding for water levels (4 states)
+   - Precise rising edge detection between valid state transitions
+   - Correct output combinations per specification table
+
+3. State Handling:
+   - STATE_HIGH: Above s[2] (s=111)
+   - STATE_MID_HIGH: Between s[2]-s[1] (s=011)
+   - STATE_MID_LOW: Between s[1]-s[0] (s=001)
+   - STATE_LOW: Below s[0] (s=000)
+
+4. Transition Logic:
+   - Store previous state to detect rising/falling levels
+   - dfr asserted only when moving to higher level
+   - Outputs follow truth table precisely

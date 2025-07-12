@@ -1,0 +1,23 @@
+To fully comply with the problem statement, the 4-bit LFSR should:
+
+1. Compute feedback by XORing bits 3 and 2 of the current output and then inverting this XOR result.
+
+2. On a synchronous, active-high reset, initialize the register to zero (4'b0000) as specified.
+
+3. On every positive edge of clk (and if not resetting), shift left by one bit and insert the inverted XOR feedback at LSB.
+
+The previous code did not invert the feedback signal and initialized the register to a non-zero seed to avoid the all-zero lock state, which is good for practical LFSRs but doesn't match the problem statement.
+
+The zero initialization risks the LFSR staying stuck at zero, but since the problem explicitly requires zero initialization, we'll follow that.
+
+In the testbench:
+
+- Inputs clk and rst will be declared as reg for procedural assignments.
+
+- Output out will be declared as wire.
+
+- The testbench will apply reset for a few cycles and then run the LFSR for enough cycles to observe pseudo-random behavior (if any), even though zero initialization means it will stay zero if no feedback inversion logic causes a state change.
+
+- The code will be clean and consistent with port widths.
+
+This approach ensures the code matches the problem's specification precisely, including the feedback inversion and zero reset, while ensuring the testbench is error-free for simulation.

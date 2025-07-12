@@ -1,0 +1,7 @@
+To implement a novel 100-bit left/right rotator, we can utilize a ring buffer architecture with two pointers, one pointing to the start of the buffer and the other pointing to the end. This design allows for efficient rotation without the need for complex logic or significant data movement.
+
+Our novel solution involves dividing the 100-bit data into smaller segments and storing them in a ring buffer. We will use two pointers, `head` and `tail`, to keep track of the current start and end positions of the buffer. When the `load` signal is asserted, we load the new data into the buffer, updating the `head` and `tail` pointers accordingly.
+
+For rotation, we will use a single rotation step, where we rotate the buffer by one position in the specified direction. If `ena[1:0]` is `2'b01`, we rotate right by one bit, and if `ena[1:0]` is `2'b10`, we rotate left by one bit. The `head` and `tail` pointers are updated based on the rotation direction.
+
+This ring buffer architecture allows for efficient rotation and reduces the complexity of the logic, making it suitable for area and power optimization.

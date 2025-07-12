@@ -1,0 +1,5 @@
+To fix the off-by-one error and ensure shift_ena is asserted exactly 4 clock cycles after a synchronous reset, adjust the counter logic and output assignment carefully. Initialize the counter to 3 (not 4) because counting from 3 down to 0 inclusive yields exactly 4 cycles. Decrement the counter on each cycle while in ENABLE state, and disable shift_ena when counter hits zero (i.e., after 4 cycles). Also, keep the output logic based purely on the counter value rather than the FSM state to precisely control the enable duration. This approach preserves clarity and correctness.
+
+For better PPA, avoid using enum and typedef (SystemVerilog features) for broader compatibility and slightly simpler synthesis. Use a simple reg for state and define constants for states. Use nonblocking assignments and synchronous reset as specified. This will produce minimal logic and is easy to optimize.
+
+Overall, this yields correct 4-cycle pulse generation on shift_ena synchronized to reset and minimal hardware.

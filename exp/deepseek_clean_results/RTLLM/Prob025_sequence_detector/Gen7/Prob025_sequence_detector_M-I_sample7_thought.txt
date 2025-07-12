@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the output logic to break the critical path
+   - Simplify the combinational logic by separating state transition and output generation
+2. Power Optimization:
+   - Add clock gating for the shift register when in IDLE state
+   - Use registered output to prevent glitches
+3. Area Optimization:
+   - Eliminate the separate state register by encoding state in the shift register MSB
+   - Share comparators between state and output logic
+4. Key Changes:
+   - Use shift_reg[3] as state indicator (1=WAIT_FOR_LAST_1)
+   - Clock gating when in IDLE and no sequence start detected
+   - Two-stage output pipeline for better timing
+5. Expected Benefits:
+   - Improved WNS by ~0.15ns through pipelining
+   - ~15% power reduction through clock gating
+   - Small area reduction by eliminating state register

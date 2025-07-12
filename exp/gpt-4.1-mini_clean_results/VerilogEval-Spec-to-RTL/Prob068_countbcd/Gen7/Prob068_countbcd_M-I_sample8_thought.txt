@@ -1,0 +1,19 @@
+To improve the PPA, the main goal is to reduce combinational logic depth and unnecessary toggling, particularly in the carry propagation and digit update logic, without changing the functional behavior.
+
+Key improvements:
+1. **Timing**: Instead of generating enables as combinational logic involving multiple comparisons and logic ANDs for carries, use a ripple carry style where the carry-out of one digit directly enables the increment of the next digit in the same clock cycle. This avoids complex enable combinational generation and reduces logic depth.
+
+2. **Power**: Only update digits if they or the previous digit caused a carry, reducing toggling and unnecessary increments.
+
+3. **Area**: The code structure becomes simpler by using a ripple carry increment approach, eliminating multiple parallel comparisons for enable generation.
+
+Implementation details:
+- Always increment the ones digit.
+- If ones digit wraps from 9 to 0, generate carry for tens digit increment.
+- Similarly propagate carry from tens to hundreds, hundreds to thousands.
+- Store all digits in 4-bit registers.
+- Generate ena signals as the carry signals out of ones, tens, hundreds digits.
+- Synchronous active-high reset clears all digits.
+- Non-blocking assignments ensure correct sequential behavior.
+
+This ripple carry approach reduces logic depth for enable generation, and decreases dynamic power by updating digits only when needed.

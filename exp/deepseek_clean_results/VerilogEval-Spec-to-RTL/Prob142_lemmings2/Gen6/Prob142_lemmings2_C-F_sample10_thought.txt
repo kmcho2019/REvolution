@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. State Encoding: Use a compact 2-state representation (WALK/FALL) with a separate direction bit, combining the simplicity of Example 1 with the efficiency of Example 2's direction handling.
+
+2. Transition Logic: Implement clean bump handling from Example 1 (direction toggle on bump) while maintaining the robust ground checking from Example 2. Add explicit handling for bump events only during WALK state.
+
+3. Output Logic: Use Example 2's efficient combinatorial output generation but make it more readable by clearly separating walk_left and walk_right conditions.
+
+4. Reset Handling: Keep the simple asynchronous reset from both examples, initializing to walk left.
+
+5. Power Optimization: Add explicit clock gating for direction updates (only during WALK state when ground is present) to reduce unnecessary switching.
+
+Key Improvements:
+- Minimal state representation (2 states + direction bit)
+- Clear separation of walking and falling behaviors
+- Efficient output logic with no glitches
+- Optimized power consumption through clock gating
+- Maintained all functional requirements

@@ -1,0 +1,22 @@
+Improved fractional divider with 3.5x division:
+
+1. Core Concept:
+   - Maintain 7-cycle counter (0-6) as foundation
+   - Generate two complementary clock phases:
+     * clk_div1: High for first 4 cycles (0-3)
+     * clk_div2: High for next 3 cycles (4-6)
+   - Phase-shift clk_div2 by half cycle using negedge
+   - Combine phases with XOR for precise alignment
+
+2. Key Improvements:
+   - Proper alternation between 4 and 3 cycle periods
+   - Correct phase relationship between clock halves
+   - XOR combination ensures clean transitions
+   - Reduced logic complexity
+   - Maintains 50% duty cycle in final output
+
+3. Implementation Details:
+   - Single counter for both phases
+   - Clear boundary conditions for each phase
+   - Proper reset handling
+   - Minimal gate count implementation

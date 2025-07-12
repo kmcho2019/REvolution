@@ -1,0 +1,13 @@
+This design implements a more robust synchronization scheme using a handshake protocol between clock domains. Key features:
+1. Uses a request-acknowledge handshake for safe data transfer
+2. Implements a small FIFO buffer (depth=1) to hold data during transfer
+3. Includes data valid signaling to prevent metastability
+4. Provides better timing margin by using the full 3-cycle enable window
+5. Implements independent clock domain resets with proper synchronization
+
+Advantages over previous solution:
+- More reliable data transfer with explicit handshaking
+- Better handles cases where data_en might glitch
+- Clear separation of clock domains
+- Easier to verify timing constraints
+- More scalable for wider data buses

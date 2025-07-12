@@ -1,0 +1,7 @@
+To improve the original design's PPA metrics, especially power and timing, I will:
+- Combine all three counters into a single always block triggered by posedge CLK or RST. This reduces the number of always blocks and the related combinational logic, potentially improving timing and area.
+- Introduce clock-enable style gating inside the always block, updating minutes and hours only when seconds roll over to zero, minimizing toggling and logic complexity.
+- Maintain non-blocking assignments and reset behavior as specified.
+- Keep Hours as 5 bits, Mins and Secs as 6 bits.
+- Add clear comments for maintainability.
+This merged approach should reduce critical path complexity by eliminating repeated conditional checks across always blocks and lowering power by gating increments inside the single always block.

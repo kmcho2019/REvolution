@@ -1,0 +1,14 @@
+Novel Architectural Idea: Hierarchical Tree Reduction
+1. Instead of serial reduction chains, implement a balanced binary tree structure for each operation
+2. This reduces critical path depth from O(n) to O(log2n) - from 100 levels to just 7 levels
+3. Use parameterized generate blocks to create a scalable hierarchy
+4. Each level of the tree combines pairs of results from the previous level
+5. For XOR, this also naturally computes parity in logarithmic time
+6. The structure is more hardware-friendly and synthesizes to faster circuits
+
+Advantages:
+- Better timing performance (7 levels vs 100)
+- More regular structure that maps well to FPGA LUTs or ASIC standard cells
+- Easier to pipeline if needed
+- Scales better for larger input widths
+- Clear hierarchical structure that's easier to verify

@@ -1,0 +1,8 @@
+To implement a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3, we need to:
+1. Use a 5-bit register to store the current state (q)
+2. On each clock edge:
+   - If reset is active, set q to 1 (00001)
+   - Otherwise, perform the LFSR operation:
+     - The new MSB (q[4]) is q[0] XOR q[2] (since taps are at positions 5 and 3, which correspond to bits 4 and 2 in 0-based indexing)
+     - The remaining bits shift right (q[3:0] becomes q[4:1])
+3. This will generate a sequence of 31 (2^5-1) unique states before repeating

@@ -1,0 +1,21 @@
+To simplify the next-state logic for y[1], we need to focus only on the cases where y[1] becomes 1 in the next state, ignoring transitions where it remains 0. From the state machine:
+
+1. y[1] becomes 1 when:
+   - From B (001) to C (010) on w=0
+   - From C (010) to D (011) on w=1
+   - From E (100) to D (011) on w=1
+   - From F (101) to C (010) on w=0
+
+2. We can express this as:
+   y1_next = (current state is B and w=0) OR
+             (current state is C and w=1) OR
+             (current state is E and w=1) OR
+             (current state is F and w=0)
+
+3. Using state encodings:
+   - B: 001 → ~y[2] & ~y[1] & y[0]
+   - C: 010 → ~y[2] & y[1] & ~y[0]
+   - E: 100 → y[2] & ~y[1] & ~y[0]
+   - F: 101 → y[2] & ~y[1] & y[0]
+
+This gives us a more concise implementation focusing only on the necessary transitions.

@@ -1,0 +1,14 @@
+Fuse the best ideas from both examples to create a clean, robust, and timing-friendly LIFO buffer design with minimal toggling and clear pointer management:
+
+- Use SP as a count of elements (0 to 4), incrementing on push and decrementing on pop, simplifying EMPTY and FULL flag derivation.
+- On push (RW=0): write dataIn at stack_mem[SP], then increment SP if not full.
+- On pop (RW=1): decrement SP first if not empty, then read stack_mem[SP] to dataOut, avoiding reliance on SP-1 index within the same cycle, thus improving timing clarity.
+- Avoid clearing stack_mem locations on pop to reduce toggling and power.
+- Clear entire stack_mem on reset for known initial state and set SP to 0 indicating empty buffer.
+- Update dataOut only on pop to reduce unnecessary toggling.
+- Keep EMPTY and FULL flags purely combinational based on SP.
+- Use a temporary variable inside the sequential block to hold data popped from the stack, improving timing and avoiding combinational dependency on updated SP within the same clock.
+- Gating all operations behind EN to prevent unnecessary toggling when inactive.
+- Use non-blocking assignments consistently.
+- Avoid loops on reset to ease synthesis; explicitly clear stack_mem locations.
+- This fusion integrates the clear pointer manipulation and minimal toggling from Example 1, and the clean dataOut update timing from Example 2, yielding a power-aware, easy-to-read, and synthesis-friendly LIFO buffer.

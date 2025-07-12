@@ -1,0 +1,9 @@
+The key insight in refactoring the provided TopModule code is to maintain the same functional behavior while potentially simplifying the logic and improving its structure. One approach to refactoring is to eliminate the need for the `next_Q` signal and instead directly assign the value of `Q` based on the combinational logic.
+
+Given the nature of the TopModule, which acts as a 2:1 multiplexer followed by a flip-flop, we can directly express this behavior using a single always block that captures both the multiplexing logic and the flip-flop's update rule.
+
+An alternative approach is to utilize continuous assignment (`assign`) for the combinational logic part, which can simplify the code and potentially make it more readable. However, the flip-flop update still requires a sequential block (`always` block) to capture the behavior at the clock edges.
+
+In the refactored version, we aim to maintain clarity and simplicity while adhering to the functional requirements. This involves directly updating the `Q` register within the sequential logic block based on the conditions provided, without the need for an intermediate signal like `next_Q`.
+
+By structuring the code in this manner, we aim to improve readability and potentially reduce the complexity of the design, making it easier to understand and maintain.

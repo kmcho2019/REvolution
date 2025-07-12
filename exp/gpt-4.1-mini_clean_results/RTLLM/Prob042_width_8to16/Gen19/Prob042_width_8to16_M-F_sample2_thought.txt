@@ -1,0 +1,13 @@
+To meet the requirement that valid_out and data_out are generated in the cycle **after** the second 8-bit input arrives, the design needs to separate the data capturing and output registering phases clearly.
+
+Key fixes:
+- Use a two-stage pipeline for output: when the second valid input arrives, latch the concatenated 16-bit data into an intermediate register `combined_data`, but do NOT assert valid_out yet.
+- In the next clock cycle, transfer `combined_data` to the output register `data_out` and assert `valid_out` simultaneously, introducing a one-cycle latency after the second input.
+- Maintain a flag `has_first_byte` to store the first byte until the second arrives.
+- Do not reset `has_first_byte` prematurely; only clear it after capturing the second byte and scheduling output.
+- Maintain an output-valid flag `valid_out_reg` registered synchronously, which is set high for exactly one cycle when output data is valid.
+- Avoid resetting output valid flag early by controlling the valid_out based solely on output pipeline registers, not on input valid_in.
+- On reset, clear all registers and output signals.
+- This design cleanly pipelines input concatenation and output valid assertion with correct timing, fully synchronous and compliant with the problem specification.
+
+The result is a simple and reliable two-byte packer that outputs concatenated data and valid signal exactly one cycle after the second byte input, handling arbitrary input arrival patterns robustly.

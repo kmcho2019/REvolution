@@ -1,0 +1,5 @@
+The existing solution correctly implements the output z as the XNOR of inputs x and y, which matches the waveform. To improve power and area metrics even further, we can use a direct Boolean expression to reduce gate usage slightly. From the waveform, z is high only when both inputs are equal (both 0 or both 1). The function can be written as z = (~x & ~y) | (x & y). This form is equivalent to XNOR but often can be synthesized more efficiently by some tools. This minimal expression will keep logic simple and may reduce switching activity slightly by using only AND and OR gates without XOR.
+
+No clock or sequential logic is involved; thus, timing remains zero. This slight change focuses on potentially reducing power and area marginally by expressing the function in basic gates rather than XOR+NOT.
+
+This change keeps the design fully combinational and minimal, optimized for clean gate-level synthesis.

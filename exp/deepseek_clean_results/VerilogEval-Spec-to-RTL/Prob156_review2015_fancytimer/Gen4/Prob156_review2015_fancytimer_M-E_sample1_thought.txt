@@ -1,0 +1,18 @@
+Novel Architecture Approach:
+
+1. **Parallel Pattern Matching**: Instead of a shift register, use combinatorial logic to detect the 1101 pattern in the last 4 bits received. This eliminates the need for explicit pattern shift tracking.
+
+2. **Bit Counter with Early Capture**: Use a 3-bit counter to track received bits, allowing us to precisely know when to capture the delay value after pattern detection.
+
+3. **Precise Cycle Counting**: Implement a two-level counter system:
+   - Main counter counts down from (delay+1)*1000
+   - Sub-counter counts 1000 cycles for each count decrement
+   This ensures accurate timing and clean count output transitions.
+
+4. **Explicit State Encoding**: Use clear state names and transitions that exactly match the specification requirements.
+
+Key Innovations:
+- Parallel pattern detection reduces state complexity
+- Precise bit counting ensures accurate delay capture
+- Two-level counter guarantees exact cycle counting
+- Clean separation of pattern detection and timing phases

@@ -1,0 +1,12 @@
+Fuse the clear combinational next state logic from Example 1 with the function-based approach from Example 2 for improved readability and synthesis friendliness. Implement next state logic as a combinational function for clarity and potential logic optimization while maintaining an always_comb block to explicitly declare combinational next_state reg for synthesis tools favoring explicit always blocks. 
+
+Retain output z as a combinational continuous assignment for minimal logic and immediate output response, since it depends only on the present state input y. Compute Y0 as the least significant bit of next_state, ensuring it reflects the next state immediately.
+
+By combining these strengths:
+- Use a combinational function for next state logic, clarifying mapping and allowing easy extension.
+- Use a dedicated always_comb block to drive next_state reg, aiding synthesis tool inference and readability.
+- Use simple continuous assignments for outputs for minimal logic and power.
+- Use a safe default case for robustness.
+- Keep no internal state registers since y is present state input, as required.
+
+This approach optimizes clarity, synthesis friendliness, and likely power/area due to the function reuse and clean logic separation.

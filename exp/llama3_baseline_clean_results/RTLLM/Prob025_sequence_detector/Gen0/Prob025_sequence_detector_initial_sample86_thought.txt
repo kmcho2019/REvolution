@@ -1,0 +1,20 @@
+The sequence detector module is designed as a finite state machine (FSM) with five states: IDLE, S1, S2, S3, and S4. The FSM transitions between these states based on the input data_in and detects the specific 4-bit binary sequence 1001. 
+
+The module uses a clock signal clk to synchronize the detection process and a reset signal reset_n to initialize the state machine. 
+
+When the reset signal is high, the state machine returns to the IDLE state. 
+
+On each clock cycle, the detector checks the input data_in and transitions to the next state if the input matches the expected sequence. 
+
+Once the complete sequence is detected, the output sequence_detected is set high. 
+
+The state transitions are as follows: 
+- IDLE: If data_in is 1, transition to S1. 
+- S1: If data_in is 0, transition to S2. 
+- S2: If data_in is 0, transition to S3. 
+- S3: If data_in is 1, transition to S4. 
+- S4: Set sequence_detected high and stay in S4 until reset.
+
+To implement the sequence detector in Verilog, we will use an enum to define the states, a reg to store the current state, and a reg to store the output sequence_detected. 
+
+We will also use a case statement to handle the state transitions and a combinational logic to set the output sequence_detected.

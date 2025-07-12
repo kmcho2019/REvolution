@@ -1,0 +1,11 @@
+To optimize the existing combinational next-state and output logic for better power, performance, and area (PPA) while preserving functionality, we can:
+
+- Factor the S_next expression further by extracting common terms to reduce gate count and critical path length.
+- Combine related next-state signals with common conditions to minimize repeated logic.
+- Minimize the number of OR and AND gates by using fewer intermediate signals and direct assignments.
+- Maintain clear naming and readability to facilitate downstream synthesis optimizations.
+- Use simple one-hot decoding signals directly without additional intermediate wires, avoiding unnecessary logic.
+- Since shift_ena is asserted for B0 through B3, use a concise wire for that condition rather than multiple OR operations.
+- Ensure next-state signals are mutually exclusive where possible, to help synthesis reduce logic complexity.
+
+These optimizations target reduction in gate count and logic depth, which should improve timing and reduce area and power.

@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by maintaining a clear, binary-encoded 4-state FSM with well-separated roles: IDLE (waiting for start bit), DATA (receiving 8 bits), STOP (checking stop bit), and ERROR (recovering from framing errors). 
+
+Implement the FSM with synchronous reset and all sequential updates in one always block for synthesis friendliness. Use non-blocking assignments and minimal toggling by resetting bit counters and shift registers only in IDLE and ERROR states, thus reducing unnecessary transitions.
+
+Adopt the intuitive LSB-first shift direction from Example 2 (`shift_reg <= {in, shift_reg[7:1]}`) to directly place incoming bits into the LSB, which aligns naturally with the protocol and eases debug.
+
+Generate the `done` signal as a synchronous one-cycle pulse asserted only when a valid stop bit is detected in the STOP state, preventing glitches and unnecessary toggling.
+
+Use a clean next_state combinational block for clear state transition logic, separating combinational and sequential logic for clarity and good synthesis results.
+
+Overall, this design achieves a robust, low-power, and low-area FSM by combining careful state separation, minimal register toggling, intuitive bit ordering, and clean done pulse generation.

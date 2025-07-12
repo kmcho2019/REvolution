@@ -1,0 +1,9 @@
+To optimize the frequency divider for better power efficiency while maintaining functional correctness, I will combine the counters for CLK_10 and CLK_1 into a single always block. This reduces duplicated control logic and register toggling at the flip-flop level.
+
+Additionally, I will use minimal bit-width counters precisely sized for the counts needed, as before. The toggle logic remains the same, but sharing the clock enable control and synchronous reset in one block improves synthesis optimization opportunities.
+
+For CLK_50, toggling every clock is already minimal and cannot be further simplified.
+
+This structural change leads to reduced register count, less switching activity in control signals, and potentially smaller area and power without compromising timing or readability. The overall design stays fully synchronous with clean reset semantics.
+
+This approach balances the trade-offs between complexity and power/area improvement while keeping the code maintainable.

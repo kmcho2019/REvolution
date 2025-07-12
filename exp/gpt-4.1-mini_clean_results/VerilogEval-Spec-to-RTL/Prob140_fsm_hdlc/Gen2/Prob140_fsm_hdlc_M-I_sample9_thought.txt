@@ -1,0 +1,18 @@
+The original FSM and output logic are correct and clear but can be optimized for better power and performance by removing the `prev_in` register and using a purely state-based approach with delayed signals for output. 
+
+We can reduce power and area by avoiding the explicit storage of `prev_in` and instead detect the disc and flag conditions using the current and next state only. Since the outputs depend on seeing a zero after 5 or 6 consecutive ones, the transition from S5->S0 or S6->S0 with input=0 is key.
+
+By registering the current and next state (or previous and current states) in a pipeline of two registers, we can generate the outputs based only on the state transition pattern, thus eliminating `prev_in`.
+
+This reduces toggle on an extra flip-flop (`prev_in`) and simplifies output combinational logic.
+
+Also, changing the outputs to be registered only once per clock edge reduces glitches.
+
+In summary, improvements:
+- Remove `prev_in` register.
+- Store current and previous state registers.
+- Outputs detected by checking a transition from previous state S5/S6 to current state S0 (which means input=0 after 5 or 6 ones).
+- `err` stays the same, asserted when state = S7.
+- Keep synchronous reset and positive clock edge triggering.
+
+This approach reduces flip-flop usage and shortens critical paths for output logic, improving timing and power.

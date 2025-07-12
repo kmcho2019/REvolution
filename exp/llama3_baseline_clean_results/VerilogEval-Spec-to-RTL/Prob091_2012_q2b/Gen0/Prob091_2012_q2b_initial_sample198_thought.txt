@@ -1,0 +1,9 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the transitions between states based on the input 'w' and the current state 'y'. The one-hot encoding helps simplify the logic because each state is uniquely represented by a single '1' in the 'y' vector. 
+
+We can derive the logic for Y1 (input of state flip-flop y[1]) and Y3 (input of state flip-flop y[3]) by examining the transitions that lead to states B (000010) and D (001000) respectively, since these are the states where y[1] and y[3] are '1'. 
+
+For Y1, we need to consider transitions to state B, which happens from state A when 'w' is '1'. This can be represented as y[0] & w.
+
+For Y3, we consider transitions to state D, which can occur from states B, C, E, or F when 'w' is '0', and from state D itself when 'w' is '1'. However, given the specific encoding and transitions, we can observe that state D (001000) is directly involved, and its next state depends on 'w'. The transitions to D when 'w' is '0' can come from B or C, and when 'w' is '1', D can transition to itself or come from E or F. But considering the one-hot encoding and the requirement for Y3, we focus on the conditions that lead to a '1' in y[3], which directly relates to the current state and the input 'w'.
+
+The logic for Y3, given it should be '1' when the system is in state D or transitions to it under the right conditions, involves more complex combinations considering the states and 'w'. For state D (001000), we need y[3] to be '1' when the system is in D, or when it transitions to D from B or C when 'w' is '0'. Given the specific transitions and the one-hot encoding, we can directly implement the logic based on the current state and 'w'.

@@ -1,0 +1,6 @@
+Refactor the synchronizer module by separating the clock domain crossing more explicitly:
+- Keep data_reg and en_data_reg in clk_a domain, but update data_reg only when data_en is high to reduce toggling.
+- Synchronize en_data_reg into clk_b domain through a dedicated 2-stage synchronizer chain (en_sync_0, en_sync_1).
+- Use a clock-domain crossing handshaking style for enable signal crossing to improve metastability robustness.
+- Use a combinational mux on dataout input selecting data_reg when delayed enable is high, and register dataout on clk_b.
+- Use continuous assignments where appropriate to clarify data flow, and reduce redundant code.

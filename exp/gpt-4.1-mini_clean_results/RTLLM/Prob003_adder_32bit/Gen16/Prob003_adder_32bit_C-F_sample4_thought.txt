@@ -1,0 +1,13 @@
+Fuse the strengths of both examples by designing a hierarchical 32-bit carry-lookahead adder composed of two 16-bit CLA blocks. Inside each 16-bit CLA, use per-bit propagate and generate signals with a clean prefix carry-lookahead chain implemented via generate blocks (like Example 1) for fast, parallel carry calculation rather than simple iterative carry functions (which are essentially ripple carry in Example 2).
+
+In addition, explicitly compute block propagate and generate signals within the 16-bit CLA block using a hierarchical prefix chain, enabling the top-level adder to compute the upper 16-bit carry-in efficiently as Cin_high = G_low + P_low * 0 = G_low.
+
+Maintain the user interface of inputs and outputs as [32:1], but internally map to zero-based [31:0] vectors for synthesis friendliness, using generate loops to cleanly remap signals without verbose manual concatenations.
+
+Use blocking assignments for combinational logic, generate blocks for scalability and clarity, and concise wire declarations.
+
+This fusion:
+- Retains fast parallel prefix carry computation inside 16-bit blocks (superior timing compared to iterative carry function)
+- Provides explicit and clean hierarchical block propagate/generate signals for the 32-bit carry chain (top-level carry-in)
+- Uses consistent 1-based input/output indexing externally with clean mapping internally
+- Combines clarity, modularity, and performance benefits to create a superior, scalable, and clean design.

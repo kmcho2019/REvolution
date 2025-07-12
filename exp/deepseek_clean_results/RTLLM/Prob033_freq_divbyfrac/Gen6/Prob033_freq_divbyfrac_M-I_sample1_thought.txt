@@ -1,0 +1,24 @@
+Improved Strategy for 3.5x Fractional Division:
+
+1. **Accurate Cycle Counting**:
+   - Maintain 7-cycle counter (0-6) for precise 3.5x division
+   - Clear counter synchronously on reset
+
+2. **Proper Phase Generation**:
+   - Primary phase: High for first 4 cycles (0-3), low for next 3 (4-6)
+   - Secondary phase: Offset by exactly half the input period (180° phase shift)
+   - Achieve this by toggling secondary phase on negative clock edge
+
+3. **Phase Combination**:
+   - OR both phases to create uniform output clock
+   - This creates the required fractional division with proper duty cycle
+
+4. **Reset Synchronization**:
+   - Ensure all registers initialize to known state
+   - Synchronize divided clock output with reset release
+
+Key Improvements:
+- Correct phase relationship between primary and secondary clocks
+- Proper half-cycle delay implementation
+- Accurate duty cycle generation
+- Clean startup behavior

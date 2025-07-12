@@ -1,0 +1,22 @@
+To fix the issues and ensure correct fractional divide-by-3.5 clock generation with a 50% duty cycle approximation, the approach is as follows:
+
+1. Align the initialization states of posedge and negedge state machines carefully, ensuring they start in complementary phases to maintain the intended 180° phase shift.
+
+2. Correct the counting logic by counting from 1 up to the specified duration (3 or 4), which is more intuitive and less error-prone than counting from 0, thus avoiding off-by-one errors.
+
+3. Update the outputs (`clk_out_posedge` and `clk_out_negedge`) combinationally inside the clocked always blocks at each cycle to ensure no unintended glitches or stuck states.
+
+4. Maintain the separate state machines on posedge and negedge to generate two pulse trains that are phase shifted by half clock cycle, and XOR them to obtain the fractional output clock with better duty cycle uniformity.
+
+5. Implement the counters and states such that for posedge:
+   - High for 4 cycles (count from 1 to 4)
+   - Low for 3 cycles (count from 1 to 3)
+   For negedge (phase shifted by half cycle):
+   - Low for 3 cycles
+   - High for 4 cycles
+   
+6. Reset all registers on rst_n synchronously to prevent glitches on startup.
+
+This results in clean toggling every half cycle between the two signals, producing a frequency of clk/3.5 with near 50% duty cycle and a stable waveform suitable for synthesis and simulation.
+
+This design is optimized for clarity, correctness, and stable operation, suitable for FPGA or ASIC implementation.

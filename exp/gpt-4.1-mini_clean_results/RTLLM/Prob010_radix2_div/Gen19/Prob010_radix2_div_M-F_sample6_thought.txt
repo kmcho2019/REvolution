@@ -1,0 +1,30 @@
+The main issue lies in the incorrect management of the shift register (shift_reg) during the iterative division cycles and the unclear separation between remainder and quotient bits within this register. The subtraction and update logic must strictly follow radix-2 division algorithm: at each cycle, shift left the combined remainder and quotient, subtract the divisor from the remainder trial, and set the quotient bit accordingly.
+
+To fix this:
+
+1. **Shift Register Layout and Management**:  
+   Use a 17-bit shift register:  
+   - Upper 9 bits: remainder (to accommodate subtraction and sign bit)  
+   - Lower 8 bits: partial quotient
+
+2. **Division Algorithm Update**:  
+   Each cycle, left-shift the shift register by 1 bit, so the remainder and quotient shift left together, then subtract the divisor from the remainder trial (upper 9 bits).  
+   - If subtraction is non-negative (no borrow), update the remainder in shift_reg to subtraction result and set the LSB of quotient to 1.  
+   - Else keep the remainder as is and set quotient bit to 0.  
+   
+   This means the shift_reg is updated with:  
+   `{next_remainder[8:0], next_quotient[7:0]}` after shifting and setting the quotient bit.
+
+3. **Clear and Restart Logic**:  
+   Properly handle division by zero by outputting predefined quotient=0xFF and remainder=dividend (absolute or signed as per operation), then wait for result consumption (`res_ready`) to go back to IDLE.  
+   Ensure res_valid is only asserted when the operation is complete and cleared only when `res_ready` is asserted and no new operation is requested (opn_valid low).  
+   
+4. **Start Condition**:  
+   Use opn_valid rising edge detection or ensure opn_valid is sampled only in IDLE state to prevent unintended starts or overlapping operations.
+
+5. **Sign Handling**:  
+   Calculate absolute values and sign flags at start, perform unsigned division, then apply sign corrections on quotient and remainder in DONE state.
+
+The code will use a three-state FSM (IDLE, DIVIDE, DONE), 8 division cycles (count from 0 to 7), and synchronous reset. The division cycles update shift_reg consistently and correctly.
+
+This approach resolves the core functional issues from the feedback while maintaining synchronous logic and proper interface.

@@ -1,0 +1,9 @@
+To implement the finite state machine described, we can break it down into several states and transitions based on the given conditions. The states can be as follows:
+- State A: The initial state where the FSM stays as long as the reset is asserted. After reset is de-asserted, it moves to State B on the next clock edge.
+- State B: Sets output f to 1 for one clock cycle and then moves to State C.
+- State C: Monitors the x input. If x produces the sequence 1, 0, 1 in three successive clock cycles, it moves to State D.
+- State D: Sets output g to 1 and monitors the y input. If y becomes 1 within two clock cycles, it moves to State E. If y does not become 1 within two clock cycles, it moves to State F.
+- State E: Maintains g = 1 permanently until reset.
+- State F: Sets g = 0 permanently until reset.
+
+The FSM's behavior can be implemented using a combination of counters to track the sequence of x and the timing of y, and a state register to keep track of the current state.

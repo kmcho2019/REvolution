@@ -1,0 +1,15 @@
+Fuse the strengths of both examples by combining explicit wiring for shifts (to minimize complex arithmetic operations) and consolidating all shift selection into a single combinational always block with a case statement for efficient synthesis of a 4:1 mux.
+
+Key fusion points:
+
+- Use explicit concatenations for shifting left by 1 and 8 bits (dropping bits on one side and appending zeros) to avoid large arithmetic shifters and enable cleaner hardware inference.
+
+- Implement arithmetic right shifts by replicating MSB for sign extension, explicitly via concatenation, again avoiding arithmetic shift operators.
+
+- Instead of creating four separate shift wires and chaining two muxes, use a single 4:1 mux encoded in a combinational always block, controlled directly by 'amount', so synthesis tools can optimize the multiplexers better and reduce mux layers and routing.
+
+- Compute shifted data combinationally only once per cycle, gated by ena/load in the sequential block to reduce switching activity (although since combinational, all four paths are computed, the mux reduces logic duplication).
+
+- Use nonblocking assignments correctly in the clocked always block to update register 'q' with load or shifted data only if enabled or loaded.
+
+This fusion maintains the clarity, reduces mux layers from two levels down to one, and explicitly performs shifts with concatenations for better area and timing. It balances performance, power, and area optimizations in a straightforward, synthesis-friendly style.

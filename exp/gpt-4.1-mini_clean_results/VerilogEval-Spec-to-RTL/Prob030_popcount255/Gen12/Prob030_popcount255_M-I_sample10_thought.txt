@@ -1,0 +1,11 @@
+To improve the original solution for better performance, power, and area (PPA), I propose the following optimizations:
+
+1. Use 16-bit chunks instead of 17-bit for easier partitioning (255 bits → 15 chunks of 16 bits + 1 leftover bit), improving regularity and reducing complexity.
+2. Implement a more compact and efficient popcount16 module using a parallel adder tree with fewer levels and utilizing carry-save addition style summation to minimize critical path.
+3. Sum all 16-bit chunk popcounts plus the leftover bit (1 bit) using a balanced iterative summation instead of recursive instantiation, thereby reducing module count and overhead.
+4. Use a straightforward array of 15 partial counts (each 5 bits for popcount16 max = 16) plus the leftover bit, then sum them iteratively with a standard adder tree structure coded explicitly for clarity and better timing.
+5. Output remains 8 bits (max popcount = 255).
+
+This approach reduces logic depth and area by simplifying chunk sizes and summation logic. The iterative tree is explicit and avoids recursive complexity. The use of 16-bit chunks aligns with power-of-two boundaries, simplifying indexing and potentially improving synthesis optimizations. 
+
+All logic remains purely combinational with continuous assignments for simplicity and clean timing.

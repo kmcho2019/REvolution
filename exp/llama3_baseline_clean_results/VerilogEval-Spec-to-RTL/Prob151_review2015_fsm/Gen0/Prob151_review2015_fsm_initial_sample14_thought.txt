@@ -1,0 +1,8 @@
+To implement the TopModule finite-state machine, we'll use a Moore machine with the following states:
+- IDLE: The initial state where the machine waits for the pattern '1101' to be detected.
+- SHIFT: After detecting the pattern, the machine shifts in 4 more bits by asserting shift_ena.
+- COUNT: The machine then waits for the counters to finish counting by asserting counting and waiting for done_counting.
+- DONE: Once the counters are done, the machine asserts done to notify the user and waits for ack.
+We'll use a binary encoding for the states and implement the state transitions based on the input conditions.
+
+The state machine will be implemented using a always_comb block for combinational logic and an always_ff block for sequential logic.

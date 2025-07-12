@@ -1,0 +1,17 @@
+1. For Y2 (next state B), analyze transitions:
+   - Comes from state A (y[0]) when w=0 (A->B transition)
+   - Comes from state F (y[5]) when w=0 (F->C transition, but C is y[2] not B)
+   - Actually, no transitions lead to B except from A with w=0
+
+2. For Y4 (next state E), analyze transitions:
+   - Comes from state C (y[2]) when w=0 (C->E transition)
+   - Comes from state E (y[4]) when w=0 (E->E self-loop)
+
+3. Correct the Y1 and Y3 logic:
+   - Y1 should only be active from state D with w=1 or state A with w=1
+   - Y3 should be active from states B,C,E,F with w=1
+
+4. Implement using direct assign statements with proper conditions:
+   - Each output is driven by OR of relevant state transitions
+   - Input w acts as condition for each transition
+   - Maintain one-hot encoding constraints

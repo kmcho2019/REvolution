@@ -1,0 +1,5 @@
+To implement the TopModule, we first need to understand how a Galois Linear Feedback Shift Register (LFSR) operates. Given that we have taps at positions 32, 22, 2, and 1, and the LFSR shifts right, we will XOR the bits at these tap positions with the Least Significant Bit (LSB) to generate the next state of the shift register. However, since the taps are specified for a 32-bit register and bit position 32 is out of range (as we only have positions 31 to 0), we'll interpret this as needing a tap at position 31 instead, which aligns with common practices in defining LFSRs. 
+
+The module will have a reset mechanism that sets all bits of the output q to 1 when the reset signal is high. The LFSR will be implemented using a 32-bit register, with a combinational logic part that computes the next state based on the current state and the tap positions. The update of the register will be triggered on the positive edge of the clock signal.
+
+Given the specifics of this problem, the taps at positions 31, 22, 2, and 1 (all zero-indexed) will contribute to the new bit that will be shifted into the most significant bit (MSB) position during each clock cycle.

@@ -1,0 +1,9 @@
+To optimize the FSM for better performance and potentially lower power, I will remove the conditional state update logic that requires the comparator `(next_state != state)`. This removes additional combinational logic in the clock path, simplifying the state register and reducing clock-to-Q delay, improving maximum frequency.
+
+The state will always update every clock cycle unless reset is asserted, which simplifies timing but may slightly increase toggling and power. Given the small state space and simple transitions, the power tradeoff is acceptable.
+
+I will keep the 3-bit binary encoding for area efficiency and maintain synchronous active-high reset and the separation of sequential and combinational logic for clarity and good synthesis results.
+
+The output `z` remains a continuous assignment, as it is simple and efficient.
+
+Overall, this balances improved timing with minimal power and area impact.

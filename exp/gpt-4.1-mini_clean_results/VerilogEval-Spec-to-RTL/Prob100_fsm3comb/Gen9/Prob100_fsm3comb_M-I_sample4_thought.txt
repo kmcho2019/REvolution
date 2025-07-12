@@ -1,0 +1,5 @@
+The existing solution uses ternary operators for combinational logic and direct comparisons for output, which is efficient and clear for this 2-bit FSM. To further optimize for power and area, we can reduce comparator logic by encoding output and next_state logic as Boolean expressions instead of case/ternary operators, minimizing logic depth and gate usage. Since output is only 1 at state D (2'b11), the output can be derived as the AND of the two state bits, which is simpler than a comparator.
+
+Next_state bits can be expressed by combinational logic equations derived from the state transition table, replacing the nested conditionals with minimized Boolean expressions. This can reduce switching activity and overall gate count, benefiting power and area. The improvements keep performance intact by preserving the same logic depth or reducing it slightly.
+
+This approach trades readability for slightly better PPA by leveraging Boolean logic simplification.

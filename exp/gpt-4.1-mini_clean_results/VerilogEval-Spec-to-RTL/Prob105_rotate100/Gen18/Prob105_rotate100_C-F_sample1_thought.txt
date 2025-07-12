@@ -1,0 +1,12 @@
+Fuse the loop-based rotation's clarity and explicit bit-level control from Example 1 with the vectorized, synthesis-friendly concatenation approach of Example 2, achieving a balance of clarity, maintainability, and synthesis efficiency. 
+
+Key enhancements in this fusion:
+- Use vector concatenations to implement left and right rotations succinctly, reducing combinational logic complexity and critical path length.
+- Explicitly prioritize synchronous load over rotation.
+- Avoid unnecessary register writes when no rotation or load occurs by not assigning q in that case, to reduce toggling and power.
+- Use non-blocking assignments consistently.
+- Avoid using temporary intermediate signals or loops inside the clocked process to keep code straightforward and synthesis-friendly.
+- The rotation is 1-bit only, so concatenations are safe and efficient.
+- The code is clean, easy to maintain, and maps well to hardware barrel shifters or multiplexers, improving area and performance.
+
+This fusion thus takes the best of both worlds — efficient vector operations with minimal toggling and clear load/rotate control — producing a superior design for a 100-bit rotator with synchronous load and two-bit enable control.

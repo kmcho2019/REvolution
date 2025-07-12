@@ -1,0 +1,11 @@
+To optimize the design further while maintaining correct functionality, I'll implement these improvements:
+1. Use a simpler state machine with just 2 states (IDLE and COMPLEMENT) to clearly represent the behavior
+2. Remove the registered output to reduce flip-flop count and improve timing
+3. Make the output purely combinational based on current state and input
+4. Keep the asynchronous reset for initialization
+5. The state machine will:
+   - Stay in IDLE until first '1' is seen
+   - Transition to COMPLEMENT state after first '1'
+   - In COMPLEMENT state, output inverted bits
+   - Reset returns to IDLE state
+This reduces area by eliminating one flip-flop (output register) and improves timing by making output combinational.

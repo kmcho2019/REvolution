@@ -1,0 +1,7 @@
+To implement the parameterized fixed-point adder, we first need to identify the signs of the input operands `a` and `b` and then perform either addition or subtraction based on their signs. The absolute values of `a` and `b` are added when they have the same sign, and their difference is calculated when they have different signs. After calculating the absolute result, we apply the correct sign to the result based on the signs of `a` and `b` and handle any potential overflow.
+
+The Verilog module will take two input parameters, `Q` and `N`, where `Q` represents the number of fractional bits and `N` is the total number of bits. The module will have three ports: `a` and `b` for the input operands and `c` for the output result.
+
+To handle precision, we ensure that the addition or subtraction operations maintain the fractional part consistent with the parameter `Q`. Overflow handling is managed by checking the most significant bit of the result to ensure it stays within the `N`-bit range.
+
+We use internal registers to store the result temporarily before assigning it to the output port `c`.

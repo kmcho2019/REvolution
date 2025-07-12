@@ -1,0 +1,5 @@
+Refactor the 5-bit maximal-length Galois LFSR to separate next-state combinational logic from the sequential state update. Calculate the feedback bit and next state combinationally using an intermediate wire, then register the next state on the clock edge with synchronous reset.
+
+This approach improves clarity, separates combinational and sequential logic, and may help synthesis tools optimize timing by reducing combinational depth in the sequential block. The LFSR shifts right with taps at bit positions 5 and 3 (q[4] and q[2]), feedback is XOR of these taps with q[0]. The synchronous reset sets q to 1.
+
+By using a combinational next state signal and a simple sequential always block for state register update, the design is easier to understand, potentially better for timing, and functionally equivalent to the original code.

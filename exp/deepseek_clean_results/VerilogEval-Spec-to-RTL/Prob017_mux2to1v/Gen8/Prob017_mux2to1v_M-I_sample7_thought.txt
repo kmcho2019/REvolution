@@ -1,0 +1,11 @@
+To optimize the PPA metrics while maintaining functionality, I'll implement the following improvements:
+
+1. **Fanout Optimization**: The current design has high fanout on the 'sel' signal (driving 100 muxes). I'll add buffer trees to improve timing and reduce load on the select signal.
+
+2. **Power Gating**: Since all 100 bits might not always be needed, I'll add an enable signal to gate the output when not in use, reducing dynamic power.
+
+3. **Hierarchical Muxing**: Instead of one large 100-bit mux, I'll break it into smaller 10-bit chunks with local select buffers. This improves routing and allows for better placement.
+
+4. **Output Register**: Adding output registers can help with timing closure in high-frequency designs, though this adds latency.
+
+The improved design will have better timing characteristics (especially for high fanout signals), lower dynamic power when idle, and more balanced routing.

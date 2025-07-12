@@ -1,0 +1,11 @@
+To improve the existing 32-bit carry-lookahead adder (CLA) design in terms of performance and maintain modularity, I'll enhance the internal 16-bit CLA block by introducing a hierarchical structure: break the 16-bit block into four 4-bit CLA sub-blocks, and then use carry-lookahead logic to combine their carry outputs. This approach reduces the carry propagation length within the 16-bit block, significantly improving timing (lower critical path) by enabling more parallel carry computation.
+
+Specifically, each 4-bit CLA will generate group propagate (PG) and group generate (GG) signals. Then a higher-level carry-lookahead logic combines these to calculate carries between the 4-bit blocks, enabling fast carry computation in O(log n) steps rather than a linear chain. This hierarchical design yields lower delay and better power by reducing toggling through shorter carry chains.
+
+The 32-bit top module remains composed of two 16-bit CLA blocks, each using this improved internal hierarchical structure. Inputs are sliced directly for clarity. This design balances complexity, performance, and area.
+
+Thus, the improvements:
+- Hierarchical 16-bit CLA: 4x 4-bit CLAs + carry-lookahead of their group signals.
+- Each 4-bit CLA is a classic CLA generating sum and group signals.
+- Carry signals computed in parallel, improving maximum clock frequency.
+- Maintain same interface and top-level structure for seamless integration.

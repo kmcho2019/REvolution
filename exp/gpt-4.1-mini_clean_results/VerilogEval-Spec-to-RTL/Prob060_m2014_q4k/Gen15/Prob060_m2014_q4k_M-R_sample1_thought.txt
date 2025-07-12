@@ -1,0 +1,11 @@
+Refactor the design by using a single 4-bit shift register implemented as a register vector with synchronous active-low reset inside one always block instead of individual DFF modules.
+
+This approach:
+- Uses a vector register to hold the 4-stage shift register state rather than multiple instantiated DFF modules.
+- Implements the synchronous active-low reset and shifting logic in one always block triggered on the positive clock edge.
+- Captures the input bit at the LSB, shifts left each cycle, and outputs the MSB.
+- Removes the generate loop and DFF_SR module, simplifying hierarchy and improving code compactness.
+- Maintains the same synchronous reset semantics and shift register behavior.
+- Simplifies the top-level module by integrating all logic into TopModule, reducing module count.
+  
+This refactoring leads to more concise RTL, easier readability, and potentially better synthesis optimization because the entire shift register is described as one block instead of separate flip-flops. It keeps the design functionally equivalent but structurally different.

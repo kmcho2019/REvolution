@@ -1,0 +1,18 @@
+To model the behavior of the Lemming, we can use a finite state machine (FSM) with the following states: 
+- walking_left
+- walking_right
+- falling
+- digging_left
+- digging_right
+
+The FSM will transition between these states based on the input signals: bump_left, bump_right, ground, and dig.
+
+When the FSM is in the walking_left or walking_right state, it will transition to the other walking state if it receives a bump signal from the opposite side. If the ground signal goes low, it will transition to the falling state.
+
+When the FSM is in the falling state, it will transition back to the walking state (either walking_left or walking_right) when the ground signal goes high again.
+
+When the FSM is in the walking_left or walking_right state and receives a high dig signal, it will transition to the corresponding digging state (digging_left or digging_right). The FSM will stay in the digging state until the ground signal goes low, at which point it will transition to the falling state. Once it hits the ground again, it will resume walking in its original direction.
+
+The output signals walk_left, walk_right, aaah, and digging will be set based on the current state of the FSM.
+
+We will use a reset signal (areset) to reset the FSM to the walking_left state.

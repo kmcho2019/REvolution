@@ -1,0 +1,18 @@
+Here's a novel approach using a state-based implementation with explicit enable control:
+
+1. **State Machine Concept**:
+   - Instead of a simple mux, implement as a tiny state machine with two modes: LOAD and SHIFT
+   - This makes the control flow more explicit and potentially more power-efficient
+
+2. **Power Optimization**:
+   - Use separate always blocks for mode selection and data path
+   - This allows the synthesis tool to better optimize clock gating
+
+3. **Timing Optimization**:
+   - The mode selection is evaluated first, then the appropriate data path is chosen
+   - This creates a more balanced critical path
+
+4. **Novelty**:
+   - Explicit state tracking makes the design more maintainable and extensible
+   - The two-stage evaluation could enable better pipelining in larger designs
+   - Potential for better power gating as the mode evaluation happens separately

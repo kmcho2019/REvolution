@@ -1,0 +1,11 @@
+To implement the Mealy FSM detection circuit, we can define the states based on the input sequence. Since we are detecting the sequence 10011, we can break it down into states:
+- State 0 (S0): Initial state or reset state.
+- State 1 (S1): After seeing the first '1'.
+- State 2 (S2): After seeing '10'.
+- State 3 (S3): After seeing '100'.
+- State 4 (S4): After seeing '1001'.
+- State 5 (S5): After seeing '10011', which is our target sequence.
+
+We use a single-bit input IN, and we transition between these states based on the value of IN. When we reach state S5, we set MATCH to 1. If at any point the input does not match the expected sequence, we reset to S0. The FSM is synchronous, meaning transitions occur on the positive edge of the clock signal CLK, and it can be reset to S0 via the RST signal.
+
+We will use an enumeration to define these states and a case statement to handle the transitions between states based on the current state and the input IN.

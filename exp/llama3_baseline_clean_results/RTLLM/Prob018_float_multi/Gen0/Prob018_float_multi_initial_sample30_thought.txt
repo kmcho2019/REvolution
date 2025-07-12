@@ -1,0 +1,17 @@
+To implement a 32-bit floating-point multiplier for IEEE-754 standard single-precision arithmetic, we need to follow these steps:
+1. Extract the mantissas, exponents, and sign bits from the input floating-point numbers.
+2. Check for special cases like NaN (Not a Number) and infinity.
+3. Normalize the mantissas if needed.
+4. Multiply the mantissas, combining the signs and adjusting the exponents.
+5. Round the result and adjust the exponent to ensure accurate representation.
+6. Format the final result in IEEE 754 standard, addressing overflow and underflow scenarios.
+
+The IEEE 754 single-precision floating-point format has 32 bits, with 1 bit for the sign, 8 bits for the exponent, and 23 bits for the mantissa.
+We will use the following formulas for floating-point multiplication:
+- Multiply the mantissas: `product = a_mantissa * b_mantissa`
+- Calculate the new exponent: `z_exponent = a_exponent + b_exponent + bias`
+- Determine the sign of the result: `z_sign = a_sign XOR b_sign`
+
+For rounding, we will use the round-to-nearest-even mode, which is the default rounding mode for IEEE 754 floating-point operations.
+The round-to-nearest-even mode rounds the result to the nearest even number if the fractional part is exactly halfway between two numbers.
+We will also handle overflow and underflow scenarios by checking the new exponent and adjusting it accordingly.

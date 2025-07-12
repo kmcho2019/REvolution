@@ -1,0 +1,15 @@
+Implement a binary-encoded FSM with five states: IDLE, WAIT_START, RECEIVE_BITS, CHECK_STOP, and WAIT_IDLE. The FSM samples input bits at clock edges assuming stable input. To improve robustness against line glitches, add a WAIT_START state to confirm start bit detected (optional but improves glitch immunity).
+
+Use a bit index counter (3 bits) to count the received data bits 0 to 7. Shift the incoming bits into a shift register LSB first during RECEIVE_BITS state.
+
+done is a pulse asserted for one cycle at the clock when a valid stop bit is detected, accompanied by loading the valid byte on out_byte.
+
+If stop bit is invalid, transition to WAIT_IDLE state to wait for line to return to idle (line == 1), then go back to IDLE.
+
+All FSM and data path registers use synchronous reset. done and out_byte update in the same clock cycle as the stop bit validation for minimal latency.
+
+This binary FSM reduces flip-flop count and logic complexity compared to one-hot. The explicit WAIT_IDLE and WAIT_START states simplify sequencing and increase clarity.
+
+done is registered and only asserted in the CHECK_STOP state when stop bit == 1, otherwise 0. out_byte updates simultaneously.
+
+This approach maintains correct protocol reception while minimizing area and power relative to one-hot FSM design.

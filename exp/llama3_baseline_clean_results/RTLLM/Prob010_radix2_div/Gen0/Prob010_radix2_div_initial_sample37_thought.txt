@@ -1,0 +1,7 @@
+To design a simplified radix-2 divider for 8-bit signed or unsigned integers, we will implement a module named `radix2_div` with the specified input and output ports. The design will perform the division operation synchronously using a clock signal and handle both signed and unsigned division.
+
+The operation starts when `opn_valid` is high and `res_valid` is low. We will save the inputs `dividend` and `divisor`, initialize the shift register `SR` with the absolute value of the `dividend` shifted left by one bit, set `NEG_DIVISOR` to the negated absolute value of the `divisor`, and set the counter `cnt` and `start_cnt` to begin the division process.
+
+During the division process, we will check if the counter `cnt` reaches 8. If it does, we will clear `cnt` and `start_cnt`, and update the shift register `SR` with the final remainder and quotient. Otherwise, we will increment the counter `cnt`, compute the subtraction of `NEG_DIVISOR`, use a multiplexer to select the appropriate result based on the carry-out, and update `SR` by shifting left and inserting the carry-out.
+
+Finally, we will manage `res_valid` based on the reset signal, the counter, and whether the result has been consumed.

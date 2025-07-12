@@ -1,0 +1,13 @@
+The original design is functionally correct and already quite efficient. To further optimize PPA:
+
+1. Replace magic number '31' with a localparam MAX_WAVE for better maintainability.
+2. Combine wave and direction update logic to minimize redundant conditional checks.
+3. Use a single state variable named 'state' as in the original problem description instead of 'direction' for clarity.
+4. Use a case statement on state for clearer finite-state machine representation, which can improve synthesis tool optimizations.
+5. Hold wave unchanged explicitly using no assignment at boundary cycles to reduce switching, as done before.
+6. Keep asynchronous active-low reset and synchronous updates for deterministic behavior.
+7. Minor code cleanups for clarity.
+
+These changes aim to maintain performance and area while improving maintainability and potentially enabling better optimization by synthesis tools.
+
+The core triangle wave generation logic remains the same, ensuring no functional regressions.

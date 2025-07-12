@@ -1,0 +1,28 @@
+Improved Lemming State Machine Design:
+
+1. State Encoding:
+   - Use 4 explicit states: WALK, FALL, DIG, SPLAT
+   - Track direction separately (LEFT/RIGHT)
+
+2. Priority Handling:
+   - Clear priority structure in state transitions:
+     1. Falling (ground=0) has highest priority
+     2. Digging (dig=1 and ground=1) comes next
+     3. Bumping only considered when neither falling nor digging
+
+3. Splat Condition:
+   - Maintain separate fall cycle counter
+   - Transition to SPLAT state when fall_cycles > 20 and ground returns
+   - SPLAT state permanently zeros all outputs
+
+4. Output Logic:
+   - Direct mapping from state and direction
+   - Explicit handling of SPLAT state
+   - Proper sequencing of state transitions
+
+Key Improvements:
+- Explicit SPLAT state for clearer behavior
+- More robust state transition logic
+- Proper handling of direction preservation during FALL/DIG
+- Clear separation of output generation logic
+- Strict adherence to priority rules

@@ -1,0 +1,21 @@
+Correct Implementation Approach:
+1. For mux_in[0] (ab=00):
+   - K-map shows: 0 (cd=00), 1 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is d | (c & d) | (~c & d) which simplifies to d (always 1 when d=1)
+
+2. For mux_in[1] (ab=01):
+   - All zeros in K-map - correct as is
+
+3. For mux_in[2] (ab=11):
+   - K-map shows: 0 (cd=00), 0 (cd=01), 1 (cd=11), 0 (cd=10)
+   - This is exactly c & d (only 1 when both c and d are 1)
+
+4. For mux_in[3] (ab=10):
+   - K-map shows: 1 (cd=00), 0 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is ~d | (c & d) which is ~d | c
+
+Key Changes:
+- mux_in[0] corrected to simply d (matches all cases where d=1)
+- mux_in[2] corrected to c & d (only true for cd=11)
+- mux_in[3] corrected to ~d | c (matches all required 1s in K-map)
+- All outputs now exactly match the K-map requirements

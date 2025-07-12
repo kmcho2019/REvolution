@@ -1,0 +1,17 @@
+To implement the Lemming's behavior as a Moore state machine, we will define states for walking left, walking right, falling, and digging. The state machine will transition between these states based on the input signals. 
+
+We will start by defining the states and their corresponding outputs. The state machine will have four states: WALK_LEFT, WALK_RIGHT, FALLING, and DIGGING. 
+
+The state machine will transition from WALK_LEFT to WALK_RIGHT when bump_left is high, and from WALK_RIGHT to WALK_LEFT when bump_right is high. 
+
+When ground is low, the state machine will transition to the FALLING state. 
+
+When dig is high and the state machine is in WALK_LEFT or WALK_RIGHT, it will transition to the DIGGING state. 
+
+When ground is high again, the state machine will transition from FALLING to either WALK_LEFT or WALK_RIGHT, depending on the previous walking direction. 
+
+When ground is low and the state machine is in DIGGING, it will transition to FALLING. 
+
+We will use a case statement to implement the state machine, with a default case to handle any unexpected states. 
+
+We will also use a variable to keep track of the previous walking direction, so that we can transition back to it after falling or digging.

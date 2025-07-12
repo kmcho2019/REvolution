@@ -1,0 +1,9 @@
+Improved odd frequency divider with correct duty cycle:
+1. Maintain dual counters for rising/falling edges counting full periods (NUM_DIV)
+2. Generate toggle signals when counters reach (NUM_DIV-1)/2 (rounded down) and NUM_DIV-1
+3. Use OR logic to combine the two phase-shifted clocks as originally specified
+4. Ensure proper reset conditions for both counters and clock outputs
+5. Use floor division for the toggle point to handle all odd numbers correctly
+6. Maintain precise 50% duty cycle by toggling at exactly half the period
+7. Simplified state machine with clear counter conditions
+8. More robust edge handling through proper counter reset conditions

@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. Reduce state machine to just 2 states: waiting for start byte (IDLE) and counting received bytes (COUNTING)
+2. Use a 2-bit counter to track received bytes (0-2) during COUNTING state
+3. Directly assign 'done' when counter reaches 2 (third byte received)
+4. Reset both state and counter on reset
+5. Minimal logic: only check in[3] in IDLE state, increment counter otherwise
+
+Key Benefits:
+- Fewer states (2 instead of 3)
+- Clear separation between IDLE and COUNTING phases
+- Simple counter for byte tracking
+- Direct done signal assignment
+- Reduced comparison operations

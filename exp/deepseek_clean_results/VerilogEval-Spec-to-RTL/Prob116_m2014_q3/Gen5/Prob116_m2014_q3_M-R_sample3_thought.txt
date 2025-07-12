@@ -1,0 +1,24 @@
+To correctly implement the Karnaugh map function, we need to:
+
+1. Understand the input mapping:
+   - The K-map uses x[4] as the LSB (x[0] in Verilog)
+   - x[3] remains the same
+   - x[2] and x[1] are correctly mapped
+
+2. Analyze the K-map patterns:
+   - f=1 when:
+     * x[3]x[0]=11 (rows 3) for all x[2]x[1] except 10
+     * x[3]x[0]=10 (rows 2) for x[2]x[1]=00 or 01
+     * x[3]x[0]=01 (rows 1) for x[2]x[1]=11
+
+3. Implement the logic using:
+   - Case statements for each x[3]x[0] combination
+   - Explicit patterns for x[2]x[1] within each case
+   - Careful handling of don't-cares to minimize logic
+
+4. Verification points:
+   - 1100: 1 (x[3]x[0]=11, x[2]x[1]=00)
+   - 0111: 1 (x[3]x[0]=01, x[2]x[1]=11)
+   - 1000: 1 (x[3]x[0]=10, x[2]x[1]=00)
+   - 0001: 0 (x[3]x[0]=00, x[2]x[1]=01)
+   - 0110: 0 (x[3]x[0]=01, x[2]x[1]=10)

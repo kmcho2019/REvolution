@@ -1,0 +1,13 @@
+This design uses a two-state finite state machine (FSM) to track whether the first 8-bit input has arrived. 
+
+- In the IDLE state, upon receiving a valid input, it stores the data in a register and transitions to the WAIT state.
+- In the WAIT state, upon the next valid input, it concatenates the stored first byte and the new byte and stores the 16-bit result into an output register. The output valid signal is asserted in the next clock cycle after concatenation (achieved by registering the output valid signal one cycle later).
+- The FSM then returns to IDLE to process the next pair.
+
+This approach cleanly separates input buffering and output generation phases using an FSM. It guarantees valid_out and data_out are registered and appear exactly one cycle after receiving the second input, as required.
+
+On reset, all registers and FSM state are cleared.
+
+The output valid signal is generated from a pipeline register, ensuring a one-cycle delay between input arrival and output data validity.
+
+This design fully meets the spec with explicit state control and simple, clear logic.

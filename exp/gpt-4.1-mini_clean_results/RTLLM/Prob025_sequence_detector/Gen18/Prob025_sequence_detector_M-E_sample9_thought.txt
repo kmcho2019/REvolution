@@ -1,0 +1,20 @@
+I will implement the sequence detector using a binary encoded Moore FSM with 3 bits for state representation. This approach reduces flip-flop count compared to one-hot encoding, thus saving area and potentially lowering power.
+
+The FSM will be synchronous with an active-low synchronous reset.
+
+States are defined as follows:
+- IDLE: waiting for '1'
+- S1: matched '1'
+- S2: matched '10'
+- S3: matched '100'
+- S4: matched '1001' (output asserted)
+
+The output sequence_detected will be high only when in state S4, making it a Moore output directly derived from the current state, which simplifies output logic and reduces toggling.
+
+To support overlapping sequences, next states allow transitions that re-use partial matched bits if input allows.
+
+This binary FSM design will trade a slightly more complex next state logic for fewer flip-flops and simpler output logic. This could improve area and power while keeping performance acceptable.
+
+A synchronous reset initializes the FSM to IDLE.
+
+This design will highlight a traditional FSM style with binary encoding and Moore output, contrasting with the previous one-hot solution.

@@ -1,0 +1,17 @@
+The original code is functionally correct as a 4-stage 64-bit pipeline adder without parameters. The simulation failure and elaboration errors reported stem from a mismatch between the module interface and the testbench which expects parameters DATA_WIDTH and STG_WIDTH. To fix this, I will modify the module to include parameters for DATA_WIDTH (default 64) and STG_WIDTH (default 16), making the module more generic and compatible with the testbench.
+
+I will parameterize:
+- DATA_WIDTH = 64
+- STG_WIDTH = 16
+and automatically derive NUM_STAGES = DATA_WIDTH / STG_WIDTH.
+
+The pipeline will be implemented with arrays of registers indexed by stages, improving code readability and scalability.
+
+Each stage:
+- Registers slices of adda and addb inputs (STG_WIDTH bits).
+- Registers partial sums and carry-in.
+- Carries propagate between stages with addition done sequentially per stage each clock.
+
+The input enable signal (i_en) will be pipelined to generate output enable (o_en) with appropriate latency.
+
+This fixes the interface mismatch issue while retaining the pipeline behavior and synchronous design.

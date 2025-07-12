@@ -1,0 +1,20 @@
+Simplification Strategy:
+1. Truth Table Analysis:
+   - Output 1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 cases: 0,1,4,5,6,9,10,13,14
+   - Don't-cares: 3,8,11,12
+
+2. SOP Simplification:
+   - Minterm 2: ~a & ~b & c & ~d
+   - Minterms 7 and 15 share b & c & d (a is don't-care for 7 vs 15)
+   - Final SOP: (~a & ~b & c & ~d) | (b & c & d)
+
+3. POS Simplification:
+   - Find maxterms where output is 0
+   - Key patterns: when c=0, or when b≠d for certain cases
+   - After analysis, minimal POS: (c) & (b | d) & (a | b | ~d)
+
+4. Verification:
+   - SOP correctly covers all 1 cases
+   - POS correctly covers all 0 cases
+   - Both forms are minimal and correct

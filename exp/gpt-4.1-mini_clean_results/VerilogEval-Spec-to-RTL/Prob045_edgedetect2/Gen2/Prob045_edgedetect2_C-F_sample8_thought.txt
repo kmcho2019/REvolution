@@ -1,0 +1,5 @@
+To fuse the best ideas from both examples, we retain the efficient use of a single register to hold the previous input value and detect edges with a simple XOR operation. To enhance clarity and slightly improve power by avoiding unnecessary toggling, we will register both the delayed input and the edge detection output together in one always block, updating them simultaneously on the positive clock edge. This helps ensure clean timing and reduces clock domain crossings or glitches.
+
+Additionally, to improve robustness and initialization, we add an asynchronous reset input that initializes both registers to zero at startup, preventing unknown states. The bit-width is kept fixed at 8 bits as per specification, but the design is straightforward enough to be easily parameterized in the future.
+
+This combined approach keeps the minimal logic and area overhead from Example 2, merges the simultaneous update of the registers from Example 1 for synchronous clarity, and adds a reset for better practical usage, forming a superior and production-ready edge detection module.

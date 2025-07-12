@@ -1,0 +1,17 @@
+To fix the implementation, we need to address the timing and priority issues identified in the feedback. Here's the revised approach:
+
+1. **Separate Prediction and Update Paths**: Keep prediction outputs purely combinational to reflect the state before any updates. This ensures predictions use the current state of PHT and GHR without being affected by pending updates.
+
+2. **Strict Training Priority**: Implement clear priority where training completely overrides prediction updates when they occur in the same cycle. Training updates (both PHT and GHR) will only take effect at the next clock edge.
+
+3. **Proper GHR Recovery**: For mispredictions, use the provided train_history to recover the correct GHR state, then append the actual taken bit.
+
+4. **Output Timing**: Make predict_taken and predict_history combinational outputs that reflect the state at prediction time, unaffected by pending updates.
+
+5. **Initialization**: Maintain weakly-taken initialization for PHT counters as it's a reasonable default for branch predictors.
+
+The key changes are:
+- Making prediction outputs combinational
+- Ensuring training completely overrides prediction updates
+- Properly sequencing GHR updates
+- Maintaining correct timing relationships

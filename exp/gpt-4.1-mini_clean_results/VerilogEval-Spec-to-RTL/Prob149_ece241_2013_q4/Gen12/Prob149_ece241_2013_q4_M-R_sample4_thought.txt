@@ -1,0 +1,35 @@
+Refactor by separating the level decoding combinationally from the sequential storage of current and previous levels, using a small state machine encoded explicitly for level states.
+
+Use an enumerated state type for water levels and a separate combinational function to decode sensor inputs exactly matching the specified sensor combinations (not just priority on s[2] or s[1]):
+
+- ABOVE: s == 3'b111 (all sensors asserted)
+- BETWEEN1: s == 3'b110 (s[2]=1, s[1]=1, s[0]=0)
+- BETWEEN0: s == 3'b100 (s[2]=1, s[1]=0, s[0]=0) is invalid, so instead per spec Between s[1] and s[0] means s[0] asserted alone, so s == 3'b001
+- BELOW: s == 3'b000 (no sensors asserted)
+
+Check the table carefully; the problem states:
+
+- Above s[2]: sensors s[0], s[1], s[2] all asserted => 3'b111
+- Between s[2] and s[1]: s[0], s[1] asserted => 3'b011 (not 110)
+- Between s[1] and s[0]: s[0] asserted => 3'b001
+- Below s[0]: none asserted => 3'b000
+
+So we should exactly match these sensor patterns rather than use priority bits.
+
+If the sensors don't exactly match any of these, treat as below or ignore for now (or use the closest matching level).
+
+Store `curr_level` and `prev_level` as enumerated states updated synchronously at clk posedge.
+
+`dfr` asserted only when current level is strictly higher than previous level and the sensor input changed (level changed).
+
+Outputs `fr0, fr1, fr2` combinationally assigned per the current level per table.
+
+Implement synchronous reset to initialize to BELOW level and all outputs asserted.
+
+This approach explicitly matches the problem's sensor combinations to levels rather than using a priority shortcut, fixes functional mismatches, and clearly separates combinational and sequential logic for clarity.
+
+Also, implement `dfr` logic based on last level change properly, improving clarity and correctness.
+
+Use `always_ff`/`always_comb` style for clarity (if synthesizer supports SystemVerilog) or standard Verilog always blocks.
+
+This restructuring clarifies the semantics of level detection and state updating and helps meet testbench requirements.

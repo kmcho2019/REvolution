@@ -1,0 +1,12 @@
+The existing solution is functionally correct and well-structured but the LUI implementation incorrectly places the immediate value in the lower 16 bits instead of the upper 16 bits, which contradicts the MIPS ISA specification. This fix is critical. Also, the carry and overflow outputs are properly computed only for ADD and SUB variants, which is efficient. To improve power, the flag output should be explicitly driven to 0 when unused instead of 'z' for synthesis friendliness, which is already done. Negative and zero flags are cleanly computed outside the always block.
+
+For better PPA:
+
+- Correct the LUI operation by placing the input immediate in the upper 16 bits and zeroing the lower 16 bits as per MIPS spec.
+- Avoid recomputing signed conversions inside the always block by defining them outside.
+- Since the ALU is fully combinational, the design is already optimal for timing with a flat case statement.
+- To slightly improve power, the default assignments in the always block can be set only once outside the case to reduce toggling in the unused parts.
+- The carry flag is technically a borrow for subtraction, but since the problem states carry means carry bit, keeping current logic is acceptable.
+- Overall, the changes focus on correctness (LUI) and small power improvements (assign defaults once before case), with minimal structural changes to preserve clarity.
+
+This approach balances correctness, clarity, and minor PPA improvements without unnecessary complexity.

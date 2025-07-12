@@ -1,0 +1,11 @@
+Fuse the clear separation of two instruction registers (ins_p1 and ins_p2) from Example 1 with the synchronous reset and single always block approach from Example 2 for improved timing, power, and area efficiency. Use one always block triggered by posedge clk and negedge rst (active low reset) to synchronously update ins_p1 and ins_p2 based on fetch signals, retaining previous values otherwise. This avoids asynchronous resets that can complicate timing closure.
+
+Maintain two separate 8-bit registers to cleanly separate instruction sources and avoid combinational dependency on fetch signals in outputs, reducing glitching and improving timing. Outputs ins and ad1 are derived from ins_p1, while ad2 is directly from ins_p2. This preserves explicit dual-register separation for clarity and modularity.
+
+This combined design ensures:
+- Single always block for easier synthesis and improved timing
+- Synchronous reset for robustness
+- Independent register updates controlled by fetch with minimal switching activity
+- Clear, direct combinational outputs derived only from registered data, preventing glitches
+
+Overall, this fusion achieves clean functional correctness, improved PPA (performance, power, area), and better readability.

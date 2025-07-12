@@ -1,0 +1,10 @@
+To refactor the triangle wave generator while maintaining the same functionality, we can separate the combinational logic for the next state and next wave value from the sequential registers by implementing a Mealy-style state machine with explicit next-state and next-wave signals.
+
+The idea is:
+- Keep `state` and `wave` as registered signals updated synchronously on `clk` and `rst_n`.
+- Compute `next_state` and `next_wave` combinationally using an always_comb block or continuous assignments with a case statement.
+- The sequential block just updates state and wave from the next-state logic on the clock edge or reset.
+  
+This separation improves code readability and enables clearer distinction between combinational and sequential parts. It also matches design best practices by avoiding assignments to registers outside the sequential block.
+
+This refactor uses explicit next-state logic and a case statement in a combinational always block and synchronous register updates in the clocked always block, which is a common pattern for state machines.

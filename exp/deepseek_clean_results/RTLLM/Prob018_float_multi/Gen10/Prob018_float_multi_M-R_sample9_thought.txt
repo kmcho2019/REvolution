@@ -1,0 +1,23 @@
+Refactoring Approach:
+1. Combinational Logic Conversion:
+   - Replace sequential logic with combinational where possible
+   - Use continuous assignments (assign) for special case detection and partial products
+   - Maintain pipelined approach for critical path operations
+
+2. Optimized State Machine:
+   - Simplify to 3-stage pipeline (Input, Multiply, Normalize/Output)
+   - Move special case handling to first stage
+   - Combine normalization and rounding into single stage
+
+3. Resource Sharing:
+   - Reuse multiplier for partial products via time-multiplexing
+   - Share common exponent calculation logic
+
+4. Reduced Register Usage:
+   - Minimize intermediate registers where possible
+   - Use wires for values that don't need to be stored between cycles
+
+Key Improvements:
+- Reduced power by eliminating unnecessary registers
+- Simplified control flow with clearer pipeline stages
+- Maintained same functionality while improving readability

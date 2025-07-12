@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. **Y1 Logic**: The current implementation (y[0] & w) is already minimal and optimal. No simplification needed.
+
+2. **Y3 Logic**: 
+   - The current implementation uses ~w & ~(y[0] | y[3])
+   - We can observe that Y3 should be active when transitioning to state D (y[3])
+   - From the state machine, transitions to D occur when:
+     * From B (y[1]) with w=0
+     * From C (y[2]) with w=0
+     * From E (y[4]) with w=0
+     * From F (y[5]) with w=0
+   - This can be expressed as ~w & (y[1] | y[2] | y[4] | y[5])
+   - This is equivalent to the current implementation but may be more intuitive
+
+3. **Final Implementation**:
+   - Keep Y1 as is (y[0] & w)
+   - Implement Y3 as ~w & (y[1] | y[2] | y[4] | y[5])
+   - This maintains functionality while potentially being more readable

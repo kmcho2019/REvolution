@@ -1,0 +1,29 @@
+module TopModule (
+    input clk,
+    input x,
+    output z
+);
+
+    // Combined state register [xor, and, or]
+    reg [2:0] state;
+    wire [2:0] next_state;
+
+    // Combinational logic for next state
+    assign next_state[0] = x ^ state[0];        // XOR path
+    assign next_state[1] = x & ~state[1];       // AND path
+    assign next_state[2] = x | ~state[2];       // OR path
+
+    // State update with synchronous reset
+    always @(posedge clk) begin
+        state <= next_state;
+    end
+
+    // Output is NOR of all state bits
+    assign z = ~(|state);
+
+    // Initial reset (synthesis-friendly)
+    initial begin
+        state = 3'b0;
+    end
+
+endmodule

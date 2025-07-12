@@ -1,0 +1,23 @@
+Refactored design with improved pipelining and correct partial product handling:
+
+1. Key Improvements:
+   - Removed the dangling 'en' port since it wasn't in original spec
+   - Properly extend multiplicand before shifting for correct partial products
+   - Implement true two-stage pipelining as specified
+   - Use assign statements for combinational logic where possible
+   - Better organize the pipeline stages
+
+2. Pipeline Structure:
+   - Stage 0: Register inputs and generate all partial products
+   - Stage 1: First level of addition (pp0+pp1 and pp2+pp3)
+   - Stage 2: Final addition and output registration
+
+3. Partial Product Fixes:
+   - Properly extend multiplicand to 8 bits before shifting
+   - Generate partial products using assign statements
+   - Clearer separation between combinational and registered logic
+
+4. Reset Handling:
+   - Maintain clean synchronous reset behavior
+   - All registers properly reset to zero
+   - Output register follows same reset scheme

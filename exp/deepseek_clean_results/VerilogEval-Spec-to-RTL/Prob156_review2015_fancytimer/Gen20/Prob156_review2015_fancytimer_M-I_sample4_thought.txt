@@ -1,0 +1,33 @@
+Improved Design Strategy:
+
+1. **Pattern Detection**:
+   - Maintain 4-bit shift register for "1101" detection
+   - Only shift when in PATTERN state to prevent false detection
+
+2. **Delay Capture**:
+   - After pattern match, capture next 4 bits as delay value
+   - Use separate counter for bit capture (0-3)
+
+3. **Precise Counting**:
+   - Use two counters: 
+     * Outer counter for delay value (count[3:0])
+     * Inner counter for 1000-cycle periods
+   - Clear count output when not counting
+
+4. **State Machine**:
+   - 5 states for clear separation:
+     * IDLE - Initial/reset state
+     * PATTERN - Detect 1101
+     * CAPTURE - Get delay bits
+     * COUNTING - Active counting
+     * DONE - Wait for ack
+
+5. **Reset Handling**:
+   - Ensure all registers properly initialize
+   - Clear outputs when not active
+
+Key Improvements:
+- Separate counters for better timing control
+- Additional state for cleaner ack handling
+- Proper initialization and reset behavior
+- Precise cycle counting with two counters

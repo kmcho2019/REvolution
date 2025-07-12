@@ -1,0 +1,24 @@
+To improve the original fully combinational design, which has a long critical path due to a large 24x24 multiplier and extensive combinational logic, I will implement a multi-cycle sequential floating-point multiplier using a simple FSM and a cycle counter. 
+
+Key improvements:
+
+- Split the multiplication into separate stages clocked across several cycles to shorten critical path per cycle.
+- Use internal registers for mantissa, exponent, and sign extraction on the first cycle.
+- Use a 24x24 multiplier once, store the product, and then do normalization and rounding in subsequent cycles.
+- Use a 3-bit cycle counter for sequencing the operation steps.
+- Handle special cases at the start and produce output at the end of the operation.
+- The shorter combinational logic per cycle allows for a higher clock frequency.
+- Reset logic will clear state and outputs properly.
+- Output is updated only after the final cycle.
+
+This approach trades some latency for improved timing, power, and area characteristics by breaking the logic into smaller, manageable steps synchronized by the clock and counter.
+
+I will keep signals as per the user's request: a_mantissa, b_mantissa, z_mantissa as 24 bits; exponents as 10 bits internally to avoid overflow; product as 50 bits to hold multiplication results; guard, round, sticky bits for rounding; counter as 3 bits for sequencing. 
+
+Special cases (NaN, Inf, Zero) will be detected and handled early to avoid unnecessary operations.
+
+Normalization and rounding steps are done in later cycles to reduce combinational path.
+
+Final output will be formed at the last cycle, and output register updated accordingly.
+
+This design should improve max frequency and reduce power by limiting heavy operations to a single cycle rather than one big combinational block.

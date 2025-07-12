@@ -1,0 +1,9 @@
+The provided Verilog code for the TopModule implements a Mealy finite-state machine that acts as a 2's complementer using one-hot encoding. To refactor this code, we can consider a different structure that achieves the same functionality but potentially improves performance, power consumption, or area efficiency. 
+
+One approach is to use a more explicit state machine encoding and directly assign the output `z` based on the current state and input `x`, rather than using a combinational logic block. We can also simplify the state transition logic to directly reflect the conditions under which the state changes.
+
+Given the simplicity of the state machine (only two states), we can directly encode the states using a single bit. State A can be represented by `0`, and state B by `1`. The output `z` can be directly determined based on the current state and the input `x`. If the current state is `A` (represented by `0`), then `z` is the inverse of `x`. If the current state is `B` (represented by `1`), then `z` is `x` itself. 
+
+For the state transition, we only need to move from state `A` to state `B` when `x` is `1`. Once in state `B`, we remain in state `B` regardless of `x`. This simplifies the logic for state transition.
+
+By directly assigning `z` based on the state and `x`, and simplifying the state transition logic, we aim to maintain the functionality while potentially improving the PPA metrics by reducing unnecessary logic and minimizing the area required for the implementation.

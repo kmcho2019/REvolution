@@ -1,0 +1,18 @@
+Refactoring approach:
+
+Maintain the same division by an odd number using a single counter and separate clock dividers for positive and negative edges. Instead of explicitly setting/clearing clk_div1 and clk_div2 based on count values inside always blocks, use toggle flip-flops triggered when the counter hits specific values to produce pulses, which toggle the outputs. This reduces combinational conditions within the always blocks and can improve clarity and timing.
+
+Specifically:
+- Use one counter counting modulo NUM_DIV on posedge clk.
+- On posedge clk, toggle clk_div1 when counter reaches HALF_DIV.
+- On negedge clk, toggle clk_div2 when the delayed counter reaches HALF_DIV.
+- Initialize both clk_div1 and clk_div2 to 0 on reset.
+- Synchronize delayed counter cnt_dly on posedge clk as before.
+- The final divided clock is the OR of clk_div1 and clk_div2.
+- This approach replaces explicit set/reset conditions with toggling at half periods, which is typical for clock dividers and often easier for synthesis and timing.
+
+Additionally:
+- Implement an asynchronous reset.
+- Keep the parameter oddness check.
+- Use nonblocking assignments properly.
+- This refactor provides a clean, toggle-based solution with simpler control logic inside the always blocks.

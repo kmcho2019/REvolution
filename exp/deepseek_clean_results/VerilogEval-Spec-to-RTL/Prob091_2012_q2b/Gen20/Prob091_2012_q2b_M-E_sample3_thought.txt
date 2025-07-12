@@ -1,0 +1,12 @@
+Innovative Priority-Encoded State Transition:
+1. **Key Insight**: Instead of checking each state separately, we can leverage the one-hot property to create a priority-based transition scheme.
+2. **Y1 Logic**: Only needs to check if we're in state A (y[0]) and w=1, same as before.
+3. **Y3 Logic**: 
+   - We observe that D (y[3]) is the target state for all transitions where w=0 except when in A or D.
+   - Rather than checking all states individually, we can use the fact that in one-hot encoding, only one bit is set at a time.
+   - We can implement this as: Y3 = ~w & (|y[2:1] | |y[5:4]) which checks if we're in any state except A or D.
+4. **Benefits**:
+   - Reduces the number of comparisons needed for Y3
+   - More scalable if more states are added
+   - Uses OR reduction which is efficient in hardware
+5. **Robustness**: Maintains correct functionality while being more efficient in gate count.

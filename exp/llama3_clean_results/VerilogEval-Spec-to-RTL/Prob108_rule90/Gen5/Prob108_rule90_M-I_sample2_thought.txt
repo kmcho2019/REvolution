@@ -1,0 +1,13 @@
+The primary goal of this improvement is to optimize the existing solution for better Power, Performance, and Area (PPA) metrics while maintaining the correct functionality of the Rule 90 cellular automaton. 
+
+1. **Simplifying Boundary Handling**: The existing code already uses bitwise operations for handling the left and right boundary conditions efficiently by padding the `q_reg` with zeros. This approach remains optimal.
+
+2. **Parallelizing XOR Operations**: To improve performance, the large XOR operation can be broken down into smaller, more manageable pieces. This can be achieved by dividing the 512-bit vectors into smaller segments and performing the XOR operation in parallel on these segments.
+
+3. **Reducing Switching Activity**: To minimize power consumption, reducing the switching activity on the `q_reg` signal is crucial. This can be achieved by ensuring that only the bits that need to change are updated, rather than updating the entire `q_reg` at once.
+
+4. **Optimizing Area**: While the existing implementation is area-efficient, further optimizations could involve exploiting any patterns or symmetries in the Rule 90 logic that could reduce the required operations.
+
+5. **Improving Synthesizability**: To address synthesizability concerns, the design should be structured in a way that synthesis tools can easily optimize for the target technology. This might involve using synthesis directives or restructuring the logic to better match the capabilities of the target technology.
+
+Given the provided solution is already fairly optimized for PPA, the focus will be on refining the parallelization of the XOR operations to further reduce the critical path delay and hence improve performance.

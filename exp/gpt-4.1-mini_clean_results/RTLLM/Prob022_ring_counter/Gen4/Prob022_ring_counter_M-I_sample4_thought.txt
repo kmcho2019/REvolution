@@ -1,0 +1,10 @@
+To address the compatibility issue with the assignment of a concatenation involving vector slices, avoid direct concatenation on the left-hand side. Instead, use a temporary intermediate signal (wire or reg) for the rotated value and then assign it to the output register. This approach separates the rotation logic from the register assignment and improves simulator/tool compatibility.
+
+For PPA (Power, Performance, Area), the logic is minimal and already optimal since it just rotates a single bit. Using a temporary signal for rotation does not add any overhead that matters significantly here.
+
+Thus, the improvement is to:
+- Create an intermediate wire representing the rotated version of the current output.
+- On clock edge, assign this wire to the output register.
+- On reset, initialize output as before.
+
+This preserves fully synchronous operation, ensures compatibility, and keeps the code clean and synthesizable.

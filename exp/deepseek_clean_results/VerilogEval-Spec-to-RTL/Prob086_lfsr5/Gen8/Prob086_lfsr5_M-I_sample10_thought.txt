@@ -1,0 +1,13 @@
+To optimize the LFSR implementation while maintaining functionality:
+1. Keep the basic Galois LFSR structure with taps at positions 5 and 3 (bits 4 and 2 in 0-index)
+2. Optimize the XOR operation by:
+   - Using a temporary register for the XOR result to potentially improve timing
+   - Simplifying the concatenation for better readability and potential area optimization
+3. Maintain the synchronous reset to 5'b00001
+4. Consider the feedback from PPA metrics:
+   - The current implementation already has good power and area
+   - Focus on maintaining timing while potentially reducing switching activity
+5. The optimized version should:
+   - Use a single always block for sequential logic
+   - Keep the minimal XOR operation
+   - Maintain clear bit assignments

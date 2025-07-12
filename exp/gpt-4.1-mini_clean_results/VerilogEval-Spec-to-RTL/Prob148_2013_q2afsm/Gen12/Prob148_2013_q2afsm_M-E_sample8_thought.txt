@@ -1,0 +1,13 @@
+Use one-hot encoding for states to simplify state decoding: four states A, B, C, D each as one bit in a 4-bit vector.
+
+State encoding: A=4'b0001, B=4'b0010, C=4'b0100, D=4'b1000.
+
+State register updates synchronously on clk with active-low synchronous reset to A.
+
+Next-state logic prioritizes requests on state A with nested if-else: if r[0] then B, else if r[1] then C, else if r[2] then D, else remain in A.
+
+In grant states B, C, D, if the corresponding request remains asserted, stay; else return to A.
+
+Output g is directly assigned from state bits so that g[0] = B state, g[1] = C state, g[2] = D state.
+
+This approach reduces combinational decoding logic by using one-hot encoded states, enables faster state transition and output decoding in FPGAs or ASICs favoring one-hot, and cleanly separates state and output logic.

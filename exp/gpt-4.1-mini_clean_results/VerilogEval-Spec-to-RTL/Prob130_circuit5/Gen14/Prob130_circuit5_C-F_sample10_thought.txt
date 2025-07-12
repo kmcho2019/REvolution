@@ -1,0 +1,7 @@
+Combine the clarity and efficiency of the case-statement approach with the power optimization idea of gating inputs based on one-hot decoding of 'c'. Use a one-hot decoded select signal for each input, then drive the output by OR'ing the gated inputs and a constant 4'hF for cases when c > 3.
+
+This fusion yields a clean and easy-to-understand structure, like Example 2, while minimizing unnecessary switching on inputs not selected, as in Example 1. By gating each input with its select line, we reduce toggling inside the combinational paths, which lowers dynamic power without increasing area significantly.
+
+The implementation uses a simple combinational assignment with one-hot decoded selects and bitwise ANDs, avoiding a large case statement and improving power. For c > 3, output is constant 4'hF, directly assigned.
+
+This approach preserves performance (minimal logic depth), keeps area small (no extra registers, simple logic), and improves power by minimizing switching on unused inputs.

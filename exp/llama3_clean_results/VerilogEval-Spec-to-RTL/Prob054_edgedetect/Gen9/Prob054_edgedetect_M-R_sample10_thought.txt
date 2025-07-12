@@ -1,0 +1,5 @@
+To refactor the given Verilog code for the TopModule, we can maintain the core functionality of detecting positive edge transitions in the 8-bit input vector while exploring alternative structural implementations. One approach is to use a combination of `assign` statements for combinational logic and `always` blocks for sequential logic. This can make the code more modular and potentially easier to understand and maintain.
+
+We will keep the use of a register (`prev_in`) to store the previous state of the input signal, as this is essential for detecting edge transitions. However, instead of directly updating the `pedge` output within the `always` block that updates `prev_in`, we can use an `assign` statement to continuously update `pedge` based on the current `in` and the previous `prev_in` values. This way, the combinational logic for detecting the edge is separate from the sequential logic that updates the state.
+
+This refactoring aims to improve readability and potentially allow for better optimization by the synthesis tool, as the separation of combinational and sequential logic can make the design's intent clearer.

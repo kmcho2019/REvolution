@@ -1,0 +1,17 @@
+Novel Architectural Idea: Clock Phase Sampling
+1. Instead of using separate flip-flops for rising and falling edges, we'll sample the clock phase
+2. Create a delayed version of the clock (90° phase shifted) to detect both edges
+3. Use this delayed clock to trigger a single flip-flop at both effective edges
+4. The delayed clock creates a pulse at each original clock edge transition
+5. This approach uses only one flip-flop but requires careful timing of the clock delay
+
+Advantages:
+- Uses only one flip-flop instead of two
+- More elegant edge detection mechanism
+- Potentially lower power since only one flip-flop toggles
+- Novel approach not commonly seen in textbooks
+
+Implementation Notes:
+- The delay element should be carefully sized to create a proper phase shift
+- In real implementations, the delay would need to be technology-specific
+- For simulation purposes, we'll model the delay with a simple buffer chain

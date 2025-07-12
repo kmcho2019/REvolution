@@ -1,0 +1,8 @@
+To properly implement an odd frequency divider, we'll follow the original specification precisely:
+1. Use two counters (cnt1 and cnt2) to track rising and falling edges separately
+2. Generate two intermediate clock signals (clk_div1 and clk_div2) for each edge
+3. Each counter counts up to NUM_DIV-1 (since we're dividing by NUM_DIV)
+4. Toggle the intermediate clocks when counters reach (NUM_DIV-1)/2 to create a near 50% duty cycle
+5. Combine the intermediate clocks with an OR operation to get the final output
+6. Reset initializes both counters and intermediate clocks to 0
+7. This approach properly handles odd division by utilizing both clock edges

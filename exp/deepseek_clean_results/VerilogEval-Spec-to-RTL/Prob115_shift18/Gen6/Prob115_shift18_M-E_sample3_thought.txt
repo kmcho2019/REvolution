@@ -1,0 +1,8 @@
+This design employs a multi-stage shift architecture with these key innovations:
+1. Pre-shift preparation: The input is pre-aligned based on shift direction to simplify the final shift operation
+2. Dynamic sign extension: Uses a parameterized sign extension block that adapts to the shift amount
+3. Hierarchical shifting: Implements shifts in two stages (coarse 8-bit and fine 1-bit) for better timing
+4. Shift direction unification: Treats all shifts as left shifts by rotating the input for right shifts
+5. Early sign calculation: Computes sign extension bits in parallel with other operations
+6. Optimized load path: Direct load path bypasses shift logic when active
+7. Resource sharing: Reuses the same shift hardware for both 1-bit and 8-bit operations

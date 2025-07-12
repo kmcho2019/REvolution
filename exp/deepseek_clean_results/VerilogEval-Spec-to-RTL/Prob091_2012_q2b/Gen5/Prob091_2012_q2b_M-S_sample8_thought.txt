@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. For Y1: The current implementation (y[0] & w) is already minimal and optimal - no simplification needed.
+
+2. For Y3: 
+   - The current implementation uses ~w & (y[1] | y[2] | y[4] | y[5])
+   - Leverage one-hot encoding property: since only one y[i] is active at a time, we can replace the OR with a simple wire OR (bitwise OR)
+   - The expression can be written more concisely as ~w & |{y[1], y[2], y[4], y[5]}
+
+3. Result:
+   - Functionally identical but more concise
+   - Potentially better for synthesis as it clearly expresses the one-hot OR operation
+   - Same gate count but more readable

@@ -1,0 +1,9 @@
+Combine the clarity and modularity of Example 2's single synchronous always block and consistent non-blocking assignments with the internal binary counters and efficient BCD conversion of Example 1. Use binary counters internally for seconds (0–59), minutes (0–59), and hours (1–12) to simplify counting and reduce sequential logic complexity. Keep the synchronous reset and enable with priority to reset.
+
+Handle hour increment and PM toggle precisely on the hour rollover from 11 to 12. Implement a single always @(posedge clk) block for all counting logic, using internal binary registers.
+
+For output, convert binary counters to BCD using simple combinational functions, implemented by arithmetic subtraction (tens derived by conditional thresholding, units by subtracting tens*10 using shift and add to avoid multipliers). Convert hour binary to BCD similarly.
+
+To improve timing and reduce combinational path delays, register the BCD output values after conversion, breaking the combinational path from counters to outputs. This pipelining provides better timing closure than purely combinational outputs.
+
+This fusion captures Example 2's clean, non-blocking, single clocked block approach while leveraging Example 1's internal binary counting and subtraction-based BCD conversion for simplicity and efficiency, plus pipelined BCD outputs for timing improvements.

@@ -1,0 +1,6 @@
+To simplify the design while maintaining functionality, I will:
+1. Use fixed address width since DEPTH=8, so address width is 3 bits, removing $clog2 usage.
+2. Combine the synchronous reset and write into one always block triggered on posedge clk or negedge rst_n for clarity.
+3. Make read_data a registered output updated on posedge clk or negedge rst_n, providing synchronous read with read_en gating.
+4. Initialize RAM on reset by looping through all locations to zero.
+This reduces combinational logic for read, simplifies ports and code, and keeps correct dual-port behavior.

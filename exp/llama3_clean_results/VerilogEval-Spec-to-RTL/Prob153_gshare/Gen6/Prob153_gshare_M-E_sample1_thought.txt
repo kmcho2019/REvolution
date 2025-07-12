@@ -1,0 +1,9 @@
+To improve the existing branch predictor design, I propose a novel architectural idea that incorporates a separate pipeline stage for handling misprediction recovery. This approach will allow for more efficient and accurate branch prediction, as well as faster recovery from mispredictions.
+
+The main idea is to divide the branch predictor into two separate modules: a prediction module and a recovery module. The prediction module will be responsible for making branch predictions based on the current state of the branch history and the pattern history table (PHT). The recovery module will be responsible for handling misprediction recovery, including updating the branch history and the PHT.
+
+The prediction module will use a gshare predictor with a 7-bit PC and a 7-bit global history, hashed into a 7-bit index. The recovery module will use a separate 7-bit index, calculated based on the mispredicted branch's PC and branch history.
+
+When a misprediction occurs, the recovery module will be triggered, and it will update the branch history and the PHT accordingly. The prediction module will continue to make predictions based on the updated branch history and PHT.
+
+This approach will allow for more efficient and accurate branch prediction, as well as faster recovery from mispredictions. It will also reduce the complexity of the design and improve its scalability.

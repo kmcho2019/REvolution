@@ -1,0 +1,16 @@
+We can implement the TopModule by explicitly using for loops inside a combinational always block to assign each bit of the output vectors. This approach differs from the vector slicing and continuous assignments approach.
+
+1. For out_both:
+   - out_both[0] to out_both[98]: Each bit is the AND of in[i] and in[i+1].
+   - out_both[99] = 0 (no left neighbor).
+
+2. For out_any:
+   - out_any[1] to out_any[99]: Each bit is the OR of in[i] and in[i-1].
+   - out_any[0] = 0 (no right neighbor).
+
+3. For out_different:
+   - For each bit i from 0 to 99:
+     out_different[i] = in[i] XOR in[left_neighbor].
+   - Left neighbor is (i+1) mod 100, so for i=99 neighbor is 0 (wrap-around).
+
+This loop-based approach inside an always @(*) block provides an alternative structural style, easy to extend or modify and visually explicit in neighbor logic.

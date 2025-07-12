@@ -1,0 +1,8 @@
+To implement the TopModule, we need to design a 32-bit global history shift register that updates based on branch predictions and mispredictions. The module should have the following components:
+- A 32-bit register to store the branch history.
+- Logic to shift in the predicted branch direction when a prediction is made.
+- Logic to load the branch history with the history after the completion of a mispredicted branch when a misprediction occurs.
+- Priority logic to handle cases where a prediction and misprediction occur at the same time, giving precedence to the misprediction.
+- Asynchronous reset logic to reset the history counter to zero when areset is asserted.
+
+We can use a single always block to implement the sequential logic, with conditional statements to handle the different update scenarios. The predict_history output will be driven directly from the internal history register.

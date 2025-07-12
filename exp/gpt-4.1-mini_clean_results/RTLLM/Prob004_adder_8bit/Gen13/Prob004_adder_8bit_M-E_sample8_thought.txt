@@ -1,0 +1,12 @@
+Instead of a traditional ripple carry adder, I will implement the 8-bit adder using a hierarchical carry-lookahead concept to speed up carry propagation without adding excessive complexity.
+
+The idea is to divide the 8-bit adder into two 4-bit adders, each implemented using bit-level full adders with internal carry chains. Then, compute the carry-out of the lower 4 bits quickly using a carry-lookahead scheme (by generating propagate and generate signals) to determine the carry-in for the upper 4 bits in combinational logic.
+
+Specifically:
+1. Each 4-bit section will use four full adders connected in ripple to produce sum bits and generate/propagate signals.
+2. Generate (G) = g3 + (p3 * g2) + (p3 * p2 * g1) + (p3 * p2 * p1 * g0) for the group.
+3. Propagate (P) = p3 * p2 * p1 * p0.
+4. Use these group G and P signals to compute the carry-in for the upper 4 bits immediately from cin.
+5. This reduces the carry propagation delay roughly in half, improving timing without a full carry-lookahead adder complexity.
+
+This design balances modularity and better performance using partial lookahead logic with full adders for bit-level additions.

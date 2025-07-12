@@ -1,0 +1,10 @@
+Refactor the design by separating state and output registers and using a simple finite state machine with two states: IDLE (waiting for first byte) and WAIT_SECOND (storing first byte, waiting for second). On receiving the second valid input, generate outputs registered on the next clock cycle to enforce the one-cycle delay.
+
+- Use a state register to track whether the first byte is stored.
+- Store the first byte in a register when received.
+- When the second byte arrives, register the concatenated data and valid_out one cycle later.
+- This ensures clear separation of input data capture, state progression, and output generation with proper synchronization.
+- Outputs only assert valid_out when two bytes have been received and combined.
+- Reset clears state, output registers, and buffers.
+
+This state machine approach makes the logic clearer and eliminates mixing combinational next-state logic with sequential output update in the same always block.

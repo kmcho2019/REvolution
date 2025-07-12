@@ -1,0 +1,9 @@
+The original design uses parameterized AND modules to modularize the AND gates, which adds hierarchy and clarity, but it incurs slight overhead in area and power because the input sizes are fixed and small (2 or 3 inputs). To optimize for power and area while maintaining clarity, I will:
+
+- Replace the parameterized AndGateN modules with direct assign statements using explicit multi-input AND operators (`&` with bit concatenation) to avoid extra module overhead.
+- Use intermediate wires for the four AND gate outputs to clearly separate the AND and OR logic, preserving readability.
+- Keep simple continuous assign statements for the final OR gates to produce the outputs.
+- This approach reduces hierarchy depth, simplifies the netlist, and lowers switching power and area by removing unnecessary module instantiations and general reduction operator overhead.
+- The design remains fully combinational with one AND and one OR level per output, preserving optimal timing.
+
+This yields a minimal, clean, and easily synthesizable RTL implementation of the 7458 functionality optimized for PPA.

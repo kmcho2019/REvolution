@@ -1,0 +1,7 @@
+The best solution fuses the explicit clarity of Example 2's direct bit assignments with the efficiency and elegance of Example 1's use of Verilog operators.
+
+Instead of a generate loop or manual individual assigns, use a single continuous assignment that replicates the sign bit 24 times and concatenates it with the original input. This approach uses the replication operator `{24{in[7]}}` for concise, readable code that synthesis tools optimize well.
+
+Additionally, cast `in` as signed to ensure correct sign extension semantics and let Verilog handle any internal optimizations related to sign extension. This balances clarity, synthesis friendliness, and minimal logic depth, avoiding arithmetic shifting or multiple assigns.
+
+This design is fully combinational, easy to understand, minimal in logic, and optimal in PPA metrics by directly leveraging Verilog's replication and concatenation language features.

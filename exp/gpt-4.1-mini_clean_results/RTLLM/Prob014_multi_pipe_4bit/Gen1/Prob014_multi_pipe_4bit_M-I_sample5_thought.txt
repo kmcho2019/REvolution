@@ -1,0 +1,23 @@
+To improve the given 4-bit pipelined multiplier for better performance, power, and area (PPA), we can optimize partial product generation and addition stages.
+
+1. **Partial Product Generation:**
+   - Avoid extending the multiplier (mul_b) by zeros since only the actual multiplier bits are used for selecting partial products; extension there wastes logic and toggling.
+   - Instead of using a variable shift operator (which synthesizes to a barrel shifter), hardcode the shifts using concatenation and zeros for each partial product, as the multiplier size is fixed at 4 bits. This reduces area and power.
+
+2. **Adder Tree Structure:**
+   - Keep the two-stage pipeline but balance additions in each stage:
+     - Stage 1 accumulates partial products 0 and 1, and partial products 2 and 3 separately.
+     - Stage 2 sums the two intermediate sums.
+   - This structure reduces critical path delay compared to a single-stage addition of all partial products.
+
+3. **Signal Extensions:**
+   - Extend only the multiplicand (mul_a) by size zeros at MSB to form a 2*size-bit wide input for shifts.
+   - Use the multiplier bits directly for partial product selection without extension.
+
+4. **Coding Practices:**
+   - Use nonblocking assignments for sequential logic.
+   - Keep synchronous reset active low as required.
+
+This approach simplifies and reduces the hardware cost of shift operations, minimizes unnecessary toggling, and maintains a well-structured pipeline to sustain throughput while reducing delay and power.
+
+The code below implements these improvements.

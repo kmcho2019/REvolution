@@ -1,0 +1,14 @@
+Here's a novel approach using a hierarchical multiplexer structure that directly selects the appropriate rotated output based on the combined control signal value. Instead of cascading shift stages, we'll:
+
+1. Pre-compute all 8 possible rotation variants (0-7 positions)
+2. Use the 3-bit control signal as a selector for an 8:1 multiplexer
+3. Implement the multiplexer using a case statement for clarity
+
+Advantages:
+- Single-stage selection rather than cascaded operations
+- All rotation variants are computed in parallel
+- Clear mapping between control value and rotation amount
+- Easily extensible to larger bit widths
+- No intermediate wires needed between stages
+
+This approach trades some area (more pre-computation) for potentially better timing (single selection stage).

@@ -1,0 +1,12 @@
+The key problem is incorrect updating of last_walk_dir tied to the combinational next_state logic, causing it to update prematurely or incorrectly during transitions to and from FALLING state.
+
+Fixes:
+- Update last_walk_dir only in the sequential block and only on clock edges when actually walking (i.e., when current state is WALK_LEFT or WALK_RIGHT). This ensures last_walk_dir always holds the correct last walking direction before falling.
+- Do not update last_walk_dir when entering or in FALLING.
+- This avoids last_walk_dir changing based on next_state that depends on inputs that could glitch in combinational logic.
+- The bump and ground transition logic is correct per spec; the bump input is ignored during FALLING.
+- Outputs remain Moore type based on current state.
+- Use a 1-bit last_walk_dir to represent walking direction: 0 for left, 1 for right for simplicity.
+- Keep asynchronous reset to WALK_LEFT and last_walk_dir=0 (left).
+
+This design will correctly remember last walking direction during falling, ignore bumps during falling and ground transitions, and produce correct walk_left, walk_right, and aaah outputs.

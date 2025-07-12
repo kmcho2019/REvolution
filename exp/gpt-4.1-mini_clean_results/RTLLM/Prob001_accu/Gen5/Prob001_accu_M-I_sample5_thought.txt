@@ -1,0 +1,9 @@
+To optimize the existing design for better PPA (Power, Performance, Area):
+
+1. Remove the redundant sum_reg register as it is not utilized outside the always block, reducing area and power.
+2. Use an enable signal derived from valid_in to update the accumulator and counter only when valid_in is asserted, minimizing toggling power.
+3. Drive valid_out only when the accumulation is ready (when 4 inputs are received), and keep it low otherwise, avoiding unnecessary toggling.
+4. Separate the accumulator reset and output update into sequential steps to reduce combinational critical paths, improving timing.
+5. Retain synchronous active-low reset and register outputs for robust timing.
+
+These changes reduce flip-flop count, minimize switching activity, and improve timing by simplifying the logic without impacting functionality.

@@ -1,0 +1,11 @@
+To fuse the best ideas from both examples, I will combine the clarity and hierarchical approach of the balanced tree (Example 2) with the efficiency of flattening comparisons into a single always_comb block (Example 1). 
+
+The approach: Implement a small combinational module min2 that finds the minimum between two inputs using a simple ternary operator for clarity and modularity. Then, inside the TopModule, instead of instantiating three min2 modules, I will perform the balanced tree minimum calculation in a single always_comb block using local variables that hold intermediate minimums. This preserves the balanced comparison approach (to reduce logic depth and improve timing) while avoiding redundant module overhead and unnecessary separate instantiations. 
+
+This fusion reduces logic depth (like Example 2), avoids multiple min2 module instantiations, and leverages a procedural block (like Example 1) for concise synthesis-friendly logic. The single always block also reduces redundant comparisons and switching activity by carefully ordering comparisons in a balanced manner, potentially improving power and area.
+
+Summary of benefits:
+- Balanced tree comparison reduces critical path length, enhancing timing.
+- Using a single always_comb block avoids overhead from multiple module instantiations.
+- Clear, readable, and easily maintainable code.
+- Minimal logic duplication, potentially lowering power and area.

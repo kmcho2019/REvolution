@@ -1,0 +1,55 @@
+To improve the existing implementation for better performance, power, and area, I will first derive a simpler boolean expression from the Karnaugh map. By analyzing the K-map, I can factor and reduce the logic expression more aggressively, minimizing the number of gates and the logic depth.
+
+From the given K-map:
+
+           x[0]x[1]
+x[2]x[3]  00 01 11 10
+  00      1   0  0  1
+  01      0   0  0  0
+  11      1   1  1  0
+  10      1   1  0  1
+
+Step 1: Identify minterms (f=1):
+
+- (x3 x2 x1 x0):
+  0000 (0)
+  0010 (2)
+  1100 (12)
+  1101 (13)
+  1110 (14)
+  1010 (10)
+  1011 (11)
+  1000 (8)
+  1001 (9)
+
+Step 2: Group to simplify:
+
+- Group A: When x3=0,x2=0: f=1 if (x1,x0)=00 or 10 -> x3' x2' (~x1' x0' + x1' x0)
+  Which simplifies to x3' x2' ~x1'
+
+- Group B: x3=1,x2=1: f=1 if x1=0 (x0=0 or 1) or x1=1,x0=0
+  Covers 12,13,14: x3 x2 (~x1 + x1 ~x0) = x3 x2 (~x1 + ~x0) = x3 x2 (~x1 + ~x0)
+
+- Group C: x3=1, x2=0: covers 8,9,10,11 when x1=0 or x1=1,x0=0
+  Similar logic: x3 ~x2 (~x1 + x1 ~x0) = x3 ~x2 (~x1 + ~x0)
+
+Combining B and C:
+x3 (~x1 + ~x0) (x2 + ~x2) = x3 (~x1 + ~x0)
+
+So final simplified expression:
+
+f = x3 (~x1 + ~x0) + x3' x2' ~x1'
+
+Step 3: Express with fewer gates and logic depth:
+
+- f = x3 (~x1 + ~x0) + ~x3 ~x2 ~x1
+
+This expression has fewer product terms and fewer literals than the previous one.
+
+Step 4: Implementation:
+
+- Assign wires for x3, x2, x1, x0.
+
+- Use minimal logic gates (AND, OR, NOT) as per this equation.
+
+This approach reduces logic levels, gate count, and switching activity, thus optimizing performance, power, and area.

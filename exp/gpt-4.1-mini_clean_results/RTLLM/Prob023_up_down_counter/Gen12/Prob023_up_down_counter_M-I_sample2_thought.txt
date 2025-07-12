@@ -1,0 +1,11 @@
+To optimize for better performance and area, I will reduce the combinational logic delay by minimizing the use of an explicit combinational block and instead perform the increment/decrement operation inline in the sequential block.
+
+Since counting is a simple increment or decrement by 1, I can directly implement it in the clocked always block using the up_down control signal as a conditional operator, avoiding an extra combinational variable and associated muxing.
+
+This reduces logic stages in the critical path and might help the synthesis tool use fast carry chains efficiently.
+
+For power, while the counter always toggles, removing the combinational block reduces unnecessary toggling in intermediate signals.
+
+Overall, this streamlined code is more compact, easier for synthesis tools to optimize for carry-based arithmetic, and can yield better PPA without changing functionality.
+
+The code uses synchronous reset, counts up or down on each clock cycle, and outputs the 16-bit count.

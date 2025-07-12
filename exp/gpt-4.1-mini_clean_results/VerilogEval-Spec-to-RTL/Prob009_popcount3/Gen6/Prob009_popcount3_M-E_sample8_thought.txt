@@ -1,0 +1,12 @@
+To implement a 3-bit population count differently, I will use explicit combinational logic instead of addition. The output bits can be derived as follows:
+
+- out[0] = XOR of all three input bits; this gives parity of the number of ones (i.e., whether the count is odd).
+- out[1] = Majority function of the three inputs (at least two inputs are '1'), indicating whether the count is 2 or 3.
+
+This approach computes the population count in a structural way without using the '+' operator, representing the count in 2-bit binary directly: 
+- 0 ones -> out=00
+- 1 one  -> out=01 (parity=1, majority=0)
+- 2 ones -> out=10 (parity=0, majority=1)
+- 3 ones -> out=11 (parity=1, majority=1)
+
+This gives a novel way of implementing popcount logic using XOR and majority functions.

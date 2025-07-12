@@ -1,0 +1,15 @@
+To fix and improve the given solution, focus on these points:
+
+1. Consolidate the 'done' signal assignment into a single always block to avoid conflicting drivers and glitches.
+2. Ensure the done signal is asserted only for one cycle, precisely when the stop bit is verified as correct.
+3. Correct the data bit shifting to match LSB-first transmission:
+   - Shift bits right and load the incoming bit into the MSB or shift left and load at LSB.
+   - Since LSB is sent first, shifting right and placing 'in' at MSB is incorrect.
+   - Instead, shift left and place 'in' at LSB: shift_reg <= {shift_reg[6:0], in};
+4. Adjust the bit counter and state transitions accordingly.
+5. Use non-blocking assignments consistently in sequential always blocks.
+6. Maintain synchronous reset with all registers initialized.
+7. The FSM states remain the same, only clarify their meaning.
+8. The done signal is asserted exactly when the stop bit is valid (state == CHECK_STOP and in == 1) and cleared otherwise.
+
+This approach fixes functional mismatches and makes the design clearer and more robust, also improving PPA slightly due to cleaner code and avoiding multiple drivers on 'done'.

@@ -1,0 +1,7 @@
+Implement a 64-bit accumulator register to hold the full precision accumulation result of the 32-bit multiplication, avoiding any overflow or saturation concerns by design. The output port c will expose the lower 32 bits of the accumulator, reflecting the least significant bits of the running sum. Use synchronous reset on the positive clock edge. 
+
+This approach preserves complete precision in accumulation (no saturation or overflow detection needed) and simplifies the logic by removing overflow handling, which reduces combinational logic complexity and potential timing bottlenecks. The user can interpret the accumulator's value by reading the output and can extend the interface later to provide the higher 32 bits if needed.
+
+The multiplier result is directly added to the 64-bit accumulator in every clock cycle. Only the lower 32 bits of the accumulator are output. This design supports continuous accumulation without data loss and can be easily pipelined or extended for wider output.
+
+This provides a clean, robust solution suitable for many MAC applications where full precision is desired internally, while presenting a 32-bit result externally.

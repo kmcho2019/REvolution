@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Instead of traditional right-shift with zero-fill, implement a rotating shift register that naturally preserves bits
+2. Use a mask control to selectively zero out the MSB during shift operations
+3. This reduces the critical path by combining shift and zero-insertion into one operation
+4. The mask control also simplifies the priority logic by making load and shift operations more orthogonal
+5. Additional benefit: this structure could easily be extended to support both left and right shifts with minimal modification
+
+Key Advantages:
+- Reduced critical path by eliminating separate zero-insertion logic
+- More efficient implementation of the shift operation
+- Clean separation of load and shift functionality
+- Potential for future extension to bidirectional shifting

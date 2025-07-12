@@ -1,0 +1,12 @@
+To simplify the solution while maintaining functionality:
+
+1. Focus only on the required outputs Y2 and Y4 (next state bits for y[1] and y[3])
+2. For Y2 (next y[1]): Only need to consider transition from A->B (y[0] & ~w)
+3. For Y4 (next y[3]): Only need transitions that lead to state D (B/C/E/F with w=1)
+4. Remove redundant comments and intermediate incorrect terms
+5. Use minimal logical OR operations for Y4
+6. Keep one-hot encoding assumption clear through signal names
+
+Simplified logic:
+- Y2 = y[0] AND NOT w
+- Y4 = (y[1] OR y[2] OR y[4] OR y[5]) AND w

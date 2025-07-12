@@ -1,0 +1,19 @@
+To solve this problem, we can use a Moore state machine with three states: 
+walking left, walking right, and falling. The state machine will have two 
+main components: a combinational logic part to determine the next state, 
+and a sequential logic part to store the current state and update it on 
+the positive edge of the clock. The outputs will be determined solely by 
+the current state. 
+
+When the Lemming is walking left or right, it will switch directions if 
+it hits an obstacle. If it hits both obstacles at the same time, it will 
+still switch directions. 
+
+When the ground disappears, the Lemming will fall and say "aaah!". The 
+walking direction will not be affected by bumps while falling. When the 
+ground reappears, the Lemming will resume walking in the same direction 
+as before the fall.
+
+We will use two bits to encode the three states: 00 for walking left, 
+01 for walking right, and 10 for falling. The state machine will reset to 
+the walking left state on the positive edge of the asynchronous reset.

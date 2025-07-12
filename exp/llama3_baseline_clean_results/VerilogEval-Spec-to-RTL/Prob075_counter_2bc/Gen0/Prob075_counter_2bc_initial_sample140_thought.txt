@@ -1,0 +1,5 @@
+To implement the two-bit saturating counter, we need to consider the following conditions:
+- When the asynchronous reset (areset) is high, the counter should reset to 2'b01 (weakly not-taken state) regardless of the clock edge.
+- On the positive edge of the clock (clk), if train_valid is high, the counter should either increment or decrement based on the value of train_taken. If train_taken is high, the counter should increment up to a maximum of 3 (2'b11). If train_taken is low, the counter should decrement down to a minimum of 0 (2'b00).
+- If train_valid is low, the counter should maintain its current value.
+We will use a conditional statement to check the asynchronous reset first, and then use another conditional statement to handle the clock edge and the training conditions.

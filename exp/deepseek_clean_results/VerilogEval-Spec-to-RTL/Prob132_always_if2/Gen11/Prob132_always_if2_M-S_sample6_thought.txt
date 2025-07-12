@@ -1,0 +1,8 @@
+The original module has two issues:
+1. The outputs are not fully specified in all cases (missing else clauses), which creates latches
+2. Using reg outputs with always @(*) blocks is unnecessary for simple combinational logic
+
+Simplified solution:
+1. Convert to continuous assignments (assign statements) which are more concise for simple combinational logic
+2. Remove unnecessary reg declarations since we're using wire outputs
+3. Maintain the same functionality but with cleaner, latch-free code

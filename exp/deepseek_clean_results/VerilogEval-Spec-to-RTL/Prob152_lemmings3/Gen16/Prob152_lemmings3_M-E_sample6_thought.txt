@@ -1,0 +1,16 @@
+Novel architectural idea:
+1. Implement a hierarchical FSM with two layers:
+   - Primary state (WALKING, FALLING, DIGGING)
+   - Secondary state (LEFT, RIGHT) for walking direction
+2. Use separate registers for tracking:
+   - Current state (3 bits for 5 possible states)
+   - Previous direction (for recovery after falling)
+   - Current direction (for walking state)
+3. Implement priority-based state transitions:
+   - Falling takes precedence over everything
+   - Digging takes precedence over direction changes
+   - Bump direction changes are only considered when walking on ground
+4. Optimize state encoding to minimize transitions:
+   - Use one-hot encoding for primary states
+   - Combine with direction bits for efficient decoding
+5. Add edge detection for ground signal to properly handle transitions

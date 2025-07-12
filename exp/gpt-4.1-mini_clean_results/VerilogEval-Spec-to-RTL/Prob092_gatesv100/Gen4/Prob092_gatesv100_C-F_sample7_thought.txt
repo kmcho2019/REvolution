@@ -1,0 +1,7 @@
+Fuse the vectorized slicing and bitwise operations from Example 1 with the clear boundary handling and explicit wrap-around rotation for out_different, to produce a concise, efficient, and fully vectorized design.
+
+- For `out_both`: assign bits 0 to 98 using vector slicing with bitwise AND on `in[i]` and `in[i+1]`, and explicitly set `out_both[99]` to 0 since bit 99 has no left neighbor.
+- For `out_any`: assign bits 1 to 99 using vector slicing with bitwise OR on `in[i]` and `in[i-1]`, and explicitly set `out_any[0]` to 0 since bit 0 has no right neighbor.
+- For `out_different`: implement the wrap-around neighbor using a single vector rotation `{in[0], in[99:1]}`, then XOR it with `in` to avoid per-bit generate loops, minimizing area and power.
+- This fusion retains clarity, synthesis friendliness, and minimal logic levels.
+- Adding comments improves maintainability.

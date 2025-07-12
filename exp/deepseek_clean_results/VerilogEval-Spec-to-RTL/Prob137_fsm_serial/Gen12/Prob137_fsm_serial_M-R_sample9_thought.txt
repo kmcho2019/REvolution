@@ -1,0 +1,15 @@
+Refactoring Strategy:
+1. State Encoding: Keep binary encoding but restructure as Mealy machine for more compact logic
+2. Data Handling: Replace clock-gated shift with continuous assignment + clock enable for better timing
+3. State Transitions: Move all combinational logic to assign statements for clarity
+4. Counter Logic: Implement as separate always block for better synthesis
+5. Done Signal: Generate directly from state machine outputs (Mealy-style)
+6. Reset: Maintain synchronous reset but simplify reset conditions
+
+Key Changes:
+- Convert to Mealy machine for more direct output generation
+- Use continuous assignments for next_state logic
+- Separate counter logic for better timing closure
+- Simplified shift register with explicit enable
+- More compact state transition logic
+- Direct done signal generation from current state/inputs

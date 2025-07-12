@@ -1,0 +1,12 @@
+Improvement strategy for better PPA:
+1. Break down the 16-bit counter into four 4-bit BCD counters with cascaded enable signals to:
+   - Reduce comparator width (from 8/12-bit to 4-bit)
+   - Minimize unnecessary bit toggling
+   - Enable better resource sharing
+2. Use registered enable signals to break timing paths
+3. Implement ripple-carry style increment with registered enables to:
+   - Reduce combinatorial logic depth
+   - Improve timing (reduce WNS/TNS)
+   - Lower dynamic power by reducing glitching
+4. Maintain synchronous reset functionality
+5. Optimize area by sharing 4-bit increment logic

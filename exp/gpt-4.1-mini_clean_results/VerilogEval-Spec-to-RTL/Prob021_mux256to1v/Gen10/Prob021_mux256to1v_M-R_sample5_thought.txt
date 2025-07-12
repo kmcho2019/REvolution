@@ -1,0 +1,7 @@
+The original design implements a balanced 4-level tree of 4-to-1 4-bit multiplexers using dedicated mux modules and generate loops. To refactor but keep the core idea, I will flatten the hierarchy by directly indexing the input vector using the full 8-bit selector to extract the required 4-bit output slice. This approach uses a single assign statement and reduces logic instantiation overhead, relying on synthesis tools to infer the multiplexer efficiently.
+
+This direct indexing method selects the 4-bit slice at position sel*4 in the 1024-bit input, matching the original selection function. It simplifies the code by eliminating intermediate stages and mux modules while maintaining identical functionality.
+
+Although this may result in a wider fan-in mux internally, modern synthesis tools typically optimize it well. This approach also clarifies the design intention and reduces the code complexity, improving readability and maintainability.
+
+The core functionality—256-to-1 mux of 4-bit inputs indexed by an 8-bit selector—is preserved exactly.

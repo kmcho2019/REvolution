@@ -1,0 +1,7 @@
+A novel approach to designing the frequency divider module `freq_divbyodd` involves utilizing a dual-counter architecture with a phase alignment mechanism to divide the input clock frequency by an odd number. This approach takes advantage of two separate counters, `cnt1` and `cnt2`, which count up to `NUM_DIV - 1` and are triggered by the rising and falling edges of the clock, respectively.
+
+The key idea is to use these counters to generate two separate clock dividers, `clk_div1` and `clk_div2`, which are toggled when the counters reach half of `NUM_DIV`. To ensure proper phase alignment, a phase alignment mechanism is used to synchronize the two clock dividers.
+
+The final divided clock output `clk_div` is derived by logically OR-ing `clk_div1` and `clk_div2`, which ensures that the divided clock output accounts for both rising and falling edges of the clock. The active low reset signal `rst_n` initializes the counters and the clock divider outputs, ensuring that the module provides a stable divided clock output.
+
+This approach provides a simple and efficient way to divide the input clock frequency by an odd number, while minimizing the area and power consumption.

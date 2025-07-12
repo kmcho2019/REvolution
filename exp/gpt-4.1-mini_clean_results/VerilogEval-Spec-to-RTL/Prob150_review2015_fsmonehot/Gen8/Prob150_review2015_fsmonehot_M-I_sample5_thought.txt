@@ -1,0 +1,14 @@
+The original solution is functionally correct and clean, using one-hot encoding with simple combinational logic for next states and outputs. However, to optimize for better Power, Performance, and Area (PPA):
+
+1. Minimize the logic expressions further by factoring common terms to reduce gate count.
+2. Reduce redundant computations, e.g., compute combined signals only once and reuse.
+3. Avoid multi-bit OR operations by explicitly writing logic that reduces signal toggling and logic levels.
+4. For shift_ena, rather than OR'ing four state bits, generate the signal as a range check (state between B0 and B3). In one-hot encoding, this is equivalent to OR of those bits, but a simpler expression may help synthesis.
+5. For next-state signals like S_next, combine input and state conditions with minimal gates by merging expressions more tightly.
+6. Use localparams to improve readability but keep logic minimal.
+
+By explicitly generating next-state outputs only for those needed and reusing partial results, we can reduce logic complexity and potentially improve power and area. Also, this reduces input pin toggling of outputs and eases the critical path.
+
+These changes maintain correctness while streamlining the combinational logic for the Moore FSM.
+
+Note: Since the problem states to implement only combinational logic for next states and outputs, no sequential logic or registers are included.

@@ -1,0 +1,14 @@
+The problem can be solved using two always blocks in Verilog. The first always block updates the values of two registers with the input values. The second always block performs the division operation. The division operation involves extracting the higher bits of the dividend, comparing them with the divisor, and updating the quotient and remainder accordingly. This process is repeated until all bits of the dividend are processed.
+
+To implement this, we will use a temporary register to store the remainder and another register to store the quotient. We will shift the remainder to the left by one bit in each iteration and add the next bit of the dividend to the remainder. We will then compare the remainder with the divisor and update the quotient accordingly.
+
+However, since we are not allowed to use sequential logic (i.e., clocked always blocks) in this problem, we will have to unroll the loop and perform all the iterations in a single combinational logic block.
+
+Here's how we can think about it:
+
+- Initialize the remainder and quotient to 0.
+- Extract the higher 8 bits of the dividend and compare them with the divisor.
+- If the extracted bits are greater than or equal to the divisor, subtract the divisor from the extracted bits and set the corresponding bit in the quotient to 1.
+- Shift the remainder to the left by one bit and add the next bit of the dividend to the remainder.
+- Repeat the above steps until all bits of the dividend are processed.
+- After the loop finishes, the remainder will hold the final remainder of the division operation, and the quotient will hold the final quotient.

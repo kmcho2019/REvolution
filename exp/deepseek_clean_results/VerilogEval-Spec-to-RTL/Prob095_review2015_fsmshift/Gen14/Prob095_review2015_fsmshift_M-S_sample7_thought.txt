@@ -1,0 +1,13 @@
+Simplified approach:
+1. Use a 2-bit counter instead of a shift register to count exactly 4 cycles
+2. Initialize counter to 0 on reset
+3. Increment counter each clock cycle while it's less than 3
+4. Assert shift_ena when counter value is less than 4 (0-3)
+5. Counter stops at 3, maintaining shift_ena low thereafter
+6. Fewer bits needed (2 vs 4) and simpler logic than shift register approach
+
+Benefits:
+- Exactly 4 cycles of shift_ena after reset
+- Simple counter logic
+- Minimal hardware (2 flip-flops)
+- Clear, maintainable implementation

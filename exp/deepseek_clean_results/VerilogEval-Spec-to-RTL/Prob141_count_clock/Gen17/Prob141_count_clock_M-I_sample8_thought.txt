@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the rollover detection logic by adding a register stage for sec_rollover and min_rollover signals
+   - Simplify the hour counter logic by using a single 4-bit counter (1-12) with cleaner transition conditions
+   - Break the critical path by registering the hour increment condition
+
+2. Power Optimization:
+   - Register the hr_tens/hr_ones calculation to reduce combinational switching
+   - Gate the minute and second counters more aggressively using registered enable signals
+   - Simplify the PM toggle logic by making it purely sequential
+
+3. Area Optimization:
+   - Maintain the packed BCD format but optimize comparator usage
+   - Share rollover detection logic between counters where possible
+   - Simplify the hour counter to use minimal logic
+
+Key Changes:
+- Added pipeline registers for rollover signals
+- Simplified hour counter to single 4-bit register
+- Moved BCD conversion to clocked logic
+- Optimized PM generation logic
+- Better enable signal gating

@@ -1,0 +1,22 @@
+The new architecture employs Booth encoding to reduce the number of partial products and a 2-stage pipeline for better throughput:
+
+1. **Radix-4 Booth Encoding**:
+   - Encodes the multiplier (mul_b) to reduce partial products from 8 to 4
+   - Each encoded digit selects from [-2A, -A, 0, +A, +2A] operations
+   - Sign extension handled properly for negative multiples
+
+2. **2-Stage Pipeline**:
+   - Stage 1: Input registration and Booth encoding
+   - Stage 2: Partial product generation and summation
+   - Enables higher clock frequency due to reduced combinational path
+
+3. **Optimized Summation**:
+   - Uses carry-save adders for partial product reduction
+   - Final addition performed in the second stage
+   - Properly aligned partial products with sign extension
+
+Key advantages:
+- Fewer partial products (4 vs 8) reduces adder complexity
+- Balanced pipeline stages for better timing
+- Booth encoding provides inherent power savings
+- Maintains same latency (2 cycles) with better performance

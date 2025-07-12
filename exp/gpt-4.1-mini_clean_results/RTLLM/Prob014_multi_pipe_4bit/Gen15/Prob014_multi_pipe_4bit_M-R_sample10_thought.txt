@@ -1,0 +1,21 @@
+Refactor the pipeline multiplier to strictly follow the problem requirements and improve correctness and clarity:
+
+- Use a generate block to create partial products for each bit of the multiplier. Each partial product is generated combinationally from extended multiplicand and the corresponding multiplier bit, shifted by the bit position.
+
+- Implement two pipeline register levels for partial sums:
+
+  1. First pipeline stage: register the partial products to pipeline them and align timing.
+
+  2. Second pipeline stage: register the sum of all partial products to produce the final product.
+
+- On reset (active-low), clear all pipeline registers and output.
+
+- Inputs `mul_a` and `mul_b` are combined with zeros on MSB side as per requirement.
+
+- Pipeline registers at each stage separate combinational generation and addition, avoiding read-after-write issues and ensuring correct alignment of data through the pipeline.
+
+- The module uses two clocked always blocks for pipelining: one capturing partial products, the second summing and registering the final product.
+
+- This refactoring adheres strictly to the specification, uses a generate block for partial product generation, ensures synchronous operation with asynchronous reset, and matches the pipeline stages requested.
+
+- This approach cleanly separates combinational logic (partial product generation) and registered pipeline stages, avoiding timing hazards.

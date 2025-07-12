@@ -1,0 +1,6 @@
+The original solution uses a LUT-based approach which is functionally correct but inefficient in terms of area and power. We can refactor this to use a more direct combinational logic approach with a multiplexer. Since the behavior only depends on the lower 2 bits of 'c' (values 0-3), we can:
+
+1. Use a 4:1 multiplexer with c[1:0] as the select signal
+2. For c values ≥4, we can OR the upper bits of c to force the output to 'f'
+3. This eliminates the need for a full 16-entry LUT while maintaining identical functionality
+4. The implementation will be purely combinational using assign statements

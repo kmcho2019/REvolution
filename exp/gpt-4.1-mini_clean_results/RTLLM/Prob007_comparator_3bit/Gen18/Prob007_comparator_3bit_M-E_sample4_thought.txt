@@ -1,0 +1,8 @@
+I will implement the 3-bit comparator using a hierarchical bitwise comparison approach, mimicking a cascading comparator chain. Starting from the most significant bit (MSB), I compare A[2] and B[2]. If unequal, that determines the result immediately. If equal, move to the next bit A[1], B[1], and so on until the least significant bit (LSB). This "priority encoder" style ensures a short-circuit comparison, making the logic intuitive and structured. 
+
+The outputs A_greater, A_equal, and A_less will be mutually exclusive by construction:
+- If at any stage, A[i] > B[i], output A_greater=1.
+- If all bits equal, output A_equal=1.
+- Otherwise, output A_less=1.
+
+This method uses simple combinational logic (AND, OR gates) for each bit, and a chain of enables that gate comparisons at the next bit only when previous bits are equal, yielding clear and maintainable code. This also maps efficiently for synthesis as a priority comparison tree.

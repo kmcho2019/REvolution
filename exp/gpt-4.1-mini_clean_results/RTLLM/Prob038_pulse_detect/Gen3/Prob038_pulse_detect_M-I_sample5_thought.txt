@@ -1,0 +1,9 @@
+The original solution uses a 3-state FSM and outputs data_out for exactly one cycle when the pulse ends, correctly detecting the 0-1-0 pattern. To optimize for Performance, Power, and Area (PPA):
+
+- Performance: The FSM is simple and fast, but state encoding can be simplified to 2 bits with clear one-hot-like assignment to reduce combinational logic delay.
+- Power: Minimize output toggling by setting data_out only when the pulse end is detected; keep it zero otherwise.
+- Area: We can remove the combinational next_state logic by integrating state transitions directly into the sequential block, reducing combinational logic and potentially reducing area and power by avoiding extra logic gates.
+
+Thus, I will merge the next state logic into the sequential block to make the design more concise, which is often beneficial for synthesis tools and reduces flip-flop output switching. The data_out is kept 1 for one cycle at the pulse end.
+
+This single always block approach is efficient and clearly describes the FSM behavior.

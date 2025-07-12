@@ -1,0 +1,7 @@
+Fuse the clear, straightforward synchronous load and rotate logic from both examples, maintaining a single always block triggered on clk's rising edge for synchronous operation. Use a case statement on ena to select rotation direction, with load having priority. Preserve the 100-bit width and rotation logic by concatenating bits to rotate left or right by one bit without data loss. Include comments for clarity, following good synchronous design practice.
+
+To improve power slightly, explicitly avoid unnecessary updates by only changing q if load or ena indicates rotation; otherwise keep q unchanged. This prevents redundant register toggling. This is achieved naturally by the case/default structure and load condition.
+
+No additional pipeline stages are introduced as rotating a wide register by one bit is best done combinationally in a single clock cycle for simplicity and minimal latency.
+
+This fused solution combines clarity, correctness, and minimal switching, aligned with the best practices demonstrated in the examples.

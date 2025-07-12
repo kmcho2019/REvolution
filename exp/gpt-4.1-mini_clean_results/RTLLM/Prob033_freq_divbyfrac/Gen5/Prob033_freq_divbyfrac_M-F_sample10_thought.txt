@@ -1,0 +1,14 @@
+To fix the fractional frequency divider by 3.5x with double-edge clocking and achieve the correct phase shifts and duty cycle, we must explicitly generate two clocks that are phase-shifted by half the input clock period.
+
+The previous code toggled two intermediate clocks on rising and falling edges with uneven counts (4 and 3), but simply OR-ing them did not guarantee the required half-cycle phase shift and smooth output.
+
+Fix approach:
+1. Use a single 3-bit counter clocked on the rising edge of `clk` to count from 0 to 6 (7 total states), since 7 input clocks correspond to two output clock periods (3.5 cycles per output cycle).
+2. Generate two internal clocks (clk_A and clk_B) by defining their states (high/low) over the 7 counts:
+   - clk_A has a period of 7 cycles with a high time of 4 cycles (for the longer half-cycle)
+   - clk_B has a period of 7 cycles with a high time of 3 cycles (for the shorter half-cycle)
+3. clk_B is phase shifted by half a clock cycle relative to clk_A by driving clk_B on the falling edge of clk (using the delayed count or via dual-edge clocking).
+4. Finally, OR clk_A and clk_B to get `clk_div`, which combines these two waveforms phase-shifted by half a clock cycle, producing a uniform fractional frequency with balanced duty cycle.
+5. This avoids asynchronous clocks inside the logic and uses a clean synchronous counter with a simple phase shift obtained by driving clk_B from the falling edge count or using a half-cycle delayed count value.
+
+This approach explicitly models the two clock halves, their duty cycles, and phase offsets, resulting in accurate fractional division by 3.5 with proper timing alignment and duty cycle balance.

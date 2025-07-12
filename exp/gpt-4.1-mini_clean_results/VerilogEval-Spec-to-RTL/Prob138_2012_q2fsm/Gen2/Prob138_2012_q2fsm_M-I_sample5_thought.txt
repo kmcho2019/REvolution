@@ -1,0 +1,7 @@
+To improve the PPA metrics (timing, power, area) of the original FSM design, I will apply the following optimizations:
+1. Use one-hot state encoding instead of binary to potentially improve timing on FPGA or certain synthesis tools, because one-hot encoding simplifies next state logic and reduces logic levels, at the cost of slightly larger area. Since the original area is small, this tradeoff is acceptable.
+2. Register the output z (currently purely combinational) to reduce glitches and improve timing/power by synchronizing output to clock.
+3. Keep the separate always blocks for state register and combinational next state logic for clarity.
+4. Use non-blocking assignments for sequential logic and blocking for combinational logic correctly.
+5. Add default cases for safe synthesis.
+These changes should yield improved timing due to simpler combinational logic and stable output, possibly slightly increased area due to one-hot, but overall better PPA balance.

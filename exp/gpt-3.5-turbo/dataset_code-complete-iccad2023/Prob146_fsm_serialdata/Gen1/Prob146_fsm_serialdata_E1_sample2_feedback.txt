@@ -1,7 +1,0 @@
-1. The first issue in the code is in the STOP_BIT state. The condition to transition back to the IDLE state if the input is high is incorrect. The transition should only occur if the input remains high for the duration of a full bit period (considering the start bit). This premature transition is likely causing incorrect behavior in identifying the stop bit.
-
-2. Another issue is with the output generation in the RECEIVING state. When the condition for correct reception of 8 data bits and a high stop bit is met, the output byte is assigned directly from 'data_reg'. However, since the serial protocol sends the LSB first, the output byte construction is incorrect. It should consider the bit ordering when forming the output byte.
-
-3. Additionally, the FSM does not handle situations where a start bit is expected but not found within a reasonable time frame. The FSM should have a way to handle and recover from this situation to synchronize correctly for the next byte reception.
-
-These issues are leading to multiple mismatches in the simulation results.

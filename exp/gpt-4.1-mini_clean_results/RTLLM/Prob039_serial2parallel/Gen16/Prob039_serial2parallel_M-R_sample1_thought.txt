@@ -1,0 +1,7 @@
+Refactor the design by using a simple state machine approach with two states: IDLE and COLLECT. When din_valid is asserted, we collect the serial bits by shifting a shift register right and inserting the incoming bit at the MSB, ensuring that the first received bit ends up in the MSB position in dout_parallel. Use a 4-bit counter to track how many bits have been collected. Once 8 bits are collected (counter hits 7, counting from 0), assert dout_valid for one clock cycle and output the collected parallel data. Otherwise, dout_valid is low.
+
+This approach uses a synchronous reset and a clean state machine to clarify data collection phases, making the design modular and easier to extend or debug.
+
+The shift direction is changed to shift right, inserting new bits at the MSB so that the earliest serial bit maps to dout_parallel[7].
+
+This will clearly separate the data collection logic from output control and ensure correct bit ordering per specification.

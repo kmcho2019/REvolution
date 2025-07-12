@@ -1,0 +1,17 @@
+The main issue is the edge detection of the ground signal using a delayed ground_d register updated synchronously on the same clock edge as the state registers. This causes the edge detection signals (ground_falling_edge, ground_rising_edge) to represent transitions one cycle late relative to the current inputs, leading to bumps being improperly recognized as valid or invalid on the same cycle as ground changes.
+
+To fix this:
+
+1. Implement a two-stage synchronization of the asynchronous ground input to the clock domain, producing stable, synchronized ground signals (ground_sync1, ground_sync2). This prevents metastability and glitches.
+
+2. Perform edge detection on the synchronized ground signals so that ground_falling_edge and ground_rising_edge correspond accurately to ground transitions occurring exactly between two clock cycles.
+
+3. Use these synchronously detected edges in the FSM next state logic to block bump-induced direction changes only on the precise cycles when ground transitions occur.
+
+4. Initialize the synchronization registers and direction/falling state properly on asynchronous reset.
+
+5. This approach guarantees bump inputs are ignored only in the cycle of ground transitions and the direction flip logic becomes stable and synchronous, fixing mismatches on walk_left/walk_right outputs.
+
+The FSM remains Moore with outputs derived combinationally from current state.
+
+This synchronization and clean edge detection solves the direction handling bug while preserving the correct falling and aaah output behavior.

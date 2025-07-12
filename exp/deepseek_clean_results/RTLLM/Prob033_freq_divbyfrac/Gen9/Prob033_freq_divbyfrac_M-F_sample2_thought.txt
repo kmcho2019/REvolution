@@ -1,0 +1,32 @@
+Revised Solution for Accurate 3.5x Fractional Division:
+
+1. **Cycle Pattern Correction**:
+   - Implement exact 4/3 cycle alternation (7 cycles total)
+   - Primary phase: 4 cycles high, 3 cycles low
+   - Secondary phase: 3 cycles high, 4 cycles low (180° out of phase)
+
+2. **Counter Synchronization**:
+   - Both counters now use posedge with proper phase offset
+   - Secondary counter starts at midpoint (3'd3) for correct alignment
+   - Counters wrap at 6 to maintain 7-cycle period
+
+3. **Phase Generation Logic**:
+   - Primary phase active for first 4 cycles (0-3)
+   - Secondary phase active for next 3 cycles (4-6)
+   - No overlapping active periods to prevent duty cycle distortion
+
+4. **Reset Handling**:
+   - Both counters initialize to known states
+   - Reset forces all outputs low
+   - Secondary counter starts at phase offset position
+
+5. **Output Combination**:
+   - Maintain OR operation but with properly aligned phases
+   - Ensures smooth transitions between 4/3 cycle periods
+
+Key Improvements:
+- Exact 4/3 cycle alternation pattern
+- Proper phase alignment through counter initialization
+- Simplified phase generation logic
+- Guaranteed correct duty cycle
+- Matches expected 3.5x division ratio

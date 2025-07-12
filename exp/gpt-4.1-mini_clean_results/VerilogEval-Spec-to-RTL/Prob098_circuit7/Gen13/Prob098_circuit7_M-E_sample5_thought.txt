@@ -1,0 +1,7 @@
+From the waveform, q samples the value of 'a' delayed by one clock cycle, but inverted only when 'a' was high in the previous cycle. In other words, q changes only when 'a' transitions from 1 to 0; otherwise, q remains stable.
+
+Another way to implement this behavior is to store the previous value of 'a' in a register and output q as (previous_a NAND a). Since the waveform shows q = 1 when a and previous a are not both 1, and q = 0 when a remains high after previous cycle, we can implement q = ~(prev_a & a).
+
+This requires a register to hold previous 'a', and combinational logic to compute q from prev_a and current 'a'.
+
+This architecture uses a single register for previous input and a NAND gate for output logic, separating storage and combinational parts, which may be helpful in more complex designs.

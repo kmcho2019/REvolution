@@ -1,0 +1,12 @@
+Instead of simply registering the previous input value to detect edges combinationally, use a two-stage shift register to sample the input 'a' over two clock cycles. Then, in a synchronous always block, detect edges by comparing the two delayed samples to the current input. This allows us to generate the rise and down outputs synchronously as registered signals rather than combinational outputs.
+
+By making rise and down registered signals, the outputs are asserted and held high in the clock cycle immediately following the edge detection, and then cleared the next cycle, exactly as requested. This approach introduces a single clock cycle latency after the edge event, ensuring the outputs are synchronous and glitch-free.
+
+This architecture also allows easy extension if, in future, output pulse width changes or further signal conditioning are required. The synchronous style with registered outputs is a good design practice and easy to verify.
+
+Summary:
+- Use two registers (a_d1, a_d2) to delay 'a' over two clock cycles.
+- Detect edges by comparing a_d2 to a_d1.
+- Register rise and down signals in always block (not combinational).
+- Outputs are synchronous, one-clock-cycle wide pulses exactly on next clk after edge.
+- Reset asynchronously on rst_n (active low).

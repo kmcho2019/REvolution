@@ -1,0 +1,33 @@
+To fix the functional mismatch, we must ensure the output `z` is asserted exactly one cycle after the group of three w-samples and that counting and output logic do not conflict inside a single clock cycle.
+
+The key issues are:
+
+- The current code updates `count` and computes `z_next` inside the same clock edge, leading to timing confusion because the `count` used for `z_next` calculation is the old value before updating with the current `w`.
+
+- Also, updating `z` at the start of the sampling group (in B0) using `z_next` (the previous group's result) works in principle, but since `z_next` is assigned inside the same sequential block, it may cause glitches or timing mismatches.
+
+To fix this:
+
+- Separate the counting and output logic clearly.
+
+- Use registers `count` to accumulate the current group's count during B0, B1, B2 states.
+
+- At the end of B2, save the result (whether count==2) into a dedicated register `z_out` that holds the output to be asserted in the next cycle.
+
+- Output `z` should directly follow `z_out` (e.g., assign `z <= z_out;` every cycle).
+
+- The transition back to B0 starts a new group with a reset count, but the output `z` is already updated to the previous group's result.
+
+- Keep `z_out` stable during sampling cycles and update only at the end of B2.
+
+- On reset, initialize `state = A`, `count=0`, and `z_out=0`.
+
+- Output `z` is assigned synchronously as `z_out` at every clock, so output timing is consistent and always delayed by exactly one cycle after sampling group.
+
+This approach avoids mixing combinational computation inside the sequential block and ensures timing clarity of output signal with respect to the sampled data.
+
+The FSM states remain A, B0, B1, B2, minimizing states.
+
+Synchronous reset and positive edge clock triggering is maintained.
+
+This corrects the timing and counting errors and should match the expected behavior with zero mismatches.

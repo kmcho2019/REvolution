@@ -1,0 +1,9 @@
+Refactor the 256-to-1 multiplexer by removing hierarchical submodules and implementing the entire mux functionality directly in the TopModule using a single continuous assignment. Since the inputs are packed sequential 4-bit chunks and the select signal indexes which 4-bit chunk to output, the mux can be implemented succinctly by slicing `in` at `sel * 4`.
+
+This approach:
+- Eliminates multiple mux layers and intermediate wiring, reducing logic complexity.
+- Uses an `assign` statement for direct combinational logic, enabling simpler and more optimized synthesis.
+- Improves area and power by removing hierarchical mux overhead.
+- Maintains the same interface and functionality but with clearer, minimal code.
+
+This refactor directly indexes the input vector to produce the 4-bit output, making the multiplexer a single-stage combinational block.

@@ -1,0 +1,21 @@
+Correct Approach:
+
+1. Truth Table Analysis:
+   - Output should be 1 for inputs: 2 (0010), 7 (0111), 15 (1111)
+   - Output should be 0 for inputs: 0,1,4,5,6,9,10,13,14
+   - Inputs 3,8,11,12 are don't-cares (can be used for optimization)
+
+2. SOP Implementation:
+   - Directly implement the minimal SOP covering required 1s
+   - out_sop = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+3. POS Implementation:
+   - Find all input combinations where output should be 0
+   - Create maxterms for each false case
+   - Combine with AND operations
+   - out_pos = (a|b|c|d) & (a|b|c|~d) & (a|b|~c|d) & ... (covering all false cases)
+
+4. Optimization:
+   - Use don't-cares to minimize both forms
+   - Keep implementation simple with assign statements
+   - Verify all specified cases are covered correctly

@@ -1,0 +1,7 @@
+Instead of physically shifting bits, we can implement a virtual rotation using a base pointer that tracks the effective start position of the rotated data. This approach:
+1. Uses a 100-bit register to store the actual data
+2. Maintains a 7-bit pointer (since 100 needs 7 bits) to track rotation offset
+3. For reads (q), we reconstruct the rotated view by combining parts of the register based on the pointer
+4. For rotations, we simply increment/decrement the pointer modulo 100
+5. Load operations reset the pointer to 0
+This reduces the physical movement of bits during rotation to just pointer updates.

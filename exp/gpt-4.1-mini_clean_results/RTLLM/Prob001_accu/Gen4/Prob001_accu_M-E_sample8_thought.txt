@@ -1,0 +1,11 @@
+Instead of accumulating all inputs in a single register and resetting after 4 inputs, use a small FIFO-like shift register to store the 4 incoming data samples, and simultaneously maintain a running sum.
+
+The idea:
+1. Use a 4-stage shift register to capture the last 4 valid inputs.
+2. Maintain a running sum by adding the new input and subtracting the oldest input leaving the window, enabling a sliding window accumulation.
+3. Use a counter to detect when 4 valid inputs have been received initially.
+4. Output the accumulated sum only once when the 4th input arrives, along with a single-cycle valid_out pulse.
+5. After the initial 4 inputs, the sum represents the rolling sum of the latest 4 inputs, but valid_out is asserted only on the 4th input arrival.
+6. On reset, clear all registers.
+
+This design offers modularity and easily scales to accumulate windows beyond 4 samples with minimal change. Also, it introduces subtraction to maintain the running sum, which can be beneficial if the problem changes to sliding window accumulation in future.

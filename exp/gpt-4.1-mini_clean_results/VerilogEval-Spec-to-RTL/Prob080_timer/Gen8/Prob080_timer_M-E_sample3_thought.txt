@@ -1,0 +1,9 @@
+Implement the countdown timer as a register that directly stores the count value, but use the load signal as a clock enable for decrementing. Instead of always decrementing, decrement only when load=0 and the counter is not zero. On load=1, load the counter with data, overriding decrement.
+
+We keep a single always @(posedge clk) block to update the counter register.
+
+The terminal count output is asserted when the counter reaches zero.
+
+This approach separates the load and decrement operations clearly inside the sequential block, avoiding combinational subtraction outside the register update, and the code directly reflects the counter update logic. The decrement logic inside the always block uses a simple conditional, reducing combinational complexity.
+
+Also, by gating the decrement inside the always block via a conditional, unnecessary toggling is avoided when the counter is zero or load is asserted.

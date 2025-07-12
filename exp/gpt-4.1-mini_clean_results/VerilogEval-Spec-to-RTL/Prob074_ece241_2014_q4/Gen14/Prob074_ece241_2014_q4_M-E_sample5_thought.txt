@@ -1,0 +1,20 @@
+I will implement the requested FSM by explicitly modeling the three D flip-flops as separate registers clocked on the positive edge of clk without any reset logic inside, adhering strictly to the problem statement "Assume D flip-flops are initially reset to zero before the machine begins." This means the initial zero values will be simulation assumptions, and no reset signal is introduced.
+
+To create a novel architectural approach different from the prior solution, I will:
+
+- Use a single always block with non-blocking assignments for all three flip-flops.
+- For clarity and modularity, compute each gate's D input in separate combinational always blocks (or continuous assignments) before the clocked process.
+- Compute the final output z by passing the flip-flop outputs through a NOR3 module to encapsulate the three-input NOR gate as a separate submodule.
+- This modular submodule approach enhances readability and code reuse.
+- Explicitly declare all intermediate signals as wires for clear separation of combinational and sequential logic.
+- No internal reset is implemented; rely on initial zero values for simulation and synthesis tools (which often initialize registers to zero or have user-defined reset schemes).
+- The problem description does not forbid a separate NOR gate module, so this encapsulation offers a different perspective architecturally.
+
+This approach emphasizes structural modularity and separation of combinational logic from sequential logic, providing a different architectural flavor than the prior monolithic single-module implementation.
+
+The module hierarchy will be:
+
+- TopModule (main FSM and registers)
+- Nor3 (three-input NOR gate)
+
+This achieves the exact functionality while demonstrating good design practice and modularity.

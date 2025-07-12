@@ -1,0 +1,31 @@
+We need a one-bit state machine with inputs `a` and `b`, output `state` (the stored flip-flop bit), and output `q`.
+
+From the waveform:
+- Initially, `state` is 0.
+- On each positive clock edge, `state` updates based on current `state` and inputs `a` and `b`.
+- The output `q` depends on `state` and inputs, but not just a simple OR.
+
+By examining transitions and outputs, a concise way to capture the behavior is:
+
+- Define next state as:
+  - If current state is 0:
+    - Next state is 1 if inputs `a` and `b` differ (i.e., `a ^ b == 1`), else stay 0.
+  - If current state is 1:
+    - Next state returns to 0 if both inputs are 1 (`a & b`), else stay 1.
+
+- Output `q` is:
+  - 1 if `state` is 1 and not both inputs 1 (i.e., state is 1 and !(a&b))
+  - or if inputs `a` and `b` are both 1 (regardless of state)
+
+Putting it succinctly:
+
+- next_state = state ? (~(a & b)) : (a ^ b)
+- q = (state & ~(a & b)) | (a & b)
+
+This logic matches the waveform transitions and outputs:
+
+- State flips from 0 to 1 when inputs differ.
+- State returns to 0 when both inputs are 1.
+- Output `q` signals when state is 1 but inputs are not both 1, or inputs are both 1.
+
+Implementing this logic with a positive edge clocked flip-flop and combinational output fulfills the requirement.

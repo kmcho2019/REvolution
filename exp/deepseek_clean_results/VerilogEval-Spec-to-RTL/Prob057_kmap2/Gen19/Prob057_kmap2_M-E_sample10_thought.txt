@@ -1,0 +1,24 @@
+Novel Architectural Idea: Majority Function with Selective Inversion
+
+1. Key Insight:
+   - The K-map shows symmetry when viewed diagonally (from ab=00,cd=00 to ab=11,cd=11)
+   - The pattern resembles a modified majority function where we need 3/4 inputs to agree, but with selective inversion
+
+2. Implementation Strategy:
+   - Use XOR gates to create phase-controlled signals
+   - Implement a weighted voting mechanism where:
+     - a and b have higher weight when c=0
+     - c and d have higher weight when a=1
+   - Combine using a balanced OR-AND structure that naturally captures the K-map patterns
+
+3. Advantages:
+   - More regular structure than minterm-based approaches
+   - Better scalability for similar patterns in larger K-maps
+   - Potential for better timing due to balanced path delays
+
+4. Verification:
+   - The structure ensures all 1s in K-map are covered by:
+     - When c=0, the a|b term dominates
+     - When a=1, the c|d term dominates
+     - The XOR terms handle the edge cases
+   - All 0s in K-map are properly excluded

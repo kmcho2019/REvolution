@@ -1,0 +1,6 @@
+To implement the pulse detection module, we can use a finite state machine (FSM) with three states: IDLE, PULSE_START, and PULSE_END. 
+The FSM starts in the IDLE state. When data_in transitions from 0 to 1, it moves to the PULSE_START state. 
+If data_in is still 1 in the next cycle, it stays in the PULSE_START state. 
+When data_in transitions from 1 to 0, it moves to the PULSE_END state and sets data_out to 1. 
+Then, it returns to the IDLE state and resets data_out to 0. 
+We use a register state to keep track of the current state and an always block to implement the state transitions and output generation.

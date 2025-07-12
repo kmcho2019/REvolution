@@ -1,0 +1,11 @@
+To simplify the FSM while maintaining functionality:
+1. Reduce states from 4 to 3 by eliminating the ERROR state - we can handle error cases within the STOP state
+2. Combine state transition and data processing into a single always block for clarity
+3. Simplify bit counting by directly using the state transitions
+4. Remove redundant registers and combine logic where possible
+5. Maintain the same protocol behavior: start bit (0), 8 data bits (LSB first), stop bit (1)
+
+The simplified FSM will have:
+- IDLE: Wait for start bit
+- RECEIVE: Collect 8 data bits
+- STOP: Check stop bit and output if valid

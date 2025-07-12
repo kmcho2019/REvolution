@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+Instead of using a traditional XOR-based edge detector, we'll implement a state machine approach that tracks transitions more explicitly. This method:
+1. Uses a 2-bit state per input bit (00=stable, 01=rising edge detected, 10=falling edge detected)
+2. Provides more detailed transition information (though we'll still output just the edge detection)
+3. Could be extended to distinguish between rising/falling edges if needed
+4. May offer better timing characteristics as it avoids the XOR operation
+5. Uses explicit state transitions that might be more power-efficient for certain input patterns
+
+The state machine will:
+- Transition to rising/falling state when a 0→1 or 1→0 change is detected
+- Return to stable state on the next clock cycle
+- Output 1 when in either edge-detected state

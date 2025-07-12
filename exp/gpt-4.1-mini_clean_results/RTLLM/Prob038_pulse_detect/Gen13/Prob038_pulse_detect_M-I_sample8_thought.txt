@@ -1,0 +1,15 @@
+The original solution uses a 2-bit shift register to detect the "0->1->0" pulse pattern, asserting data_out at the last 0 in the sequence. This approach is already simple and efficient.
+
+To optimize PPA further:
+- Replace the shift register with explicit previous cycle registers for clarity and possibly better synthesis results.
+- Use non-blocking assignments consistently.
+- Reduce combinational logic by precomputing conditions inside the always block, minimizing the combinational path outside.
+- Keep synchronous reset only on positive edge (as per best practice) and avoid async reset to improve timing.
+- Add an enable signal inside the always block to avoid unnecessary toggling (though the benefit may be minor here).
+- Keep logic minimal to reduce area and switching power.
+  
+This approach maintains functional correctness but could improve timing slightly by reducing combinational fanout and making all logic synchronous.
+
+The resulting code explicitly tracks previous two data_in samples and uses a synchronous reset. This can lead to slightly better timing (less hold check complexity) and better power due to stable reset and synchronous logic.
+
+Overall, the design remains minimalistic with clear state, improving PPA with small structural improvements.

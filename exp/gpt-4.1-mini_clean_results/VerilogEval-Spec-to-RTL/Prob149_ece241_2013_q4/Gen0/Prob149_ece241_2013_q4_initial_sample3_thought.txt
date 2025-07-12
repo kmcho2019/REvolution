@@ -1,0 +1,75 @@
+We need a state machine or at least state tracking to keep track of the previous sensor level to know whether the water level increased or decreased since the last sensor change. On each clock cycle, we examine the current sensor inputs s[2:0]. Based on which sensors are asserted (1 means sensor covered by water?), we determine the nominal flow outputs fr0, fr1, fr2 per the table:
+
+- Above s[2] (s == 3'b111): no nominal flow valves open (fr0=fr1=fr2=0), supplemental valve dfr=0
+- Between s[2] and s[1] (s == 3'b110): fr0=1, fr1=fr2=0, dfr= depends on previous level
+- Between s[1] and s[0] (s == 3'b100 or possibly s == 3'b101? The problem states s[0] asserted means between s[1] and s[0]): fr0=1, fr1=1, fr2=0
+- Below s[0] (s == 3'b000): fr0=fr1=fr2=1
+
+From the table, the sensor encoding for the levels is:
+
+- Above s2: s == 3'b111 (all sensors asserted)
+- Between s2 and s1: s == 3'b110 (s[2]=1,s[1]=1,s[0]=0)
+- Between s1 and s0: s == 3'b100 (s[2]=1,s[1]=0,s[0]=0) or s==3'b100? The problem states Between s[1] and s[0]: s[0] asserted only. That means s == 3'b001 (s[0]=1, others 0) or s == 3'b010? We need to clarify the exact values for between s1 and s0.
+
+The problem states: 
+
+- Above s[2]: sensors s0, s1, s2 asserted => s=3'b111
+- Between s[2] and s[1]: s0, s1 asserted => s=3'b011?
+- Between s[1] and s[0]: s0 asserted only => s=3'b001
+- Below s[0]: none asserted => s=3'b000
+
+Wait, the problem statement says:
+
+"Water Level           | Sensors Asserted 
+Above s[2]            | s[0], s[1], s[2]
+Between s[2] and s[1] | s[0], s[1]
+Between s[1] and s[0] | s[0]
+Below s[0]            | None"
+
+So sensors assert from lowest upwards:
+
+- Lowest sensor s0 at bottom
+- s[0] asserted means water level above that sensor
+- So s[0] = 1 means water >= sensor0
+- s[1] = 1 means water >= sensor1
+- s[2] = 1 means water >= sensor2
+
+Therefore:
+
+- Above s2: s=3'b111
+- Between s2 and s1: s=3'b011 (s[2]=0, s[1]=1, s[0]=1)
+- Between s1 and s0: s=3'b001 (s[2]=0, s[1]=0, s[0]=1)
+- Below s0: s=3'b000
+
+Hence, to map the s input to the nominal flows:
+
+- s==3'b111: fr0=fr1=fr2=0
+- s==3'b011: fr0=1, fr1=fr2=0
+- s==3'b001: fr0=1, fr1=1, fr2=0
+- s==3'b000: fr0=1, fr1=1, fr2=1
+
+For other s values (like 3'b010, 3'b100, 3'b101, etc), the problem does not specify, so treat them as invalid or map them conservatively.
+
+We also have to detect changes in sensor level (i.e., if the sensor pattern changed compared to previous), to check if the previous water level was lower than the current. If so, open supplemental valve dfr.
+
+So:
+
+- Keep track of previous s (prev_s)
+- On each clock, if s changed from prev_s, compare levels:
+
+Define water level by a number associated with the sensor pattern:
+
+Level mapping (higher number = higher water):
+
+- Above s2 (3'b111) = 3
+- Between s2 and s1 (3'b011) = 2
+- Between s1 and s0 (3'b001) = 1
+- Below s0 (3'b000) = 0
+
+For other patterns, treat as closest lower level or 0.
+
+If current_level > previous_level, then dfr=1; else dfr=0
+
+On reset: outputs should correspond to low water level (below s0), so fr0=fr1=fr2=dfr=1 and previous level=0 (lowest).
+
+Implement a synchronous reset and output accordingly.

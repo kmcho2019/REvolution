@@ -1,0 +1,9 @@
+The existing solution detects positive edges in an 8-bit input vector. To optimize it for better Power, Performance, and Area (PPA) metrics, several strategies can be employed. Firstly, for performance improvement, the existing combinational logic for edge detection seems optimal as it directly calculates the edge detection signal using bitwise AND and NOT operations. However, reducing the number of registers and optimizing the combinational logic could potentially reduce area and power consumption.
+
+Given that the module primarily involves detecting transitions in the input signals, one area for improvement is in the sequential logic. Currently, the `prev_in` and `pedge_reg` are updated every clock cycle. This might lead to unnecessary switching and power consumption when the input doesn't change. 
+
+A possible optimization strategy involves reducing unnecessary switching in the registers. Since the `edge_detect` signal is directly derived from `in` and `prev_in`, we can maintain the same functionality while minimizing the number of registers and optimizing the logic for area and power.
+
+Another potential area for improvement is in clock management. Although not directly applicable here without additional context (like a clock enable signal), generally, clock gating can help reduce dynamic power consumption.
+
+Lastly, ensuring that the synthesis tool is optimizing for the correct balance of PPA metrics is crucial. Some tools allow specifying priorities for area, speed, or power, which can influence the final optimized design.

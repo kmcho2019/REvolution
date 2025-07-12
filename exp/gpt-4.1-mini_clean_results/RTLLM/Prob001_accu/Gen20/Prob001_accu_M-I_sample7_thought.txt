@@ -1,0 +1,15 @@
+To optimize the original design for better performance, power, and area (PPA), the main focus is on reducing critical path delay, lowering switching activity, and minimizing resource usage without changing functionality.
+
+Improvement strategy:
+1. **Performance**: Split the addition operation into a pipeline stage by accumulating inputs into a small FIFO-like buffer (4 registers) or temporary registers and then summing them in one clock cycle when four inputs are collected. However, since data come serially and accumulation must be done on the fly, this would add latency and complexity. Instead, use a 3-stage accumulator with carry-save addition approach is complex for this size and probably overkill. Given the small data width and accumulation count (4), the original accumulator is efficient enough.
+
+2. **Power**: Instead of resetting valid_out to zero every cycle, assert it only when needed by gating its register update with an enable signal. This reduces toggling in the valid_out register.
+
+3. **Area**: Simplify by removing the output register for data_out to reduce one clock register stage by directly driving it combinationally from accumulator and data_in on the last input cycle. However, data_out width and timing need to be ensured. Alternatively, retain registers for synchronous output.
+
+4. **Additional minor optimizations**:
+   - Use an enable signal for the accumulator and count updates to avoid switching when valid_in is low.
+   - Use a 3-bit count (from 0 to 3) for clarity.
+   - Use non-blocking assignments properly.
+
+Final choice: Minimal change from original that can lower power by gating valid_out update and accumulator/count updates on valid_in, and clarify counter usage. This reduces toggling and may slightly improve timing and power while keeping the clean, simple design.

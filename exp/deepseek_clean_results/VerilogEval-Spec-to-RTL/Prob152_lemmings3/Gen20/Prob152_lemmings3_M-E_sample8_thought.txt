@@ -1,0 +1,15 @@
+My novel approach uses a hierarchical state machine with three main states (WALK, FALL, DIG) and encodes direction separately. Key innovations:
+
+1. Explicit DIG state for cleaner state transitions
+2. Direction stored in a separate register for independent control
+3. Priority logic handled through nested if-else structure
+4. Outputs derived directly from current state and direction
+5. Asynchronous reset initializes both state and direction
+
+The state transitions follow:
+- FALL has highest priority (ground=0)
+- DIG has next priority (dig=1 when grounded)
+- Bumps change direction only when in WALK state
+- Direction persists through FALL and DIG states
+
+This provides clearer separation of concerns and more maintainable state transitions.

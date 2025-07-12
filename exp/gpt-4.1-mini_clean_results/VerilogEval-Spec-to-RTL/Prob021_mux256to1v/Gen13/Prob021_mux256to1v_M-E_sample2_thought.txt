@@ -1,0 +1,9 @@
+Instead of using a multi-level tree of 4-to-1 muxes, I will implement the 256-to-1 4-bit multiplexer by directly computing the selected index offset into the input vector and extracting the corresponding 4-bit slice using Verilog's indexed part-select.
+
+This approach leverages the fact that each 4-bit input is aligned and stored sequentially in 'in'. Since 'sel' ranges from 0 to 255, I can multiply sel by 4 (left-shift by 2) to find the bit offset of the selected 4-bit slice in 'in'. Using the part-select "in[offset +: 4]", the selection can be done in a single combinational statement without hierarchical multiplexing.
+
+This method reduces the mux tree levels to one and relies on the synthesizer to optimize the large indexed part-select. It potentially improves timing by removing multiple mux stages and reduces area and power by avoiding explicit intermediate mux instances.
+
+This flat direct-indexing approach is concise, simple, and synthesizes efficiently for large muxes when the selector input width matches the number of inputs.
+
+I will implement this in TopModule only, with no submodules needed.

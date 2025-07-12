@@ -1,0 +1,22 @@
+Instead of using two separate counters and toggle registers for positive and negative edges and OR-ing their outputs, a cleaner method for odd frequency division is to generate a clock with a nearly 50% duty cycle by controlling the toggle timing precisely.
+
+The new approach uses a single counter clocked on the input rising edge, counting from 0 to NUM_DIV -1, and toggling a single output clk_div at two points:
+
+- At count == 0: toggle clk_div
+- At count == HALF_DIV: toggle clk_div again
+
+Since NUM_DIV is odd, HALF_DIV = NUM_DIV // 2 is an integer division.
+
+This yields a divided clock with period NUM_DIV input clocks and a 50% duty cycle approximation because clk_div is toggled twice per full cycle, spaced by HALF_DIV counts.
+
+Using a single always block with synchronous reset on the rising edge of clk:
+
+- When reset, set counter and clk_div to zero.
+- On each clk rising edge, increment counter modulo NUM_DIV.
+- Toggle clk_div at counts 0 and HALF_DIV.
+
+This design is simpler, avoids glitches from combining two clocks, and ensures correct timing with a single clock domain.
+
+Also add compile-time checks to ensure NUM_DIV is odd and >=3.
+
+This method provides a clean odd frequency division and avoids issues with double counters and combining outputs.

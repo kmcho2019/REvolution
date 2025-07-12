@@ -1,0 +1,14 @@
+To implement the TopModule, we can use a Moore state machine with the following states: 
+- idle_left (initial state, walking left)
+- idle_right (walking right)
+- falling (falling, not walking)
+- digging_left (digging, initially walking left)
+- digging_right (digging, initially walking right)
+
+We will use a reset to initialize the machine to the idle_left state. The inputs ground, bump_left, bump_right, and dig will determine the state transitions.
+
+In each state, we will set the outputs walk_left, walk_right, aaah, and digging according to the current state.
+
+The transition logic will be based on the current state and the input values. For example, if the machine is in the idle_left state and bump_right is 1, it will transition to the idle_right state.
+
+We will also need to handle the case where ground becomes 0, which will cause the machine to transition to the falling state, regardless of the current state.

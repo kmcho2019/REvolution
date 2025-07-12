@@ -1,0 +1,23 @@
+module counter_12 (
+    input  logic        rst_n,  // Reset signal (active low)
+    input  logic        clk,    // Clock signal
+    input  logic        valid_count,  // Signal to enable counting
+    output logic [3:0]  out     // 4-bit output representing the current count value
+);
+
+// Sequential logic with gated clock and natural wrap-around
+always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        out <= 4'b0000;
+    end else if (valid_count) begin
+        if (out == 4'd11) begin
+            out <= 4'b0000;  // Wrap-around
+        end else begin
+            out <= out + 1;
+        end
+    end else begin
+        // No change if valid_count is 0
+    end
+end
+
+endmodule

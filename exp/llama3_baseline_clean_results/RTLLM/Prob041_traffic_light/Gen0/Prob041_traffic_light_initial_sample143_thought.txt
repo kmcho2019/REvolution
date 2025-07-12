@@ -1,0 +1,9 @@
+The problem can be solved by implementing a finite state machine (FSM) in Verilog. The FSM will have four states: idle, s1_red, s2_yellow, and s3_green. The state transition logic will be handled in the first always block. The counting logic of the internal counter will be handled in the second always block. The output signals will be handled in the third always block.
+
+We will use an 8-bit register (cnt) to implement the internal counter, a 2-bit register (state) to implement the current state of the FSM, and three 1-bit registers (p_red, p_yellow, p_green) to implement the next values for the output signals.
+
+The state transition logic will use a case statement to handle different states. The counting logic will decrement the counter by 1 on every positive edge of the clock or negative edge of the reset signal. The counter values will be adjusted based on various conditions.
+
+The assign statement will assign the value of the internal counter (cnt) to the output clock. The output signals will be assigned the previous values (p_red, p_yellow, p_green) on the positive edge of the clock or negative edge of the reset signal.
+
+The pedestrian button press will be handled by checking the pass_request signal. If the pass_request signal is active and the green signal is active, the counter will be set to 10.

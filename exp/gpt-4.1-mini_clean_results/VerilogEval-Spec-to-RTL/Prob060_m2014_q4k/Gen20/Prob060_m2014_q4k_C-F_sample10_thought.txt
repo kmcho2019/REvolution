@@ -1,0 +1,10 @@
+Fuse the modular explicitness and clarity of Example 1's per-flip-flop instantiation with the compactness, parameterization, and efficient synchronous reset logic of Example 2. 
+
+- Implement a parameterized ShiftReg module with WIDTH=4, internally using a vector register with synchronous active-low reset for optimal synthesis and minimal area.
+- Internally generate explicit wires for each stage, but connect these wires directly to individual registers representing the flip-flop outputs rather than re-assigning from the vector register to avoid redundant toggling and routing.
+- Expose these internal stage signals as outputs from the ShiftReg module for debug and clarity, but keep them unconnected in TopModule, preserving the original interface.
+- Use a generate block to instantiate individual DFF modules for each bit, each with synchronous reset, but implement these DFFs as simple reg declarations within ShiftReg, combining vectorized shift behavior with stage granularity.
+- This hybrid approach maintains easy debugging by having named signals per stage, ensures tool-friendly vector register inference for area and power efficiency, and keeps the modularity of explicit flip-flops for clear timing and reset semantics.
+- Finally, in TopModule, instantiate ShiftReg with WIDTH=4, connecting only the final output to the module's output port to keep the interface as requested.
+
+This solution leverages strong points of both examples: vectorized shifting with synchronous reset and modular per-stage signals for debug, while avoiding unnecessary intermediate wires or duplicated registers.

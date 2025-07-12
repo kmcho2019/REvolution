@@ -1,0 +1,26 @@
+Simplified Approach: Direct Edge Detection
+
+1. Core Concept:
+   - Instead of tracking 3 cycles, detect the falling edge (1->0 transition) that occurs exactly one cycle after a rising edge (0->1 transition)
+   - This reduces the storage requirement from 3 bits to just 1 bit (previous value)
+
+2. Advantages:
+   - Uses only 1 flip-flop instead of 3
+   - Simpler comparison logic (single XOR gate)
+   - Same functionality with reduced hardware
+   - Lower power consumption due to reduced switching
+
+3. Implementation Details:
+   - Store only the previous value of data_in
+   - Detect when current input is 0 and previous was 1
+   - Additional check that the value before previous was 0 (implied by the rising edge)
+
+4. Edge Cases Handling:
+   - Reset initializes all storage elements
+   - No false positives during initial cycles
+   - Output pulse lasts exactly one cycle
+
+5. Performance:
+   - Same detection latency (3 cycles total)
+   - Smaller critical path (just one register delay)
+   - Fully synchronous design

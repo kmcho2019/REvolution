@@ -1,0 +1,13 @@
+Instead of simulating a classic shift-subtract division with explicit remainder stages stored in an array, use a sequential bit-by-bit combinational approach without arrays, but emulate the process with two intermediate combinational registers representing the running remainder and the quotient bits being formed.
+
+The approach:
+- Use two always blocks as requested.
+- The first always block simply latches inputs to internal regs for stability and clarity.
+- The second always block performs a bit-serial division in combinational logic via a single loop over 16 iterations.
+- At each iteration, shift the remainder left by 1, bring in the next dividend bit from the latched input, then compare with the divisor.
+- If remainder >= divisor, subtract divisor from remainder and set the corresponding quotient bit to 1, else quotient bit is 0.
+- Instead of arrays, keep the current remainder in a single register that updates every iteration, and the quotient in another register.
+- The remainder width is 9 bits (1 bit wider than divisor) to hold possible borrow.
+- Output quotient as 16-bit and remainder zero-extended to 16-bit.
+- This is a straightforward and resource-friendly algorithm in combinational logic but uses no intermediate array storage, which synthesizes more cleanly.
+- This design maintains the 2 combinational always block structure for input latching and division.

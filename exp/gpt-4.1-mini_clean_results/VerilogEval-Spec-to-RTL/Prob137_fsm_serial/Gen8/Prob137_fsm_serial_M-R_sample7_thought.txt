@@ -1,0 +1,11 @@
+Refactor by separating the FSM state register and next state logic more distinctly, using an asynchronous-combinational next state decoder and a synchronous state register.
+
+Use a case statement inside a combinational always block for next_state generation, but compute done as a separate combinational signal derived from state and input rather than inside the clocked block.
+
+Implement the shift register and bit counter as separate always blocks clocked by clk, enabling more modular code and clearer data flow.
+
+Use right shift to shift in new bits into LSB, which matches the LSB-first serial data convention more naturally.
+
+Keep synchronous reset but update all registers with nonblocking assignments in separate sequential blocks.
+
+This structure improves readability, separates combinational and sequential logic, and makes done signal logic purely combinational for easier verification and potential timing optimization.

@@ -1,0 +1,18 @@
+To fix the issues identified in the feedback:
+1. Reset functionality:
+   - Ensure reset is properly synchronous and active-high as specified
+   - Initialize all registers to zero on reset
+   - Verify reset timing by making it strictly synchronous to clock edge
+
+2. Enable signals:
+   - Re-examine enable logic to ensure proper synchronization
+   - ena[0] should be 1'b1 (always enabled for ones digit)
+   - ena[1] should be high only when ones digit rolls over (9->0)
+   - ena[2] should be high only when both ones and tens digits roll over
+   - Generate enable signals combinatorially based on current counter values
+   - Ensure enable signals are valid in the same cycle as rollovers occur
+
+3. Timing considerations:
+   - All state updates happen synchronously on clock edge
+   - Enable signals are derived from current counter values
+   - No race conditions between counter updates and enable generation

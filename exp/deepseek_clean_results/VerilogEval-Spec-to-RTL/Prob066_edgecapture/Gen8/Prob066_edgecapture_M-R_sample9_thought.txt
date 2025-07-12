@@ -1,0 +1,13 @@
+Refactored approach using single-stage history with combinational edge detection:
+
+1. **Simplified History**: Instead of maintaining two stages, we only need the immediate previous value (prev_in) to detect transitions between consecutive cycles.
+
+2. **Combinational Edge Detection**: The falling edge detection (prev_in & ~in) is calculated combinationally before being registered. This makes the timing relationship clearer.
+
+3. **Registered Capture**: The detected edges are OR'ed with the current capture value and stored in a register, maintaining the sticky behavior until reset.
+
+Key improvements:
+- Eliminates unnecessary pipeline stage (prev2_in)
+- Clearer timing: compares current input with immediately previous value
+- Separates combinational logic from sequential for better readability
+- Maintains identical functionality with simpler structure

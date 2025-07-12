@@ -1,0 +1,14 @@
+The waveform shows two state outputs p and q that start as unknown, then initialize to 0 at the first rising clock edge, and then p can be set to input a only when q is 0; q holds the previous p value.
+
+To correctly model the behavior and timing:
+
+- Use two internal registers p_reg and q_reg initialized to 'x' to match initial unknown states.
+- At every posedge clock:
+  - q_reg <= p_reg (q is one cycle delayed from p)
+  - p_reg <= a if q_reg == 0, else hold p_reg.
+- Outputs p and q continuously reflect p_reg and q_reg.
+- Remove unnecessary self-assignments by coding a default hold state.
+- This matches the timing seen in the waveform, where q follows p by one clock cycle, and p updates based on input a only when q is 0.
+- This yields correct initialization, timing, and state updates matching the waveform.
+
+This fixes the original code by properly sequencing q_reg update before checking q_reg for the p_reg update, avoiding timing issues.

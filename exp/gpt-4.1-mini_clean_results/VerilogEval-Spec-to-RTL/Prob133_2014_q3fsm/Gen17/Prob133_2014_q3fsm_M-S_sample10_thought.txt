@@ -1,0 +1,12 @@
+The FSM has only two states, and the only complexity is counting the number of w=1 occurrences over three cycles in state B.
+
+To simplify the design:
+
+- Use a single 2-bit counter for cycles and a 2-bit register for counting w=1 events, both updated synchronously.
+- Combine cycle counting and w counting logic directly in the sequential block to avoid separate next-state signals or complex combinational logic.
+- Generate output z only after completing three cycles in state B, asserting z=1 only if exactly two w=1 inputs occurred.
+- Keep state encoding as a single bit.
+- On reset or in state A, reset all counters and output.
+- Use non-blocking assignments consistently to ensure simple, clear, and minimal sequential logic.
+
+This approach reduces complexity by avoiding extra signals and combinational logic, maintaining functionality and easy understanding.

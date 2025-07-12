@@ -1,0 +1,9 @@
+Implement the serial-to-parallel converter using a single always block triggered on the rising clock and synchronous reset.
+
+- Use a shift register to accumulate the serial bits, shifting left on each valid input to place the new bit at LSB, then after 8 bits the MSB will be the first input bit, LSB the last.
+- Keep a 4-bit counter to count how many bits have been received.
+- When the counter reaches 8 (i.e., after receiving the 8th bit), assign the shift register directly to dout_parallel and set dout_valid high for one clock cycle.
+- Reset counter and dout_valid once done, to prepare for the next byte.
+- This approach shifts data LSB-first during reception but will reverse the bits; so to satisfy the requirement that bits are stored MSB-first, we shift left and insert the serial input at LSB each time. After 8 bits, the register holds data with first received bit at MSB.
+- By assigning the register to dout_parallel at the moment counter reaches 8, we fulfill the requirement without extra manipulation.
+- This architecture simplifies the design with one always block, reduces control signals, and avoids multiple registers holding similar data, improving efficiency and clarity.

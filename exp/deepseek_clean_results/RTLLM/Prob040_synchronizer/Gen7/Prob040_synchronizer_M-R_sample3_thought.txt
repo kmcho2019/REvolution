@@ -1,0 +1,12 @@
+Refactoring Strategy:
+1. Replace sequential logic with combinational where possible for clarity
+2. Use continuous assignments for simpler register updates
+3. Maintain same clock domain crossing strategy (two-flop synchronizer)
+4. Keep same reset behavior but express differently
+5. Use non-blocking assignments only where truly needed (clock domain crossings)
+
+Key Changes:
+- Use 'assign' for data_reg and en_data_reg updates (since they're simple pass-throughs when not reset)
+- Express the two-flop synchronizer as a shift register
+- Make output register update more explicit with a mux
+- Keep same functionality but with cleaner separation of combinational and sequential logic

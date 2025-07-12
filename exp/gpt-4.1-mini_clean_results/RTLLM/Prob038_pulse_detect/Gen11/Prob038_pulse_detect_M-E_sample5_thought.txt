@@ -1,0 +1,9 @@
+Instead of a multi-state FSM, this design uses a small shift register to store the last three sampled values of data_in. At each clock cycle, the new data_in bit is shifted in, forming a 3-bit pattern representing the current and last two input bits.
+
+A pulse is detected when the 3-bit pattern matches the sequence "0 1 0" (from oldest to newest), which corresponds to a binary pattern of 3'b010. When this pattern is found at the current clock edge, data_out is asserted for one cycle, indicating the pulse end.
+
+This approach simplifies the pulse detection logic by using a sliding window pattern matching on consecutive input values rather than an explicit FSM. It also ensures that only a single clock cycle pulse is asserted at the end of the pattern, as required.
+
+The reset initializes the shift register and data_out to zero.
+
+This architecture is straightforward, relies on pattern matching with a shift register, and is easily extensible or modifiable for other pulse patterns.

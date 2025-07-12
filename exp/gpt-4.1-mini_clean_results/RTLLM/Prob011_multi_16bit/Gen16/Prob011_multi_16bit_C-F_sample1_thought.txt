@@ -1,0 +1,23 @@
+The best approach fuses Example 1's clean and precise control of counting, shifting, and accumulating with Example 2's FSM clarity and conditional addition to minimize toggling and improve power efficiency.
+
+Fusion strategy:
+
+1. Use a simple FSM with IDLE and BUSY states as in Example 2 for clean operation control and clear separation of idle and active phases.
+
+2. Maintain a shift count register (5-bit) for tracking the 16 iterations, updated only when active, like Example 1.
+
+3. Load multiplicand and multiplier only once at start, as both examples do.
+
+4. Perform shift and accumulate only when needed. Adopt Example 1's scheme of shifting multiplicand (areg) and multiplier extended (breg_ext) registers to keep track of bit positions without recomputing shifts in adder input.
+
+5. Use conditional addition based on the LSB of multiplicand register (areg[0]), as in Example 1, to only add when the current multiplier bit is 1, avoiding unnecessary additions and toggling, reducing power.
+
+6. Update done flag at count 16, cleared on reset or start deassert, as Example 1 does, for clean done signaling.
+
+7. Keep the product register (yout_r) as 32-bit accumulator.
+
+8. Reset all registers asynchronously on rst_n low.
+
+This fusion keeps the clarity and FSM control from Example 2, the efficient shift-and-accumulate from Example 1, and avoids unnecessary toggling by conditional additions and shift enable gating. This should provide good PPA: good timing via straightforward sequential logic, low power by gating updates and additions, and moderate area with minimal overhead.
+
+The design adheres exactly to the problem statement's requirements on input/output and behavior.

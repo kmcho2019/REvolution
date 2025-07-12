@@ -1,0 +1,10 @@
+To simplify the FSM implementation:
+1. Reduce to just 2 states (A and B) since that's all we need
+2. Instead of separate cycle and w counters, use a single 2-bit cycle counter
+3. Track w=1 occurrences by accumulating them in a register
+4. At the end of each 3-cycle window:
+   - Check if we have exactly 2 w=1's
+   - Output z accordingly
+   - Reset counters for next window
+5. Maintain synchronous reset functionality
+6. Simplify comparison logic by checking w_count directly after 3 cycles

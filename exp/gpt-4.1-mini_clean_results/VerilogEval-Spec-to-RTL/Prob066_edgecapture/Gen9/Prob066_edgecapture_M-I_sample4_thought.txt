@@ -1,0 +1,11 @@
+The original implementation is logically correct and clean, capturing falling edges by comparing the current input to the previous cycle's input and latching them in the output until reset. However, subtle issues may arise from not explicitly registering the inputs separately, or from any glitches or asynchronous transitions on `in` right at clock edges, which could cause metastability or misdetection.
+
+To improve robustness and thus correctness, I will introduce an input synchronization stage by registering the input `in` twice before detecting edges. This synchronizer stage ensures metastability is minimized and that transitions are sampled cleanly relative to the clock domain.
+
+This two-stage register approach is a common design pattern in synchronous designs when handling potentially asynchronous or non-registered inputs. The falling edge detection will then compare the two synchronized versions (`sync_in` and `prev_sync_in`), eliminating issues due to asynchronous input changes or glitches.
+
+This improvement sacrifices a small amount of latency (two clock cycles for synchronization) but increases the functional reliability without significantly impacting performance or area since only a few extra registers are added. Power should remain similar, and area overhead is minimal compared to improving correctness.
+
+The output still latches detected falling edges until reset synchronously. The reset remains synchronous and clears all registers.
+
+In summary, the key improvement is input synchronization via double-registering to prevent metastability and improve correctness when the input may be asynchronous or noisy, thereby fixing the functional mismatches observed in simulation while preserving the original design’s clarity and simplicity.

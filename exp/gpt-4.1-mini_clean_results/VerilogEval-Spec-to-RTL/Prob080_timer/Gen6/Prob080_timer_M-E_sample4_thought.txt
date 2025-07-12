@@ -1,0 +1,7 @@
+Use a single 10-bit shift register as the timer state, encoded in a unary fashion: the timer counts down by shifting right each clock cycle. When load=1, the shift register is loaded with a one-hot pattern where the bit corresponding to the input data position is set, representing the countdown duration. For example, if data=3, the shift register is loaded with a '1' at bit position 3 (zero-based from LSB), and zeros elsewhere. At each clock when load=0, the register shifts right by 1, effectively counting down. The timer expires (tc=1) when the shift register becomes zero (all bits cleared). This approach uses a 10-bit DFF register but leverages shifting rather than arithmetic decrement, aligning with the single D flip-flop concept as a shift-register. It counts down the number of clock cycles by shifting a "1" from higher bits to lower bits until it disappears.
+
+This is a novel architectural approach compared to the typical subtractor-based counter. It still meets all requirements:
+- load sets timer duration
+- timer counts down each cycle by shifting right
+- tc asserted when timer expired (shift register zero)
+- timer holds zero after expire until loaded again

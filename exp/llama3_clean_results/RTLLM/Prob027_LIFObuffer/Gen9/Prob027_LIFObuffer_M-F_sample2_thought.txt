@@ -1,0 +1,9 @@
+To correct the LIFO buffer implementation, we need to address the issues identified in the feedback. Firstly, the stack pointer (`SP`) should be initialized to a value that indicates an empty buffer, considering its 2-bit range. Since the buffer can hold up to 4 entries, a valid range for `SP` is 0 to 3, where 3 indicates an empty buffer and 0 indicates a full buffer. 
+
+We should update the condition checks for the buffer being full or empty to correctly reflect the valid range of `SP`. For a buffer with 4 entries, `SP` equals 3 when the buffer is empty (as we're considering the stack pointer decrements on push and increments on pop), and `SP` equals 0 when the buffer is full.
+
+Additionally, we should review the logic for updating the `FULL` and `EMPTY` flags to ensure it aligns with the expected behavior of a LIFO buffer. The `FULL` flag should be set when the buffer is full (i.e., `SP` equals 0), and the `EMPTY` flag should be set when the buffer is empty (i.e., `SP` equals 3).
+
+Lastly, it's essential to ensure that the data output (`dataOut`) is correctly updated during a pop operation and that the corresponding stack memory location is cleared.
+
+By addressing these issues, we can create a functional LIFO buffer that correctly implements the required push and pop operations.

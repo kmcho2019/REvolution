@@ -1,0 +1,9 @@
+Refactor the design to avoid explicit reset logic by relying on Verilog's `initial` block to set the flip-flops' initial state to zero, since the problem states that flip-flops are initially reset before operation but does not require explicit reset signals or counters.
+
+Implement the D flip-flops in a single always block triggered on the positive clock edge without any reset logic.
+
+Compute the combinational logic for each D input inside the always block before assigning, so inputs are clearly grouped.
+
+Finally, compute the output `z` as the NOR of the flip-flops' outputs using a continuous assignment.
+
+This approach simplifies the design, aligns with the problem's initial-reset assumption, and should avoid mismatches caused by a multi-cycle reset sequence.

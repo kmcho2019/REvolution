@@ -1,0 +1,9 @@
+To solve this problem, we will design a finite state machine (FSM) with the following states:
+- IDLE: Initial state where we discard bytes until we find one with in[3]=1.
+- BYTE1: State where we have found the first byte of a message and we are waiting for the next two bytes.
+- BYTE2: State where we have received the first two bytes of a message and we are waiting for the last byte.
+- DONE: State where we have received all three bytes of a message and we signal done.
+
+We will use a counter to keep track of the bytes received. The FSM will transition from one state to another based on the current state and the input byte. We will also use a register to store the current state.
+
+When reset is active high, the FSM will reset to the IDLE state.

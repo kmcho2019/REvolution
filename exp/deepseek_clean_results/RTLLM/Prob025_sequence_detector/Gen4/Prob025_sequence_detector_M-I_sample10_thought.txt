@@ -1,0 +1,20 @@
+To improve the PPA metrics while maintaining correct functionality, I'll implement these optimizations:
+
+1. **Timing Improvement**:
+   - Register the output to break the critical path from state logic to output
+   - Use one-hot encoding for states to simplify next-state logic and reduce propagation delay
+
+2. **Power Reduction**:
+   - Add clock gating for state transitions when input doesn't change
+   - Register the output to prevent glitches from propagating
+
+3. **Area Optimization**:
+   - Keep one-hot encoding which is efficient for small FSMs (5 states)
+   - Remove redundant default case since all states are covered
+
+The improved design will:
+- Maintain correct sequence detection for "1001"
+- Use one-hot encoding (5 bits for 5 states)
+- Have registered output for better timing
+- Include clock gating for power savings
+- Keep the same interface for compatibility

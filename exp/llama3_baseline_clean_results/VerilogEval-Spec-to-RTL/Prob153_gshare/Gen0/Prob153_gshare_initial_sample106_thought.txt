@@ -1,0 +1,14 @@
+To implement the gshare branch predictor, we need to follow these steps:
+1. Create a 7-bit global branch history register.
+2. Create a 128-entry table of two-bit saturating counters.
+3. Hash the 7-bit pc and 7-bit global history into a 7-bit index using xor.
+4. Use the index to access the pattern history table (PHT) and make predictions.
+5. Update the PHT when training is requested.
+6. Update the global branch history register after making a prediction.
+7. Handle the case when training and prediction occur in the same cycle.
+
+We will use a register to store the global branch history and another register to store the PHT.
+The global branch history will be updated at the next positive clock edge after a prediction is made.
+The PHT will be updated at the next positive clock edge after a training request is received.
+If training and prediction occur in the same cycle, training takes precedence.
+If training and prediction of the same PHT entry happen at the same time, the prediction sees the PHT state before training.

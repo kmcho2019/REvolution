@@ -1,0 +1,19 @@
+To improve the existing solution, we can focus on optimizing the state machine, reducing unnecessary switching activity, and simplifying the logic to minimize area usage. 
+
+Firstly, we can simplify the state machine by merging the IDLE and RECEIVE states, since the only difference between them is the presence of the start bit detection flag. This can be achieved by using a single state and a separate flag to track the start bit detection.
+
+Secondly, we can reduce unnecessary switching activity in the shift_register by only shifting in new bits when necessary. This can be done by using a load signal to control the shifting of the register.
+
+Thirdly, we can simplify the logic for resetting the done signal by removing the separate always block and integrating it into the main always block. This can help reduce unnecessary switching activity and simplify the logic.
+
+Lastly, we can optimize the design for better PPA metrics by reducing the size of the shift register, implementing a more efficient state machine encoding, and minimizing unnecessary updates to the registers.
+
+We will use a 3-bit state register to implement the state machine, with the following states: IDLE, RECEIVE, and WAIT_STOP. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the WAIT_STOP state will wait for a stop bit when the previous stop bit was incorrect.
+
+The shift_register will be used to collect the start bit, 8 data bits, and the stop bit will be checked separately. This approach simplifies the logic and reduces the number of states required.
+
+The counter will be used to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+To optimize the design for better PPA, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.

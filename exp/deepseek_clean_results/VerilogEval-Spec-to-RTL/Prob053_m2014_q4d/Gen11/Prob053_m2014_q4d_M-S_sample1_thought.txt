@@ -1,0 +1,9 @@
+Here's a simplified version that maintains the exact same functionality:
+
+1. Remove unnecessary intermediate signals (xor_out and d_ff) since we can directly use the output reg
+2. Combine the XOR operation and flip-flop into a single always block
+3. Make 'out' a reg type since it's assigned in procedural block
+4. Directly compute the XOR between 'in' and current 'out' value at each clock edge
+5. Still maintains positive edge-triggered behavior without reset
+6. The circuit still implements: out(t) = in(t-1) XOR out(t-1) at each clock edge
+7. Reduced from 5 lines of logic to 3 lines while keeping identical behavior

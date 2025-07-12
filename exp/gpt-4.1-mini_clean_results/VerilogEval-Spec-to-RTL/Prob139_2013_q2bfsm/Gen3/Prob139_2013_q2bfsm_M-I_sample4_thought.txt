@@ -1,0 +1,12 @@
+To fix the FSM so that outputs exactly match the specification, I will:
+
+- Remove the complicated reset_released flag and handle synchronous active-low reset cleanly by forcing the FSM into state A while resetn=0.
+- On the first clock cycle after resetn=1, transition from state A to state F_ONE where f=1 for exactly one cycle.
+- Then move to WAIT_X1 to detect the x=1,0,1 pattern.
+- Refine the pattern detection states so if the pattern breaks, the FSM restarts pattern detection from the beginning (WAIT_X1), ensuring robust and glitch-free pattern matching.
+- Ensure outputs f and g are registered synchronously with the state.
+- Use a single clocked always block for both state transitions and outputs for simplicity and reliability.
+- Use a combinational block for next state logic only.
+- This approach clarifies timing, eliminates glitches, and ensures outputs match the required timing exactly.
+
+This fully synchronous FSM with clean reset handling and robust pattern recognition addresses the functional mismatches observed.

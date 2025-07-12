@@ -1,0 +1,11 @@
+To fix the FSM based on the feedback, I will restrict the shift_reg update (pattern detection shift register) to only the IDLE and SHIFT states. This ensures that pattern detection occurs only when appropriate and prevents overwriting the register during COUNTING and DONE states.
+
+The shift_ena signal will be asserted exactly during the 4 clock cycles of the SHIFT state, controlled by a shift_count counter that counts from 0 to 3 inclusive.
+
+Outputs (shift_ena, counting, done) will be registered based on the current state inside the clocked always block, ensuring synchronous, glitch-free output transitions aligned exactly with state changes.
+
+The FSM transitions are unchanged but now clearly separate pattern detection and shifting phases from counting and done phases, preventing unexpected shifts or state behavior.
+
+Reset remains synchronous and active-high, initializing state, shift_reg, shift_count, and outputs appropriately.
+
+This approach meets the specification precisely and fixes timing/output mismatches by controlling when shift_reg is updated and by syncing outputs to state transitions.

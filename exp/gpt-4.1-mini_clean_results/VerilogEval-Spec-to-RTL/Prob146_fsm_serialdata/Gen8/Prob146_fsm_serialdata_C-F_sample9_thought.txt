@@ -1,0 +1,17 @@
+Fuse both designs to produce a robust, efficient, and clear FSM serial receiver:
+
+- Use a 2-bit binary FSM with states: IDLE, RECEIVE, STOP, WAIT_STOP for minimal area and clarity.
+- Separate combinational next-state logic from sequential state updates for timing and clarity.
+- Implement synchronous reset for all registers.
+- Use explicit clock-enable signals to gate updates of bit_count and data_shift only during RECEIVE state.
+- Reset bit_count and data_shift when start bit detected in IDLE for clarity and power saving.
+- Shift LSB first on each RECEIVE cycle by concatenating the serial input with the current shift register (in, data_shift[7:1]).
+- Assert done as a one-cycle pulse ONLY in STOP state when a valid stop bit (1) is detected.
+- Output out_byte latched only on valid stop bit detection in STOP state.
+- When an invalid stop bit is detected, transition to WAIT_STOP to wait for line idle (in==1) before restarting reception, ensuring robust error recovery.
+- Minimize toggling by updating done to 0 every clock except when asserted.
+- Use synchronous reset and non-blocking assignments for all sequential logic.
+- Maintain clear signal naming and modular structure for readability and maintainability.
+- This fusion optimizes for area (minimal state bits and counters), power (clock enables for register updates, minimal toggling), and timing (combinational next-state logic separated from sequential logic).
+
+This combination takes advantage of the best practices from both examples and balances PPA trade-offs effectively.

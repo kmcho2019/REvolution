@@ -1,0 +1,10 @@
+To optimize the existing design for better power and maintain the zero timing slacks and area efficiency, I will make a slight improvement by introducing synchronous reset with asynchronous assertion only for the reset signal. This approach is often used to balance power and timing, as asynchronous assertion ensures fast reset response, while synchronous deassertion avoids metastability and reduces power by not toggling the flip-flops asynchronously when releasing reset. This reduces switching activity related to the asynchronous reset release, helping power slightly while keeping timing stable.
+
+Additionally, I will keep the vectorized, parameterized approach for clarity and area efficiency.
+
+This technique:
+- Keeps asynchronous assertion to meet the spec of asynchronous active-high reset.
+- Uses synchronous reset release to improve timing and power by preventing glitches on reset release.
+- Maintains modularity and clean code.
+
+Overall, this offers a subtle power improvement without sacrificing timing or area.

@@ -1,0 +1,12 @@
+Improve the original design by leveraging Verilog's native signed arithmetic to simplify the logic, removing explicit absolute value conversions and manual sign handling. This reduces combinational complexity, improves synthesis friendliness, and potentially reduces area and power by using built-in signed adders and comparators.
+
+The approach is:
+- Declare inputs and outputs as signed to naturally represent two's complement fixed-point numbers.
+- Perform addition or subtraction directly with signed operations.
+- Determine sign and magnitude logic by comparing signed values directly, avoiding manual absolute value computations.
+- Use parameterized signed vectors to ensure precision and bit width consistency.
+- Maintain the `res` register internally to store the result.
+- Perform all operations combinationally using non-blocking assignments for synthesis safety.
+- Handle overflow implicitly via two's complement arithmetic (result truncated to N bits).
+
+This results in simpler, cleaner, and more efficient fixed-point addition logic that remains fully parameterized and synthesizable.

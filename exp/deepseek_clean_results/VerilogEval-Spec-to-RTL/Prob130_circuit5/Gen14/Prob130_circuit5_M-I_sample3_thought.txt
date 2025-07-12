@@ -1,0 +1,11 @@
+Optimization Strategy:
+1. **Replace priority-encoded OR with multiplexer**: The current 5-level OR gate chain creates unnecessary delay. A 4:1 mux with a default case will reduce the critical path.
+2. **Simplify comparison logic**: Instead of separate comparators, use a single decoder-like structure for c values 0-3.
+3. **Optimize default case handling**: Instead of generating all 1s, directly assign the default value to the mux.
+4. **Reduce redundant logic**: Eliminate the intermediate masking steps and directly connect to the mux inputs.
+
+Key Improvements:
+- Single 4:1 multiplexer reduces critical path
+- Shared decoder logic for c values 0-3
+- Cleaner default case handling
+- Reduced gate count and switching activity

@@ -1,0 +1,11 @@
+To realize a divide-by-3.5 fractional frequency divider with a clean output clock and roughly 50% duty cycle, I propose a time-division multiplexing approach:
+
+- Use a modulo-7 counter clocked on the input clock's rising edge to create a 7-cycle period.
+- Define the divided clock to be high for 4 input cycles and low for 3 input cycles.
+- To achieve half-cycle phase shifts without using both clock edges directly (which risks synchronization issues), generate two intermediate clocks:
+  - clk_intA toggles at counts 3 and 0 (high for 4 cycles, low for 3 cycles).
+  - clk_intB is the same waveform delayed by half a clock period, implemented by capturing clk_intA into a flip-flop clocked by an inverted version of the input clock. This produces a reliable half-cycle phase shift without independent counters.
+- The final output clk_div is obtained by OR'ing clk_intA and clk_intB, effectively "filling in" the half-cycle gaps, resulting in a fractional division of 3.5 with smooth duty cycle.
+- Reset synchronously initializes all registers to known states.
+
+This approach avoids asynchronous counters on different edges, prevents synchronization issues, and cleanly implements the half-cycle phase shift by a clocked delay register. It provides a reliable fractional divider with reduced jitter and improved waveform quality.

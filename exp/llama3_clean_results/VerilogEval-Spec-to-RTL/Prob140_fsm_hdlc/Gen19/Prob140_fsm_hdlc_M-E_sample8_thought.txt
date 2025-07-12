@@ -1,0 +1,10 @@
+A novel approach to solving this problem would be to utilize a counter-based architecture instead of a traditional finite state machine. The counter can track the number of consecutive ones encountered in the input stream. By comparing the counter value with specific thresholds, we can determine when to assert the disc, flag, and err signals.
+
+Here's a high-level overview of the proposed architecture:
+
+- A counter will be used to keep track of the number of consecutive ones in the input stream.
+- When the counter reaches 5, it indicates that a "0111110" sequence has been encountered, and the disc signal should be asserted.
+- If the counter reaches 6 and the next input bit is 0, it indicates that a "01111110" sequence has been encountered, and the flag signal should be asserted.
+- If the counter exceeds 6, it indicates that an error has occurred (7 or more consecutive ones), and the err signal should be asserted.
+
+This approach simplifies the state machine and reduces the number of states required, making it more efficient and easier to implement.

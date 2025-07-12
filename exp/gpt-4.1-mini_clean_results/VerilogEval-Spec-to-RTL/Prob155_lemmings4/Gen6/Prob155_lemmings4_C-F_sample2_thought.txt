@@ -1,0 +1,20 @@
+Fuse the best elements from both examples for a superior solution:
+
+- Use the combined 3-bit packed state register [2] direction + [1:0] mode encoding from Example 1 for compactness and clarity.
+- Retain the explicit and precise bump handling logic from Example 2, which distinguishes bump_left only, bump_right only, and both bumps correctly with clear priority.
+- Maintain the priority order of fall > dig > bump for transitions, exactly as specified.
+- Keep the Moore FSM style with asynchronous reset triggering the initial walking-left state.
+- Implement the saturating 5-bit fall timer logic from Example 1, capped at 31, and with splatter detection on landing after >20 cycles falling.
+- Have the fall count updated only during falling, reset otherwise.
+- Use separate combinational always blocks for next state logic and outputs for clarity and better synthesis support.
+- Use non-blocking assignments in sequential block with posedge clk or posedge areset for reliable reset and state update.
+- Use clear and concise assign statements for outputs, directly from current state bits.
+- Factor out bump condition signals for readability.
+- Ensure the direction bit changes only when bumped during walking on ground.
+- Ensure no bumps or dig commands affect the direction during falling or digging.
+- Preserve dig start only when walking and ground is present, ignored otherwise.
+- Preserve that falling resumes walking direction after landing, or transitions to splat if fall time exceeded.
+- Fix subtle corner cases like simultaneous bump and ground disappearing or reappearing have no effect on direction.
+- This fused approach yields the minimal, clear, and robust FSM with clean state encoding, precise bump logic, proper priority, and efficient counters.
+
+This solution combines compact state encoding and good coding style from Example 1 with the correct bump logic clarity from Example 2, producing an optimal, synthesizable, and maintainable FSM.

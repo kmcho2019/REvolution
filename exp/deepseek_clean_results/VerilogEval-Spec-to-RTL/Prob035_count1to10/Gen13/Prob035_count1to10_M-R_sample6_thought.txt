@@ -1,0 +1,17 @@
+Refactoring Strategy:
+1. Structural Change:
+   - Implement the counter using a purely combinational approach with a register
+   - Use a ternary operator for the reset and wrap-around logic
+   - Eliminate the separate next_q wire by combining logic in the register assignment
+
+2. Optimization Goals:
+   - Maintain identical functionality (1-10 counter with sync reset)
+   - Reduce line count by combining logic
+   - Keep synchronous reset behavior
+   - Use efficient terminal count detection (q == 4'b1010)
+
+Key Changes:
+- Single always block handles both reset and counting logic
+- Direct comparison with 10 (1010) for clearer intent
+- No intermediate wires needed
+- More compact implementation while maintaining readability

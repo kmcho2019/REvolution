@@ -1,0 +1,18 @@
+My novel approach introduces a hierarchical state encoding scheme that combines the benefits of one-hot encoding with state grouping optimization. The key innovations are:
+
+1. State Grouping: I categorize states into three functional groups:
+   - Pattern detection (S, S1, S11, S110)
+   - Bit shifting (B0-B3)
+   - Counting/Waiting (Count, Wait)
+
+2. Hierarchical Encoding: 
+   - Use 2 bits to identify the current group (00: pattern, 01: shifting, 10: counting/wait)
+   - Within each group, use separate one-hot encoding
+   - This reduces total state bits from 10 to 6 (2 group bits + 4 pattern bits)
+
+3. Output Generation:
+   - Implement outputs as direct functions of both group and state bits
+   - Use group bits to quickly determine major output categories
+   - Optimize next-state logic by first checking group transitions
+
+This approach reduces combinational logic complexity while maintaining the timing benefits of one-hot encoding for critical paths.

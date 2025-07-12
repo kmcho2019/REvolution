@@ -1,0 +1,17 @@
+To improve the PPA of the existing Rule 90 512-bit design, I will focus on reducing the dynamic power and critical path delay by introducing boundary flip-flops to register the boundary signals between blocks. Currently, boundaries are purely combinational signals crossing block boundaries each cycle, which can cause glitches and increase power consumption and timing slack.
+
+By adding boundary registers for the left and right boundary signals feeding each block, we:
+- Reduce glitches and switching activity at block interfaces, lowering dynamic power.
+- Improve timing by shortening the combinational path, since boundary signals are now registered before use in the next state XOR.
+- The boundary registers add a small area and latency cost (one clock cycle delay in boundary signals), but since these boundary signals represent neighbors in the same cycle, the delay does not break the logic, as the update is synchronous on the clock edge. The automaton evolution is defined by simultaneous updates and this register staging keeps correctness because boundaries represent immediate neighbors from the previous cycle.
+
+I will keep the 64-bit block modular structure, but modify Rule90Block64 to accept registered boundary signals, and add boundary registers between blocks.
+
+Additionally, I will apply synchronous load and simple always blocks without gating for simplicity.
+
+This change is expected to improve timing (WNS), reduce glitches and switching power, and keep area reasonable due to simple added boundary registers per block interface.
+
+Overall:
+- Add boundary registers to pipeline boundary signals between 64-bit blocks.
+- Update top-level wiring to connect boundary registers and boundary signals.
+- Keep original load and state update logic.

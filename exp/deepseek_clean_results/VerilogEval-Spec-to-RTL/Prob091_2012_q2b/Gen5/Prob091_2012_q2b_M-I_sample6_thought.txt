@@ -1,0 +1,14 @@
+The current solution is already quite efficient, but we can make some minor optimizations based on the PPA metrics:
+
+1. For Y1: The existing implementation (y[0] & w) is already optimal - single AND gate with minimal delay.
+
+2. For Y3: We can optimize the logic by:
+   - Observing that ~(y[0] | y[3]) is equivalent to (y[1] | y[2] | y[4] | y[5]) in one-hot encoding
+   - This might reduce gate count slightly as we can directly OR the relevant state bits
+   - The ~w term remains the same
+
+3. Additional optimization:
+   - Since we're using one-hot encoding, we can be explicit about which states can transition to D (B, C, E, F)
+   - This makes the design more readable while maintaining efficiency
+
+The improved version will have slightly better clarity while maintaining the same excellent PPA metrics.

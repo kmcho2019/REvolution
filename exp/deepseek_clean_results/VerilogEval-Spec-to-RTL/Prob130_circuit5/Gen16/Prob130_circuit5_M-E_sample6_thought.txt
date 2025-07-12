@@ -1,0 +1,15 @@
+Novel Architecture Idea: Priority-Encoded Multiplexer with Direct Selection
+
+1. **Core Concept**: Instead of using a traditional decoder or case statement, implement a priority-encoded selection mechanism that directly routes the appropriate input to the output based on the value of 'c'. This eliminates intermediate mask generation and reduces logic levels.
+
+2. **Key Features**:
+   - Direct 4:1 multiplexing using the lower 2 bits of 'c' as select lines
+   - Immediate default to 'f' when c[3:2] are non-zero (indicating c > 3)
+   - Parallel bitwise selection without intermediate mask generation
+   - Single-level selection logic for better timing
+
+3. **Advantages**:
+   - Reduced logic depth (only one level of multiplexing)
+   - No unnecessary mask generation or decoding
+   - Early termination for default case (c > 3)
+   - More efficient use of synthesis tool optimizations

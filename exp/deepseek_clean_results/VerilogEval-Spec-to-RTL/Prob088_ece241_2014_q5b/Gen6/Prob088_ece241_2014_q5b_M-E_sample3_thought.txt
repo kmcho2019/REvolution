@@ -1,0 +1,18 @@
+Novel approach: Implement the FSM using a single-bit state register with output prediction.
+
+Key insights:
+1. The FSM has only two states and state B is absorbing (once entered, never exits)
+2. The output z can be expressed as: z = (state == A) ? x : ~x
+3. The state transition can be simplified to: next_state = state | (current_state == A & x)
+
+Architecture:
+- Use a single flip-flop for state (0=A, 1=B) instead of one-hot
+- Combine state transition and output logic into minimal expressions
+- This reduces area and power while maintaining performance
+- Asynchronous reset initializes to state A (0)
+
+Benefits:
+- 50% reduction in state registers compared to one-hot
+- Simpler combinational logic
+- Lower power due to reduced switching
+- Maintains same functionality

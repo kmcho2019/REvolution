@@ -1,0 +1,11 @@
+The main idea is to implement a finite state machine that has five distinct states: `RESET`, `F_SET`, `X_DETECT`, `Y_DETECT`, and `FINAL`. 
+
+- `RESET` state is the initial state where the FSM stays as long as the reset signal is asserted. 
+- `F_SET` state is the state where `f` is set to 1 for one clock cycle after the reset signal is de-asserted.
+- `X_DETECT` state is the state where the FSM detects the sequence 1, 0, 1 in three successive clock cycles on the `x` input. 
+- `Y_DETECT` state is the state where the FSM checks if `y` is 1 within two clock cycles after the sequence 1, 0, 1 is detected on `x`.
+- `FINAL` state is the state where `g` is set to 1 permanently if `y` is detected within two clock cycles, or set to 0 permanently if `y` is not detected within two clock cycles.
+
+We use a counter to keep track of the clock cycles in the `X_DETECT` and `Y_DETECT` states. 
+
+The FSM transitions between these states based on the current state and the inputs `x`, `y`, and `resetn`.

@@ -1,0 +1,5 @@
+Implement the design as a synchronous process where the register q either resets or loads 4 immediately if input 'a' is high, or otherwise increments modulo-7 in a numerical manner with proper wrap-around. The key insight is that when 'a' is high, q is synchronously forced to 4, overwriting any previous value. When 'a' is low, q counts forward modulo 7 with the sequence 4→5→6→0→1→2→3→4..., but we implement it using arithmetic and a conditional wrap-around rather than a case statement.
+
+This approach uses arithmetic addition with conditional logic to implement modulo 7 counting efficiently without a lookup table. The initial value on reset can be unspecified (X) per problem. The code uses a clocked always block only, making logic simple, and relies on an arithmetic modulo calculation implemented with a conditional reset when reaching 7, but starting the count from 4 as baseline.
+
+This differs from the example by using arithmetic to calculate the next value and a direct conditional load of 4 if 'a' is asserted, eliminating the combinational next-state block.

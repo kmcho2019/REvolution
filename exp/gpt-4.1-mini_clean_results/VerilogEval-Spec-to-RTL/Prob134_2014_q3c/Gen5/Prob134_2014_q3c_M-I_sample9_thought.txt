@@ -1,0 +1,9 @@
+Improve the design by registering the FSM state internally within the module to reduce glitching and provide a stable state transition synchronized to clk. Inputs clk and x are used to update the internal state register instead of directly using the input y as state. The input y is instead treated as an external state input, which is not standard for an FSM's current state.
+
+Assuming y is meant as an input vector representing the current state externally, the FSM should actually hold its own state internally and update it on each clock. We'll rename the input y to avoid confusion and implement an internal state register named 'state'. The outputs are generated based on the internal state.
+
+This approach ensures the state is properly registered, reducing glitches, improving timing, and enabling better power and area optimization in synthesis. The next_state logic remains combinational and concise.
+
+Additionally, the output 'z' is assigned based only on the internal current state, and Y0 is assigned as the least significant bit of next_state, as required.
+
+This approach improves performance by adding proper registered FSM state, reduces power by avoiding glitches from combinational loops involving external state inputs, and can improve area via state register inference and optimized logic synthesis.

@@ -1,0 +1,8 @@
+To simplify the dual-edge triggered flip-flop design, I will:
+
+- Eliminate the separate EdgeFF module to reduce hierarchy.
+- Use two always blocks directly in TopModule, one triggered on posedge clk, the other on negedge clk, each capturing the input 'd' into separate registers.
+- Then use a combinational mux (assign statement) to select between the two registers based on clk level.
+- This approach is simpler, uses only non-blocking assignments in sequential blocks and a combinational mux for output selection.
+- Although the combinational mux may have glitch potential, it keeps the design minimal and synthesizable.
+- This method complies with FPGA-friendly coding rules (no dual-edge always blocks or illegal sensitivity lists).

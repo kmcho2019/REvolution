@@ -1,0 +1,11 @@
+Simplified Single-Register Approach:
+1. Use a single history register to track both committed and speculative state
+2. On misprediction (highest priority): Rollback by directly loading {train_history[30:0], train_taken}
+3. On prediction (when no misprediction): Shift in predict_taken
+4. Eliminate the need for separate safe/spec registers and valid flags by:
+   - Directly using the single register for both purposes
+   - Relying on the fact that mispredictions will correct any speculative updates
+5. Benefits:
+   - Reduced area (single register instead of two)
+   - Simpler control logic (no need to track speculative state)
+   - Maintains correct functionality since mispredictions have priority

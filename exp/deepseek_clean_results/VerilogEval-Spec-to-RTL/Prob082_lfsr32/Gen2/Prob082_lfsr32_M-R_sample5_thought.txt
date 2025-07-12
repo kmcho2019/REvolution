@@ -1,0 +1,11 @@
+To correctly implement the 32-bit Galois LFSR with specified taps:
+1. Use continuous assignment (assign) for combinational logic
+2. Create a feedback signal from the LSB (q[0])
+3. For each bit position:
+   - If it's a tap position (32,22,2,1), XOR with feedback
+   - Otherwise, simply take the value from the next higher bit
+4. Use a separate always block for synchronous reset and register update
+5. Key improvements:
+   - Clear separation of combinational and sequential logic
+   - Explicit handling of each tap position
+   - Correct Galois structure where taps modify their own next state

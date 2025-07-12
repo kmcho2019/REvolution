@@ -1,0 +1,9 @@
+To implement the Lemming's behavior, we need to define a finite state machine that captures all the possible states and transitions described in the problem statement. The states we'll need include walking left, walking right, falling, digging, and splattered. We'll use a counter to keep track of the number of clock cycles the Lemming has been falling. When the Lemming hits the ground after falling for more than 20 clock cycles, it will transition to the splattered state. The inputs will determine the next state, with falling having the highest precedence, followed by digging, and then switching directions.
+
+We will use a Moore state machine, where the output is a function of the current state only, not the inputs. This means we need to encode the state in a way that can produce the correct outputs based on the current state and any necessary internal signals.
+
+Given the complexity of the behavior and the need to track the number of clock cycles the Lemming has been falling, a straightforward approach would involve using an enumeration for the states and a counter for the fall duration. The state machine will then be defined by a set of rules that determine the next state based on the current state and inputs.
+
+The outputs walk_left, walk_right, aaah, and digging will be determined by the current state. The aaah output, for example, will be high when the Lemming is in the falling state. Similarly, the digging output will be high when the Lemming is in the digging state.
+
+The state transitions will be implemented using combinational logic that determines the next state based on the current state and the inputs. For example, if the Lemming is currently walking and hits an obstacle, it will switch direction. If it's walking and ground disappears, it will start falling. If it's falling and hits the ground, it will check the fall counter to see if it should splatter or resume walking.

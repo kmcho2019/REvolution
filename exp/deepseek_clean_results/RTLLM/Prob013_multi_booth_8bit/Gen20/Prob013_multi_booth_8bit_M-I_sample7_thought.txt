@@ -1,0 +1,28 @@
+Improvement Strategy:
+
+1. Timing Optimization:
+   - Break the critical path by pipelining the Booth encoding and arithmetic operations
+   - Pre-compute multiplier bit indices in previous cycle to reduce combinatorial path
+   - Use registered outputs for better timing closure
+
+2. Power Optimization:
+   - Add clock gating for inactive registers when rdy=1
+   - Simplify zero detection logic to reduce switching activity
+   - Optimize shift operations using dedicated wires
+
+3. Area Optimization:
+   - Share arithmetic resources between + and - operations
+   - Use more efficient encoding for control signals
+   - Simplify reset logic by removing conditional operations
+
+4. Functional Improvements:
+   - Add explicit sign extension handling
+   - Improve completion detection logic
+   - Better register initialization
+
+Key Changes:
+- Two-stage pipeline for Booth operations
+- Shared adder/subtractor unit
+- Optimized shift operations
+- Simplified control logic
+- Better clock gating

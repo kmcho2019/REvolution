@@ -1,0 +1,53 @@
+First, interpret the inputs a,b,c,d as a 4-bit number with a as MSB and d as LSB.
+We want out = 1 for decimal inputs 2, 7, and 15 and 0 for 0,1,4,5,6,9,10,13,14.
+Inputs 3,8,11,12 never occur.
+
+Step 1: Express the numbers in binary:
+0 = 0000
+1 = 0001
+2 = 0010  --> out=1
+3 = 0011  (never occur)
+4 = 0100
+5 = 0101
+6 = 0110
+7 = 0111  --> out=1
+8 = 1000  (never occur)
+9 = 1001
+10= 1010
+11= 1011  (never occur)
+12= 1100  (never occur)
+13= 1101
+14= 1110
+15= 1111  --> out=1
+
+Step 2: Define variables (a,b,c,d) where a is MSB and d is LSB:
+Bits: a b c d
+
+Step 3: Write minterms for out=1: for 2(0010),7(0111),15(1111)
+- 2: 0 0 1 0  => a'b'cd'
+- 7: 0 1 1 1  => a b c d
+- 15:1 1 1 1  => a b c d
+
+Since 7 and 15 only differ in a (0 vs 1), the combined minterm for 7 and 15 is b c d (a don't care).
+
+So out_sop = a'b' c d' + b c d
+
+Step 4: Simplify or confirm minterms:
+- For 2: a'b' c d'
+- For 7 & 15: b c d
+
+Step 5: Write POS form:
+Using Karnaugh map or expression minimization, POS can be expressed as:
+- The zeros (maxterms) are for 0,1,4,5,6,9,10,13,14.
+
+We can write the maxterms and then minimize them to get the POS.
+
+Alternatively, from the SOP form, we get the POS as:
+
+out_pos = (a + b + d') (a + b' + c + d) (a' + b + c + d)
+
+This can be verified by converting the SOP to POS.
+
+Step 6: Implement the module with these two expressions for out_sop and out_pos.
+
+Note: We will confirm the POS via Boolean algebra or Karnaugh map minimization in code comments.

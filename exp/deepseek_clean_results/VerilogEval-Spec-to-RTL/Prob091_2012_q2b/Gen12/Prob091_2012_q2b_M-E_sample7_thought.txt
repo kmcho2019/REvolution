@@ -1,0 +1,19 @@
+Novel Architectural Idea:
+1. **Priority-Encoded State Transition**: Instead of pure one-hot decoding, we'll use a priority scheme where higher-numbered states (E,F) have precedence in the transition logic. This reduces the number of terms needed in the output equations.
+
+2. **Y1 Optimization**: 
+   - Only needs to be active when transitioning from A to B
+   - Can ignore all other states since they can't transition to B
+   - This makes the logic simpler than the original approach
+
+3. **Y3 Optimization**:
+   - Observes that D is the default transition state for many cases
+   - Uses a "catch-all" condition for transitions to D
+   - Only excludes cases where we know D isn't the next state
+   - This reduces the number of gate inputs needed
+
+4. **Benefits**:
+   - Fewer logic levels than the original solution
+   - More scalable for larger state machines
+   - Maintains one-hot properties while simplifying equations
+   - Better timing characteristics due to reduced logic depth

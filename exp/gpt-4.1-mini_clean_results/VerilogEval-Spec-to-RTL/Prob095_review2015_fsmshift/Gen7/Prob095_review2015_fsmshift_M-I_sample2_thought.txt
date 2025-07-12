@@ -1,0 +1,11 @@
+To correct the design, I will explicitly count four cycles of shift_ena assertion starting synchronously with the reset clock edge (cycle 0) and then disable shift_ena indefinitely until the next reset. 
+
+Since shift_ena should be asserted during the reset cycle and the following three cycles, a 3-bit counter initialized to zero on reset can be incremented each clock cycle after reset. shift_ena will be asserted when the counter is less than 4 (cycles 0 to 3 inclusive) and deasserted afterward.
+
+To avoid shift_ena being asserted forever, the counter will stop incrementing once it reaches 4 (or saturate), ensuring shift_ena is zero after 4 cycles.
+
+This logic strictly adheres to the requirement of synchronous active-high reset, enabling shift_ena for exactly 4 cycles starting immediately with reset assertion.
+
+Since the problem only requested shift_ena on reset, the pattern detection is not implemented here.
+
+This approach uses a minimal width up-counter with saturation and a combinational comparison for the output enable signal.

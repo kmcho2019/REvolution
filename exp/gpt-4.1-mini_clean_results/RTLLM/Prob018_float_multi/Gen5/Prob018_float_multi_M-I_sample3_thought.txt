@@ -1,0 +1,21 @@
+The original solution is functionally correct but has potential issues related to special case flag propagation timing, subtle rounding corner cases, and handling of denormals. To improve robustness and correctness:
+
+1. Make all sequential updates use nonblocking assignments to ensure correct simulation behavior and signal propagation across states.
+
+2. Propagate special case flags carefully across cycles by assigning them every cycle (not only in S_CALC) so that S_OUT always sees stable flag values.
+
+3. Refine rounding logic to consider mantissa overflow after rounding correctly, especially since mantissa_rounded is 25 bits with MSB possibly set, and maintain consistency in leading bits.
+
+4. Simplify underflow/denormal handling by converting the mantissa to a 48-bit shifted value with implicit leading 1 or 0 and then shifting right by the required amount, ensuring rounding bits are correctly extracted.
+
+5. Improve zero detection to handle negative zero and denormals correctly by checking exponent and mantissa bits.
+
+6. Maintain a simple 3-cycle state machine but ensure signals update cleanly, with all intermediate signals registered, to avoid race conditions.
+
+7. Use explicit signed/unsigned conversions where necessary for exponent arithmetic for clarity.
+
+These changes ensure the module correctly handles all corner cases, including NaN, Inf, zero, denormals, rounding, overflow, and underflow, with stable and consistent output every cycle.
+
+No change in overall structure or latency (3 cycles) to preserve timing characteristics, but improved correctness and simulation behavior.
+
+This balances correctness, clarity, and modest PPA optimization by avoiding unnecessary recomputation and ensuring stable flag signals.

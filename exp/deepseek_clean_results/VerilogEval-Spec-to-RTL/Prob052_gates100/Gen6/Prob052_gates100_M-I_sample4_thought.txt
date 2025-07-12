@@ -1,0 +1,14 @@
+Optimization Strategy:
+1. Maintain the efficient use of Verilog reduction operators for AND and OR as they are already optimal
+2. Optimize the XOR implementation by breaking it into smaller chunks to:
+   - Reduce critical path delay for better timing at higher frequencies
+   - Potentially reduce area by using more balanced tree structures
+3. Keep the design purely combinational as per original requirements
+4. Use a balanced tree approach for XOR to improve timing without adding registers (since this is specified as combinational)
+
+Key Improvements:
+- XOR computation now uses a 4-level balanced tree (100 bits → 25x4 → 6x4 → 2x4 → 1)
+- Maintains identical functionality
+- Reduces worst-case path for XOR from 100 levels to ~7 levels (log4(100))
+- No impact on AND/OR paths which were already optimal
+- Still synthesizes to combinational logic

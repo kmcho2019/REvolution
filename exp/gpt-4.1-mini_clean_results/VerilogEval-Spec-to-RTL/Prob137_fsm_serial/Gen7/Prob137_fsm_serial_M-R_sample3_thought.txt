@@ -1,0 +1,5 @@
+Refactor the FSM by combining the state and counters updates into a single always block and moving next state logic into a function to improve clarity and modularity. Use separate registers for state and counters but compute next state combinationally via a function instead of a separate always block. Also, drive the done signal combinationally as a registered pulse generated when the FSM enters the STOP state with a valid stop bit, removing done logic from the sequential block. This simplifies control signals and separates combinational next state calculation from sequential state updates.
+
+We maintain the same 4 states and behavior: IDLE waits for start bit=0; RECEIVE shifts in bits and counts; STOP checks stop bit and asserts done for one cycle; ERROR waits for stop bit=1 to recover. The done signal is asserted for one cycle right after STOP state with correct stop bit.
+
+This approach makes the FSM next-state logic more modular and separates the output signal generation combinationally, which can be clearer for synthesis and maintenance.

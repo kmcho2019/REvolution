@@ -1,0 +1,5 @@
+Refactor the design by moving the state register update logic into a separate always block with explicit asynchronous reset (reset the state to zeros on initialization). Keep the combinational next state logic as a separate always_comb block (using an always @* block) instead of a generate-for with a function. This avoids the function call overhead and uses direct procedural assignments in a loop to calculate the next state. Also, expose `q` as a wire output assigned from the register internally, and keep the register internal. This makes the output purely combinational from the register state, which may simplify some synthesis flows.
+
+This restructuring preserves the zero-padding and boundary handling by constructing the padded vector inside the combinational block, but uses a for-loop in procedural code to compute next_q, simplifying the hardware interpretation.
+
+Overall, the logic and behavior remain the same, but this change separates combinational logic (next state calculation) and sequential logic (state register update) more explicitly, potentially aiding synthesis and debugging without changing functionality.

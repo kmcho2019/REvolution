@@ -1,0 +1,19 @@
+To optimize the given 4-bit BCD adder for better power and area while maintaining performance and correctness, we can reduce the bit-widths used during addition to only what is strictly necessary and avoid redundant wiring. Specifically, since both inputs and the output are 4-bit BCD digits, the raw sum with carry-in can be at most 5 bits (max 9+9+1=19 decimal, which fits in 5 bits). The correction value is always 6 (0110), which fits in 4 bits, so we do not need to extend it to 5 bits. We can perform the correction addition as a 5-bit operation by zero-extending 4-bit correction value instead of using a 5-bit wire. This slightly reduces wire sizes and added logic.
+
+Additionally, instead of comparing raw_sum > 9 directly, which involves 5-bit comparator logic, use a Boolean expression to detect when correction is needed to reduce logic complexity. Using the classic BCD correction condition:
+
+Correction needed if:
+
+- raw_sum > 9, which is when
+
+    raw_sum[4] == 1 (carry-out from addition of A, B, and Cin), OR
+
+    raw_sum[3] & (raw_sum[2] | raw_sum[1]) is 1
+
+This conditional logic typically synthesizes to less complex hardware than a 5-bit comparator.
+
+By implementing these changes, we reduce area and potentially power due to simpler logic and narrower wires.
+
+Lastly, keeping the design fully combinational without extra registers preserves the timing performance.
+
+Overall, these refinements maintain correctness while improving area and power efficiency.

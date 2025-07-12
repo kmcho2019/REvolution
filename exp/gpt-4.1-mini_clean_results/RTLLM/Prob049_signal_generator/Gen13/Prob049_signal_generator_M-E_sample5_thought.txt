@@ -1,0 +1,7 @@
+Implement the triangle wave generator using a direction bit to indicate counting up or down, and update the wave counter every clock cycle. Instead of explicitly using a state machine with a separate state register, encode the direction in a register bit 'dir' (0 = increment, 1 = decrement). On each clock cycle, increment or decrement 'wave' based on 'dir'. When 'wave' reaches the boundaries 0 or 31, invert 'dir' to reverse counting direction.
+
+This approach eliminates the need for a next_state signal and combines control and data path cleanly. The always block is synchronous with asynchronous reset. This design is compact, easy to understand, and has straightforward state transitions.
+
+By toggling direction only at the bounds, the wave variable sweeps linearly up and down between 0 and 31 continuously, producing the triangle wave.
+
+This design is efficient in registers (only wave and dir), and logic is minimal (comparator and direction toggle). The code uses nonblocking assignments and follows best reset practice.

@@ -1,0 +1,7 @@
+To implement the TopModule, we need to consider the following scenarios: 
+1) When a prediction is made, update the branch history by shifting in the predicted result from the LSB side.
+2) When a misprediction occurs, load the branch history with the history after the completion of the mispredicted branch.
+3) Handle the case when both a prediction and a misprediction occur simultaneously, giving precedence to the misprediction.
+4) Reset the branch history to zero when an asynchronous reset is asserted.
+
+We will use a 32-bit register to store the branch history and use a combination of conditional statements and concatenation to handle the different scenarios.

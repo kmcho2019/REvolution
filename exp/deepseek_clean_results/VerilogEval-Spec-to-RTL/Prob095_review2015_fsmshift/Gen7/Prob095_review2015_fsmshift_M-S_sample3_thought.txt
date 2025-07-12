@@ -1,0 +1,13 @@
+To simplify while maintaining correct functionality:
+1. Use a 2-bit counter (4 states: 0-3) to track exactly 4 cycles
+2. Reset initializes counter to 0
+3. shift_ena is active when counter is 0,1,2, or 3 (all 4 states)
+4. Counter stops incrementing after reaching 3 (binary 11)
+5. This ensures shift_ena is exactly 4 cycles after reset
+6. Simple comparison logic (count <= 3) for shift_ena
+
+Key improvements:
+- Correctly counts 4 cycles (0-3)
+- shift_ena remains low after 4 cycles
+- Minimal logic (2-bit counter + simple comparison)
+- Clear and straightforward implementation

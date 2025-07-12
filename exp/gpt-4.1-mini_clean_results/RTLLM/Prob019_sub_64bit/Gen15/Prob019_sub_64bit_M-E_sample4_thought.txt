@@ -1,0 +1,14 @@
+Implement the 64-bit subtractor as a single unified 64-bit ripple borrow subtractor built using a chain of 64 1-bit full subtractor cells. Each bit performs subtraction with borrow input from the previous bit.
+
+- The 1-bit full subtractor computes difference = A_bit - B_bit - borrow_in.
+- Borrow out is generated if the subtraction requires borrowing.
+- The borrow chain propagates serially from the least significant bit (LSB) to the most significant bit (MSB).
+- This approach is simple and area-efficient though slower in timing compared to CLA, trading speed for simplicity and minimal hardware.
+
+For overflow detection in signed 2's complement subtraction:
+- Overflow occurs if the sign bit borrow behavior indicates overflow.
+- Specifically, overflow can be detected by examining the borrow into and out of the MSB, or more simply by the standard overflow condition:
+  - When subtracting B from A (A - B):
+    overflow = (A[63] != B[63]) && (result[63] != A[63])
+
+This ripple borrow subtractor yields a minimal and straightforward design, easier to understand and synthesize, with clearly defined borrow signals per bit and accurate signed overflow detection.

@@ -1,0 +1,73 @@
+Implement the Karnaugh map function using a small truth table lookup with a combinational case statement. Since there are 3 effective inputs (a,b,c) and d is don't-care, we ignore d for logic and use {a,b,c} as the address to a small 8-bit ROM to generate 'out'. This approach is different from direct Boolean equation and shows how to implement logic via a lookup table, which can be useful for complex functions or when a direct formula is non-trivial.
+
+The inputs are mapped as:
+addr = {a,b,c} (3-bit)
+For each addr, we assign out according to the K-map interpretation (ignoring d):
+
+From the K-map:
+a b c d  out
+Use the mapping ignoring d and take values where the output is known (0 or 1), set don't-cares arbitrarily to minimize logic if possible.
+
+Construct the truth table from the K-map:
+
+a b c | out (consider d don't-care)
+0 0 0 | out=1 (from cell ab=00, cd=00 is 0, but given the map rows and columns, carefully pick)
+We have to map inputs correctly to the K-map coordinates:
+
+Given the K-map coordinates: rows = cd, cols = ab
+Inputs: a,b,c,d
+Mapping for inputs to K-map:
+ab (columns) = a and b
+cd (rows) = c and d
+
+We want to find out for each (a,b,c) what the output is, ignoring d.
+
+For each (a,b,c), output is 1 if for any d output is 1 or d is don't-care (choose 1)
+
+Check each combination:
+
+a b c d | out
+0 0 0 0: ab=00, cd=00 => from map cell (00,00)=d (don't care), choose 1 to help simplify
+0 0 0 1: ab=00, cd=01 => cell (01,00)=0
+0 0 1 0: ab=00, cd=10 => cell (10,00)=0
+0 0 1 1: ab=00, cd=11 => cell (11,00)=0
+0 1 0 0: ab=01, cd=00 => cell (00,01)=0
+0 1 0 1: ab=01, cd=01 => cell (01,01)=0
+0 1 1 0: ab=01, cd=10 => cell (10,01)=1
+0 1 1 1: ab=01, cd=11 => cell (11,01)=1
+1 0 0 0: ab=10, cd=00 => cell (00,10)=1
+1 0 0 1: ab=10, cd=01 => cell (01,10)=d (choose 1)
+1 0 1 0: ab=10, cd=10 => cell (10,10)=1
+1 0 1 1: ab=10, cd=11 => cell (11,10)=1
+1 1 0 0: ab=11, cd=00 => cell (00,11)=1
+1 1 0 1: ab=11, cd=01 => cell (01,11)=d (choose 1)
+1 1 1 0: ab=11, cd=10 => cell (10,11)=1
+1 1 1 1: ab=11, cd=11 => cell (11,11)=1
+
+For each (a,b,c), look at the outputs for d=0 and d=1 and pick 1 if any output is 1 or d=don't care.
+
+Hence truth table for (a,b,c):
+
+a b c | out
+0 0 0 | 1 (from d=0 cell chosen as 1)
+0 0 1 | 0 (both d=0 and d=1 map to 0)
+0 1 0 | 0
+0 1 1 | 1
+1 0 0 | 1
+1 0 1 | 1
+1 1 0 | 1
+1 1 1 | 1
+
+Implement out as a 3-bit input indexed ROM with 8 entries according to above:
+
+index (abc) | out
+000 = 1
+001 = 0
+010 = 0
+011 = 1
+100 = 1
+101 = 1
+110 = 1
+111 = 1
+
+This implementation uses a small LUT approach, different from the direct logic expression.

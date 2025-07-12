@@ -1,0 +1,21 @@
+Here's a simplified approach that maintains correct functionality while reducing complexity:
+
+1. **Single GHR**: Use a single global history register (ghr) instead of dual GHRs. This eliminates the need to manage speculative and committed states separately.
+
+2. **Direct PHT Access**: Remove the shadow PHT and access the main PHT directly. Predictions see the current state, while training updates occur at the next clock edge.
+
+3. **Priority Handling**: When both predict and train occur in the same cycle:
+   - Prediction uses current PHT and GHR state
+   - Training updates PHT and GHR at next clock edge
+   - For mispredictions, GHR is restored from train_history
+
+4. **Simpler Update Logic**:
+   - Predictions update GHR immediately (if no training)
+   - Training updates PHT counters and GHR (with misprediction recovery)
+   - Mispredictions override any concurrent prediction updates
+
+Key simplifications:
+- Eliminates shadow PHT and dual GHR complexity
+- Single source of truth for branch history
+- Clear priority handling without speculative state
+- Maintains correct timing behavior

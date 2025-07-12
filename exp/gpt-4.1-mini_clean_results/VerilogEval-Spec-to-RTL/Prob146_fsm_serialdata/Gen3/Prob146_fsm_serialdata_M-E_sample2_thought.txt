@@ -1,0 +1,14 @@
+I will design the serial receiver FSM with clearly defined states: IDLE, RECEIVE, and STOP_CHECK. The approach is to sample the incoming serial bit stream synchronously on each clock. The line is idle when high (1).
+
+- In IDLE state, the FSM waits for a falling edge on the input (`in` goes from 1 to 0) signaling the start bit.
+- Once a start bit is detected (confirmed by sampling the input being 0), we move to RECEIVE.
+- In RECEIVE state, we shift in 8 data bits LSB first into a shift register, counting the bits received with a 3-bit counter.
+- After all 8 bits are received, transition to STOP_CHECK state, where the stop bit is sampled.
+- If the stop bit is 1 (valid), assert `done` for one cycle and output the received byte.
+- If stop bit is invalid (not 1), discard the byte and wait in STOP_CHECK until the line returns to idle (logic 1), then return to IDLE.
+- To improve robustness, start bit detection is done by detecting a falling edge (from previous `in` sample) to avoid glitch sensitivity.
+- The `done` signal is asserted exactly one cycle when the byte is valid.
+- All state changes and data sampling occur on the positive clock edge.
+- Active-high synchronous reset sets FSM back to IDLE and clears counters and registers.
+  
+This design avoids extra states for recovery by integrating error handling in the STOP_CHECK state, ensuring clear and minimal FSM complexity. It also aligns well with synchronous logic and practical serial input timing. Previous sample of `in` is stored to detect start bit falling edge cleanly.

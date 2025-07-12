@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. State Encoding: Use 2-bit binary encoding (from both examples) for compact state representation (IDLE, RECEIVE, STOP, ERROR).
+2. Shift Register: Adopt the efficient right-shift implementation (from both examples) for LSB-first reception.
+3. Done Signal: Use Example 2's approach of conditional assignment in STOP state for cleaner timing.
+4. Error Handling: Keep explicit ERROR state (from Example 1) but optimize transitions to reduce unnecessary states.
+5. Optimizations:
+   - Combine reset handling from both examples
+   - Use Example 2's more concise state transition logic
+   - Add explicit default case for robustness
+   - Optimize bit_count comparison to use 3'b111 (from Example 2)
+   - Simplify ERROR state transitions to directly return to IDLE when stop bit is found
+
+Key improvements:
+- More efficient state transitions
+- Cleaner done signal generation
+- Reduced logic complexity
+- Better error recovery path

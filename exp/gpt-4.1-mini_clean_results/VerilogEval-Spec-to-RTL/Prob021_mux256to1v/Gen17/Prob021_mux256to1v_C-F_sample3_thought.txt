@@ -1,0 +1,18 @@
+Fuse the hierarchical clarity and modular 3-stage structure from Example 1 with the direct indexed slicing and simplified combinational logic from Example 2 for optimized PPA:
+
+- Keep three stages to limit mux input size and logic depth: 
+  - Stage 1: sixteen 16-to-1 4-bit muxes selected by sel[3:0].
+  - Stage 2: four 4-to-1 4-bit muxes selected by sel[5:4].
+  - Stage 3: one final 4-to-1 4-bit mux selected by sel[7:6].
+
+- Replace the large case statements in Example 1’s muxes with direct part-select indexed by sel to reduce logic and improve synthesis friendliness, as done in Example 2.
+
+- Avoid unpacked arrays of wires in the intermediate stages; instead, flatten outputs into concatenated vectors for cleaner and smaller logic.
+
+- Use parameterized, generate-based mux modules to keep code compact and scalable.
+
+- This approach preserves the balanced hierarchical structure for timing and power benefits while reducing area by using direct indexed selects and fewer intermediate wires.
+
+- Modular muxes use direct indexing with sel for efficient logic inference and maintain clear combinational always blocks or continuous assignments for synthesis friendliness.
+
+Overall, this fusion blends modularity, hierarchy, explicit logic, and efficient indexing for better performance, power, and area metrics than either prior design.

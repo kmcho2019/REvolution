@@ -1,0 +1,12 @@
+I will implement a 4-bit adder using a purely ripple-carry architecture but with a twist: instead of using separate full adder modules, I will inline the logic for each bit to reduce module overhead and increase clarity. Each bit's sum and carry-out will be computed directly with simple expressions, propagating carry sequentially from LSB to MSB.
+
+The final carry-out from the MSB addition will be assigned as the overflow bit (sum[4]). This approach is straightforward, with minimal logic depth per bit, which can be beneficial for small bit-width adders due to low overhead.
+
+Advantages:
+- Simplicity: no separate modules, only straightforward wire assignments.
+- Minimal area, as no module instantiation overhead exists.
+- Easier for synthesis tools to optimize.
+- Clear carry propagation path, useful for timing analysis.
+- The inlined design reduces unnecessary carry-out signal generation and routing.
+
+Although ripple-carry adders have longer carry propagation delay than carry-lookahead, for 4-bit this is acceptable and area/power savings can be significant.

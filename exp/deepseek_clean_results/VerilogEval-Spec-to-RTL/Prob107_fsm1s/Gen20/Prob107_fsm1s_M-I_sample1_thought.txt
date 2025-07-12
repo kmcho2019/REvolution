@@ -1,0 +1,22 @@
+To optimize this solution further, I'll focus on improving timing while maintaining the already excellent power and area metrics. The key observations:
+
+1. **Timing Improvement**: The current implementation has a small negative slack (-0.18ns). The critical path likely involves the inversion operation (~) in the next_state logic. We can eliminate this by:
+   - Changing state encoding to make transitions direct (no inversion)
+   - Using a more direct logical expression for state transitions
+
+2. **Power and Area Preservation**: The current power and area are already excellent, so we'll maintain:
+   - 1-bit state encoding
+   - Minimal combinational logic
+   - Synchronous reset
+
+3. **Implementation Strategy**:
+   - Modify state encoding so B=1, A=0 (opposite of current)
+   - Adjust transition logic to avoid inversion
+   - Keep output logic equally simple
+   - Maintain all other good aspects (parameters, comments, structure)
+
+This change should:
+- Eliminate the inverter from the critical path
+- Potentially achieve positive slack
+- Maintain same power and area
+- Keep code readability

@@ -1,0 +1,10 @@
+Refactor the FSM by combining the counters and state encoding into a single state machine with more states representing the counting progress, avoiding separate counters. Use an explicit 3-cycle counting state sequence within state B to track the number of w=1 inputs using a small register. Output z is registered on a separate clock cycle, after counting 3 cycles.
+
+This approach uses a multi-state FSM (still minimal states) instead of separate counters, simplifying sequential logic and making state transitions explicit. The output z is updated synchronously on a separate output state. The reset behavior and input handling remain identical.
+
+Overall, the FSM states will be:
+- A: Wait for s=1 to move to B0
+- B0, B1, B2: count w samples and accumulate count of w=1
+- B3: output z=1 if exactly two w=1s counted; then go back to B0
+
+This explicit counting in FSM states removes the need for cycle_count and w_count registers, moving to a pure state-based approach.

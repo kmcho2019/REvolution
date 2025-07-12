@@ -1,0 +1,21 @@
+The original code used direct product terms and sum terms with intermediate wires, but the POS expression is incorrect, and the bit-to-number mapping (a,b,c,d) should be clearly defined: here we treat 'a' as MSB and 'd' as LSB, so number = {a,b,c,d} in binary.
+
+To clarify and fix the logic:
+
+1. Explicitly define the input vector `in = {a,b,c,d}` as a 4-bit wire.
+
+2. Use a combinational always block or continuous assignment with a case statement or functions to directly map the input vector to the output.
+
+3. Use don’t-care conditions for inputs 3,8,11,12, excluding them from logic simplification.
+
+4. Generate out_sop from the minimal SOP expression derived using Karnaugh maps or logic minimization tools based on the given numbers and don’t-cares.
+
+5. Generate out_pos similarly using minimal POS form.
+
+6. Implement both out_sop and out_pos as continuous assignments to show the combinational nature clearly.
+
+7. Provide intermediate comments to show the logic and verification.
+
+This approach makes the design more readable, less error-prone, and makes the bit ordering explicit, correcting the previous logical mismatch.
+
+Below is a refactored implementation with proper bit ordering and minimal SOP and POS expressions deduced explicitly.

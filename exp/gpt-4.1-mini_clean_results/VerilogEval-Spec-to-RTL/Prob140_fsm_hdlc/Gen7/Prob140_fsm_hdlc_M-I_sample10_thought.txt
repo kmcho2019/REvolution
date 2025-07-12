@@ -1,0 +1,14 @@
+The original solution uses a 3-bit counter-style FSM and explicit next state logic with a big case statement. To optimize for better performance and power without changing functionality, we can:
+
+- Replace the case statement with arithmetic next-state calculation since the states represent counts of consecutive ones (0 to 7+).
+- Use a simple increment or reset logic to simplify next-state logic and reduce combinational depth.
+- Simplify the output logic by using comparisons on the state register rather than enumerations.
+- Keep the same registered outputs to maintain correct output timing.
+- The error condition is state 7 or above, so saturate the counter at 7.
+- Use fewer localparams for the states, replacing with a single 3-bit counter register and saturate at 7.
+- This reduces logic complexity, possibly improving timing and power.
+- Keep synchronous reset as before.
+
+This approach reduces the FSM logic complexity from a large case to a simple conditional counter with saturation, streamlining synthesis and potentially reducing delay and power.
+
+Outputs are unchanged except the conditions are expressed via simple comparison rather than explicit states.

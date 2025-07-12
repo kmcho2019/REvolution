@@ -1,0 +1,11 @@
+The main improvement needed is to fix the timing of the output 'z' generation. Currently, 'z' is set in the same cycle as the third 'w' sample, but it should be set in the following cycle. We'll:
+1. Keep the same state machine structure (states A and B)
+2. Maintain the 3-bit window for tracking w values
+3. Use the cycle counter to track window positions
+4. Add a registered version of the window check to delay 'z' by one cycle
+5. Simplify the output logic by separating the window evaluation from the output generation
+
+Key improvements:
+- Correct output timing by evaluating the window one cycle earlier
+- Use a registered 'z' output that updates based on the previous window evaluation
+- Maintain minimal state count while ensuring correct functionality

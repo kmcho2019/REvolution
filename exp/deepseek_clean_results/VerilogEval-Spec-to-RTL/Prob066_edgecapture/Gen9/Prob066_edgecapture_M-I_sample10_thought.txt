@@ -1,0 +1,19 @@
+The key issue in the original solution is the timing of the falling edge detection. To properly detect 1→0 transitions between consecutive clock cycles, we need to:
+
+1. **Properly Register Inputs**:
+   - First register the current input to align timing
+   - Then compare this registered version with the previous cycle's value
+
+2. **Two-Stage Pipeline**:
+   - Add an additional register stage for the input to ensure we're comparing values from two consecutive cycles
+   - This eliminates any potential race conditions from combinational logic
+
+3. **Optimized Capture Logic**:
+   - Maintain the sticky capture behavior until reset
+   - Only update the capture register when we detect a valid falling edge
+
+This approach ensures:
+- Correct timing for edge detection
+- No race conditions
+- Clear separation of combinational and sequential logic
+- Proper alignment of signals for comparison

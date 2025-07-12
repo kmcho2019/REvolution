@@ -1,0 +1,5 @@
+To design the barrel shifter module, we first define the submodule `mux2X1` that will be used in each stage of the shifter. This submodule takes in two 8-bit inputs and a select signal. Based on the select signal, it outputs either the first or the second input. 
+
+The main `barrel_shifter` module uses three stages of these multiplexers. Each stage represents a shift by 1, 2, or 4 positions as specified by the control signal. We start by shifting by 4 positions if `ctrl[2]` is high, then by 2 positions if `ctrl[1]` is high, and finally by 1 position if `ctrl[0]` is high. 
+
+In each stage, we create the shifted version of the input (or intermediate result from the previous stage) and use the `mux2X1` submodule to select between the original (or intermediate) input and its shifted version based on the corresponding control bit. The output of each stage is then used as the input for the next stage, with the final output being the fully shifted result.

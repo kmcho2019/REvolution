@@ -1,0 +1,15 @@
+The original solution is functionally correct but has some optimization opportunities. Here's my improvement strategy:
+
+1. **Output Logic Optimization**:
+   - The 'z' output is purely combinational and only depends on the current state (y). We can implement it directly as a combinational expression instead of storing in a register.
+   - This saves area by eliminating the next_z register and associated logic.
+
+2. **Default Case Optimization**:
+   - Since all 5 states are explicitly covered, we can remove the default case to save a small amount of logic.
+   - This is safe because y is a 3-bit input and we've covered all specified states.
+
+3. **Direct Assignment**:
+   - Assign Y0 directly from the next state logic without intermediate register.
+   - This reduces the critical path slightly by eliminating one level of logic.
+
+These changes should reduce the area while maintaining the same functionality and timing characteristics.

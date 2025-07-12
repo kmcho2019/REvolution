@@ -1,0 +1,17 @@
+The provided solution appears to be functionally correct and implements the required finite state machine to identify message boundaries in a PS/2 mouse protocol byte stream. However, to further improve the Power, Performance, and Area (PPA) metrics of the design, several potential optimizations can be explored.
+
+Firstly, for **Performance (Timing)**, we should minimize the complexity of the combinational logic within the always_comb block. The current design seems straightforward, but any additional logic or complex operations within this block could potentially impact the maximum achievable clock frequency.
+
+Secondly, for **Power**, reducing switching activity could be beneficial. The design's use of sequential logic and conditional statements based on the input could lead to high switching activity if the inputs are highly variable. Optimizing the logic to minimize unnecessary transitions could help reduce power consumption.
+
+Lastly, for **Area**, the design appears to be relatively simple and doesn't seem to have redundant or overly complex logic that would significantly increase area usage. However, if the design were to be integrated into a larger system or if additional functionality were required, considerations such as resource sharing or using more area-efficient implementations of certain functions could become relevant.
+
+Given the current state of the design, the main focus should be on maintaining or slightly improving the current PPA metrics, especially power and area, without compromising functionality or performance.
+
+To achieve this, we will adopt the following improvement strategy:
+1. Simplify the combinational logic to reduce the number of operations and minimize glitches.
+2. Introduce a separate signal to indicate when a message is fully received, ensuring correct timing of the 'done' signal.
+3. Optimize state transitions to reduce unnecessary changes.
+4. Review the state machine's encoding to ensure it is area-efficient.
+
+By combining these strategies, we aim to create an optimized solution that balances functional correctness with improved PPA metrics.

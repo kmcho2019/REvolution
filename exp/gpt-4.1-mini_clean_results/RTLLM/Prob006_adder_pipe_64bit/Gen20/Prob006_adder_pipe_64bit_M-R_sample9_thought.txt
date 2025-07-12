@@ -1,0 +1,13 @@
+Refactoring this pipelined 64-bit ripple carry adder involves restructuring the design to improve clarity and modularity. Instead of storing partial sums in pipeline registers and updating them sequentially inside an always block, I will split the design into two main parts:
+
+1. **Input Register Stage**: Capture input operands and enable signal on the first clock edge when i_en is asserted. This registers inputs and starts the pipeline.
+
+2. **Pipeline Stage Processing**: For each pipeline stage, I will implement a pipeline register that stores carry-in and enable signals, and combinational logic that computes the partial sum for that stage using the registered carry-in and registered operands from the input stage.
+
+The key difference is moving partial sum computation combinationally at each stage from registered inputs and carry-ins, but registering only carry and enable signals through the pipeline stages. The sum outputs from each stage are generated combinationally every cycle, avoiding storing partial sums explicitly. Final concatenation collects all partial sums and the carry-out into the output register.
+
+The pipelining is controlled by registers for carry and enable signals for each stage to track the data validity and carry propagation through the pipeline. Operands are registered only once at the pipeline input stage, reducing storage needs. The output result and output enable are registered at the last pipeline stage.
+
+This refactoring improves design clarity, avoids manual partial sum concatenations, and cleanly separates combinational adder logic from pipeline registers for control signals.
+
+The overall latency remains the same (number of pipeline stages), but the code style is more modular and easier to extend or modify.

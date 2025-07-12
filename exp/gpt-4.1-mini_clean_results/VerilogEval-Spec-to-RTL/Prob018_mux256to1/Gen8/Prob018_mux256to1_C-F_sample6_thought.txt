@@ -1,0 +1,15 @@
+Combine the strengths of both hierarchical approaches by implementing a 256-to-1 multiplexer using 8-to-1 multiplexers organized in a 3-level tree. 
+
+Specifically, split the 8-bit selector into three groups: sel[2:0], sel[5:3], and sel[7:6], handling the input vector hierarchy as follows:
+- Level 0: 256 inputs grouped into 32 groups of 8 inputs each; select using sel[2:0].
+- Level 1: 32 outputs grouped into 4 groups of 8 outputs each; select using sel[5:3].
+- Level 2: 4 outputs selected by sel[7:6], final output.
+
+This fusion:
+- Reduces total mux levels to 3 from 4, decreasing critical path and delay.
+- Uses wider muxes (8-to-1) reducing total mux instance count compared to many 4-to-1 muxes.
+- Keeps a balanced tree structure for good timing and moderate fan-in.
+- Uses indexed vector slices and behavioral assignments to encourage synthesis optimizations and minimize switching and area.
+- Keeps code modular and readable with parameterized generate loops.
+
+This approach balances the lower depth and fewer mux instances of Example 1 with the clean indexing and modularity of Example 2, optimizing power, performance, and area effectively.

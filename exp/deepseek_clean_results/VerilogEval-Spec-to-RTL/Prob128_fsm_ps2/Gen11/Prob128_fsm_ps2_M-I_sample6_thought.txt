@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Timing Optimization: Replace the ternary operator with direct increment and wrap-around logic to reduce critical path
+2. Power Optimization: Add an enable signal to the counter to reduce unnecessary switching when idle
+3. Area Optimization: Replace the comparator with direct bit checks for the done signal
+4. State Encoding: Maintain the efficient 2-bit counter but optimize the state transition logic
+5. Reset Handling: Keep synchronous reset but streamline the logic further
+
+Key Changes:
+- Replace cnt == 2'b10 check with (cnt[1] && !cnt[0]) for done signal
+- Implement direct increment with wrap-around for cnt
+- Add enable signal to counter (counting only during message reception)
+- Simplify state transition logic
+- Maintain same functionality with better PPA

@@ -1,0 +1,21 @@
+Simplified Design Strategy:
+
+1. Truth Table Optimization:
+   - Output=1 cases remain: 2(0010), 7(0111), 15(1111)
+   - Don't-care cases (3,8,11,12) can be used to simplify both SOP and POS forms
+
+2. SOP Simplification:
+   - Original minterms: ~a~bc~d + ~abcd + abcd
+   - Can combine terms using don't-cares:
+     * term_2_7: ~a~bc~d + ~abcd = ~ac(b~d + bd) = ~acb(d + ~d) = ~abc
+     * Final SOP: ~abc + abcd
+
+3. POS Simplification:
+   - Identify maxterms where output=0 (but use don't-cares to minimize)
+   - Essential maxterms: (a+b+c+d), (a+b+~c+d), etc.
+   - After optimization using don't-cares, we get a simpler POS form
+
+4. Implementation:
+   - Use minimized Boolean expressions
+   - Eliminate intermediate wires where possible
+   - Directly implement optimized forms

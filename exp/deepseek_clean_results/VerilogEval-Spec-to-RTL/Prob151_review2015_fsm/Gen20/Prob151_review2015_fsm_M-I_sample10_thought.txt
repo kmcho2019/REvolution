@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the pattern detection by splitting into two stages (current and previous bits)
+   - Replace counter comparison with terminal count signal to reduce critical path
+   - Use one-hot encoding for faster state transitions
+
+2. Power Optimization:
+   - Add enable signals for pattern shift register and counter
+   - Gate clock for pattern register when not needed
+   - Use clock gating for counter during non-SHIFT states
+
+3. Area Optimization:
+   - Simplify state encoding to reduce decoding logic
+   - Share pattern matching logic between states
+   - Optimize output logic to use direct state bits
+
+Key Changes:
+- One-hot state encoding for better timing
+- Pipelined pattern detection
+- Gated clock/enable signals for power reduction
+- Terminal count signal for counter
+- Optimized output logic

@@ -1,0 +1,25 @@
+The initial design concept is fundamentally correct: use a 7-count counter (0 to 6), generate clk_intA on the rising edge with 4 cycles high and 3 low, and generate clk_intB on the falling edge with 3 cycles high and 4 low, then OR them to get a 3.5x frequency division with a near-50% duty cycle.
+
+The main problem in the previous design was that clk_intB was derived by sampling the rising-edge counter cnt_r on the falling edge, causing timing misalignments and overlapping of high periods that lead clk_div to stay high longer than expected.
+
+**Improvement strategy:**
+
+1. **Generate separate counters for rising and falling edges:**
+   - Instead of sampling the rising-edge counter at the falling edge, create two counters:
+     - `cnt_r`: increments on rising edge (0..6)
+     - `cnt_f`: increments on falling edge (0..6)
+   - This ensures that both counters progress synchronously but independently, removing the need to sample one on the other’s edge.
+
+2. **Define clk_intA and clk_intB based on their own counters:**
+   - clk_intA: on rising edge, high for counts 0 to 3 (4 cycles), low otherwise.
+   - clk_intB: on falling edge, high for counts 3 to 5 (3 cycles), low otherwise.
+
+3. **Reset all counters and registers synchronously with clk edges and asynchronous reset.**
+
+4. **Because clk_intA and clk_intB are generated on opposite edges, clk_intB is naturally phase-shifted by half a clock cycle relative to clk_intA.**
+
+5. **OR clk_intA and clk_intB to produce clk_div with a uniform 3.5x frequency division and an improved duty cycle balance.**
+
+6. **This approach avoids unsafe clock domain crossings or metastability risks and aligns the two clock phases cleanly.**
+
+This design improves timing behavior, aligns internal states properly, and fixes the previous problem of overlapping and stuck signals, providing the correct fractional clock output.

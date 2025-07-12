@@ -1,0 +1,13 @@
+The original design already uses minimal state encoding and a single XOR gate for next state logic, achieving low area and decent performance. However, we can improve power by reducing toggling on the state register. Since the FSM output equals the current state, toggling occurs whenever next state differs from current state. 
+
+To reduce switching, we can modify the next state logic to minimize transitions on the state flip-flop when input `in` does not change the FSM state. The current XOR expression toggles state when `in`=0 and keeps it when `in`=1. To reduce toggling on input changes, we can rewrite next state logic as a simple multiplexing between states A and B based on `in`, using fewer gates and avoiding unnecessary toggling.
+
+Concretely, we implement next_state = (state == B && in == 0) ? A : (state == A && in == 0) ? B : state
+
+This matches the state diagram and does not toggle state on input=1 (which maps state->state).
+
+This multiplexing logic is a 2-to-1 mux implemented via simple combinational logic, which can be optimized to reduce transitions and thus reduce power.
+
+The asynchronous reset and Moore output remain unchanged.
+
+This minor logic change is expected to slightly reduce power due to less frequent state toggling while maintaining the same area and similar performance.

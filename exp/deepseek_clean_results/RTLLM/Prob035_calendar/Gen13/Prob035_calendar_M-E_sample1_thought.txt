@@ -1,0 +1,15 @@
+Novel Architectural Idea: Hierarchical Counter with Pre-computed Rollover Signals
+
+1. Instead of calculating rollover conditions in the same cycle, pre-compute them in the previous cycle to break the critical path
+2. Use a hierarchical counter structure where each counter (sec/min/hour) has its own dedicated always block with local rollover logic
+3. Implement a "carry" propagation system where lower counters generate enable signals for higher counters
+4. Use gray coding for the counters to minimize switching activity and power consumption
+5. Add parameterized constants for all time limits to improve maintainability
+6. Implement synchronous reset with priority to ensure clean startup
+
+Key Advantages:
+1. Reduced critical path by pre-computing rollover signals
+2. Lower power consumption due to gray coding and localized updates
+3. Better timing closure with distributed counter logic
+4. More modular design that's easier to verify and maintain
+5. Clear separation of concerns between different time units

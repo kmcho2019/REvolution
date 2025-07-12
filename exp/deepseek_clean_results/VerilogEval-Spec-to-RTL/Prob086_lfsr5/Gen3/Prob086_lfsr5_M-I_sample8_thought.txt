@@ -1,0 +1,18 @@
+To improve the PPA metrics, particularly the timing (WNS), we can consider the following optimizations:
+
+1. **Register Retiming**: Move the XOR operation closer to the input side to potentially reduce the critical path. Since the XOR is only needed for bit 2, we can compute it earlier in the pipeline.
+
+2. **Simplified Logic**: The current implementation uses separate assignments for each bit. We can combine some operations to potentially reduce logic depth.
+
+3. **Reset Optimization**: The reset condition is simple (set to 1), which doesn't need optimization.
+
+4. **Parallel Computation**: Maintain the parallel computation approach but optimize the expression for bit 2 to potentially reduce the critical path.
+
+The improved version will:
+- Keep the same functionality (maximal-length LFSR with taps at 5 and 3)
+- Maintain the synchronous reset to 1
+- Use the same clock edge triggering
+- Optimize the XOR operation placement
+- Potentially reduce the critical path delay
+
+This should help improve the WNS while maintaining similar power and area characteristics.

@@ -1,0 +1,14 @@
+Fuse the best ideas from both examples to create a cleaner, more efficient Moore FSM implementation:
+
+- Use a single state register with asynchronous reset as in both examples.
+- Register the input bit `x` to eliminate input glitches and improve timing.
+- Use a simple 2-state FSM (WAIT_FOR_ONE and INVERTING), with state transitions driven by the registered input.
+- Generate the output purely as a Moore output depending only on the current state and registered input.
+- Avoid using an explicit inversion bit register; instead, derive output from state and registered input.
+- Separate input sampling and state update into one always block to reduce critical path and facilitate timing.
+- Use a separate combinational block for output logic depending only on registered state and input.
+- Implement asynchronous reset with clean initialization for state and input register.
+- Use nonblocking assignments consistently for sequential logic.
+- This fusion simplifies the design by removing the extra inversion bit register and makes output purely Moore (depends only on registered state and input), improving readability, timing, and power efficiency.
+
+This approach blends Example 1's compact state & input sampling with Example 2's clear state-output separation and synchronous output, yielding a robust and optimized design.

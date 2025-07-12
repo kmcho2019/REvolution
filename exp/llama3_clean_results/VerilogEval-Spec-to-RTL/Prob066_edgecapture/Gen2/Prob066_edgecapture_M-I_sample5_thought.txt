@@ -1,0 +1,9 @@
+To improve the existing solution, we need to address the functional errors and optimize the code for better PPA metrics. The main issue with the current code is that it does not handle the case when the input bit remains 0 or goes high again. To fix this, we need to ensure that the output bit remains 1 until a reset occurs. We can achieve this by not modifying the output bit once it is set to 1, unless a reset occurs. 
+
+Additionally, to optimize the code for better PPA, we can reduce the number of always blocks and directly assign the result to `out_reg` without using an intermediate register. We can also minimize the switching activity of the output bits by only updating the output when necessary.
+
+Another optimization strategy is to avoid using for loops inside the always block, as they can impact the design's timing. However, in this case, the loop is necessary to iterate over the 32-bit input vector.
+
+To improve power consumption, we can use a more efficient encoding scheme or resource sharing, but this might not be directly applicable to this specific design.
+
+Overall, our improvement strategy involves fixing the functional errors, reducing the number of always blocks, minimizing switching activity, and optimizing the code for better performance and area consumption.

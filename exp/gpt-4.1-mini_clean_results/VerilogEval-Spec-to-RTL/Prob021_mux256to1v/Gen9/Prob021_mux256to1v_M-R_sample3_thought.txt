@@ -1,0 +1,5 @@
+Refactor the hierarchical mux design by replacing the multiple always blocks and intermediate arrays with a single continuous assignment using a direct indexed part-select. Instead of unpacking the 1024-bit input vector into 256 separate 4-bit wires and then performing hierarchical multiplexing, directly index into the packed input vector using the select signal. This method reduces the combinational logic depth, switching activity, and area while maintaining the same functionality.
+
+The output can be assigned directly as: out = in[sel*4 +: 4]
+
+This approach improves PPA by avoiding the generation of intermediate wires and multiple mux stages, simplifying the design and enabling better synthesis optimization.

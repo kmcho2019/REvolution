@@ -1,0 +1,14 @@
+New approach using a state machine with explicit cycle counting:
+1. Instead of a simple counter, implement a 4-state FSM that tracks each of the 4 required cycles
+2. States represent each clock cycle where shift_ena should be active
+3. After 4 cycles, transition to a permanent IDLE state
+4. Reset synchronously returns to the first active state
+5. This provides precise control over the 4-cycle window
+6. State encoding is simple binary for clarity
+
+Advantages:
+- Explicit state tracking ensures exactly 4 cycles of shift_ena
+- Clear state transitions make timing obvious
+- Easy to modify if cycle count needs to change
+- No counter overflow issues
+- Power efficient as FSM stays in IDLE after completion

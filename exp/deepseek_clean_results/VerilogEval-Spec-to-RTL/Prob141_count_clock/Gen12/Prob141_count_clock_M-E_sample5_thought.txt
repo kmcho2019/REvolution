@@ -1,0 +1,26 @@
+Novel State Machine Approach:
+1. Unified State Machine:
+   - Implement the entire clock as a finite state machine with states representing time values
+   - Each state transition corresponds to a time increment when enabled
+   - This eliminates separate counters and their rollover logic
+
+2. Optimized BCD Encoding:
+   - Use a packed BCD representation where each digit is stored separately
+   - Implement custom BCD increment logic that handles all rollover cases efficiently
+   - Special handling for 12-hour format transitions
+
+3. Time Value Compression:
+   - Store the entire time value (hh:mm:ss) in a compressed 24-bit format
+   - Use arithmetic operations directly on this format for increments
+   - Extract individual components for output
+
+4. PM Indicator Optimization:
+   - Derive PM from the hour value directly rather than maintaining a separate register
+   - This reduces state elements and simplifies the design
+
+Key Advantages:
+- Single always block reduces control logic overhead
+- State transitions are more predictable for timing analysis
+- Compressed time representation reduces routing complexity
+- Eliminates cascaded enable signals
+- More efficient BCD arithmetic implementation

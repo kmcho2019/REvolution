@@ -1,0 +1,25 @@
+To create a superior 4-digit BCD counter design, I will fuse the best ideas from both examples:
+
+- From Example 1:
+  - Use separate 4-bit registers for each digit to keep enable signals simple and localized.
+  - Generate ena signals as carry outputs indicating when each upper digit increments.
+  - Employ clock-enable gating by updating each digit register only when its value changes, reducing unnecessary toggling and power.
+
+- From Example 2:
+  - Use a clear, functional approach to increment each digit with carry propagation.
+  - Implement the increment logic in combinational logic outside the sequential block for better timing.
+  - Avoid deep nested conditional increments inside the clocked block to shorten critical path.
+  
+**Fusion Strategy:**
+
+1. Maintain separate digit registers for clarity and easier enable signal generation.
+
+2. Precompute all carry signals and next digit values in combinational logic using a function that cleanly implements BCD increment and carry.
+
+3. Generate enable signals based on carry outputs indicating increments for tens, hundreds, and thousands digits.
+
+4. Use clock-enable signals to update registers only when the digit actually changes, reducing switching power.
+
+5. Use synchronous reset.
+
+This approach combines clean, modular combinational increment logic with local register updates gated by enables, which reduces timing critical path length and switching power. It balances clarity, power efficiency, and timing better than either example alone.

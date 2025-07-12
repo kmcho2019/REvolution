@@ -1,0 +1,7 @@
+Instead of a nested generate loop, use a flat combinational logic block that unpacks the inputs into an array, then compute all 25 pairwise equalities by explicitly indexing input bits in a single always_comb block, forming the output vector by concatenation.
+
+This approach leverages Verilog's vector operations and concatenation to build the output in a single procedural block, which can improve readability by gathering all logic in one place and avoids generate complexity.
+
+The output bits are ordered from out[24] to out[0] corresponding to pairs (a,b,c,d,e) in lexicographic order with indices (0-4), where out[24] = a~^a, ..., out[0] = e~^e. The mapping is done by the equation: out[24 - (i*5 + j)] = inputs[i]~^inputs[j].
+
+This method remains fully combinational, is synthesis friendly, and clearly expresses output bit assignment in a compact procedural style.

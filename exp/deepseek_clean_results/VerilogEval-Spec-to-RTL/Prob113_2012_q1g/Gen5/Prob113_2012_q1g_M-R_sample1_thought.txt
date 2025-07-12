@@ -1,0 +1,11 @@
+To correctly implement the Karnaugh map:
+1. Re-examine the K-map to identify all minterms where f=1:
+   - Top row (x[3:2]=00): f=1 at x[1:0]=00 and 10
+   - Third row (x[3:2]=11): f=1 at x[1:0]=00, 01, and 11
+   - Bottom row (x[3:2]=10): f=1 at x[1:0]=00, 01, and 10
+2. Identify the most efficient grouping:
+   - For x[3:2]=00: f = ~x[1] (covers both 00 and 10)
+   - For x[3:2]=11: f = x[1] | ~x[0] (covers all three 1s)
+   - For x[3:2]=10: f = ~x[0] | ~x[1] (covers all three 1s)
+3. Combine these cases with proper selection logic based on x[3:2]
+4. Implement using a case statement for clarity and maintainability

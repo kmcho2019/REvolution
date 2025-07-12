@@ -1,0 +1,10 @@
+The original design uses a fully combinational balanced adder tree to sum all partial products in parallel, which optimizes latency but can cause relatively high power consumption and area due to parallelism and a large combinational path. 
+
+To optimize for better power and area while retaining correct functionality:
+- Use an iterative shift-and-add approach implemented with a simple for-loop inside an always_comb block. 
+- This approach serially accumulates partial products by checking each bit of B and shifting A accordingly, but done combinationally.
+- This reduces area by avoiding multiple parallel 16-bit adders and can help the synthesis tool optimize the additions more efficiently.
+- Also, the design remains purely combinational, matching the problem requirements.
+- Using a for loop for addition and shifting keeps the implementation concise and easy to understand, with improved power due to fewer simultaneous additions.
+
+This approach is a classic shift-and-add multiplier optimized for area and power relative to the fully parallel balanced adder tree, trading off some latency (not a pipeline here, but pure combinational latency should be manageable).

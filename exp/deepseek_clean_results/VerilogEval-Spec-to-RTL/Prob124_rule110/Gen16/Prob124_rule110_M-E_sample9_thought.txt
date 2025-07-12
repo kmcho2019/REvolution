@@ -1,0 +1,21 @@
+The key innovation in this solution is using a circular shift register approach combined with optimized combinational logic:
+
+1. **Shift Register Architecture**:
+   - Instead of individual neighbor selection for each bit, we'll use a 3-bit window that shifts through the state register
+   - This reduces interconnect complexity and area by sharing neighbor selection logic
+
+2. **Optimized Logic**:
+   - Implement Rule 110 using a minimized Boolean expression: next_state = center ^ (left | (center & right))
+   - This expression uses fewer operations than previous implementations while being mathematically equivalent
+
+3. **Pipelined Processing**:
+   - Process the state in 64-bit chunks (8 cycles) to reduce combinational path length
+   - This improves timing at the cost of slightly increased latency
+
+4. **Boundary Handling**:
+   - Use a dedicated boundary register that always reads as 0
+   - This eliminates special cases in the neighbor selection logic
+
+5. **Power Optimization**:
+   - Only update active chunks each cycle
+   - Use register enables to minimize unnecessary toggling

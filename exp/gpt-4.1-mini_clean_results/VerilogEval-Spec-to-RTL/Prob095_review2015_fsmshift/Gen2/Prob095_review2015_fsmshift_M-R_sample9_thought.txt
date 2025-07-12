@@ -1,0 +1,5 @@
+The original solution used a counter and two always blocks, and included a `pattern_detected` input which was not part of the problem interface. The problem states that after synchronous reset, `shift_ena` should be asserted for exactly 4 cycles, then remain low forever until the next reset. Also, `shift_ena` should be enabled for 4 cycles whenever the proper bit pattern is detected, but the problem does not specify any such input or detection logic, so we should implement only the reset-triggered behavior.
+
+To refactor, I will implement a simple 2-state FSM with states: IDLE and ENABLE. On synchronous reset, the FSM moves to ENABLE state, enables `shift_ena` for 4 cycles, then transitions to IDLE and stays there until the next reset. Counting will be done with a 3-bit register inside the ENABLE state. This makes the design clear and simple, using only one always block and an `assign` statement for output. This approach fully respects the provided interface and requirements, avoids dangling inputs, and simplifies the control logic.
+
+If later a pattern detection input is added, the FSM and logic can be extended easily.

@@ -1,0 +1,19 @@
+Simplified design approach for 3.5x fractional divider:
+
+1. Use a 3-bit counter (0-6) to track 7 input clock cycles (3.5x division)
+2. Generate the divided clock by:
+   - Setting output high for first 4 input cycles (counts 0-3)
+   - Setting output low for next 3 input cycles (counts 4-6)
+3. Eliminate separate phase generation and combination logic:
+   - Directly generate the divided clock from counter value
+   - No need for XOR/OR operations or dual-edge triggering
+4. Simplified reset handling:
+   - Clear counter and output on reset
+   - Start clean divided clock immediately after reset
+
+Key simplifications:
+- Single always block for counter and output generation
+- No phase generation or combination logic
+- Uses only positive edge triggering
+- Maintains correct 4:3 duty cycle ratio
+- Still achieves exact 3.5x frequency division

@@ -1,0 +1,25 @@
+Fuse the clear and minimal flip-flop usage from Example 2 with explicit two-bit one-hot state representation from Example 1 for clarity and scalability, but implement state encoding as a 2-bit vector to keep explicit one-hot semantics while enabling easier extensions or debugging.
+
+Use a 2-bit state register with only one flip-flop toggling each clock cycle to maintain one-hot encoding:
+- State A: 2'b01
+- State B: 2'b10
+
+Derive next state combinationally with minimal expressions:
+- Next state A when in A and x=0
+- Next state B otherwise
+
+Keep asynchronous active-high reset initializing the FSM to state A (2'b01).
+
+Implement Mealy output logic combinationally with a continuous assignment for synthesis friendliness and minimal logic depth:
+- z = (state_A && x) || (state_B && ~x)
+
+This hybrid approach maintains explicit one-hot state bits as a vector (improving readability, debugging, and synthesis insight), keeps minimal flip-flop usage by encoding states as distinct bits within a vector, and clean combinational logic for output. This should improve PPA by avoiding redundant logic and enabling synthesis optimizations that leverage vector state encoding while ensuring the FSM is Mealy with asynchronous reset and positive-edge clocking.
+
+Thus:
+- Use a 2-bit state vector with one-hot encoding
+- Asynchronous reset sets state to A (2'b01)
+- Next state logic in combinational block with minimized logic
+- Mealy output via continuous assign
+- Non-blocking assignments in sequential block
+
+This approach merges the clarity of explicit one-hot bits with the compactness and minimal registers of Example 2, balancing readability, area, power, and timing.

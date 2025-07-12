@@ -1,0 +1,12 @@
+Fuse the strengths of both designs by implementing a 4-stage pipeline that balances performance, power, and area:
+
+- Use a 4-stage pipeline on the enable signal to track operation validity.
+- Sample inputs only when mul_en_in is high.
+- Generate all 8 partial products combinationally each cycle from registered inputs.
+- Break the summation of partial products into two pipeline stages using balanced adder groups, reducing the critical path length and improving timing compared to the second example.
+- Perform the final addition in a fourth stage, registering the final product.
+- This approach distributes addition over multiple clock cycles, lowering combinational delay versus summing all partial products at once.
+- The enable pipeline tracks validity through each stage and controls registers and output enable.
+- Output product is gated by mul_en_out derived from the most significant bit of the enable pipeline.
+- Reset signals asynchronously clear all registers, ensuring a clean startup.
+- This design reduces critical path delay compared to the second example, while using fewer adder stages than the first, balancing timing and complexity.

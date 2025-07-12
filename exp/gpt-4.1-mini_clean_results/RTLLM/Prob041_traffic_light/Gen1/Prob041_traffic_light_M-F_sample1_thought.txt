@@ -1,0 +1,15 @@
+To fix the issues, the FSM state durations and counter reloads must strictly follow the problem requirements: green for 60 clocks, yellow for 5 clocks, red for 10 clocks. The pass_request logic should only shorten the remaining green time once when the button is pressed and the remaining green time is greater than 10 clocks; this can be done by updating the counter only when pass_request is asserted and cnt > 10, and then ignoring further requests until next green phase. The counter reload values should be assigned on state transitions to avoid conflict and ensure clear timing.
+
+Therefore, implement the following:
+
+- On reset, start in idle and immediately transition to s1_red with cnt=10 (red duration).
+- In s1_red state, count down cnt from 10 to 0; when 0, transition to s3_green and load cnt=60.
+- In s3_green state, count down cnt from 60 to 0; if pass_request and cnt > 10, shorten cnt to 10 (only once).
+- When green cnt reaches 0, transition to s2_yellow and load cnt=5.
+- In s2_yellow state, count down cnt from 5 to 0; when 0, transition back to s1_red with cnt=10.
+- Update the output signals synchronously from the current state.
+- Maintain previous outputs only as current state outputs; p_red etc. registers are unnecessary if outputs directly correspond to states.
+- Ensure all state transitions and cnt reloads happen synchronously at clock edges.
+- Assign the output clock from the counter to reflect the remaining time correctly.
+
+This approach clarifies timing, avoids redundant counter assignments, and correctly handles pass_request once per green phase.

@@ -1,0 +1,14 @@
+Design a fixed-point adder module using signed arithmetic directly, leveraging Verilog's signed types to simplify sign and magnitude handling.
+
+1. Declare inputs and outputs as signed [N-1:0], which inherently treats MSB as sign bit.
+2. Perform the addition using signed arithmetic operator (+).
+3. Store the result in a signed register `res`.
+4. Since addition of signed fixed-point numbers with same Q can be done directly, no separate absolute value or conditional logic is needed.
+5. The module output is assigned the lower N bits of the result to match input width.
+6. Overflow may occur if the result exceeds the signed range; here, we just allow wrap-around as fixed-point behavior or the designer can extend this design for saturation.
+
+This approach fully utilizes Verilog signed arithmetic, simplifies the logic, reduces hardware, and provides accurate fixed-point addition consistent with Q fractional bits.
+
+If user needs subtraction, this can be done by feeding negative operands, since signed addition covers both addition and subtraction.
+
+Overall, this is a clean, minimal, and efficient fixed-point adder with parameterizable word length and fractional bits.

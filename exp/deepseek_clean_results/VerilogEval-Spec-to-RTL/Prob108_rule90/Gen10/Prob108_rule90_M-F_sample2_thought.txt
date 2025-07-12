@@ -1,0 +1,12 @@
+To fix the Rule 90 implementation:
+1. Maintain the correct boundary handling with zero padding (q[-1] and q[512] as 0)
+2. Properly select left and right neighbors for each cell:
+   - Left neighbor for q[i] is q[i-1] (correct in original)
+   - Right neighbor for q[i] is q[i+1] (needs fixing)
+3. Implement right neighbor selection by:
+   - Using padded_q[511:0] for left neighbors (q[i-1])
+   - Using padded_q[513:2] for right neighbors (q[i+1])
+4. XOR the properly selected neighbors to compute next state
+5. Keep the same clocked update logic with load functionality
+
+The key correction is in the right neighbor selection - we need to shift the padded_q differently to properly align q[i+1] for each position.

@@ -1,0 +1,21 @@
+To fix this implementation, we need to:
+
+1. Derive the minimal Sum-of-Products (SOP) and Product-of-Sums (POS) expressions:
+   - For out_sop (SOP form):
+     * Identify minterms where output is 1 (2,7,15)
+     * Write as OR of AND terms: (¬a∧¬b∧c∧¬d) + (¬a∧b∧c∧d) + (a∧b∧c∧d)
+     * Simplify using don't-cares (3,8,11,12) to minimize terms
+
+2. For out_pos (POS form):
+   - Identify maxterms where output is 0 (0,1,4,5,6,9,10,13,14)
+   - Write as AND of OR terms: (a+b+c+d)(a+b+c+¬d)... etc.
+   - Simplify using don't-cares to minimize terms
+
+3. Implementation approach:
+   - Use continuous assignments for both outputs
+   - Implement the minimized Boolean expressions directly
+   - For out_sop: OR of the three required minterms
+   - For out_pos: AND of the inverted required maxterms
+   - Don't-care conditions are naturally optimized in the minimized forms
+
+This ensures we meet the requirement of minimal SOP and POS forms while correctly handling don't-care conditions.

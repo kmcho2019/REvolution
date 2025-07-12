@@ -1,0 +1,13 @@
+Fuse the two designs by combining the clear and robust pointer approach of Example 2 with the power- and timing-aware gating and memory usage optimizations from Example 1:
+
+- Use SP as a count of elements (0 to 4), incrementing on push and decrementing on pop (Example 2 style). This avoids negative or tricky indexing and simplifies EMPTY/FULL flag logic.
+- Maintain combinational EMPTY and FULL flags derived from SP for immediate status.
+- Only update stack_mem and SP on valid operations gated by EN and buffer status to reduce toggling and dynamic power.
+- Avoid clearing stack_mem on reset except initializing to zero for clarity (like Example 1). Clearing only at reset keeps synthesis simple.
+- Update dataOut only on pop operations, holding it otherwise, minimizing toggling.
+- Use non-blocking assignments consistently to avoid simulation and synthesis mismatch.
+- Include a small enable gating logic to prevent unnecessary writes or reads.
+- The pop operation reads from stack_mem[SP - 1] after decrementing SP; since SP is updated non-blocking, use a temporary variable inside the clocked process for clean logic and better timing.
+- Initialize dataOut on reset to zero.
+
+This fusion retains the pointer clarity of Example 2, the low power toggling strategy of Example 1, and strong reset behavior, providing a balanced, clean, and efficient design.

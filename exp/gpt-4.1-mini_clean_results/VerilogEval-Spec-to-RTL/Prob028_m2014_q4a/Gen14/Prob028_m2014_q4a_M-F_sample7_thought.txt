@@ -1,0 +1,11 @@
+To fix the synthesis issue, I will revert to using a traditional latch coding style that synthesis tools expect:
+
+1. Use a sensitivity list that explicitly lists all signals controlling the latch: `always @(d or ena)`. This is key to latch inference.
+
+2. Use blocking assignments (`=`) inside this always block since latches are level-sensitive and inferred by blocking assignments in such always blocks.
+
+3. Remove any redundant self-assignment like `q = q;` since if `ena` is low, the latch should retain its previous value implicitly by not assigning `q`.
+
+4. Declare `q` as a `reg` since it holds state.
+
+This approach directly reflects the classic D latch implementation and will be correctly inferred by synthesis tools without missing primitive errors.

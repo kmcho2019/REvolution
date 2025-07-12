@@ -1,0 +1,73 @@
+Implement the module TopModule as a purely combinational next-state logic generator for y[1]. Since y is a 3-bit input representing the current state, and w is the input controlling transitions, we will output Y1 as the next value of y[1] after the transition.
+
+Instead of using explicit state equality checks, we'll use a compact boolean logic expression for next y[1] derived from the transition table.
+
+From the transitions:
+
+States (y) and next states (y_next) with emphasis on y[1]:
+
+- A(000): y1=0
+  w=0 -> B(001): y1_next=0
+  w=1 -> A(000): y1_next=0
+
+- B(001): y1=0
+  w=0 -> C(010): y1_next=1
+  w=1 -> D(011): y1_next=1
+
+- C(010): y1=1
+  w=0 -> E(100): y1_next=0
+  w=1 -> D(011): y1_next=1
+
+- D(011): y1=1
+  w=0 -> F(101): y1_next=0
+  w=1 -> A(000): y1_next=0
+
+- E(100): y1=0
+  w=0 -> E(100): y1_next=0
+  w=1 -> D(011): y1_next=1
+
+- F(101): y1=0
+  w=0 -> C(010): y1_next=1
+  w=1 -> D(011): y1_next=1
+
+We notice:
+
+- Next y1 is 1 if:
+  - Current state is B (001), any w
+  - Current state is C (010), w=1
+  - Current state is E (100), w=1
+  - Current state is F (101), any w
+
+- Else next y1 is 0.
+
+Let's write the boolean logic for next y1:
+
+Let y = y[2:0] = y2 y1 y0
+
+Define states:
+
+B: y=001 (y2=0,y1=0,y0=1)
+C: y=010 (0,1,0)
+E: y=100 (1,0,0)
+F: y=101 (1,0,1)
+
+Therefore:
+
+next_y1 = (B) + (C & w) + (E & w) + (F)
+
+We can express B, C, E, F as boolean expressions:
+
+B = ~y2 & ~y1 & y0
+C = ~y2 & y1 & ~y0
+E = y2 & ~y1 & ~y0
+F = y2 & ~y1 & y0
+
+Then:
+
+next_y1 = B | (C & w) | (E & w) | F
+
+We'll implement this combinationally and output Y1 = next_y1.
+
+This design meets the problem requirement: implement next-state logic for y[1] only, output Y1 as next y1, with no registers or clock involved. This is a pure next-state combinational function.
+
+This architectural choice avoids unnecessary flip-flops and uses minimal logic for y1 next state output.

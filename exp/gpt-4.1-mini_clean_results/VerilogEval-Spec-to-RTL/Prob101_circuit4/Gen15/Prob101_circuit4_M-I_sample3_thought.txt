@@ -1,0 +1,5 @@
+The original design uses a separate OrGate2 module instantiated inside TopModule, which is functionally correct but adds hierarchy and port overhead, increasing area and power slightly.
+
+To optimize for power and area without sacrificing clarity or correctness, we can inline the combinational logic directly inside TopModule by using a continuous assign statement: q = b | c. This reduces module overhead and eliminates unnecessary signals or interconnect, improving power and area metrics with no impact on performance since the logic is minimal.
+
+This approach is synthesizable, fully equivalent in function to the original design, and minimal in hardware. It is the best trade-off for PPA given the simple OR logic extracted from the waveform.

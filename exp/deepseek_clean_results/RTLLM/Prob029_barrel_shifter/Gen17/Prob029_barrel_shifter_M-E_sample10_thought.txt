@@ -1,0 +1,12 @@
+Novel approach using a hierarchical multiplexer structure:
+1. Instead of cascading shifts, we'll implement a direct selection approach where each output bit is selected from the input bits based on the full shift amount
+2. First compute the total shift amount by summing the control bits (ctrl[2]<<2 + ctrl[1]<<1 + ctrl[0])
+3. For each output bit, select the appropriate input bit using the calculated shift amount
+4. This creates a more parallel implementation where all output bits are determined simultaneously rather than through sequential stages
+5. The rotation is handled by using modulo arithmetic on the bit indices
+
+Advantages:
+- Single calculation of total shift amount
+- All output bits calculated in parallel
+- More intuitive mapping between control signals and shift amount
+- Easier to extend to larger bit widths

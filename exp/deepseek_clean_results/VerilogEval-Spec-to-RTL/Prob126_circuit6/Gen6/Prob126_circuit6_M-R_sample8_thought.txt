@@ -1,0 +1,13 @@
+The current implementation uses a cascaded ternary operator which, while functional, creates a long chain of multiplexers that could impact timing. Let's refactor this to use a case statement within an always block. This approach:
+
+1. Maintains the same combinational behavior
+2. Potentially improves timing by allowing synthesis tools to optimize the multiplexer structure
+3. Makes the code more readable and maintainable
+4. Still results in pure combinational logic
+5. May offer better PPA metrics as synthesis tools can better optimize case statements
+
+The case statement approach is particularly suitable here because:
+- We have a small, fixed set of input patterns (3-bit input)
+- Each input maps directly to a specific output pattern
+- The structure is easy to understand and modify
+- Most synthesis tools optimize case statements efficiently

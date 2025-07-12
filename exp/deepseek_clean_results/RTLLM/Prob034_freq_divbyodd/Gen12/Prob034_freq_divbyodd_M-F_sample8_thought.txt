@@ -1,0 +1,9 @@
+Fixed odd frequency divider with proper 50% duty cycle:
+1. Maintain separate counters for positive and negative edges, counting full periods (NUM_DIV)
+2. Generate toggle signals only when counters reach (NUM_DIV-1)/2 (midpoint) and NUM_DIV-1 (wrap-around)
+3. Remove redundant toggle at counter reset to prevent double-toggling
+4. Use XOR instead of OR to combine the two phase-shifted clocks for proper 50% duty cycle
+5. Ensure counters reset properly and toggle only at specified points
+6. Simplified toggle logic with clear conditions
+7. Maintain precise timing by toggling only at midpoint and wrap-around
+8. Properly handle all odd division ratios with correct floor division

@@ -1,0 +1,26 @@
+Improvement Strategy:
+1. **Critical Path Optimization**:
+   - Flatten the shift selection logic to reduce nested ternary operators
+   - Pre-compute sign extension bits for right shifts to reduce logic levels
+   - Use parallel computation for all shift options but with optimized selection
+
+2. **Power Optimization**:
+   - Gate shift computations with 'ena' signal to prevent unnecessary switching
+   - Break down 8-bit shifts into sequential operations when possible
+   - Use clock gating for the register update
+
+3. **Area Optimization**:
+   - Share sign extension logic between 1-bit and 8-bit right shifts
+   - Implement barrel shifter techniques for 8-bit shifts
+   - Use a single multiplexer structure for all shift operations
+
+4. **Readability & Synthesis**:
+   - Maintain clear priority structure (load > ena > shift)
+   - Use parameterized shift amounts for better maintainability
+   - Keep continuous assignments for shift operations but with optimized structure
+
+Key Improvements:
+- Reduced logic depth in shift selection
+- Gated computations for power savings
+- Shared resources for area reduction
+- Maintained clear functionality while optimizing PPA

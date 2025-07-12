@@ -1,0 +1,9 @@
+To implement a dual-edge triggered flip-flop without instantiating two separate edge-triggered flip-flops, I will use a single clock domain with a toggle mechanism. The design uses a positive-edge triggered flip-flop capturing the input on the rising edge, and a small state machine to toggle the output also on the falling edge by detecting the clock falling edge through a delayed clock signal. This approach avoids using negedge sensitivity or two full flip-flops.
+
+Specifically, the design uses:
+- A flip-flop capturing 'd' at posedge clk.
+- A delayed version of clk to detect falling edges via an edge detector.
+- When a falling edge is detected (clk transitions from 1 to 0), the output toggles to the latest 'd' sampled in the posedge flip-flop.
+- Internally, a state variable tracks the output data updated on both edges but implemented only with posedge-triggered FFs and combinational logic.
+
+This approach synthesizes on FPGA as only positive edge triggered FFs are used; the falling edge is detected by simple combinational logic, and output updates occur synchronized to posedge clk plus combinational logic, effectively emulating dual-edge triggering behavior.

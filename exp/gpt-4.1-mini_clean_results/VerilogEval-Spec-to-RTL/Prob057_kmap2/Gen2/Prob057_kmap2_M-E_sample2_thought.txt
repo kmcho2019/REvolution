@@ -1,0 +1,31 @@
+A novel approach is to directly implement the K-map as a small 4x4 ROM-like lookup, where the inputs {c,d,a,b} form the address to a 16-bit constant representing the output values for each minterm.
+
+Since the K-map's row corresponds to c,d and the column to a,b (with ab columns 00,01,11,10 and cd rows 00,01,11,10), remapping inputs to match that indexing allows a direct combinational ROM.
+
+First, remap the inputs into a 4-bit address (cd,a,b) in the order that matches the K-map table, adjusting column order since the columns are 00,01,11,10 (b=0 or 1 not in ascending binary order):
+
+- The column mapping order is:
+  ab = 00 -> 0
+  ab = 01 -> 1
+  ab = 11 -> 3
+  ab = 10 -> 2
+
+Hence, define col_index = {a,b} reordered as col_index = (b << 1) | a but permuted to match 00->0,01->1,11->3,10->2
+
+To do this easily: 
+- Use bits {a,b} as 2-bit number ab_val = {a,b}
+- Map ab_val to col_index:
+  2'b00 -> 0
+  2'b01 -> 1
+  2'b11 -> 3
+  2'b10 -> 2
+
+This matches col_index = (a ^ b) ? (a | b) : ab_val, or simply create a small mux.
+
+Once col_index and row_index (cd) are combined, create a 16-bit parameter with K-map values in row-major order per the given mapping.
+
+The output is the bit indexed by row*4 + col_index in the constant.
+
+This approach shifts the logic burden into a fixed vector lookup rather than large boolean expressions.
+
+This method is efficient for small functions, easy to verify, and modular if the truth table changes.

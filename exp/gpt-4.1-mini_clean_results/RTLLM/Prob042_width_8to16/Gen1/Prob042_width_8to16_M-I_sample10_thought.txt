@@ -1,0 +1,12 @@
+To improve the initial design, eliminate the combinational next-state signals (`valid_out_next`, `data_out_next`) that depend on registered signals, which complicates synthesis and may cause glitches or unintended latches. Instead, handle all state updates (data_lock, flag, data_out, valid_out) synchronously within a single always block. 
+
+The strategy:
+- Use a flag to indicate that the first byte has been stored.
+- When `valid_in` arrives:
+  - If the flag is clear, store the first byte and set the flag.
+  - If the flag is set, concatenate the stored byte with the current byte, output data and valid_out in the **next** clock cycle, and clear the flag.
+- Use a registered signal (e.g., `output_pending`) to delay the output valid and data by one cycle after receiving the second byte.
+- This makes timing explicit and synthesizable without combinational feedback loops.
+- On reset, clear all registers and outputs.
+
+This approach ensures clean synchronous operation, avoids combinational feedback loops, reduces glitch risk, improves timing closure, and simplifies the control logic for better area and power efficiency.

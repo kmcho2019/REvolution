@@ -1,0 +1,12 @@
+Fuse the best of both examples by using a clean generate-for loop to calculate carries sequentially from c[0] to c[8], which improves readability and scalability. Use explicit propagate (p) and generate (g) signals for clarity. For the sum bits, compute them as p XOR c, similar to both examples, but ensure the carry chain is clear and consistent.
+
+Additionally, to slightly improve timing and reduce critical path length compared to the strictly serial carry chain, implement a simple two-level hierarchical carry-lookahead for the 8-bit adder:
+- First level computes p and g for each bit.
+- Second level computes group propagate and generate signals for two 4-bit halves.
+- Use these group signals to speed up carry computation to the MSB half, cutting the longest carry chain in half and improving performance.
+
+This fusion keeps the code concise and synthesizable with generate blocks, maintains correctness for sum and signed overflow, and improves PPA by reducing carry propagation depth.
+
+Overflow is computed by XOR of the carry into and carry out of the MSB (c[7] and c[8]).
+
+This modular hierarchical carry-lookahead balances clarity, performance, and area efficiency better than the purely serial carry chain.

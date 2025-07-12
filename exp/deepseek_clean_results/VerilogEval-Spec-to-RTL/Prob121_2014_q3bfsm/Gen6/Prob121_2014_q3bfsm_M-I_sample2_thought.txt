@@ -1,0 +1,18 @@
+To optimize the FSM for better PPA metrics, I'll implement the following improvements:
+
+1. **One-Hot State Encoding**: 
+   - Switch from binary to one-hot encoding (5 bits for 5 states) to reduce combinational logic depth and improve timing.
+   - One-hot typically has better performance in FPGAs and reduces next-state logic complexity.
+
+2. **Registered Output**:
+   - Add a flip-flop for the output 'z' to eliminate glitches and reduce dynamic power.
+   - This adds one cycle latency but improves power and timing.
+
+3. **State Transition Optimization**:
+   - Simplify the next-state logic by leveraging one-hot properties (each bit can be computed independently).
+   - Group similar transitions to minimize logic gates.
+
+4. **Reset Optimization**:
+   - Maintain synchronous reset but initialize only the first state bit.
+
+These changes should improve timing (WNS), reduce power (by eliminating glitches), while slightly increasing area due to one-hot encoding.

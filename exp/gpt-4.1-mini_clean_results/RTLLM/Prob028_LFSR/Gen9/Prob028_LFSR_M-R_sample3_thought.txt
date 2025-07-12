@@ -1,0 +1,9 @@
+Refactor the 4-bit LFSR by separating the state register update (sequential logic) and the feedback generation (combinational logic) explicitly within always blocks, rather than using continuous assignment for feedback. 
+
+Key changes:
+- Use a combinational always block to compute the feedback bit by XORing bits 3 and 2, then inverting it.
+- Use a sequential always block triggered on the rising edge of clk and synchronous active-high reset to update the state.
+- On reset, initialize the register to a non-zero seed.
+- On each clock, shift left and insert the feedback bit at the LSB.
+- Output the current state directly as out.
+- This style uses always blocks for clarity and easier extension, while maintaining the same LFSR function.

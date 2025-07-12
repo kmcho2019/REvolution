@@ -1,0 +1,41 @@
+Analyzing the waveform carefully:
+
+- The state bit acts like a one-bit memory updated only on the clock edge.
+- When b=0, state holds its value (no change).
+- When b=1, the state can change based on a and the current state:
+  - At time 45ns (b=1, a=0, state=0), next state = 1
+  - At time 65ns (b=1, a=1, state=0), next state = 0
+  - At time 75ns (b=1, a=0, state=1), next state =1
+  - At time 85ns (b=1, a=1, state=0), next state = 0
+  - At time 95ns (b=1, a=1, state=1), next state =1
+  - At time 115ns (b=1, a=1, state=1), next state = 0
+
+From this, the next state depends on inputs and current state as:
+
+- If b=0, next_state = state (hold)
+- If b=1:
+  - next_state = (a & ~state) | (~a & state) 
+  This is equivalent to next_state = a XOR ~state = ~(a ^ state)
+
+Checking:
+
+- For b=1, next_state = ~(a ^ state)
+
+For output q:
+
+- At b=0, q = state
+- At b=1, q = a
+
+This fits the waveform since q toggles to a value matching a when b=1, otherwise q = state.
+
+Therefore, implement:
+
+- next_state = b ? ~(a ^ state) : state;
+- q = b ? a : state;
+
+This simple logic aligns perfectly with waveform:
+
+- state only changes when b=1; otherwise held.
+- Output q follows either 'a' (b=1) or 'state' (b=0).
+
+This design uses one flip-flop, combinational next_state and q.

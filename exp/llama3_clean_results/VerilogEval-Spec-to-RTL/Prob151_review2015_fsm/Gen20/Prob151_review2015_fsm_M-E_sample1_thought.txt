@@ -1,0 +1,7 @@
+To address the issues and improve the code, a novel approach would involve re-architecting the finite-state machine (FSM) to better align with the problem's requirements. The new idea involves utilizing a hierarchical state machine structure, where the main FSM controls the overall state transitions, and sub- FSMs or counters handle specific tasks such as pattern detection, shifting, and counting.
+
+The main FSM would have states for IDLE, PATTERN_DETECTION, SHIFTING, COUNTING, and DONE. The PATTERN_DETECTION state would utilize a sub-FSM or a counter to detect the input pattern '1101'. Once the pattern is detected, the main FSM would transition to the SHIFTING state, where it would use a shift counter to ensure 'shift_ena' is asserted for exactly 4 clock cycles.
+
+After shifting, the main FSM would transition to the COUNTING state, where it would wait for the 'done_counting' signal to be high. Upon receiving this signal, it would transition to the DONE state, asserting the 'done' output and waiting for the 'ack' signal to return to the IDLE state.
+
+This hierarchical approach allows for cleaner, more modular code, where each state or sub-FSM has a clear and specific function, making the overall design easier to understand, maintain, and debug.

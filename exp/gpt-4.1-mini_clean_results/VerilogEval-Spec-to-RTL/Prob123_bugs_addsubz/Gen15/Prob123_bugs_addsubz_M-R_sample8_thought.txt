@@ -1,0 +1,11 @@
+Refactor the design to use purely continuous assignments for both the adder-subtractor output and zero flag, eliminating the always block entirely. This improves clarity and synthesis friendliness by describing the logic as pure combinational signals rather than procedural code.
+
+- Keep conditional inversion of b with bitwise XOR.
+- Compute the carry signals and sum bits using generate and wire assignments.
+- Drive `out` and `result_is_zero` as wires internally and assign directly to outputs (reg outputs replaced by wires for combinational signals).
+- Compute the zero flag using a reduction NOR on the sum bits as before.
+- This approach eliminates any always block and reg signals, making it explicit combinational logic.
+- The module interface changes to output wires rather than regs, which is acceptable since outputs are purely combinational.
+- Keeps the exact same functionality and correctness, but uses a cleaner, fully combinational coding style favored in synthesis for purely combinational datapaths.
+
+This refactor maintains correctness, synthesis clarity, and reduces complexity in the code structure.

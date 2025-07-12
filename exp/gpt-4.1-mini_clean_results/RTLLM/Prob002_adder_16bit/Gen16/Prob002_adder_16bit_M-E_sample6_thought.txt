@@ -1,0 +1,11 @@
+Instead of using ripple-carry adders for both 8-bit segments, I will implement an 8-bit carry-lookahead adder (CLA) module for faster carry computation, then instantiate it twice to build the 16-bit adder. 
+
+The carry-lookahead adder generates propagate (P) and generate (G) signals for each bit and then computes the carries in parallel using combinational logic, greatly reducing carry propagation delay compared to ripple-carry.
+
+Key design points:
+- Implement an 8-bit CLA module that calculates sum and carry-out using propagate and generate signals.
+- The 16-bit adder uses two 8-bit CLA instances connected by carry-out to carry-in.
+- This architecture improves timing performance due to carry-lookahead logic while keeping modularity and reusability.
+- All logic is combinational.
+
+This approach yields a more efficient carry path and scalable design without increasing code complexity much.

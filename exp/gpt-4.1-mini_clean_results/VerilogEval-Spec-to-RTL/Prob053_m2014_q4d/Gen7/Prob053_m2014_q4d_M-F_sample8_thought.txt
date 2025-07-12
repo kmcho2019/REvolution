@@ -1,0 +1,7 @@
+The problem requires no reset signal, so we cannot add one to initialize the flip-flop. The initial block used to initialize the register is ignored by synthesis tools, causing the output 'out' to start undefined in real hardware and leading to simulation mismatches.
+
+To fix this while respecting the no-reset constraint, the best approach is to remove the initial block entirely. This matches realistic hardware behavior, where the register starts in an unknown state and then evolves based on input and clock.
+
+This change eliminates the initial block synthesis warnings and aligns simulation and synthesis semantics. Although simulation may still show an undefined output at time zero, this reflects the real hardware condition.
+
+Hence, the fix is to remove the initial block initializing the register and keep the rest of the logic unchanged.

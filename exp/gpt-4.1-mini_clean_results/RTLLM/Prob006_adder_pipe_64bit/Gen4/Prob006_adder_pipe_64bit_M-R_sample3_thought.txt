@@ -1,0 +1,13 @@
+Refactor the 64-bit pipelined ripple carry adder by explicitly splitting it into 8 pipeline stages of 8 bits each and connecting each stage with its own set of registers for operands, carry, sum, and enable signals. Instead of mixing combinational addition inside the clocked always block, separate combinational add logic using assigns and use clocked always blocks only to register pipeline stage inputs, sums, carry-outs, and enables. This improves clarity by distinguishing combinational addition from pipeline register updates.
+
+In each clock cycle:
+- Register inputs and enables into stage 0 registers when i_en is high.
+- For stages 0 to 7:
+  - Use combinational adders to calculate partial sums and carry-outs based on registered inputs and carry-ins.
+- Register the sum outputs and carry-outs for each stage synchronously.
+- Propagate enables through pipeline registers so that output enable o_en asserts when the final stage’s data is valid.
+- Finally, concatenate sums from all stages and the final carry-out to form the 65-bit result.
+
+This structure better separates combinational logic and sequential registers and improves code readability and modularity without changing the pipelining idea or latency. It also explicitly avoids assignments inside conditionals in always blocks and uses blocking assigns in combinational logic.
+
+Reset synchronously clears pipeline registers and disables output. The module name and ports remain the same as specified.

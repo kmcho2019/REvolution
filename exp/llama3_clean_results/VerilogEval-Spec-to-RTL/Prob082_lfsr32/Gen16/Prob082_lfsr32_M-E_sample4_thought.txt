@@ -1,0 +1,9 @@
+To correctly implement the Galois LFSR, we need to rethink the calculation of the next state. Instead of directly calculating the next state, we can separate the calculation into two parts: calculating the XOR result of the taps and the LSB, and then shifting the bits to the right. 
+
+We will first calculate the XOR result of the bits at the tap positions (32, 22, 2, and 1) and the LSB (q[0]). However, we need to consider that the tap positions are specified from the left (most significant bit), but the actual indices of these bits in the 32-bit vector are one less than their positions. 
+
+We will use a temporary variable to calculate the XOR result of the taps and the LSB. Then, we will use this result to shift the bits to the right and update the specific bit positions accordingly.
+
+To implement this, we can use a combination of bitwise operations and shift operators. We will use the XOR operator (^) to calculate the XOR result of the taps and the LSB, and then use the shift operator (>>) to shift the bits to the right.
+
+By separating the calculation into two parts, we can make the implementation more modular and easier to understand, while also ensuring that the Galois LFSR is correctly implemented.

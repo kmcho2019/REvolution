@@ -1,0 +1,26 @@
+Refactoring Strategy:
+
+1. Core Improvements:
+   - Maintain 2-stage pipeline but with proper carry propagation timing
+   - Use explicit combinational logic for additions
+   - Separate pipeline registers for clearer timing
+   - Properly synchronize output enable with pipeline stages
+
+2. Structural Changes:
+   - Replace always blocks with assign statements where possible
+   - Use explicit intermediate registers for each pipeline stage
+   - Separate carry propagation into dedicated registers
+   - Simplify output generation logic
+
+3. Key Benefits:
+   - Clearer separation of combinational and sequential logic
+   - Proper carry timing between stages
+   - Correct output enable synchronization
+   - More maintainable structure
+   - Same latency (2 cycles) but with correct functionality
+
+4. Implementation Approach:
+   - Stage 1: Register inputs and compute lower 32-bit sum
+   - Stage 2: Compute upper 32-bit sum with carry from stage 1
+   - Properly concatenate results from both stages
+   - Synchronize o_en with final result availability

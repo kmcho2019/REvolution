@@ -1,0 +1,20 @@
+To refactor the fixed-point subtractor while maintaining the same core logic, I will leverage Verilog's support for signed arithmetic and simplify the implementation by:
+
+1. Declaring inputs and outputs as signed vectors (`signed [N-1:0]`), enabling direct arithmetic without explicit sign/magnitude extraction.
+2. Perform direct subtraction of `a - b` as signed values to get the preliminary result.
+3. Detect zero by checking if the result is zero, and explicitly set the sign bit to zero if so.
+4. Since the inputs and output are two's complement signed fixed-point numbers, direct subtraction yields correct signed arithmetic results without manual magnitude manipulation.
+5. Use continuous assignments (`assign`) instead of `always` blocks for clean combinational logic.
+6. Parameterize the widths and fractional bits per the spec; Q is used mainly for interpretation rather than arithmetic in hardware.
+
+This approach preserves the intended behavior:
+
+- Same sign subtraction and different sign addition are inherently handled by signed subtraction.
+- Explicit zero sign bit clearing is done after subtraction.
+- The code becomes simpler, more synthesis-friendly, and easier to maintain, while meeting the spec.
+
+This refactoring simplifies the design, removes manual sign/magnitude operations and functions, and improves synthesis compatibility without changing functionality.
+
+No clock or sequential logic is needed; output is purely combinational.
+
+The module interface stays the same, except inputs and outputs are declared as signed wires to enable direct arithmetic.

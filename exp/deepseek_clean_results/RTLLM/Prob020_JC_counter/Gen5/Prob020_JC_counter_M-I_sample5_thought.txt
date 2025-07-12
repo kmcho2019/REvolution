@@ -1,0 +1,20 @@
+To optimize the Johnson counter implementation for better PPA metrics while maintaining functionality:
+
+1. Timing Optimization:
+- The current WNS violation (-0.12ns) suggests the feedback path is critical
+- We'll pipeline the feedback path by adding a register stage for Q[0]
+- This breaks the long combinational path while maintaining correct functionality
+
+2. Power Optimization:
+- Add clock gating when the counter reaches its terminal states (all 1s or all 0s)
+- This reduces unnecessary toggling when the counter isn't changing state
+
+3. Area Optimization:
+- Keep the basic structure but optimize the register implementation
+- Use a more efficient shift register structure if available in the target technology
+
+The improved version will:
+- Maintain the same Johnson counter sequence
+- Improve timing by pipelining
+- Reduce power through clock gating
+- Keep area comparable while improving other metrics

@@ -1,0 +1,13 @@
+To improve the FSM correctness and timing alignment, we implement the following refinements:
+
+1. Shift in the serial data on every clock cycle regardless of state to ensure pattern detection is continuous and timely.
+
+2. Detect the start pattern 1101 by checking the shifted-in register after the new bit is included, allowing immediate transition to SHIFT state on pattern match.
+
+3. Use a separate counter for shift cycles during SHIFT state, reset properly on state transitions.
+
+4. Update outputs synchronously based on the registered state to avoid combinational glitches and ensure outputs change precisely on clock edges.
+
+5. Keep all sequential logic triggered on posedge clk with synchronous active-high reset.
+
+This approach ensures that pattern detection is seamless, shift_ena assertion duration is precise, and output signals align properly with the FSM state transitions, meeting functional verification requirements.

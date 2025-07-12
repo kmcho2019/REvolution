@@ -1,0 +1,20 @@
+To optimize the design for better PPA metrics while maintaining correct functionality, we'll implement these improvements:
+
+1. **Timing Optimization**:
+   - Pipeline the counter comparison logic by pre-computing count+1
+   - Use one-hot encoding for critical comparisons (count==5/6)
+
+2. **Power Optimization**:
+   - Remove default output assignments to reduce unnecessary toggling
+   - Only update counter when needed (when in changes)
+
+3. **Area Optimization**:
+   - Share comparison logic between output conditions
+   - Use more efficient state encoding (minimum bits needed)
+
+4. **Maintain Correctness**:
+   - Keep the same detection logic for disc, flag, and err
+   - Preserve synchronous reset behavior
+   - Ensure outputs are registered for one cycle
+
+The improved design will reduce critical path delay while maintaining the same functionality.

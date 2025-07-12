@@ -1,0 +1,13 @@
+The waveform suggests p and q are sequential outputs updated on the clock's positive edge only, with p depending on both the current input 'a' and the previous value of q, and q being updated based on the previous value of p. Initially, both outputs are undefined (x), indicating no reset, but the waveform shows stable behavior as clock and inputs progress.
+
+To match the waveform:
+
+- Use a synchronous design triggered only on the positive clock edge.
+- Update p and q as a 2-bit state register to simplify assignments.
+- From waveform observations, p updates to (a & ~q), and q updates to previous p.
+- Implement the state update as {p,q} <= {a & ~q, p}, reflecting the sequential relationship.
+- Initialize p and q to 0 at start for deterministic simulation results.
+
+This approach simplifies the design to one clock edge and models the sequence of outputs precisely as per the waveform, eliminating timing issues caused by using both clock edges.
+
+The final solution uses a 2-bit state register {p,q} updated at posedge clock to the next state {a & ~q, p}.

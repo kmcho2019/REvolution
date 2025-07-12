@@ -1,0 +1,14 @@
+After carefully analyzing the feedback and waveform, here's the corrected understanding:
+1. State transitions occur only on positive clock edges when a=1:
+   - If a=1 and b=1: toggle state (state <= ~state)
+   - If a=1 and b=0: reset state to 0
+   - If a=0: state remains unchanged (explicitly maintain previous value)
+2. Output q is always state XOR b (matches all waveform cases)
+3. Initial state is 0 (matches waveform)
+4. All transitions must be perfectly synchronized with clock edges
+
+Key fixes:
+1. Explicitly maintain state when a=0 by including the "else" case
+2. Keep XOR for q output as it perfectly matches observed behavior
+3. Ensure state only changes on clock edges when a=1
+4. Remove any potential race conditions by proper sequential design

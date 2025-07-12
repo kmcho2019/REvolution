@@ -1,0 +1,5 @@
+I will implement the frequency divider using a single up-counter that counts from 0 to 99 (for 1 MHz output) and derive all output clocks by toggling their signals at the appropriate counter values. This removes the need for multiple counters, simplifying state tracking and potentially saving area. The 50 MHz output toggles every 1 count (divide by 2), the 10 MHz toggles every 5 counts (divide by 10), and the 1 MHz toggles every 50 counts (divide by 100). 
+
+This approach uses a single counter with width 7 bits (to count up to 99), and a combinational decode of the count for toggling each clock output. On each positive clock edge, the counter increments and when hitting toggle points, the corresponding output clock toggles. Reset asynchronously clears the counter and outputs.
+
+This architecture centralizes counting, avoids multiple counters, and simplifies control, which is helpful for synthesis and area optimization.

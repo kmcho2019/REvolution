@@ -1,0 +1,10 @@
+The main issue with the current implementation is in the dfr (supplemental flow valve) control logic. While the nominal flow rates (fr2, fr1, fr0) are correctly implemented, the dfr output has mismatches because it's too sensitive to any sensor change rather than specifically detecting rising water levels.
+
+Improvement strategy:
+1. Implement proper water level state tracking (below s[0], between s[0]-s[1], between s[1]-s[2], above s[2])
+2. Track previous state to detect actual level increases (not just sensor changes)
+3. Only assert dfr when moving to a higher level zone
+4. Handle invalid sensor patterns by maintaining current state
+5. Optimize state encoding for minimal logic
+
+The improved version will use explicit state tracking and level comparison to ensure dfr is only asserted during genuine rising water conditions.

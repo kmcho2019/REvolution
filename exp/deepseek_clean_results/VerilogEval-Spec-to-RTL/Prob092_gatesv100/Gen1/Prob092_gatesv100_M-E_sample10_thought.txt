@@ -1,0 +1,17 @@
+Instead of using individual bit operations, we can implement this using shift operations and parallel comparisons:
+
+1. For out_both:
+   - Create a left-shifted version of the input (shifted by 1)
+   - Bitwise AND with original input
+   - Force MSB to 0 (no left neighbor for in[99])
+
+2. For out_any:
+   - Create a right-shifted version of the input (shifted by 1)
+   - Bitwise OR with original input
+   - Force LSB to 0 (no right neighbor for in[0])
+
+3. For out_different:
+   - Create a circular left-shifted version of the input
+   - Bitwise XOR with original input for all bits
+
+This approach minimizes individual bit operations by processing the entire vector at once using shift operations, which can be more efficient in some FPGA architectures.

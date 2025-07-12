@@ -1,0 +1,15 @@
+To simplify the implementation while maintaining functionality, we can derive a minimal Boolean expression from the Karnaugh map. Observing the K-map:
+
+1. The output is 1 in most cases except for specific patterns where it's 0.
+2. The 0s appear in a checkerboard-like pattern that can be captured with XOR operations.
+3. The minimal expression is: out = ~(c ^ d) | (a ^ b) | (c & ~d & ~a & b) | (~c & d & a & ~b)
+
+However, this still seems complex. A better approach is to recognize that the output is 0 only in these cases:
+- cd=00 and ab=11
+- cd=01 and ab=01 or ab=11
+- cd=10 and ab=11 or ab=10
+
+This can be expressed more simply as:
+out = !((~c & ~d & a & b) | (~c & d & ~a & b) | (~c & d & a & b) | (c & ~d & a & b) | (c & ~d & a & ~b))
+
+But this is still not optimal. The most efficient implementation is to keep the case statement but make it more concise by grouping the 0 cases.

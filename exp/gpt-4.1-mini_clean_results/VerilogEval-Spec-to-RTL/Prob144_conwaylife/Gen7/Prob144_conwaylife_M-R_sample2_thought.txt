@@ -1,0 +1,11 @@
+Refactor the design by replacing the always block computing the next state with a purely combinational continuous assignment using a generate-for loop and helper functions. This allows for clearer indexing via a local function to get neighbors count, and the final next_q assignment is built from a 256-bit wide vector of updated cell values calculated independently. The combinational logic is split per cell via generate, using a separate function to count neighbors with wrap-around indexing.
+
+This approach uses a separate neighbor counting function that takes coordinates and returns the sum, avoiding nested for loops in the always block, and the next state calculation is done via a generate construct with a parallel assignment to each bit of next_q. The sequential q register update logic remains synchronous with load.
+
+This structure improves code readability by leveraging functions and generate blocks and simplifies synthesis tool inference for parallel hardware. It also makes the combinational neighbor counting explicit and isolated, potentially helping synthesis optimizations.
+
+Key points:
+- Define a function to count neighbors with wrap-around.
+- Use generate-for to compute next state bit-by-bit combinationally.
+- Use assign statements inside generate block to build next_q.
+- Sequential q update on posedge clk with load synchronous load.

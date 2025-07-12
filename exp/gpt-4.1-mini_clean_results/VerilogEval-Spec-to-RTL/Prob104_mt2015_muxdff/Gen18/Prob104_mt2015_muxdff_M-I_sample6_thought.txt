@@ -1,0 +1,11 @@
+The original TopModule design is a simple muxed D flip-flop that selects between r_in and q_in on the rising edge of clk based on L. This fits the problem statement since full_module is responsible for computing the next state logic and feeding it to q_in.
+
+However, to improve the design for better PPA (Power, Performance, Area) and clarity, I will explicitly implement the 2:1 multiplexer outside the always block as a combinational mux, then feed the mux output to a single flip-flop. This separation often helps synthesis tools optimize mux and flip-flop better.
+
+Also, using a wire for mux output improves readability and avoids potential synthesis issues with mixed mux and flip-flop logic inside the always block.
+
+The module interface and functionality remain identical: on posedge clk, Q <= L ? r_in : q_in.
+
+This approach provides clean logic mapping of a 2:1 mux followed by a D flip-flop, potentially improving timing and area during synthesis.
+
+No logic changes are introduced, only restructuring for improved synthesis friendliness.

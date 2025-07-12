@@ -1,0 +1,7 @@
+Refactor the design to separate combinational neighbor counting into a generate block with localwire arrays and use continuous assignments (`assign`) to compute next states for each cell in parallel. Store the current state in a register updated on clock edge, with synchronous load.
+
+This approach replaces the nested loops and function calls with explicit generate loops and wire arrays for neighbor counts, enabling the synthesis tool to infer parallel logic more easily and potentially improve timing by flattening the logic hierarchy.
+
+We use wire arrays indexed by row and column to hold current cell states and neighbor counts. Neighbor counting is done by summing eight neighboring bits using Verilog arithmetic. The next state is computed via combinational logic based on the neighbors count, then flattened back to a 256-bit bus for the output register.
+
+This structure avoids `always @(*)` with loops and functions for neighbor counting, making the design cleaner and more synthesis-friendly, while maintaining identical behavior.

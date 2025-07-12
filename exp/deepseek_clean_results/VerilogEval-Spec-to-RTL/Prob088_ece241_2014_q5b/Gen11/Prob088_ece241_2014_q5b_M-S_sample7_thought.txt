@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Eliminate redundant state logic by recognizing that state_B is simply the complement of state_A in this two-state machine
+2. Reduce the number of state variables by using only state_A and deriving state_B from it
+3. Simplify the output logic by directly mapping to the current state and input
+4. Maintain the one-hot encoding requirement while minimizing logic operations
+5. Keep the same reset behavior and Mealy machine characteristics
+
+Key Observations:
+- Since it's a one-hot two-state machine, we only need to track one state (state_A)
+- state_B can be derived as ~state_A
+- Output z can be expressed directly as x ^ state_A (XOR operation)
+- Next state logic for state_A simplifies to state_A & ~x

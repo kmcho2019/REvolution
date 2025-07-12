@@ -1,0 +1,17 @@
+Instead of computing all 256 cells' next states fully combinationally every clock cycle, I will pipeline the computation over multiple clock cycles to reduce combinational complexity and improve timing.
+
+Specifically, I will process one row of the grid per clock cycle: on each clock cycle (if not loading), the module computes the next state of one row using the current full grid state. After 16 such cycles (processing rows 0 through 15), the next state grid is complete and replaces the current grid.
+
+A counter will track the current row to process. This pipelined approach spreads the neighbor counting and summing over multiple clock cycles, easing combinational load.
+
+To support this, I will:
+
+- Store the current state grid in a 256-bit register q.
+- Have a 256-bit register next_q to accumulate the next grid state.
+- On 'load', initialize q with data immediately and reset the row counter.
+- Otherwise, each clock cycle compute the next state for the row indicated by the counter and write it into next_q.
+- When all 16 rows are processed (counter reaches 15), transfer next_q to q and reset the counter.
+
+This approach decreases combinational complexity per cycle by a factor of 16, simplifying timing and reducing power spikes.
+
+Also, since grid size is 16 (a power of two), use bitwise masking instead of modulo operations for wrapping indices, improving synthesis efficiency.

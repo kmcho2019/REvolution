@@ -1,0 +1,23 @@
+Refactored solution with improved state machine structure and clearer priority handling:
+
+1. Key improvements:
+   - Simplified state encoding with explicit priority handling
+   - Combined direction and action states into a single state machine
+   - Used continuous assignments for outputs (more readable)
+   - Explicit fall counter handling with clear reset conditions
+   - More straightforward state transitions with proper priority ordering
+
+2. State machine structure:
+   - States: WALK_LEFT, WALK_RIGHT, FALL_LEFT, FALL_RIGHT, DIG_LEFT, DIG_RIGHT, SPLAT
+   - Direction encoded directly in state
+   - Clear transitions between walking, falling, and digging states
+
+3. Priority handling:
+   - Fall condition checked first (highest priority)
+   - Dig condition checked next (if not falling)
+   - Bump condition checked last (if neither falling nor digging)
+
+4. Output logic:
+   - Pure combinatorial assignments based on current state
+   - Clear mapping from states to outputs
+   - No complex saved direction logic needed

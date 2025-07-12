@@ -1,0 +1,7 @@
+To implement a simplified radix-2 divider for 8-bit signed or unsigned integers, we will follow the provided specification. The design involves a finite state machine that handles the division process, including initialization, the iterative division steps, and result validity management. Key components include a shift register for the dividend, a counter for tracking the division steps, and a mechanism for handling signed and unsigned operations.
+
+The module `radix2_div` will have a synchronous reset (`rst`) and operate based on the clock signal (`clk`). It will take the dividend, divisor, and an operation validity signal (`opn_valid`) as inputs, and produce a result validity signal (`res_valid`) along with the 16-bit result containing the remainder and quotient.
+
+The division process starts when `opn_valid` is high and `res_valid` is low, saving the inputs and initializing the necessary registers. The division itself involves iterative steps where the shift register is updated based on the subtraction result between the current value of the shift register and the negated divisor, with the result and carry determining the next state of the shift register.
+
+Management of the result validity (`res_valid`) is crucial and will be updated based on the reset signal, the completion of the division process, and the consumption of the result.

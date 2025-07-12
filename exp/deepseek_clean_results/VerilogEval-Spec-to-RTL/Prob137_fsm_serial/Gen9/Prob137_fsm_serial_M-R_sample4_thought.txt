@@ -1,0 +1,16 @@
+Refactoring Strategy:
+1. State Machine Restructuring: Use a single always block for both state transitions and output logic (Mealy-style FSM) to reduce code complexity
+2. Data Handling: Replace sequential shift register with combinational right-shift operation to improve timing
+3. Bit Counting: Use a combinational bit_count_next signal to separate counting logic from state transitions
+4. Done Logic: Implement as combinational output directly from state and input conditions
+5. Reset Handling: Maintain synchronous reset but simplify register updates
+6. Optimizations:
+   - Eliminate separate next_state register by using immediate assignments
+   - Remove done_reg by making done purely combinational
+   - Simplify WAIT state transitions by combining with STOP conditions
+
+Key Changes:
+- Single always block design reduces hierarchy and improves readability
+- Combinational data shifting removes one clock cycle delay in data capture
+- Direct bit_count_next calculation separates concerns
+- Mealy-style done output matches specification while reducing registers

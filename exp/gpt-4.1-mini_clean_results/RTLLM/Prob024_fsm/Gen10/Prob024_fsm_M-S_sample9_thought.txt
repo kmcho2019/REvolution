@@ -1,0 +1,7 @@
+To simplify the FSM design while maintaining correct sequence detection and continuous overlapping support, I will reduce the number of states to only those strictly necessary for tracking the sequence "10011". A 5-state Mealy FSM suffices: S0 (start), S1 (detected '1'), S2 (detected '10'), S3 (detected '100'), and S4 (detected '1001'). The FSM transitions track the progress and loops back properly for overlapping detection.
+
+The MATCH output is asserted combinationally when the FSM is in state S4 and input IN=1, indicating the full sequence "10011" was detected.
+
+I will implement simple synchronous reset and state updates without clock enable gating, reducing logic complexity and ensuring clean, easy-to-understand code. The next state logic will be implemented with a straightforward `case` statement.
+
+This approach reduces states and complexity but still fully supports detection of the sequence "10011" on a continuous input stream with overlapping matches.

@@ -1,0 +1,5 @@
+Instead of using an always block with a case statement, I will implement this purely with continuous assignments using a combinational logic approach. Each output signal will be asserted when the 16-bit scancode exactly matches its associated constant. This approach simplifies the design by using simple equality comparisons for each output and avoids any conditional or sequential logic. It also allows parallel detection of multiple keys, if needed, though the scancode protocol typically prevents that.
+
+This method produces minimal combinational delay since all outputs are derived from parallel equality comparators. It also keeps the design very modular and explicit, with no implicit latches or registers. It's easy to understand, and synthesis tools will likely generate optimal logic by sharing common prefixes in the comparisons.
+
+Thus, each output is directly driven by a boolean expression checking the entire 16-bit scancode for each arrow key's code.

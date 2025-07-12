@@ -1,0 +1,11 @@
+Simplified design approach:
+1. Use single always block for write operations instead of generate block to reduce complexity
+2. Keep combinational read path for simplicity and low latency
+3. Maintain separate read/write ports for true dual-port functionality
+4. Simplify reset logic to clear entire memory in one operation
+5. Remove unnecessary zeroing of read_data when not enabled to reduce power
+6. Benefits:
+   - Reduced area by eliminating generate block
+   - Lower power by minimizing unnecessary transitions
+   - Simpler code structure while maintaining same functionality
+   - Better synthesis results with single write always block

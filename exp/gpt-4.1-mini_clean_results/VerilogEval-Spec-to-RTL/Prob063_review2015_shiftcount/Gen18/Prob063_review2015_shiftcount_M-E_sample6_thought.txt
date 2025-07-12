@@ -1,0 +1,7 @@
+I will implement the shift register and decrement counter by separating the operations into two exclusive always blocks, each triggered on the clock edge but enabled only when their respective enable signals are high. This approach naturally prioritizes whichever operation is active, since both enables will never be asserted simultaneously per the problem statement.
+
+The 4-bit shift register will shift left (MSB first) and insert the input data at LSB on shift_ena. Separately, when count_ena is high, the register will decrement by one using a simple subtraction.
+
+This design uses synchronous logic only, no initialization flag; instead, it assumes power-on reset is not required or handled externally. To keep the register updated correctly, the register holds its value in absence of enable signals.
+
+Overall, this dual-always-block approach cleanly splits functionality, makes control explicit, and can yield simpler or more natural hardware mapping for some flows.

@@ -1,0 +1,6 @@
+To solve this problem, we need to design a finite state machine that can identify the message boundaries in a byte stream. The algorithm will be as follows:
+- The FSM will start in an idle state, discarding all input bytes until it finds one with in[3] = 1.
+- Once such a byte is found, it will transition to a state where it will capture the next two bytes, completing a message.
+- After capturing the three bytes of a message, the FSM will signal the receipt of the message by asserting the done signal and output the 24-bit message on out_bytes.
+- The FSM will then reset to its idle state, ready to search for the next message.
+We can implement this using a simple 4-state FSM (idle, byte1, byte2, done), with registers to hold the captured bytes and the out_bytes output.

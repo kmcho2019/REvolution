@@ -1,0 +1,13 @@
+Alternative approach using a direction bit and a single always block for both wave and direction updates.
+
+Idea:
+- Maintain a 5-bit wave register and a 1-bit direction register.
+- Direction = 0 means increment wave, 1 means decrement wave.
+- On each clock cycle, update wave according to direction.
+- When wave reaches upper boundary (31), set direction to decrement.
+- When wave reaches lower boundary (0), set direction to increment.
+- Implement all logic in a single always block triggered on posedge clk or negedge rst_n.
+- This approach avoids redundant conditional holds by changing direction immediately at boundaries.
+- The direction bit directly encodes increment/decrement state, simplifying control logic.
+- This single-block design reduces flip-flop-to-flip-flop delays and conditional complexity.
+- It meets the spec of cycling wave between 0 and 31 inclusively and smoothly generates the triangle wave.

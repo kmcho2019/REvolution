@@ -1,0 +1,15 @@
+Refactor the FSM to separate direction state and falling state into two independent registers: a walking_direction (1 bit, 0 for left, 1 for right) and a falling flag. This decouples direction from falling, avoiding the need for a "last_walk_dir" state register and reducing complexity.
+
+- walking_direction is updated only in walking mode, changed on bump signals.
+- falling flag is set/reset based on ground input.
+- When falling is asserted, the walk outputs are suppressed and aaah is asserted.
+- When ground returns, falling clears and walking resumes in the stored walking_direction.
+- Reset asynchronously initializes walking_direction to left and falling to zero.
+
+This approach simplifies state transitions, avoids a three-state FSM, and eliminates issues with last_walk_dir timing.
+
+The outputs are directly generated from walking_direction and falling signals. The direction flips only when walking and bumped.
+
+Bumps during falling or ground transition do not change direction.
+
+This structure implements the same behavior as the original problem with simpler, more robust state handling.

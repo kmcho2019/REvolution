@@ -1,0 +1,9 @@
+The original design is already minimal and correct, but to optimize for power and area slightly, we can:
+
+- Combine the next state and output logic into a single always block since outputs depend only on states, reducing redundant combinational logic.
+- Use a single nonblocking assignment style consistently.
+- Use parameters instead of localparams for flexibility.
+- Encode the output directly from the state bit, avoiding a separate case statement, since the output matches the inverse of the state in this encoding (B=0 => out=1, A=1 => out=0).
+- This small change reduces logic and net switching, potentially improving power and area without affecting timing.
+
+The synchronous reset remains to ensure correct initialization.

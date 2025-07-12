@@ -1,0 +1,13 @@
+Implement a single synchronous FSM with four states: IDLE (search for pattern 1101), DELAY_LOAD (shift in 4 delay bits MSB first), COUNTING (count (delay+1)*1000 cycles), and DONE (assert done, wait for ack).
+
+Use a 4-bit shift register for pattern detection in IDLE. Once detected, move to DELAY_LOAD and shift in 4 bits to delay_reg.
+
+In COUNTING, use a 10-bit micro_counter counting 0..999 and a 4-bit step_counter counting down delay steps from delay_reg to 0. Each step represents 1000 cycles. The count output shows the current step remaining.
+
+When counting finishes, assert done and wait for ack to return to IDLE.
+
+All registers update synchronously in one always block. No multi-driver conflicts.
+
+Outputs: counting asserted during COUNTING; done asserted during DONE; count shows current step remaining only in COUNTING, else don't-care (zero).
+
+This approach is clean, minimal, and meets all requirements.

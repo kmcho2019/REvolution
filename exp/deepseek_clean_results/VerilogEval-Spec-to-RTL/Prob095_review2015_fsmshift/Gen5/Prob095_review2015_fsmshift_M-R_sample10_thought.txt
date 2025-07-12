@@ -1,0 +1,12 @@
+Here's a corrected version using the same shift register concept but with proper implementation:
+
+1. Initialize a 4-bit shift register to 4'b1111 on reset (active high)
+2. Each clock cycle, shift right with 0 input (becomes 4'b0111, 4'b0011, 4'b0001, 4'b0000)
+3. The LSB (not MSB) of the shift register controls shift_ena
+4. This creates exactly 4 cycles of shift_ena (while any '1's remain in the register)
+5. After 4 shifts, the register becomes 4'b0000 and stays there until next reset
+
+Key changes from original:
+- Using LSB instead of MSB for shift_ena
+- Correct shift direction (right shift with 0 input)
+- Maintains same elegant shift register approach but now works correctly

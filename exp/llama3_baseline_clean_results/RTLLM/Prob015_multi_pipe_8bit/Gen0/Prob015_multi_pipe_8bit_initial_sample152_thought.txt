@@ -1,0 +1,13 @@
+The multi_pipe_8bit module is designed as a pipelined 8-bit unsigned multiplier. It utilizes a clock signal, active-low reset signal, input enable signal, and provides an output enable signal along with the product output of size 16 bits. The design is structured around several stages, including input control, input registers, partial product generation, partial sum calculation, final product calculation, and output assignment. This modular approach enables efficient pipelining and improves overall performance.
+
+The key components of this design are:
+1. Input Control: This stage samples the input enable signal and stores it in a register. The output enable signal is derived from this register.
+2. Input Registers: These registers store the input multiplicand and multiplier, updated only when the input enable signal is active.
+3. Partial Product Generation: This stage generates partial products by performing bitwise operations between the multiplicand and the multiplier bits.
+4. Partial Sum Calculation: The partial products are summed up in stages to calculate intermediate sums, using a set of registers updated on the positive edge of the clock signal.
+5. Final Product Calculation: The final product is obtained by summing up all partial sums and stored in a register.
+6. Output Assignment: The output product is assigned based on the output enable signal and the accumulated sum.
+
+The Verilog implementation of this design involves using always blocks for sequential logic (registers) and combinational logic for partial product generation, partial sum calculation, and final product calculation. The output enable signal is used to ensure that the output product is only considered valid when the multiplication operation is enabled.
+
+By utilizing pipelining, this design can improve performance by increasing the throughput of multiplication operations.

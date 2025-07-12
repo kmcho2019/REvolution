@@ -1,0 +1,5 @@
+To simplify the design, I will avoid generate loops and localparams, and instead explicitly write out each of the 25 bits in the output vector. Since the inputs are just five single bits, enumerating all pairwise comparisons directly with the XNOR operator (~^) is straightforward and clear.
+
+This explicit approach removes the complexity of indexing and generate constructs, improving readability while maintaining full functionality. The output bit indexing will follow the problem's specified mapping from bit 24 down to bit 0, ordered as out[24] = a ~^ a, out[23] = a ~^ b, ..., out[0] = e ~^ e.
+
+Though this increases code verbosity, it simplifies understanding and debugging, making it an ideal solution when synthesis or area/power optimization is not the primary concern.

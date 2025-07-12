@@ -1,0 +1,20 @@
+To improve the given 16-bit adder design for better Performance, Power, and Area (PPA), I will enhance carry computation by implementing a hierarchical carry-lookahead structure instead of simple ripple carry between two 8-bit adders. 
+
+Specifically:
+- Inside each 8-bit adder, keep the existing carry-lookahead logic.
+- At the 16-bit level, replace the ripple carry from the lower 8-bit block to the upper block with a carry-lookahead signal computed using the group propagate and generate signals of both 8-bit blocks.
+- Compute the carry-in to the upper 8-bit adder in parallel by generating group propagate (P) and group generate (G) for each 8-bit block.
+- Use these group P and G signals to calculate the carry into the upper block without waiting for the full ripple through the lower 8 bits, thus reducing the critical path delay.
+
+This hierarchical carry-lookahead approach:
+- Reduces carry propagation delay between blocks (improves timing).
+- Keeps the modular 8-bit block structure for easy reuse and maintainability.
+- Keeps combinational logic for synthesis without added complexity.
+- Requires minimal additional logic for group P and G signals and their combination.
+
+This optimization focuses primarily on reducing critical path delay while keeping power and area comparable or slightly improved due to less switching delay on carry signals.
+
+Implementation details:
+- Modify adder_8bit to output group propagate (P) and group generate (G).
+- At the 16-bit level, compute carry_in_upper = G_lower | (P_lower & Cin).
+- Use carry_in_upper as carry-in to upper 8-bit adder.

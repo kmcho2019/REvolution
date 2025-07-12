@@ -1,0 +1,10 @@
+To fix the functional mismatches and reset issues, the outputs should be fully registered rather than purely combinational from the asynchronous input sensors. On reset, the outputs must explicitly reflect the "low water level for a long time" state with all nominal flow valves and supplemental valve asserted. To achieve this:
+
+- Register the decoded water level on each clock cycle, synchronizing inputs.
+- Compare the registered current level to the previous level to determine if the water level is rising.
+- Drive all outputs (fr0, fr1, fr2, dfr) from registered signals updated synchronously.
+- On reset, initialize previous and current levels to "below s[0]" (lowest level), and assert all flow outputs.
+- This ensures stable outputs during and after reset regardless of asynchronous input changes.
+- The decoding function remains the same but is only applied on registered inputs.
+
+This approach solves the mismatch between input-driven combinational outputs and internal state, matches problem requirements, and improves output stability and simulation correctness.

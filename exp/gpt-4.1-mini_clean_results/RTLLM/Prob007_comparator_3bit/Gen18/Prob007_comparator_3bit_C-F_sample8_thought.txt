@@ -1,0 +1,15 @@
+To create a superior 3-bit comparator, I will combine the best features of both examples as follows:
+
+1. Use bitwise XNOR for each bit's equality check for clarity and synthesis friendliness.
+
+2. Define a combined equality of the top two bits (eq_21) to reuse in both equality and greater-than logic, reducing repeated logic and improving synthesis efficiency.
+
+3. Calculate overall equality as eq_21 & eq_bit0, maintaining modularity.
+
+4. For greater-than logic, inline equality signals except reusing eq_21 twice, balancing wire count and logic depth for a concise, readable, and minimal gate-level representation.
+
+5. Define less-than as the complement of (greater or equal) signals to ensure mutual exclusivity and avoid redundant comparisons.
+
+6. Use purely combinational assign statements with minimal wires and clear structure, enabling optimal synthesis results for performance, power, and area.
+
+This fusion preserves clarity and modularity, minimizes gate count and logic depth, and ensures mutual exclusivity of outputs. It leverages intermediate signals smartly without redundant wires, maintaining compact and efficient implementation.

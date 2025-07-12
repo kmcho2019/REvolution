@@ -1,0 +1,11 @@
+Novel approach using dual-buffer technique:
+1. Use two 8-bit registers (buffer and output) to enable continuous serial collection while allowing parallel output
+2. Implement a state machine with two states: COLLECT and OUTPUT
+3. In COLLECT state: accumulate bits into buffer register from MSB to LSB
+4. When 8 bits are collected: switch to OUTPUT state, transfer buffer to output, and assert dout_valid
+5. Immediately return to COLLECT state to begin next byte collection
+6. Advantages:
+   - Clear separation between collection and output phases
+   - Output register remains stable during collection
+   - Easier timing closure with separated paths
+   - More scalable for wider parallel outputs

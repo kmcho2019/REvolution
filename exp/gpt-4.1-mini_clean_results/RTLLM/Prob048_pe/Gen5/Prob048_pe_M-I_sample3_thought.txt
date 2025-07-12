@@ -1,0 +1,7 @@
+To improve PPA, I will pipeline the multiplier and accumulator by registering the product before accumulation. This breaks the critical path between multiplication and addition, reducing clock period and improving timing (reducing WNS and TNS). Adding an enable signal (always enabled here) keeps logic simple.
+
+The accumulator remains 64 bits to avoid overflow, but since the product is registered, the 64-bit adder sees stable inputs, aiding timing.
+
+This pipelining adds one clock cycle latency but enhances max frequency and power by reducing glitching on wide adders. The reset is synchronous, as preferred.
+
+Overall, this balances timing, power, and area by slightly increasing register usage but improving clock period and stability.

@@ -1,0 +1,24 @@
+Fixed Pipelined Multiplier Implementation:
+
+Key Improvements:
+1. **Parameter Handling**: Explicitly define and use the size parameter throughout the module
+2. **Simplified Pipeline Structure**: Break down the addition operations into more manageable stages
+3. **Better Reset Handling**: Ensure all registers are properly initialized
+4. **Optimized Partial Product Calculation**: Use shifted versions of extended multiplicand for cleaner implementation
+
+Pipeline Stages:
+1. **First Stage**:
+   - Calculates partial products for bits 0 and 1
+   - Accumulates them in stage1_reg
+2. **Second Stage**:
+   - Calculates partial products for bits 2 and 3
+   - Adds them to stage1_reg result
+   - Stores in stage2_reg
+3. **Output Stage**:
+   - Directly outputs stage2_reg
+
+Changes from Original:
+- Removed intermediate wire declarations for sums
+- Simplified the partial product calculations
+- Made parameter usage more explicit
+- Improved reset handling

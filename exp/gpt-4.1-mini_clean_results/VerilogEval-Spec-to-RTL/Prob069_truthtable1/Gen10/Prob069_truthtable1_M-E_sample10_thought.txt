@@ -1,0 +1,28 @@
+We can implement the function using a small 3-to-1 priority encoder style structure with a lookup table approach inside combinational logic.
+
+The truth table shows that f is 1 when either:
+- x2 is 1 and x3 is 0, regardless of x1, or
+- x3 is 1 and x1 is 1.
+
+An alternative is to implement f as the result of a 2:1 multiplexer controlled by x3 that selects between:
+- output1 = x2 (when x3=0)
+- output2 = x1 (when x3=1)
+
+But to create a novel structural idea, we can explicitly build two AND gates that check the minterms where f=1 and then OR them.
+
+We define two minterm signals:
+- m1 = ~x3 & x2 (covers rows where x3=0, x2=1)
+- m2 = x3 & x1 (covers rows where x3=1, x1=1)
+
+Then f = m1 | m2
+
+However, to make the architecture different, we instantiate the AND and OR gates as separate modules, then instantiate them inside TopModule for modularity and clarity. This approach could be beneficial for large designs and is a different style from using just assign statements.
+
+This also allows possible reuse of these modules for similar functions or hierarchical designs.
+
+Hence the design will have:
+- Module AND2 (2-input AND gate)
+- Module OR2 (2-input OR gate)
+- Module TopModule instantiating two AND2 gates and one OR2 gate.
+
+This is a structural approach using basic gate-level modules rather than a simple assign statement.

@@ -1,0 +1,31 @@
+The existing design is already quite efficient with minimal combinational logic and straightforward factored expressions for next state logic and output. Since it's a small FSM with one-hot encoding, the biggest leverage for optimization is simplifying logic expressions and reducing gate inputs where possible.
+
+To improve power and area marginally, I will:
+- Remove redundant terms by re-inspecting the next_state logic and factoring further where possible.
+- Use the direct decoding from state bits combined with input for each next_state bit, avoiding unnecessary ORs or ANDs.
+
+Specifically:
+- next_state[0] is set when in=0 and current state is A or C; can be written as ((A | C) & ~in), which is minimal.
+- next_state[1] for in=1 and states A, B, or D; keep as is.
+- next_state[2] for in=0 and states B or D; keep as is.
+- next_state[3] for in=1 and state C; minimal.
+
+This is already minimal, so no further simplification is feasible without changing encoding or state assignments.
+
+However, since in a one-hot FSM only one state bit is high at a time, an alternate expression is to write next_state bits as muxes controlled by 'state' and 'in'. But this would increase complexity without area/time benefit here.
+
+For output, since only state D produces output=1, simply assign out = D is already minimal.
+
+Thus, the best improvement is to explicitly declare 'in_n' (inverted input) once for reuse, reducing inverter count.
+
+This saves power slightly by sharing the inversion.
+
+Also, replace bitwise negation (~) on 'in' with a single wire 'in_n'.
+
+Overall, the optimization focuses on:
+- Sharing inverted input signal.
+- Keeping the logic equations clean and as in the original.
+
+This approach slightly reduces inverter count and can marginally reduce power and area.
+
+The structure and readability remain the same, maintaining excellent PPA.

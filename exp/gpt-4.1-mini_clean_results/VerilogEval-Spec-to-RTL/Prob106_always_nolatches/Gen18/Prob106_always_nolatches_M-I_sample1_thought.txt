@@ -1,0 +1,9 @@
+To optimize for better power and area while maintaining the same functionality, I will eliminate the intermediate 3-bit `dir` register and decode each output signal directly using simple equality comparisons on the 16-bit `scancode` input.
+
+This approach reduces logic and toggling since no intermediate register or multiplexing is needed. It also simplifies synthesis to parallel comparators, which can be more area- and power-efficient.
+
+The outputs will be continuous assignments driven by direct comparison of the input scancode to the known constants representing each arrow key. This will yield zero-delay combinational outputs with minimal logic.
+
+Since only one key can be active at a time, the one-hot nature of outputs remains intact without extra logic. This direct approach also improves readability by making it clear each output corresponds to a simple pattern match.
+
+Overall, this method optimizes PPA by minimizing internal signals, removing a combinational `always` block, and using purely parallel comparator logic on inputs.

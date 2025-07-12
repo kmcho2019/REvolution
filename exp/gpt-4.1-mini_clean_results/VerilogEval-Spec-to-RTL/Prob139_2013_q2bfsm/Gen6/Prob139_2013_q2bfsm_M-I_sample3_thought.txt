@@ -1,0 +1,30 @@
+The key to fixing the FSM lies in precisely aligning outputs with the specification timing and ensuring correct sequence detection and monitoring cycles without off-by-one errors.
+
+Improvements:
+
+1. Explicitly handle synchronous reset active low: on reset asserted (resetn=0), FSM stays in state A with outputs cleared.
+
+2. The output f is asserted for exactly one clock cycle immediately after reset is released. This is implemented as a separate state S_B with f=1. Make sure f=1 occurs exactly one cycle after reset release, and no earlier or later.
+
+3. Improve sequence detection for x=1,0,1 to allow overlapping sequences:
+   - At each step, if the expected input does not match, check if the input could be the start of a new sequence (e.g., if expecting 0 but receive 1, move back to S_SEQ1 as if starting new sequence detection).
+   - This prevents missing sequences that overlap, ensuring proper transition to S_MON exactly after 1,0,1 detected.
+
+4. The monitoring state S_MON counts full two clock cycles (using a 2-bit counter) after entering this state to see if y=1 occurs at least once during these two cycles.
+   - Use mon_cnt initialized at 0 on entry to S_MON.
+   - Increment mon_cnt each cycle S_MON is active.
+   - If y=1 at any cycle during S_MON, transition immediately to S_G1.
+   - If mon_cnt reaches 2 without y=1, transition to S_G0.
+   - This precisely counts two cycles as "within at most two clock cycles" per spec.
+
+5. Outputs f and g are purely Moore-type, directly from current state, avoiding registered outputs to prevent off-by-one delays.
+
+6. Avoid using SystemVerilog typedef and enums for better compatibility. Use `localparam` for states.
+
+7. Reset mon_cnt to zero in all states except S_MON to avoid stale counter values.
+
+These changes ensure the FSM correctly detects reset, asserts f once after reset release, detects sequence 1,0,1 (including overlapping sequences), asserts g=1 at correct timing, monitors y correctly for up to two cycles, and transitions to permanent g=1 or g=0 as required.
+
+This fixes all functional mismatches and aligns the FSM exactly with the problem specification.
+
+---

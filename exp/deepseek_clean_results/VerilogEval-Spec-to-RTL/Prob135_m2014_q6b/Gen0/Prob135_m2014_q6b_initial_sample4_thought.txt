@@ -1,0 +1,14 @@
+To implement the next-state logic for y[1] in the given state machine, we need to:
+1. Analyze each state transition where y[1] changes
+2. Determine the conditions under which y[1] becomes 1 or 0 in the next state
+3. Create combinational logic that sets y[1] based on current state (y) and input (w)
+
+From the state transitions:
+- y[1] becomes 1 when:
+  - Current state is E (100) and input is 0 (stays in E)
+  - Current state is F (101) and input is 0 (goes to C, but C has y[1]=0, so this doesn't set y[1])
+  - Actually, only state E has y[1]=1 in next state when staying in E (input 0)
+  
+- y[1] becomes 0 in most transitions except when staying in E
+
+The logic for y[1] can be simplified to: y[1] is 1 in next state only if current state is E (100) and input is 0.

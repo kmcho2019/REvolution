@@ -1,0 +1,9 @@
+I will refactor the FSM by encoding the states in a binary format instead of one-hot encoding to reduce the number of flip-flops from 5 to 3, which is more area-efficient. The next-state logic will be implemented using combinational always block as before, but with explicit binary states.
+
+I will define the FSM states as binary-encoded localparams representing each matched prefix length, from 0 to 4.
+
+The MATCH output will still be a Mealy output asserted when the FSM is in the state corresponding to matched "1001" (state 4) and IN=1.
+
+This binary-encoded FSM uses fewer flip-flops and simpler state representation, potentially reducing area and power consumption. The code structure separates combinational next-state logic and sequential state updates clearly. The synchronous reset is maintained, and output MATCH is purely combinational for minimal latency.
+
+This refactoring keeps the same detection behavior and continuous, overlapping detection support but uses a different state encoding and implementation style.

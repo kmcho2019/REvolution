@@ -1,0 +1,16 @@
+Use a simple flag register to remember if the first valid 8-bit input has arrived. When valid_in is asserted:
+
+- If the flag is clear, store the input in data_lock and set the flag, do not output yet.
+- If the flag is set, concatenate the stored data_lock (as higher 8 bits) and current data_in (lower 8 bits) to form data_out.
+  Assert valid_out for exactly one cycle.
+  Clear the flag to indicate ready for next pair.
+
+All registers update synchronously on posedge clk or asynchronously reset on negedge rst_n.
+
+This approach avoids an explicit FSM by using a simple flag and reduces the logic to minimal state.
+
+valid_out and data_out will appear exactly one clock cycle after receiving the second input.
+
+During reset, clear all registers.
+
+This design ensures the first input is held until the second arrives before outputting, matching the requirement.

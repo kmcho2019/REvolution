@@ -1,0 +1,9 @@
+I will implement the decoder using combinational continuous assignments instead of an always block for outputs, leveraging bitwise comparison and equality checks directly in the output expressions. This approach avoids registers entirely and uses simple boolean expressions for each output, making the logic purely combinational and potentially very fast.
+
+Specifically:
+- Check if the upper 8 bits are 0xE0 using equality.
+- For each arrow output, compare the lower 8 bits to the respective scancode byte.
+- Combine these two conditions using a logical AND.
+- This results in a set of simple assign statements that are concise, readable, and synthesizable.
+- The code avoids always blocks and reg types, favoring wire outputs directly driven by assign statements.
+- This style can be beneficial in some synthesis flows by clearly defining combinational logic without inferred latches or registers.

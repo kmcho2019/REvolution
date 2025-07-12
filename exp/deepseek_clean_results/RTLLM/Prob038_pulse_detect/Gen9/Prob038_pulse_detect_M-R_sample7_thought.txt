@@ -1,0 +1,14 @@
+I'll refactor the code to use a shift register approach instead of explicit state machines. This alternative implementation will:
+
+1. Replace the state machine with a 3-bit shift register that tracks the last 3 values of data_in
+2. Use combinational logic to detect the 010 pattern (pulse) in the shift register
+3. Make data_out a wire assigned directly from the pattern detection
+4. Eliminate the need for next_state logic by using the shift register as implicit state
+5. Maintain identical functionality but with potentially simpler timing paths
+
+Advantages:
+- More compact implementation
+- Eliminates explicit state transitions
+- Output is purely combinational from the shift register
+- Easier to extend for longer patterns if needed
+- Same reset behavior and timing

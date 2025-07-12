@@ -1,0 +1,13 @@
+The refactored implementation will maintain the same Mealy-type sequence detection functionality but use a state machine approach instead of shift registers. Here's the design approach:
+
+1. Use a 3-state FSM (IDLE, GOT1, GOT10) to track the sequence progress
+2. Implement Mealy output where z depends on current state and input
+3. Keep negative edge asynchronous reset
+4. Maintain overlapping sequence detection capability
+5. Use explicit state encoding for clarity
+
+Key changes from original:
+- Replaces shift register with explicit state transitions
+- Output logic now depends on both state and input (true Mealy)
+- More verbose but potentially more readable state machine structure
+- Same sequence detection behavior with identical timing

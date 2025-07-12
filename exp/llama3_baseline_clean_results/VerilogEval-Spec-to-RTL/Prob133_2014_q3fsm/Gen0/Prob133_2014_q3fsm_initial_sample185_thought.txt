@@ -1,0 +1,7 @@
+To implement this finite state machine (FSM), we need to design a module with the given interface. The FSM has two main states: A and B. State A is the initial state where the FSM waits for s = 1 to transition to state B. In state B, the FSM examines the input w for the next three clock cycles. 
+
+We can use a counter to track the number of clock cycles and a variable to count the number of w = 1 in these cycles. After three clock cycles, we check if the count of w = 1 is exactly two. If it is, we set the output z to 1 in the next clock cycle. Otherwise, we set z to 0.
+
+To minimize the number of states, we can use a single state machine that remains in state B and uses a counter to keep track of the clock cycles.
+
+The state machine will be implemented using a always_ff block that is sensitive to the positive edge of the clock. The reset will be handled synchronously.

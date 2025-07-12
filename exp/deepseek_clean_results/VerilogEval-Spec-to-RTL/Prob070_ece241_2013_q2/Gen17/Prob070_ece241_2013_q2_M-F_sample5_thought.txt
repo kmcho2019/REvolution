@@ -1,0 +1,22 @@
+Corrected Design Strategy:
+
+1. Truth Table Analysis:
+   - Output=1 cases: 2(0010), 7(0111), 15(1111)
+   - Output=0 cases: 0(0000),1(0001),4(0100),5(0101),6(0110),9(1001),10(1010),13(1101),14(1110)
+   - Don't-cares: 3,8,11,12
+
+2. SOP Implementation:
+   - Must exactly match the specified 1-output conditions
+   - No simplification possible as each case is unique
+   - Keep original minterms for 2,7,15
+
+3. POS Implementation:
+   - Need to cover all 0-output cases as maxterms
+   - Each maxterm represents where output should be 0
+   - Convert each 0-case to a sum term where at least one inverted input makes the term true
+   - Combine all these sum terms with AND
+
+4. Verification:
+   - Ensure SOP only outputs 1 for specified cases
+   - Ensure POS outputs 0 for all specified 0-cases
+   - Don't-cares can be used to simplify POS but aren't required

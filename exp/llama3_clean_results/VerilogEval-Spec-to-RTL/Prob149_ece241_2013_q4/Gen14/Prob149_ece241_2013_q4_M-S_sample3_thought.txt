@@ -1,0 +1,10 @@
+To simplify the existing solution, we can eliminate unnecessary variables and directly use the sensor inputs to determine the output signals. The main idea is to correctly implement the logic for the output signals (`fr2`, `fr1`, `fr0`) and the supplemental flow rate signal (`dfr`) based on the sensor inputs (`s`) and the previous sensor state (`prev_s`).
+
+We can use a single always block to update the previous sensor state (`prev_s`) and another always block to determine the output signals based on the current sensor state (`s`) and the previous sensor state (`prev_s`).
+
+The `dfr` signal can be determined by checking if the current sensor state is higher than the previous state, indicating an increase in water level.
+
+The simplified code will have the following structure:
+- Sequential logic to update the previous sensor state (`prev_s`).
+- Combinational logic to determine the output signals (`fr2`, `fr1`, `fr0`) based on the current sensor state (`s`).
+- Combinational logic to determine the supplemental flow rate signal (`dfr`) based on the current and previous sensor states.

@@ -1,0 +1,17 @@
+The initial design is already minimal and optimal for a 3-bit population count since summing three bits directly yields a 2-bit count using minimal logic. However, to potentially optimize power and area slightly, we can manually implement the population count logic using bitwise operations and minimal gate-level expressions rather than arithmetic addition. 
+
+A known population count expression for 3 bits is:
+- out[1] = (in[0] & in[1]) | (in[1] & in[2]) | (in[0] & in[2])  (i.e., if at least two bits are set)
+- out[0] = in[0] ^ in[1] ^ in[2]  (parity bit)
+
+This logic requires fewer arithmetic components and can lead to simpler combinational logic, which might slightly reduce power and area in some synthesis flows.
+
+This approach retains the 2-bit output encoding:
+- "00" for 0 ones
+- "01" for 1 one
+- "10" for 2 ones
+- "11" for 3 ones
+
+Hence, the functionality is the same, but the implementation is purely combinational logic gates instead of an adder.
+
+Although modern synthesis tools likely optimize the '+' operator to similar logic, explicitly specifying the gate-level logic can sometimes improve PPA depending on synthesis technology and settings.

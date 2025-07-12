@@ -1,0 +1,17 @@
+Implement the unsigned 16-bit multiplier using a sequential shift-and-add algorithm with a single product register combining partial product and multiplier bits. Instead of shifting the multiplier left, we shift the product right each cycle, inspecting the least significant bit (LSB) of the multiplier portion to decide whether to add the multiplicand. This uses a combined 33-bit register: the upper 17 bits hold the accumulating product, and the lower 16 bits hold the shifting multiplier.
+
+The algorithm:
+- On start, load the product register with {16'b0, bin} and save ain into a separate multiplicand register.
+- For each of 16 cycles, if the LSB of the product register is 1, add the multiplicand shifted appropriately to the upper bits.
+- Then shift the product register right by 1 to prepare for the next bit.
+- After 16 iterations, the upper 32 bits of the combined register hold the final product.
+- The done flag is asserted for one cycle after completion.
+
+Advantages:
+- Only one shift direction (right shift) on a single register, simplifying hardware.
+- No variable length left shifts needed each cycle, reducing combinational complexity.
+- Multiplicand is fixed, multiplier bits are processed serially.
+- Shift count increments from 0 to 16; done asserted at count 16.
+- Clean control signals, with registers reset properly on active low reset.
+
+This approach mimics a classic hardware multiplication algorithm, easy to synthesize and efficient for FPGA/ASIC implementation.

@@ -1,0 +1,8 @@
+To implement the TopModule, we need to follow these steps:
+1. Create a 7-bit global branch history register (gshare_history) to keep track of the branch history.
+2. Create a 128-entry table of two-bit saturating counters (pattern_history_table) to store the prediction outcomes.
+3. When a prediction is requested, calculate the index using the xor of the pc and the gshare_history, and use this index to access the pattern_history_table.
+4. When a training request is made, update the pattern_history_table entry at the index calculated using the xor of the train_pc and the train_history.
+5. Update the gshare_history register based on the prediction and training requests.
+6. Handle the case when training and prediction occur in the same cycle, giving precedence to training.
+7. Reset the module asynchronously when areset is high.

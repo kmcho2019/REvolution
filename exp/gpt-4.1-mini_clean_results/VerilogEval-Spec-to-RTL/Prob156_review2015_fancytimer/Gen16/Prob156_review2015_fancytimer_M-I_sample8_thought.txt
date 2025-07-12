@@ -1,0 +1,22 @@
+Address functional correctness issues by:
+
+1. Fixing `delay_bit_cnt` width to 3 bits but counting up to 4 to correctly track delay bits. Use a separate logic variable or check for `delay_bit_cnt == 3` plus one extra cycle to latch delay and move to COUNTING.
+
+2. In `LOAD_DELAY`, shift delay bits MSB first on each clock. After exactly 4 bits are shifted in, latch `delay_value` and transition to COUNTING. Use a precise bit counter from 0 to 3 for shifting, then transition next cycle.
+
+3. In COUNTING phase, count `(delay_value + 1) * 1000` cycles properly:
+   - Initialize `block_count` to `delay_value + 1`.
+   - Use a 10-bit subcycle counter from 999 down to 0 to count cycles within a block.
+   - When subcycle hits 0, decrement block_count if >0; when block_count=0 and subcycle=0, counting ends.
+
+4. Hold `count` output stable during COUNTING as the current block count minus 1 (since counting from delay down to 0), otherwise drive it to 0 to avoid 'x' values.
+
+5. Only shift `pattern_shift` in PATTERN_DETECT state, and stop shifting once pattern detected until reset, avoiding glitches.
+
+6. Synchronous reset initializes all signals including counters and state.
+
+7. FSM transitions and control signals are clean and stable with no ambiguous or out-of-range values.
+
+8. Outputs `done` and `counting` asserted only in their respective states, else deasserted.
+
+This guarantees correct detection of start pattern, loading delay bits, correct counting of (delay+1)*1000 cycles, proper output timing of remaining blocks, and correct handshaking with `done` and `ack` signals.

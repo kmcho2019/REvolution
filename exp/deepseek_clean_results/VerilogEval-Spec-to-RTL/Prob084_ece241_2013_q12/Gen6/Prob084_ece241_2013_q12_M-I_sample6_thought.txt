@@ -1,0 +1,22 @@
+To optimize the design for better PPA, I'll implement the following improvements:
+
+1. Clock Gating:
+   - Add clock gating for the shift register to reduce dynamic power when enable=0
+   - This will significantly cut power consumption during idle periods
+
+2. One-Hot Mux Optimization:
+   - Implement the 8:1 mux using one-hot encoding for better timing
+   - This reduces fanout and improves critical path delay
+
+3. Resource Sharing:
+   - Use a single always block for the shift register
+   - Keep the direct indexing for the mux but optimize the selection logic
+
+4. Low-Power Techniques:
+   - Use blocking assignments for the mux to prevent unnecessary glitches
+   - Minimize signal transitions in the selection logic
+
+The improvements should:
+- Reduce power consumption further through clock gating
+- Maintain or improve timing with one-hot mux approach
+- Keep area similar while improving other metrics

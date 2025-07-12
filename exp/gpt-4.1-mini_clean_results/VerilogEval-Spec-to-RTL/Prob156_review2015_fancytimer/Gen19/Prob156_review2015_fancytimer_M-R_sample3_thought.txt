@@ -1,0 +1,7 @@
+Refactor the design by clearly separating combinational and sequential logic with a single always_ff block for state and registers and separate always_comb for next state and outputs. Use a 4-bit shift register exactly to detect the pattern (no extra bit), shifting on every clock in the detection state only. Once pattern 1101 is detected, move to LOAD state, and shift delay bits into delay register MSB first by shifting left and inserting data at LSB, counting bits loaded with a 3-bit counter.
+
+On entering COUNT state, initialize cycle counter (0..999) and block counter (delay + 1). Count cycles incrementing cycle counter each clock. When cycle counter wraps at 999, decrement block counter. Output count is block counter -1 during counting; done is asserted only in DONE state. The FSM transitions clearly synchronize initialization on state transitions.
+
+Pattern detection is disabled during LOAD and COUNT states by freezing shift register (no shifting). The done state asserts done and waits for ack to return to PATTERN_DETECT. Use enumerated states with typedef for clarity.
+
+This structure ensures precise timing of state transitions, exact counting of cycles, proper pattern detection, and delay loading with correct bit order, avoiding off-by-one and timing bugs.

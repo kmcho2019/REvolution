@@ -1,0 +1,27 @@
+To fix the issues identified in the feedback and match the specification precisely, the following changes are made:
+
+1. **One-Cycle Pulse on g Exactly After Pattern Detection:**  
+   Separate the pulse state (STATE_D) where g=1 for exactly one cycle.  
+   After that, the FSM transitions to y-monitoring states (E0, E1) where g remains high if required.
+
+2. **Pattern Detection Strictness:**  
+   Adjust pattern detection FSM transitions to strictly expect the sequence 1,0,1 in three *consecutive* cycles without repeated values in intermediate states:  
+   - In STATE_C1, if x != 0, restart pattern detection at C0 (no lingering in C1 with x=1).  
+   - In STATE_C2, if x != 1, restart detection at C0.
+
+3. **Clear Output Assignments Based on Current State:**  
+   Outputs f and g depend solely on the current state, ensuring outputs align perfectly with one-cycle pulse requirements:  
+   - f = 1 only in STATE_B (first cycle after reset deasserted).  
+   - g = 1 only in STATE_D (pulse after pattern detection) and subsequently in STATE_E0, E1, F for maintaining g=1.  
+   - g = 0 in all other states including STATE_G (permanent g=0 after y monitoring failure).
+
+4. **Synchronous Active Low Reset:**  
+   On resetn low, FSM stays in STATE_A with f=0, g=0.
+
+5. **FSM States and Next State Logic Carefully Designed:**  
+   Implement clear transitions that restart pattern detection on any mismatch in expected pattern inputs, thus strictly enforcing the 1,0,1 sequence in consecutive cycles.
+
+6. **No extra counters for y-monitoring cycles:**  
+   Use STATE_E0 and STATE_E1 to track the two monitoring cycles naturally.
+
+This solution corrects off-by-one errors, aligns outputs precisely with the FSM state, and enforces strict pattern detection, removing previous timing mismatches.

@@ -1,0 +1,12 @@
+Fuse the strengths of both examples by implementing a clear, fully combinational two’s complement adder-subtractor inside a single always_comb (or always @(*) in Verilog-2001) block with blocking assignments for clarity and synthesis friendliness. 
+
+Key fusion points:
+- Use conditional XOR of B with do_sub to invert B for subtraction, maintaining the canonical two’s complement approach.
+- Use an explicit ripple carry adder inside the combinational block for clear carry propagation and optimal synthesis mapping.
+- Keep outputs declared as reg to preserve the interface and semantics.
+- Correctly compute the zero flag by using the reduction NOR operator (~|) on the final sum inside the same always block, ensuring it is always driven (no latch).
+- Use a single procedural block to enhance readability and maintainability while avoiding any combinational loops or partial assignments.
+- Avoid generate blocks and continuous assignments for carry to prevent complexity and enhance synthesis clarity.
+- Use a standard integer loop index inside the always block for indexing, which is synthesis-friendly in this context.
+  
+This fusion yields a clean, robust, and synthesis-friendly solution combining the clarity of a single procedural block with explicit carry logic and a correct zero flag, fixing the original bug and enhancing maintainability.

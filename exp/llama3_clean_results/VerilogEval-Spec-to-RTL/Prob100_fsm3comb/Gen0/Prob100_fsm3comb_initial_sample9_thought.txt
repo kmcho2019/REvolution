@@ -1,0 +1,11 @@
+To implement the state transition table and output logic of the Moore state machine, we will use a case statement in Verilog to determine the next state based on the current state and input. The output will also be determined based on the current state. This approach allows us to directly map the state transition table into Verilog code.
+
+First, we'll decode the current state and input to determine the next state. Then, we'll use the current state to determine the output. Since this is a Moore machine, the output depends solely on the state, not on the input.
+
+We will use the following logic:
+- If the current state is A (2'b00), then next_state is A if in is 0, and B if in is 1. The output is 0.
+- If the current state is B (2'b01), then next_state is C if in is 0, and B if in is 1. The output is 0.
+- If the current state is C (2'b10), then next_state is A if in is 0, and D if in is 1. The output is 0.
+- If the current state is D (2'b11), then next_state is C if in is 0, and B if in is 1. The output is 1.
+
+This logic will be implemented using case statements within an always @(*) block to ensure combinational logic behavior.

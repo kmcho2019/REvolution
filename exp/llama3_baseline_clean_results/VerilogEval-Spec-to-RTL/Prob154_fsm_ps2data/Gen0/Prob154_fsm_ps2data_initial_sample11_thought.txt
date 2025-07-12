@@ -1,0 +1,15 @@
+To solve this problem, we need to design a finite state machine (FSM) with the following states: 
+- IDLE: The initial state of the FSM. In this state, the FSM waits for the first byte of the message.
+- BYTE_1: The state after the first byte is received.
+- BYTE_2: The state after the second byte is received.
+- DONE: The state after the third byte is received.
+
+We need to design the state transitions as follows:
+- From IDLE to BYTE_1 when in[3] = 1.
+- From BYTE_1 to BYTE_2 when a byte is received.
+- From BYTE_2 to DONE when a byte is received.
+- From DONE to IDLE when a clock cycle passes.
+
+We also need to handle the reset signal. When the reset signal is high, the FSM should go to the IDLE state.
+
+We need to use a counter to keep track of the bytes received and store the bytes in a register.

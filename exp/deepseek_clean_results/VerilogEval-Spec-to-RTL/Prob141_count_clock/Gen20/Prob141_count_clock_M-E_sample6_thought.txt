@@ -1,0 +1,14 @@
+Innovative approach using a finite state machine (FSM) with pre-computed BCD values:
+1. Replace cascaded counters with a single FSM that tracks all time states
+2. Use a ROM-like lookup table for BCD conversion of hours (eliminates arithmetic)
+3. Implement a circular buffer for time states to minimize transition logic
+4. Use one-hot encoding for seconds/minutes to simplify comparison logic
+5. Combine all enable conditions into the FSM transitions
+6. Pre-compute all output values in registers to break critical paths
+
+Key advantages:
+- Eliminates cascaded counter dependencies (improves timing)
+- ROM-based hour conversion reduces combinatorial logic
+- One-hot seconds/minutes simplify comparison operations
+- All outputs are registered (better timing closure)
+- State transitions are explicit and optimized

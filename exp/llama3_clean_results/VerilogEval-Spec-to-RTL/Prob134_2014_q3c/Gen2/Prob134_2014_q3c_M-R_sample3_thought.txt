@@ -1,0 +1,5 @@
+The existing code implements an FSM with next state logic and output logic. However, it uses a combination of always blocks and continuous assignments to achieve this. To refactor the code, we can simplify the implementation by using a single always block for the sequential logic (next state and current state update) and continuous assignments for the combinational logic (output z and Y0 calculation). This approach reduces the complexity and improves readability. We can maintain the use of internal reg variables for the next state and output calculations to ensure the code compiles and functions as intended.
+
+The next state logic will be determined based on the current state and the input y, following the provided FSM table. The output z will be calculated based on the current state and the input y, and Y0 will be the least significant bit of the next state.
+
+We will remove the case statement for z_reg and instead use a single assign statement outside the always block to directly assign the value of z based on the current state and y. This simplification reduces the repetition of case statements and improves code readability.

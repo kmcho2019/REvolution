@@ -1,0 +1,13 @@
+To solve this problem, we need to design a Moore-type finite state machine (FSM) that can recognize the specified sequences. The FSM should have states to track the number of consecutive 1s and 0s, and to distinguish between valid and invalid sequences. 
+
+The states can be defined as follows:
+- IDLE: Initial state after reset, waiting for a 1.
+- ONE: One 1 received, waiting for more 1s or a 0.
+- TWO_ONES: Two 1s received, waiting for more 1s or a 0.
+- THREE_ONES: Three 1s received, waiting for more 1s or a 0.
+- FOUR_ONES: Four 1s received, waiting for more 1s or a 0.
+- FIVE_ONES: Five 1s received, waiting for a 0 (disc) or a 1 (err).
+- SIX_ONES: Six 1s received, waiting for a 0 (flag) or a 1 (err).
+- ERR: Error state, 7 or more consecutive 1s.
+
+The outputs will be asserted based on the current state and the input. If the FSM is in the SIX_ONES state and a 0 is received, the flag output will be asserted. If the FSM is in the FIVE_ONES state and a 0 is received, the disc output will be asserted. If the FSM reaches the ERR state, the err output will be asserted.

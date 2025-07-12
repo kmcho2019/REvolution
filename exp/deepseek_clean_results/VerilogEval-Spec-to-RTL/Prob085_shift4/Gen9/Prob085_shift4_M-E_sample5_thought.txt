@@ -1,0 +1,10 @@
+Instead of a traditional shift register, I'll implement a circular buffer with a write pointer. This approach:
+1. Uses a 4-bit register and a 2-bit write pointer
+2. On load: stores all 4 bits and resets pointer to 0
+3. On shift: moves the pointer right (circular) and clears the new position
+4. On read: outputs the entire register (like a shift register)
+5. Benefits:
+   - More flexible for future extensions (variable shift amounts)
+   - Potential power savings since only one bit changes per shift
+   - Easier to implement multi-function operations
+   - Clear separation between control and data paths

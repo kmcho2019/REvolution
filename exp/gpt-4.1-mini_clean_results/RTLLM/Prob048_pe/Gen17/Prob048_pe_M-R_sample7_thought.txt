@@ -1,0 +1,7 @@
+Refactor the multiplying accumulator by separating the multiplication and accumulation steps explicitly: compute the product in a continuous assignment, and calculate the next accumulator value also as a wire. Then, update the accumulator register `c` synchronously on the clock with reset, assigning the next value computed combinationally. This splits combinational logic and registers more clearly, improving readability.
+
+Implement synchronous reset and accumulation in a single always block triggered on clock edge. The overflow detection and saturation logic is handled combinationally in the `next_c` wire, which feeds the register.
+
+By moving multiplication and addition out of the always block and into wires, the design improves clarity and can potentially aid synthesis tools in better optimization or parallelization. The output `c` remains driven directly by the register.
+
+This approach keeps the same functionality — accumulating `a*b` into `c` with saturation — but rearranges logic for clearer data flow separation and structural clarity.

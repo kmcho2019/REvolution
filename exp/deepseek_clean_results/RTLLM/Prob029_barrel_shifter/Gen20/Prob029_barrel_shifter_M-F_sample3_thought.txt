@@ -1,0 +1,12 @@
+The corrected implementation follows a cascaded approach where shifts are applied sequentially, with each stage's output feeding into the next stage. This ensures proper cumulative shifting behavior:
+
+1. First stage: Apply 4-bit rotation if ctrl[2] is set
+2. Second stage: Take first stage output and apply 2-bit rotation if ctrl[1] is set
+3. Third stage: Take second stage output and apply 1-bit rotation if ctrl[0] is set
+
+Key improvements:
+- Properly cascades shifts in the correct order (4->2->1)
+- Each stage operates on the result of previous shifts
+- Maintains correct rotation behavior for all control combinations
+- Uses multiplexers to select between shifted and unshifted versions at each stage
+- Matches the problem description's requirement for staged shifting

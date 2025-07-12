@@ -1,0 +1,27 @@
+To implement the state input logic for Y1 and Y3 differently, we can express Y1 and Y3 using the given transitions and one-hot encoding but use boolean expressions derived by grouping transitions to each state. Instead of directly using OR gates on all states, let's use intermediate signals that represent groups of states to show a more structural and hierarchical approach.
+
+- Y1 corresponds to the input of state B (y[1]).
+  From the FSM transitions, the only transition into B is from A (y[0]) with w=1.
+  So Y1 = y[0] & w
+
+- Y3 corresponds to the input of state D (y[3]).
+  Transitions into D happen from B(0), C(0), E(1), and F(1) on w=0.
+  Using the y vector:
+    - B = y[1]
+    - C = y[2]
+    - E = y[4]
+    - F = y[5]
+  Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+We will separate the states transitioning into D into two groups to reflect their output behavior for teaching clarity:
+
+  Group0 = y[1] | y[2];  // from B and C (both with output 0)
+  Group1 = y[4] | y[5];  // from E and F (both with output 1)
+
+Then:
+
+  Y3 = (~w) & (Group0 | Group1);
+
+This hierarchical approach can help when scaling up or modifying the design.
+
+We implement the logic using intermediate wires Group0 and Group1 for clarity.

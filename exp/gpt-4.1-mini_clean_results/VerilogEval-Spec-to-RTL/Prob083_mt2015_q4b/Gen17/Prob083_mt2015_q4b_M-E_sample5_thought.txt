@@ -1,0 +1,12 @@
+Instead of using a direct XNOR logic, I will implement the functionality using a small finite state machine (FSM) that reacts to changes on inputs x and y and updates the output accordingly. The FSM will have states representing whether x and y are equal or not. The FSM transitions will be synchronous to a clock signal, but since no clock is provided in the interface, I will infer a simple 1-bit combinational feedback loop using a latch behavior: output z is set to 1 if both inputs are equal and 0 otherwise.
+
+Alternatively, since we cannot use clock (not provided), I will use a combinational priority logic: output z = 1 if both inputs are 0 or both inputs are 1; else 0. But to create a novel architectural approach, I will use a truth table with a lookup approach coded with case statements.
+
+This design uses a case statement with combined inputs {x,y} as selector and outputs z accordingly, making the combinational logic explicit and scalable if more inputs were added.
+
+This approach is fully combinational and provides an alternative style that can be easily extended and understood structurally.
+
+Summary:
+- Use a combinational always block with case statement on {x,y}.
+- Define output z explicitly in each case.
+- This differs from continuous assignment with XNOR.

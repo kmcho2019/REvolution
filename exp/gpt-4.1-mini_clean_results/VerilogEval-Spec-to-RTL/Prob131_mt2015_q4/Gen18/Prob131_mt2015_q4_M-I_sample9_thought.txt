@@ -1,0 +1,20 @@
+The original design correctly implements the required logic but instantiates only one instance each of modules A and B, sharing their outputs for the OR and AND gates. This reduces area but deviates from the problem statement which requires two instances of each.
+
+To optimize PPA while adhering to the original specification of two instances each of A and B, the improvement strategy is:
+
+1. Instantiate the required number of modules (two each of A and B).
+2. Connect their inputs as specified.
+3. Use internal signals to carry outputs.
+4. Compute the OR of the first A and B outputs.
+5. Compute the AND of the second A and B outputs.
+6. XOR the OR and AND outputs for the final z.
+
+For optimization:
+- Since modules A and B only implement simple logic, each pair's OR and AND outputs are computed directly.
+- Module B implements an XNOR function, which is the inverse of XOR, so it's minimal logic.
+- Using structural instantiation and straightforward gate assignments keeps the critical path minimal.
+- This strictly follows the problem spec and keeps logic levels low.
+- Although this duplicates logic, the problem demands two instances each, so no logic sharing optimization is applied beyond minimal combinational logic.
+- This keeps performance good and area moderate, and the power consumption is expected to be similar to the original since gates are duplicated as per spec.
+
+Thus, the improved code respects the problem statement and maintains minimal logic depth for good timing, ensuring correctness and clarity.

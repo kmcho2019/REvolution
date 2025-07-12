@@ -1,0 +1,15 @@
+The current implementation is already quite efficient, but we can make a few targeted improvements:
+
+1. Timing Optimization:
+   - Replace the XOR-based transition logic with explicit case statements to potentially reduce the critical path
+   - This eliminates the need for the input inversion operation, which might save one logic level
+
+2. State Encoding:
+   - Keep the current encoding (B=1, A=0) as it's optimal for this simple FSM
+   - The output remains directly tied to the state bit
+
+3. Reset Handling:
+   - Maintain asynchronous reset for consistent behavior
+   - Keep reset to state B as specified
+
+The explicit case statement might be more readable and could potentially reduce the critical path by avoiding the XOR operation, though the difference may be minimal for such a simple FSM.

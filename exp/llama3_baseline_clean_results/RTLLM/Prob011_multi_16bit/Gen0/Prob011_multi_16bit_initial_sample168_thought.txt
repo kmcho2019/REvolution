@@ -1,0 +1,20 @@
+To implement the unsigned 16-bit multiplier, we can use the following approach:
+1. Create a finite state machine (FSM) to manage the multiplication operation.
+2. Use a counter to keep track of the shift count.
+3. On every positive edge of the clock signal, update the counter and perform the shift and accumulate operation if the start signal is active.
+4. Generate the multiplication completion flag when the shift count reaches 16.
+5. Reset all registers when the reset signal is low or the start signal is inactive.
+
+The main components of the module are:
+- A counter (i) to keep track of the shift count.
+- A register (areg) to store the multiplicand.
+- A register (breg) to store the multiplier.
+- A register (yout_r) to store the product.
+- A flag (done_r) to indicate the completion of the multiplication operation.
+
+The module uses the following logic:
+- If the reset signal is low, reset all registers.
+- If the start signal is active, start the multiplication operation.
+- On every positive edge of the clock signal, update the counter and perform the shift and accumulate operation.
+- If the counter reaches 16, generate the multiplication completion flag.
+- Assign the product output (yout) the value of the product register (yout_r).

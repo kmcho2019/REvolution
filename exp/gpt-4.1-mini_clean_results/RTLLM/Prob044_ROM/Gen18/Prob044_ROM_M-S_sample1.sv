@@ -1,0 +1,13 @@
+module ROM (
+    input  [7:0]  addr,
+    output [15:0] dout
+);
+
+    reg [15:0] mem [0:255] = '{
+        16'hA0A0, 16'hB1B1, 16'hC2C2, 16'hD3D3, // First 4 initialized
+        default: 16'h0000                       // Others zero-initialized
+    };
+
+    assign dout = mem[addr];
+
+endmodule

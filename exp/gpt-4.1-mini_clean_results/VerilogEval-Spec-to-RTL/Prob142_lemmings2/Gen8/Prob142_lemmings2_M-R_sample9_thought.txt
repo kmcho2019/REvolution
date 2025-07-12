@@ -1,0 +1,13 @@
+Refactor the FSM by separating the direction and falling state bits into two registers: one for direction (dir, 0=left, 1=right) and one for falling (falling flag). This decomposes the 2-bit state into two 1-bit state registers, which may lead to simpler logic expressions and possibly better optimizations for small circuits.
+
+The direction register changes only on bump events when grounded. The falling register tracks ground changes and does not change direction when falling.
+
+Use continuous assignments for next-state logic combined with a single always block with asynchronous reset to register state bits.
+
+Outputs remain Moore style, directly driven from state bits.
+
+This structure avoids a case statement, uses simple combinational assign statements for next state, and a simpler sequential block for registering direction and falling bits. This may reduce combinational complexity and enhance clarity by explicitly showing how direction and falling are updated independently.
+
+The asynchronous reset resets direction to left and falling to 0.
+
+This approach still fully meets the original FSM requirements.

@@ -1,0 +1,79 @@
+We must produce mux_in[3:0], inputs to a 4-to-1 mux selected by {a,b} (external selectors), such that the entire circuit implements the given 4-variable function from the K-map.
+
+- Inputs to TopModule are only c and d (1 bit each).
+- a and b are *not* inputs of TopModule; they are external selectors for the 4-to-1 mux connected after TopModule.
+- mux_in[3:0] are signals from TopModule to the inputs of the 4-to-1 mux, each bit corresponds to a fixed {a,b} value:
+  mux_in[0] -> ab=00
+  mux_in[1] -> ab=01
+  mux_in[2] -> ab=11
+  mux_in[3] -> ab=10
+
+Each mux_in[i] is thus a function of c and d only, representing one column of the K-map (fixed a,b).
+
+We map each mux_in[i] as the function for fixed a,b over c,d (rows):
+
+Given the K-map:
+
+       ab
+    cd  00  01  11  10
+    00 | 0 | 0 | 0 | 1 |
+    01 | 1 | 0 | 0 | 0 |
+    11 | 1 | 0 | 1 | 1 |
+    10 | 1 | 0 | 0 | 1 |
+
+For each ab (column), mux_in[i] over cd (rows) is:
+
+- mux_in[0] (ab=00): cd=00:0, 01:1, 11:1, 10:1  => 0,1,1,1
+- mux_in[1] (ab=01): 0,0,0,0  (always 0)
+- mux_in[2] (ab=11): 0,0,1,0  => 0,0,1,0
+- mux_in[3] (ab=10): 1,0,1,1  => 1,0,1,1
+
+We implement each mux_in[i] using only 2-to-1 muxes with selectors c or d (and constants 0 or 1), no other gates:
+
+- NOT d = mux(d,0,1)
+
+Derive mux trees for each mux_in:
+
+1) mux_in[0] = 0 1 1 1 for cd=00,01,11,10
+
+Index cd as c d:
+
+c=0,d=0 =>0
+
+c=0,d=1 =>1
+
+c=1,d=1 =>1
+
+c=1,d=0 =>1
+
+This is output = c OR d
+
+Implement c OR d = mux(c,1,d)
+
+2) mux_in[1] = always 0
+
+3) mux_in[2] = 0 0 1 0 for cd=00,01,11,10
+
+Only 1 when c=1 and d=1 => c AND d
+
+c AND d = mux(c,d,0)
+
+4) mux_in[3] = 1 0 1 1 for cd=00,01,11,10
+
+When c=1 output=1
+
+When c=0 output = NOT d
+
+So mux_in[3] = c OR (NOT d) = mux(c,1,not_d)
+
+This matches the K-map exactly.
+
+Finally assign mux_in = {mux_in[3], mux_in[2], mux_in[1], mux_in[0]}
+
+This produces the correct 4 inputs to the external 4-to-1 mux selected by {a,b}.
+
+We have corrected the misunderstanding: a,b are *not* inputs to TopModule and should not appear inside. Only c,d and constants and muxes are used inside TopModule to produce mux_in.
+
+The 4-to-1 mux outside with selectors {a,b} then produces the full 4-input function.
+
+This fulfills the problem requirement with minimal 2-to-1 muxes and one 4-to-1 mux outside.

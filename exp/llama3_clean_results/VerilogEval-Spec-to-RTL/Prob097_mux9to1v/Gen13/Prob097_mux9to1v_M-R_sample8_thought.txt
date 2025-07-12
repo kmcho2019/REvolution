@@ -1,0 +1,11 @@
+To refactor the given Verilog code, we will focus on simplifying the structure and potentially improving the synthesizability of the design. The current implementation uses an `always` block with a ternary operator to select the output based on the `sel` input. While this approach is efficient, we can achieve the same functionality using a different structure.
+
+One approach is to use a case statement within an `always` block. However, since the unused cases (sel=9 to 15) require setting all output bits to '1', we can handle these cases explicitly. 
+
+An alternative approach is to utilize the `assign` statement with a ternary operator for each bit of the output. This can potentially simplify the combinatorial logic and make the code more concise.
+
+Another strategy is to use a case statement with a default case to handle the unused values of `sel`. This approach can provide a clear and straightforward implementation of the multiplexer logic.
+
+In this refactored version, we will use a combination of these strategies to achieve a more concise and efficient implementation. We will maintain the use of an array to store the inputs, as this keeps the code organized and potentially synthesizable. For the multiplexer logic, we will use a case statement within an `always` block to handle the selection based on `sel`. This approach allows for explicit handling of the unused cases and can lead to better synthesis results.
+
+By refactoring the code in this manner, we aim to achieve a balance between conciseness, efficiency, and synthesizability, thereby optimizing the Power, Performance, and Area (PPA) metrics.

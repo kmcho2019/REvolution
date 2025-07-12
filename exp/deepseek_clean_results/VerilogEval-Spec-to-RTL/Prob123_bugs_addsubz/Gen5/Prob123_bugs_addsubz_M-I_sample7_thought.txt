@@ -1,0 +1,18 @@
+The current solution is functionally correct but has room for PPA optimization. Here's the improvement strategy:
+
+1. Zero Flag Optimization:
+   - Move the zero flag logic outside the always block to make it purely combinational
+   - Use reduction NOR instead of reduction OR with inversion for slightly better synthesis
+
+2. Arithmetic Operation Optimization:
+   - Remove the intermediate b_sel wire and implement the inversion directly in the sum calculation
+   - This reduces one level of logic by combining the mux and addition
+
+3. Output Assignment:
+   - Make the output assignment continuous for better synthesis optimization
+   - Remove the always block since we can assign directly
+
+These changes should:
+- Reduce power by eliminating redundant logic
+- Maintain or improve timing by reducing logic levels
+- Potentially reduce area slightly by combining operations

@@ -1,0 +1,5 @@
+Refactor the design by separating the data accumulation logic from the output generation logic using two always blocks: one for counting and accumulating input data when valid_in is asserted, and another to generate a one-cycle valid_out pulse and output the accumulated sum when 4 inputs are reached. 
+
+Use a small state machine to track accumulation phases explicitly. On receiving the fourth valid input, latch the accumulated sum plus current input into a register to be output, pulse valid_out, and reset the accumulator and count. This method makes the output logic clear and separates concerns, improving code readability.
+
+Also use synchronous reset and ensure valid_out is a clean single-cycle pulse generated via a registered signal. Avoid combinational assignments of outputs by using registers only. This refactoring changes control flow but maintains the same functionality and timing behavior.

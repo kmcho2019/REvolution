@@ -1,0 +1,9 @@
+To solve this problem, we can design a finite state machine (FSM) that goes through several states: 
+- IDLE: waiting for the start bit (0)
+- START_BIT: after seeing the start bit, waiting for the 8 data bits
+- DATA_BITS: receiving the 8 data bits
+- STOP_BIT: after receiving the 8 data bits, waiting for the stop bit (1)
+- DONE: after verifying the stop bit, output the received byte and assert done
+When in the DONE state, the FSM will output the received byte on out_byte and assert done. 
+It will then move back to the IDLE state and wait for the next start bit. 
+If a stop bit does not appear when expected, the FSM will wait until it finds a stop bit before attempting to receive the next byte.

@@ -1,0 +1,17 @@
+The current implementation is already quite optimal for this simple truth table, but we can explore if further simplification is possible. Looking at the truth table:
+
+1. f is true when x2=1 and x3=0 (first two terms of truth table where f=1)
+2. f is also true when x1=1 and x3=1 (last two terms where f=1)
+
+This matches exactly the simplified expression (~x3 & x2) | (x3 & x1). 
+
+However, we can consider an alternative implementation using a multiplexer-like structure:
+- When x3=0, select x2
+- When x3=1, select x1
+
+This gives exactly the same logic: f = (x3 ? x1 : x2)
+
+This implementation might have slightly better PPA characteristics since it:
+1. Uses one less gate (replaces two ANDs and one OR with one MUX)
+2. Has the same logic depth (still one level)
+3. May have better signal propagation characteristics

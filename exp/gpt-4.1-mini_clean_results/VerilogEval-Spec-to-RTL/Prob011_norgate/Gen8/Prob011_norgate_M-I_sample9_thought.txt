@@ -1,0 +1,12 @@
+The original implementation is already optimal for a simple 2-input NOR gate at RTL level. The gate is implemented with a single assign statement using bitwise OR and negation, which synthesizes directly to a NOR gate in hardware.
+
+To further improve PPA (Performance, Power, Area) at the RTL level is not feasible since this is the simplest possible design. Any improvements must come from synthesis tool optimizations or downstream physical design steps.
+
+One very minor style improvement is to use the built-in Verilog NOR reduction operator `nor` instead of `~(a | b)`, which can improve readability and potentially allow the synthesis tool to recognize intent better.
+
+Hence, the suggested improvement is:
+- Replace `assign out = ~(a | b);` with `assign out = ~(a | b);` to `assign out = nor(a, b);`
+
+This uses the `nor` keyword to express the gate explicitly and is functionally identical but semantically clearer.
+
+No other structural or RTL changes can improve PPA for this trivial gate.

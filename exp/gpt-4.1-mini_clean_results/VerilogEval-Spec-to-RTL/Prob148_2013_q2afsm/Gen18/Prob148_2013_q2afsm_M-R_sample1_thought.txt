@@ -1,0 +1,9 @@
+Refactor the FSM by encoding states as a 2-bit binary encoding instead of one-hot, reducing the number of flip-flops from 3 to 2 for area efficiency. Assign explicit state names with parameters for clarity.
+
+Use a synchronous active-low reset as before.
+
+Separate the next state logic into an always @(*) block using a case statement, prioritizing requests as required.
+
+Implement the output logic (grant signals) using continuous assignments based on the current state to simplify output combinational logic.
+
+This binary state encoding reduces flip-flop count, simplifies state register, and keeps combinational logic clear and easy to synthesize, while still fulfilling all FSM requirements.

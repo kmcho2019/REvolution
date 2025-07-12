@@ -1,0 +1,8 @@
+To solve this problem, we need to design a finite state machine (FSM) that can identify the boundaries of PS/2 mouse messages in a continuous byte stream. The FSM will have four states: 
+1. IDLE: The initial state where we discard bytes until we find one with in[3]=1.
+2. BYTE1: The state after receiving the first byte of a message.
+3. BYTE2: The state after receiving the second byte of a message.
+4. BYTE3: The state after receiving the third byte of a message, where we signal done.
+
+The FSM will transition between these states based on the value of in[3] and the current state. 
+We will also need to consider the reset signal to return the FSM to the IDLE state when reset is high.

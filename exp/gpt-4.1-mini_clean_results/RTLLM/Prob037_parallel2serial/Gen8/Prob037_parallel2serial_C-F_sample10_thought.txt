@@ -1,0 +1,12 @@
+To fuse the best ideas from both examples, we avoid shifting data every cycle to reduce switching power and improve timing. Instead of physically shifting the register, we load the 4-bit parallel data into a register when the counter is at 3, then output bits serially using the counter as an index from MSB to LSB. The valid_out signal is asserted for one cycle only when new data is loaded (i.e., when the MSB is output).
+
+This eliminates continuous shifting and reduces data toggling, improving power and timing. A simple 2-bit counter increments from 0 to 3 to index the bit to output, then reloads data and resets. We also ensure reset clears all registers cleanly.
+
+In summary:
+- Load 4-bit input at cnt=3 and reset cnt to 0.
+- On each clock, output data[3 - cnt].
+- valid_out asserted only when cnt=0 after load.
+- No shift operation on data, just bit indexing.
+- Clean reset and synchronous operations.
+
+This design merges the correctness and clarity of Example 2 with the power and timing improvements from Example 1.

@@ -1,0 +1,5 @@
+To improve PPA, especially power and timing, gate the shift register updates so it only toggles during the RECEIVE state, minimizing unnecessary transitions. Also, avoid resetting the bit_count and shift_reg in the WAIT_STOP state repeatedly, which unnecessarily toggles registers without any functional benefit.
+
+Keep the FSM encoding as is for area and simplicity, but refine the sequential logic to limit register activity when not needed. The done signal remains a one-clock-cycle pulse on the stop bit detection. These small refinements reduce switching activity, improving power and possibly timing, without changing functionality.
+
+Overall, selectively update registers only when needed within the RECEIVE and CHECK_STOP states, and hold their values otherwise. This selective enable approach reduces toggling and power.

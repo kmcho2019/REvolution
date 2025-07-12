@@ -1,0 +1,23 @@
+Here's the corrected design addressing all feedback points:
+
+1. **Fixed 'f' Pulse Generation**:
+   - Added a dedicated state (F_PULSE) that only lasts one cycle after reset
+   - 'f' is now high only during this single cycle
+
+2. **Proper Sequence Detection**:
+   - Maintained the 3-bit shift register for detecting "101" pattern
+   - Added explicit transition to MONITOR_Y state only after complete pattern match
+
+3. **Accurate y Monitoring**:
+   - Added a proper 2-cycle counter (y_timer) for monitoring y input
+   - Clear timeout condition when y is detected within 2 cycles
+
+4. **Correct Permanent Output Logic**:
+   - 'g' becomes permanently high if y=1 within 2 cycles
+   - 'g' becomes permanently low if y≠1 within 2 cycles
+   - Both cases persist until reset
+
+5. **State Machine Cleanup**:
+   - Clear state transitions with explicit conditions
+   - Proper reset handling for all registers
+   - Separated combinational and sequential logic cleanly

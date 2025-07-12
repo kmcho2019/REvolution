@@ -1,0 +1,11 @@
+To implement a 32-bit Galois LFSR with taps at bit positions 32, 22, 2, and 1, we will create a module named TopModule that takes in a clock signal, a reset signal, and outputs a 32-bit signal q. 
+
+We will use a D Flip-Flop array to implement the shift register, and XOR gates to implement the feedback taps. 
+
+On the positive edge of the clock, the state of each D Flip-Flop will be updated. For bits without taps, their next state will be the current state of the bit to their left (if it exists), effectively shifting right. 
+
+For bits with taps, their next state will be the XOR of the current state of the bit to their left (if it exists) and the current state of the least significant bit (LSB), q[0].
+
+When the reset signal is high, the output q should be reset to 32'h1, which means all D Flip-Flops should be reset to their corresponding initial value.
+
+Since Verilog is a hardware description language, we can use a for loop to generate the D Flip-Flops for the shift register. We will also use the XOR operator (^) to implement the taps.

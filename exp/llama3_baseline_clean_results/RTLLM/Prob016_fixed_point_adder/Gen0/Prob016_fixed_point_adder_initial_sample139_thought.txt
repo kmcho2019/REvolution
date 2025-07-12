@@ -1,0 +1,11 @@
+To implement the fixed-point adder module, we first need to understand the requirements of the design. The module should be able to perform addition and subtraction operations on fixed-point numbers with a specified precision (Q fractional bits and N total bits). 
+
+We'll use two input ports `a` and `b` for the operands, and one output port `c` for the result. The design will include an internal register `res` to store the result. 
+
+The logic of the module will be as follows:
+- Check the MSBs of `a` and `b`. If they are the same, perform absolute value addition and set the MSB of the result accordingly.
+- If the MSBs are different, perform absolute value subtraction. Determine the larger absolute value and set the MSB of the result based on whether the result is positive, zero, or negative.
+
+We will also handle overflow by observing the MSB to ensure the result fits within the N-bit range. 
+
+We'll implement this logic using Verilog, utilizing parameterized module definitions to accommodate the variable precision and total number of bits specified by the user.

@@ -1,0 +1,22 @@
+Implement a 2's complementer as a Moore FSM with three states to explicitly track the carry behavior during bitwise addition:
+
+- States:
+  - IDLE: waiting for reset release, output zero.
+  - PASS_THROUGH: before the first '1' bit is seen, output input bit directly.
+  - INVERT_AND_CARRY: after first '1', output inverted input bits.
+
+- The FSM resets asynchronously to IDLE, and transitions to PASS_THROUGH immediately after reset release.
+
+- The FSM looks at input x each cycle. While in PASS_THROUGH:
+    - If input bit is '0', stay in PASS_THROUGH, output is input bit.
+    - If input bit is '1', move to INVERT_AND_CARRY next cycle, output input bit.
+
+- In INVERT_AND_CARRY:
+    - Output inverted input bit (to complete 2's complement).
+    - Remain in INVERT_AND_CARRY.
+
+- Use a state register and an output register, and no extra input register. Output z is Moore, dependent only on current state and input.
+
+- All sequential elements are positive edge triggered with asynchronous reset.
+
+This clear three-state FSM explicitly models the carry addition, provides straightforward logic, and minimizes registers to state and output only.

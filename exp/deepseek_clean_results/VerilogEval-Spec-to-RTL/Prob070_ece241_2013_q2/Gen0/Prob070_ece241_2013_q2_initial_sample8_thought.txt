@@ -1,0 +1,13 @@
+To solve this problem, we need to implement a combinational logic circuit with inputs a, b, c, d that outputs 1 when the input represents decimal 2, 7, or 15, and 0 for other specified cases. The numbers 3, 8, 11, and 12 never occur.
+
+First, we'll create a truth table based on the given specifications:
+- 2: 0010
+- 7: 0111
+- 15: 1111
+These are the cases where output should be 1.
+
+For sum-of-products (SOP) form, we'll OR the minterms (2,7,15):
+out_sop = a'b'cd' + a'bcd + abcd
+
+For product-of-sums (POS) form, we'll find cases where output is 0 and AND the maxterms (0,1,4,5,6,9,10,13,14):
+out_pos = (a+b+c+d)(a+b+c+d')(a+b'+c+d)(a+b'+c+d')(a+b'+c'+d)(a'+b+c+d')(a'+b+c'+d)(a'+b'+c+d')(a'+b'+c'+d)

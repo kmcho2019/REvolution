@@ -1,0 +1,10 @@
+Fuse the modularity and fast carry lookahead structure from Example 1 with the explicit two's complement subtraction and straightforward overflow detection from Example 2 to build a clean, efficient, and performant 64-bit subtractor.
+
+Strategy:
+- Perform subtraction as A + (~B + 1), keeping the explicit two's complement logic.
+- Implement a hierarchical 64-bit adder structure by combining two 32-bit carry lookahead adders (CLAs), like Example 1, to split the critical carry path and speed up carry propagation.
+- Use a single 64-bit bitwise inversion of B (rather than two separate halves) for clarity and minimal wiring.
+- Chain carry-out of lower 32-bit CLA as carry-in to upper 32-bit CLA to maintain correctness.
+- Keep the overflow logic identical and straightforward: overflow when sign(A) differs from sign(B) and sign(result) differs from sign(A).
+- Integrate the 32-bit CLA module inside the same file for completeness and reuse.
+- This fusion leverages the performance and modularity advantages of Example 1 with the explicit, clear subtractor logic style of Example 2, minimizing area and power by limiting carry chain length and avoiding ripple carry in the full 64-bit width.

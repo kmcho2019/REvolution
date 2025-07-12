@@ -1,0 +1,12 @@
+To optimize the 4-bit comparator for better power, area, and slightly improved timing, replace the subtractor-based comparison with direct bitwise comparisons using combinational logic. Specifically:
+
+- For equality, use bitwise XNOR of each A and B bit and AND them to check if all bits are equal.
+- For greater and less, implement a hierarchical bit-level comparison starting from the MSB:
+  * If the MSB of A is greater than B, A_greater = 1.
+  * Else if MSBs are equal, check next bit, and so forth.
+  * If all bits are equal, outputs reflect equality.
+- This avoids ripple borrow chains and explicit subtraction logic, reducing critical path delay.
+- The logic is also power efficient since it uses simple gates without carry chains.
+- Outputs remain mutually exclusive.
+
+This approach improves performance and potentially reduces power and area for a 4-bit comparator.

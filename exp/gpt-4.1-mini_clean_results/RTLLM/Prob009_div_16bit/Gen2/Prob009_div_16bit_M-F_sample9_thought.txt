@@ -1,0 +1,25 @@
+To fix the division logic based on the feedback, the algorithm must follow these steps precisely:
+
+1. Use two combinational always blocks as required. The first latches inputs A and B into registers a_reg and b_reg for use in the main division block.
+
+2. In the second always block, perform the iterative division using the described algorithm:
+
+   - Initialize a 16-bit quotient and an 8-bit remainder to zero.
+
+   - Iterate 16 times (for each bit of the dividend from MSB to LSB):
+
+       a) Shift the remainder left by 1 bit and bring down the next bit of the dividend (from a_reg) into remainder's LSB.
+
+       b) Compare the remainder (8-bit) with the divisor (b_reg).
+
+       c) If remainder >= divisor, subtract divisor from remainder, and set quotient bit corresponding to the current iteration to 1; else quotient bit is 0.
+
+3. After all bits are processed, quotient holds the division result and remainder holds the final remainder.
+
+4. Output result as the 16-bit quotient and odd as the 16-bit remainder with upper 8 bits zero-padded.
+
+This method matches the classic restoring division approach and aligns with the problem's description to process the dividend bits in sequence and update quotient and remainder accordingly.
+
+This corrects the original code by properly managing the remainder width (8 bits), matching divisor width, and concatenating bits properly without misaligned shifts. The subtraction uses 8-bit remainder and divisor (no unnecessary shifts). The quotient bits are set starting from the MSB to LSB in order.
+
+By this method, the division result and remainder will be correct, satisfying the problem and testbench requirements.

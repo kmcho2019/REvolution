@@ -1,0 +1,7 @@
+To implement a 64-bit Johnson counter, we first need to understand its operation. The counter starts at 0000 and increments by shifting the current value one bit to the right and appending a 1 at the most significant bit position until the least significant bit becomes 1. After that, it decrements by shifting the current value one bit to the right and appending a 0 at the most significant bit position. This process repeats.
+
+We will design a Verilog module named JC_counter with input ports clk for the clock signal and rst_n for the active-low reset signal. The output port Q will represent the current count value as a 64-bit register.
+
+The counter will be updated on every rising edge of the clock signal or the falling edge of the reset signal. If the reset signal is low, the counter value will be set to 0. Otherwise, the counter will check the least significant bit (Q[0]) to determine whether to increment or decrement the count value.
+
+The increment operation involves shifting the current value (Q[63:1]) to the right and appending a 1 at the most significant bit position, while the decrement operation involves shifting the current value (Q[63:1]) to the right and appending a 0 at the most significant bit position.

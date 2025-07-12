@@ -1,0 +1,16 @@
+To better match the waveform, we note that p updates synchronously with the rising clock edge and directly follows 'a' at that time, so p is a registered version of 'a' sampled at posedge clock.
+
+The output q acts like a latch holding its state except it sets to 1 when p becomes 1 at the rising edge, and resets to 0 when clock is low and a is high (likely at falling edges). 
+
+Instead of using negedge clock, we use a single always block triggered at posedge clock to update p, and another triggered at negedge clock to update q to respect the sequencing seen in the waveform.
+
+To avoid initial unknowns, we add a reset (asynchronous or synchronous) initialized via initial block (since no reset input is specified) or we initialize outputs to 0 explicitly.
+
+Refactoring the code to use a state machine style:
+
+- Use a register for p updated at posedge clock with p <= a.
+- Use a register for q updated at negedge clock:
+   if (clock == 0 && a == 1) q <= 0; else q <= q | p; 
+This captures q reset when clock is low and a is high, and sets q when p is 1.
+   
+This maintains the same core idea but uses separate always blocks and explicit initial reset to resolve unknown states, improving waveform matching.

@@ -1,0 +1,17 @@
+The original design uses two counters counting up to NUM_DIV-1 on opposite clock edges and toggles their respective clock divider outputs when counters reach HALF_COUNT. However, toggling when cnt == HALF_COUNT inside the same clock edge that increments the counter causes a timing offset (since cnt updates after the toggle condition is evaluated), resulting in a phase misalignment between clk_div1 and clk_div2. This causes the final clk_div (OR of clk_div1 and clk_div2) to have glitches or incorrect timing, failing the functional checks.
+
+Improvement strategy:
+
+1. Change counters to count from 0 to NUM_DIV-1 but toggle clk_divx output *after* the counter reaches NUM_DIV-1. This ensures that each clk_divx toggles once per full count cycle, ensuring stable and well-aligned edges.
+
+2. On each clock edge (pos or neg), increment counter and when it reaches NUM_DIV-1, toggle clk_divx and reset the counter. This aligns toggling with counter rollover, avoiding mid-cycle toggling that causes misalignment.
+
+3. Use half_count only to determine toggle point if generating 50% duty cycle clock, but with odd dividers, toggling on counter wrap-around generates the correct odd division frequency.
+
+4. To improve duty cycle, use the two toggling outputs clk_div1 and clk_div2 staggered by half cycle on posedge and negedge, and OR them. Because toggle occurs every NUM_DIV cycles on posedge and negedge separately, the combined clk_div will have the input clock divided by NUM_DIV with near 50% duty cycle.
+
+5. Ensure asynchronous reset resets counters and outputs synchronously on posedge and negedge accordingly.
+
+6. Validate parameter remains an odd number greater or equal to 3.
+
+This approach improves timing alignment, removes mid-cycle toggling glitches, and better matches expected simulation results.

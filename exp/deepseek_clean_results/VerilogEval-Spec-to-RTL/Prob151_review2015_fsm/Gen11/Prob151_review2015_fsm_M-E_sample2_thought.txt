@@ -1,0 +1,31 @@
+Novel architectural approach:
+
+1. Pattern Detection with Validation:
+- Use a separate 4-bit shift register exclusively for pattern detection
+- Only validate pattern when full (4 bits received) to prevent partial matches
+- Clear pattern register only when leaving IDLE state
+
+2. Precise Shift Control:
+- Implement a 3-bit shift counter (0-7) for accurate 4-cycle counting
+- Generate shift_ena only during active shifting phase
+- Use counter value comparison for exact cycle control
+
+3. Enhanced State Machine:
+- Five distinct states for clearer control flow:
+  * IDLE: Waiting for pattern
+  * VALIDATE: Confirm pattern match
+  * SHIFT: Active data shifting
+  * COUNT: Timing operation
+  * NOTIFY: Completion phase
+- Explicit state transitions with all edge cases handled
+
+4. Output Management:
+- Outputs derived from state and counter values
+- Clean separation between control and data path signals
+- Glitch-free output generation
+
+Key innovations:
+- Separate pattern validation state for robust detection
+- Extended counter range for precise timing
+- Explicit state for pattern confirmation
+- Clear state transition conditions

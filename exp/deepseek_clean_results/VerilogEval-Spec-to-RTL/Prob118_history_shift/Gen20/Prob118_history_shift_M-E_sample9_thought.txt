@@ -1,0 +1,14 @@
+Novel Pipeline Architecture:
+1. Implement dual history registers: one for committed state (safe_history) and one for speculative state (spec_history)
+2. Safe history updates only on mispredictions or when predictions are validated
+3. Speculative history tracks all predictions in flight
+4. Eliminates need for rollback by maintaining correct committed state
+5. Reduces critical path by separating prediction and misprediction handling
+6. Uses parallel update logic instead of shift operations for better timing
+
+Key Advantages:
+- Naturally handles concurrent predict/mispredict cases without priority logic
+- Speculative history can support multiple in-flight branches
+- Committed history is always correct and doesn't need rollback
+- Parallel update reduces critical path compared to shift operations
+- Clear separation of concerns between speculative and committed state

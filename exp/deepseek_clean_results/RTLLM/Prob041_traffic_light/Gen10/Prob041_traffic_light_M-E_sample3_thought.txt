@@ -1,0 +1,13 @@
+Here's a novel approach using a time-sliced architecture with parallel counters:
+
+1. Instead of a single counter, use three dedicated counters (one for each light state) that run in parallel
+2. Implement a priority-based state machine where the current state is determined by which counter reaches zero first
+3. The pedestrian request is handled by preemptively loading the green counter when conditions are met
+4. Use a "time bank" concept where unused green time can be carried over to the next cycle
+5. Implement a watchdog timer to ensure minimum durations for each state
+
+Key innovations:
+- Parallel counters eliminate the need for state-dependent counter loading
+- Priority-based state selection simplifies the state machine logic
+- Time banking allows for more flexible pedestrian request handling
+- Watchdog ensures minimum safety durations are maintained

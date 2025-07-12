@@ -1,0 +1,13 @@
+Fuse the strengths of both examples by using a continuous assignment with an indexed input array to keep the code concise and synthesis-friendly, while explicitly handling the invalid sel cases to output all ones. To further improve clarity and synthesis optimization, define the inputs array as a localparam array of concatenated inputs sliced appropriately, eliminating multiple assign statements and helping tools to infer optimized multiplexers. 
+
+Additionally, implement the mux with a case statement inside a combinational always block with reg output to guide synthesis toward a priority mux structure, which can reduce area and power by minimizing unnecessary switching, compared to purely indexed array selection. 
+
+To combine conciseness and optimization:
+
+- Use a packed input vector to represent all inputs, indexed by sel.
+- Use a combinational always block with a case statement on sel for clear selection and default output.
+- The always block approach can help synthesis tools optimize mux logic better than a continuous indexed array.
+- Keep output as reg to hold mux output combinationally without flip-flops.
+- This balances readability, explicit default handling, and synthesis friendliness.
+
+This fusion approach leverages array packing from Example 1 for neat input management, but prefers Example 2’s clarity and synthesis-directed case statement style for better PPA outcomes.

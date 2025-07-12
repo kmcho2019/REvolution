@@ -1,0 +1,17 @@
+To simplify the design while maintaining functionality, I'll make these key changes:
+
+1. State Encoding: Switch from one-hot to binary encoding (2 bits) for the 4 states to reduce area and power.
+
+2. State Reduction: Merge the WAIT and STOP states since they serve similar purposes (waiting for stop bit). This reduces the state machine complexity.
+
+3. Control Logic: Combine the state transition and data processing logic into a single always block for simplicity.
+
+4. Remove Clock Gating: Eliminate the shift_enable signal since the shift register only updates in RECEIVE state anyway.
+
+5. Simplify Output Logic: Generate 'done' directly in the combinational logic rather than pipelining it.
+
+The simplified design will have:
+- 2-bit state encoding (4 states)
+- Combined state and data processing
+- Direct done signal generation
+- Fewer control signals

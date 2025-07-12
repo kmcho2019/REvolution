@@ -1,0 +1,15 @@
+To optimize the existing hierarchical 32-bit CLA adder design for better PPA (performance, power, area), we focus on reducing carry calculation logic depth and redundant signal propagation without altering correctness. 
+
+Improvement strategy:
+1. Replace the explicit per-bit carry assignments in cla_16bit with a more efficient prefix carry-lookahead approach, calculating the carries in logarithmic steps rather than linear propagation. This reduces logic depth, improving timing.
+2. Use a 4-level CLA prefix structure internally in the 16-bit block (e.g., Kogge-Stone style), which is more parallel and balanced than a linear carry chain.
+3. Since the top-level 32-bit adder already uses two 16-bit blocks hierarchically, we maintain that structure but enhance the 16-bit block's carry generate/propagate logic.
+4. Retain the 1-based input/output indexing interface for compatibility.
+5. Remove redundant signals and organize generate/propagate logic to minimize area and switching power.
+6. Use generate loops and intermediate wire arrays to implement the prefix logic clearly.
+
+These changes will reduce critical path delay within the 16-bit block, lowering total delay from input to output. The prefix carry computation replaces the linear carry assignment with parallel prefix logic, which is a classic carry-lookahead speedup technique.
+
+The rest of the top-level adder is kept similar for modular clarity.
+
+Note: This approach slightly increases area due to more complex wiring internally but can improve timing significantly and power due to reduced fanout and switching in carry signals.

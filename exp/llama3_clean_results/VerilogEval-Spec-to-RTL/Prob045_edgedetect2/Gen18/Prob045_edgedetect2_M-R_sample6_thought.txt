@@ -1,0 +1,5 @@
+To refactor the given code while maintaining its core functionality, we can consider a different approach for detecting edges and updating the previous state. Instead of using an `always` block to handle both the edge detection and the state update, we can separate these operations into two distinct parts: one for the sequential logic (handling state updates) and the other for combinational logic (detecting edges). This refactoring maintains the same functionality but changes the structure of the implementation.
+
+One way to refactor is to use a `always_ff` block for the sequential part, which updates the previous state, and use continuous assignment (`assign`) for the combinational part, which detects edges based on the current and previous states.
+
+The idea is to ensure that the module still detects any edge in the input signal but does so in a manner that could potentially be more efficient in terms of area or power, depending on the synthesis tool and target technology. By using `always_ff` and `assign` statements, we explicitly define the sequential and combinational parts of our design, which can help in optimizing the design for specific PPA metrics.

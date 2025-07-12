@@ -1,0 +1,15 @@
+Novel Architectural Idea: 
+1. Implement a dual-buffer approach where we maintain both current and next state history registers
+2. Use a priority encoder to select between three update sources: reset, misprediction, or prediction
+3. The next state logic computes all possible updates in parallel before the mux selection
+4. This approach potentially improves timing by:
+   - Parallel computation of all possible next states
+   - Reducing critical path to just the mux selection
+   - Enabling better synthesis optimization through explicit parallel paths
+5. The design maintains the same functionality but with potentially better timing characteristics
+
+Key Features:
+- Explicit parallel computation of all update scenarios
+- Single-cycle operation maintained
+- Clear priority structure preserved
+- Potential for better timing closure

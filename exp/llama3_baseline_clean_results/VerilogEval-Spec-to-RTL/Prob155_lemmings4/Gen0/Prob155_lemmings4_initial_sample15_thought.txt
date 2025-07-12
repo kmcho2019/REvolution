@@ -1,0 +1,12 @@
+The state machine will have several states: walking left, walking right, falling, digging, and splattered. The walking left and walking right states will handle bumping into obstacles, falling, and digging. The falling state will count the number of cycles the Lemming is in the air and check if it hits the ground to resume walking or splatter. The digging state will continue digging until there is no ground, then it will transition to falling. The splattered state will output all zeros until the FSM is reset.
+
+To implement this, we can use a Moore machine with the following states:
+- WALK_LEFT
+- WALK_RIGHT
+- FALLING
+- DIGGING
+- SPLATTERED
+
+We will use a counter to count the number of cycles the Lemming is in the air when falling. We will also use two registers to store the previous ground state and the previous dig state to handle the case where the ground disappears or reappears, or the Lemming is told to dig when falling.
+
+The state machine will be implemented using a case statement in Verilog, with each case corresponding to a different state. We will use the current state, inputs, and previous states to determine the next state and outputs.

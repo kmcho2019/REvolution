@@ -1,0 +1,15 @@
+To improve PPA over the initial solution, focus on reducing toggling and simplifying control signals:
+
+1. Add a clock enable (recv_en) active only in RECEIVE state, gating shift register and bit counter updates to reduce toggling outside receive periods.
+
+2. Simplify shift register logic by shifting left and capturing incoming LSB into bit 0 position since serial data is LSB first; this aligns with typical LSB-first protocol and can ease timing.
+
+3. Implement done as a one-clock-cycle pulse precisely when stop bit is detected to minimize output toggling.
+
+4. Use registered outputs updated only when done is asserted to hold stable data and prevent glitches.
+
+5. Avoid redundant resets of bit counter and shift register outside RECEIVE state.
+
+6. Retain one-hot FSM encoding for timing benefits, but simplify next_state logic slightly by direct combinational assignments.
+
+These improvements reduce dynamic power by gating sequential logic and minimize output glitches, potentially improving timing slack and power without increasing area. The design still meets all functional requirements.

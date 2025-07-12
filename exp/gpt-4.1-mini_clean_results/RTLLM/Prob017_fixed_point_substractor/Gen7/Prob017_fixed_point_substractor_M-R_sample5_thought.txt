@@ -1,0 +1,11 @@
+Refactor the fixed-point subtractor by eliminating the always blocks and using continuous assignments and intermediate wires exclusively for a purely combinational, declarative style. We will:
+
+- Use signed arithmetic explicitly by declaring inputs and outputs as signed to simplify sign handling and arithmetic.
+- Compute absolute values with ternary expressions using signed operations.
+- Use wires for intermediate values instead of regs.
+- Handle sign detection and zero detection via continuous assignments.
+- Compose the final output by assigning either the positive magnitude or two's complement of the magnitude based on the sign.
+- Force zero result sign bit to zero explicitly.
+- This structure improves readability, reduces register usage, and fully clarifies combinational flow.
+
+This approach also helps synthesis tools better optimize combinational logic and is more idiomatic Verilog for combinational arithmetic modules.

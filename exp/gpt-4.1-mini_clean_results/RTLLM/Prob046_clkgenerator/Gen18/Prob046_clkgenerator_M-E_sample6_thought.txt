@@ -1,0 +1,7 @@
+To create a novel clock generator module suitable for simulation, I will use an always block driven by a self-resetting timer implemented using a counter and an internal clock derived from the simulator's time units.
+
+The module will use an internal time unit counter that increments every time unit (using a nonblocking delay). When the counter reaches half the PERIOD, the clock toggles and the counter resets. This approach uses a procedural always block with a zero-delay wait loop to simulate time passing, avoiding the initial forever loop with # delays.
+
+This design is still for simulation only but uses a different architecture: a counting approach inside an always block to model the clock toggling at regular intervals, improving event-based timing in simulators that might not handle forever delays well.
+
+The clk output is a reg toggled every half PERIOD units using a software counter incremented with a zero-time delay loop.

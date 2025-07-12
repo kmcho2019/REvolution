@@ -1,0 +1,40 @@
+The problem requires a basic, bit-serial Booth multiplier (not radix-4) running 16 cycles: each cycle processes one bit of the multiplier. On reset, multiplicand and multiplier are sign-extended and loaded into 16-bit registers. The multiplier register is called "multiplier", and the multiplicand is called "multiplicand" (following problem statement). Each clock cycle shifts multiplicand left by 1 to prepare for the Booth operation, checks the current bit of multiplier[ctr], and if it is 1, adds multiplicand to the product register (p). The counter ctr increments each cycle and when it reaches 16, rdy is set.
+
+The feedback points out the previous implementation did not follow this exactly and mixed radix-4 concepts with fewer cycles and complex indexing.
+
+Hence, the corrected design:
+
+- Use a 5-bit counter `ctr` counting from 0 to 15 (16 cycles total).
+- On reset:
+  - Sign-extend inputs `a` and `b` to 16 bits and assign to multiplicand and multiplier registers.
+  - Clear product register p and ctr.
+  - Clear rdy.
+- On each clock cycle (if not reset and not ready):
+  - If multiplier[ctr] is 1, add multiplicand to p.
+  - Shift multiplicand left by 1 (prepare for next bit).
+  - Increment ctr.
+- When ctr == 16, set rdy = 1 to indicate multiplication done.
+- Output p is the 16-bit product.
+
+Note: The problem states multiplicand and multiplier loading on reset, not on a start signal; hence this is a synchronous operation starting immediately after reset is deasserted.
+
+This is a straightforward bit-serial Booth multiplier without radix-4 grouping.
+
+We use synchronous always block triggered on posedge clk or posedge reset. All registers declared at module scope.
+
+Nonblocking assignments are used for synchronous logic.
+
+We must be careful to not mix multiplicand and multiplier roles. The problem states multiplier <= sign-extended a, multiplicand <= sign-extended b, so `a` is multiplier, `b` multiplicand. But the example says multiplier <= sign-extended `a`, multiplicand <= sign-extended `b`. Confirming this:
+
+- multiplier <= {{8{a[7]}}, a}
+- multiplicand <= {{8{b[7]}}, b}
+
+We keep this naming to avoid confusion.
+
+We then process 16 cycles, each cycle checking multiplier[ctr] and adding multiplicand accordingly, shifting multiplicand each cycle.
+
+Finally, output p is 16 bits, taking p directly from the product register (which accumulates sum). Since multiplicand and product are 16-bit wide, we assume product also is 16-bit, but we must consider overflow. The problem states p is 16 bits; we will do 16-bit arithmetic (with signed extension on inputs). For safety, we can define product as signed 17-bit or wider to hold intermediate sums, but problem states multiplicand and product 16-bit, so for simplicity, keep 16-bit and allow signed overflow as per Verilog semantics.
+
+This matches the problem statement.
+
+We provide the final code below.

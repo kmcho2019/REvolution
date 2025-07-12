@@ -1,0 +1,10 @@
+The original design correctly implements an 8-bit signed adder with overflow detection using propagate/generate signals and a ripple carry chain for carry calculation. While functional, the ripple carry chain limits performance. To optimize for better PPA (performance, power, area), the key improvement is to replace the ripple carry chain with a true carry-lookahead structure that computes carries in parallel with logarithmic delay.
+
+Improvement strategy:
+- Implement a hierarchical carry-lookahead logic that computes carries with fewer logic levels than ripple carry.
+- Specifically, create group propagate and generate signals and use them to calculate carries in parallel for faster carry computation.
+- Keep the same sum calculation using propagate signals XORed with carry-in.
+- Retain the simple and correct overflow detection logic.
+- This structure reduces critical path delay significantly for better max clock frequency without significant area or power overhead in this 8-bit design.
+
+This approach balances minimal area overhead while improving maximum frequency and power efficiency by reducing switching in carry propagation chains.

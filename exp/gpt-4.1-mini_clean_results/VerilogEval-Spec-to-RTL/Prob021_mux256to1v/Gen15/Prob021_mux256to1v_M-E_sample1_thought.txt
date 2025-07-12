@@ -1,0 +1,17 @@
+I will implement the 256-to-1 4-bit multiplexer using a one-hot decoding approach combined with bit-sliced AND-OR logic rather than a hierarchical mux tree. 
+
+Concept:
+- Use a one-hot 256-bit vector decoded from the 8-bit sel input.
+- Each bit in the one-hot vector enables a 4-bit slice of the 1024-bit input vector.
+- Bitwise AND each 4-bit input slice with the corresponding decoded one-hot bit replicated 4 times.
+- Finally, OR all the 256 masked 4-bit slices to get the output.
+
+Advantages:
+- The logic is flattened, producing a single-level AND-OR structure.
+- It trades off area and power for potentially lower delay by eliminating mux tree stages.
+- The design is fully combinational and straightforward.
+- The approach is scalable and uses basic gates only.
+
+This avoids multiple levels of muxes and can provide faster routing since the decoding and output combination is parallel, though at the cost of more area and potentially more power if not optimized.
+
+I will implement a decoder module for the one-hot vector and then the TopModule to do the described masking and reduction.

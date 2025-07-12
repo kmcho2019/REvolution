@@ -1,0 +1,25 @@
+The previous design attempted to pipeline a ripple carry adder by performing all stage additions and carry propagations within the same clock cycle, which breaks the ripple carry principle and causes incorrect carry propagation.
+
+To fix this, I will redesign the pipeline so that each pipeline stage consists of:
+- Registering the input operands slice,
+- Adding the slice along with the carry-in from the previous stage (available from the previous clock cycle),
+- Registering the sum and carry-out,
+- Passing the carry-out to the next stage's carry-in in the next clock cycle.
+
+This way, carry propagates through the pipeline stage by stage, taking one clock cycle per stage.
+
+Key design points:
+
+1. Pipeline latency = number of stages (`NUM_STAGES = 64/16 = 4`).
+2. Each stage processes 16 bits plus the carry-in.
+3. Carry-out and sum of stage `i` become inputs to stage `i+1` in the next clock cycle.
+4. `i_en` is shifted through an enable pipeline register to generate `o_en` after all pipeline stages.
+5. Inputs for all stages are sliced from `adda` and `addb` at `i_en` assertion, and registered into pipeline registers at each stage synchronously.
+6. Outputs and internal registers use non-blocking assignments.
+7. The final `result` (65 bits) concatenates all stage sums and final carry-out after the last stage completes.
+8. Use arrays of registers for inputs, sums, and carries indexed by stage.
+9. All registers are reset synchronously with `rst_n`.
+
+This approach explicitly pipelines the ripple carry addition so that the carry propagates sequentially across clock cycles, matching a true pipelined ripple carry adder. This guarantees correct addition and synchronized output enable signal.
+
+The implementation uses only synchronous always blocks and avoids mixed combinational/clocked blocks for data path signals, improving clarity and correctness.

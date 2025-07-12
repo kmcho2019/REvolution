@@ -1,0 +1,12 @@
+To simplify the 5-bit maximal-length Galois LFSR implementation:
+1. Keep the same tap positions (bits 4 and 2 in 0-based indexing, corresponding to positions 5 and 3 in 1-based)
+2. The feedback only needs to XOR the current LSB (q[0]) with the tapped bits
+3. Untapped bits simply shift right
+4. Maintain the same reset behavior (initialize to 1)
+5. The simplified structure will be:
+   - New MSB (q[4]) = q[0] XOR q[4]
+   - q[3] = q[4]
+   - q[2] = q[0] XOR q[2]
+   - q[1] = q[2]
+   - q[0] = q[1]
+6. This maintains maximal-length sequence while being more straightforward

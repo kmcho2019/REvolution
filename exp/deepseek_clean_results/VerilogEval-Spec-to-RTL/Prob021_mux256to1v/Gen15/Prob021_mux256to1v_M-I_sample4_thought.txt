@@ -1,0 +1,26 @@
+To further optimize the PPA metrics, I'll implement these improvements:
+
+1. Single-stage implementation: 
+   - Eliminate intermediate wires and hierarchical stages
+   - Directly compute the selected bits using a single expression
+   - This reduces area by removing the stage1_out array and simplifies routing
+
+2. Optimized selection logic:
+   - Use a single bit-slice operation with concatenated sel bits
+   - The calculation (sel * 4) becomes a simple shift operation
+   - This reduces logic depth and improves timing
+
+3. Power optimization:
+   - The single-stage approach activates only the minimal necessary logic
+   - No intermediate results need to be computed/stored
+
+4. Area reduction:
+   - Remove all generate blocks and temporary wires
+   - Implement the minimal logic required for the selection
+   - The synthesis tool can better optimize a single expression
+
+The strategy focuses on:
+- Simplifying the implementation to its most direct form
+- Reducing logic levels for better timing
+- Minimizing routing resources and wire usage
+- Maintaining clean, readable code

@@ -1,0 +1,34 @@
+I will implement a clean and modular FSM with clearly separated combinational next-state logic and sequential state updates. The approach:
+
+1. **States:**
+   - IDLE: searching for pattern 1101.
+   - LOAD_DELAY: after detecting pattern, shift in 4 bits MSB first into delay_reg.
+   - COUNTING: count (delay+1)*1000 clock cycles with one 10-bit cycle counter and one 4-bit tick counter counting down from delay to 0.
+   - DONE: assert done output, wait for ack to restart.
+
+2. **Pattern detection:**
+   Use a 4-bit shift register capturing bits MSB first. On each clock in IDLE, shift left and append new data bit at LSB. When the register equals 4'b1101, transition to LOAD_DELAY.
+
+3. **Delay loading:**
+   Shift in delay bits MSB first (into delay_reg), counting the bits shifted. When 4 bits loaded, initialize tick_counter = delay_reg + 1, cycle_counter = 0, transition to COUNTING.
+
+4. **Counting:**
+   - cycle_counter increments each clock.
+   - When cycle_counter reaches 999, reset to 0 and decrement tick_counter.
+   - Output `count` is stable per 1000 cycle period, showing current tick_counter-1 or 0 at last tick.
+   - counting output asserted during this state.
+   - When tick_counter reaches 0 and cycle_counter == 999, transition to DONE.
+
+5. **Done & Ack:**
+   - done output asserted.
+   - Wait for ack=1 to restart to IDLE.
+
+6. **Reset:**
+   - synchronous active-high reset.
+   - Resets state and all registers.
+
+This structure cleanly isolates input reading to only IDLE and LOAD_DELAY states, avoids input during counting/done.
+
+The counting logic uses only one always block with non-blocking assignments; next state and outputs are computed combinationally for clarity and synthesis friendliness.
+
+This approach guarantees the exact timing needed, pattern detection is MSB-first, and the outputs behave as required.

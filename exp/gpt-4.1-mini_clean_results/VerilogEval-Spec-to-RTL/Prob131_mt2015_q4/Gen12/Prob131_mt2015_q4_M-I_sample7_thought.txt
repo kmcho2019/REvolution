@@ -1,0 +1,7 @@
+To optimize the previous design for better power, performance, and area (PPA), I will eliminate unnecessary gates by implementing the AND operation directly instead of via NAND+NOT. This reduces gate count and propagation delay. Also, the B module output ~(x^y) is inferred from the waveform and used correctly.
+
+Furthermore, since the original problem states two instances each of A and B connected in pairs (one pair outputs to OR, another to AND, then XOR), the original single-instance implementation is a simplification. To fully respect the problem description while optimizing, I will instantiate two A and two B modules with shared inputs, connect the first pair outputs to OR, the second pair outputs to AND, and XOR these results to produce z. This matches the specification exactly.
+
+This approach preserves the correct structure, improves clarity, and reduces logic overhead (no extra NAND+NOT). It also ensures timing optimization by using direct gates and straightforward wiring.
+
+No sequential logic is needed; all outputs are combinational.

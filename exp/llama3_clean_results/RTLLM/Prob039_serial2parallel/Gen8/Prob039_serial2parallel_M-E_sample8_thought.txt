@@ -1,0 +1,7 @@
+To create a novel solution, we will utilize a Finite State Machine (FSM) to manage the series-parallel conversion process. The FSM will have two states: an idle state and a data collection state. When in the idle state, the module will wait for the din_valid signal to be asserted, indicating that valid serial data is available. Upon assertion of din_valid, the FSM will transition to the data collection state and begin collecting the serial data bits.
+
+In the data collection state, the FSM will use a counter to keep track of the number of bits collected. Once 8 bits have been collected, the FSM will transition back to the idle state and output the collected data in parallel form. This approach allows for a clean and efficient way to manage the conversion process and ensures that the output data is only updated when a complete byte has been received.
+
+Additionally, we will use a separate register to store the collected data, which will be shifted and updated on each clock cycle when in the data collection state. This approach minimizes the combinational logic depth and reduces the risk of timing issues.
+
+The FSM will also handle the reset condition, where the module will be reset to its initial state when the reset signal is asserted.

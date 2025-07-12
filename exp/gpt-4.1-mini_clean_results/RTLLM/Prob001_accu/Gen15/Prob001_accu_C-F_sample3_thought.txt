@@ -1,0 +1,7 @@
+Fuse strengths by using a single always block with synchronous reset and non-blocking assignments for clean, simple state management. Improve timing by accumulating the first three inputs progressively in an accumulator, and on the 4th input cycle, add the 4th input to the accumulator and output the final sum and valid_out pulse simultaneously. This avoids adding data_in twice in the same clock cycle (which was a minor timing concern in Example 2). 
+
+Add an enable signal derived from valid_in to gate accumulator and count updates, reducing switching power when no valid data arrives. Also, keep valid_out low by default at each clock edge to ensure a clean 1-cycle pulse. 
+
+The accumulator width remains 10 bits, suitable for summing four 8-bit inputs. The 2-bit count tracks number of valid inputs. This design reduces combinational paths, limits switching to only valid input cycles, and maintains a minimal area and clean structure.
+
+Overall, it combines simplicity, low power (via enable gating), and better performance by avoiding repeated addition of data_in in the same clock cycle.

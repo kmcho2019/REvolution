@@ -1,0 +1,12 @@
+Instead of implementing the logic function as a single OR gate of three inputs, I will create a 2-level hierarchical design that mimics the K-map coverage using multiplexers. The idea is to use input 'a' as the select signal of a 2-to-1 mux, and inputs 'b' and 'c' to generate the mux inputs, effectively dividing the input space into two parts: a=0 and a=1.
+
+From the K-map, when a=0, the output depends on b and c, and when a=1, output is always 1. We can implement the output as:
+out = a + f(b,c)
+
+Here f(b,c) = 1 except when b=0 and c=0 (out=0).
+
+So f(b,c) = b OR c.
+
+The implementation uses a 2-input OR gate for b and c, then a 2-to-1 mux controlled by a, which outputs 1 when a=1 and outputs b|c when a=0.
+
+This structural approach models the decision tree implied by the K-map and demonstrates hierarchical design with a MUX and OR gates, providing a clear, modular, and scalable structure different from the direct OR gate implementation.

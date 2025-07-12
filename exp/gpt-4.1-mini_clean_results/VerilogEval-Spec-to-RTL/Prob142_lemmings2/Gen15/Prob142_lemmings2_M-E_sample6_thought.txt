@@ -1,0 +1,24 @@
+Implement the Lemming FSM using one-hot state encoding for clarity and straightforward output logic:
+
+- Use three states encoded with three flip-flops:
+  - WALK_LEFT (only walk_left=1)
+  - WALK_RIGHT (only walk_right=1)
+  - FALLING (aaah=1)
+
+- Maintain an internal direction bit register separately to track walking direction while falling, since falling state doesn't indicate direction by itself.
+
+- On reset, set state to WALK_LEFT and direction bit to 0 (left).
+
+- Transition logic:
+  - From WALK_LEFT or WALK_RIGHT:
+    - If ground lost (ground=0), transition to FALLING, direction unchanged.
+    - Else if bump_left or bump_right (or both) occurs, change direction accordingly and switch to the opposite walking state.
+  - From FALLING:
+    - If ground returns (ground=1), transition back to walking state according to the saved direction.
+    - Ignore bumps while falling.
+
+- Outputs are directly driven by the one-hot state bits for simplicity, ensuring glitch-free Moore outputs.
+
+- Asynchronous reset clears to WALK_LEFT and sets direction to left.
+
+This design emphasizes explicit state signals with clear output mapping and separation of direction logic for clean FSM modeling.

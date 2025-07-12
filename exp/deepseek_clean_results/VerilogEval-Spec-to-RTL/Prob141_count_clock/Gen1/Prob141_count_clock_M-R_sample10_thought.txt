@@ -1,0 +1,12 @@
+To optimize the clock implementation, I'll restructure the design with these improvements:
+1. Separate the counters into distinct always blocks to reduce critical path length
+2. Use binary counters internally with BCD conversion for better area efficiency
+3. Simplify the hour counter logic by handling special cases (12->1 and 09->10) with clearer conditions
+4. Move the AM/PM toggle logic to only evaluate when hours change
+5. Use synchronous reset consistently across all counters
+
+The new structure will:
+- Have parallel counters for seconds, minutes, and hours
+- Convert binary counts to BCD only at output
+- Simplify hour increment logic
+- Reduce nesting depth for better timing

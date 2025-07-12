@@ -1,0 +1,20 @@
+To optimize the FSM implementation, I'll focus on improving timing and reducing power while maintaining the area efficiency. The key improvements are:
+
+1. State Encoding: Switch to Gray coding to minimize bit transitions between consecutive states, which reduces switching power and improves timing.
+
+2. Output Logic: Keep the simple AND gate for output since it's already area-efficient.
+
+3. Reset Strategy: Maintain synchronous reset for consistency with the original design.
+
+4. State Transition Logic: Optimize the case statement by:
+   - Grouping similar transitions
+   - Using parallel case pragma if supported by synthesis tool
+   - Minimizing logic levels
+
+The Gray code state assignment will be:
+A = 00
+B = 01
+C = 11
+D = 10
+
+This ensures only one bit changes between consecutive states (A<->B, B<->C, C<->D, D<->A).

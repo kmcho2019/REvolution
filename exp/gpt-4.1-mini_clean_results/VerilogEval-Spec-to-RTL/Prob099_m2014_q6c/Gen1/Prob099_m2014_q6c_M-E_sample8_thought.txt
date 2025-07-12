@@ -1,0 +1,27 @@
+To address the problem differently, we explicitly derive the next-state equations for the next states corresponding to y[1] (B) and y[3] (D) based on the state transitions and one-hot encoding.
+
+States (one-hot encoding):  
+A = y[0], B = y[1], C = y[2], D = y[3], E = y[4], F = y[5]
+
+From the transition diagram, list the conditions where the next state is B (y[1]) and D (y[3]):
+
+Next state = B (y[1]):  
+- A (y[0]) with input 0  
+No other transitions to B.
+
+So, Y2 (next y[1]) = y[0] & ~w.
+
+Next state = D (y[3]):  
+- B (y[1]) with input 1  
+- C (y[2]) with input 1  
+- D (y[3]) with input 1  
+- E (y[4]) with input 1  
+- F (y[5]) with input 1
+
+So, Y4 (next y[3]) = (y[1] | y[2] | y[3] | y[4] | y[5]) & w.
+
+We will implement these outputs as combinational signals with the exact port names Y2 and Y4 as requested.
+
+This approach uses explicit combinational logic derived from the transition conditions, making the design clean and straightforward.
+
+The module interface includes inputs y[5:0], w, and outputs Y2, Y4.

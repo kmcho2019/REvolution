@@ -1,0 +1,29 @@
+The main issue lies in the timer counting logic and state transitions causing an off-by-one error and extra counted cycles. To fix this:
+
+1. At transition from LOAD_DELAY to COUNTING:
+   - Initialize tick_counter with delay + 1.
+   - Initialize cycle_counter to zero.
+
+2. During COUNTING:
+   - cycle_counter counts from 0 to 999 (1000 cycles per tick).
+   - When cycle_counter == 999, it resets to 0 and tick_counter decrements by 1 if tick_counter > 0.
+   - As soon as tick_counter reaches 0 (meaning all (delay+1) chunks counted), transition immediately to DONE on the next clock.
+   - This means the timer counts exactly (delay+1)*1000 cycles.
+
+3. Output `count`:
+   - While counting, output count = tick_counter - 1 (show remaining delay in 1000-cycle chunks).
+   - When tick_counter == 0, output count = 0 for the last 1000 cycles.
+   - This correctly reflects the remaining time for the user.
+
+4. The pattern shift register only updates in IDLE, which is correct.
+
+5. Synchronous reset is kept, with all registers initialized properly.
+
+6. The FSM transitions are adjusted to move to DONE immediately after finishing the last counting tick (when tick_counter reaches 0).
+
+This approach ensures:
+- The timer counts exactly the intended cycles.
+- The output count reflects the remaining 1000-cycle chunks correctly.
+- The pattern matching, delay loading, and ACK waiting are implemented as per spec.
+
+This fixes the functional failures in the original code while keeping the design clean and easily maintainable.

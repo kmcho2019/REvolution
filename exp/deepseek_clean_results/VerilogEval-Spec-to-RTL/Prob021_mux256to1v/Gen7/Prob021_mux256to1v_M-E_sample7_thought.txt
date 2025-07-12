@@ -1,0 +1,6 @@
+Instead of using hierarchical multiplexing, we can implement a bit-sliced parallel selection approach:
+1. Treat each of the 4 output bits independently (bit-slicing)
+2. For each bit position (0-3), create a 256-to-1 mux that selects from the corresponding bit in each 4-bit group
+3. Use the same sel signal for all 4 muxes
+4. This approach allows for parallel bit selection and may enable better optimization during synthesis
+5. The implementation uses direct bit selection with concatenated indexing for each output bit

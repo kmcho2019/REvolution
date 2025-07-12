@@ -1,0 +1,15 @@
+The current implementation is already quite efficient, but we can simplify it further by leveraging the one-hot encoding properties more directly:
+
+1. Next state logic can be simplified by:
+   - For next_state[0] (A): Only transitions from A or C when in=0
+   - For next_state[1] (B): Only transitions from A, B, or D when in=1 (simplified to in & ~state[2] since D is state[3])
+   - For next_state[2] (C): Only transitions from B or D when in=0
+   - For next_state[3] (D): Only transition from C when in=1
+
+2. Output logic remains the same (just state[3]) as it's already minimal.
+
+Key simplifications:
+- Remove all intermediate wires
+- Use direct one-hot state bit checks
+- Maintain minimal output logic
+- All expressions use only 2-input operations

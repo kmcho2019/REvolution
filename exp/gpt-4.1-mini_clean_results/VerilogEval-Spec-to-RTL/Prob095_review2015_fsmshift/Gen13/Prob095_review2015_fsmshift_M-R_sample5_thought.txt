@@ -1,0 +1,11 @@
+I will refactor the design to use a simple FSM with two states: IDLE and SHIFT. On synchronous reset, the FSM transitions to SHIFT state and asserts shift_ena for exactly 4 cycles. After 4 cycles, it returns to IDLE and shift_ena is deasserted.
+
+To support re-triggering shift_ena for 4 cycles whenever the "proper bit pattern" is detected, I will add an input signal named `pattern_detected` which triggers the FSM from IDLE to SHIFT again for 4 cycles. Since the original problem description mentioned the FSM controls shift_ena based on bit pattern detection, this input is essential.
+
+The 4-cycle timing will be controlled by a counter which counts down from 4 to 0 during the SHIFT state. 
+
+I will implement the FSM with enumerated states and synchronous state transitions on the posedge of clk. The output shift_ena will be combinational, asserted only in the SHIFT state.
+
+This structure maintains the same timing behavior but uses a clearly defined FSM, allowing re-triggering of the shift enable period, and clean separation of combinational output and sequential state logic.
+
+If the `pattern_detected` input is not explicitly given, this interface can be easily modified to integrate such a signal from the surrounding FSM.

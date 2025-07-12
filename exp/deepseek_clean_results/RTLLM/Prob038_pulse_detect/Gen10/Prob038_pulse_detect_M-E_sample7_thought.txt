@@ -1,0 +1,24 @@
+Novel State Machine Approach:
+
+1. Core Concept:
+   - Implement a Moore machine with explicit state transitions
+   - Use named states for better readability and maintainability
+   - Each state represents a specific phase of pulse detection
+
+2. State Definitions:
+   - IDLE: Waiting for first 0->1 transition
+   - GOT_1: Received first 1 (after initial 0)
+   - GOT_0: Received second 0 (completing the pulse)
+   - Output is only high in GOT_0 state
+
+3. Advantages:
+   - Clear state transitions make the design more debuggable
+   - Easily extensible for more complex patterns
+   - Explicit state encoding helps with formal verification
+   - Better documents design intent through state names
+
+4. Implementation Details:
+   - 2-bit state register with one-hot encoding for clarity
+   - Separate next-state and output logic
+   - Reset initializes to IDLE state
+   - State transitions occur on each clock edge

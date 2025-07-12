@@ -1,0 +1,9 @@
+The problem requires us to design a TopModule in Verilog that generates the 4-bit output 'mux_in' based on the inputs 'c' and 'd', such that when combined with a 4-to-1 multiplexer, the entire circuit implements the given Karnaugh map. We can use the K-map to determine the required values for each 'mux_in' bit. 
+
+From the Karnaugh map, we can see that:
+- mux_in[0] (ab=00) should be 0 when cd=00, 1 when cd=01, 1 when cd=11, and 1 when cd=10, which simplifies to c+d.
+- mux_in[1] (ab=01) should be 0 for all cases.
+- mux_in[2] (ab=11) should be 0 when cd=00, 0 when cd=01, 1 when cd=11, and 0 when cd=10, which simplifies to c*d.
+- mux_in[3] (ab=10) should be 1 when cd=00, 0 when cd=01, 1 when cd=11, and 1 when cd=10, which simplifies to d.
+
+To minimize the use of 2-to-1 multiplexers, we can directly implement these expressions for each 'mux_in' bit using the inputs 'c' and 'd'.

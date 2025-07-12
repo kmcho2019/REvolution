@@ -1,0 +1,12 @@
+I'll implement a logarithmic multiplexer tree that:
+1. Uses a two-level hierarchy of 16-to-1 multiplexers (16x16=256)
+2. First level selects one of 16 bytes from the 256-bit input
+3. Second level selects one bit from the selected byte
+4. Benefits:
+   - Reduces critical path to just two 16-to-1 muxes in series
+   - Naturally partitions the design for better placement/routing
+   - Enables potential power gating of unused byte slices
+   - More synthesis-friendly for standard cell libraries
+5. The 8-bit sel is split into:
+   - Upper 4 bits for byte selection (16 options)
+   - Lower 4 bits for bit selection within byte (16 options)

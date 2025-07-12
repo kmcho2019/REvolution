@@ -1,0 +1,139 @@
+The previous design assumed q_comb = state ? ~(a ^ b) : (a ^ b), which did not match the waveform outputs.
+
+Reanalyzing the waveform, consider how q and state change at every positive clock edge:
+
+- At each rising edge, state updates to the previous q.
+- q depends on the current state, a, and b inputs.
+
+From waveform inspection, let's try to directly extract the q output logic as a function of current state, a, and b:
+
+Observing the behavior at clock edges:
+
+- When state=0, q = a | b (logical OR)
+- When state=1, q = a & b (logical AND)
+
+Check this hypothesis against waveform at some key points:
+
+At 45ns (state=0, a=0,b=1): q=1 (0|1=1) matches
+At 65ns (state=0, a=1,b=1): q=0 (expected 1), no match
+So OR does not fit all.
+
+Try q = (state & ~(a & b)) | (~state & (a ^ b))
+
+At 45ns: state=0, a=0,b=1 => q=0^(1)=1 matches q=1
+At 65ns: state=0, a=1,b=1 => q=1^1=0 matches q=0
+At 75ns: state=1,a=0,b=0 => q=1 & ~(0)=1 matches q=1
+At 95ns: state=1,a=1,b=1 => q=1 & ~(1)=0 matches q=1 (waveform shows q=1, no)
+
+Try q = (state & ~(a ^ b)) | (~state & (a ^ b)) = (a ^ b) ^ state
+
+This was previous attempt, which failed.
+
+Try q = (state & (a ~| b)) | (~state & (a ^ b))
+
+- a ~| b is NOR = ~(a|b)
+
+At 45ns (state=0, a=0,b=1): q=0 ^1=1 matches
+At 65ns (state=0,a=1,b=1): q=0^(1^1=0)=0 matches
+At 75ns(state=1,a=0,b=0): q=1&~(0|0)=1&1=1 matches q=1
+At 95ns(state=1,a=1,b=1): q=1&~(1|1)=1&0=0 but waveform q=1 no
+No perfect match.
+
+Try expressing q as (state & b) | (~state & a)
+
+At 45ns (state=0,a=0,b=1): q=0|0=0 waveform q=1 no.
+
+Try output q = (state & b) | (~state & a)
+
+Try the inverse: q = (state & a) | (~state & b)
+
+At 45ns(state=0,a=0,b=1): q=0|1=1 matches
+At 65ns(state=0,a=1,b=1): q=0|1=1 waveform q=0 no
+
+Try q = (state & ~b) | (~state & a)
+
+At 45ns: 0&~1=0 |1&0=0 q=0 no
+
+Try next-state logic as q = (state & (a ^ b)) | (~state & (a & b))
+
+At 45ns (state=0,a=0,b=1): 0|(0&1)=0 waveform q=1 no
+
+Try another approach:
+
+From the waveform, let's record state and q values at clk rising edges:
+
+time | state | a | b | q
+15   | 0     | 0 | 0 | 0
+45   | 0     | 0 | 1 | 1
+55   | 0     | 1 | 0 | 1
+65   | 0     | 1 | 1 | 0
+75   | 1     | 0 | 0 | 1
+85   | 0     | 1 | 1 | 0
+95   | 1     | 1 | 1 | 1
+105  | 1     | 1 | 1 | 1
+115  | 1     | 1 | 0 | 0
+125  | 1     | 0 | 1 | 0
+135  | 1     | 0 | 0 | 1
+145  | 0     | 0 | 0 | 0
+
+Looking at these:
+
+When state=0:
+- q = ~(a & b) (NAND)
+At 65ns (1,1) q=0 but NAND(1,1)=0 no match
+
+Try q = ~(a | b) (NOR)
+At 45ns(0,1) q=1 but NOR(0,1)=0 no
+
+Try q = a ^ b
+
+At 65ns (1,1) 1^1=0 matches q=0 good
+At 45ns (0,1) 0^1=1 matches q=1 good
+At 55ns (1,0) 1^0=1 matches q=1 good
+
+For state=1:
+q = a & b
+
+At 75ns(0,0) 0 matches waveform q=1 no
+
+Try q= a | b
+
+At 75ns(0,0)=0 no matches waveform q=1 no
+
+Try q = ~(a ^ b)
+
+At 75ns(0,0) q=1 matches
+At 95ns(1,1) q=1 matches
+At 115ns(1,0) q=0 matches
+At 125ns(0,1) q=0 matches
+At 135ns(0,0) q=1 matches
+
+So for state=1, q = ~(a ^ b)
+
+For state=0, q = a ^ b
+
+This matches previous guess and is consistent.
+
+Hence the previously given code is logically correct.
+
+But the feedback says it mismatches waveform starting from 20ns, so issue is initial unknown state.
+
+The waveform starts with state unknown at time 0-15, but at 15ns state=0, so initial state=0.
+
+Add asynchronous reset or initial block to initialize state_reg=0 at start.
+
+This removes unknown initial state mismatches.
+
+Therefore fix is to add reset or initial condition setting state_reg=0.
+
+If reset is not available, use initial block:
+
+initial begin
+  state_reg = 0;
+end
+
+This will align simulation with waveform initial state.
+
+Also, ensure inputs a and b are not 'x' during initial cycles for simulation matching.
+
+Hence the fix is to initialize state_reg=0 at start.

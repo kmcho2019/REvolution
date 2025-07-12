@@ -1,0 +1,15 @@
+The original design correctly detects falling edges and captures them in the output register until reset. However, resetting prev_in to zero causes spurious detections immediately after reset when inputs are zero, because falling edges are detected as prev_in=0 and in=0 leads to no edge, but the first sample can be problematic.
+
+To fix this, I will:
+- Initialize prev_in to all ones on reset. This ensures that if input bits start at 0, no false falling edge occurs at the first cycle after reset since prev_in=1 and in=0 will properly trigger a falling edge only if input really changed from 1 to 0.
+- Alternatively, initializing prev_in to all ones means we assume inputs were previously 1, so the first 1→0 transition is detected naturally.
+- Keep the output register update conditional on detection of new falling edges to reduce toggling.
+- Maintain synchronous, active-high reset as required.
+
+This fix eliminates spurious falling edge detection on the first cycle after reset and thus fixes simulation mismatches without complicating the logic.
+
+Optionally, if initialization of prev_in to all ones is undesirable, could add a "valid" flag to skip detection on first cycle, but initializing prev_in to all ones is a clean, simple approach.
+
+This correction preserves original functionality, synchronous reset, and low power toggle optimization.
+
+No other changes are necessary.

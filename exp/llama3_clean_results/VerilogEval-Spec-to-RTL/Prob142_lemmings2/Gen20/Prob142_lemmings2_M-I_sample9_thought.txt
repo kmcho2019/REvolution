@@ -1,0 +1,16 @@
+The provided solution models a finite state machine that represents the behavior of a Lemming in the game Lemmings. To improve this solution, we can focus on optimizing the PPA metrics (Performance, Power, and Area) based on the provided metrics.
+
+First, let's analyze the given metrics:
+- `tns` and `wns` are both negative, indicating that the design meets the timing requirements, but there's room for improvement in terms of performance.
+- `eff_clk_period` is 0.2, which could be optimized further.
+- `power` consumption is relatively low at 0.00195, but any reduction in switching activity could lead to further power savings.
+- `area` usage is 20.0, which might be optimized by simplifying the logic or using more efficient structures.
+
+To optimize the design for better PPA metrics:
+1. **Simplify Combinational Logic**: Reduce the number of conditional statements in the `always @(*)` block to minimize gate count and reduce timing path lengths.
+2. **Efficient State Encoding**: Ensure the state encoding is efficient to reduce timing path lengths and area usage.
+3. **Reduce Switching Activity**: Introduce logic to minimize transitions on output signals (`walk_left`, `walk_right`, and `aaah`) to reduce power consumption.
+4. **Clock Gating**: Consider using clock gating to disable the state register when the Lemming is not changing direction, which could further reduce power consumption.
+5. **Sequential Logic Optimization**: Directly calculate the next state value within the sequential logic block instead of using a separate `next_state` register to reduce area usage.
+
+By applying these strategies, we aim to create a more efficient design in terms of performance, power, and area.

@@ -1,0 +1,20 @@
+To address the synthesis issues while maintaining the same functionality, I'll refactor the design with these key changes:
+
+1. Replace the initial values in reg declarations with an explicit synchronous reset mechanism that initializes all flip-flops to zero on the first clock cycle.
+
+2. Keep the same gate logic structure but make it more synthesis-friendly by:
+   - Maintaining clear separation between combinational and sequential logic
+   - Using non-blocking assignments for all flip-flop updates
+   - Ensuring all flip-flops update simultaneously on the positive clock edge
+
+3. Implement the feedback paths exactly as specified:
+   - XOR gate gets its own flip-flop output
+   - AND and OR gates get their respective complemented flip-flop outputs
+
+4. Use a simple counter-based reset approach that works reliably in both simulation and synthesis.
+
+The refactored design will:
+- Be more synthesis-friendly
+- Have reliable initialization
+- Maintain the exact same logical behavior
+- Be more portable across different tools

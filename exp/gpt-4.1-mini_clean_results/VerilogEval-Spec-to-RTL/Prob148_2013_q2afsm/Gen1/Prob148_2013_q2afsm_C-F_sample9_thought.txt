@@ -1,0 +1,9 @@
+I will fuse the best ideas from both examples by maintaining a clean 2-bit encoded FSM with states A, B, C, D representing no grant and grants for devices 0, 1, and 2, respectively. The synchronous active-low reset resets to state A. 
+
+For next-state logic, I will prioritize requests as r[0] > r[1] > r[2] in state A, and each grant state maintains the grant while the corresponding request remains asserted; otherwise, it returns to A. The D state transition was not explicitly given in the first example but logically should behave symmetrically with states B and C, so I keep this consistent.
+
+Output grant signals are assigned combinationally via continuous assignments based on the current state for clarity and area efficiency.
+
+Additionally, I will improve code clarity and synthesis friendliness by using localparam for state encoding and avoid SystemVerilog-specific typedefs to maximize compatibility. The next-state logic will be structured clearly to avoid any redundant checks.
+
+This fusion maintains correctness, clarity, and simplicity, leveraging the first example’s explicit typedef and output clarity and the second example’s clean localparam encoding and comments. The resulting design is compact, easy to understand, and synthesis-friendly.

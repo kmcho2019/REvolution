@@ -1,0 +1,15 @@
+Simplify the FSM by encoding states with minimal bits, use a single synchronous always block for state transitions and output updates, and handle the synchronous active-low reset directly in that block.
+
+- Keep clear states: A (reset), B (f=1 pulse), C (monitor x pattern), D (g=1 pulse), E (monitor y for two cycles), F (g=1 permanent), G (g=0 permanent).
+
+- Use simple registers for pattern matching and y monitoring counters.
+
+- Update outputs directly in the clocked block to ensure stable timing.
+
+- Avoid separate next-state combinational logic to reduce complexity.
+
+- Implement pattern detection by shifting in x and checking for '101'.
+
+- Monitor y input for up to two cycles in E to determine permanent state.
+
+This approach keeps design straightforward, synchronous, and aligns exactly with the given specification.

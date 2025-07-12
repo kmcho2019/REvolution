@@ -1,0 +1,15 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states: 
+- IDLE: Wait for the input pattern 1101 to start the timer.
+- SHIFT: Shift in the next 4 bits to determine the duration of the timer delay.
+- COUNT: Count for exactly (delay[3:0] + 1) * 1000 clock cycles.
+- DONE: Assert done to notify the user the timer has timed out and wait until input ack is 1.
+We will also use a counter to keep track of the remaining time.
+
+The FSM will start in the IDLE state and transition to the SHIFT state when the input pattern 1101 is detected. 
+In the SHIFT state, it will shift in the next 4 bits to determine the duration of the timer delay. 
+Then it will transition to the COUNT state and start counting. 
+Once the count is finished, it will transition to the DONE state and assert done. 
+It will stay in the DONE state until input ack is 1, then it will transition back to the IDLE state.
+
+We will also use a separate counter to output the current remaining time. 
+This counter will be decremented every 1000 clock cycles.

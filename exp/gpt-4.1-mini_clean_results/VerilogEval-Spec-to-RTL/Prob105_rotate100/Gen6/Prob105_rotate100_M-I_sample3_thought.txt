@@ -1,0 +1,10 @@
+To optimize the existing 100-bit rotator for better performance and power, I will reduce the critical path length and switching activity by implementing rotation using generate-for loops and multiplexers instead of wide concatenations. This approach breaks down the rotation logic into bitwise combinational logic with less fanout per bit and clearer signal dependency, potentially improving synthesis results. Additionally, I'll incorporate clock gating logic on the output register update, so the register only toggles when load or rotation is active, reducing dynamic power. This does not change functionality but reduces unnecessary toggling when the shift register holds steady.
+
+The new design uses a bitwise approach to calculate next_q:
+- For rotate left, bit i = q[i-1], with wrap-around from bit 99 to 0.
+- For rotate right, bit i = q[i+1], with wrap-around from bit 0 to 99.
+- For no rotation or load, use data or q directly.
+
+Clock gating is implemented by enabling register update only when load=1 or ena is 01 or 10, otherwise q holds its value without toggling.
+
+This redesign is expected to improve timing by reducing large combinational slices, and reduce power by clock gating register writes.

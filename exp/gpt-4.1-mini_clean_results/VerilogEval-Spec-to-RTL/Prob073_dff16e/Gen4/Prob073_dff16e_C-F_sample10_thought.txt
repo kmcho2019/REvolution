@@ -1,0 +1,9 @@
+Fuse the best of both solutions by maintaining a single always block with synchronous active-low reset and two independent byte enables controlling the upper and lower bytes of a 16-bit register.
+
+- Use nonblocking assignments for both upper and lower bytes.
+- Explicitly retain old values for bytes when corresponding byteena bits are low, making it clearer how retention works.
+- Structure the code so the byte enable conditions are mutually independent and clearly handle both update and retention explicitly.
+- This explicit clarity reduces ambiguity for synthesis tools and improves readability without sacrificing performance or area.
+- Retaining old values explicitly (using ternary operators) may help some tools optimize muxing better, while still synthesizing 16 DFFs with selective loading per byte.
+
+This approach merges the clarity of explicit retention from the first example and the clean separate conditional logic of the second example, achieving a straightforward and synthesis-friendly design.

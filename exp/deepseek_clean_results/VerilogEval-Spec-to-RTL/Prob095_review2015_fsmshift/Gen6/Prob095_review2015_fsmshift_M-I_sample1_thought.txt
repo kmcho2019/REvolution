@@ -1,0 +1,13 @@
+To fix the issues in the original solution and meet the requirements:
+1. Use a 3-bit counter to properly count 4 cycles (0-3)
+2. shift_ena should be high during the first 4 cycles after reset (counter values 0-3)
+3. After 4 cycles, shift_ena should stay low until next reset
+4. Reset should synchronously initialize the counter to 0
+5. The counter should stop at 4 (3+1) to prevent unnecessary toggling
+6. Use a more explicit terminal condition for the counter
+
+Key improvements:
+- Correct counter width to count 4 cycles
+- Proper reset behavior with immediate shift_ena assertion
+- Clear terminal condition when counter reaches 4
+- Power optimization by stopping counter after 4 cycles

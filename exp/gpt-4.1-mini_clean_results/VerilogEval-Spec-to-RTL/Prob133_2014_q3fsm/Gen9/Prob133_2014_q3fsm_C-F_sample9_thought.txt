@@ -1,0 +1,11 @@
+Combine the clarity, well-structured two-block FSM design with explicit next-state and output logic from Example 1 and the packed register plus clock-enable approach from Example 2 for power and area efficiency.
+
+Specifically:
+- Use a single packed 4-bit register for cycle count and w accumulator to reduce flip-flops.
+- Update the packed register only in state B (using clock enable logic) to save power by preventing unnecessary toggling in state A.
+- Maintain separate next-state, next outputs, and packed counters in a combinational block with default assignments to prevent latches and glitches.
+- Use synchronous reset, non-blocking assignments for registers, and simple, clear code style for readability and synthesis friendliness.
+- Preserve the one-cycle delayed output z after the 3-cycle window with minimal states and logic.
+- Use localparam for state encoding and clean code practices.
+- Keep addition minimal by adding w to accumulator and incrementing cycle count in packed register bits, with no extra registers or signals.
+This fusion balances clarity, minimal hardware resources, and power saving, giving an elegant, efficient FSM suitable for synthesis and timing closure.

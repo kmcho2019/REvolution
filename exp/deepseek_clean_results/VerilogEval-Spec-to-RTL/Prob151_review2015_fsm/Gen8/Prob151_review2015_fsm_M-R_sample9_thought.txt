@@ -1,0 +1,14 @@
+The refactored solution will:
+1. Use a more explicit state machine with all required states (IDLE, SHIFT, COUNT, DONE)
+2. Implement proper pattern detection that doesn't clear too early
+3. Maintain shift_ena for exactly 4 cycles using a counter
+4. Properly handle the done/acknowledgment phase
+5. Use continuous assignments for outputs where possible
+6. Add explicit state transitions for all cases
+
+Key changes:
+- Add DONE state to properly wait for acknowledgment
+- Keep pattern register until we actually start shifting
+- Use separate counter for shift cycles
+- Make output logic more explicit and correct
+- Use binary state encoding for simplicity

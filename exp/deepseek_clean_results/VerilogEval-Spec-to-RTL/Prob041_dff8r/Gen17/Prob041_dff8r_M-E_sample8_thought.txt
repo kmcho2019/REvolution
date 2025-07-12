@@ -1,0 +1,19 @@
+Innovative Approach: Distributed Reset Shift Register
+
+1. **Core Concept**: Instead of using standard DFFs, implement a shift-register style structure where each bit's reset is handled locally
+2. **Key Features**:
+   - Each bit has its own reset logic cell
+   - Reset propagation happens in parallel rather than through a centralized reset tree
+   - Uses a hierarchical cell structure for better physical implementation
+3. **Advantages**:
+   - Potentially better reset timing due to distributed nature
+   - More balanced clock tree loading
+   - Easier physical implementation with local reset cells
+4. **Implementation**:
+   - Create a basic reset cell (DFF_R) that handles one bit
+   - Instantiate 8 of these in parallel
+   - Each cell gets its own bit of input and reset signal
+5. **Optimizations**:
+   - Local reset reduces fanout on reset net
+   - Parallel structure improves timing
+   - Modular design allows for easier ECOs

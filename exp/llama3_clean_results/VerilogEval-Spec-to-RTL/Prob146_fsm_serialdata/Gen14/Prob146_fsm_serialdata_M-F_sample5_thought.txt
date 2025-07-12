@@ -1,0 +1,9 @@
+Based on the feedback, the issues with the original code can be addressed by revising the data storage logic to correctly handle the least significant bit first (LSB-first) transmission scheme, improving the stop bit verification logic, and ensuring the `done` signal is asserted only when a valid stop bit is detected. 
+
+Here's the revised approach:
+1. **Correct Data Storage**: Modify the data storage logic in the `2: begin // DATA` state to correctly store the incoming bits in the `data` register, taking into account the LSB-first transmission scheme. This can be achieved by shifting the existing bits in the `data` register and adding the new bit to the least significant position.
+2. **Improved Stop Bit Verification**: Update the stop bit verification logic in the `3: begin // STOP` state to correctly handle cases where the stop bit is not received. If the stop bit is not found, the FSM should transition back to the `IDLE` state, ignoring the current byte and searching for a new start bit.
+3. **Assertion of `done` Signal**: Ensure that the `done` signal is asserted only when a valid stop bit is detected, indicating the successful reception of a byte.
+4. **Optimized State Transitions**: Review the state transitions to minimize unnecessary transitions and optimize the FSM's performance.
+
+By addressing these issues, the revised code should correctly implement the finite state machine to receive bytes from the serial communication protocol, handling the LSB-first transmission scheme and asserting the `done` signal only when a valid stop bit is detected.

@@ -1,0 +1,13 @@
+To address the issues in the provided code, we should adopt a more systematic approach to designing the HDLC framing finite state machine. This involves creating a state transition diagram that explicitly defines the states and transitions based on the input sequences. 
+
+Given the sequences of interest (01111110 for flag, 0111110 for discarding a bit, and 7 or more consecutive 1s for error), we can design a state machine with specific states that represent the progression towards detecting these sequences. 
+
+Upon reset, the state machine should start in a state that corresponds to having seen no consecutive ones or zeros, essentially a "reset" or "idle" state. From this state, upon receiving a '1', we transition to a state that indicates we've seen one consecutive '1'. 
+
+As we receive more '1's, we transition through states that keep track of the number of consecutive '1's seen. When we reach a state corresponding to 5 consecutive '1's, if we receive a '0', we assert the 'disc' signal because we've detected the pattern for discarding a bit (0111110). 
+
+If we reach a state corresponding to 6 consecutive '1's and then receive another '1', we check the next bit. If it's a '0', we assert the 'flag' signal because we've detected the exact sequence for the start or end of a frame (01111110). If, however, we receive another '1' after 6 consecutive '1's, we assert the 'err' signal because we've seen 7 or more consecutive '1's, indicating an error.
+
+Each state should have a clear transition based on the input, and the outputs ('disc', 'flag', 'err') should be asserted based on the current state and the next input. This approach ensures that the state machine accurately detects the required sequences and asserts the correct output signals.
+
+This systematic approach simplifies the logic, making it easier to understand, implement, and verify the correctness of the HDLC framing finite state machine.

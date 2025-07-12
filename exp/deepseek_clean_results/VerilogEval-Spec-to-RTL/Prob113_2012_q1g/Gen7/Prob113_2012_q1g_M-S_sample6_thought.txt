@@ -1,0 +1,12 @@
+To simplify the implementation while maintaining correctness:
+1. Analyze the Karnaugh map to identify essential prime implicants:
+   - For x[3:2]=00: f=1 only when x[1:0]=00 or 10 → term: ~x[3]&~x[2]&~x[0]
+   - For x[3:2]=11: f=1 when x[1:0]=00,01,11 → term: x[3]&x[2]&(~x[1]|x[0])
+   - For x[3:2]=10: f=1 when x[1:0]=00,01,10 → term: x[3]&~x[2]&(~x[1]|(x[0]&~x[1]))
+
+2. Notice that the last term can be simplified to x[3]&~x[2]&~x[1] since:
+   - This covers all required cases (1000,1001,1010) without covering 1011 (f=0)
+
+3. Final simplified expression:
+   - f = (~x[3]&~x[2]&~x[0]) | (x[3]&x[2]&(~x[1]|x[0])) | (x[3]&~x[2]&~x[1])
+   - This covers all 1s in the K-map without covering any 0s

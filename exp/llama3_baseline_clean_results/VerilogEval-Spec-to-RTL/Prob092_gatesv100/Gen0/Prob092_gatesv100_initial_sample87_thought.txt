@@ -1,0 +1,13 @@
+To solve this problem, we can use a single module named TopModule with three output vectors: out_both, out_any, and out_different. 
+
+For out_both, we can use a for loop to iterate over the input vector, and for each bit, check if it and its neighbour to the left are both '1'. We need to handle the case where the current bit is the most significant bit (in[99]) separately, as it has no neighbour to the left.
+
+For out_any, we can also use a for loop to iterate over the input vector, and for each bit, check if it or its neighbour to the right is '1'. Again, we need to handle the case where the current bit is the least significant bit (in[0]) separately, as it has no neighbour to the right.
+
+For out_different, we can use a for loop to iterate over the input vector, and for each bit, check if it is different from its neighbour to the left. We will treat the vector as wrapping around, so in[99]'s neighbour to the left is in[0].
+
+We will use the following Verilog constructs:
+- assign statement for continuous assignment
+- for loop for iteration
+- bit-wise operators (&, |, ^) for logical operations
+- indexing for accessing individual bits of the input vector

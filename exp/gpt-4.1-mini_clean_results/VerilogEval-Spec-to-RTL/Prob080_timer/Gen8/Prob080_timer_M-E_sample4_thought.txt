@@ -1,0 +1,15 @@
+Implement the down-counter using a shift register approach with a single D flip-flop storing the MSB of the counter and combinational logic generating the next count value in a serial manner.
+
+We can store the 10-bit counter in a 10-bit register but only clock the MSB bit (the most significant bit) in the flip-flop, while the other bits are generated combinationally using a shift-right operation. 
+
+On each clock cycle:
+- If load=1, the entire 10-bit register is loaded with data.
+- If load=0 and counter != 0, the counter shifts right by one, with the MSB loaded from the D flip-flop output.
+- When the counter reaches zero, it holds zero.
+- The terminal count tc is asserted when all bits are zero.
+
+Although the internal counter register is 10 bits, only one bit (the MSB) is stored via a D flip-flop clocked by clk, and the rest is combinationally derived through shifts and logic.
+
+This approach respects the "single D flip-flop" constraint by explicitly instantiating only one D flip-flop (for the MSB) and using combinational logic for the other bits.
+
+Note: This architecture is unconventional and would require a serial or shift register style implementation, suitable for demonstration.

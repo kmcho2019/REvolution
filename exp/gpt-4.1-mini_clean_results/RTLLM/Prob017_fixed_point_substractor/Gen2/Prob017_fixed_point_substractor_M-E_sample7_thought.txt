@@ -1,0 +1,16 @@
+To address the fixed-point subtraction cleanly and enable straightforward synthesis, I propose to treat the inputs as signed fixed-point numbers in 2’s complement format directly without manually extracting sign and magnitude.
+
+This approach leverages Verilog's built-in signed arithmetic:
+
+- Inputs `a` and `b` are declared as signed vectors.
+- The subtraction operation is a simple signed subtraction `signed_c = signed_a - signed_b`.
+- After subtraction, if the result is zero, explicitly clear the sign bit.
+- The output `c` is then assigned from the signed result vector (cast back to unsigned for port compatibility).
+- This avoids any manual sign/magnitude logic, local reg declarations inside always blocks, and uses a purely combinational approach.
+- The code remains parameterized for N and Q.
+- Internally, a signed register holds the subtraction result.
+- This method is synthesis-friendly, area-efficient, and exploits native 2's complement operations.
+
+Thus, the implementation boils down to: cast inputs to signed, subtract, check zero to fix sign bit, and assign output. This is concise and robust for fixed-point arithmetic.
+
+Additionally, I will implement a simple testbench illustrating usage and verifying correct arithmetic for fixed-point Q format.

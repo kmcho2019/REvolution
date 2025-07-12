@@ -1,0 +1,17 @@
+The superior solution fuses the best aspects of both examples by maintaining clear separation of functionality and optimal synchronous design:
+
+- Use two always blocks:
+  1) One block registers `prev_in` to cleanly capture the input at the clock edge, ensuring timing separation and stable previous-state data.
+  2) Another block registers the output `pedge` based on combinational edge detection logic derived from `prev_in` and current `in`.
+
+- Edge detection (`(~prev_in & in)`) is done as a simple combinational wire between these blocks, ensuring minimal combinational depth and straightforward logic.
+
+- This approach clearly delineates data sampling (prev_in) from output generation (pedge), enhancing code clarity, synthesis friendliness, and timing optimization potential.
+
+- Compared to the single-block approach, this two-block style avoids subtle ordering dependencies by separating sequential logic responsibilities, which can help synthesis tools optimize registers and logic placement independently.
+
+- The solution retains the one-cycle delayed output pulse after a 0->1 transition on any bit of the 8-bit input vector, exactly matching requirements.
+
+- This fusion results in a clean, modular, and easily maintainable design, enabling potential clock gating or register enables if power optimizations become necessary.
+
+- It combines the explicit data stage separation of Example 1 with the minimal combinational logic and clarity of Example 2’s edge detection, yielding an overall superior design.

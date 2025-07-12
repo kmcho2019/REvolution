@@ -1,0 +1,7 @@
+Refactor the design by replacing the procedural always block and for-loop with purely combinational assign statements that compute each next_state bit independently based on the current state bits and input. This approach uses explicit Boolean expressions derived from the state transitions, which may improve synthesis clarity and reduce inferred multiplexers or loops.
+
+For each next_state bit, we OR together the conditions that cause transitions into that state from any current active state, selecting based on input 'in'. Outputs are similarly computed by OR-ing the relevant current state bits.
+
+This fully combinational, expression-based coding style avoids the loop and case statement and may yield better optimization opportunities or readability in some tool flows. It also clearly documents each next state condition.
+
+The functional behavior remains identical, supporting multiple simultaneous active states and producing the corresponding next_state and outputs.

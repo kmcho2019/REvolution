@@ -1,0 +1,17 @@
+To optimize the existing dual-edge triggered flip-flop design for better PPA:
+
+- **Power:** Reduce unnecessary switching by enabling only the flip-flop corresponding to the current clock edge. Use clock gating so that only the positive-edge FF toggles on rising edges and only the negative-edge FF toggles on falling edges. This reduces toggling on the opposite edge flip-flop and dynamic power from continuous operation.
+  
+- **Performance:** Gating clocks can slightly improve timing by reducing the toggle rate of FF inputs, although adding gating logic can add delay; however, since only one FF toggles per clock edge, the effective data path is simplified, potentially improving timing.
+
+- **Area:** Adding simple clock gating logic (AND gates) is low cost compared to doubling FF switching. The mux remains the same, but gating logic is minimal.
+
+- Use standard FPGA-friendly clock gating approach by ANDing clk with enable signals derived from edge detection.
+
+- Implement edge detectors for clk: a delayed clk sample (clk_d) is used to detect rising and falling edges and generate enables.
+
+- Because sampling clk with clk is not possible, use a small process with clk and invert clk to generate gating enables safely. Alternatively, since only clk and not an asynchronous clock is available, use the clk signal to create enables that gate the clock of each FF.
+
+- Use an internal signal that distinguishes rising and falling edges: for example, create a delayed clock signal in a register clocked by clk to detect edges.
+
+This approach balances a minor area increase with meaningful power reduction and potential timing improvements while preserving functional correctness and FPGA compatibility.

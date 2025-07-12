@@ -1,0 +1,12 @@
+To refactor while maintaining the same functionality:
+
+1. Instead of using a generate block, implement the XOR logic directly in an always block
+2. Handle boundary conditions explicitly in the always block
+3. Use non-blocking assignments for all register updates
+4. The refactoring:
+   - Simplifies the structure by removing the generate block
+   - Makes the code more readable by putting all logic in one always block
+   - Maintains the same boundary conditions (q[-1] and q[512] as 0)
+   - Still computes all 512 bits in parallel
+   - Keeps the same loading functionality
+5. This approach reduces the hierarchical complexity while keeping the same behavior

@@ -1,0 +1,15 @@
+Improvement strategy for 3.5x fractional divider:
+1. **Precise Phase Alignment**: Implement exact 4-clock and 3-clock periods with proper phase relationship
+2. **Duty Cycle Correction**: Ensure 50% duty cycle over complete cycle by:
+   - Phase A: 2 clocks high, 2 clocks low (4-clock period)
+   - Phase B: 1.5 clocks high, 1.5 clocks low (3-clock period) with 180° offset
+3. **Glitch-Free Transitions**: Use edge-triggered flip-flops for both phases to prevent glitches
+4. **Simplified State Machine**: Reduce to 7 states (0-6) for clean cycle control
+5. **Proper Reset Initialization**: Both phases start low to ensure clean first cycle
+6. **Output Combination**: Use OR operation of both phases after proper synchronization
+
+Key changes:
+- Phase A generated on positive edges (4-clock period)
+- Phase B generated on negative edges (3-clock period)
+- Explicit state transitions for precise timing
+- Synchronized output combination

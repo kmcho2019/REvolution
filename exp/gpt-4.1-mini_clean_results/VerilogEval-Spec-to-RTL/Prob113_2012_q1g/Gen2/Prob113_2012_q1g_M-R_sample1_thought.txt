@@ -1,0 +1,12 @@
+The key issue in the original code is the mismatch between the Karnaugh map's bit ordering for rows and columns and the direct indexing using x[3:0]. The Karnaugh map uses x[2]x[3] as the row bits and x[0]x[1] as the column bits, so the input bits need to be reordered to form the correct index into the truth table.
+
+To fix this while keeping the LUT approach, we will:
+- Define the truth table as before, but indexed according to the Karnaugh map interpretation.
+- Compute the index by concatenating the row bits (x[2] and x[3]) and the column bits (x[0] and x[1]) as {x[2], x[3], x[0], x[1]}.
+- Use this reordered index to access the truth table LUT.
+
+This preserves the original simple LUT method, but aligns the indexing properly with the Karnaugh map labeling.
+
+We will implement this using an assign statement and a wire for the reordered index.
+
+This approach is concise, synthesizable, and ensures correct mapping from inputs to the function f according to the Karnaugh map.

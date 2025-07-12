@@ -1,0 +1,16 @@
+Novel Architectural Idea:
+1. Conditional Sum Adder Approach:
+   - Precompute both possible sums (with carry-in 0 and 1) for each bit position
+   - Select the correct sum based on actual carry propagation
+   - This allows parallel computation of sum bits
+
+2. Early Overflow Prediction:
+   - Predict overflow by examining the MSBs and carry-in to MSB
+   - Compute overflow in parallel with sum computation
+   - Uses sign bit analysis without waiting for full sum computation
+
+3. Key Benefits:
+   - Potentially faster critical path (sum and overflow computed in parallel)
+   - More regular structure than carry-lookahead
+   - Overflow detection doesn't depend on final sum computation
+   - Good for synthesis as it uses muxes which map well to FPGA/ASIC

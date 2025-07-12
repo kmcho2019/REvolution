@@ -1,0 +1,18 @@
+Novel Architecture Idea:
+1. Combined Shift-State Register:
+   - Instead of separate state machine and shift register, use a single 10-bit register that tracks both data and protocol state
+   - Bits [9:1] store the received data (including start bit)
+   - Bit [0] acts as a "valid" flag that propagates through the register
+
+2. Early Stop Bit Detection:
+   - Check for stop bit condition as soon as the 9th bit (including start) is received
+   - Eliminates need for separate STOP state by embedding the check in the shift logic
+
+3. Dynamic Idle Detection:
+   - Reset mechanism automatically returns to idle when line is high for a full byte period
+   - Reduces state machine complexity by combining WAIT and IDLE functionality
+
+Key Benefits:
+- Reduced area by combining storage and state tracking
+- Faster stop bit validation by checking during shift
+- Simplified control logic with implicit state transitions

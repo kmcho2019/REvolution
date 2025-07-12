@@ -1,0 +1,23 @@
+The root cause of walk_left and walk_right mismatches is likely that the direction bit (`dir`) is updated too eagerly on bumps, which can cause glitches or transient mismatches during simultaneous changes of `ground` and bump signals. Although the original code follows the priority order, bump signals are considered even when ground changes or dig signals occur in the same cycle.
+
+The problem arises when the Lemming is about to fall (ground transitions from 1 to 0) and bump signals are also asserted in that cycle. According to the spec, falling has higher priority than digging and bump, and bumps during falling or at the exact cycle when ground disappears (still walking but ground just fell) should not change direction. Similarly, when ground reappears while falling or digging, bump signals should not affect direction.
+
+Currently, the code switches direction on bump whenever walking and ground=1, regardless of bump timing relative to ground transitions.
+
+**To fix this:**
+
+- Use a registered version of `ground` (prev_ground) to detect rising and falling edges of ground.
+
+- Modify bump logic to switch direction only if currently walking, ground=1, and previous ground was also 1. That is, only allow bumps to affect direction if the Lemming is stably walking on ground, not when ground is just disappearing or appearing.
+
+- This avoids bump-triggered direction switches at the cycle ground disappears or appears, preventing glitches in walk direction outputs.
+
+- Keep the priority as fall > dig > bump, but consider bump only when `ground` and `prev_ground` are both 1.
+
+- Maintain a single `state` register that encodes direction and behavioral state, as before.
+
+This approach fully conforms to the problem description, preventing bumps from changing direction during transitions into or out of falling, and eliminating mismatches on the outputs.
+
+Additionally, define the asynchronous reset correctly and ensure `prev_ground` is updated every clock cycle.
+
+This fix aligns bump direction switching strictly to stable walking on ground, preventing glitches.

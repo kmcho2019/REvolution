@@ -1,0 +1,11 @@
+Refactor the design to separate input capture, output concatenation, and output valid generation into distinct pipeline stages to clearly meet the timing requirements:
+
+- Use a simple 1-bit flag register `flag` to remember that the first valid 8-bit data has been received and stored in `data_lock`.
+- On arrival of the second valid data (when `flag` is set and `valid_in` is high), latch the concatenated 16-bit data into a register `data_out_reg`.
+- Assert `valid_out` one cycle later using a registered valid signal `valid_out_reg`.
+- Use only clocked always blocks (no combinational next-state logic) for simplicity and reliability.
+- Reset all registers synchronously on negative edge of `rst_n`.
+- The first 8-bit input is stored in `data_lock`.
+- On the next valid input, concatenate `{data_lock, data_in}`, store the result into `data_out_reg`, and set `valid_out_reg` in the next cycle.
+- Clear the flag after second data is captured to prepare for the next pair.
+- This pipelined approach ensures output valid and data output are generated one cycle after second input arrival, satisfying the specification.

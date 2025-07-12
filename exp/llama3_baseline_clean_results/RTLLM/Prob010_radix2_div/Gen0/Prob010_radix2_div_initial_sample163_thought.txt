@@ -1,0 +1,5 @@
+To implement the radix-2 divider, we will first save the input dividend and divisor when opn_valid is high and res_valid is low. We then initialize the shift register SR with the absolute value of the dividend shifted left by one bit and set NEG_DIVISOR to the negated absolute value of the divisor. The division process starts when start_cnt is high, and we perform the following steps: 
+- If the counter cnt reaches 8, we clear cnt and start_cnt, and update SR with the final remainder and quotient.
+- Otherwise, we increment cnt, update SR based on the subtraction result, and use a multiplexer to select the appropriate result based on the carry-out.
+We will manage res_valid based on the reset signal, the counter, and whether the result has been consumed.
+We use Verilog's arithmetic and logical operations to implement the subtraction, multiplexer, and shift register operations.

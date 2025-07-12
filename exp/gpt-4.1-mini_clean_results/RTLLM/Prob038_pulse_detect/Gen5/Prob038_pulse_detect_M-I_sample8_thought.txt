@@ -1,0 +1,16 @@
+The main issue is that `data_out` is assigned based on the *current* state and input in the sequential block before state updates take effect, causing a one-cycle delay or missed pulse indication. To fix this, we should assert `data_out` based on the *next_state* and *data_in* (or the condition that leads to pulse completion) so that `data_out` goes high exactly at the cycle the pulse finishes.
+
+Additionally, we can simplify the state transitions by:
+- Removing redundant fallback cases (since data_in is 1-bit).
+- For the state WAIT_FOR_ONE, if data_in is 0, restart waiting for the first zero (i.e., reset to WAIT_FOR_FIRST_ZERO), since the pattern requires a 1 after the initial 0.
+- For WAIT_FOR_SECOND_ZERO, if data_in is 1, stay in WAIT_FOR_SECOND_ZERO to keep waiting for the terminating zero.
+
+This ensures clear, non-ambiguous FSM behavior and prevents getting stuck in intermediate states.
+
+To optimize PPA:
+- Use simple 2-bit state encoding.
+- Minimal combinational logic.
+- Assign data_out purely combinationally from next_state and data_in in the sequential block to avoid glitches.
+- Use synchronous reset for better timing closure, but since the spec asks for asynchronous active low reset, we keep it.
+
+Overall, the improved design asserts `data_out` high only for one cycle, immediately when the pulse pattern 0->1->0 completes.

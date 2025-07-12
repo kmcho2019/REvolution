@@ -1,0 +1,18 @@
+Simplified yet effective design for 3.5x fractional frequency division:
+
+1. Core concept remains: divide by 3.5 using a 7-cycle pattern
+2. Key improvements:
+   - Use single counter (0-6) to track cycles
+   - Generate two complementary clock phases:
+     * Phase 1: high for first 3.5 cycles (0 to mid-cycle 3)
+     * Phase 2: high for last 3.5 cycles (mid-cycle 3 to 6)
+   - Combine phases with OR to create final output
+3. Implementation:
+   - Counter increments on both clock edges (double-edge counting)
+   - Phase generation uses simple comparison logic
+   - No complex phase shifting needed - inherent in double-edge counting
+4. Benefits:
+   - True fractional division with proper duty cycle
+   - Minimal logic and registers
+   - Clear, maintainable implementation
+   - Correct frequency ratio maintained

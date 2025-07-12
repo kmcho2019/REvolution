@@ -1,0 +1,14 @@
+Fuse the approaches by implementing a combinational shift-and-add multiplier that clearly separates the shifting of the multiplicand and the conditional addition for each bit of the multiplier B. Use a 16-bit register for the shifted multiplicand initialized from A, which gets shifted left each iteration, and a 16-bit accumulator for the product. This is similar to Example 2 but adds clarity from Example 1’s approach by separating shifting and addition, improving code readability and synthesis friendliness.
+
+This fused solution:
+- Uses a single for loop iterating over B’s bits.
+- Adds shifted multiplicand to product only if B[i] is set.
+- Shifts the multiplicand left each iteration to reflect increasing bit weight.
+- Avoids unnecessary shifts inside the addition expression by shifting a register separately.
+- Ensures all additions are done on 16-bit operands, matching output width.
+- Uses blocking assignments for combinational logic in an always @(*) block.
+- Outputs product via an assign statement for cleaner separation.
+
+This approach combines the clarity of shifting multiplicand separately (from Example 2) and conditional addition based on multiplier bits (Example 1), producing code that is straightforward, efficient for synthesis, and maintains optimal readability without adding sequential complexity.
+
+This combinational approach is simple and synthesizes well while being easily extendable for future pipelining or sequential improvements.

@@ -1,0 +1,18 @@
+Revised Design Approach:
+1. Maintain clear state separation with explicit priority handling (fall > dig > bump)
+2. Ensure proper state transitions during critical edge cases:
+   - Falling takes precedence over all other actions
+   - Digging only occurs when grounded and not falling
+   - Bump direction changes only when neither falling nor digging
+3. Strictly enforce bump ignore during falling/digging states
+4. Correct splatter condition handling:
+   - Only splatter when hitting ground after >20 cycles
+   - Maintain all outputs as 0 in splatter state
+5. Simplify output logic with direct state decoding
+6. Reset properly initializes to walk left with zero fall counter
+
+Key Fixes:
+- Proper priority enforcement in state transitions
+- Correct handling of bump conditions during state changes
+- Accurate splatter condition implementation
+- Clear output assignments based on current state

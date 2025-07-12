@@ -1,0 +1,16 @@
+To improve power and area without impacting functionality or timing significantly, I will optimize the design by adding clock enable gating to the register update to avoid unnecessary toggling when no load or rotation is requested. This prevents the register from changing state when ena is 00 or 11 and load is low, thus reducing dynamic power. 
+
+Also, I will avoid the redundant assignment q <= q in the default case, since synthesis tools infer that no register update means no toggling, further ensuring minimal transitions.
+
+This gating is implemented by deriving a single internal enable signal that asserts only on load or valid rotation (ena == 2'b01 or 2'b10).
+
+The rest of the rotation logic remains the same for clarity, synthesis friendliness, and timing.
+
+This optimization reduces toggling and thus dynamic power, with minimal added logic (one enable signal) and no additional registers or latency, preserving the original latency and area close to the original.
+
+In summary:
+
+- Add an internal 'update_en' signal to qualify register update.
+- Perform the register update only if update_en is high.
+- Implement rotation and load exactly as before.
+- Avoid redundant assignment in the no-update case.

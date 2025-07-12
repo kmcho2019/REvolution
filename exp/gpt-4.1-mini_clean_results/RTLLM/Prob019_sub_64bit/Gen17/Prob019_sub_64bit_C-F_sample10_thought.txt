@@ -1,0 +1,18 @@
+Fuse the two approaches by implementing the 64-bit subtractor using the built-in Verilog subtraction operator for clarity and synthesis efficiency, ensuring minimal area and power from tool-optimized subtractor logic. For overflow detection, use the provided sign-bit logic explicitly.
+
+To improve clarity and synthesis quality:
+- Use `assign result = A - B;` to leverage the synthesis tool’s optimized subtractor.
+- Compute overflow by checking the signs of A, B, and the result per the problem statement.
+
+This combines:
+- The explicit overflow detection logic from both examples, which is clear and correct.
+- The best of both worlds on arithmetic: relying on synthesis tools for optimized 64-bit subtractor logic (better performance, area, and power) instead of manual ripple carry or flat CLA implementations.
+
+This approach is:
+- More concise and synthesizes to efficient hardware using vendor tools.
+- Easier to maintain and verify.
+- Still meets the functional and overflow detection requirements.
+
+The overflow logic remains explicit, guaranteeing correctness for signed overflow detection during subtraction.
+
+Thus, the fusion strategy prioritizes synthesis tool optimization (automatic subtractor generation) and keeps the verified, explicit overflow detection logic, improving PPA over manual adder implementations while keeping the design simple and clear.

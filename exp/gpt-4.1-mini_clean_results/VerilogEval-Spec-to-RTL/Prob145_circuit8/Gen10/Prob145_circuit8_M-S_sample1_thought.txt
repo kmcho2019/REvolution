@@ -1,0 +1,19 @@
+The outputs p and q represent a 2-bit state updated synchronously on the rising edge of the clock. Initially, both outputs are unknown, and at the first clock edge they reset to 0. 
+
+From the waveform, the behavior suggests that:
+
+- On each rising edge, if 'a' is high, p is set to 1.
+- q follows p but only updates on the falling clock edge.
+- At falling edges, q takes the value of p from the last rising edge.
+- p updates only on rising clock edges.
+- This effectively creates a 2-bit shift register where p updates on posedge with input 'a', and q updates on negedge with p.
+
+This design simplifies the logic: p captures input 'a' on rising edge, and q captures the last p on falling edge.
+
+This matches the waveform: p changes at rising edges influenced by 'a'; q updates at falling edges to follow p.
+
+We initialize both p and q to 0 at the first clock edge, eliminating unknowns.
+
+This is a simple two-stage register capturing 'a' at rising edge and delayed by one half clock at q on falling edge.
+
+No complex combinational logic or state machine is needed.

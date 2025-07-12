@@ -1,0 +1,10 @@
+To simplify the solution, we can focus on the core requirements of the problem: detecting the message boundaries in a PS/2 mouse protocol byte stream based on the condition `in[3] == 1` and signaling `done` after receiving three bytes of a message. We can achieve this with a simpler finite state machine (FSM) that uses fewer states and variables. The key idea is to count the bytes after detecting the first byte of a message (`in[3] == 1`) and signal `done` after receiving three bytes.
+
+Here's a simplified approach:
+
+1.  **Simplified State Machine:** Implement a two-state FSM (idle and receiving) to track the process of receiving a message.
+2.  **Byte Counter:** Use a single variable (`byte_count`) to keep track of the number of bytes received after detecting the start of a message.
+3.  **Reset Logic:** Ensure that the FSM resets correctly when the `reset` signal is high, initializing the state and byte counter.
+4.  **Done Signal:** Set the `done` signal high in the cycle immediately after the third byte of a message is received.
+
+By simplifying the logic and focusing on the essential states and variables, we can improve the design's readability and maintainability while ensuring it meets the problem's requirements.

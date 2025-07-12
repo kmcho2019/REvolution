@@ -1,0 +1,12 @@
+To implement a 64-bit subtractor with overflow checking, we first need to understand the conditions for overflow in signed binary subtraction. Overflow occurs when the result of the subtraction has a different sign than the maximum possible value for the given number of bits, considering the most significant bit (MSB) as the sign bit (0 for positive and 1 for negative).
+
+Our module, named `sub_64bit`, will take two 64-bit signed integers `A` and `B` as inputs, perform the subtraction `A - B`, and output the 64-bit result along with a 1-bit `overflow` flag.
+
+The steps involved are:
+1. Perform binary subtraction of `A` and `B`.
+2. Check the sign bits of `A`, `B`, and the result to determine if an overflow has occurred.
+   - If `A` is positive and `B` is negative and the result is negative, it's a positive overflow.
+   - If `A` is negative and `B` is positive and the result is positive, it's a negative overflow.
+3. Set the `overflow` flag to 1 if an overflow condition is detected; otherwise, set it to 0.
+
+This logic can be implemented using Verilog's bit manipulation and conditional statements.

@@ -1,0 +1,15 @@
+After re-examining the problem, I realize we need to implement Y2 (next state C) and Y4 (next state E) instead of Y1 and Y3 as previously thought. Here's a new approach:
+
+1. Y2 (next state C) will be active when:
+   - Current state is B and w=0 (B → C)
+   - Current state is F and w=0 (F → C)
+
+2. Y4 (next state E) will be active when:
+   - Current state is C and w=0 (C → E)
+   - Current state is E and w=0 (E → E)
+
+Using one-hot encoding:
+- Y2 = (y[1] | y[5]) & ~w
+- Y4 = (y[2] | y[4]) & ~w
+
+This implementation focuses on the correct outputs (Y2 and Y4) and uses a more optimized logic by combining similar transition conditions.

@@ -1,0 +1,9 @@
+The current implementation already shows excellent PPA metrics for this simple state machine. However, we can make a few micro-optimizations:
+
+1. **Remove Intermediate next_state Wire**: Since the state transition logic is simple, we can directly compute the next state in the always block, eliminating one level of logic.
+
+2. **Use Direct State Assignment**: For Moore machines where the output equals the state, we can directly assign the state to output without any additional logic.
+
+3. **Simplify State Encoding**: Keep binary encoding as it's most efficient for 2-state machines (one-hot would be overkill).
+
+These changes will slightly reduce the logic depth and area while maintaining the same functionality and timing characteristics.

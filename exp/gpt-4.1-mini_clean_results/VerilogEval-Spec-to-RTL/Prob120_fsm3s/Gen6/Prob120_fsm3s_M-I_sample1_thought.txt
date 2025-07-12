@@ -1,0 +1,11 @@
+To optimize the existing FSM for better PPA:
+
+- **Performance:** Use one-hot state encoding to simplify next-state logic and speed up state decoding, which can reduce combinational delay in FPGA or ASIC synthesis tools that favor one-hot FSMs.
+
+- **Power:** One-hot encoding reduces switching in state bits, minimizing glitches. Also, register the output as a synchronous output (flip-flop) instead of combinational logic to further reduce glitches and dynamic power.
+
+- **Area:** One-hot encoding increases flip-flop count (4 FFs vs 2 FFs), slightly increasing area, but here the trade-off is acceptable for better performance and power.
+
+- **Clock gating or enable signals:** Not specified here, so no clock gating included.
+
+The resulting design uses one-hot encoded states with localparams for readability, synchronous output registered on clock edge, synchronous active-high reset to initial state A (one-hot with only bit0=1), and clean combinational next state logic. Non-blocking assignments are used for state and output registers for correct sequential behavior.

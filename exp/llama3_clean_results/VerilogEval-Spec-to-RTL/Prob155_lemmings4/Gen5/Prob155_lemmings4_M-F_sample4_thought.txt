@@ -1,0 +1,14 @@
+To address the issues identified in the feedback, we will refactor the state machine to correctly handle the bumping, digging, and falling behaviors of the Lemming. We will add additional states to handle the cases where the Lemming is bumped while walking or digging, and where the Lemming is told to dig while already walking or falling. 
+
+We will also introduce a more robust way of handling the 'fall_counter' to ensure that it is only incremented when the Lemming is in the FALLING state and has not yet splattered. Furthermore, we will review the output logic to ensure that it accurately reflects the state of the Lemming. 
+
+The new state machine will include the following states: WALKING, FALLING, DIGGING, and SPLATTERED. We will use a variable to keep track of the walking direction and a counter to track the number of clock cycles the Lemming has been falling. We will use a case statement to handle the state transitions and output logic.
+
+The key fixes include: 
+1. Handle bumping while walking by switching direction and not switching direction when ground is 0.
+2. Handle digging while walking by setting the dig flag and transitioning to the DIGGING state.
+3. Handle falling by incrementing the fall counter and transitioning to the SPLATTERED state if the counter exceeds 20.
+4. Handle digging while falling by ignoring the dig command.
+5. Handle bumping while falling by ignoring the bump command.
+
+By implementing these fixes, the state machine should accurately model the behavior described in the problem description.

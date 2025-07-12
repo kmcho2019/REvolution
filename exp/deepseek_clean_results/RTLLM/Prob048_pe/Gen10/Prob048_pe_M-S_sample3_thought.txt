@@ -1,0 +1,12 @@
+Simplified design approach:
+1. Remove redundant operand isolation logic since reset already handles clearing the accumulator
+2. Eliminate intermediate signals that don't add value (product_truncated, full_product)
+3. Perform direct 32-bit multiplication and accumulation in one step
+4. Maintain synchronous reset behavior
+5. Keep only essential logic for the MAC operation
+
+This reduces area and power by:
+- Eliminating unnecessary multiplexers
+- Removing unused 64-bit product computation
+- Simplifying the data path
+- Keeping the same core functionality with fewer components

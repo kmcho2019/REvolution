@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+1. Use a one-hot encoding scheme for the states to potentially improve timing and simplify decoding logic
+2. Implement the state machine using four separate flip-flops (one per state) with explicit enable conditions
+3. Generate next state signals combinatorially based on current state and input
+4. Use the D state flip-flop directly as the output since it's a Moore machine where output only depends on state
+5. This approach eliminates the need for state comparison logic for the output
+
+Advantages:
+- One-hot encoding often results in simpler combinatorial logic
+- Output is directly tapped from a flip-flop (D state) without additional logic
+- Each state transition is explicitly controlled by its own condition
+- Potentially better timing due to reduced fan-out on state decoding

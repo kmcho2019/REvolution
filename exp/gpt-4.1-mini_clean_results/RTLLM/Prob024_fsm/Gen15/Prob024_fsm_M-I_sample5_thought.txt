@@ -1,0 +1,13 @@
+The original FSM is already well-structured and meets the functional requirements accurately. To optimize for better PPA (performance, power, area), I will:
+
+- Simplify the next-state logic by merging some transitions and reducing redundant checks, thereby reducing combinational logic complexity.
+- Replace the three-bit state encoding with a two-bit encoding plus a small 'matched bits count' or use minimum bits needed to uniquely identify states. However, here states are five, requiring 3 bits, so no reduction possible there without complicating logic.
+- Use registered output MATCH instead of purely combinational Mealy output to reduce glitches and switching power. This will introduce one clock cycle output latency but significantly improve power and timing.
+- Integrate synchronous reset cleanly with nonblocking assignments.
+- Structure code to improve synthesis friendliness and reduce glitches by making output MATCH registered.
+- Keep the FSM Mealy nature by updating MATCH at the clock edge based on current state and input.
+- Add comments and keep naming clear.
+
+This approach slightly increases latency but benefits power and timing by avoiding combinational output glitches, and simplifies the critical path (output logic moves into clocked domain). This tradeoff is often worthwhile in synchronous designs.
+
+Below is the improved FSM with registered MATCH output.

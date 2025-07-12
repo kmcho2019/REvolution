@@ -1,0 +1,32 @@
+To address the problem differently and robustly, we implement a small finite state machine (FSM) that explicitly tracks the water level states and the history of level changes to control the flow valves. The approach is:
+
+1. **State Encoding:**  
+   Represent the four water levels as distinct FSM states:
+   - LEVEL0: Below s[0] (no sensors asserted)  
+   - LEVEL1: Between s[1] and s[0] (only s[0] asserted)  
+   - LEVEL2: Between s[2] and s[1] (s[0], s[1] asserted)  
+   - LEVEL3: Above s[2] (all sensors asserted)
+
+2. **Sensor Pattern Validation:**  
+   On every clock, decode the sensor pattern strictly to the closest level state. To handle possible inconsistent sensor patterns (like 3'b010), we map based on the number of sensors asserted starting from the bottom sensor upwards. Specifically, count how many bottom sensors are asserted in order without gaps from s[0] upwards:
+   - 0 asserted → LEVEL0  
+   - s[0] asserted only → LEVEL1  
+   - s[0] and s[1] asserted → LEVEL2  
+   - all s[0], s[1], s[2] asserted → LEVEL3  
+   If the pattern is invalid (gaps in sensors asserted, e.g. s=3'b101), choose the highest valid level consistent with the sensor input.
+
+3. **State Transition and History:**  
+   Store the previous FSM state to determine if the water level has risen or fallen. On each clock, update the state based on the decoded current water level. This FSM state remembers the last water level state.
+
+4. **Output Logic:**  
+   - Nominal flow valves (fr0, fr1, fr2) depend solely on the current FSM state per the table:  
+     LEVEL3: none open  
+     LEVEL2: fr0 only  
+     LEVEL1: fr0 and fr1  
+     LEVEL0: fr0, fr1, fr2  
+   - Supplemental valve (dfr) asserts only if the current level is higher than the previous level, indicating a rising water level.
+
+5. **Synchronous Reset:**  
+   On reset, initialize FSM to LEVEL0 (lowest water level), asserting all valves open including dfr.
+
+This FSM-based approach offers clarity, explicit state tracking, and clean logic for outputs, avoiding ambiguous sensor decoding and previous level timing issues.

@@ -1,0 +1,25 @@
+Here's the corrected approach for the 4-bit pipelined multiplier:
+
+1. Input Extension:
+   - Extend both multiplicand and multiplier by 4 zeros at MSB as specified
+   - This creates 8-bit extended inputs for proper partial product generation
+
+2. Partial Product Generation:
+   - Generate all 4 partial products (one per multiplier bit)
+   - Each partial product is either shifted multiplicand or zero
+   - Properly align partial products for addition
+
+3. Two-Stage Pipeline:
+   - First stage: Sum first two partial products and store in register
+   - Second stage: Sum third partial product with previous result, store in register
+   - Final stage: Sum fourth partial product with accumulated result
+
+4. Reset Handling:
+   - Synchronous reset clears all pipeline registers
+   - Proper initialization of intermediate values
+
+5. Key Improvements:
+   - Correct input extension as specified
+   - Complete handling of all partial products
+   - Proper pipeline stages with correct accumulation
+   - Simplified structure compared to Wallace tree while meeting requirements

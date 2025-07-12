@@ -1,0 +1,13 @@
+To refactor the existing frequency divider code, we will focus on simplifying the logic, improving the accuracy of edge detection, and optimizing the design for better performance, power, and area (PPA) metrics. 
+
+The main strategy will involve:
+1. Utilizing a single counter that increments on every clock cycle to simplify the logic and minimize switching activity.
+2. Implementing a state machine with a more straightforward condition for toggling the clock divider.
+3. Revising the logic for the final divided clock output to accurately reflect the desired odd divisor value.
+4. Employing a more efficient approach for handling the reset and minimizing unnecessary switching activity.
+
+We will employ a more efficient approach by using a single counter that increments on every clock cycle and toggles the clock divider at the appropriate count value. This method eliminates the need for separate counters and edge detection logic, reducing area consumption and improving timing.
+
+The new design will utilize a single counter `cnt` that increments on every clock cycle. The clock divider `clk_div` will be toggled at the count value equal to half of the odd divisor `NUM_DIV`. This approach ensures that the divided clock output accurately reflects the desired odd divisor value.
+
+To improve the PPA metrics, we will use a more efficient approach for handling the reset and minimize unnecessary switching activity. The reset logic will be implemented using a single line of code, reducing area consumption and improving timing.

@@ -1,0 +1,18 @@
+To optimize the existing 8-bit Radix-4 Booth multiplier implementation, I will incorporate true Radix-4 Booth encoding to halve the number of cycles from 16 to 8 by processing 2 bits of the multiplier at each cycle. This reduces latency and switching activity.
+
+Improvements include:
+
+- Extend the multiplier with an appended zero bit to enable scanning 3 bits at a time (for Radix-4 encoding).
+- Use a 5-bit counter iterating only 8 times (since Radix-4 handles 2 bits per cycle).
+- Implement the Booth recoding logic that examines 3 bits (current, previous, and next bits) to decide whether to add 0, multiplicand, 2*multiplicand, or subtract multiplicand/2*multiplicand, accordingly.
+- Maintain signed 16-bit multiplicand, product registers for proper signed arithmetic.
+- Shift the product register right logically by 2 bits each cycle and add/subtract partial product as per Booth recoding.
+- The multiplier register and related shifted bits are managed as part of product register combined with multiplier bits, using the classic Booth algorithm layout (i.e., product concatenates multiplier + extra bit).
+- Control signals and FSM states (IDLE, LOAD, RUN, DONE) remain similar but optimized for 8 iterations.
+- Clock gating is applied implicitly by only updating registers when needed.
+- By doing addition/subtraction conditionally only on relevant cycles, power is saved.
+- The product output is taken directly from the product register after completion.
+- Ready signal (rdy) flags completion.
+- Maintain synchronous reset.
+  
+This approach reduces iterations by half, lowering power consumption and improving performance without adding complexity in control. The radix-4 booth encoding is implemented in a traditional sequential way for clarity and maintainability.

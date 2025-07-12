@@ -1,0 +1,20 @@
+To further optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Timing Optimization:
+- Leverage the one-hot property more aggressively to simplify logic
+- Reduce gate depth by using state bits directly where possible
+- Eliminate redundant logic operations
+
+2. Power Optimization:
+- Minimize switching activity by using simpler expressions
+- Reduce unnecessary logic operations that could cause transitions
+
+3. Area Optimization:
+- Simplify expressions to use minimal gates
+- Exploit mutual exclusivity of one-hot states to reduce logic
+
+Key improvements:
+- Simplify next_state[1] to just (in & state[1]) since B stays B when in=1
+- Optimize next_state[0] using the observation that it only comes from A or C when in=0
+- Maintain the optimal output logic (just state[3])
+- All next_state assignments now use minimal operations while preserving correctness

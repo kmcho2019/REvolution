@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+1. Barrel Shifter with Pre-computed Shift Amounts: Implement a true barrel shifter that can handle all shift amounts in parallel, then select the appropriate result. This eliminates the need for sequential shifting operations.
+2. Sign Extension Masking: For arithmetic right shifts, generate a sign extension mask dynamically based on the shift amount and direction, applied only when needed.
+3. Priority-Encoded Load Path: Implement load as a high-priority operation that bypasses the shift logic completely when active.
+4. Shift Amount Decoder: Use a dedicated decoder for the amount input to generate one-hot control signals for the barrel shifter.
+5. Output Gating: Gate the output registers using the ena signal to prevent unnecessary toggling when not shifting.
+
+Key Innovations:
+- True parallel barrel shifter implementation for all shift amounts
+- Dynamic sign extension masking reduces redundant logic
+- Dedicated load path improves timing during load operations
+- One-hot control signals simplify multiplexer logic
+- Output gating reduces power consumption

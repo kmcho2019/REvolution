@@ -1,0 +1,14 @@
+Here's a novel approach using a toggle-based state machine instead of traditional state encoding:
+
+1. Instead of maintaining separate states, we'll use a single flip-flop to represent direction (0=left, 1=right)
+2. The state toggles when either bump signal is active, with priority given to simultaneous bumps
+3. This eliminates the need for a case statement and reduces the logic to a simple XOR operation
+4. The design maintains the same Moore-style outputs but with potentially simpler transition logic
+5. Reset still initializes to walking left (0)
+6. The toggle approach naturally handles the "bump both sides" case by toggling twice (net effect: same as toggling once)
+
+This implementation should have:
+- Fewer logic gates (just an XOR for transitions)
+- Same functional behavior
+- Potentially better timing due to simpler combinational path
+- More elegant handling of simultaneous bumps

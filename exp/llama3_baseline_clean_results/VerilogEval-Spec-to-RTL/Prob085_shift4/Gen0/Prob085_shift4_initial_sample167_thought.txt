@@ -1,0 +1,7 @@
+To implement the TopModule, we need to create a 4-bit shift register that can be loaded with data and shifted right under certain conditions. The module should have an asynchronous reset (areset) that resets the register to zero. The load and ena signals are synchronous and are triggered on the positive edge of the clock (clk). If both load and ena are asserted, the load operation should take priority. The register's current state (q) should be updated based on these conditions.
+
+The design should consider the following steps:
+1. Check for asynchronous reset and reset the register to zero if areset is high.
+2. On the positive edge of the clock, check the state of load and ena. If load is high, update the register with the input data. If load is not high but ena is high, perform a right shift operation on the register, making q[3] zero and shifting q[0] out. If neither load nor ena is high, do not change the register's state.
+
+This logic can be implemented using if-else statements within an always block in Verilog, which is sensitive to the clock edge and the areset signal.

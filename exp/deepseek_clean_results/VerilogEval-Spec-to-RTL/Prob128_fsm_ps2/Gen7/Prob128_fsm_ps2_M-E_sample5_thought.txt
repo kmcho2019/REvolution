@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Instead of using a counter-based FSM, implement a 24-bit shift register (3 bytes) that continuously shifts in new bytes
+2. Use pattern matching to detect valid message boundaries by checking in[3] of the oldest byte in the shift register
+3. This approach eliminates the need for explicit state tracking and can potentially detect messages faster when bytes are received in quick succession
+4. The shift register acts as a sliding window over the byte stream, checking for valid patterns
+5. Done is asserted when a complete 3-byte message is detected (oldest byte has in[3]=1)
+
+Advantages:
+- No explicit state machine needed
+- Can detect messages immediately when they occur in the stream
+- Simple and regular structure (just a shift register and comparators)
+- Naturally handles back-to-back messages
+- Easily extendable to larger message sizes if needed

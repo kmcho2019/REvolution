@@ -1,0 +1,5 @@
+To optimize the design for better Performance, Power, and Area (PPA), I will convert the FSM state encoding from binary (3-bit) to one-hot encoding. One-hot encoding typically yields simpler and faster next-state logic and output decoding, reducing combinational path delay and power by minimizing logic levels and toggling. It does increase area due to more state bits, but given the original design uses only 6 states (fits comfortably into 6 bits), this overhead is modest and often beneficial for timing-critical designs.
+
+I will implement next state logic with case statements, using non-blocking assignments in sequential logic, and keep output logic combinational and simple. This approach is expected to improve the effective clock period and reduce critical path delays with acceptable area trade-off. Power is also expected to improve due to simplified combinational logic.
+
+Synchronous reset remains to initialize FSM to state A. Overall, this change should provide a good PPA balance, improving timing and potentially power with a slight area increase.

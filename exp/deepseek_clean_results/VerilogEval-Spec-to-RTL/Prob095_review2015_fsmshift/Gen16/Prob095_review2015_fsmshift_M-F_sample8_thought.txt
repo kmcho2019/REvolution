@@ -1,0 +1,16 @@
+Revised approach using a counter-based state machine:
+1. Use a 2-bit counter to track the 4 cycles (0-3) after reset
+2. Add a 'done' flag to indicate when counting is complete
+3. On reset:
+   - Initialize counter to 0
+   - Clear done flag
+4. Each clock cycle:
+   - If not done, increment counter
+   - When counter reaches 3, set done flag
+5. shift_ena is asserted when counter is active (not done)
+6. Benefits:
+   - Simple and direct implementation of the 4-cycle requirement
+   - Clear state tracking with minimal hardware
+   - Guarantees exactly 4 cycles of shift_ena after reset
+   - Easy to verify and debug
+   - Matches specification precisely

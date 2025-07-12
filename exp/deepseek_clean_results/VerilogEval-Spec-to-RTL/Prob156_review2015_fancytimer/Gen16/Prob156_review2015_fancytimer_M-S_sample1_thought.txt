@@ -1,0 +1,13 @@
+Simplified design approach:
+1. Use a 3-state FSM (IDLE, COUNTING, DONE) with clear transitions
+2. Detect pattern 1101 using a 4-bit shift register
+3. Capture delay value in the same IDLE state after pattern match
+4. Count cycles using a simple counter with clear formula: (delay + 1) * 1000
+5. Calculate remaining time by dividing cycle counter by 1000
+6. Simplify control signals with direct state-based assignments
+
+Key improvements:
+- Remove complex bit-shifting math for cycle calculation
+- Clear separation of pattern detection and counting phases
+- Simplified cycle counter with straightforward arithmetic
+- Direct state-based control signal generation

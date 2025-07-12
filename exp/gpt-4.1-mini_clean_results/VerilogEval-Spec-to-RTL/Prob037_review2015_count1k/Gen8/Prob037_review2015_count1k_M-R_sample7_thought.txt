@@ -1,0 +1,7 @@
+I will refactor the synchronous counter to separate the combinational next state logic from the sequential state update. This involves:
+
+- Defining a wire `next_q` to hold the next counter value computed combinationally.
+- Using an always block triggered on the clock to update `q` with `next_q` synchronously.
+- Keeping the synchronous active-high reset inside the sequential always block.
+- This structure makes the counter logic clearer by decoupling next-state calculation and register update, which can aid readability and support formal methods or further optimization.
+- The counting condition remains `q < MAX_COUNT` for simplicity and efficient comparator synthesis.

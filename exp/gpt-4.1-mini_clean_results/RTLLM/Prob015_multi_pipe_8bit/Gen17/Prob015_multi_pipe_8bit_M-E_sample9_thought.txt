@@ -1,0 +1,15 @@
+Implement a 5-stage pipeline unsigned 8-bit multiplier that performs sequential partial product accumulation to balance area and timing with low complexity per stage.
+
+Pipeline Architecture:
+- Stage 0: Sample inputs and input enable. Store multiplicand and multiplier in registers only if input enable asserted.
+- Stage 1 to 4: Each stage calculates one partial product (mul_a shifted by the current bit of mul_b) and adds it to an accumulated sum register from previous stage.
+- This accumulative approach means each stage adds one partial product, propagating the sum forward each clock cycle.
+- Use a 5-bit shift register to propagate the enable signal (mul_en_in) through pipeline stages.
+- The output enable (mul_en_out) is asserted when the valid data reaches the final stage (after 5 cycles).
+- The final product (mul_out) is stored in the last pipeline stage accumulator register.
+- Reset (active low) clears all pipeline registers.
+- This sequential partial product accumulation pipeline offers a straightforward and balanced datapath with a single 16-bit adder per stage, making each stage's logic simple and enabling a higher clock frequency.
+- Latency is 5 clock cycles, throughput is one multiplication per clock after pipeline fill.
+- Multiplicand and multiplier are registered only on input enable, reducing unnecessary toggling.
+- Partial products are generated dynamically per stage by shifting multiplicand by the specific bit of multiplier.
+- Output is zero when output enable is low, as required.

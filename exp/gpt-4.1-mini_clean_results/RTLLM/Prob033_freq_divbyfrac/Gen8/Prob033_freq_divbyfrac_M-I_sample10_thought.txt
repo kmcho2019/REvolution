@@ -1,0 +1,16 @@
+The original design uses a counter counting 0 to 6 to realize division by 3.5, splitting the period into two parts: 4 cycles and 3 cycles. It generates two clock phases: one based on the counter at posedge and the other sampled at negedge, then ORs these signals.
+
+To improve correctness and clarity, and to better balance duty cycle:
+
+- Use a single 3-bit counter counting from 0 to 6 on posedge.
+- Generate clk_div_pos high for counts 0..3 (4 cycles) on posedge domain.
+- Generate clk_div_neg high for counts 4..6 (3 cycles) on negedge domain.
+- Instead of sampling the posedge counter asynchronously on negedge (which may cause timing issues), implement a separate negedge counter synchronized to clk (by counting on negedge), or better yet, generate clk_div_neg with a delayed and inverted version of the counter signal.
+- Since the module uses double-edge clocking, define two enable signals (clk_div_pos and clk_div_neg) each asserted for their respective half-periods.
+- Finally, OR these two signals for clk_div output.
+
+This improves timing clarity and ensures that clk_div has a 50% duty cycle on average with a fractional frequency divide-by-3.5.
+
+Reset is synchronous active low to initialize counters.
+
+The design remains simple, free of metastability issues, and suitable for synthesis.

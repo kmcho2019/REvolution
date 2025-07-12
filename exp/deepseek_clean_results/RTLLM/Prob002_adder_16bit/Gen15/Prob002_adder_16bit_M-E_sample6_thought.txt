@@ -1,0 +1,10 @@
+Novel Hybrid Architecture:
+1. Divide the 16-bit adder into four 4-bit carry-select blocks
+2. Each 4-bit block uses carry-lookahead internally for fast propagation
+3. Implement carry-select by computing both possible sums (Cin=0/1) in parallel
+4. Use multiplexers to select correct sums based on actual carry-in
+5. Benefits:
+   - Combines advantages of carry-select (parallel computation) and carry-lookahead (fast local propagation)
+   - Reduces critical path compared to pure ripple-carry
+   - Maintains reasonable area overhead compared to pure carry-lookahead
+   - Scales better than pure carry-select for wider adders

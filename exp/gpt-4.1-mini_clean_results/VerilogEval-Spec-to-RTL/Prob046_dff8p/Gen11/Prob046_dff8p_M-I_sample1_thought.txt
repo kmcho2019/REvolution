@@ -1,0 +1,9 @@
+To optimize the original design for better PPA while keeping the same functionality, I will combine all 8 D flip-flops into a single 8-bit register instead of instantiating 8 separate 1-bit modules. This approach reduces module overhead and wiring complexity, potentially improving area and power.
+
+Specifically, I will:
+- Use a single always block triggered on the negative edge of clk.
+- Use a single 8-bit reset constant (0x34) assigned synchronously when reset is asserted.
+- Avoid per-bit parameter passing and generate constructs.
+- This also reduces the number of control signals toggling during reset, which can lower switching power.
+
+The synchronous reset behavior and negative edge clock triggering remain as specified, ensuring functional equivalence but with a simpler, more compact RTL structure that typically leads to improved synthesis results.

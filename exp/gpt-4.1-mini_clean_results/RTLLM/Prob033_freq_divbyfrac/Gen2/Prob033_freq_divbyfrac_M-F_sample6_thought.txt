@@ -1,0 +1,10 @@
+To fix the fractional frequency divider for 3.5x division using double-edge clocking, maintain the 3-bit counter counting from 0 to 6 for a 7-cycle period. Generate a base clock signal high for 4 counts (0-3) and low for 3 counts (4-6). To implement the required half-cycle phase shift correctly, instantiate two registers:
+
+1. One register (`base_clk_reg`) updated on the rising edge of `clk` reflecting the base clock pattern.
+2. Another register (`shifted_clk_reg`) updated on the falling edge of `clk`, but also synchronized to the same 7-count pattern but offset by one count (phase-shifted by half a clock).
+
+By clocking one register on the positive edge and the other on the negative edge of `clk`, and carefully controlling their update timing and counts, these two signals represent two phases of the fractional divided clock shifted by half a cycle.
+
+Finally, OR the two phase-shifted signals to produce the output `clk_div`. This results in a uniform output period equivalent to 3.5 times the input clock period with improved duty cycle.
+
+This approach uses double-edge clocking explicitly with two always blocks triggered on posedge and negedge clk, correctly implementing the half-cycle phase shift, resolving the timing alignment and duty cycle issues from the previous attempt.

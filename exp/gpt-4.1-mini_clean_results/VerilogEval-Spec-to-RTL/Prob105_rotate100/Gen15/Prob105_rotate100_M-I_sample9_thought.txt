@@ -1,0 +1,13 @@
+To optimize PPA (performance, power, area) beyond the initial clean design, I will implement a clock enable signal that only toggles the register `q` when the register contents actually change, i.e., during load or a valid rotation (ena == 2'b01 or 2'b10). This clock gating-like approach reduces unnecessary toggling in the register, lowering dynamic power.
+
+Additionally, I will use a simple combinational mux for the next state instead of a case statement, which may slightly simplify synthesis mux logic. The rotate logic itself is already optimal with concatenation and vector slicing.
+
+By adding a gated clock enable signal, the register won't update when rotation is disabled or load is not active, reducing transitions and possibly improving timing by reducing toggle activity.
+
+No structural changes to the rotation logic are needed as rotating by one bit is best done by simple bitwise concatenation.
+
+The improved code will:
+- Compute `next_q` combinationally as before.
+- Define a clock enable `ce` asserted when load or valid rotate is requested.
+- Update `q` only if `ce` is asserted.
+- Hold `q` otherwise, preventing unnecessary toggles and power.

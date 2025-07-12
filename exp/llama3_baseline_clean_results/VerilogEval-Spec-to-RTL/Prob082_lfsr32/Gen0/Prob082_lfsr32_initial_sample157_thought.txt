@@ -1,0 +1,6 @@
+To implement the TopModule with the specified 32-bit Galois LFSR, we need to follow these steps:
+- Initialize the output q to 32'h1 on reset.
+- On each positive edge of the clock, calculate the next state of q by shifting all bits to the right and XORing the bits at tap positions (32, 22, 2, and 1) with the current LSB (q[0]).
+- The tap positions are indexed from the most significant bit (MSB) down, so bit position 32 refers to the MSB (q[31]), position 22 refers to q[21], position 2 refers to q[1], and position 1 refers to q[0].
+- To implement the XORing of tap positions, we need to create a polynomial that corresponds to the taps. In this case, the polynomial would be x^32 + x^22 + x^2 + x + 1.
+- We'll use a temporary variable to hold the next state of q, and then assign this value to q on the positive edge of the clock.

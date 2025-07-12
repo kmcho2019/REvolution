@@ -1,0 +1,39 @@
+The previous solution modeled p as an accumulating latch that never resets once set, which contradicts the waveform where p returns to 0 multiple times. Also, q does not simply follow p delayed by one clock cycle; q toggles between 0 and 1 in a manner that suggests it might hold a delayed version of p, but with additional conditions.
+
+Re-examining the waveform:
+
+- Initially, p and q are unknown (x) until the first rising edge of clock.
+
+- At the first clock posedge with a=0, p=0 and q is unknown, indicating p is loaded with a at the posedge and q retains its previous value (unknown at start).
+
+- Later, p and q change with a pattern suggesting that p holds the input a sampled on the rising edge.
+
+- q seems to latch the previous value of p, but is also cleared on the falling edge of clock to 0 sometimes.
+
+The waveform shows that q changes only on the falling edge of clock, while p changes on the rising edge.
+
+For example, at 115ns (clock falling edge), q changes from 0 to 1 while p changes from 0 to 1 at the same time.
+
+This suggests a two-edge sequential circuit:
+
+- On the rising edge of clock: p <= a; (sample input a)
+
+- On the falling edge of clock: q <= p; (capture the sampled p value)
+
+This behavior fits the observed output patterns:
+
+- p updates on clock rising edge with a.
+
+- q updates on clock falling edge with the previous p.
+
+Implementing this dual-edge clocking (one always block on posedge for p, one always block on negedge for q) matches the waveform's temporal relationships of p and q.
+
+Since the waveform shows q changes occur only at clock falling edge and p only at rising edge, this design will capture the toggling and delays properly.
+
+No initial reset is used, so p and q start unknown (x) as in waveform.
+
+This fix aligns with the waveform timing and resolves the previous errors of p never resetting and q incorrectly following p on the same clock edge.
+
+Use nonblocking assignments for proper sequencing.
+
+Hence the final implementation uses two always blocks for posedge and negedge clock edges separately.

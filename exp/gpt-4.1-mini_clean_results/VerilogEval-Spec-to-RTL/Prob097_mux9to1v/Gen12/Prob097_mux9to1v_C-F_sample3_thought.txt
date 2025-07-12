@@ -1,0 +1,8 @@
+Fuse the concise array-indexed selection and simple range check from Example 1 with a flat, fully combinational case statement for sel values 0 to 8 to potentially reduce intermediate mux levels and minimize logic depth. This combines the clarity and minimal hardware of direct indexing with the synthesis friendliness and power efficiency of a case-based mux, avoiding the hierarchical mux overhead from Example 2. 
+
+We:
+- Use an inputs array for clean indexing.
+- Use a combinational always_comb block with a case statement for sel values 0 to 8 to select inputs explicitly.
+- Default out to 16'hFFFF for sel >= 9 to avoid extra mux levels and quickly drive the output to all ones.
+- This approach maintains straightforward combinational logic, reduces switching activity by avoiding unnecessary intermediate wires, and improves area by relying on the synthesis tool's optimized case mux implementation.
+- The result is a clear, minimal-depth, and power/area optimized design suitable for both ASIC and FPGA flows.

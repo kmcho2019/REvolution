@@ -1,0 +1,11 @@
+Analyze the waveform outputs to infer the logic function implemented by q.
+
+Looking at the values of q, it appears q is '1' when the number of inputs set to 1 is even and '0' otherwise, which is an even parity function over inputs a,b,c,d.
+
+A novel implementation approach is to compute the parity by XORing all inputs and then invert the result. Since XOR of inputs returns 1 for odd parity, its inversion (XNOR) gives 1 for even parity.
+
+Thus, q = ~(a ^ b ^ c ^ d)
+
+This approach uses a single XOR reduction over the inputs combined with inversion, reducing complexity by avoiding intermediate signals and making the code extremely compact and synthesizable efficiently.
+
+This contrasts with the pairwise XNOR approach by using direct XOR reduction and negation for even parity detection.

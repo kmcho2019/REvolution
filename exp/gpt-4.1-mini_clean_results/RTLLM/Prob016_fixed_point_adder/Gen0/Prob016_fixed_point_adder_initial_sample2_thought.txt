@@ -1,0 +1,21 @@
+To implement a parameterized fixed-point adder with sign handling, we treat inputs as signed numbers in two's complement form with N bits total, Q fractional bits. The sign is the MSB. The addition logic is:
+
+- If signs match, add absolute values (magnitude).
+- If signs differ, subtract the smaller magnitude from the larger one.
+- Assign the sign of the result based on which magnitude is larger or if signs matched.
+- Magnitude comparison and subtraction is done on absolute values (ignore MSB).
+- After operation, combine the sign bit and magnitude bits into the result.
+- Because inputs and output are fixed N-bit signed numbers, the standard two's complement addition suffices, but per instructions, implement explicit sign and magnitude logic.
+- Overflow handling is implicit: the MSB sign bit indicates the sign of the result.
+
+Implementation steps:
+
+1. Extract sign bits and absolute values.
+2. If signs are the same, add magnitudes, and assign the original sign bit.
+3. If different, subtract smaller magnitude from larger, assign the sign of the operand with larger magnitude.
+4. If result magnitude zero, assign sign zero (positive zero).
+5. Reconstruct the final two's complement result by combining sign and magnitude, converting magnitude+sign back to two's complement form.
+
+This approach allows us to respect the problem constraints and handle signed fixed-point addition precisely.
+
+Note: The module's inputs and outputs are declared as signed [N-1:0] vectors, but we will handle sign and magnitude explicitly as required.

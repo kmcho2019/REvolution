@@ -1,0 +1,7 @@
+I will refactor the decade counter by separating the combinational next-state logic into an explicit always_comb block and handle the synchronous reset and state update in a sequential always_ff block. Instead of using a clock enable signal and multiple if-else branches inside one always block, I will use a single next-state signal computed combinationally to simplify and clarify the counting and wrap-around logic.
+
+Specifically:
+- Calculate next_q combinationally using a conditional operator that resets to 0 when the counter is 9, otherwise increments.
+- Use an always block triggered on the posedge of clk to update q, resetting synchronously when reset is asserted, or loading the next state otherwise.
+- This structure clearly separates combinational and sequential logic, improving readability and possibly synthesis optimization.
+- No clock enable signal is needed as the logic inherently covers counting and wrap-around.

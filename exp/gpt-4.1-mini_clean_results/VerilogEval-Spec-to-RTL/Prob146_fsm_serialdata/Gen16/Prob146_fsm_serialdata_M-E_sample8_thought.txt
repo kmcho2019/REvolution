@@ -1,0 +1,11 @@
+I will design a Moore FSM with clearly separated states: IDLE (waiting for start bit), RECEIVE (shifting in data bits), STOP_CHECK (checking the stop bit), and ERROR_WAIT (waiting for the line to return to idle after a framing error).
+
+Instead of shifting bits with concatenation, I will explicitly store the received bits into a byte register by indexing them with a bit counter, which counts from 0 to 7, to directly place each bit in the correct position (LSB first).
+
+The done signal will be asserted for one clock cycle after a valid stop bit is detected, using a dedicated output register.
+
+The FSM transitions occur synchronously on the positive clock edge; synchronous reset resets all registers and returns FSM to IDLE.
+
+In the ERROR_WAIT state, the FSM waits until the line input goes to '1' (idle), then transitions back to IDLE to look for a new start bit.
+
+This approach emphasizes explicit bit indexing instead of shift operations, which might help synthesis tools optimize registers better and reduce switching power. Done is only asserted when a valid byte is received with a correct stop bit. The design is straightforward and modular.

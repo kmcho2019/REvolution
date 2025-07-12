@@ -1,0 +1,14 @@
+Instead of using parity and majority logic, this alternative approach uses a small combinational encoder to directly compute the population count by summing the bits with a 2-bit adder implemented using one half-adder and one full-adder.
+
+Specifically, first, we half-add in[0] and in[1] to get a partial sum and carry. Then, we full-add the partial sum with in[2] and the previous carry to compute the final 2-bit count.
+
+This design leverages basic arithmetic building blocks (half-adder and full-adder) to achieve the count, which may be more intuitive for certain flows or tools that optimize arithmetic operators.
+
+Though it might have a similar gate count to the original approach, this method clearly decomposes the population count into an addition operation that can scale modularly for larger inputs.
+
+Hence, the population count for 3 input bits is computed as:
+
+- sum1 = half_adder(in[0], in[1])
+- final_sum = full_adder(sum1.sum, in[2], sum1.carry)
+
+Assign the final 2-bit sum as the output.

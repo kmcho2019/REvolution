@@ -1,0 +1,11 @@
+The current implementation is functionally correct and minimal for a positive edge-triggered D flip-flop with asynchronous active-high reset. Its PPA metrics are already excellent due to the simple nature of the design.
+
+To potentially improve power slightly, a common approach is to gate the clock or reduce unnecessary toggling on q. However, clock gating is often handled at higher levels and may add complexity that is not warranted here.
+
+Another minor power improvement is to avoid updating q if the input d matches the current state q, thus reducing unnecessary toggling. This can be done by adding a check before assigning q. However, synthesis tools often optimize this themselves. 
+
+For area and timing, the design is already optimal — a single flip-flop with asynchronous reset is minimal.
+
+Therefore, the suggested improvement is to add a condition to assign q only when d differs from q, potentially reducing toggle activity and power. This is a subtle optimization, and whether it is effective depends on synthesis and switching patterns. The code remains clean and synthesizable.
+
+This optimization keeps the asynchronous reset logic straightforward and synchronous data update conditional on change.

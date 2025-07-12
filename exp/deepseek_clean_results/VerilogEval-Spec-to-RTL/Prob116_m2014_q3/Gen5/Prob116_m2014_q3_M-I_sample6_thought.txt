@@ -1,0 +1,18 @@
+1. Correct input interpretation:
+   - Maintain original assumption: rows = x[3]x[0], columns = x[1]x[2]
+   - This matches the 4-bit input x[3:0]
+
+2. K-map analysis with don't-care optimization:
+   - For x[3]x[0]=00: Only definite 0 at x[1]x[2]=01, others can be treated as 1 for optimization
+   - For x[3]x[0]=01: f=1 only at x[1]x[2]=11, else 0
+   - For x[3]x[0]=11: f=1 at x[1]x[2]=00,01 (others don't-care)
+   - For x[3]x[0]=10: f=0 only at x[1]x[2]=10, others can be 1
+
+3. Optimized implementation:
+   - Group 1s and use don't-cares to minimize logic
+   - Key observations:
+     * f=1 when x[3]=1 and (x[0]=1 or x[1]=0)
+     * Except when x[3]x[0]=01 and x[1]x[2]≠11
+     * And when x[3]x[0]=10 and x[1]x[2]=10
+   - Final expression: f = (x[3] & (x[0] | ~x[1])) & ~(x[3] & ~x[0] & ~(x[1] & x[2])) & ~(~x[3] & x[0] & ~x[1] & x[2])
+   - Can be further simplified to: f = x[3] ? (x[0] | ~x[1]) & ~(~x[0] & ~(x[1]&x[2])) : ~(x[0] & ~x[1] & x[2])

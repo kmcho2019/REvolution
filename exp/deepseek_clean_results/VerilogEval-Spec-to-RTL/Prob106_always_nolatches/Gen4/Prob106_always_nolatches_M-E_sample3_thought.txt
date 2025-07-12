@@ -1,0 +1,12 @@
+Here's a novel approach using a shift register and edge detection to handle potential key press sequences more robustly:
+
+1. Instead of just checking the current scancode, we'll use a 16-bit shift register to track the last two bytes received
+2. Implement edge detection to only trigger outputs when a new valid scancode is detected
+3. Use a state machine approach to handle the two-byte nature of PS/2 scancodes
+4. Add debouncing logic to prevent false triggers from noisy inputs
+
+This approach provides better noise immunity and more accurate key press detection, especially important for gaming applications where quick, precise inputs are needed. The design will:
+- Only update outputs when a complete new scancode is detected
+- Filter out partial or corrupted scancodes
+- Maintain low power by minimizing unnecessary output changes
+- Provide more reliable operation in real-world conditions

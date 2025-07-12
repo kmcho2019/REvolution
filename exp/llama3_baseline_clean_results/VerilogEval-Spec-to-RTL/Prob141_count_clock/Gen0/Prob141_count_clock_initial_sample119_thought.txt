@@ -1,0 +1,9 @@
+To design the TopModule for a 12-hour clock, we'll need to create counters for seconds, minutes, and hours. These counters should increment based on the enable signal, which occurs once per second. We'll also need to handle the AM/PM indicator. The counters will be reset to "12:00 AM" upon the active high reset signal.
+
+We'll start by defining the counters for seconds, minutes, and hours. Each counter will be 8 bits wide since we're representing BCD (Binary-Coded Decimal) digits. 
+
+We'll use if-else statements to handle the enable and reset conditions. When the enable signal is high, we'll increment the counters accordingly. The seconds counter should increment every time the enable signal is high, and when it reaches 59, it should reset to 0 and increment the minutes counter. Similarly, when the minutes counter reaches 59, it should reset to 0 and increment the hours counter. The hours counter should increment from 1 to 12 and then reset to 1. 
+
+When the reset signal is high, we'll reset all counters to their initial values, i.e., hours to 12, minutes to 0, and seconds to 0, and set the AM/PM indicator to AM.
+
+To handle the AM/PM indicator, we'll check the hours counter. If the hours counter is between 1 and 11, the AM/PM indicator should be low (AM), otherwise, it should be high (PM).

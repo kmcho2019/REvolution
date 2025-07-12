@@ -1,0 +1,25 @@
+To implement a one-input one-output serial 2's complementer Moore state machine, we can use a finite state machine (FSM) with two states: idle and convert. When the reset is released, the machine goes to the idle state. In the idle state, it waits for the first input bit. Once the first input bit is received, it starts the conversion process. The machine accumulates the input bits and their complements in two separate registers. When the reset is asserted again, the conversion stops, and the machine goes back to the idle state. The output is the complement of the input if the machine is in the convert state.
+
+The key idea here is to keep track of the sign bit of the input number and invert all subsequent bits if the sign bit is 1. Since the input is a series of bits starting from the least significant bit, we can detect the sign bit when the first 1 is encountered. 
+
+However, the provided information does not specify the length of the input number. So, we will have to assume the length is variable and will only stop when reset is asserted.
+
+We will also need a flip-flop to store the current bit being processed and another flip-flop to store the output.
+
+The control logic will need to implement the following:
+1. Initialize the output flip-flop to 0 when reset is asserted.
+2. On every positive edge of the clock, update the output flip-flop with the complement of the input if the machine is in the convert state.
+3. On every positive edge of the clock, if the input is 1, change the state to convert.
+
+However, there is an issue with this approach as described: 2's complementing is typically done after all bits have been received and does not make sense in a streaming fashion as the machine must know when it has received the most significant bit. 
+
+Instead, we can keep accumulating bits in a register until the reset is asserted and then calculate the 2's complement and provide it as output. But this would require the number of bits to be a power of 2 (to fit in a register), which contradicts the requirement that the machine can handle input numbers of arbitrary length.
+
+A way to handle arbitrary length would be to use a shift register to accumulate the bits and provide the complemented output in real-time, but only after a certain delay which corresponds to the length of the input.
+
+For simplicity and adherence to the Moore machine requirement, we can assume the machine outputs the 2's complement after the reset is asserted and the machine is in an idle state.
+
+To simplify this, we will have a Moore machine with the following states:
+- idle: The machine waits for input and reset is asserted. 
+- convert: The machine accumulates the input and when reset is asserted, outputs the 2's complement.
+The output will be valid one clock after reset is asserted.

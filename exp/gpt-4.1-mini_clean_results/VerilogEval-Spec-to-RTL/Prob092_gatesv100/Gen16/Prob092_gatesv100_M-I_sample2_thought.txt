@@ -1,0 +1,6 @@
+To optimize the module for better power, performance, and area (PPA), replace the always @(*) block and loops with continuous vector assignments using bitwise operations and vector slicing.  
+Declare outputs as wires instead of regs to avoid unnecessary registers and inferred latches, reducing power and area.  
+Use vector slices shifted appropriately to represent neighbors for out_both and out_any outputs, concatenating boundary bits as zeros per specification.  
+For out_different with wrap-around neighbor, use vector concatenation and XOR directly without modulo in the loop.  
+This vectorized approach allows synthesis tools to implement efficient combinational logic with minimal gate count and critical path delay, resulting in improved PPA.  
+Overall, the design remains fully combinational and logically equivalent but is simpler and more efficient in hardware.

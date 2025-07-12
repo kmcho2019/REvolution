@@ -1,0 +1,20 @@
+To simplify the solution while maintaining functionality:
+
+1. Remove the explicit state machine and use wave boundaries to control direction:
+   - When wave reaches 31, automatically switch to decrement
+   - When wave reaches 0, automatically switch to increment
+   - This eliminates the need for a separate state register
+
+2. Simplify the logic to a single conditional expression:
+   - Use wave boundary checks to determine increment/decrement
+   - Combine the direction control and counter update in one expression
+
+3. Maintain the same timing characteristics:
+   - Still synchronous to clock edge
+   - Same reset behavior
+   - Same boundary conditions (holds max/min values for one cycle)
+
+This reduces:
+- Register count by eliminating state
+- Logic complexity by removing state transitions
+- Power by reducing toggling elements

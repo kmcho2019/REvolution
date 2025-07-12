@@ -1,0 +1,11 @@
+Fuse the explicit next-state combinational logic from Example 1 with the single always block synchronous update and optimized terminal count detection from Example 2. Specifically, compute the next count value combinationally based on valid_count and terminal_count, then update the output register synchronously on the clock edge with an active-low reset. This keeps the design clean, eliminates any possible glitches, and retains clear separation of combinational and sequential logic.
+
+Advantages of this fusion:
+- The combinational next state logic cleanly expresses the counting and wrap-around behavior, improving readability and modularity.
+- Using the bitwise terminal count logic from Example 2 reduces comparator complexity and potential synthesis overhead.
+- All sequential updates happen in one always block, ensuring synchronous reset and stable timing.
+- Holding the count stable when valid_count is low reduces switching activity, lowering dynamic power.
+- Non-blocking assignments and explicit next state variable improve timing and synthesis quality.
+- Avoiding clock gating maintains good timing closure and avoids complexity.
+
+This combination balances clarity, performance, power, and area optimally for a 4-bit counter wrapping at 11 with gated counting.

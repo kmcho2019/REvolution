@@ -1,0 +1,10 @@
+To implement a finite state machine that identifies received bytes from a serial stream, we can use a novel architectural approach that separates the state machine into distinct phases. Each phase will be responsible for a specific task, such as start bit detection, data bit reception, and stop bit verification. This approach will simplify the state machine's logic and make it easier to understand and maintain.
+
+The proposed architecture consists of the following phases:
+1. **Idle Phase**: The state machine remains in this phase until it detects a start bit (0) on the input stream.
+2. **Start Phase**: Once a start bit is detected, the state machine transitions to this phase, where it waits for one clock cycle to ensure the start bit is stable.
+3. **Data Phase**: In this phase, the state machine receives the 8 data bits and stores them in a register.
+4. **Stop Phase**: After receiving the 8 data bits, the state machine transitions to this phase, where it verifies the stop bit (1).
+5. **Done Phase**: If the stop bit is correctly verified, the state machine asserts the `done` signal and outputs the received byte.
+
+By separating the state machine into these distinct phases, we can create a more modular and efficient design that is easier to understand and maintain.

@@ -1,0 +1,8 @@
+The original implementation directly realizes q = (a | b) & (c | d) using two intermediate wires and explicit OR and AND gates, which is clear and minimal at RTL. To optimize for better PPA:
+
+- Combine the intermediate wires into a single assign statement without temporary signals, reducing netlist complexity and area.
+- Use the built-in Verilog operators directly in one expression to allow synthesis tools to better optimize.
+- This reduces logic signals and gates slightly, potentially lowering area and dynamic power.
+- Timing impact is neutral or slightly improved due to fewer intermediate nets.
+
+This approach balances clarity and synthesis friendliness with minimal area and power. It preserves the original logic functionality perfectly.

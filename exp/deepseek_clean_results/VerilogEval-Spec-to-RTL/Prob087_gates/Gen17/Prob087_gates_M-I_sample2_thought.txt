@@ -1,0 +1,17 @@
+Improvement Strategy: Common Subexpression Elimination and Output Derivation
+1. Key Observations:
+   - Several outputs share common subexpressions (AND, OR, XOR)
+   - Some outputs can be derived from others (XNOR from XOR, NAND from AND)
+   - This reduces total gate count and area
+
+2. Optimizations:
+   - Compute AND, OR, XOR first and store as intermediate wires
+   - Derive NAND, NOR, XNOR from these intermediates
+   - Maintain separate computation for A-AND-NOT-B as it's unique
+   - This reduces the number of primitive operations from 7 to 4
+
+3. Expected Benefits:
+   - Reduced area by eliminating redundant logic
+   - Same performance (still single-level combinational logic)
+   - Slightly lower power due to fewer gates switching
+   - Maintains clean, readable structure

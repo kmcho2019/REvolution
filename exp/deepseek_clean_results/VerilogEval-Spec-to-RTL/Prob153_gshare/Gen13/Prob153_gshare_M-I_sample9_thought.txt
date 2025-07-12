@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. **Critical Path Optimization**:
+   - Pre-compute PHT next states to eliminate saturation checks during updates
+   - Pipeline the index generation to break the critical path
+   - Use simpler arithmetic for counter updates
+
+2. **Power Reduction**:
+   - Add entry-specific enable signals for PHT access
+   - Gate GHR updates when not needed
+   - Use clock gating for PHT updates
+
+3. **Area Optimization**:
+   - Replace individual PHT registers with block RAM if available
+   - Simplify reset logic by using synchronous reset
+   - Remove redundant comparison operations
+
+4. **Timing Closure**:
+   - Register the index computation to meet timing
+   - Add pipeline registers for prediction path
+   - Optimize the saturation logic

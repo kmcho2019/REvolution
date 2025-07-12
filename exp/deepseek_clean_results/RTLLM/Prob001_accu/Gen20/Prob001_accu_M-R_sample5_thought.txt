@@ -1,0 +1,20 @@
+Refactoring Strategy:
+1. State Machine Approach:
+   - Use explicit state machine with 4 states (IDLE, ACC1, ACC2, ACC3) for clearer control flow
+   - Each state represents accumulation step, transitions on valid_in
+   - Output occurs when returning to IDLE from ACC3 state
+
+2. Combinational Logic:
+   - Move accumulator logic to combinational always block
+   - Use continuous assignment for next_state logic
+   - Separate combinational and sequential logic for better synthesis
+
+3. Output Generation:
+   - Generate valid_out combinationally based on state transition
+   - Register data_out separately for clean timing
+
+Key Improvements:
+- More explicit state control through FSM
+- Better separation of combinational/sequential logic
+- Clearer state transitions and output generation
+- Maintains same functionality with different implementation style

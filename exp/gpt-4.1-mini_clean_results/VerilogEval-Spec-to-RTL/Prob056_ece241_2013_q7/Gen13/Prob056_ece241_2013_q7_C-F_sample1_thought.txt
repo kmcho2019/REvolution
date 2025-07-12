@@ -1,0 +1,7 @@
+The best approach combines the clarity and minimalism of embedding the JK flip-flop logic expression directly inside the clocked always block (like Example 2) with the explicit initialization of Q to a known state for better simulation clarity and synthesis stability. 
+
+This fusion leverages the compact, minimal combinational logic `(j & ~Q) | (~k & Q)` that directly implements the JK truth table without extra intermediate wires, minimizing logic depth and area. Adding an initial block to reset Q at simulation start ensures well-defined startup behavior, which is beneficial for simulation and formal verification without affecting synthesis or PPA metrics.
+
+No further logic complexity or structural changes are needed as the current logic is near optimal in timing, power, and area. This solution is clean, easy to understand, and synthesis-friendly.
+
+Hence, the final design uses a single always block triggered on the positive clock edge with a non-blocking assignment implementing the JK logic and includes an initial block to reset Q at startup.

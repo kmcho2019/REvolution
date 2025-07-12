@@ -1,0 +1,17 @@
+The given 4-stage pipeline floating-point multiplier is functionally correct with solid handling of normalization, rounding, and special cases. To optimize for better PPA while preserving functionality:
+
+1. **Reduce the internal mantissa width:** The original uses 48-bit for product (24x24) mantissa multiplication. We can leverage the fact that inputs are 24-bit with implicit leading 1 or 0 and perform a 24x24 multiplication yielding 48 bits but only store and use the top 25 bits (including guard, round, sticky) to reduce register width and logic in later stages.
+
+2. **Optimize sticky bit calculation:** Instead of OR-reducing all lower bits every cycle, we can compute sticky as a single OR in the normalization stage for only relevant lower bits, and use a simplified sticky calculation by folding OR operations hierarchically or limiting the sticky bit to a few bits to reduce combinational logic.
+
+3. **Refine pipeline registers width:** Narrow the exponent registers to 9 bits where possible (8 bits + 1 bit for overflow) instead of 10 bits to save area without sacrificing correctness.
+
+4. **Simplify rounding logic:** Move the rounding increment decision and mantissa addition into a single cycle with minimal control signals.
+
+5. **Avoid excess pipeline registers for special case signals:** Pack the special-case flags into a single multi-bit signal to reduce register count and switching activity.
+
+6. **Early zero detection:** Add logic to bypass multiplication when inputs are zero to reduce switching.
+
+7. **Use blocking assignments inside always_comb blocks if any (but here all logic is sequential), keep non-blocking inside sequential always blocks to maintain proper simulation semantics.
+
+This improved code keeps the 4-stage pipeline structure but reduces widths and simplifies logic to reduce area and power while maintaining timing and correctness.

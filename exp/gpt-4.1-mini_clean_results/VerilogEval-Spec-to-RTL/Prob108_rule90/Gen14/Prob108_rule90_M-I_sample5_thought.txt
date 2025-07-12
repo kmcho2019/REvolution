@@ -1,0 +1,14 @@
+To improve the original Rule 90 implementation for better power, performance, and area (PPA), I will:
+
+1. **Add clock gating by a clock enable (CE) signal**:  
+   Update registers only when `load` is active or the next state differs from the current state. This prevents unnecessary toggling and switching inside flip-flops, reducing dynamic power without impacting performance notably.
+
+2. **Refactor boundary wiring using generate loops** for clarity and maintainability, while preserving the explicit zero boundaries at the edges.
+
+3. **Use non-blocking assignments correctly** and keep combinational next state logic outside the always block for clean timing and synthesis.
+
+4. **Keep modular 64-bit blocks** for scalability and manageable logic depth.
+
+This strategy avoids updates when the state is stable, saving dynamic power. The clock gating logic is a simple XOR comparison per block, adding minimal area overhead but significant power savings. The generate loop for boundary wiring reduces verbosity and chance of errors.
+
+This should improve power consumption significantly while preserving timing and modestly improving area due to cleaner code structure and limited toggling.

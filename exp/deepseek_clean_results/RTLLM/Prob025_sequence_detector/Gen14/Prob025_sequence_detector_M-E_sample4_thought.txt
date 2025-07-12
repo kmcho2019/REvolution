@@ -1,0 +1,22 @@
+Novel Architecture: "Parallel Pattern Matching with Bitmask Comparison"
+
+Key Innovations:
+1. Eliminates traditional state machine and shift register completely
+2. Uses a 4-bit history buffer that updates every cycle
+3. Employs parallel comparison with a bitmask for sequence detection
+4. Implements edge-triggered detection to avoid false positives
+5. Optimized for minimal logic depth and maximum clock frequency
+
+Advantages:
+- Single-cycle detection latency (vs multi-cycle in FSM approaches)
+- No state transition logic overhead
+- Constant-time detection regardless of sequence length
+- Easily scalable to longer sequences
+- Lower power due to absence of state machine toggling
+- Simpler verification with direct pattern matching
+
+Operation Principle:
+1. Maintain a 4-bit window of recent inputs (history buffer)
+2. On each clock cycle, compare the buffer against target pattern (1001)
+3. Use edge detection to ensure the pattern is recognized exactly when completed
+4. Reset behavior clears the history buffer

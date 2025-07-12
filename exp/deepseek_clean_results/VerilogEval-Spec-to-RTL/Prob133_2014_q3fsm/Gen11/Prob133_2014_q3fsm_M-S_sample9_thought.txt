@@ -1,0 +1,13 @@
+Simplified approach:
+1. Maintain the same 2-state FSM (A and B) but eliminate separate state register by using pos_cnt as implicit state indicator
+2. Combine window tracking and state transition logic - state B is active when pos_cnt is counting
+3. Remove w_history shift register and count 'w' values on-the-fly using a 2-bit counter
+4. Generate output z directly when the 3-cycle window completes (pos_cnt wraps)
+5. Reset all counters when in state A (pos_cnt == 0 and not s)
+
+Key simplifications:
+- Eliminated explicit state register by using pos_cnt as state indicator
+- Removed w_history shift register (3 bits saved)
+- Count 'w' values incrementally instead of storing them
+- Simplified output logic by checking count at window completion
+- Reduced total register bits from 6 to 3

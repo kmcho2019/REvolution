@@ -1,0 +1,14 @@
+To refactor the existing code and address the issues identified, we will focus on two primary improvements: 
+1. Ensure that `prev_in` holds the previous value of `in` when checking for transitions.
+2. Simplify the logic for updating `out_reg` by leveraging the fact that once a bit in `out_reg` is set, it remains set until reset.
+
+The key insight is that we only need to update `out_reg` when a transition from 1 to 0 is detected in `in`, and otherwise, keep `out_reg` unchanged unless a reset occurs. We will maintain the use of a sequential block for `prev_in` and `out_reg` but simplify the logic inside.
+
+To achieve this, we will:
+- Use a single `always` block to update both `prev_in` and `out_reg` on the positive edge of the clock.
+- Inside this block, first handle the reset condition to reset both `prev_in` and `out_reg`.
+- Then, update `prev_in` with the current value of `in` to ensure it holds the previous value of `in` during the next clock cycle.
+- Update `out_reg` based on the condition that checks for a transition from 1 to 0 in `in` (using the current `prev_in` and `in` values).
+- To maintain the state of `out_reg` bits once they are set, only update them when a transition is detected or during reset.
+
+By structuring the code in this manner, we avoid potential race conditions and ensure that `prev_in` always reflects the previous state of `in` when checking for transitions.

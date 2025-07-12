@@ -1,0 +1,12 @@
+I'll refactor the code to use a continuous assignment (assign) for the next state logic while keeping the sequential element in a separate always block. This approach:
+1. Separates combinational and sequential logic clearly
+2. Uses a wire for the next state calculation
+3. Maintains the same functionality with shift having priority over count
+4. Makes the combinational logic more visible and potentially easier to optimize
+5. Still triggers on positive clock edges for the sequential part
+
+The key changes are:
+- Using assign for the combinational next state logic
+- Keeping the register update in a separate always block
+- Making the shift and count operations more modular
+- Potentially allowing better synthesis optimization of the combinational path

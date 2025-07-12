@@ -1,0 +1,20 @@
+The Karnaugh map for inputs a, b, c, d is given. We need to find the logic function for out.
+Mapping variables:
+- ab are the column indices (00, 01, 11, 10)
+- cd are the row indices (00, 01, 11, 10)
+
+From the table, output is 1 for:
+(c,d,a,b) =
+(0,0,0,1), (0,0,1,0)
+(0,1,0,0), (0,1,1,1)
+(1,1,0,1), (1,1,1,0)
+(1,0,0,0), (1,0,1,1)
+
+We can analyze the pattern or look for a simpler expression.
+Notice the pattern in the output:
+- The output is 1 when the number of 1's among (a,b,c,d) is odd.
+Checking the count of ones for these positions, they always have an odd number of ones.
+
+Therefore, output = a ^ b ^ c ^ d
+
+Hence, the module just computes the XOR of all inputs.

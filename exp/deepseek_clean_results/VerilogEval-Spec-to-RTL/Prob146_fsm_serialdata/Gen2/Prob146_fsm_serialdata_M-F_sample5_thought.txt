@@ -1,0 +1,12 @@
+To fix the done signal behavior:
+1. Make done signal synchronous to only assert when we actually detect a valid stop bit and transition back to IDLE
+2. Create a temporary register to store the done condition
+3. Move done signal assignment into the clocked always block
+4. Clear done signal immediately after the transition to maintain single-cycle pulse
+5. Keep all other functionality identical (start bit detection, LSB-first shifting, stop bit verification)
+
+Key changes:
+- Done signal now properly pulses for one cycle when valid stop bit detected
+- Prevents continuous assertion during STOP state
+- Maintains all other correct functionality from previous implementation
+- Still uses efficient 3-state FSM design

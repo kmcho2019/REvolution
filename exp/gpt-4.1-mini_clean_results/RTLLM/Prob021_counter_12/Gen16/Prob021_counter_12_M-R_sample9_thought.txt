@@ -1,0 +1,12 @@
+Refactor the counter by integrating the next state logic directly inside the sequential always block using non-blocking assignments and a conditional (ternary) operator to determine the next count value. This approach eliminates the separate combinational always block and the intermediate `next_out` register, simplifying the design.
+
+Use a continuous `assign` statement for `terminal_count` detection as before for clarity. The counter increments only when `valid_count` is high and wraps from 11 back to 0. When `valid_count` is low, the count holds its value.
+
+This refactor maintains the same functionality but reduces the code complexity and slightly improves readability by consolidating the state update logic.
+
+Key points:  
+- `terminal_count` remains a wire with bitwise logic for efficient terminal detection.  
+- All state transitions occur synchronously in a single always block on `posedge clk`.  
+- The output holds when `valid_count` is low without using an explicit next-state variable.
+
+This structure is synthesizable and keeps good timing and power characteristics.

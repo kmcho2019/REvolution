@@ -1,0 +1,11 @@
+The original design is functionally correct and minimal, but we can improve the power and timing slightly by enabling register updates only when valid_in is asserted, preventing unnecessary toggling. Also, by separating the update of sum and count from the output stage, we allow combinational logic for the final sum calculation to be registered in the next cycle, reducing the critical path.
+
+Specifically:
+- Introduce a "sum_next" signal for combinational accumulation.
+- Register valid_out only when output data is ready, keeping it asserted for only one cycle.
+- Update sum and count registers only when valid_in is high to reduce power.
+- Output the accumulated sum on the cycle after the 4th input arrives, thus pipelining the output stage slightly to ease timing.
+- Keep reset synchronous for easier timing closure in modern FPGA/ASIC flows.
+- Keep all logic in a single always block for clarity.
+
+This approach trades a one-cycle latency in output validity for improved timing and power characteristics.

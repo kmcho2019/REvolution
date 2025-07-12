@@ -1,0 +1,21 @@
+The current implementation has good power and area metrics but suffers from timing issues due to the gated clock approach. Here's the improved strategy:
+
+1. Performance:
+   - Replace gated clock with synchronous enable for better timing closure
+   - Maintain the efficient wrap-around logic using pattern matching
+   - Keep asynchronous reset for predictable initialization
+
+2. Power:
+   - Use synchronous enable (valid_count) to control counting
+   - Maintain low-power characteristics by only updating registers when needed
+
+3. Area:
+   - Keep the compact implementation of counter logic
+   - Remove gated clock circuitry to save area
+   - Let synthesis tool optimize the increment and wrap-around logic
+
+The improved version will:
+- Remove timing risks from gated clock
+- Maintain excellent power characteristics
+- Potentially improve area by removing clock gating logic
+- Keep the same functionality

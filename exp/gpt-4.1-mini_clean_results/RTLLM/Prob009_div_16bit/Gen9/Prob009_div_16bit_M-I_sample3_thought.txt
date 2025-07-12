@@ -1,0 +1,7 @@
+To optimize the existing combinational divider for better power and area, reduce the width of the remainder register to 8 bits instead of 9 bits by carefully controlling the comparison and subtraction. Since divisor is 8-bit, the remainder cannot exceed 8 bits, so no need to extend remainder to 9 bits. Use an 8-bit remainder and compare directly with the 8-bit divisor. Also, instead of prepending 1'b0 to divisor to make it 9 bits, keep divisor 8 bits and carefully shift remainder to 8 bits. This reduces bit width of the remainder register and removes one bit in operations, cutting combinational logic size and switching activity. 
+
+The logic remains the same: shift remainder left by 1 and bring down dividend bits one by one; if remainder >= divisor, subtract divisor and set quotient bit to 1. Otherwise, quotient bit is 0. Finally, output quotient and remainder.
+
+This adjustment should reduce critical path length and area and power, while maintaining functionality.
+
+Additionally, declare loop variable and intermediate registers inside always block to aid synthesis clarity.

@@ -1,0 +1,7 @@
+The right shifter module can be implemented using a register that is initialized to 0. On each rising edge of the clock, the register is right-shifted by one bit, and the most significant bit is assigned the value of the input signal. This is achieved by first shifting the register to the right using the >> operator and then assigning the input signal to the most significant bit.
+
+To implement this, we'll use a clocked always block in Verilog, where the register 'q' is updated on the rising edge of the clock 'clk'. The new value of 'q' will be the previous value right-shifted by one bit, with the most significant bit being replaced by the input 'd'.
+
+However, directly assigning `q[7] <= d` within the always block that also shifts `q` would cause a race condition in the logic because both operations are attempting to modify `q` simultaneously. To avoid this, we can achieve the desired behavior by first shifting `q` and then replacing the most significant bit with `d` in a single, atomic operation.
+
+The initial statement is used to initialize the register 'q' to 0 when the simulation starts.

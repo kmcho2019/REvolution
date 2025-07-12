@@ -1,0 +1,17 @@
+The original design is clean and meets functional requirements well, but we can optimize power and area by adding a clock enable signal for the timer decrement logic to avoid unnecessary toggling when the timer is zero. This will reduce switching activity, improving power.
+
+Also, we can change the asynchronous reset to synchronous reset since synchronous resets generally improve timing closure and synthesis optimization on many modern FPGAs and ASIC flows.
+
+To maintain clarity and minimal logic, I'll:
+
+1. Introduce a timer enable (timer_en) that is asserted only when timer > 0 or when reloading the timer on state transition.
+
+2. Use synchronous reset for all registers.
+
+3. Keep state encoding as is, as it's minimal and efficient.
+
+These changes improve power by reducing toggling and improve timing closure by using synchronous resets, with negligible impact on area.
+
+Finally, outputs remain combinational from the registered state and timer.
+
+This maintains the good balance of the original design with better PPA characteristics.

@@ -1,0 +1,12 @@
+Here's a refactored version that maintains the same logical behavior but uses a different implementation approach:
+1. Instead of using explicit muxes, we'll implement the logic as a single Boolean expression derived from the K-map
+2. Observing the K-map, we can see that:
+   - When a=1, output is always 1 (matches original)
+   - When a=0, output is c unless b=1 (matches original)
+3. This can be expressed as: out = a | (~a & ~b & c)
+4. The expression is logically equivalent but uses basic Boolean operators instead of mux structures
+5. Benefits:
+   - Potentially better synthesis optimization
+   - More direct mapping to standard cells
+   - Same functionality with different implementation
+6. Don't-cares are handled the same way (ignored)

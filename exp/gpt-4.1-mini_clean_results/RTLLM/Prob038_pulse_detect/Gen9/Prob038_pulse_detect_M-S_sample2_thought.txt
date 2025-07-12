@@ -1,0 +1,9 @@
+I will implement a simplified FSM using plain Verilog-2001 style without typedef or enums. The FSM will have three states encoded as 2-bit registers:
+
+- S0: Waiting for data_in to be 0 (start of pulse)
+- S1: Received 0, waiting for data_in to become 1
+- S2: Received 1 after 0, waiting for data_in to go back to 0
+
+When data_in transitions 0 → 1 → 0 over three clock cycles, at the last 0 the output data_out will be asserted high for one clock cycle. After that, the FSM returns to S0 to detect the next pulse.
+
+The design uses synchronous reset and state updates on the positive clock edge. data_out is asserted only for one cycle on pulse detection, simplifying the logic.

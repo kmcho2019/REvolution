@@ -1,0 +1,27 @@
+To implement the logic "out = in1 & ~in2" differently, we can leverage a single NAND gate with both inputs inverted externally, transforming the logic into a NAND form with input inversion inside the module. Specifically, since out = in1 & ~in2, it is equivalent to out = ~(~in1 + in2), which is a NAND of (~in1) and (in2).
+
+However, to use a single NAND primitive directly, we can invert 'in1' and then NAND it with 'in2', then invert the NAND output to produce the correct function. 
+
+Alternatively, to implement this using only NAND gates (to potentially aid some synthesis optimizations), we can use De Morgan's law and the property that an inverter can be formed by tying both NAND inputs together.
+
+Thus, the new approach is:
+
+- Generate ~in1 using a NAND gate (both inputs connected to in1).
+- NAND the result (~in1) with in2.
+- Then NAND the result with itself to generate the output (invert again).
+ 
+But this results in out = in1 | ~in2, which is not desired.
+
+So to fix this, we can implement the function with three NAND gates:
+
+- First invert in2 by NAND(in2, in2) => ~in2
+- Then NAND(in1, ~in2) gives out (since NAND(in1, ~in2) = ~(in1 & ~in2))
+- Finally invert the output of this NAND to get out = in1 & ~in2.
+
+Hence, the final logic:
+
+out = NAND(NAND(in1, NAND(in2, in2)), NAND(in1, NAND(in2, in2)))
+
+This approach uses only NAND gates and shows an alternative architectural style implementing AND with a bubble on in2.
+
+This shows a structural approach with only NAND gates, which might be more desirable in some standard cell libraries optimized for NAND gates.

@@ -1,0 +1,11 @@
+Novel Architecture Idea:
+1. Speculative GHR Update: Instead of waiting for training feedback, update GHR speculatively during prediction and maintain a shadow GHR for recovery on mispredictions.
+2. Two-Level Prediction: Use a secondary PHT that tracks patterns in the GHR itself, combining with primary PHT via majority vote.
+3. Early Training: Begin training entries as soon as predictions are made, reducing training latency.
+4. Banked PHT Structure: Split PHT into two banks (odd/even indices) to allow simultaneous predict+train to different banks.
+
+Key Benefits:
+- Reduces misprediction penalty by speculating GHR updates
+- Improves accuracy with two-level prediction
+- Enables more parallel operations with banked structure
+- Maintains single-cycle prediction latency

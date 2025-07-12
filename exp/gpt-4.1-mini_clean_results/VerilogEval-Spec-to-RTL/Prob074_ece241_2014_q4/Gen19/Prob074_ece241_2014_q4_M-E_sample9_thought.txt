@@ -1,0 +1,15 @@
+I will implement the three flip-flops individually with explicit internal registers for clarity. Each flip-flop will store the output of its respective gate (XOR, AND, OR). For each gate, the two inputs are as follows:
+
+- XOR gate: inputs are x and the XOR flip-flop output (current state).
+- AND gate: inputs are x and complemented AND flip-flop output.
+- OR gate: inputs are x and complemented OR flip-flop output.
+
+At every positive clock edge, each flip-flop captures the output of its gate. The module output z is the NOR of all three flip-flop outputs.
+
+Since the problem states the flip-flops are initially reset to zero before operation but does not specify a reset input, I will use the Verilog `initial` construct to set each flip-flop register to zero at simulation start, which also works for many synthesis tools for initial state inference.
+
+This approach breaks the 3-bit register into 3 separate registers, which may improve clarity and help synthesis tools infer logic correctly.
+
+The output z will be computed explicitly as a NOR gate of the three flip-flop outputs, i.e., z = ~(xor_ff | and_ff | or_ff).
+
+This modular structure with explicit gate computations should make the FSM behavior clear and ensure compliance with the problem specification.

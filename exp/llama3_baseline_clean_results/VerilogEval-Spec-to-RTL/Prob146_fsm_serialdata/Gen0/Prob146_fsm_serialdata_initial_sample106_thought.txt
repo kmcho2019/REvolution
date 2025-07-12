@@ -1,0 +1,12 @@
+To implement the TopModule, I will design a finite state machine (FSM) that transitions through several states to receive and verify the serial byte. The states will include: 
+- IDLE: waiting for a start bit (0) on the input line
+- START: found the start bit, preparing to receive data bits
+- DATA: receiving the 8 data bits
+- STOP: waiting for the stop bit (1)
+- DONE: received a complete byte and verified the stop bit, output the byte and assert done.
+
+The FSM will use a counter to track the number of data bits received and a shift register to store the received data bits. It will also use a flag to indicate when the stop bit is received and verified.
+
+Upon reset, the FSM will return to the IDLE state. When a start bit is detected, the FSM will transition to the START state and then to the DATA state to receive the data bits. After receiving all 8 data bits, it will transition to the STOP state to wait for the stop bit. If the stop bit is received correctly, the FSM will transition to the DONE state, output the received byte, and assert done. If the stop bit is not received, the FSM will wait in the STOP state until a stop bit is received before returning to the IDLE state.
+
+To handle the serial protocol's least significant bit first transmission, the shift register will be designed to shift in the new bit from the least significant position.

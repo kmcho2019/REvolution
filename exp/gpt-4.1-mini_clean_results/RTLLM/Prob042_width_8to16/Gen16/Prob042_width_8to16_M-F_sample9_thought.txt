@@ -1,0 +1,11 @@
+Use a simple two-step approach with a flag register (data_lock) to store the first 8-bit data. When valid_in is asserted, if data_lock is empty, store the input data there and wait for the next valid input. When the second valid_in arrives, concatenate data_lock (high 8 bits) and the current input (low 8 bits) into a pipeline register and assert valid_out on the *next* clock cycle to meet the timing requirement.
+
+Specifically:
+- On reset, clear all registers and deassert valid_out.
+- When valid_in arrives and data_lock is empty, store input in data_lock, do not assert valid_out.
+- When valid_in arrives and data_lock is full, capture both bytes in a register pair, then in the next cycle assert valid_out and output the concatenated 16-bit data.
+- After outputting, clear data_lock to accept new inputs.
+- valid_out is only asserted for one cycle, exactly one cycle after the second input data arrives.
+- This approach removes the explicit FSM for clarity and ensures exact timing and correct data handling.
+
+This clean logic aligns with the problem statement and fixes timing and functional issues from the initial FSM design.

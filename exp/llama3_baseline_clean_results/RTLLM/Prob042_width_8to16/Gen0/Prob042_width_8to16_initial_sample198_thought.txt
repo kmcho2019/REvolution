@@ -1,0 +1,11 @@
+To implement the data width conversion circuit, we need to design a module that can store the first arriving 8-bit data and then concatenate it with the next arriving 8-bit data to produce a 16-bit output. This can be achieved by using a flag signal to track the arrival of the first data and then using this flag to control the concatenation and output of the 16-bit data.
+
+The module will have two registers: one to store the first arriving 8-bit data (data_lock) and another to store the output 16-bit data (data_out). The valid_out signal will be generated when the 16-bit data is valid.
+
+The operation of the module can be summarized as follows:
+1. On reset, clear all registers and flags.
+2. When valid_in is high, check the flag signal. If the flag is low, store the current 8-bit data in the data_lock register and set the flag high.
+3. If the flag is high, concatenate the data_lock register with the current 8-bit data and store the result in the data_out register. Set valid_out high and reset the flag.
+4. The data_out and valid_out signals are updated on the next clock cycle after the two data inputs have been concatenated.
+
+This approach ensures that the first arriving 8-bit data is placed in the higher 8 bits of the 16-bit data output and that the valid_out and data_out signals are generated only after the two data inputs have been concatenated.

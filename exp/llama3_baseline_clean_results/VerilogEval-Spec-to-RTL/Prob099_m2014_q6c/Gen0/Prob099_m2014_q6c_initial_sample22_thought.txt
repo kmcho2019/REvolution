@@ -1,0 +1,9 @@
+To implement the next-state signals Y1 and Y3, we need to analyze the state machine and derive the logic equations for each state transition. We can use the one-hot encoding to simplify the process. 
+
+For Y1 (y[1]), which corresponds to state B, we need to consider the transitions that set Y1 to 1. According to the state machine, Y1 is set to 1 when the current state is A and the input w is 0, or when the current state is C and the input w is 0, or when the current state is E and the input w is 0. 
+
+For Y3 (y[3]), which corresponds to state D, we need to consider the transitions that set Y3 to 1. According to the state machine, Y3 is set to 1 when the current state is B and the input w is 1, or when the current state is C and the input w is 1, or when the current state is D and the input w is 1, or when the current state is E and the input w is 1, or when the current state is F and the input w is 1.
+
+Using the one-hot encoding, we can derive the logic equations for Y1 and Y3 as follows:
+Y1 = (y[0] & ~w) | (y[2] & ~w) | (y[4] & ~w)
+Y3 = (y[1] & w) | (y[2] & w) | (y[3] & w) | (y[4] & w) | (y[5] & w)

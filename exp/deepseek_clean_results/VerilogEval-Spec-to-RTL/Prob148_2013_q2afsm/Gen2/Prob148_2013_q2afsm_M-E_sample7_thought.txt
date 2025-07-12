@@ -1,0 +1,20 @@
+Here's a novel approach using a priority encoder combined with state tracking:
+
+1. Priority Encoder First Stage:
+   - Implement a combinational priority encoder that always evaluates the highest priority request (r[0] > r[1] > r[2])
+   - This eliminates the need for complex state transition logic for priority handling
+
+2. State Machine Simplification:
+   - Only track whether we're in grant state (B/C/D) or idle state (A)
+   - Grant states are determined by the priority encoder output
+   - Maintain grant until request drops
+
+3. Output Generation:
+   - Use the priority encoder result directly when in idle state
+   - Maintain current grant when in grant state
+   - This reduces state transitions to just tracking grant/no-grant
+
+4. Advantages:
+   - Clear separation of priority logic and state tracking
+   - Potentially better timing as priority evaluation is parallel
+   - Easier to modify priority scheme if needed

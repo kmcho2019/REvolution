@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by combining a clean, single always block triggered on the clock edge with explicit if-else prioritization and operand gating for power efficiency. Specifically:
+- Use a single always @(posedge clk) block with non-blocking assignments only.
+- Gate register updates using a combined enable (shift_ena | count_ena) to reduce toggling.
+- Explicitly prioritize shift operation over count operation (since both asserted is don't-care).
+- Implement shift operation as shifting left with new data entering at LSB to align with MSB-first data input.
+- Use subtraction for counting down (q - 1), letting synthesis optimize the decrementer.
+- Avoid combinational intermediate signals to reduce area and simplify logic.
+- Maintain straightforward and readable code style to aid synthesis and verification.
+This yields minimal, clean, low-power, and synthesis-friendly code that performs well and is easily maintainable.

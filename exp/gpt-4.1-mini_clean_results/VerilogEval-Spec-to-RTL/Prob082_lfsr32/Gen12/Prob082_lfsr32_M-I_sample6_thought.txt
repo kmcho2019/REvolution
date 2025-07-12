@@ -1,0 +1,9 @@
+To optimize the existing 32-bit Galois LFSR implementation for better PPA (Performance, Power, Area), I will reduce the fan-in of the XOR logic by breaking the single 32-bit wide XOR into multiple smaller XOR operations. Instead of masking the entire 32-bit shifted register with q[0], I will explicitly compute the next LSB and then conditionally update the taps in the shift register only when q[0] is high. This approach simplifies combinational logic and can reduce dynamic power by limiting switching to only tap bits, not all bits.
+
+The improvement strategy:
+- Compute the feedback bit explicitly as q[0].
+- Shift the register right by 1 bit for next state.
+- For tap positions (31, 21, 1, 0 zero-indexed), XOR the feedback bit conditionally.
+- Update q synchronously on posedge clk with synchronous active-high reset.
+
+This modification breaks down the complex XOR into fewer smaller XORs and reduces toggling on non-tap bits, potentially improving timing and lowering power without increasing area significantly.

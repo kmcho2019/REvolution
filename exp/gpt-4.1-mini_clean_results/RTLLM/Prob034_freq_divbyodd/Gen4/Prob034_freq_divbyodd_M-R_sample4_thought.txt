@@ -1,0 +1,14 @@
+The refactoring maintains the core concept of using two counters (cnt1 and cnt2) running on the positive and negative edges of the input clock to toggle two divided clocks (clk_div1 and clk_div2). However, to improve timing correctness and duty cycle balance, we will toggle clk_div1 and clk_div2 at both the half count and full count edges.
+
+Specifically:
+- Each counter counts from 0 to NUM_DIV - 1.
+- At cnt == HALF or cnt == NUM_DIV - 1, toggle the corresponding clk_div signal.
+- This ensures two toggles per counting cycle, resulting in the odd frequency division with better symmetry.
+- Counters reset to zero after reaching NUM_DIV - 1.
+- The final output clk_div is still the OR of clk_div1 and clk_div2, combining positive and negative edge toggles.
+
+This approach uses synchronous reset and the counters/toggles are inside two always blocks triggered on posedge and negedge clk respectively. We also avoid toggling only once per cycle which previously caused incorrect output patterns. The toggling on both half and full counts produces a consistent output with near 50% duty cycle for an odd divisor.
+
+The code structure is cleaner, counters and toggles are tightly coupled, and toggling conditions are explicit and symmetrical. This results in a more reliable, functionally correct odd frequency divider.
+
+Additionally, use of `$clog2` for width and a parameter check for NUM_DIV oddness is retained for robustness.

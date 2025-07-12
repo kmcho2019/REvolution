@@ -1,0 +1,13 @@
+I will simplify the FSM by using a straightforward 3-state approach: IDLE, RECEIVE, and WAIT_STOP, combining STOP into WAIT_STOP state handling. The state encoding will be plain `localparam` for clarity.
+
+In IDLE, the FSM waits for the start bit (0). In RECEIVE, it shifts in 8 data bits LSB first, counting bits. After 8 bits are received, it expects a stop bit (1). If the stop bit is correct, done is asserted, output byte latched, and FSM returns to IDLE. If the stop bit is incorrect, FSM moves to WAIT_STOP to wait until line returns to idle (1) before restarting.
+
+Data shifting will use a simple shift-right with LSB input from serial 'in'.
+
+I will combine the state and bit counter updates in a single always block to reduce code complexity and remove unnecessary default assignments.
+
+Done will be a one-cycle pulse asserted only when stop bit is validated.
+
+All logic is synchronous and reset active-high synchronous.
+
+This reduces the number of states, simplifies conditions, and merges blocks for a leaner and clearer implementation.

@@ -1,0 +1,24 @@
+Novel Design Approach: Pattern-Aware Shift Controller with Delayed State Transition
+
+Key Innovations:
+1. Dual-Purpose Shift Register:
+   - Uses a single 4-bit register for both pattern detection and duration capture
+   - Eliminates separate pattern and shift registers
+   - Clears only on reset, maintaining data integrity
+
+2. Smart State Transition Control:
+   - Introduces a 'PRE_SHIFT' state after pattern detection
+   - Ensures clean transition before starting the 4-cycle shift
+   - Uses a modulo-4 counter for precise shift control
+
+3. Output Generation Strategy:
+   - Derives outputs from both state and counter values
+   - Prevents output glitches during state transitions
+   - Uses combinatorial logic with state-based enables
+
+4. Reset Handling:
+   - Comprehensive reset of all sequential elements
+   - Ensures clean startup from any state
+
+State Machine Flow:
+IDLE -> (on 1101) -> PRE_SHIFT -> SHIFT (4 cycles) -> COUNT -> DONE -> (on ack) -> IDLE

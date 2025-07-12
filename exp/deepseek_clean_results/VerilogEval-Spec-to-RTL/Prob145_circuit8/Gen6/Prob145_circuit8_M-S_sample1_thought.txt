@@ -1,0 +1,10 @@
+After carefully re-examining the waveform, I realize the behavior can be simplified to:
+
+1. Output p is simply the input 'a' sampled at positive clock edges (no conditional)
+2. Output q is the previous value of p (one cycle delayed version)
+3. Both outputs are synchronous to the clock edge
+
+This matches the observed behavior:
+- p directly follows 'a' at clock edges (90ns, 100ns, 110ns)
+- q follows p with one cycle delay (p=1 at 110ns → q=1 at next cycle)
+- Values only change at clock edges

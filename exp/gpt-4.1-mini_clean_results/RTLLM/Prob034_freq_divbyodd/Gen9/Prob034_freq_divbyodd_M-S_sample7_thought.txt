@@ -1,0 +1,9 @@
+To simplify the frequency divider for an odd divisor while maintaining the original idea of using positive and negative edges, I will:
+
+- Use a single counter running on the positive edge of the clock, counting from 0 to NUM_DIV-1.
+- Generate clk_div1 on the positive clock edge and clk_div2 on the negative clock edge by toggling them when the counter hits halfway (floor(NUM_DIV/2)) and at zero.
+- Combine clk_div1 and clk_div2 outputs by OR to get clk_div.
+- This keeps the two edge toggling logic but reduces the design to one counter and two flip-flops, removing one counter.
+- The reset signal initializes counters and flip-flops asynchronously.
+- Compile-time check ensures NUM_DIV is odd.
+- This approach achieves a roughly 50% duty cycle odd division clock while simplifying the dual counters into one counter and exploiting both clock edges.

@@ -1,0 +1,11 @@
+The original solution uses borrow-lookahead logic to determine if A < B and a bitwise XNOR-based equality check for A == B, which is efficient for timing but somewhat complex for area and power in a 4-bit comparator. Given the small bit width, a ripple borrow subtractor with direct logic can be simpler and more area- and power-efficient, potentially reducing gate count and switching.
+
+Improvement Strategy:
+- Replace the borrow-lookahead with a ripple borrow chain using simple combinational logic per bit, which is efficient for 4 bits.
+- Implement subtraction borrow logic per bit:
+  borrow_out[i] = (~A[i] & B[i]) | ((~(A[i] ^ B[i])) & borrow_in)
+- Calculate borrow sequentially from LSB to MSB.
+- Result bits (A-B) are not needed, only borrow signals to determine if borrow out of MSB occurs.
+- Equality detected by comparing A and B bits directly (XNOR + AND reduction).
+- Outputs remain mutually exclusive and mutually exhaustive.
+- This approach reduces the combinational complexity, saves area and power, and still meets performance needs for a small 4-bit comparator.

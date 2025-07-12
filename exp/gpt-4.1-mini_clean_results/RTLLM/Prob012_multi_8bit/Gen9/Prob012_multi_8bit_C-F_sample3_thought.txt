@@ -1,0 +1,9 @@
+To fuse the strengths of both examples:
+- From Example 2, I adopt the straightforward approach of iterating over each bit of B and conditionally adding a shifted A to the product, which directly models the traditional shift-and-add multiplication.
+- From Example 1, I incorporate the idea of accumulating partial sums incrementally to reduce the complexity of having multiple adders simultaneously and enhance clarity.
+- I implement a single procedural combinational block using a for-loop that accumulates the product iteratively by checking each bit of B. This is closer to the canonical algorithm for shift-and-add multiplication.
+- This approach reduces the number of intermediate signals and synthesizes into an adder with a controlled combinational delay corresponding roughly to 8 additions, which is acceptable for an 8-bit multiplier.
+- The design remains purely combinational and synthesizable, with improved readability, fewer wires, and a clean, intuitive structure.
+- The product is computed by shifting and adding inside a procedural block, which matches how hardware multipliers work, facilitating straightforward understanding and possible future pipelining or sequential implementation.
+
+This fusion combines the clarity and simplicity of Example 2's method with the elegance and structural efficiency of Example 1's partial product generation, avoiding the complexity of a fully balanced adder tree but keeping the logic manageable.

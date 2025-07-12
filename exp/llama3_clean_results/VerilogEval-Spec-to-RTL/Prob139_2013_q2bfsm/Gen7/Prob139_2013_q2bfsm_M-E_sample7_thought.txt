@@ -1,0 +1,12 @@
+The new approach involves designing a finite state machine (FSM) with a more straightforward and modular structure. The FSM will be divided into two main components: the 'x' sequence detector and the 'y' monitor. The 'x' sequence detector will be responsible for identifying the sequence 1, 0, 1 in three successive clock cycles, while the 'y' monitor will check if 'y' becomes 1 within at most two clock cycles after the 'x' sequence is detected.
+
+The FSM will have the following states:
+
+- State A: The initial state, where the FSM waits for the reset signal to be de-asserted.
+- State B: The 'x' sequence detection state, where the FSM checks for the sequence 1, 0, 1 in three successive clock cycles.
+- State C: The 'y' monitoring state, where the FSM checks if 'y' becomes 1 within at most two clock cycles.
+- State D: The final state, where the FSM sets 'g' to 1 permanently if 'y' becomes 1 within two clock cycles, or sets 'g' to 0 permanently if 'y' remains 0 for more than two clock cycles.
+
+The 'x' sequence detector will use a 2-bit shift register to store the previous two values of 'x', and a counter to keep track of the number of clock cycles since the 'x' sequence started. The 'y' monitor will use a counter to keep track of the number of clock cycles since the 'x' sequence was detected.
+
+The code will be written using a single 'always' block for the sequential logic and 'assign' statements for the combinational logic. The state machine will be designed to minimize the number of states and transitions, reducing the complexity of the code and improving its readability and maintainability.

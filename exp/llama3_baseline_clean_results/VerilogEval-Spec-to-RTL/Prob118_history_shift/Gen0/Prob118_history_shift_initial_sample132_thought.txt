@@ -1,0 +1,9 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that controls the update of the global history shift register. The FSM will have two main states: update and rollback. When a prediction is made (predict_valid = 1), the FSM will shift in the predict_taken value from the LSB side to update the branch history. When a misprediction occurs (train_mispredicted = 1), the FSM will load the branch history register with the history after the completion of the mispredicted branch. If both a prediction and misprediction occur at the same time, the misprediction will take precedence. The FSM will also be reset to zero when an asynchronous reset (areset) is asserted.
+
+The module will be implemented using a 32-bit shift register (predict_history) and a 32-bit input (train_history). The FSM will be implemented using a always block that is sensitive to the positive edge of the clock. The always block will check the values of predict_valid, train_mispredicted, and areset to determine the next state of the FSM.
+
+In the case of a prediction, the FSM will shift in the predict_taken value from the LSB side by using the left shift operator (<<) to shift the predict_history register one bit to the left and then assigning the predict_taken value to the least significant bit (LSB) of the predict_history register.
+
+In the case of a misprediction, the FSM will load the branch history register with the history after the completion of the mispredicted branch by concatenating the train_history with the train_taken value and assigning it to the predict_history register.
+
+In the case of a reset, the FSM will reset the predict_history register to zero.

@@ -1,0 +1,19 @@
+The original solution leverages two's complement signed addition directly, which is the most efficient and standard method for fixed-point addition. This approach inherently covers absolute value addition and subtraction cases without explicit sign checking or conditional logic, simplifying the design and minimizing hardware resources.
+
+The improvement here focuses on:
+- Matching the problem's requirement of an internal register `res` storing the result before assigning to output `c`.
+- Making the inputs and outputs explicitly signed and of parameterized widths.
+- Ensuring the code is clean, synthesizable, and purely combinational.
+- Adding comments for clarity.
+
+No explicit absolute value or conditional logic is needed due to two's complement representation.
+This approach provides the best PPA: minimal logic, minimal latency, and power efficient.
+
+Thus, the refined design will include:
+- Parameterized module.
+- Signed inputs/outputs.
+- Internal `res` register assigned combinationally.
+- Direct addition of signed numbers.
+- Output `c` driven by `res`.
+
+This satisfies all given implementation points while adhering to hardware synthesis best practices.

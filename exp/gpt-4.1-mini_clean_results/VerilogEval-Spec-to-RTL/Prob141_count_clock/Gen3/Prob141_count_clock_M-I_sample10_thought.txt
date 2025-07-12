@@ -1,0 +1,11 @@
+To optimize for better PPA metrics, I will restructure the code for clearer combinational and sequential separation by moving combinational logic outside the always @(posedge clk) block. This helps synthesis tools infer better pipelining and reduce critical path delay.
+
+Key improvements:
+1. Move next state logic into a combinational always @* block that computes all next values as wires or regs, then update registers in the clocked always block. This reduces combinational depth in the clocked block.
+2. Replace functions with explicit combinational logic for BCD increment to help synthesis recognize common subexpressions and optimize logic sharing.
+3. Simplify the hour increment logic by explicitly checking hours for wrap and toggle pm more straightforwardly.
+4. Use localparams for constants to improve readability and synthesis optimization.
+5. Reduce intermediate reg declarations inside sequential block.
+6. Keep output registers updating only on ena or reset to reduce toggling and dynamic power.
+
+This separation also aids better pipelining and potentially higher max frequency (improved WNS) and lower power usage.

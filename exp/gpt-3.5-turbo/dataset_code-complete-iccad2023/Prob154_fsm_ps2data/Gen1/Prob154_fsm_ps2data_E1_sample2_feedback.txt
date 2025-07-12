@@ -1,9 +1,0 @@
-1. The main issue lies in the condition used to transition from the COLLECTING_BYTES state to the MESSAGE_DONE state. The current condition `next_state = (byte1 != 8'hxx && byte2 != 8'hxx) ? MESSAGE_DONE : COLLECTING_BYTES;` doesn't ensure that all three bytes of the message have been received before transitioning to MESSAGE_DONE. This flawed condition causes premature state transitions.
-
-2. Another issue is with the output generation in the `MESSAGE_DONE` state. The concatenation of `byte1`, `byte2`, and `byte3` to `out_bytes_reg` should only occur when transitioning to the `MESSAGE_DONE` state. However, this concatenation is performed unconditionally in every clock cycle, even in the `COLLECTING_BYTES` state. As a result, `out_bytes_reg` gets updated erroneously.
-
-3. The current FSM logic does not fully align with the design intent. The FSM should signal the receipt of a message only when all three bytes have been received (MESSAGE_DONE state). However, due to the incorrect transition condition mentioned in point 1, the FSM may signal the completion of a message prematurely.
-
-4. The simulation log hints at issues with both `out_bytes` and `done` outputs, which suggests that the premature state transitions are affecting the correctness of the generated outputs, leading to mismatches.
-
-Overall, the code needs revisions in the state transition condition and output generation to align with the specified design requirements and to ensure the correct signaling of message reception.

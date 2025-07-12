@@ -1,0 +1,11 @@
+To improve the existing solution, we need to correctly implement the logic for a Moore state machine that calculates the 2's complement of an input sequence. The main issue with the current implementation is that it doesn't properly handle the inversion of bits after the first '1' is seen and does not accumulate the bits correctly to produce the 2's complement.
+
+The correct approach involves two main steps: 
+1. Flip all the bits after the first '1' is encountered.
+2. Add 1 to the result (which, in binary, is equivalent to flipping all bits and then adding 1, but since we're already flipping bits after the first '1', we only need to consider adding 1 to the final result if we've seen a '1' in the input sequence).
+
+We can achieve this by maintaining a state variable that tracks whether we've seen the first '1' and then use this state to determine the output `z`. However, to correctly implement the 2's complement logic, we also need to consider the carry bit that results from adding 1 to the flipped bits.
+
+Given that the input numbers can be of arbitrary length, we need to ensure our design can handle this variability. This means we must be able to accumulate the input bits correctly and produce the 2's complement output without a fixed length constraint.
+
+To optimize for better PPA (Power, Performance, and Area), we should aim for simplicity in our logic, minimizing the number of state variables and combinational logic needed, while ensuring the design is correct and efficient.

@@ -1,0 +1,13 @@
+Refactor the design to separate the state register update and the next state combinational logic more explicitly, and to implement the register update using a non-blocking assignment in an always block that captures next state from a combinational signal named `next_state`.
+
+Instead of embedding the rule logic in a function inside a generate block, explicitly write the combinational process outside with a for loop inside an always_comb block. This approach often improves readability and synthesis clarity because all next state logic is in a single always_comb block instead of distributed generate-assign pairs.
+
+The boundary zero-padding remains, but is assigned to a reg `ext_state` to better show intermediate signals.
+
+The module uses:
+
+- A synchronous process for updating the internal state register `q`.
+- A combinational process for computing `next_state` from `q` with zero-padded boundaries.
+- This style separates combinational and sequential logic clearly and avoids possible issues with function synthesis or generate constructs, while keeping the same logic functionality.
+
+This structure might improve synthesis tool understanding, and offers clearer separation of concerns in the code without changing functionality.

@@ -1,0 +1,13 @@
+A different architectural approach is to design a fully pipelined 64-bit ripple carry adder divided into 8 stages, each handling 8 bits with carry input and carry output registers between stages. 
+
+Each stage will have registers to store the inputs, carry-in, sum output, and carry-out, fully synchronizing data and carry signals on the clock with the pipeline. This ensures that every stage completes an 8-bit addition with carry in one clock cycle, passing the carry out and enabling high clock frequency.
+
+The pipeline input registers capture the 64-bit operands and the enable signal. The output stage registers capture the final sum (65 bits including carry-out) and output enable.
+
+This approach avoids combinational complexity per stage, using simple registered 8-bit adders with carry in and carry out signals pipelined stage by stage.
+
+The pipeline is fully balanced, with input operand registers, internal carry and sum registers at each stage, and output registers at the end.
+
+The output enable signal is pipelined through registers alongside data to indicate the valid output cycle.
+
+This clear and modular design maximizes timing closure and eases verification.

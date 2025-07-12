@@ -1,0 +1,17 @@
+To create a superior solution, we need to analyze the strengths of both examples and combine them. 
+
+The first example uses a more detailed state table with separate always blocks for the state table and the state flip-flops. This approach is clear and maintainable, and it correctly implements the priority logic and includes a state where g[2] is 1 when device 2 is the only requesting device.
+
+The second example optimizes the code for better PPA (Power, Performance, and Area) metrics by minimizing the number of logic gates and reducing the complexity of the state table. It also uses a more straightforward state encoding and assigns output signals g[0], g[1], and g[2] based on the current state.
+
+Our fusion strategy will be to combine the detailed state table from the first example with the optimized code and straightforward state encoding from the second example. We will also ensure that the state machine transitions between states based on the input requests and the current state, and that the output signals are assigned correctly.
+
+We will use the same state codes as before: A = 2'b00, B = 2'b01, C = 2'b10, and D = 2'b11. We will also use a separate always block to describe the FSM outputs.
+
+In the state table, we will first check if device 0 is requesting access. If it is, we will transition to State B. If not, we will check if device 1 is requesting access. If it is, we will transition to State C. If neither device 0 nor device 1 is requesting access, we will check if device 2 is requesting access. If it is, we will transition to State D.
+
+We will also assign the output signals g[0], g[1], and g[2] based on the current state, using continuous assignments.
+
+To optimize the code for better PPA metrics, we will minimize the number of logic gates and reduce the complexity of the state table. We will also ensure that the synthesis tool is effectively utilizing area-reducing techniques such as resource sharing or logic duplication.
+
+By combining the strengths of both examples, we can create a superior solution that correctly implements the priority logic, includes a state where g[2] is 1 when device 2 is the only requesting device, and optimizes the code for better PPA metrics.

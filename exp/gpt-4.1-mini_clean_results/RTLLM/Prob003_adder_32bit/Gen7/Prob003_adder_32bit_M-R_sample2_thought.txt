@@ -1,0 +1,5 @@
+Refactor the 16-bit CLA block by explicitly calculating the carries using a parallel prefix form with intermediate group generate and propagate signals at 4-bit granularity to reduce carry logic depth and improve clarity. Replace the carry calculation loop with combinational expressions derived from hierarchical group PG signals. Use continuous assignments for sum and carries without generate blocks for per-bit carries to reduce combinational levels.
+
+In the top-level 32-bit adder, instantiate two 16-bit CLA blocks as before, but compute the carry-in for the upper block by combining both block propagate and block generate signals of the lower block with Cin=0 as carry_in_high = G_low | (P_low & 0) = G_low, explicitly showing the formula for extensibility.
+
+Keep the 1-based indexing interface with clear input/output mapping. This approach emphasizes parallel carry computation and more explicit hierarchical carry logic rather than per-bit iterative carry assignments, improving readability and synthesizability with the same functional architecture.

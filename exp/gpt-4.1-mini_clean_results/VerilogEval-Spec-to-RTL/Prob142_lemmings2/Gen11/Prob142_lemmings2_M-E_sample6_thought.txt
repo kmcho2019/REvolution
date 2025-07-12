@@ -1,0 +1,14 @@
+Implement the Lemming FSM using three distinct one-hot encoded states for clarity and explicitness: WALK_LEFT, WALK_RIGHT, and FALLING (with the direction remembered in a separate register). Use a single-bit register to hold the walking direction when walking or prior to falling.
+
+- On reset, initialize the Lemming to WALK_LEFT state with direction=0.
+- When walking:
+  - If ground disappears (ground=0), transition to FALLING state but keep the walking direction in the direction register.
+  - If bumped left, transition to WALK_RIGHT state and set direction=1.
+  - If bumped right, transition to WALK_LEFT state and set direction=0.
+  - If bumped both sides, flip direction and change walk state accordingly.
+- When falling:
+  - Ignore bumps.
+  - When ground returns (ground=1), resume walking in the direction stored.
+- Outputs are one-hot from state bits; aaah is asserted only in FALLING state.
+
+This approach separates the direction logic (stored in a small 1-bit register) from the FSM states, enhancing readability and making the FSM states explicit and distinct. This modularity can help with debugging and synthesis optimizations, at the cost of a few more registers.

@@ -1,0 +1,7 @@
+Instead of using a traditional cascaded multiplexer approach, let's implement a parallel barrel shifter using a matrix of multiplexers. This approach:
+1. Creates all possible shifted versions of the input in parallel
+2. Uses the control bits to select the appropriate shift amount through a single level of multiplexing
+3. The shift amounts are decoded from the control signal using a binary-weighted approach (1, 2, 4)
+4. Each possible shift amount (0-7) is precomputed and then selected by the decoded control signal
+5. This reduces the critical path compared to cascaded shifts since there's only one level of multiplexing
+6. The rotation is implemented by concatenating the wrapped bits to maintain circular shifting

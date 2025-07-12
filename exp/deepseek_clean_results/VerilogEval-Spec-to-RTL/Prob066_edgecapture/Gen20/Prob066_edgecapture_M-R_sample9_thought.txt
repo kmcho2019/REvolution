@@ -1,0 +1,16 @@
+Refactored approach with proper falling edge detection and capture:
+
+1. Core idea remains detecting 1->0 transitions and maintaining state until reset
+2. Key improvements:
+   - Explicitly store previous input value in a register for accurate edge detection
+   - Use simple combinational logic to detect falling edges (1->0 transitions)
+   - Maintain captured state with a register that only clears on reset
+3. Implementation structure:
+   - Sequential block to store previous input value (prev_in)
+   - Combinational logic to detect falling edges (prev_in & ~in)
+   - Sequential block to accumulate detected edges (out_reg)
+4. Benefits:
+   - Clear separation of edge detection and state maintenance
+   - Correct functionality by properly tracking input history
+   - Easier to understand and verify
+   - Maintains synchronous design principles

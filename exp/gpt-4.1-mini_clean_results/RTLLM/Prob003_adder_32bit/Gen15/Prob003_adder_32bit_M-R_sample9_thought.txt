@@ -1,0 +1,9 @@
+Refactor the 16-bit CLA block to explicitly compute group propagate and generate signals hierarchically without the extra prefix generate array (Gc), by expressing the block generate as a reduction expression using the per-bit P and G signals with a binary tree approach. Also, remove the internal wire arrays for carries and instead compute carry signals in a combinational loop using generate statements directly assigning each carry. Instead of mapping inputs using generate loops, use continuous assignments with bit-slicing to convert from [32:1] to [31:0] and back, improving readability. Finally, implement the carry-in to the upper 16-bit block as a direct expression using block propagate and generate from the lower block (P_low and G_low), as before, but use a single wire for carry-in.
+
+This version keeps the same top-level hierarchical structure, but reduces internal intermediate signals by explicitly computing the carries and block generate signals more directly, enhancing clarity and possibly aiding synthesis tools in optimization.
+
+We also switch from using 1-bit wires P and G outputs to a packed single output for P and G, computed as an AND reduction for P and a combinational reduction for G using an explicit expression.
+
+This clean, reduced-signal approach avoids redundant intermediate wires and uses assign statements and generate blocks for all combinational logic, ensuring clarity and synthesis friendliness.
+
+The input and output index mapping uses vector slicing assignments instead of loops for better code compactness and readability.

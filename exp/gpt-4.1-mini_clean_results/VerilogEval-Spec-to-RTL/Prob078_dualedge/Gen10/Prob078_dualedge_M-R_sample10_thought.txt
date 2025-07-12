@@ -1,0 +1,13 @@
+Refactor the design by replacing the level-sensitive latch implemented with an always block by two multiplexers using continuous assignments and a small transparent latch module explicitly instantiated as a separate block. 
+
+Instead of a behavioral always block to select between q_pos and q_neg based on clk level, define a separate transparent latch module that samples its input when enabled (enable = clk or ~clk) and holds otherwise. We instantiate two latches, one enabled when clk=1 and the other when clk=0, and their outputs feed a final mux selecting the latch output matching the clk level.
+
+This structure keeps the dual-edge behavior using two flip-flops plus latch(s) but separates mux and latch logic more explicitly, and uses continuous assignments to replace combinational always blocks. It improves code clarity, and explicit latch instantiation can help synthesis tools recognize and optimize it better.
+
+We maintain the dual-edge flip-flops on posedge and negedge and use transparent latches for glitch-free output selection without combinational logic on clock signals.
+
+Overall, this refactor:
+- Defines an explicit transparent latch module.
+- Instantiates two latches with complementary enables for q_pos and q_neg inputs.
+- Selects output based on clk level via a simple assign mux.
+- Uses continuous assignment and module hierarchy to improve clarity and synthesis friendliness.

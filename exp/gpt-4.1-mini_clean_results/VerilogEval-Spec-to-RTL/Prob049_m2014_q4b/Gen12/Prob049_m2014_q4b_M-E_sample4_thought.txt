@@ -1,0 +1,7 @@
+Instead of coding a simple always block with asynchronous reset, I will implement the D flip-flop with asynchronous reset using a separate asynchronous reset logic block and a positive edge-triggered latch that is enabled by the clock, combined in a two-step approach.
+
+Specifically, I will use an asynchronous reset signal to force the output low immediately when asserted, independent of the clock. When not in reset, the D input will be sampled on the rising edge of the clock and stored in an internal register. Then, the output q will be driven by this register. This slightly separates reset logic from data sampling and can help with synthesis tools by clarifying asynchronous reset usage.
+
+This also explicitly models asynchronous reset outside of the clocked always block by using a combination of an asynchronous reset signal to zero a register and a clocked process to capture data, maintaining clear separation of asynchronous and synchronous events.
+
+This style is functionally equivalent but architecturally distinct from the single always block approach and can provide better visibility for formal verification or specific synthesis tools.

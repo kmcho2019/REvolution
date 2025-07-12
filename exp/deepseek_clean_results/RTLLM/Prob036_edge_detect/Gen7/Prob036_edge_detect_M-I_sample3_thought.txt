@@ -1,0 +1,13 @@
+The current implementation is already quite efficient, but we can make some targeted improvements for better PPA:
+
+1. Remove the unused rst_n input to save area (interface permitting)
+2. Use a single always block with non-blocking assignments for cleaner code
+3. Keep the combinational logic minimal (just two AND gates)
+4. The initialization of a_prev to 0 is sufficient for simulation and synthesis
+5. This maintains the same functionality while slightly reducing area
+
+Improvements:
+- Area: Removes unused reset port and associated routing
+- Power: Maintains same low power characteristics
+- Timing: No negative impact on timing (still minimal combinational path)
+- Functionality: Identical edge detection behavior

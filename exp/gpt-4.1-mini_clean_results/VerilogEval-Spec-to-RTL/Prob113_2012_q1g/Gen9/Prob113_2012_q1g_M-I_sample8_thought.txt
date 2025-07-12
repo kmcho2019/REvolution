@@ -1,0 +1,25 @@
+To improve PPA, I will factor common terms to reduce gate count and logic depth. Observing the original expression:
+
+f = (~x3 & ~x1) | (~x3 & x2 & x1 & ~x0) | (x3 & x2 & (~x0 | x1))
+
+We see that both first and second terms include ~x3, so factor it out:
+
+(~x3 & (~x1 | (x2 & x1 & ~x0)))
+
+The expression inside parentheses can be further simplified:
+
+(~x1 | (x2 & x1 & ~x0)) = (~x1) + (x2 x1 ~x0)
+
+No simpler factoring is obvious, so keep as is.
+
+Final expression:
+
+f = (~x3 & (~x1 | (x2 & x1 & ~x0))) | (x3 & x2 & (~x0 | x1))
+
+This reduces redundant checks on ~x3.
+
+This factoring can reduce logic levels and number of gates, improving area and power.
+
+In Verilog, implement accordingly using bitwise operators and parentheses for clarity.
+
+The implementation remains purely combinational.

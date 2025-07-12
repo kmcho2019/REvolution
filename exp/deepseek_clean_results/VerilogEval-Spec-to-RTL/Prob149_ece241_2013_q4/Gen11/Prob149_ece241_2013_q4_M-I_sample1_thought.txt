@@ -1,0 +1,15 @@
+The key issue in the original solution is the incorrect detection of rising water levels, leading to incorrect dfr outputs. Here's the improved approach:
+
+1. Maintain a 3-bit previous sensor state to track all sensor values (not just s[2:1])
+2. Implement proper state encoding for all possible water levels (4 states)
+3. Detect rising water levels by comparing current and previous states
+4. Generate dfr when:
+   - Water level is rising (current state > previous state)
+   - OR when below all sensors (all outputs should be high)
+5. Reset initializes to below-sensor state with all outputs high
+
+Improvements:
+- Track full sensor state (3 bits) instead of just s[2:1]
+- Use explicit state encoding for clearer level comparison
+- More accurate rising edge detection by comparing full states
+- Maintain simple combinatorial output logic

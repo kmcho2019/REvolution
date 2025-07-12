@@ -1,0 +1,20 @@
+Instead of trying to decode the exact complex pattern directly from the waveform, let's treat the one-bit memory (state) as a flip-flop updated at every clock positive edge based on a simple combinational function of current inputs a, b and the current state.
+
+By looking at key points in the waveform:
+- When b=0, the state remains unchanged (no toggle or reset).
+- When b=1, the state toggles if a=0, but resets to 0 if a=1.
+- The output q directly reflects the stored state.
+
+Therefore, the next state can be expressed as:
+
+next_state = b ? ((a == 1'b0) ? ~state : 1'b0) : state;
+
+This means:
+- If b=1:
+  - If a=0, toggle state
+  - Else clear state to 0
+- If b=0, state remains unchanged.
+
+We'll implement this behavior succinctly with a non-blocking assignment inside the posedge clk always block, and assign q = state.
+
+This interpretation matches the waveform transitions cleanly and respects the memory element constraints.

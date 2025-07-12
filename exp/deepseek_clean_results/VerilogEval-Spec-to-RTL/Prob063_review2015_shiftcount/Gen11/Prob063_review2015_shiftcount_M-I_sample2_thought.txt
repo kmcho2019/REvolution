@@ -1,0 +1,17 @@
+Improvement strategy based on PPA metrics:
+1. Timing Optimization:
+   - Replace the subtraction operation with a more efficient implementation using adders (since -1 is equivalent to +0xFF in 4-bit)
+   - This reduces the critical path by simplifying the arithmetic operation
+
+2. Power Optimization:
+   - Add explicit clock gating for the register when neither shift_ena nor count_ena is active
+   - This prevents unnecessary toggling of the register when no operation is needed
+
+3. Area Optimization:
+   - Maintain the current compact implementation but ensure the synthesis tool can optimize the arithmetic operation
+   - The subtraction replacement should not increase area while improving timing
+
+Key changes:
+- Replace q-1 with q + 4'b1111 (equivalent in 4-bit arithmetic)
+- Add clock gating condition
+- Maintain the same priority and functionality

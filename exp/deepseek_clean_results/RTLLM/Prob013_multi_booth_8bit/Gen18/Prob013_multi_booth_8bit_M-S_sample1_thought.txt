@@ -1,0 +1,21 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Core Optimization:
+   - Remove redundant registers (prev_bit) by using current multiplier bits directly
+   - Simplify control logic by using a 2-bit counter (4 iterations for 8 bits)
+   - Eliminate clock gating for simpler implementation
+
+2. Key Simplifications:
+   - Single always block for all operations
+   - Direct Booth encoding without pre-computed x2 value
+   - Simplified reset logic with immediate ready signal for zero inputs
+
+3. Maintained Functionality:
+   - Still handles signed multiplication correctly
+   - Preserves Radix-4 Booth algorithm efficiency
+   - Keeps same interface and timing behavior
+
+4. Implementation Approach:
+   - Use simple shift-and-add operations
+   - Combine multiplier and multiplicand updates in single cycle
+   - Straightforward completion detection

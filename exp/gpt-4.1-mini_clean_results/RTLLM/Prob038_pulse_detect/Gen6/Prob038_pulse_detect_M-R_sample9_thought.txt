@@ -1,0 +1,10 @@
+Refactor the design by separating the next_state logic into a combinational function and driving the state register with a synchronous always block. Use a one-hot style localparam state encoding for clarity and easier modification. The `data_out` signal will be assigned combinationally with an assign statement based on current state and input to simplify timing and make the output purely combinational logic rather than registered. The asynchronous reset is still used for the state register only, and the output reacts immediately to input and current state.
+
+This restructuring improves modularity: 
+- Next state logic is isolated in a combinational function.
+- State register update is straightforward.
+- Output logic is combinational and clearly separated from sequential logic, making it easier to analyze and potentially faster to synthesize.
+
+The pulse detection conditions remain the same: the pulse is detected when transitioning from WAIT_FOR_SECOND_ZERO to WAIT_FOR_FIRST_ZERO on data_in==0. But now the output is purely combinational and will be asserted at that cycle without requiring a registered output.
+
+Overall, this structure is a common FSM style in Verilog with separated combinational and sequential parts, improving readability and synthesis friendliness, while functionally equivalent to the original.

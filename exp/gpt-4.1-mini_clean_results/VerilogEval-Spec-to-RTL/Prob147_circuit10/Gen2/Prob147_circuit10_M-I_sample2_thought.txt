@@ -1,0 +1,16 @@
+To correct the design, separate the combinational next_state logic from the sequential state update to follow the standard finite state machine (FSM) pattern. 
+
+- Compute next_state combinationally from current state and inputs (a, b).
+- On the positive clock edge, update the flip-flop state with next_state.
+- The output q reflects next_state combinationally (matching the waveforms).
+- The output state exposes the registered state.
+
+This separation ensures correct timing and behavior: state updates only on clk edge; next_state is always combinational.
+
+From the waveform, next_state logic is:
+- If state=0, next_state = (~a & b)
+- Else if state=1, next_state = ~(a & ~b)
+
+Implement these as combinational logic and store in a wire. Use non-blocking assignment to update the state register on posedge clk.
+
+This matches the waveform correctly and avoids the previous design's mixing of sequential and combinational logic in the same always block.

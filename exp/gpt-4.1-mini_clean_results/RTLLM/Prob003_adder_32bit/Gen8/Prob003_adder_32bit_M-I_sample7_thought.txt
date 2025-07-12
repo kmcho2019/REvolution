@@ -1,0 +1,18 @@
+To improve the original 16-bit CLA block and thus the overall 32-bit adder's PPA metrics, I will implement a hierarchical carry-lookahead structure inside the 16-bit CLA.
+
+Instead of computing carries sequentially (ripple style), I will:
+
+1. Divide the 16-bit inputs into four 4-bit groups.
+2. Compute bit-level propagate (P) and generate (G) signals for each bit.
+3. Compute 4-bit group propagate (PG) and group generate (GG) signals.
+4. Use the group PG and GG to compute carries into each 4-bit group in parallel.
+5. Compute carries inside each 4-bit group using the same CLA logic.
+6. Finally compute the sum bits from the carries.
+
+This hierarchical approach reduces the carry chain length from 16 stages to 4 groups of 4 bits, reducing delay and dynamic power due to less switching.
+
+The top 32-bit module remains unchanged, instantiating two 16-bit CLA modules.
+
+I will keep the bit range [16:1] and [32:1] as in the problem.
+
+This design more closely aligns with canonical CLA implementations, balancing complexity, speed, and area.

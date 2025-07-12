@@ -1,0 +1,14 @@
+Instead of using traditional state encoding, I'll implement the FSM using a circular shift register where only one bit is active at any time (one-hot like but with shifting). This approach offers:
+
+1. Simplified transition logic - state transitions become simple shift operations
+2. Natural glitch-free outputs since each state has its own dedicated register
+3. Efficient power characteristics as only adjacent bits toggle during state changes
+4. Easy scalability to more states without increasing combinational logic complexity
+
+The implementation uses a 4-bit shift register where:
+- A = 0001
+- B = 0010
+- C = 0100
+- D = 1000
+
+Transitions are implemented by either holding the current bit (for self-loops) or shifting left (with wrap-around for circular behavior). The output is directly taken from the MSB (state D).

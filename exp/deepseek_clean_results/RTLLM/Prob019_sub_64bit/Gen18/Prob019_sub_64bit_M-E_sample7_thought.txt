@@ -1,0 +1,22 @@
+Novel Architectural Idea: Hybrid Carry-Select with Early Overflow Prediction
+
+1. **Parallel Subtraction with Segmentation**:
+   - Divide the 64-bit operation into 8 segments of 8 bits each
+   - Each segment computes both possible results (with carry-in 0 and 1)
+   - Final carry chain only needs to propagate through 8 segments instead of 64 bits
+
+2. **Early Overflow Prediction**:
+   - Predict overflow by examining only the MSB segment's behavior
+   - Compare sign bits of A and B with predicted result sign
+   - Eliminates need to wait for full 64-bit subtraction completion
+
+3. **Optimized Carry Propagation**:
+   - Each 8-bit segment uses carry-lookahead internally
+   - Segment selection uses multiplexers driven by previous segment's carry
+   - Combines benefits of carry-select and carry-lookahead techniques
+
+Key Advantages:
+- Reduced critical path through segmented approach
+- Early overflow detection improves timing
+- Balanced power/area tradeoff
+- Scalable architecture (can adjust segment size)

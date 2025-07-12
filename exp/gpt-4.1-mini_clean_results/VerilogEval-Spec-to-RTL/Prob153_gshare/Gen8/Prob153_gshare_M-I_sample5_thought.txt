@@ -1,0 +1,22 @@
+To improve correctness and clarify timing, explicitly separate the combinational read of PHT for prediction from the synchronous update of PHT and global history at clock edge, ensuring prediction always reads the PHT state before training updates take effect.
+
+Prioritize training update when both training misprediction and prediction valid are asserted: update global history to train_history (recovery) first, else update with predicted bit.
+
+Maintain a single global speculative history register `ghr_spec` updated only on clock edge.
+
+Implement the saturating counter update such that:
+
+- On taken=1, increment saturating counter saturating at ST (11)
+- On taken=0, decrement saturating counter saturating at SN (00)
+
+This is done by simple max/min increment/decrement.
+
+Use non-blocking assignments consistently.
+
+Avoid multiple drivers or reading/writing the same memory element in one clock domain cycle without proper sequencing.
+
+Keep PHT as a synchronous read memory or combinationally read as done, assuming Verilog simulation semantics; in synthesis, it can be implemented as SRAM block.
+
+By clarifying these rules, we ensure correct prediction and training coexistence with correct global history recovery on mispredictions and accurate PHT updates.
+
+This approach matches the problem specification, is clear, and avoids subtle race conditions.

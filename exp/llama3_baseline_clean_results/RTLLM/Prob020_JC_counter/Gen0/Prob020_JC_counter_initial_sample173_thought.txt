@@ -1,0 +1,7 @@
+The Johnson counter, also known as a torsional ring counter, is a type of shift register that generates a sequence of binary numbers. For the 64-bit Johnson counter implementation, we will use the following logic:
+- On every rising edge of the clock signal or the falling edge of the reset signal, update the counter value.
+- If the reset signal is low, set the counter value to 0.
+- Otherwise, check the least significant bit (Q[0]) of the current counter value.
+  - If Q[0] is 0, increment the counter by shifting the current value (Q[63:1]) to the right and appending a 1 at the most significant bit position.
+  - If Q[0] is 1, decrement the counter by shifting the current value (Q[63:1]) to the right and appending a 0 at the most significant bit position.
+We will use Verilog's always block with an if-else statement to implement this logic. The always block will be triggered on the rising edge of the clock signal and the falling edge of the reset signal.

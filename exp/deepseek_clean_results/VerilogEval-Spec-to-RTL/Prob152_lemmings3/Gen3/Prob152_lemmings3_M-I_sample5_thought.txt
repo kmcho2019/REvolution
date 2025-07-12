@@ -1,0 +1,23 @@
+To optimize the given solution for better PPA (Power, Performance, Area) metrics, I'll implement the following improvements:
+
+1. State Encoding Optimization:
+   - Use one-hot encoding for the 3 main states (WALK, FALL, DIG) to simplify output logic and potentially reduce area
+   - Keep direction as a separate bit since it's orthogonal to the main states
+
+2. Clock Gating:
+   - Implement clock gating for the direction register to reduce power consumption
+   - Only update direction when in WALK state and there's an actual direction change
+
+3. Output Logic Simplification:
+   - Make outputs directly dependent on state bits for minimal logic
+   - Use continuous assignments for outputs to avoid unnecessary registers
+
+4. Transition Logic Optimization:
+   - Reorder conditions to check the most likely cases first (WALK state)
+   - Combine related conditions to reduce logic depth
+
+5. Power Optimization:
+   - Minimize switching activity by only updating state/direction when necessary
+   - Use qualified clock enables for sequential elements
+
+These changes should improve timing (reduce WNS/TNS), reduce power consumption, and potentially decrease area while maintaining correct functionality.

@@ -1,0 +1,12 @@
+Fuse strengths from both examples for a superior design:
+
+- Use a synchronous active-low reset for reliable initialization.
+- Implement an enable signal that activates counting and toggling only when freq > 1, preventing output toggling at freq=0 or 1 and reducing unnecessary switching power.
+- Optimize toggle detection by comparing count == freq - 1, simplifying comparator logic and matching desired toggle intervals.
+- Keep count steady (do not reset) when disabled to avoid unnecessary register switching, reducing dynamic power.
+- Use non-blocking assignments correctly and maintain clean and clear logic structure.
+- Avoid complex 9-bit addition with carry out for toggle detection, reducing critical path delay.
+- Hold wave_out stable when disabled, ensuring a glitch-free output.
+- This fusion merges power-saving clock enable logic with a straightforward comparator toggle condition for better timing and power without increasing area.
+
+Overall, this design balances clarity, power efficiency, timing, and minimal area.

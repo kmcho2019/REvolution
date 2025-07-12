@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. The existing solution is correct but can be optimized for better power efficiency
+2. The ternary operator creates a balanced mux structure, but we can add power optimization by:
+   - Using explicit bitwise operations with gating
+   - Ensuring only one path is active at any time to reduce switching power
+3. The area is already minimal, so we'll maintain that
+4. Timing is already optimal (0 violations), so we'll preserve the critical path
+5. The new implementation will:
+   - Use AND-OR structure with explicit sel/~sel gating
+   - Keep outputs fully registered when sel changes to prevent glitches
+   - Maintain the same functionality but with potentially lower dynamic power

@@ -1,0 +1,9 @@
+Implement a 4-bit shift register with separate logic paths for shifting and counting, then select the next state based on enable signals. Specifically:
+- Use a 4-bit register q updated on clock's positive edge.
+- Calculate two intermediate values:
+  1. shift_result: Shift q left by one bit and shift in the input data at LSB (to have data as MSB first in the next cycle).
+  2. count_result: q decremented by one.
+- Use a 2-to-1 multiplexer controlled by a combined control signal that prioritizes shift_ena over count_ena, but with an explicit mux to decide next q.
+- Update q only when either shift_ena or count_ena is high; otherwise, hold current state.
+- This approach separates the data path computations, potentially improving clarity and allowing synthesis tools to optimize muxing differently.
+- No reset signal is used since the specification does not require it.

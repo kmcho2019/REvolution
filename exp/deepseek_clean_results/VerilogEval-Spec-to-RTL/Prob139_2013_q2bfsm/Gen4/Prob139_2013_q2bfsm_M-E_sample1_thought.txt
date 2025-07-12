@@ -1,0 +1,17 @@
+I'll implement a novel approach using a shift register for sequence detection and a timer for the y-input monitoring. Here's the key design concept:
+
+1. Use a 3-bit shift register to detect the '1-0-1' pattern on x
+2. Implement a 2-bit timer for the y-input monitoring phase
+3. Use a status register to track permanent output states
+4. Separate the design into three clear phases:
+   - Reset phase (output f pulse)
+   - Sequence detection phase (monitoring x)
+   - Decision phase (monitoring y with timeout)
+
+The state machine will be simpler with just 4 states:
+- IDLE: Reset state
+- PULSE_F: Output f pulse
+- MONITOR_X: Watch for 1-0-1 sequence
+- MONITOR_Y: Watch for y within 2 cycles
+
+The permanent outputs will be controlled by status flags set during the MONITOR_Y phase.

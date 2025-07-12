@@ -1,0 +1,15 @@
+To implement the TopModule, we can design a Moore-type finite state machine (FSM) that recognizes the specified sequences. The FSM will have states to track the number of consecutive 1s seen and to identify the specific patterns. We can use a combination of states to handle the discarding of bits after 5 consecutive 1s and to signal the beginning/end of a frame after exactly 6 consecutive 1s. Additionally, the FSM will have an error state to handle sequences of 7 or more consecutive 1s.
+
+The states can be defined as follows:
+- S0: Initial state or after seeing a 0
+- S1: After seeing 1
+- S2: After seeing 2 consecutive 1s
+- S3: After seeing 3 consecutive 1s
+- S4: After seeing 4 consecutive 1s
+- S5: After seeing 5 consecutive 1s
+- S6: After seeing 6 consecutive 1s (flag)
+- S7: After seeing 7 or more consecutive 1s (error)
+
+The outputs disc, flag, and err will be asserted based on the current state and the next input. When the FSM is in S6, flag will be asserted. When the FSM is in S5 and the next input is 0, disc will be asserted. When the FSM reaches S7, err will be asserted.
+
+The reset signal will be used to initialize the FSM to S0.

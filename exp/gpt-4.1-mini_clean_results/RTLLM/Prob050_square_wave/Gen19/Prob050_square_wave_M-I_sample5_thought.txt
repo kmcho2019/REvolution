@@ -1,0 +1,19 @@
+To optimize the original design for better performance, power, and area (PPA), we will focus on the following improvements:
+
+1. **Power**: Add a clock enable (ce) signal inside the always block to disable counting and toggling logic when freq=0. This prevents unnecessary toggling of flip-flops and reduces dynamic power without adding explicit clock gating circuitry, which can be complex and tool-dependent.
+
+2. **Timing**: Replace the combinational subtraction (freq-1) and equality check with a comparator that checks if count equals freq, but count increments only up to freq-1. This avoids subtract and comparator delays. We can do this by checking if count + 1 == freq, then toggle the wave_out and reset count at next cycle, or implement a carry condition. This reduces critical path delays in the combinational logic.
+
+3. **Area**: Simplify comparator logic by turning the toggle condition into a simple equality between count and freq and restructuring the counter to count from 0 to freq-1 with no subtraction. Using direct equality avoids the subtractor for (freq-1).
+
+4. **Reset**: Preserve synchronous active-high reset for clean initialization.
+
+5. **Code Clarity**: Use single always @(posedge clk) block with clear conditions and use non-blocking assignments.
+
+6. **State Holding**: When freq=0, hold count and wave_out stable by disabling increment and toggle.
+
+These changes aim to reduce combinational delay (improving timing), minimize switching activity (reducing power), and keep the design compact (improving area). The toggle condition is now `count == freq - 1` replaced by `count + 1 == freq` comparison to avoid the subtractor.
+
+Note: Since freq is 8-bit and can be zero, the toggle condition and counting are gated by freq!=0. When freq=0, the module holds its outputs stable.
+
+Below is the improved design implementing the above strategy.

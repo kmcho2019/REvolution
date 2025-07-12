@@ -1,0 +1,27 @@
+The original design uses a 10-bit binary counter loaded and decremented every clock cycle. To improve PPA, we focus on reducing critical path delay, dynamic power, and possibly area without changing functionality.
+
+Improvement strategy:
+
+1. **Performance (timing)**:  
+   - Avoid subtraction by one on every cycle by implementing the decrement as a simple ripple down-counter style using an adder/subtractor.  
+   - Since subtraction by one is simple, this is less critical, but rewriting the decrement logic with a simple binary decrementer is good practice.  
+
+2. **Power**:  
+   - Add clock gating to the counter register to freeze it when the counter is zero and load is not asserted, thus reducing unnecessary toggling.  
+   - This prevents the register from toggling when no state change occurs, saving dynamic power.  
+   - Implement clock gating via an enable signal derived from `load | (counter != 0)`.  
+
+3. **Area**:  
+   - Use a single clock gating cell (enable signal) rather than additional registers to minimize area overhead.  
+   - The gating logic is minimal and worth the power savings.
+
+4. **Coding style**:  
+   - Keep the counter logic inside a single sequential always block triggered by the gated clock enable.  
+   - Maintain continuous assignment for `tc` as (counter == 0).
+
+Summary:  
+Add clock enable logic derived from `load` and `counter!=0` to gate the counter register updates, preventing unnecessary state changes and improving power. The overall critical path is reduced since the register input changes less often. This yields a better power profile with marginal area and performance impact.
+
+Note: The one D flip-flop rule is interpreted as one 10-bit register. Clock gating does not add extra registers but uses an enable signal controlling the register clock. Synthesis tools will implement this properly.
+
+This small change should yield better power and potentially better timing without changing behavior.

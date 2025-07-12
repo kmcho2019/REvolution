@@ -1,0 +1,13 @@
+The original solution is functionally correct but can be optimized for better PPA (Power, Performance, Area) metrics:
+
+1. **Performance:** Already optimal with tns/wns = 0.0 due to simple XOR operations.
+
+2. **Power:** The ternary operator in out_always_comb is less power-efficient than a direct XOR operation. We should replace it with a simple XOR assignment.
+
+3. **Area:** The ternary operator implementation uses slightly more logic than necessary. Using direct XOR operations will minimize area.
+
+Improvement Strategy:
+- Keep out_assign as is (already optimal)
+- Replace ternary operator in out_always_comb with direct XOR
+- Keep sequential implementation of out_always_ff (necessary for the delayed output)
+- This maintains functionality while optimizing power and area

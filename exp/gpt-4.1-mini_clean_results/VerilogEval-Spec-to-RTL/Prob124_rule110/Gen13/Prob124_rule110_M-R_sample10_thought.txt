@@ -1,0 +1,9 @@
+Refactor by separating the state register update and the combinational next state calculation more explicitly. Instead of combining the load and next state update inside a single sequential always block, implement the next state logic purely combinationally using continuous assignments and then use a simple synchronous always block only to register the next state or load the input.
+
+To do this, create a combinational wire `next_state` that depends only on `q` and zero-padded boundaries. The `q` register updates synchronously with clock, either loading new data or capturing the computed next state.
+
+This approach keeps the same logic, but makes the flow of data clearer: inputs determine `next_state` combinationally, and `q` is the sole registered state updated each clock, controlled by load. This structure emphasizes pure combinational next state logic with minimal sequential logic, making the code modular and clear.
+
+Boundary conditions remain zero by padding, and the Rule 110 formula stays the same. The updated code uses explicit wire assignments, continuous assignment of the zero-extended vector, and a clean always block updating `q` on posedge `clk`.
+
+This refactor improves readability and separates combinational logic from sequential logic more distinctly.

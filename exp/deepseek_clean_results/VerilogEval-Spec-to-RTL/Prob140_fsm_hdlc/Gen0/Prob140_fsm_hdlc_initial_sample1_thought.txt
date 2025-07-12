@@ -1,0 +1,17 @@
+To implement the HDLC framing module, we'll create a Moore FSM with states representing the count of consecutive 1s. The FSM will:
+1. Start in an initial state (after reset) representing "previous input was 0"
+2. Transition between states based on current input and consecutive 1 count
+3. Detect sequences for disc, flag, and err conditions
+4. Output signals one cycle after detection
+
+The states will be:
+- S0: Initial state (0 consecutive 1s)
+- S1: 1 consecutive 1
+- S2: 2 consecutive 1s
+- S3: 3 consecutive 1s
+- S4: 4 consecutive 1s
+- S5: 5 consecutive 1s (next 1 would need discard)
+- S6: 6 consecutive 1s (flag condition)
+- S7: 7+ consecutive 1s (error condition)
+
+Outputs are registered to appear one cycle after detection.

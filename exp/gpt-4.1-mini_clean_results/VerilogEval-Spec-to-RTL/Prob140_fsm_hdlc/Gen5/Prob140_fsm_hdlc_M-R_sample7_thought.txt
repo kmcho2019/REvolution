@@ -1,0 +1,5 @@
+Refactor the FSM by implementing the state machine as a one-hot encoded state register, which can reduce combinational logic complexity and may improve timing. Use a separate combinational always block with a case statement to determine next state and output signals based on current one-hot states and input. The outputs are still registered to assert for one cycle following the detection.
+
+This approach clarifies state transitions using one-hot states rather than packed binary, and uses a case statement for next state logic, which is usually synthesis-friendly. Outputs are determined from the current state and inputs, then registered on the clock. The previous input register is removed by encoding the logic so that conditions depend only on the state and current input, since the state itself encodes how many consecutive ones have been seen.
+
+The reset initializes the FSM to the idle state (no previous 1s), simulating previous input zero. The outputs `disc`, `flag`, and `err` assert exactly one cycle after detecting their respective conditions, matching the Moore FSM style.

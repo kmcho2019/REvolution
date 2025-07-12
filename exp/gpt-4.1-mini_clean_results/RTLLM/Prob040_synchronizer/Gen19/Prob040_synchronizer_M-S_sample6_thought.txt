@@ -1,0 +1,5 @@
+Implement the multi-bit MUX-based synchronizer exactly as specified but simplify by removing the extra latch stage for the enable signal in clk_b domain and use a straightforward two flip-flop synchronizer for the enable signal crossing from clk_a to clk_b. Update data_reg and en_data_reg in clk_a domain with async reset, then pass en_data_reg through two flop synchronizers (en_clap_one and en_clap_two) in clk_b domain with async reset.
+
+On clk_b domain, use en_clap_two directly as enable to latch data_reg into dataout; when en_clap_two is low, retain the previous dataout. This maintains the required synchronization and data stability while reducing complexity by eliminating unnecessary enable latches and conditional clock enables.
+
+The design follows the exact reset, domain crossing, and update conditions as requested and keeps code clear and concise.

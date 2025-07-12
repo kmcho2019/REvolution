@@ -1,0 +1,10 @@
+To fuse the best ideas from both examples:
+
+- Use a clean two-state Moore FSM with clearly named states (COPY and INVERT).
+- Separate combinational next state logic from sequential state updates for clarity and easier optimization.
+- Implement output z as a registered Moore output updated synchronously on clock edge, dependent on state and input.
+- Maintain asynchronous active-high reset for immediate reset behavior as requested.
+- Combine the first example's direct output assignment in the clocked block (simplifies timing) with the second example's structured next state logic.
+- This fusion provides clean modularity, good timing, and easy maintainability.
+- The design outputs the input bit until first '1', then outputs inverted bits thereafter, starting from LSB and processing one bit per clock cycle.
+- The machine resets asynchronously to COPY state and output zero, then begins processing after reset deassertion.

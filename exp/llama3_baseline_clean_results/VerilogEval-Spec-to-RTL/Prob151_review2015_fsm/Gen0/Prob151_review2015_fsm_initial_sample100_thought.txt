@@ -1,0 +1,15 @@
+To implement the finite-state machine that controls the timer, we will design a state machine with the following states:
+- IDLE: searching for the start sequence (1101)
+- SHIFT: shifting in 4 more bits to determine the duration to delay
+- COUNT: waiting for the counters to finish counting
+- DONE: notifying the user and waiting for the user to acknowledge the timer
+
+The state machine will transition between these states based on the input signals. When the start sequence is detected, the state machine will transition from IDLE to SHIFT. After 4 clock cycles in SHIFT, it will transition to COUNT. When the counters finish counting (done_counting is high), it will transition to DONE. When the user acknowledges the timer (ack is high), it will transition back to IDLE.
+
+We will use a 4-state state machine with the following state encoding:
+- IDLE: 2'b00
+- SHIFT: 2'b01
+- COUNT: 2'b10
+- DONE: 2'b11
+
+We will also use a 4-bit shift register to detect the start sequence (1101).

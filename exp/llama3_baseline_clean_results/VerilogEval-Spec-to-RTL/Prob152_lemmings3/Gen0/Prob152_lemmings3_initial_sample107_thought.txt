@@ -1,0 +1,21 @@
+To solve this problem, we will design a Moore state machine with four states: walking_left, walking_right, falling, and digging. The state machine will be implemented using a case statement in Verilog. The next state logic will be determined based on the current state and the inputs. The output logic will also be determined based on the current state. We will use two variables, `state` and `next_state`, to store the current state and the next state, respectively. We will also use two variables, `walk_direction` and `prev_walk_direction`, to store the current walking direction and the previous walking direction, respectively.
+
+We will use the following states:
+- walking_left: The Lemming is walking to the left.
+- walking_right: The Lemming is walking to the right.
+- falling: The Lemming is falling.
+- digging: The Lemming is digging.
+
+The next state logic will be as follows:
+- If the current state is walking_left or walking_right, and the ground is not present (ground = 0), the next state will be falling.
+- If the current state is walking_left or walking_right, and the dig input is 1, and the ground is present (ground = 1), the next state will be digging.
+- If the current state is walking_left, and the bump_left input is 1, the next state will be walking_right.
+- If the current state is walking_right, and the bump_right input is 1, the next state will be walking_left.
+- If the current state is falling, and the ground is present (ground = 1), the next state will be walking_left or walking_right depending on the previous walking direction.
+- If the current state is digging, and the ground is not present (ground = 0), the next state will be falling.
+
+The output logic will be as follows:
+- If the current state is walking_left, walk_left will be 1 and walk_right will be 0.
+- If the current state is walking_right, walk_left will be 0 and walk_right will be 1.
+- If the current state is falling, aaah will be 1.
+- If the current state is digging, digging will be 1.

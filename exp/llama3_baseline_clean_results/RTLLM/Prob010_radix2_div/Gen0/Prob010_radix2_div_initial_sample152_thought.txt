@@ -1,0 +1,9 @@
+To implement the simplified radix-2 divider, we will create a module named `radix2_div` that accepts a dividend, divisor, and operation type (signed or unsigned) as inputs. The module will utilize a finite state machine to manage the division process, which involves iterative subtraction and shifting operations. The division process will be controlled by the `start_cnt` signal, and the result will be made available when the division is complete. We will use a 16-bit output to store both the quotient and the remainder.
+
+The implementation will involve the following steps:
+1. Save the inputs and initialize the shift register with the absolute value of the dividend shifted left by one bit when `opn_valid` is high and `res_valid` is low.
+2. Perform the division process when `start_cnt` is high, which involves:
+   - Checking if the counter `cnt` has reached 8.
+   - Computing the subtraction of the negated absolute value of the divisor from the shift register.
+   - Updating the shift register based on the subtraction result and the carry-out.
+3. Manage the `res_valid` signal based on the reset signal, the counter, and whether the result has been consumed.

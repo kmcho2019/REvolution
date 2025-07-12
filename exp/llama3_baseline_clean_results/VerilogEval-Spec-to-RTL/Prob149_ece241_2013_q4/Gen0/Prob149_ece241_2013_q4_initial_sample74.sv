@@ -1,0 +1,69 @@
+module TopModule(
+    input clk,
+    input reset,
+    input [2:0] s,
+    output fr2,
+    output fr1,
+    output fr0,
+    output dfr
+);
+
+reg [2:0] prev_s;
+reg fr2_reg, fr1_reg, fr0_reg, dfr_reg;
+
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        // Initialize state machine to state equivalent to low water level
+        fr2_reg <= 1'b1;
+        fr1_reg <= 1'b1;
+        fr0_reg <= 1'b1;
+        dfr_reg <= 1'b1;
+        prev_s <= 3'b000;
+    end else begin
+        // Determine nominal flow rate based on current sensor state
+        if (s == 3'b111) begin
+            // Above highest sensor, no flow
+            fr2_reg <= 1'b0;
+            fr1_reg <= 1'b0;
+            fr0_reg <= 1'b0;
+            dfr_reg <= 1'b0;
+        end else if (s == 3'b110) begin
+            // Between highest and middle sensors
+            fr2_reg <= 1'b0;
+            fr1_reg <= 1'b0;
+            fr0_reg <= 1'b1;
+            // Check if water level is rising
+            if (prev_s < s) begin
+                dfr_reg <= 1'b1;
+            end else begin
+                dfr_reg <= 1'b0;
+            end
+        end else if (s == 3'b100) begin
+            // Between middle and lowest sensors
+            fr2_reg <= 1'b0;
+            fr1_reg <= 1'b1;
+            fr0_reg <= 1'b1;
+            // Check if water level is rising
+            if (prev_s < s) begin
+                dfr_reg <= 1'b1;
+            end else begin
+                dfr_reg <= 1'b0;
+            end
+        end else begin
+            // Below lowest sensor, maximum flow
+            fr2_reg <= 1'b1;
+            fr1_reg <= 1'b1;
+            fr0_reg <= 1'b1;
+            dfr_reg <= 1'b1;
+        end
+        // Update previous sensor state
+        prev_s <= s;
+    end
+end
+
+assign fr2 = fr2_reg;
+assign fr1 = fr1_reg;
+assign fr0 = fr0_reg;
+assign dfr = dfr_reg;
+
+endmodule

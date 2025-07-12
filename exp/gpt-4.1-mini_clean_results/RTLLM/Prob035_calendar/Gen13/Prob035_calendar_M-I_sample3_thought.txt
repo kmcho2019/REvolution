@@ -1,0 +1,9 @@
+To optimize the design for better timing and power efficiency, split the counters into three separate always blocks, each triggered by the clock and reset. This distributes the combinational logic, shortening the critical path per counter and reducing logic depth. Each block only updates its corresponding register, minimizing switching and improving timing closure.
+
+- The seconds counter increments every clock cycle or resets.
+- The minutes counter increments only when seconds roll over from 59 to 0 or resets.
+- The hours counter increments only when both minutes and seconds roll over or resets.
+
+This approach enables better pipelining and reduces toggling on minutes and hours registers when no rollover occurs, lowering dynamic power. The outputs remain 6 bits for minutes and seconds, and 6 bits for hours (although 5 bits are sufficient for 0-23, we keep 6 bits per user requirement).
+
+This modular design eases debugging and scaling while improving PPA metrics without changing functional correctness.

@@ -1,0 +1,9 @@
+To correctly implement the 32-bit Galois LFSR:
+1. Use an always block for sequential logic triggered on posedge clk
+2. For reset, set q to 32'h1 synchronously
+3. For normal operation:
+   - The new MSB (q[31]) should be q[0] (LSB)
+   - For tap positions (31,21,1,0), XOR the current bit with q[0]
+   - All other bits simply shift right (q[i] <= q[i-1])
+4. This can be implemented more clearly using a generate loop to handle each bit position separately
+5. The taps are at positions 31, 21, 1, and 0 (0-based indexing)

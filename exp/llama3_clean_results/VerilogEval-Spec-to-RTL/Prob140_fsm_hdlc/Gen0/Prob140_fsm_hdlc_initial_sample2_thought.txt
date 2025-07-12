@@ -1,0 +1,16 @@
+To solve this problem, we need to design a Moore-type finite state machine (FSM) that recognizes the specified sequences. The FSM will have several states to track the number of consecutive 1s and the occurrence of the "flag" pattern. We will use a binary counter to keep track of the number of consecutive 1s.
+
+The states can be defined as follows:
+- IDLE: Initial state, expecting the first bit of the pattern.
+- ONE: One '1' has been received.
+- TWO: Two '1's have been received.
+- THREE: Three '1's have been received.
+- FOUR: Four '1's have been received.
+- FIVE: Five '1's have been received.
+- FLAG: The "flag" pattern has been detected.
+- ERR: An error has occurred (7 or more consecutive '1's).
+- DISCARD: A bit needs to be discarded.
+
+The FSM will transition between these states based on the current state and the input bit. The output signals will be asserted based on the current state.
+
+We will use Verilog to implement this FSM. We will define the states as enumeration values and use a case statement to handle the state transitions. The output signals will be assigned based on the current state.

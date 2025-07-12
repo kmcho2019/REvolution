@@ -1,0 +1,9 @@
+Fuse the modularity and parameterization from both examples with the simplest, clearest RTL style using the conditional (ternary) operator on a vector level for the 2-to-1 mux. This approach directly expresses the multiplexer intent in RTL, letting synthesis tools optimally map it to minimal-area and minimal-power mux cells or LUTs, while preserving zero additional logic depth for timing.
+
+- Parameterize the mux for scalability and reuse.
+- Use vector-wide ternary operator `out = sel ? b : a` for clean, concise logic, which typically synthesizes to the most efficient mux implementation.
+- Instantiate once with WIDTH=100 inside TopModule, maintaining clean hierarchy and modularity.
+- Avoid bitwise masking in RTL since it may introduce extra AND/OR gates compared to dedicated mux primitives, potentially increasing area and power.
+- This fusion yields the clearest code with minimal logic depth and typically best power and area results due to direct mux inference by synthesis.
+
+Overall, the design is clean, reusable, scalable, and likely to have optimal PPA in common synthesis tools, while being easy to read and maintain.

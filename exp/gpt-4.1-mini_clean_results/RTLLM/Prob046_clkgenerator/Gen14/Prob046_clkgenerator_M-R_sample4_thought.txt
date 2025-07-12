@@ -1,0 +1,15 @@
+To refactor the clock generator without using an always block and delays for toggling, we can implement a simple counter-based clock divider style logic inside an always block triggered by an input simulation time reference (like a free-running counter in a testbench). 
+
+However, since the original spec only has an output clk and no input clock, and the toggling is done purely by delays in initial/always blocks, an alternative approach is to use an `initial` block combined with a forever loop to toggle clk.
+
+To keep the same idea of toggling clk every half PERIOD, but using a different construct, I'll implement the toggling logic inside a single initial block with a forever loop and delay.
+
+This avoids multiple initial blocks and the always block, keeping it simple and still testbench-oriented.
+
+I will also remove the compile-time check for even PERIOD to align with the original requirement, and just rely on toggling every half period.
+
+The code will use a single initial block that initializes clk to 0 and then forever toggles it every half PERIOD.
+
+This approach is simple, clean, and functionally equivalent but structured differently.
+
+Additionally, I'll add comments to clarify the behavior.

@@ -1,0 +1,33 @@
+The original solution correctly captures the main idea but slightly mixes Mealy and Moore principles and can miss some conditions for disc and flag outputs due to saturating the state at 6 too early. 
+
+To strictly implement a Moore FSM where outputs depend solely on the state (no direct input dependency in outputs), and ensure disc and flag are asserted exactly one cycle after the pattern is detected, we can:
+
+- Define states from S0 to S6 representing counts of consecutive ones (0 to 6).
+- Add an explicit "ERROR" state to represent the 7-or-more consecutive ones condition.
+- On input=0, return to S0 from any state.
+- On input=1, increment state count up to S6.
+- From S6, input=1 transitions to ERROR.
+- Outputs (disc, flag, err) are tied solely to the current state:
+
+  - disc = 1 when in an explicit DISC state (i.e., after detecting five ones then zero),
+  - flag = 1 when in an explicit FLAG state (after six ones then zero),
+  - err = 1 when in ERROR state.
+
+- To generate a one-cycle output pulse (disc, flag), we add two transient states DISC and FLAG following S5->0 and S6->0 respectively:
+
+  - After seeing five consecutive ones then zero (pattern 0111110), next state is DISC (output disc=1),
+  - After seeing six consecutive ones then zero (pattern 01111110), next state is FLAG (output flag=1),
+  - After disc or flag output state, move back to S0.
+
+- The ERROR state stays until reset or input=0 returns to S0.
+
+This approach:
+
+- Cleanly separates output assertion states,
+- Is purely Moore with outputs only depending on state,
+- Outputs are asserted for exactly one clock cycle,
+- Err output asserted in ERROR state,
+- No need for extra output registers,
+- Reset sets state to S0.
+
+This makes the FSM straightforward, fully synchronous with Moore outputs, and resolves timing/functional issues with disc and flag outputs.

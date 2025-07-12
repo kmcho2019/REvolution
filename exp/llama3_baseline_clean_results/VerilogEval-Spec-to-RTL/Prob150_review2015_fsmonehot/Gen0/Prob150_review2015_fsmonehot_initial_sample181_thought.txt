@@ -1,0 +1,17 @@
+To implement the state machine, we first need to decode the current state from the one-hot encoding. Then, based on the current state and inputs, we can determine the next state. We will use combinational logic to implement the next-state logic and output logic.
+
+For the next-state logic, we will use the following equations:
+- S_next: current state is S and d = 0, or current state is S1 and d = 0, or current state is S110 and d = 0, or current state is Wait and ack = 1
+- S1_next: current state is S and d = 1
+- S11_next: current state is S1 and d = 1
+- B0_next: current state is S110 and d = 1
+- B1_next: current state is B0
+- B2_next: current state is B1
+- B3_next: current state is B2
+- Count_next: current state is B3 or current state is Count and done_counting = 0
+- Wait_next: current state is Count and done_counting = 1
+
+For the output logic:
+- done: current state is Wait
+- counting: current state is Count
+- shift_ena: current state is B0, B1, B2, or B3

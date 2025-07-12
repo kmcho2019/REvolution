@@ -1,0 +1,22 @@
+Improvement Strategy:
+To improve timing and reduce the longest carry chains in the addition stages, we will rebalance the partial product additions into a deeper, more balanced pipeline. Instead of summing three partial products at once in two pipeline stages and two in the third, we will implement a 5-stage pipeline with pairwise 2-input additions to create a balanced binary adder tree.
+
+Key changes:
+1. Extend mul_en_pipe to 5 stages to track pipeline validity accordingly.
+2. Sample inputs as before.
+3. Generate all 8 partial products combinationally (as 16-bit wires).
+4. Stage 1: sum partial_products[0] + partial_products[1] (2 operands)
+5. Stage 2: sum partial_products[2] + partial_products[3] (2 operands)
+6. Stage 3: sum partial_products[4] + partial_products[5] (2 operands)
+7. Stage 4: sum partial_products[6] + partial_products[7] (2 operands)
+8. Stage 5: sum all results from Stages 1-4 (four operands), done in two steps in the same cycle:
+   - sum stage1_result + stage2_result
+   - sum stage3_result + stage4_result
+   - then sum these two sums
+   We can do this with two 16-bit adders plus one final 16-bit adder, effectively making one pipeline stage with three adders.
+9. The output enable (mul_en_out) is derived from the fifth stage of mul_en_pipe.
+10. Registers update only when the corresponding enable bit is asserted to reduce switching.
+11. Output product valid only when mul_en_out is asserted, otherwise 0.
+12. This approach reduces each adder's operand count to 2, minimizing carry propagation delay.
+13. Latency increases to 5 cycles, but throughput remains 1 result per cycle after pipeline fill.
+14. Additional pipeline stage helps timing, with only slightly more registers.

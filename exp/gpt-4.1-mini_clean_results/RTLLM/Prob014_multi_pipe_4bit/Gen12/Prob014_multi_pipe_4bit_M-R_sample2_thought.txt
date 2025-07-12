@@ -1,0 +1,9 @@
+Refactor the pipeline multiplier by using arrays for partial products and registers to hold intermediate sums, simplifying the generation and addition of partial products in a for-generate loop. 
+
+- Extend the multiplicand by zero-padding at the MSB side.
+- Use a generate loop to create all partial products conditionally based on multiplier bits.
+- Implement the first pipeline stage as registers to store partial products.
+- Sum partial products in a loop to form intermediate sums stored in the second pipeline stage registers.
+- Finally, combine intermediate sums to produce the output product.
+- Use synchronous reset and clock-driven registers only, avoiding combinational assignment in always blocks.
+- This approach is more scalable and cleaner, keeping two pipeline stages while leveraging arrays and loops for concise partial product and sum handling.

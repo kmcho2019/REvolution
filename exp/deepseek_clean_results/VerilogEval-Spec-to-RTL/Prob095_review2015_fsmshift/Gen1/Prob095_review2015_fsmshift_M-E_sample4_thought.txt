@@ -1,0 +1,6 @@
+An alternative approach is to use a simple counter-based design instead of a state machine. The counter will:
+1. Initialize to 0 on reset
+2. Count up to 3 (4 cycles total) when reset is released
+3. Stop counting and hold shift_ena low after reaching the count
+
+This approach is more compact than a state machine and achieves the same functionality with fewer states. The shift_ena is simply the logical NOR of the counter's most significant bit and the reset signal, ensuring it stays high for exactly 4 cycles after reset is released.

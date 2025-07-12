@@ -1,0 +1,39 @@
+Analyze the Karnaugh map to derive the logic function.
+
+Given the K-map:
+
+      a
+  bc  0  1
+  00  0  1
+  01  1  1
+  11  1  1
+  10  1  1
+
+Interpretation:
+- Rows: bc = 00, 01, 11, 10 (in Gray code order)
+- Columns: a = 0, 1
+
+List all minterms with output 1:
+
+- (a=0, b=0, c=1) : bc=01, a=0 => minterm 0 0 1 = b' c
+- (a=0, b=1, c=0) : bc=10, a=0 => minterm 0 1 0 = b c'
+- (a=0, b=1, c=1) : bc=11, a=0 => minterm 0 1 1 = b c
+- (a=1, b=0, c=0) : bc=00, a=1 => minterm 1 0 0 = a b' c'
+- (a=1, b=0, c=1) : bc=01, a=1 => minterm 1 0 1 = a b' c
+- (a=1, b=1, c=0) : bc=10, a=1 => minterm 1 1 0 = a b c'
+- (a=1, b=1, c=1) : bc=11, a=1 => minterm 1 1 1 = a b c
+
+Simplify:
+
+- For a=0:
+  Output is 1 when bc != 00, i.e., when bc is 01,10,11
+- For a=1:
+  Output is always 1, except for bc=00 a=0 case where output=0
+
+So, output = a + (b OR c)
+
+Expressed as: out = a | b | c
+
+Hence, the output is high if any of a,b, or c is high.
+
+Implement this simple OR logic in the module.

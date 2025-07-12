@@ -1,0 +1,9 @@
+Fuse the structural clarity, correctness, and power-aware defaulting of Example 1 with the minimal and clear arithmetic/logic operations of Example 2. Use an always_comb block (always @(*) in Verilog) to ensure synthesis compatibility and clean combinational logic. 
+
+Compute carry and overflow only for arithmetic operations to avoid toggling on others, and default carry/overflow/flag to zero for simplicity and better power. The flag is set only for SLT and SLTU, zero otherwise, avoiding high-impedance outputs. 
+
+Use consistent signed casts only where needed (SLT signed comparison, SRA arithmetic shift). Use a single shamt wire from a[4:0] for all shift operations, which is simpler and consistent. Implement extended 33-bit addition/subtraction to detect carry. 
+
+Set zero and negative via continuous assignments to improve clarity and synthesis friendliness. Default all outputs at the start of always block to avoid inferred latches. For LUI, use {a[15:0],16'b0} as in Example 2, since it matches typical MIPS LUI usage (loads immediate into upper 16 bits).
+
+Keep the case statement clean and efficient, with concise logic for each opcode. This fusion maximizes clarity, power efficiency, and correctness while keeping code minimal and easily synthesizable.

@@ -1,0 +1,20 @@
+A novel approach is to implement the unsigned 16-bit multiplier using a finite state machine (FSM) that explicitly tracks the multiplication process in three states: IDLE, RUNNING, and DONE.
+
+The main idea is:
+- When 'start' is asserted, load the multiplicand and multiplier into internal registers and clear the product register.
+- In each RUNNING cycle, examine the LSB of the multiplier register: if it's 1, add the multiplicand (appropriately shifted) to the product.
+- Shift the multiplier register right by one bit each cycle and shift the multiplicand left by one bit (which aligns partial products).
+- Use a 5-bit counter to count up to 16 cycles for the bits of the multiplier.
+- Once all bits are processed, assert the done flag and transition to DONE state until 'start' is deasserted.
+- Reset behavior is synchronous active low.
+
+Benefits:
+- The multiplicand is shifted left every cycle instead of the multiplier shifted left and multiplicand shifted right. This can be more intuitive for partial products and accumulation.
+- The multiplier is shifted right to process its bits from LSB to MSB.
+- Use an FSM which cleanly separates control and data path, improving clarity.
+- Only one register shift per clock cycle per register, and add operation only when multiplier bit is '1'.
+- Done flag explicitly tied to FSM state, avoiding multiple counter comparisons.
+- State machine simplifies handling of start and done signals and avoids corner cases of counters at boundaries.
+- Product accumulation uses a 32-bit register added to partial shifted multiplicand, thus following classical shift-and-add multiplication.
+
+This solution is clearly different in control flow from the original approach, and the code will reflect FSM control with explicit states.

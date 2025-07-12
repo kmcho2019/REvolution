@@ -1,0 +1,10 @@
+To improve the original design's power and timing without adding complexity or extra flip-flops, introduce an enable signal for the counter update. The counter only updates (loads new data or decrements) when necessary: either when load=1 or when counter ≠ 0. This gating reduces unnecessary toggling, lowering dynamic power.
+
+Also, rewrite the decrement logic using a simple ripple decrementer style expression, minimizing combinational subtraction complexity. This can slightly improve timing by reducing critical path delay.
+
+The updated design still uses a single always @(posedge clk) block for sequential logic and one register (the counter). The terminal count signal asserts when the counter hits zero, and the counter holds at zero until loaded again, maintaining functional correctness.
+
+Overall, the changes optimize the design by:
+- Adding a counter_enable to gate counter updates, reducing switching power.
+- Simplifying combinational decrement logic.
+- Maintaining a single register and always block for synthesis simplicity.

@@ -1,0 +1,5 @@
+Refactor the design by replacing the combinational always block with purely combinational assign statements. For each next_state bit, we directly OR contributions from all current states that can transition to it, depending on the input. This eliminates the loop and case construct, making logic explicit and potentially easier for synthesis tools to optimize for timing and area.
+
+Outputs remain as simple bitwise checks.
+
+This approach yields fully combinational continuous assignments, clearer data flow, and may reduce logic levels by avoiding iterative OR accumulation inside always blocks.

@@ -1,0 +1,10 @@
+Novel approach using a two-stage history register with rollback capability:
+1. Maintain two 32-bit registers: current_history and shadow_history
+2. On prediction (predict_valid), update current_history by shifting in predict_taken
+3. On misprediction (train_mispredicted), reconstruct correct history by:
+   - Using shadow_history which stores the pre-prediction state
+   - Concatenating with actual train_taken
+4. Shadow_history always tracks the state before any prediction update
+5. This eliminates need for circular buffers while maintaining single-cycle rollback
+6. Reset clears both registers
+7. Output always reflects current_history

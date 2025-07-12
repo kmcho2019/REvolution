@@ -1,0 +1,9 @@
+To implement the next-state signals Y1 and Y3 corresponding to y[0] and y[2] is not required as per the state machine given. However, we need to implement the next-state signals Y1 and Y3 corresponding to signals y[1] (state B) and y[3] (state D). 
+First, let's understand the state transitions for states B and D. 
+For state B (y[1]), it can be set to 1 when the current state is A and the input w is 1. 
+For state D (y[3]), it can be set to 1 when the current state is B and the input w is 1, or when the current state is C and the input w is 1, or when the current state is E and the input w is 1, or when the current state is D and the input w is 0.
+Next, we need to express these transitions in terms of the current states and the input w. 
+The current state A is represented by y[0], B by y[1], C by y[2], D by y[3], E by y[4], and F by y[5].
+We can write the logic equations by inspection using the one-hot encoding. 
+Y1 (next state of B) = y[0] & w 
+Y3 (next state of D) = (y[1] & w) | (y[2] & w) | (y[4] & w) | (y[3] & ~w)

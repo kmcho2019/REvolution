@@ -1,0 +1,7 @@
+The current solution uses manual bitwise XOR and AND operations to increment the 4-bit counter, mimicking ripple carry addition. While functionally correct, this approach can create a longer carry chain limiting timing, and may consume slightly more power and area than necessary.
+
+To optimize for better PPA, replace the manual bitwise increment logic with a simple "q <= q + 1;" statement. This allows synthesis tools to infer optimized carry-chain adders commonly available in FPGA and ASIC architectures, improving timing and reducing area and power.
+
+Also, keep the synchronous active-high reset and positive-edge clocking as required.
+
+No additional clock gating or enable signals are introduced since the problem specification does not include them, but such enhancements could further reduce power in real designs.

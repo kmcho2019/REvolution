@@ -1,0 +1,23 @@
+A more systematic approach would be to first decode the current state, then implement the next-state logic for y[1] based on both the current state and input w. We can use a case statement to handle each state explicitly, making the logic more readable and maintainable. The key insight is that y[1] changes only in specific state transitions, and we can directly map these transitions using the state encoding.
+
+State encoding:
+A: 000 (y[2:0])
+B: 001
+C: 010
+D: 011
+E: 100
+F: 101
+
+For y[1] next state:
+1. It becomes 1 when:
+   - Transitioning from B to C (w=0)
+   - Transitioning from C to D (w=1)
+   - Transitioning from E to D (w=1)
+   - Transitioning from F to C (w=0)
+2. It becomes 0 when:
+   - Transitioning from D to A (w=1)
+   - Transitioning from D to F (w=0)
+   - Transitioning from C to E (w=0)
+3. It stays the same in all other transitions
+
+This approach makes the state transitions explicit and easier to verify.

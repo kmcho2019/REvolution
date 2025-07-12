@@ -1,0 +1,7 @@
+Use a single FSM with these states: SEARCH, SHIFT, COUNT, DONE. 
+Continuously shift serial input data into a 4-bit shift register every clock cycle, regardless of state, to detect the start pattern 1101. 
+When the pattern is detected in SEARCH state, transition to SHIFT state, asserting shift_ena for exactly 4 cycles using a shift counter. 
+After 4 cycles, transition to COUNT state, assert counting output, and wait until done_counting input is asserted. 
+Then move to DONE state, assert done output until ack input is received, then return to SEARCH state. 
+Implement synchronous reset to initialize FSM state and counters.
+This approach avoids missing overlapping patterns by continuously shifting in data every cycle. Outputs are controlled explicitly in each state.

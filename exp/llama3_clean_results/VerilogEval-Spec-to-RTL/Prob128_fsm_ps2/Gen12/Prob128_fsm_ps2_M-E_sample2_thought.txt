@@ -1,0 +1,5 @@
+A novel approach to detect message boundaries in a PS/2 mouse protocol byte stream is to utilize a counter-based state machine. The state machine will have three states: Idle, Byte1, Byte2, and Byte3. The machine starts in the Idle state and remains there until it encounters a byte with in[3] = 1, at which point it transitions to the Byte1 state. The machine then counts the number of bytes received until it reaches the third byte, at which point it asserts the 'done' signal and returns to the Idle state. This approach eliminates the need for a complex state encoding scheme and simplifies the state transition logic.
+
+The counter-based state machine can be implemented using a simple 2-bit counter that increments with each byte received. The counter is reset when the machine returns to the Idle state. The 'done' signal is asserted when the counter reaches its maximum value (i.e., 3).
+
+This approach offers several advantages, including reduced complexity, improved readability, and easier maintainability. The counter-based state machine can be easily extended to support other protocols with varying message lengths.

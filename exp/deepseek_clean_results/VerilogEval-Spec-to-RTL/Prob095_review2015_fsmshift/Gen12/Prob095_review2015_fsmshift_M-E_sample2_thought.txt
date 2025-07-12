@@ -1,0 +1,15 @@
+Novel approach using a shift register:
+1. Instead of a counter, use a 4-bit shift register initialized to 4'b1111
+2. On each clock cycle, shift in a 0 from the right
+3. shift_ena is simply the leftmost bit of the shift register
+4. Reset behavior:
+   - Synchronously load 4'b1111 into the shift register
+   - This naturally produces 4 cycles of shift_ena=1 as the 1's shift out
+5. After 4 cycles, the register becomes 4'b0000 and stays that way
+6. No need for explicit done signal - shift register state implicitly tracks completion
+
+Advantages:
+- More elegant implementation using shift register's natural behavior
+- Exactly matches the 4-cycle requirement (4 initial 1's)
+- No complex counting logic needed
+- Self-terminating after 4 cycles without additional control logic

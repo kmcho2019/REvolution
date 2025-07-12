@@ -1,0 +1,23 @@
+To optimize the given solution for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. **Performance Optimization**:
+   - The current implementation has balanced paths, but we can further reduce critical path by:
+     - Simplifying the S_next logic by separating the Wait_curr term
+     - Pre-computing common terms like (S_curr | S1_curr | S110_curr)
+
+2. **Power Optimization**:
+   - Reduce switching activity by:
+     - Minimizing the number of terms in next-state equations
+     - Using more direct state transitions where possible
+
+3. **Area Optimization**:
+   - Further minimize logic by:
+     - Combining related output signals where possible
+     - Eliminating redundant terms in next-state logic
+     - Using more efficient encoding for state transitions
+
+The key insights are:
+1. S_next can be split into two separate conditions for better clarity and potential optimization
+2. Count_next can be simplified by recognizing it's just a latch-like behavior
+3. Wait_next can be simplified similarly
+4. Output logic is already minimal but can be made more explicit

@@ -1,0 +1,26 @@
+Simplified Lemming State Machine Design:
+
+1. State Reduction:
+   - Combine WALK and DIG states since their behavior is similar (both can transition to FALL)
+   - Use direction flag to track walking direction
+   - Only need 3 states: WALK (includes digging), FALL, SPLAT
+
+2. Priority Handling:
+   - Fall has highest priority (ground=0)
+   - Then dig (if ground=1 and dig=1)
+   - Finally direction change (only if walking and not falling/digging)
+
+3. Fall Counter:
+   - Only increment during FALL state
+   - Reset when leaving FALL
+   - Splat if counter >20 when ground returns
+
+4. Output Logic:
+   - Simplify by deriving outputs directly from state and direction
+   - SPLAT state zeros all outputs
+
+Key simplifications:
+- Fewer states (3 vs 4)
+- Clearer priority implementation
+- More straightforward output logic
+- Maintains all specified functionality

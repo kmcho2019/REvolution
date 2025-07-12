@@ -1,0 +1,19 @@
+The primary issue is the high mismatch count on the 'pm' signal despite correct hour, minute, and second counters.
+
+The toggling of 'pm' currently occurs only when the hour wraps from 12 to 1 (hour_overflow). This is conceptually correct for a 12-hour clock; however, the toggling logic depends on the precise detection of this rollover. The current implementation computes the next hour and overflow based on incrementing the hour and checking if it exceeds 12, but the timing of when 'pm' toggles may be off relative to the seconds and minutes rollover detection.
+
+To fix this, the clock increment logic should be refactored to:
+
+1. Compute all next states in a clear combinational block using local variables before updating registers, avoiding any ambiguity or multiple references to registers within the always block.
+
+2. The next 'pm' value should be toggled precisely when the hour increments from 11 to 12, not when it wraps from 12 to 1, as 'pm' changes at the transition to 12, not after wrapping back to 1.
+
+3. Implement an explicit check for when hours increment from 11 to 12. For this, we decode the current hour BCD and detect this increment to toggle 'pm'.
+
+4. Use intermediate signals to represent increments of seconds, minutes, and hours to cleanly cascade increments.
+
+5. Ensure all updates happen simultaneously on the clock edge and with synchronous reset having top priority.
+
+6. Remove any inline reg declarations inside the always block; declare all local variables at the top of the always block for clarity.
+
+This approach will resolve the timing mismatch in 'pm' toggling and align it correctly with the hour increment from 11 to 12, thereby eliminating the 'pm' mismatches observed in simulation.

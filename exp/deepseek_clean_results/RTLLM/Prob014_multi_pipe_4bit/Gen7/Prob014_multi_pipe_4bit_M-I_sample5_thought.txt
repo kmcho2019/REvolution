@@ -1,0 +1,24 @@
+The original solution incorrectly implemented Booth's algorithm when a simple unsigned shift-and-add multiplier was required. Here's the correct implementation strategy:
+
+1. **Basic Shift-and-Add Approach**:
+   - For each bit in the multiplier (mul_b), generate a partial product by AND-ing the multiplicand (mul_a) with the multiplier bit
+   - Shift each partial product left by its bit position
+   - Accumulate all partial products to get the final result
+
+2. **Two-Stage Pipeline**:
+   - First stage: Generate all partial products in parallel
+   - Second stage: Sum the partial products with proper alignment
+
+3. **Register Optimization**:
+   - Use registers only for intermediate sums to minimize area
+   - Properly size all signals to avoid unnecessary bits
+
+4. **Reset Handling**:
+   - Synchronous reset for better timing
+   - Clear all registers consistently
+
+Key Improvements:
+- Correct implementation of unsigned multiplication
+- Proper pipelining with two stages
+- Efficient use of registers
+- Clear signal width management

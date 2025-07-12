@@ -1,0 +1,7 @@
+The main issue in the original code is that the FSM's transition for state S2 expects `data_in` to be 1 to move forward, while the third bit in the sequence "1001" is actually 0. This incorrect condition causes the FSM to detect the wrong sequence "1101" instead of "1001". 
+
+To fix this, update the S2 state to transition to S3 only if `data_in` is 0, reflecting the correct third bit of the sequence. 
+
+Additionally, ensure consistent naming for the reset input as `reset_n` (active low) to match the specification and avoid confusion. The rest of the FSM logic, including overlapping sequence detection in S4, output assertion, and asynchronous reset behavior, are correct and retained.
+
+This fix ensures the FSM correctly detects the 4-bit sequence "1001".

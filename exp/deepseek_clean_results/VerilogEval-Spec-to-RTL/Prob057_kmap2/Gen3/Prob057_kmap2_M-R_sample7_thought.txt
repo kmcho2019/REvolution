@@ -1,0 +1,27 @@
+1. First, let's properly analyze the Karnaugh map by identifying all minterms where output is 1:
+   - When cd=00: out=1 for ab=00,01,10 (but not 11)
+   - When cd=01: out=1 for ab=00,10
+   - When cd=11: out=1 for ab=01,10,11
+   - When cd=10: out=1 for ab=00,01
+
+2. We can derive the minimal expression by:
+   - Grouping the four corners (cd=00,ab=00; cd=00,ab=10; cd=10,ab=00; cd=10,ab=10) which gives ~d & ~b
+   - Adding the cd=00,ab=01 case with ~c & ~d & a & ~b
+   - Adding the cd=01,ab=00 case with ~c & d & ~a & ~b
+   - Adding the cd=01,ab=10 case with ~c & d & a & ~b
+   - Adding the cd=11,ab=01 case with c & d & ~a & b
+   - Adding the cd=11,ab=10 case with c & d & a & ~b
+   - Adding the cd=11,ab=11 case with c & d & a & b
+   - Adding the cd=10,ab=01 case with c & ~d & ~a & b
+
+3. After combining terms and simplifying, we get:
+   out = (~d & ~b) |                     // Corner grouping
+         (~c & ~d & a & ~b) |            // cd=00,ab=01
+         (~c & d & ~a & ~b) |            // cd=01,ab=00
+         (~c & d & a & ~b) |             // cd=01,ab=10
+         (c & d & ~a & b) |              // cd=11,ab=01
+         (c & d & a & ~b) |              // cd=11,ab=10
+         (c & d & a & b) |               // cd=11,ab=11
+         (c & ~d & ~a & b)               // cd=10,ab=01
+
+4. This covers all 1's in the K-map exactly without any overlaps with 0's.

@@ -1,0 +1,21 @@
+Novel Handshake Synchronizer Architecture:
+1. Instead of simple enable synchronization, implement a request/acknowledge handshake
+2. When data_en goes high, generate a pulse (req) in clk_a domain
+3. Synchronize req to clk_b domain using 2FF synchronizer
+4. When synchronized req is detected, capture data and generate ack
+5. Synchronize ack back to clk_a domain to complete handshake
+6. Only update output when valid synchronized data is available
+
+Advantages:
+- More robust synchronization with explicit handshake
+- Clear indication when data is safely transferred
+- Prevents data corruption during metastable periods
+- Better handles varying clock frequencies
+- Explicit flow control between domains
+
+Implementation Details:
+- Request generation in clk_a domain
+- Dual synchronization stages for req and ack
+- Data capture only after successful handshake
+- Output register updates only with valid data
+- Proper reset handling for both domains

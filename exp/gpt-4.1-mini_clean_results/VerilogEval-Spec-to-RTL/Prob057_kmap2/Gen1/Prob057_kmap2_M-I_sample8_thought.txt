@@ -1,0 +1,52 @@
+The original solution implements the function as a sum of 10 minterms, each a 4-input AND, ORed together. This causes a large OR gate and many gates overall, leading to poor area and power. To improve, we should simplify the boolean function by Karnaugh map grouping to reduce the number of product terms and factor common literals to share gates.
+
+From the Karnaugh map, we can find groups that lead to a simpler sum-of-products:
+
+- Group 1: c'd' (c=0,d=0) with ab = 00,01,10 (m0,m1,m2) → c'd'(a'b' + a'b + ab') = c'd'(a' + b')
+- Group 2: c'd (c=0,d=1) with ab=00,10 (m4,m6) → c'd(a'b' + ab') = c'd(a' + b')
+- Group 3: cd' (c=1,d=0) with ab=00,01 (m8,m9) → cd'(a'b' + a'b) = cd'a'
+- Group 4: cd (c=1,d=1) with ab=01,10,11 (m13,m14,m15) → cd(b' a + b a' + b a) = cd(b' a + b a' + b a)
+
+Simplify group 4:
+
+b' a + b a' + b a = a(b' + b) + b a' = a(1) + b a' = a + b a'
+
+The expression a + b a' = a + b a' = (a + b)(a + a') = (a + b)*1 = a + b.
+
+But careful: a + b a' is equivalent to a + b a' = a + b a' (which is simplified differently).
+
+Alternatively, write group 4 as cd (b' a + b a' + b a) = cd(a b' + a' b + a b) = cd(a + b)
+
+Checking minterms:
+
+- m13: a=0,b=1,c=1,d=1 → cd=1, ab=01 → included
+- m14: a=1,b=0,c=1,d=1 → cd=1, ab=10 → included
+- m15: a=1,b=1,c=1,d=1 → cd=1, ab=11 → included
+
+This matches cd (a + b).
+
+So final expression:
+
+F = c'd'(a' + b') + c'd(a' + b') + cd' a' + cd (a + b)
+
+Factor (a' + b') common in first two groups:
+
+F = (a' + b')(c'd' + c'd) + cd' a' + cd (a + b)
+
+Note c'd' + c'd = c' (d' + d) = c' (1) = c'
+
+Therefore,
+
+F = (a' + b') c' + cd' a' + cd (a + b)
+
+We can implement this with fewer gates:
+
+- term1 = c' & (a' + b')
+- term2 = c & d' & a'
+- term3 = c & d & (a + b)
+
+Finally, out = term1 + term2 + term3
+
+This reduces the minterms from 10 to 3 product terms with shared literals, improving area, power, and timing.
+
+We will implement this simplified expression.

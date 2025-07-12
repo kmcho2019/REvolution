@@ -1,0 +1,24 @@
+To simplify the FSM while maintaining functionality, I'll make these key changes:
+
+1. **State Reduction**: 
+   - Combine G_PERMANENT_HIGH and G_PERMANENT_LOW into a single FINAL state
+   - Use output registers to maintain g value permanently
+
+2. **Simpler Pattern Detection**:
+   - Use a 2-bit shift register instead of 3-bit
+   - Detect when previous x was 1 and current is 0 (first part of 101 pattern)
+   - Then wait for next 1 to complete pattern
+
+3. **Streamlined Timeout Logic**:
+   - Use a single bit counter (0-1) for the 2-cycle timeout
+   - Eliminate separate timeout_count register by using state duration
+
+4. **Output Control**:
+   - Generate f pulse directly in state transition
+   - Maintain g through simple state conditions
+
+Key simplifications:
+- Fewer states (5 → 4)
+- Smaller pattern detection shift register
+- Simpler timeout logic
+- Clearer output generation

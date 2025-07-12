@@ -1,0 +1,17 @@
+To optimize the FSM for better PPA metrics, I'll implement these improvements:
+
+1. **State Encoding Change**: Switch from binary to one-hot encoding to reduce switching activity and improve timing. One-hot typically has better performance for small FSMs (4 states here).
+
+2. **Output Logic Optimization**: Combine the output assignments into a single always block with case statement for better synthesis optimization.
+
+3. **Next-State Logic Simplification**: Restructure the next-state logic to minimize combinational path delays by:
+   - Prioritizing the most common transitions first
+   - Reducing nested conditionals
+   - Using parallel case synthesis directive
+
+4. **Register Outputs**: Consider registering outputs to improve timing at the cost of 1-cycle latency (though not implemented here as spec requires immediate outputs)
+
+These changes should help with:
+- Timing (reduce WNS violation)
+- Power (reduce switching activity)
+- Maintain similar area

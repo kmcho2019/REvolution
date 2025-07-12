@@ -1,0 +1,11 @@
+Refactored approach using a down counter instead of a shift register:
+1. Use a 2-bit counter to count down from 3 to 0 (4 cycles)
+2. Initialize counter to 3 when reset is asserted
+3. Decrement counter each clock cycle until it reaches 0
+4. shift_ena is asserted when counter is non-zero
+5. Benefits:
+   - More explicit counting of the 4 required cycles
+   - Clear relationship between counter value and shift_ena
+   - Easier to modify if cycle count needs to change
+   - Maintains synchronous reset behavior
+   - Uses simple arithmetic comparison for output

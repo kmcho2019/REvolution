@@ -1,0 +1,14 @@
+module TopModule (
+    input  [3:0] in,
+    output reg [1:0] pos
+);
+    always @(*) begin
+        casez (in)
+            4'b???1: pos = 2'd0;  // bit 0 has highest priority
+            4'b??10: pos = 2'd1;  // then bit 1
+            4'b?100: pos = 2'd2;  // then bit 2
+            4'b1000: pos = 2'd3;  // finally bit 3
+            default: pos = 2'd0;  // no bit set
+        endcase
+    end
+endmodule

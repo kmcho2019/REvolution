@@ -1,0 +1,5 @@
+To fix the subtle mismatch and improve performance, power, and area, we can replace the eight separate DFF instances with a single 8-bit register updated in one always block triggered by the positive edge of clk. This approach groups all flip-flops into one vector, minimizing module overhead and enabling better synthesis optimizations. 
+
+Since the feedback noted a possible initial condition or reset issue, it's best practice to include an asynchronous or synchronous reset to initialize the register, but since reset isn't specified, we can rely on the default power-on reset behavior or initial value if allowed by the environment.
+
+This solution ensures that on each rising edge of clk, the entire 8-bit input d is sampled into the register q simultaneously, exactly matching the functional requirement with improved synthesis and simulation behavior.

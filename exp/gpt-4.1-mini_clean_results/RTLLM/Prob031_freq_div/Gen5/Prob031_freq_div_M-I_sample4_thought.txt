@@ -1,0 +1,5 @@
+To optimize the original design for better PPA, I will combine the counters into one sequential always block to reduce redundant logic and minimize switching activity by controlling toggling only when needed. Instead of toggling output clocks on every counted event, I will generate enable signals to toggle outputs only when their respective count conditions are met, which can reduce unnecessary toggling inside the clock domain and optimize switching activity.
+
+Additionally, I will declare counter widths exactly as needed to minimize area, use localparams for count limits to improve readability and maintainability, and keep synchronous reset logic for clean behavior. By reducing the number of separate always blocks and grouping the counter logic, the synthesis tool may optimize the logic better and reduce power consumption from flip-flop toggling. This approach preserves the functional correctness, 50% duty cycle outputs, and accurate frequency division.
+
+This improvement balances RTL clarity with slight power and area gains by reducing redundant flip-flops and toggling, while maintaining a fully synchronous design.

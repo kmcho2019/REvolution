@@ -1,0 +1,13 @@
+The design requires a finite state machine (FSM) with the following states:
+1. IDLE: Waits for the 1101 pattern
+2. SHIFT: Shifts in 4 bits for timer duration
+3. COUNT: Waits for counters to finish
+4. DONE: Notifies user and waits for acknowledgment
+
+The FSM transitions:
+- IDLE -> SHIFT when 1101 pattern is detected
+- SHIFT -> COUNT after 4 clock cycles
+- COUNT -> DONE when done_counting is high
+- DONE -> IDLE when ack is received
+
+Pattern detection is done using a shift register. Shift_ena is asserted in SHIFT state, counting in COUNT state, and done in DONE state.

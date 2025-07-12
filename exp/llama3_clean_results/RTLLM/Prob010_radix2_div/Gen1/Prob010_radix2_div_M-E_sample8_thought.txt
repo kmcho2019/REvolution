@@ -1,0 +1,16 @@
+To implement the simplified radix-2 divider, I propose a novel architectural idea that utilizes a combination of shift registers and a subtraction unit to perform the division. The main components of the design are:
+
+1.  **Shift Registers:** Two 16-bit shift registers, SR1 and SR2, will be used to store the dividend and the intermediate results during the division process. SR1 will store the dividend shifted left by one bit, while SR2 will store the divisor.
+2.  **Subtraction Unit:** A subtraction unit will be used to perform the subtraction of the divisor from the dividend. The result of the subtraction will determine whether to shift the dividend to the left or to the right.
+3.  **Control Unit:** A control unit will be used to manage the division process. It will generate the control signals for the shift registers and the subtraction unit based on the current state of the division process.
+4.  **Signed/Unsigned Detection:** A detection unit will be used to determine whether the division is signed or unsigned. If the division is signed, the detection unit will convert the dividend and divisor to their absolute values and store the sign of the result.
+
+The division process will be performed in the following steps:
+
+1.  **Initialization:** The dividend and divisor will be loaded into the shift registers SR1 and SR2, respectively.
+2.  **Subtraction:** The subtraction unit will subtract the divisor from the dividend, and the result will be stored in SR1.
+3.  **Shifting:** If the result of the subtraction is negative, the dividend will be shifted to the right by one bit. Otherwise, the dividend will be shifted to the left by one bit.
+4.  **Repeat:** Steps 2 and 3 will be repeated until the dividend is less than the divisor.
+5.  **Result:** The final result will be stored in SR1, with the quotient in the lower 8 bits and the remainder in the upper 8 bits.
+
+This architectural idea takes advantage of the fact that the radix-2 division can be performed using a combination of shifts and subtractions. The use of shift registers and a subtraction unit simplifies the design and reduces the number of logic gates required.

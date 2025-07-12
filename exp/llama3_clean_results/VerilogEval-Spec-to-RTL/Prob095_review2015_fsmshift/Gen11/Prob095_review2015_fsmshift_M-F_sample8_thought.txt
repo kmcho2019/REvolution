@@ -1,0 +1,9 @@
+To fix the existing code, we need to address the issues identified in the analysis. The primary problem is that the counter is being initialized to a value (4) that exceeds its 2-bit width, resulting in it being initialized to 0 instead. This causes the `shift_ena` signal to never be asserted.
+
+To correct this, we should widen the counter to at least 3 bits to accommodate the value 4. However, since we only need to count down from 4, a 2-bit counter could theoretically work if we adjust how we represent the values. 
+
+But a more straightforward approach, considering the requirement, is to ensure the counter can hold the value 4, which means we need a counter that can represent at least 5 states (0 to 4). This requires at least 3 bits because 2^2 = 4, which can only represent 4 states (0 to 3).
+
+Additionally, we should ensure that the `shift_ena` signal is properly driven based on the counter's value. Since we want `shift_ena` to be asserted for exactly 4 clock cycles whenever the FSM is reset, we can simply assert `shift_ena` as long as the counter is greater than 0.
+
+Thus, the fix involves widening the counter to at least 3 bits and adjusting the logic to correctly initialize and decrement the counter, ensuring that `shift_ena` is asserted for 4 cycles after reset.

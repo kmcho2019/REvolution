@@ -1,0 +1,15 @@
+To implement a 64-bit Johnson counter with a novel architectural idea, instead of directly shifting the entire 64-bit register every clock cycle, we can treat the counter as an array of flip-flops updated in parallel, each flip-flop capturing the value from its neighbor, effectively mimicking the shift operation without a large concatenation.
+
+Specifically:
+- Maintain Q as a 64-bit register.
+- On reset, clear Q.
+- On each clock edge, update Q[i] with Q[i+1] for i = 0 to 62, and for the MSB (Q[63]), update it with the inverted value of Q[0].
+  
+This approach uses a for-loop to update each bit individually within a single always block. It represents the same functionality but emphasizes a bitwise "shift register" behavior.
+
+Advantages:
+- More explicit data movement between flip-flops, which some synthesis tools can optimize better.
+- Easier to modify individual bit updates for more complex variants.
+- Demonstrates a "bitwise" perspective rather than a "concatenation" approach, potentially enhancing code clarity for understanding data flow at the flip-flop level.
+
+The logic is still synchronous with async reset, and non-blocking assignments ensure proper flip-flop behavior. This implementation is functionally identical but architecturally distinct.

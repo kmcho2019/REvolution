@@ -1,0 +1,5 @@
+Refactor by separating the synchronous reset and data update logic: use a combinational next-state calculation for q_next based on reset and d inputs, and then update the register q on the negedge clk. This approach clearly distinguishes combinational logic for the next state from the sequential logic updating q, enhancing readability and easing potential modifications.
+
+Also, instead of a vector inequality comparator for clock enable, generate a bitwise OR of d XOR q to detect any bit difference efficiently and use it as clock enable to reduce toggling, which synthesizes better than direct vector comparison.
+
+Overall, the module keeps negative edge clocking, synchronous reset to 8'h34, and clock enable logic but is structurally cleaner by isolating next state logic combinationally.

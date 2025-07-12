@@ -1,0 +1,23 @@
+Simplified Lemming State Machine Design:
+
+1. Combined State and Direction:
+   - Use a single state register that encodes both behavior and direction
+   - Fewer states by combining direction with walking state
+
+2. Reduced State Transitions:
+   - Main states: WALK_LEFT, WALK_RIGHT, FALL, DIG, SPLATTER
+   - Eliminates separate direction tracking
+
+3. Straightforward Priority Logic:
+   - Fall has highest priority, then dig, then bump
+   - Simple if-else structure for clear priority handling
+
+4. Compact Fall Timer:
+   - Integrated directly into state transition logic
+   - Reset when not falling
+
+Key Simplifications:
+- Fewer total states (5 vs previous 4 states + 2 directions)
+- No enum type casting issues
+- More straightforward state transitions
+- Same functionality with less code

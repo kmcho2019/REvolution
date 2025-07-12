@@ -1,0 +1,10 @@
+To implement the finite state machine described, we need to track the state of the system through the reception of bytes. We start in an idle state, waiting for a byte where in[3] = 1. Once this condition is met, we assume the start of a message and begin accumulating the next bytes. Since we need to output the 24-bit message (3 bytes) whenever a packet is received, we will use a counter to keep track of the current byte position within the message.
+
+Here's a step-by-step breakdown:
+1. Start in an idle state, waiting for a byte where in[3] = 1.
+2. Upon finding such a byte, transition to a state where we start accumulating bytes.
+3. Accumulate the next two bytes to form a complete 3-byte message.
+4. After the third byte is received, signal done and output the 24-bit message.
+5. Reset the system upon receiving the reset signal.
+
+This process involves using a counter to keep track of the number of bytes received after finding the start byte and using a register to store the accumulated message.

@@ -1,0 +1,5 @@
+Refactor the multiplier by separating the control logic (counter and done flag) and data path clearly. Use a single `always` block for sequential logic including a shift count, product register, and registers for multiplicand and multiplier. Instead of FSM states, use the shift count as the implicit controller: count=0 means idle/wait start; count from 1 to 16 performs the shifting and accumulating; count=17 resets the done flag.
+
+Keep a single register `product` holding partial sums in upper 16 bits and current multiplier bits in lower 16 bits. On each cycle (if active), check the LSB of the multiplier part (product[0]) to conditionally add the multiplicand shifted into upper half before shifting right.
+
+Use synchronous reset and non-blocking assignments for clean sequencing. Drive the done signal combinationally from the shift count and a done register. This design keeps the same shift-and-add logic but removes explicit FSM, relying on the count register and done logic for control. This makes the code simpler to follow, while functionality and timing remain equivalent.

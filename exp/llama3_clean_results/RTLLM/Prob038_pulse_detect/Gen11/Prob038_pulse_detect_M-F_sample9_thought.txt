@@ -1,0 +1,7 @@
+To fully implement the pulse detection logic as per the problem statement, we need to modify the existing code to track the sequence of data_in over multiple cycles. The key idea is to use a finite state machine (FSM) with three states: idle, rising_edge, and falling_edge. 
+
+The idle state represents the initial state where we wait for data_in to go from 0 to 1. Once this transition is detected, we move to the rising_edge state. In this state, we check if data_in remains high for the next cycle. If it does, we move to the falling_edge state. 
+
+In the falling_edge state, we check if data_in goes from 1 to 0. If this transition is detected, we set data_out to 1, indicating the end of a pulse. Regardless of the transition in the falling_edge state, we return to the idle state to prepare for the next pulse detection.
+
+By implementing this FSM, we can accurately detect the 0 to 1 to 0 sequence in data_in within three cycles and set data_out accordingly. This approach ensures that we capture the complete pulse sequence as required by the problem statement.

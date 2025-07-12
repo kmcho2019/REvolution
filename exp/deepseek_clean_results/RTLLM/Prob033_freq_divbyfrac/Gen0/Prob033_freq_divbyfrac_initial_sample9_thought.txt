@@ -1,0 +1,8 @@
+To implement a fractional frequency divider (3.5x), we'll use a counter-based approach with phase manipulation:
+1. Use a 3-bit counter to count 7 clock cycles (since 3.5x means 2 output cycles per 7 input cycles)
+2. Generate two intermediate clocks:
+   - clk_div1: toggles every 3 or 4 cycles (alternating)
+   - clk_div2: same as clk_div1 but phase-shifted by half cycle
+3. OR these two clocks to create the final output with uniform period
+4. The duty cycle is maintained by the phase-shifted versions
+5. Reset synchronizes the counter and outputs

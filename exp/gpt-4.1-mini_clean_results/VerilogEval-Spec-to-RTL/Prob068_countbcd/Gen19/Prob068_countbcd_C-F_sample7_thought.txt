@@ -1,0 +1,10 @@
+To create a superior 4-digit BCD counter, I will combine the strengths of both examples as follows:
+
+- Use a single 16-bit register to hold all digits for compactness and clear output mapping.
+- Increment digits sequentially in the clocked always block using simple if statements for minimal logic depth per step, but avoid nested if-elses by sequentially updating digit registers within the clock edge. This reduces combinational complexity compared to deeply nested carry chains.
+- Generate enable signals combinationally from the current digit values, signaling when each upper digit should increment, i.e., when the lower digit(s) are 9.
+- Implement the BCD increment logic explicitly and locally within the sequential block without a separate function call, enabling synthesis tools to optimize and pipeline easily.
+- Employ non-blocking assignments for sequential logic to ensure correct timing and stable simulation.
+- This design balances timing, power, and area by reducing critical path length (no nested function calls), minimizing switching (increment upper digits only on carry), and using clean combinational enable signals.
+
+Synchronous active-high reset clears all digits to zero on posedge clk. The output q packs the four BCD digits (thousands to ones), and ena provides increment enable for digits 1 to 3 as requested.

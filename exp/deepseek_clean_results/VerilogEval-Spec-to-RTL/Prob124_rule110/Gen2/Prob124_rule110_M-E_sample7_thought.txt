@@ -1,0 +1,15 @@
+Here's a novel approach using a circular buffer with parallel computation:
+
+1. **Circular Boundary Handling**: Instead of treating boundaries as fixed zeros, we'll implement the 512 cells as a circular buffer where q[511]'s left is q[0] and q[0]'s right is q[511]. This creates interesting emergent patterns while maintaining the same computational power.
+
+2. **Parallel Computation**: We'll compute all next states simultaneously using a generate block, creating 512 parallel combinational logic units. Each unit handles its own Rule 110 calculation.
+
+3. **Double Buffering**: To ensure clean state transitions, we'll use a shadow register (next_q) that gets computed in parallel and then copied to the main register (q) on each clock edge.
+
+4. **Optimized Case Statement**: We'll use a more efficient truth table implementation that combines equivalent cases to reduce logic gates.
+
+This approach provides:
+- True parallel computation of all cells
+- Interesting circular boundary effects
+- Clean synchronous updates
+- Efficient logic implementation

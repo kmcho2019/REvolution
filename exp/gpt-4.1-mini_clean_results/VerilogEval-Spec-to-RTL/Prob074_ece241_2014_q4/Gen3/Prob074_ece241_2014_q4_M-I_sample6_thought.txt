@@ -1,0 +1,9 @@
+To guarantee flip-flops are initialized to zero before operation, implement an asynchronous active-high reset input internal to the module using a power-on-reset (POR) scheme. Since the problem does not provide an explicit reset input, generate a reset signal with an asynchronous initialization register set to 1 at declaration. This asynchronous reset will clear flip-flops immediately on power-up (or simulation start), ensuring zero state before any clock edges.
+
+The asynchronous reset is released synchronously on the first clock edge to allow normal operation afterward.
+
+This approach meets the problem's requirement of flip-flops being initialized to zero "before the machine begins" and avoids relying on a synchronous reset asserted only after the first clock edge.
+
+The logic for D inputs remains the same, and the combinational and sequential logic connections are unchanged.
+
+This modification ensures correct initialization timing and functional correctness without extra external inputs.

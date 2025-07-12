@@ -1,0 +1,14 @@
+The feedback highlights issues with continuous detection and state transitions. Here's the improved strategy:
+1. Maintain 6 states (S0-S5) for detecting "10011" sequence
+2. Fix state transitions to properly handle continuous detection:
+   - After complete match (S5), the FSM should continue detecting new sequences
+   - Allow overlapping sequences (e.g., "100110011" should produce two matches)
+3. Correct output logic to only assert MATCH when final '1' is detected in state S4
+4. Simplify state encoding while maintaining clear state transitions
+5. Ensure proper reset behavior
+
+Key improvements:
+- Correct state transitions from S5 to properly handle continuous input
+- Maintain Mealy output behavior (output depends on current state and input)
+- Clear separation of state transition and output logic
+- Proper handling of overlapping sequences

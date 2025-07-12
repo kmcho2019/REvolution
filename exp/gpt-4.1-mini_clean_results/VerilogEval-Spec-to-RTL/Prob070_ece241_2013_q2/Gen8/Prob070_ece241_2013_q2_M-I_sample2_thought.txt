@@ -1,0 +1,21 @@
+To correctly implement the minimal SOP and POS forms with the given don't-care conditions (inputs 3,8,11,12), I will:
+
+1. Translate the decimal values into 4-bit binary input assignments:
+   - Inputs mapped as num = {a,b,c,d} (a is MSB).
+2. Identify the minterms where output = 1: {2,7,15}.
+3. Identify minterms where output = 0: {0,1,4,5,6,9,10,13,14}.
+4. Inputs {3,8,11,12} are don't-cares.
+
+Using Karnaugh maps or boolean algebra with these sets and don't-cares, minimize the expressions:
+
+- Minimal SOP for out_sop is (b & c) | (a & b & c & d) | (~a & ~b & c & ~d)
+  - This covers 2 (0010): ~a & ~b & c & ~d
+  - 7 (0111): b & c & d (since b=1,c=1,d=1)
+  - 15 (1111): a & b & c & d
+
+- Minimal POS for out_pos derived from zero minterms with don't-cares considered:
+  The minimal POS expression is (a + b + ~c + d) & (a + ~b + c + d) & (~a + b + c + ~d)
+
+Thus, implement these minimized expressions directly for out_sop and out_pos.
+
+This solution properly accounts for don't-cares to minimize logic, satisfies the requirement for minimal SOP and POS, and does not rely on direct equality comparisons that ignore optimization.

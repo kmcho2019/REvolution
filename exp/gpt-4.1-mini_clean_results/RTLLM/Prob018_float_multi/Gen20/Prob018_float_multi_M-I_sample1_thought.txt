@@ -1,0 +1,18 @@
+To optimize the original fully combinational floating-point multiplier design for better power, performance, and area (PPA), we implement a multi-cycle sequential approach with a small FSM controlled by a 3-bit cycle counter. This breaks the critical path into multiple shorter stages, reducing combinational delay and potentially increasing max frequency. It also saves power by not having all logic active simultaneously and allows better resource sharing.
+
+Key improvements:
+- Sequential datapath spread over multiple clock cycles (3 to 4 cycles).
+- In the first cycle, extract input fields and special case flags.
+- In the second cycle, perform mantissa multiplication using a 24x24 multiplier.
+- In the third cycle, normalization, rounding, and exponent adjustment.
+- Final cycle assembles output and registers result.
+- Use pipeline registers between steps to reduce combinational logic per cycle.
+- Sticky bit calculation and rounding logic done in the normalization cycle to keep logic balanced.
+- The cycle counter controls the datapath flow and output register timing.
+- Reset clears internal registers and output.
+- This approach reduces maximum combinational delay per cycle, improving max frequency and potentially lowering power.
+- Control logic remains simple since it’s a fixed small FSM.
+
+The module uses internal registers for mantissas, exponents, signs, product, and rounding bits. It handles all IEEE-754 special cases, normalization, rounding, and output formatting across cycles.
+
+This design trades latency (multi-cycle) for improved PPA and better timing closure on typical FPGA or ASIC implementations.

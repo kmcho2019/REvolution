@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Critical Path Optimization:
+   - Replace variable shift with fixed shifts by pre-computing all possible shifted versions of the multiplier
+   - Use multiplexers to select the appropriate shifted value based on counter
+   - This reduces the combinational path by eliminating the variable shifter
+
+2. Power Optimization:
+   - Add clock gating for the product register when not in active operation
+   - Remove unnecessary toggling by making output assignment conditional
+
+3. Area Optimization:
+   - Reduce counter width to 4 bits with overflow detection
+   - Combine operand loading and first addition into same cycle
+   - Remove redundant registers where possible
+
+4. Performance Boost:
+   - Complete multiplication in exactly 16 cycles by optimizing control logic
+   - Early termination when multiplicand is zero
+   - Parallelize shift operations
+
+The improved design maintains the same functionality but with better PPA characteristics.

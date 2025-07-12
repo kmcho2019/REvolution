@@ -1,0 +1,31 @@
+The waveform shows a one-bit state machine with state held in a flip-flop and outputs depending on inputs a, b, and the state.
+
+Observing the waveform trends:
+
+- When b=0, state remains stable.
+- When b=1, state toggles if a=0; if a=1, state resets to 0.
+- The output q seems to reflect the XOR between a and current state when b=1, otherwise it follows state when b=0.
+
+In other words:
+
+- next_state = (b & ~a & ~state) | (b & ~a & state ? toggle : hold) or more simply, next_state toggles when b=1 and a=0; otherwise holds or resets.
+- When b=1 and a=1, state resets to 0.
+- When b=0, next_state = state (hold)
+
+Formulating:
+
+- if (b == 1)
+  - if (a == 1) next_state = 0;
+  - else next_state = ~state;
+- else next_state = state;
+
+Output q:
+
+- If b=1, q = a ^ state (XOR)
+- Else q = state
+
+This matches the waveform patterns: q toggles or resets according to inputs, state updates accordingly.
+
+This logic uses minimal combinational expressions and maps neatly to the observed behavior.
+
+The design will have a clocked process updating state and a combinational process generating q and next_state accordingly.

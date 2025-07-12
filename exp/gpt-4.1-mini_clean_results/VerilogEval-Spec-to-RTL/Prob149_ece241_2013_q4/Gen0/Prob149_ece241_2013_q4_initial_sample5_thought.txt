@@ -1,0 +1,44 @@
+Implement a synchronous FSM to track the previous sensor level and control the flow valves accordingly. At every clock cycle, read the current sensor state (s). Determine the current water level region (above s[2], between s[2] and s[1], between s[1] and s[0], below s[0]) based on which sensors are asserted.
+
+The "previous level" is the level before the last sensor change, so we need to detect when sensor input changes, and update the stored previous level only at sensor changes.
+
+Define levels (from low to high):
+0 = below s[0]
+1 = between s[1] and s[0]
+2 = between s[2] and s[1]
+3 = above s[2]
+
+- On reset, set previous level to 0 (lowest level) and output all flow outputs asserted (fr2, fr1, fr0, dfr).
+
+- At each sensor input change, update previous level to the old level before transition.
+
+- Outputs determined by current sensor pattern as per the table:
+  * above s[2] (s[2]=1): all fr signals deasserted
+  * between s[2] and s[1]: fr0 asserted
+  * between s[1] and s[0]: fr0, fr1 asserted
+  * below s[0]: fr0, fr1, fr2 asserted
+
+- If level rose (current level > previous level), dfr asserted; else dfr deasserted.
+
+Store previous level in a register; detect sensor input changes by comparing current s with previous s.
+
+The FSM needs to store previous water level (2 bits).
+
+Implement synchronous reset to initial state.
+
+This design uses registers for previous sensor input and previous level.
+
+The outputs are combinational based on current s and previous level stored in a register.
+
+Because s is 3 bits indicating sensors from low (s[0]) to high (s[2]), and the water level depends on which sensors are asserted, we decode s into current level:
+
+- If s == 3'b111 (all sensors asserted), level=3 (above s[2])
+- If s == 3'b011 (s[0]=1,s[1]=1,s[2]=0), level=2 (between s[2] and s[1])
+- If s == 3'b001 (only s[0] asserted), level=1 (between s[1] and s[0])
+- If s == 3'b000 (no sensors asserted), level=0 (below s[0])
+
+Any other patterns should not happen per problem statement but can be handled gracefully by mapping to the closest level.
+
+Use a small combinational function to decode level from s.
+
+Finally, implement all in a single module TopModule with specified ports.

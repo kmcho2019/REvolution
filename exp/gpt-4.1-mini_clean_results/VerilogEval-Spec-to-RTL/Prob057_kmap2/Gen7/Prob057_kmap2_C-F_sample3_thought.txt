@@ -1,0 +1,19 @@
+Both examples arrive at the same minimal SOP expression for the K-map function:
+
+out = (~d & ~a) | (~c & ~b) | (c & d & (a | b))
+
+This form is minimal, balanced in terms of logic depth, and shares common factors optimally. 
+
+From Example 1, the logic was carefully factored to show how common terms can be grouped and reduced to just three main product terms, reducing gates and levels.
+
+From Example 2, the implementation explicitly reused inverted signals (na, nb, nc, nd) and the shared sub-expression (a|b), improving clarity and enabling better synthesis optimizations. It also highlighted that the four inverted signals could be shared.
+
+To fuse these strengths:
+
+- Use the minimal expression from Example 1.
+- Declare only the necessary inverted signals (na, nb, nc, nd) once.
+- Declare intermediate signals for common sub-expressions like (a | b) and use them.
+- Implement the logic with clear continuous assignments and explicit wires for readability and optimization.
+- This improves power by reducing redundant inversions and logic reuse, area by fewer gates, and performance by minimal gate depth.
+
+Thus, I implement the minimal SOP with shared inverted signals and common OR terms, preserving readability and synthesis-friendly style.

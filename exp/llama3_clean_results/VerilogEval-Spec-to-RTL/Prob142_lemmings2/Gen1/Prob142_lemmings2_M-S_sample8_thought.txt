@@ -1,0 +1,30 @@
+To simplify the TopModule as a Moore state machine, we can define four states: 
+- Walking Left (WL): 2'b00
+- Walking Right (WR): 2'b01
+- Falling (F): 2'b10
+- Invalid: 2'b11 (not explicitly used but helps in default state handling)
+
+We will use two bits to represent the current state. 
+
+Initially, we start in the Walking Left (WL) state. 
+
+When we are bumped from the left while walking left, we transition to Walking Right (WR). 
+When we are bumped from the right while walking right, we transition to Walking Left (WL). 
+If both bump_left and bump_right are high at the same time, we will still switch directions.
+
+When ground becomes 0, we transition to Falling (F) regardless of the current direction. 
+While falling, we don't change direction, even if we are bumped. 
+When ground becomes 1 again, we transition back to our previous walking direction.
+
+If areset is asserted, we reset the state machine to Walking Left (WL) regardless of the current state.
+
+For simplification, we can maintain separate variables for the current state and the previous walking direction. 
+This will help us simplify the state machine's logic and avoid unnecessary conditional checks.
+
+We can use two registers: 
+- `state` to store the current state (WL, WR, F)
+- `direction` to store the previous walking direction (left or right)
+
+We will update `state` and `direction` based on the inputs and the current state.
+
+The outputs `walk_left`, `walk_right`, and `aaah` will be determined based on the `state` and `direction`.

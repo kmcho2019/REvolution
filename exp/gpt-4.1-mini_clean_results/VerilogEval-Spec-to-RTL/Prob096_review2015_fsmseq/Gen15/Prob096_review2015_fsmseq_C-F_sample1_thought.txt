@@ -1,0 +1,11 @@
+Fuse the best aspects of both designs by:
+- Using a minimal binary-encoded FSM (3 bits) with descriptive localparams for clarity.
+- Implementing the next-state logic combinationally with a clear case statement.
+- Removing the separate clock enable and instead integrate the freeze of the final detected state (S4) into the synchronous state update logic by making the next state stay at S4 indefinitely.
+- Maintain synchronous active-high reset.
+- Derive the output combinationally from the current state for glitch-free Moore output.
+- This approach avoids the extra clock enable logic (simpler, possibly faster), keeps the FSM minimal and readable, and ensures start_shifting is asserted and latched after detection.
+- Freezing the FSM by holding the final detected state reduces unnecessary toggling and thus saves power without extra clock gating logic.
+- The design balances clarity, low area (3-bit state), power efficiency (sticky final state), and good performance by minimizing combinational logic and critical path length.
+
+This fusion combines the simplicity and efficiency of Example 1’s clean next-state logic with Example 2’s well-structured binary encoding and output logic, but simplifies clock enable management by folding it into state transitions.

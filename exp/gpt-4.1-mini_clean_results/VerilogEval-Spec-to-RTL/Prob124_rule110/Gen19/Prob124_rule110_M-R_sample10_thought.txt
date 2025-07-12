@@ -1,0 +1,13 @@
+Refactor the design to separate state storage and next state calculation more explicitly by using a dedicated intermediate register for the current state, and computing next state combinationally with continuous assign outside a generate block. This avoids the generate loop by using vector operations and shifts to extract neighbors. 
+
+Specifically:
+- Store the current state in a 512-bit register `state`.
+- Create zero-padded neighbors by shifting the vector left and right, concatenating zeros.
+- Compute next state for all bits at once by applying the rule as a bitwise expression on the neighbors vectors.
+- Use a continuous assign for `next_state` calculation (combinational logic).
+- Update the `state` register on clk posedge with either loaded data or next state.
+- Drive the output `q` directly from `state`.
+  
+This vectorized approach eliminates generate loops and per-bit procedural logic, enhancing readability and potentially improving synthesis efficiency by leveraging wide vector operations. It keeps boundary conditions intact by zero-padding shifted versions of state.
+
+The core Rule 110 formula remains the same but now applied over entire vectors via bitwise operators, simplifying the code structure.

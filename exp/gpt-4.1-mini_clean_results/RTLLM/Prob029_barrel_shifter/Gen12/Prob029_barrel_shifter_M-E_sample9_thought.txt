@@ -1,0 +1,11 @@
+Implement the 8-bit barrel shifter using a single combinational logic block that computes the rotated output in one step based on the 3-bit control input interpreted as a rotation amount.
+
+Instead of staged mux arrays, calculate the rotation amount as a single integer from the control bits: rotation = ctrl[0]*1 + ctrl[1]*2 + ctrl[2]*4, which ranges from 0 to 7.
+
+Then, generate the output bits by selecting input bits shifted left by that rotation amount modulo 8, effectively performing a left rotation by the computed amount.
+
+This approach avoids multi-stage mux chains and intermediate signals, reducing logic levels and simplifying the design.
+
+The mux2X1 submodule is still implemented and used internally but combined into a tree that selects the rotation amount directly through a variable shift in combinational logic.
+
+This architecture is concise, synthesizable, and efficient for small widths, offering a cleaner single-block rotation mechanism compared to multi-stage cascades.

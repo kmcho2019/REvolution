@@ -1,0 +1,12 @@
+To implement a 64-bit subtractor with overflow checking, we can utilize the built-in subtraction operation in Verilog, and then detect overflow conditions by examining the sign bits of the inputs and the result. 
+The design will involve the following steps:
+1. Define the module and its ports according to the specifications.
+2. Perform the subtraction operation on the input operands A and B.
+3. Detect overflow conditions based on the signs of A, B, and the result.
+4. Set the overflow flag accordingly.
+
+The sign of a 64-bit signed integer can be determined by its most significant bit (MSB), which is bit 63 in this case. If the MSB is 1, the number is negative; otherwise, it is positive.
+
+We will use the following conditions to detect overflow:
+- Positive overflow: A is positive (A[63] == 0), B is negative (B[63] == 1), and the result is negative (result[63] == 1).
+- Negative overflow: A is negative (A[63] == 1), B is positive (B[63] == 0), and the result is positive (result[63] == 0).

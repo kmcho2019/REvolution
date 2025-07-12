@@ -1,0 +1,19 @@
+module TopModule (
+    input  clk,
+    input  reset,
+    output [4:0] q
+);
+
+reg [4:0] q_reg;
+
+always @(posedge clk) begin
+    if (reset) begin
+        q_reg <= 5'b00001; // reset to 1
+    end else begin
+        q_reg <= {q_reg[3] ^ q_reg[0], q_reg[4:1]}; // XOR bit 3 with LSB and shift right
+    end
+end
+
+assign q = q_reg;
+
+endmodule

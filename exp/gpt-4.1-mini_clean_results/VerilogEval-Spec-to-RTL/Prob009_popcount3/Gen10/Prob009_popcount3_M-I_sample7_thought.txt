@@ -1,0 +1,25 @@
+To further optimize the design for better PPA (power, performance, area), the goal is to reduce the number of logic gates and simplify the logic expressions if possible. The original implementation uses the exact minimal logic for 3-bit population count: 
+- out[0] as the parity (XOR of all bits)
+- out[1] as the majority function (at least two bits set).
+
+One minor improvement is to implement the out[1] (two-or-more ones) using a more compact logic form to reduce switching activity and potentially gate count. By leveraging the XOR output (parity) in the computation, we can rewrite out[1] more compactly.
+
+Specifically, note that out[1] can also be written as: 
+out[1] = (in[0] & in[1]) | ((in[0] ^ in[1]) & in[2])
+This reduces one AND gate compared to the original 3 pairwise ANDs and ORs.
+
+This expression computes:
+- If first two bits are both 1, then output 1
+- Else if exactly one of first two bits is 1 and the third bit is 1, output 1
+
+This covers all cases for having two or more 1 bits.
+
+This reduces gate count slightly and balances logic levels better, potentially improving power and area slightly with negligible impact on timing.
+
+The parity calculation remains unchanged, as it's already optimal as a three-input XOR.
+
+Thus, the improved design uses:
+- out[0] = parity (unchanged)
+- out[1] = (in[0] & in[1]) | ((in[0] ^ in[1]) & in[2])
+
+This reduces the total number of AND gates from 3 to 2 and OR gates from 1 to 1, which should have a small positive impact on power and area.

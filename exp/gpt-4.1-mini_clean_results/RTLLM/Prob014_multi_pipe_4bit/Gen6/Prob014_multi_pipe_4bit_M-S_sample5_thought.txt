@@ -1,0 +1,13 @@
+To simplify the 4-bit pipelined multiplier with two levels of registers, we will:
+
+- Avoid unnecessary zero extension of inputs.
+- Generate partial products directly by shifting the multiplicand based on each multiplier bit.
+- Use two pipeline stages: 
+  - Stage 1 registers hold sums of partial products for bits 0 and 1.
+  - Stage 2 registers hold sums of partial products for bits 2 and 3.
+- On the next clock cycle, add these two stage sums to produce the final product output.
+- This creates a two-level pipeline where the partial sums are registered first, then combined and registered again.
+- Synchronous reset clears all registers.
+- This approach preserves the pipeline structure, reduces complexity, and aligns with the problem requirements.
+
+The partial products are combinationally generated each cycle, then their sums are registered over two stages, with the output registered as the final product.

@@ -1,0 +1,23 @@
+From the waveform, analyze the output q based on inputs a, b, c, d. Observing when q = 1:
+
+- At 0ns to 15ns, a=0,b=0,c=0,d=0 => q=1
+- At 30ns, a=0,b=0,c=1,d=1 => q=1
+- At 40ns, a=0,b=1,c=0,d=1 => q=1
+- At 45ns, a=0,b=1,c=1,d=0 => q=1
+- At 60ns, a=1,b=0,c=0,d=1 => q=1
+- At 65ns, a=1,b=0,c=1,d=0 => q=1
+- At 75ns, a=1,b=1,c=0,d=0 => q=1
+- At 90ns, a=1,b=1,c=1,d=1 => q=1
+
+From these, it seems q=1 when the number of inputs set to 1 is even. Checking the counts:
+
+- 0 ones: q=1
+- 2 ones in (30ns,40ns,45ns,60ns,65ns,75ns): q=1
+- 4 ones (90ns): q=1
+- For 1 or 3 ones, q=0
+
+Thus, q implements the even parity of inputs a,b,c,d.
+
+So q = ~(a ^ b ^ c ^ d) or equivalently q = a ^ b ^ c ^ d inverted.
+
+Implement the combinational logic for even parity of inputs a,b,c,d.

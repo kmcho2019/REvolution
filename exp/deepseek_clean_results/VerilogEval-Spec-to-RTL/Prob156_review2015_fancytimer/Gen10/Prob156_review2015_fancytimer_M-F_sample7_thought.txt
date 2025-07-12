@@ -1,0 +1,20 @@
+The key fixes needed are:
+
+1. **Accurate Cycle Counting**: Implement precise (delay+1)*1000 cycle counting by:
+   - Initializing periods_left to delay_val (not delay_val+1) since we count down to 0
+   - Counting exactly 1000 cycles per period (0-999)
+
+2. **Consolidated State Logic**: Move all counting initialization into the main state machine to avoid race conditions
+
+3. **Proper Reset Handling**: Ensure all outputs and counters are properly initialized on reset
+
+4. **Output Timing**: Align output signals exactly with state transitions and counting completion
+
+5. **Pattern Capture**: Maintain strict 4-bit capture after pattern detection with proper bit counting
+
+The improved design will:
+- Use a single always block for state transitions and counting
+- Precisely count (delay_val+1)*1000 cycles
+- Maintain correct output timing
+- Properly handle reset conditions
+- Keep clean pattern detection and capture logic

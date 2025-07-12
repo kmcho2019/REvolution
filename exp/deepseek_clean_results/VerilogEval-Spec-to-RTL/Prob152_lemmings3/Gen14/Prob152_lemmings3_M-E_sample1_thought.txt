@@ -1,0 +1,15 @@
+Novel Architecture:
+1. Hierarchical State Machine: Split the behavior into two parallel state machines - one for movement (left/right) and one for actions (walk/fall/dig). This reduces state combinations and simplifies transitions.
+
+2. Parallel Evaluation: Use separate always blocks for movement and action states to enable parallel evaluation of conditions, improving timing.
+
+3. Output Pipelining: Register the outputs to reduce glitches and improve timing closure, while maintaining correct Moore behavior.
+
+4. Edge Detection: Use edge detection on ground signal to precisely capture falling/landing events independent of clock timing.
+
+Key Innovations:
+- Decoupled movement and action states enable simpler transitions
+- Parallel evaluation reduces critical path
+- Output pipelining improves timing
+- Edge detection makes ground transitions more robust
+- Explicit priority encoding in hardware

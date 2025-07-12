@@ -1,0 +1,11 @@
+To create a novel solution with improved PPA metrics, I propose a "state prediction" architecture that reduces the critical path by pre-computing next state possibilities:
+
+1. **Parallel State Prediction:** Instead of sequential state transitions, we'll compute all possible next states in parallel during the current cycle, then select the correct one based on input 'w'. This reduces the critical path by eliminating sequential dependencies.
+
+2. **Output Pre-calculation:** The output 'z' is pre-calculated for all possible next states, allowing the output to be selected concurrently with state transition.
+
+3. **Optimized Encoding:** Use a modified one-hot encoding where states E and F share a common bit (since they both output z=1), reducing output logic complexity.
+
+4. **Early Reset Propagation:** Implement reset logic that immediately affects both state and output registers for faster recovery.
+
+This approach should improve timing by parallelizing computations while maintaining clear state transitions.

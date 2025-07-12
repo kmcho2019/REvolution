@@ -1,0 +1,13 @@
+Refactor the design to avoid the recursive sum_tree_recursive module and instead explicitly unroll the summation tree for the 16 inputs using a straightforward iterative generate loop. This will flatten the summation logic into a balanced tree with explicit intermediate signals at each stage.
+
+Instead of using a recursive module instantiation, we create arrays of wires for partial sums at each level, manually summing pairs stage-by-stage, widening the adder bit width accordingly. This approach improves visibility of the summation tree structure, facilitates easier debugging, and avoids recursion which may confuse some tools.
+
+We keep the popcount17 module unchanged, since it is clean and efficient.
+
+Key changes:
+- No recursive module. Instead, implement a generate block that iterates over levels and nodes per level.
+- Maintain arrays of partial sums per level as wires, increasing bit widths accordingly.
+- Final sum is extracted after the last stage.
+- Padding the input partial counts to 16 with zero remains the same.
+- The TopModule wires and interface remain unchanged.
+- This explicit tree summation approach can help tools optimize the tree more aggressively and improves code readability for verification or debugging.

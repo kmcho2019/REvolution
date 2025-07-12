@@ -1,0 +1,9 @@
+The given Verilog code for the frequency divider can be refactored by utilizing a more structural approach. Instead of using a single always block for all the operations, we can use separate always blocks for each counter and output clock signal. This will improve the readability and maintainability of the code.
+
+We will maintain the same logic for generating the output clock frequencies: 50MHz, 10MHz, and 1MHz from the input clock frequency of 100MHz. However, we will use separate always blocks for each clock signal and counter, making the code more modular and easier to understand.
+
+For the `CLK_50` signal, we can directly toggle its value on every positive edge of `CLK_in` if `RST` is inactive.
+
+For `CLK_10` and `CLK_1`, we will use separate counters `cnt_10` and `cnt_100` respectively, and reset them when `RST` is active or when they reach their respective thresholds (4 for `cnt_10` and 49 for `cnt_100`).
+
+This refactored code will improve the overall structure and readability of the design while maintaining the required functionality.

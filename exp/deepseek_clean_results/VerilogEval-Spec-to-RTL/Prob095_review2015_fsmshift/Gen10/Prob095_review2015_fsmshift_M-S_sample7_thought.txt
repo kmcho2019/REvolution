@@ -1,0 +1,15 @@
+Simplified design approach:
+1. Use a 2-bit counter (since we only need to count 0-3)
+2. shift_ena should be high only when counter is between 0 and 3 (inclusive)
+3. Counter increments every clock cycle when not in reset
+4. Reset behavior:
+   - Synchronously reset counter to 0
+   - This automatically makes shift_ena high for next 4 cycles (0-3)
+5. After 4 cycles, counter will be 3 and stop incrementing (since shift_ena goes low)
+6. No need for complex conditions - shift_ena is simply (counter < 4)
+
+Key simplifications:
+- Remove feedback dependency (shift_ena no longer affects counter)
+- Simpler counter control (always increments unless reset)
+- Clearer state representation
+- Fewer logic operations

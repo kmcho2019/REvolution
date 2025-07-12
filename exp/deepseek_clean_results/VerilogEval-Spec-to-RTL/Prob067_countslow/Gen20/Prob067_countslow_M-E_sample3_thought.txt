@@ -1,0 +1,10 @@
+Novel Architecture Idea:
+1. Instead of using a standard binary counter, implement a "one-cold" encoding where only one bit is 0 at any time
+2. This reduces the combinational logic complexity for next state calculation
+3. Use a rotating bit pattern where the 0 shifts left each increment (e.g., 1110 -> 1101 -> 1011 -> 0111 -> 1110)
+4. Map these patterns to actual decade counter values (0-9) using a simple combinational decoder
+5. Benefits:
+   - Reduced combinational logic complexity for next state calculation (just barrel shift)
+   - Simplified rollover detection (just check if the 0 is in the MSB position)
+   - Potential power savings due to reduced switching activity
+6. The decoder converts the one-cold pattern to standard binary output

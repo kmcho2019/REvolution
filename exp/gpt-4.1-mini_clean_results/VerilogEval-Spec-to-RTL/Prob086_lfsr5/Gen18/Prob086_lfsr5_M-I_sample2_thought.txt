@@ -1,0 +1,7 @@
+To optimize the original design for better PPA, I will compute the entire next state as a combinational logic vector before registering it on the clock edge. This reduces the number of individual bit assignments and potentially eases timing and power optimizations by synthesis tools. 
+
+The feedback bit is the current LSB q[0]. For taps at bit positions 5 (q[4]) and 3 (q[2]), only q[2] receives XOR with feedback. The other bits shift right by one position directly. 
+
+By defining next_q as combinational logic derived from q and feedback, and assigning q <= next_q on the clock edge, we simplify the sequential logic and promote cleaner synthesis. The reset behavior remains synchronous and active-high, setting q to 5'b00001.
+
+This approach improves timing by reducing sequential dependencies, lowers dynamic power through a single vector update, and potentially reduces area by allowing logic sharing for the feedback calculation.

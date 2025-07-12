@@ -1,0 +1,48 @@
+To optimize the given solution for better PPA metrics, we replace the ROM-like case statement with a minimized Boolean expression derived from the Karnaugh map, which reduces area and improves performance and power efficiency. 
+
+First, we carefully analyze the Karnaugh map, interpreting 'd' (don't care) to allow the minimal expression.
+
+Mapping bits:
+- Row bits: x[3]x[4] → x[2]x[3] in Verilog
+- Column bits: x[1]x[2] → x[0]x[1] in Verilog
+
+The Karnaugh map (with don't cares replaced appropriately to minimize the function):
+
+                x[1]x[2]
+      x[3]x[4]   00  01  11  10
+            00 | d | 0 | d | d |
+            01 | 0 | d | 1 | 0 |
+            11 | 1 | 1 | d | d |
+            10 | 1 | 1 | 0 | d |
+
+Convert the rows/cols in terms of x bits:
+
+Row bits (x[3] x[4]) → x[2] x[3]:
+- 00 → x[2]=0, x[3]=0
+- 01 → x[2]=0, x[3]=1
+- 11 → x[2]=1, x[3]=1
+- 10 → x[2]=1, x[3]=0
+
+Col bits (x[1] x[2]) → x[0] x[1]:
+- 00 → x[0]=0, x[1]=0
+- 01 → x[0]=0, x[1]=1
+- 11 → x[0]=1, x[1]=1
+- 10 → x[0]=1, x[1]=0
+
+Analyzing the map and performing K-map minimization for f, the minimal expression can be found as:
+
+f = (x[3] & x[2]) | (x[3] & x[1]) | (x[2] & ~x[1] & ~x[0]) | (~x[3] & x[1] & x[0])
+
+We can further simplify:
+
+- The pair (x[3] & x[2]) and (x[3] & x[1]) can be factored as x[3] & (x[2] | x[1])
+- The term (x[2] & ~x[1] & ~x[0]) covers specific minterms
+- The term (~x[3] & x[1] & x[0]) covers another specific minterm
+
+This expression uses only AND, OR, and NOT gates with four inputs, minimizing logic depth.
+
+This approach improves area by reducing logic gate count compared to a large case statement and decreases power by reducing toggling in unnecessary branches. It also enhances performance by decreasing combinational delay.
+
+Finally, the output is declared as a wire and computed with a continuous assignment for better optimization by synthesis tools.
+
+This yields a more efficient and clean design.

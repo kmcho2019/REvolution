@@ -1,0 +1,7 @@
+Fuse the clear state machine separation and minimal state encoding from both examples with the clean and robust next-state combinational logic from Example 1. Use only two states (A and B), with state A waiting for s=1 and resetting counters and output, and state B counting three cycles of w input using a 2-bit counter and a 2-bit accumulator for w=1 counts.
+
+In state B, accumulate w synchronously each cycle, and at the end of the third cycle (cycle count 2), decide the output z in the next cycle based on whether exactly two of the three w samples were 1. The output z is registered to be asserted one cycle after completing the window, ensuring correct timing and no glitches.
+
+Maintain synchronous active-high reset, positive-edge clocking, and clear separation between combinational next-state logic and sequential state updates, ensuring clean timing and ease of synthesis.
+
+This fusion improves clarity and timing by separating combinational and sequential logic, reduces unnecessary resets in combinational blocks by limiting them to synchronous reset, and keeps minimal state and counter widths for area and power efficiency.

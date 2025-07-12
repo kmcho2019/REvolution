@@ -1,0 +1,14 @@
+To implement the combinational reductions for AND, OR, and XOR over 100 inputs with a novel architectural idea, I will use a hierarchical tree reduction approach using generate-for constructs. Instead of processing all bits serially in a loop or relying on single-step built-in reductions, the input vector will be recursively halved and combined in pairs to reduce the width step-by-step until a single bit result remains for each logic operation.
+
+This tree approach explicitly models a balanced binary reduction tree at the RTL level, clarifying how synthesis tools can create optimized multi-level logic with minimum depth.
+
+The top-level module will:
+- Instantiate three reduction trees (AND, OR, XOR).
+- Each tree module uses generate blocks to combine pairs of bits into intermediate results at each stage.
+- The reduction stages continue halving the vector size until a single bit output remains.
+
+This method:
+- Is structurally different from direct reductions and from simple loops.
+- Matches hardware intuition for large fan-in gates.
+- Can be easily parameterized and reused.
+- Emphasizes clarity in hardware structure, possibly helping in physical design and timing analysis.

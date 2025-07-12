@@ -1,0 +1,13 @@
+Refactor the FSM to use a one-hot style explicit state registers and separate direction logic clearly. Represent states as individual bits (WALKING, DIGGING, FALLING) instead of an enum, allowing clearer combinational next state logic with direct conditions.
+
+Use two separate always blocks:
+- One synchronous block handling state, direction, and saved_dir updates on clk and async reset.
+- One combinational block computing next state and direction based on current inputs and states.
+
+Also separate walking direction updates distinctly, updating direction only when walking and bumped.
+
+Output signals are assigned combinationally by decoding state and direction.
+
+This structure improves readability by isolating direction logic, clarifies transition priorities (fall > dig > bump), and avoids potential confusion from packed enum usage. It also makes explicit that bumps while falling/digging do not affect direction.
+
+The refactor preserves the original functionality and priorities exactly but reorganizes the code flow to ease verification and debugging.

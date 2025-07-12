@@ -1,0 +1,21 @@
+Corrected 3.5x fractional divider design:
+
+1. Key Fixes Implemented:
+   - Proper half-cycle phase shift by directly using negedge sampling without intermediate counter delay
+   - Accurate counter comparison logic for both base and phase-shifted clocks
+   - Synchronized reset behavior across both clock domains
+
+2. Improved Phase Alignment:
+   - Base clock generated from posedge domain with correct 4/3 duty cycle
+   - Phase-shifted clock directly sampled at negedge for true half-cycle delay
+   - Both clocks now properly aligned for clean OR operation
+
+3. Timing Correction:
+   - Removed counter_delayed register that caused full-cycle delay
+   - Both clocks now use the same counter value but sampled at opposite edges
+   - Ensured reset properly initializes both clock states
+
+4. Duty Cycle Precision:
+   - Base clock high for 4 cycles (0-3), low for 3 cycles (4-6)
+   - Phase-shifted clock follows same pattern but offset by half cycle
+   - Combined output produces uniform 3.5x division

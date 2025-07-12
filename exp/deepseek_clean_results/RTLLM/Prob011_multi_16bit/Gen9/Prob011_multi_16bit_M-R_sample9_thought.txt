@@ -1,0 +1,11 @@
+The refactored design maintains the same shift-and-accumulate multiplication algorithm but implements it with these key changes:
+1. Uses a simpler 2-state FSM (IDLE and BUSY) instead of 4 states
+2. Moves all combinational logic to continuous assignments
+3. Uses explicit bit checking instead of a counter for shift operations
+4. Simplifies the control logic by tracking operation completion with a single bit
+5. Uses parallel shift operations with masking for better timing
+
+The state machine is simplified to:
+- IDLE: Waits for start signal, clears registers
+- BUSY: Performs all 16 shift-and-add operations before returning to IDLE
+The done signal is generated combinationally based on state and counter.

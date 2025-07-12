@@ -1,0 +1,12 @@
+The original solution correctly detects falling edges but permanently latches them, which doesn't match the requirement to only capture transitions from 1 to 0 until reset. The improved solution should:
+
+1. Still detect falling edges (1→0 transitions) on each bit
+2. Capture these transitions (set output to 1) until reset
+3. Not accumulate historical transitions - only show current state
+4. Use minimal registers (only need to store previous input)
+
+Key improvements:
+- Remove the separate 'captured' register since we can directly output the edge detection
+- The output becomes purely combinational based on current and previous input
+- Reset only needs to clear the previous input register
+- More efficient implementation with same functionality

@@ -1,0 +1,11 @@
+To refactor the code, I propose a state machine-based approach using a single always block and a combination of sequential logic and combinational logic. The design will utilize a finite state machine (FSM) to manage the different states of the timer.
+
+The FSM will have four states: IDLE, SHIFT, COUNT, and DONE. In the IDLE state, the FSM will search for the input sequence 1101. Once the sequence is detected, the FSM will transition to the SHIFT state, where it will capture the next 4 bits to determine the delay duration.
+
+The COUNT state will be responsible for counting up to the desired number of clock cycles based on the delay value. The count value will be decremented every 1000 clock cycles.
+
+In the DONE state, the FSM will assert the done signal and wait for the ack signal to reset the state machine.
+
+To improve the design, I will use a parameterized approach to define the number of bits in the sequence register, delay register, and counter modules. This will make the design more flexible and adaptable to different requirements.
+
+The refactored code will utilize a single always block to manage the state machine, and combinational logic will be used to generate the output signals.

@@ -1,0 +1,24 @@
+To implement the described behavior, we will design a Moore state machine with the following states:
+- WALK_LEFT: the Lemming is walking left
+- WALK_RIGHT: the Lemming is walking right
+- FALL: the Lemming is falling
+- DIG: the Lemming is digging
+- SPLATTER: the Lemming has splattered
+
+We will use two counters: one to count the number of cycles the Lemming has been falling and another to keep track of the previous walking direction.
+The state machine will have the following transitions:
+- WALK_LEFT to WALK_RIGHT: when the Lemming is bumped on the left
+- WALK_LEFT to WALK_RIGHT: when the Lemming is bumped on the right
+- WALK_LEFT to FALL: when the ground disappears
+- WALK_LEFT to DIG: when the Lemming is told to dig and the ground is present
+- WALK_RIGHT to WALK_LEFT: when the Lemming is bumped on the left
+- WALK_RIGHT to WALK_LEFT: when the Lemming is bumped on the right
+- WALK_RIGHT to FALL: when the ground disappears
+- WALK_RIGHT to DIG: when the Lemming is told to dig and the ground is present
+- FALL to WALK_LEFT or WALK_RIGHT: when the ground reappears and the Lemming has not splattered
+- FALL to SPLATTER: when the ground reappears and the Lemming has been falling for more than 20 cycles
+- DIG to FALL: when the ground disappears
+- DIG to WALK_LEFT or WALK_RIGHT: when the ground reappears and the Lemming was previously walking in that direction
+- SPLATTER to SPLATTER: in all cases
+
+We will use a parameter to define the number of cycles before the Lemming splatters.

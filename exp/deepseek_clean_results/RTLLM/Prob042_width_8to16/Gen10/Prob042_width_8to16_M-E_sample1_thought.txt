@@ -1,0 +1,15 @@
+Novel Design Strategy:
+1. Use a shift register approach instead of state machine for simpler implementation
+2. Implement a 16-bit shift register that captures 8-bit inputs sequentially
+3. When first valid input arrives, store in upper 8 bits of shift register
+4. When second valid input arrives, store in lower 8 bits and assert valid_out
+5. Clear shift register after each complete 16-bit output
+6. No intermediate states needed - tracks input sequence through shift register fill level
+7. Output appears exactly one cycle after second input is received
+
+Key Advantages:
+- Simpler control logic than state machine approach
+- Clear timing relationship between inputs and outputs
+- Efficient use of registers
+- Natural handling of input sequence
+- Meets all timing requirements precisely

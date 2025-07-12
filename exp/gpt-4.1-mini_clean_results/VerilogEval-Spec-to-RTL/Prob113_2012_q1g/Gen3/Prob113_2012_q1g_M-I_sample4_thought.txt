@@ -1,0 +1,25 @@
+The previous solution correctly identifies all minterms where f=1 by carefully matching the Karnaugh map cells with the input bits, respecting the bit order and positions. However, the design is expressed as a sum of eight minterms (product terms), which is functional but not optimized.
+
+To improve PPA (power, performance, area), I will minimize the logic expression from the Karnaugh map directly instead of enumerating all minterms.
+
+By grouping the Karnaugh map cells where f=1:
+
+- Group A: (x[3] & ~x[1]) covers minterms 8,9,10,12,13, and also covers minterm 15 partially.
+- Group B: (~x[3] & ~x[2] & ~x[0]) covers minterms 0 and 2.
+- Single minterm 15: (x[3] & x[2] & x[1] & x[0]) but since minterm 15 is already included in Group A with x[3] & ~x[1] is false (because minterm 15 has x[1]=1), so minterm 15 is not covered by Group A. It needs to be covered separately.
+
+From the Karnaugh map, a minimal sum-of-products is:
+
+f = (x[3] & ~x[1]) | (~x[3] & ~x[2] & ~x[0]) | (x[3] & x[2] & x[1] & x[0])
+
+This expression covers all '1's in the map:
+
+- x[3] & ~x[1]: covers all rows with x[3]=1 and x[1]=0 (8,9,10,12,13)
+- ~x[3] & ~x[2] & ~x[0]: covers (0 and 2)
+- x[3] & x[2] & x[1] & x[0]: minterm 15
+
+This reduces logic complexity significantly: only three terms with combined three and four literals instead of eight terms with four literals each.
+
+I will implement this optimized expression.
+
+This should improve the area by reducing the number of gates and potentially improve timing and power consumption.

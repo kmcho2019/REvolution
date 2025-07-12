@@ -1,0 +1,17 @@
+By examining the original solution, we see that the next_y1 expression depends on the decoded states B, C, E, and F. However, B, E, and F all have y1=0 in the present state, and C is the only state with y1=1. Given the state encoding, next_y1 is defined as B | F | ((C | E) & w). Since B and F are mutually exclusive states (different encodings) and do not depend on w, and (C | E) & w adds conditional logic, we can directly rewrite next_y1 as a sum of decoded states and their conjunction with w.  
+
+To reduce complexity further, instead of decoding all states explicitly, note that B=001, C=010, E=100, and F=101. y[1] bit directly identifies states C and D since only states with y[1] = 1 are C and D. But since we only care about next_y1 and its transitions, we can combine terms using minimal decoding:
+
+- B is when y=001 → y==3'b001
+- F is when y=101 → y==3'b101
+- (C | E) is when y=010 or y=100 → so y[2:1] == 2'b10 or 2'b01, but simpler is to check y[2]^y[1] == 1, or just combine via (y == 3'b010) or (y == 3'b100).
+
+But to keep it very simple and minimal, just use case equality checks for these 4 states instead of combinational logic decoding, and combine next_y1 accordingly. This avoids the overhead of multiple AND/OR gates and intermediate signals.  
+
+Hence, we use equality checks for these states and implement next_y1 as:
+
+next_y1 = (y == 3'b001) | (y == 3'b101) | (((y == 3'b010) | (y == 3'b100)) & w);
+
+This approach reduces intermediate signals and gates while preserving the exact logic.
+
+Assign Y1 = next_y1 as required.

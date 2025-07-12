@@ -1,0 +1,11 @@
+Simplified design approach:
+1. Remove unnecessary segmentation of the 32-bit shift operation - let synthesis tools optimize this naturally
+2. Eliminate the reg_enable signal since it adds complexity without clear benefit
+3. Use straightforward concatenation for both misprediction and prediction cases
+4. Maintain the priority of misprediction over prediction
+5. Keep the asynchronous reset functionality
+
+Key simplifications:
+- Single concatenation operation for both update cases
+- Direct use of conditions in always block without intermediate enable signal
+- Cleaner priority handling with if-else structure

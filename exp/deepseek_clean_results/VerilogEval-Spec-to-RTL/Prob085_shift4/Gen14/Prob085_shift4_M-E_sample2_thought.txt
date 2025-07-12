@@ -1,0 +1,17 @@
+Novel Architecture Idea: Parallel Load with Shift Enable
+1. Key Innovation:
+   - Instead of using priority logic (load > ena), implement parallel load and shift as independent operations
+   - Use a 2:1 mux at each bit position to select between load data and shifted data
+   - This allows for cleaner separation of concerns and potentially better synthesis optimization
+
+2. Implementation Approach:
+   - Create separate always blocks for combinational and sequential logic
+   - Combinational block calculates next state based on current state and inputs
+   - Sequential block handles clock and reset, updating the state
+   - This separation often leads to better synthesis results and timing
+
+3. Benefits:
+   - More modular design with clear separation of control and data paths
+   - Potential for better timing as muxing happens in parallel
+   - Easier to extend to wider bus widths if needed
+   - Reset remains asynchronous for clean initialization

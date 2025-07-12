@@ -1,0 +1,25 @@
+Revised State Machine Design:
+
+1. Key Fixes:
+   - Strict priority enforcement: fall > dig > direction change
+   - Correct direction maintenance during all states
+   - Proper fall timer handling across state transitions
+   - Accurate output logic without unnecessary gating
+
+2. State Machine Improvements:
+   - Separate direction register persists through all states
+   - Fall timer only resets when not falling
+   - Digging continues until ground disappears
+   - Explicit priority checks before state transitions
+
+3. Output Logic:
+   - Walk outputs reflect current direction when walking
+   - aaah active only during falling
+   - digging active only during digging state
+   - All outputs zero in splat state
+
+4. Transition Logic:
+   - Check fall condition first (highest priority)
+   - Then check dig condition if not falling
+   - Finally handle direction changes if neither falling nor digging
+   - Splat condition checked when landing from a fall

@@ -1,0 +1,13 @@
+To optimize the solution for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. **Performance Optimization**:
+   - Replace the XOR-based conditional inversion with a multiplexer to potentially reduce the critical path. While XOR is elegant, a mux might have better timing characteristics in some technologies.
+
+2. **Power Optimization**:
+   - Use a more power-efficient adder structure (ripple-carry) since we're working with only 8 bits, where the power overhead of more complex adders isn't justified.
+
+3. **Area Optimization**:
+   - Implement the zero flag detection using a reduction NOR instead of equality comparison, which might use fewer gates.
+   - Combine the addition and subtraction operations more efficiently by using the do_sub bit directly as the carry-in.
+
+The improved version should maintain correctness while potentially improving all three PPA metrics.

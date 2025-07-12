@@ -1,0 +1,15 @@
+Refactor the serial-to-parallel converter by separating the shift register update and output logic clearly and using a combinational assignment for the output parallel data directly from the shift register. The shift register will shift left each valid serial input bit, placing the new bit in the least significant bit, but since the problem requires the first bit received to be MSB, we can shift right and insert at MSB, as before. 
+
+We will:
+- Maintain a 4-bit counter to count valid serial inputs.
+- Update the shift register synchronously only when din_valid is high.
+- Use a combinational assignment to assign dout_parallel directly from shift_reg.
+- Generate a one-cycle dout_valid pulse when count reaches 7 (after 8 bits received).
+- Reset all sequential logic asynchronously with rst_n.
+
+This refactor improves clarity by:
+- Separating data storage (shift_reg) from output logic (dout_parallel assigned combinationally).
+- Simplifying dout_valid generation with explicit condition.
+- Avoiding combinational logic inside always block for outputs.
+
+This makes timing explicit, avoids race conditions, and better matches good synchronous design practices.

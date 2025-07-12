@@ -1,0 +1,17 @@
+The current implementation correctly simplifies the function to q = b | c, which matches the waveform. Since input d is unused, removing it from the interface would further reduce area and power by avoiding unnecessary input buffers and switching. However, the problem statement requires all four inputs. 
+
+To improve power further without changing the interface, I can explicitly tie off the unused input d inside the module by ignoring it or driving it to zero internally, but that is not standard practice for inputs.
+
+Hence, the best PPA improvement is to keep the existing minimal combinational OR gate and ensure the input d is passed through but unused.
+
+From a Verilog perspective, the current code is already minimal and optimal:
+
+- q is a wire driven by a single OR gate.
+- Inputs are wires; no registers or latches inferred.
+- No unnecessary logic involving d.
+
+Therefore, the optimal approach is the current solution. To explicitly document the unused input d, I will keep the implementation unchanged but add a comment for clarity.
+
+No further improvements to PPA are achievable at the RTL level given the constraints.
+
+In summary, the existing design is the minimal and optimal solution for this function with the given interface.

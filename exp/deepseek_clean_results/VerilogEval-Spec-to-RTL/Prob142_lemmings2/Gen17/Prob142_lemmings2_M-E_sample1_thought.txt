@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. Priority-based State Machine: Implement a hierarchical state machine where falling has the highest priority, followed by bump detection, then normal walking.
+
+2. Edge Detection for Bumps: Instead of level-sensitive bump detection, use edge detection to only respond to new bumps, preventing multiple toggles if bumps stay asserted.
+
+3. Direction Latch: Maintain direction in a separate register that only updates when valid bumps occur (not during falling). This separates concerns and simplifies timing.
+
+4. Output Encoding: Use a one-hot-like output encoding where each output is driven directly from specific state conditions, reducing combinational logic depth.
+
+Key Innovations:
+- Edge detection prevents redundant direction toggles
+- Priority handling ensures correct behavior during transitions
+- Separated direction register simplifies state transitions
+- Direct output mapping improves timing

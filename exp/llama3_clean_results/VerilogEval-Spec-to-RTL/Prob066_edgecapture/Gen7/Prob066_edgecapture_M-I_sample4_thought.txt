@@ -1,0 +1,11 @@
+To improve the solution, we need to address the logic issues identified in the feedback. The main problem is that the comparison `prev_in[i] && !in[i]` is between the current `prev_in` value and the new `in` value, but `prev_in` has not yet been updated with the new value of `in` at this point in the clock cycle. To fix this, we can update `prev_in` with the current value of `in` at the beginning of the clock cycle, before making the comparison.
+
+Additionally, to prevent a bit in `out` from being set to 1 multiple times if the corresponding bit in `in` transitions from 1 to 0 multiple times, we can use a non-blocking assignment (`<=`) to update `out` only when a transition is detected. This ensures that once a bit in `out` is set to 1, it remains 1 until the register is reset.
+
+To optimize the design for better power, performance, and area (PPA), we can simplify the logic and reduce the number of operations within the clock cycle. One way to do this is to use a single bitwise operation to update `out` based on the comparison between `prev_in` and `in`. This approach reduces the complexity of the logic and minimizes the number of operations.
+
+Here's the improved strategy:
+
+1. Update `prev_in` with the current value of `in` at the beginning of the clock cycle.
+2. Use a non-blocking assignment to update `out` only when a transition is detected.
+3. Simplify the logic using a single bitwise operation to update `out`.

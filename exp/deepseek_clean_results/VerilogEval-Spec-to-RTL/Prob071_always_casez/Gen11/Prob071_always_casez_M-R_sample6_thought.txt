@@ -1,0 +1,16 @@
+To refactor the priority encoder while maintaining the same functionality, I'll make these key changes:
+
+1. **Switch to Continuous Assignments:** Replace the always block with assign statements for combinational logic, which can be more efficient for simple logic like this.
+
+2. **Flatten the Logic:** Instead of hierarchical nibble checks, implement a single priority encoder using a parallel structure with ternary operators.
+
+3. **Optimize for PPA:** 
+   - Remove redundant default assignments
+   - Use direct bit checks instead of casez for simpler synthesis
+   - Maintain the same LSB priority order
+
+The new approach will:
+- Use a series of nested ternary operators to implement the priority encoding
+- Check bits from LSB to MSB (0 to 7)
+- Default to 0 when no bits are set
+- Be more concise while maintaining the same functionality

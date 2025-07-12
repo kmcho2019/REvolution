@@ -1,0 +1,23 @@
+Fusion Strategy:
+1. Boolean Optimization:
+   - Recognize that ModuleB implements XNOR (equality) function, so use direct XNOR implementation
+   - ModuleA's (x^y)&x can be simplified to x&~y
+
+2. Logic Reduction:
+   - Observe that (a|b)^(a&b) is equivalent to a^b (XOR)
+   - Since all submodules have identical inputs, we only need one instance each of ModuleA and ModuleB
+
+3. Power/Area Optimization:
+   - Eliminate redundant module instances
+   - Reduce logic depth by combining operations
+   - Use simplest possible boolean expressions
+
+4. Final Output:
+   - The entire circuit simplifies to (x&~y) ^ (~(x^y)) which further reduces to x|~y
+
+Key Improvements:
+- Reduced from 4 submodules to 2
+- Simplified boolean expressions
+- Single XOR operation at output
+- Minimal logic depth (2 levels)
+- No redundant computations

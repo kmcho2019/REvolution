@@ -1,0 +1,14 @@
+To simplify the design while maintaining correct functionality, I will implement the shift register update with a single combinational expression inside the clocked always block using a case statement based on `amount`. This approach directly selects the shifted value without intermediate stages or extra variables, reducing complexity and improving readability.
+
+Specifically:
+- On `load` high, synchronously load the input data.
+- Otherwise, if `ena` is high, perform the shift operation as per `amount`:
+  - 00: shift left by 1
+  - 01: shift left by 8
+  - 10: arithmetic shift right by 1
+  - 11: arithmetic shift right by 8
+- Use Verilog's arithmetic shift right operator (`>>>`) on signed data to preserve sign.
+- Keep the shift register as a simple 64-bit register updated synchronously.
+- Avoid extra intermediate registers and blocking assignments to minimize complexity.
+
+This single-level case-based approach reduces logic depth and makes synthesis optimization straightforward, achieving a simpler, clean design.

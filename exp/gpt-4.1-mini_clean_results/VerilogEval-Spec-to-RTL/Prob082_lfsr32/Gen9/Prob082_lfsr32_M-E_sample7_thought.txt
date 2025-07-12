@@ -1,0 +1,6 @@
+To implement the 32-bit Galois LFSR with taps at bits 32, 22, 2, and 1 differently, I will unroll the LFSR feedback logic explicitly by computing the next value of q[31] as the XOR of q[0] and the tap bits, then shifting all bits right by one position. This is equivalent to the Galois LFSR operation but avoids using a single mask and conditional XOR for all bits simultaneously. Instead, the LFSR state update will be done bitwise:
+
+- q_next[31] = q[0] ^ q[31] ^ q[21] ^ q[1]  (since taps at 32,22,2,1 correspond to bits 31,21,1,0 in zero indexing)
+- q_next[i] = q[i+1] for i = 0 to 30 (simply shifting right by one)
+
+This approach explicitly wires the feedback bit into the highest bit, preserving the Galois configuration. The synchronous reset sets q to 32'h1. This style of expressing the next state is more verbose but conceptually clear and may help synthesis tools optimize or allow easier modifications of tap positions.

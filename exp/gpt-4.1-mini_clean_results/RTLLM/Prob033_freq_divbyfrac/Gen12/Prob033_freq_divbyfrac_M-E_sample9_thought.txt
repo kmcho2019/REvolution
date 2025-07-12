@@ -1,0 +1,14 @@
+To achieve a fractional frequency division by 3.5 using a different approach, we can use a time-multiplexed clock enable (CE) signal that selectively enables clock toggling at uneven intervals to emulate the fractional division.
+
+Concept:
+- The output clock toggles state every time the CE signal is asserted.
+- The CE is generated from a counter that runs modulo 7 (to produce a 7-cycle period).
+- The CE pattern is designed so that the toggle intervals alternate between 3 and 4 input clock cycles, effectively producing a division ratio of 3.5.
+- Specifically, the toggle enable signal pulses on specific counter values corresponding to the accumulated toggle times.
+- This creates a clock output with 7 input clock cycles per output clock full period (i.e., 3.5 input clock cycles per half output period).
+- The output clock is toggled only when CE is asserted, resulting in uneven half-periods (3 and 4 clk cycles alternately).
+- This technique does not require double-edge clocking or phase shifting; instead, it uses uneven toggle enables driven by a mod-7 counter to realize fractional division.
+- Reset sets the output clock low and counter zero to ensure deterministic startup.
+- This approach is easily scalable for other fractional divisions by modifying the CE pattern and counter modulus.
+
+The output `clk_div` will have a frequency input_clk / 3.5, and its duty cycle will be approximately 50% averaged over time by alternating 3 and 4 cycle half-periods.

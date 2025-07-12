@@ -1,0 +1,29 @@
+To properly implement the finite-state machine (FSM) for the timer controller, we need to make several improvements:
+
+1. Accurate Pattern Detection:
+   - Implement a proper shift register to detect the 1101 sequence
+   - Only transition to SHIFT state when the exact pattern is detected
+
+2. Precise Shift Counting:
+   - Maintain shift counter only during SHIFT state
+   - Clear counter when leaving SHIFT state
+
+3. Robust State Encoding:
+   - Use sufficient bits for state encoding
+   - Add explicit default state handling
+
+4. Correct Output Timing:
+   - Ensure outputs are asserted exactly when required
+   - Match timing requirements from the problem description
+
+The improved FSM will have these states:
+1. IDLE: Waiting for 1101 pattern
+2. SHIFT: Shifting in 4 duration bits (shift_ena high)
+3. COUNTING: Waiting for counters (counting high)
+4. DONE: Timer finished (done high until ack)
+
+State transitions:
+- IDLE → SHIFT when 1101 detected
+- SHIFT → COUNTING after 4 cycles
+- COUNTING → DONE when done_counting
+- DONE → IDLE when ack received

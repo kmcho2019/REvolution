@@ -1,0 +1,12 @@
+The original design is already minimal and well-structured for pulse detection using two delayed samples of data_in and detecting the pattern 0->1->0.
+
+To further optimize for PPA:
+- Keep the logic synchronous with only positive-edge clocking for better timing and reset stability.
+- Combine data_in delays and pulse detection in a single always block to minimize logic duplication.
+- Use explicit state names or comments for clarity but avoid extra states since the minimal approach is best.
+- Use localparam or parameters for states is unnecessary here because the pattern detection is combinational.
+- Ensure the reset sets registers to zero to avoid metastability.
+- To save power, add an enable input could be considered, but it was not specified.
+- Overall, the design is already optimal in area and power; the main focus is to keep synchronous reset and minimal combinational logic.
+
+Hence, the improved solution keeps the original approach but changes the reset to synchronous only (active low reset asynchronous is less timing-friendly), and cleans code comments for clarity. The pulse detection logic remains the same and minimal.

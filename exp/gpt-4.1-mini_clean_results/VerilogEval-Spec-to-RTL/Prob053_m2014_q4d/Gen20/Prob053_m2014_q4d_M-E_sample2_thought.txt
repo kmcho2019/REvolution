@@ -1,0 +1,11 @@
+Instead of using a single flip-flop whose output feeds back into the XOR, we can separate the storage element from the combinational XOR by explicitly declaring a wire for the XOR output and connecting it to the D input of the flip-flop. 
+
+This approach makes the dataflow clear: a combinational XOR block computes the next D input using the current flip-flop output and 'in'. Then, at each positive clock edge, the flip-flop updates the output with that XOR result. This explicitly models the D input stage of the flip-flop and isolates combinational logic from the sequential logic for better readability and possible synthesis optimizations.
+
+No reset is added, per requirements. 'out' is declared as reg because it's driven by a sequential always block.
+
+This differs structurally from the previous solution and provides a modular flow:
+- wire d = in ^ out;
+- always @(posedge clk) out <= d;
+
+This structure makes it straightforward to reason about the timing of the signal assignments.

@@ -1,0 +1,10 @@
+Implement the 512-cell Rule 90 cellular automaton using a single 512-bit register and combinational logic that handles all cell updates in parallel, but optimize boundary condition handling by extending the register with two zero bits (one at each end) to simplify neighbor indexing without special cases.
+
+- Store the current state in a 512-bit register q_reg.
+- For next state calculation, form a 514-bit wire "extended" by concatenating 1'b0, q_reg, and 1'b0.
+- Each bit of next state is computed as XOR of neighbors from extended: next_q[i] = extended[i] ^ extended[i+2].
+- On each clock rising edge, if load is high, load q_reg with data; else update q_reg with next_q.
+- Output q as q_reg.
+- This approach avoids explicit boundary multiplexing by zero-padding the edges.
+- The single-block design simplifies control and wiring, with a flat XOR operation over a wide vector.
+- Uses generate loop for next state calculation for clarity.

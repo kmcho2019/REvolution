@@ -1,0 +1,9 @@
+An alternative approach is to implement the functionality using a small state machine that tracks the previous input values. The output z is determined by both current and previous inputs, creating a more complex behavior that still matches the waveform. Here, we'll use a 2-bit state register to remember the last input combination and make z dependent on both current inputs and the state.
+
+The state machine rules:
+- If current inputs are 00 or 11, z=1
+- If current inputs are 01 and previous state was not 11, z=0
+- If current inputs are 10 and previous state was not 00, z=0
+- Otherwise maintain previous z value
+
+This creates a more sequential implementation that still matches the given waveform while being architecturally different from the pure combinational XNOR solution.

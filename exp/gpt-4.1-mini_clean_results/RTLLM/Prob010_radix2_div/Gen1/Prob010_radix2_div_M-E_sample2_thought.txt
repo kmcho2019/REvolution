@@ -1,0 +1,13 @@
+Implement the radix-2 division as a synchronous sequential process over 8 cycles using a shift-subtract algorithm.
+On receiving a start (opn_valid & !busy), latch the dividend and divisor, compute absolute values and signs (if signed).
+Use two main registers:
+- A 17-bit remainder register (initialized with 0 concatenated with dividend_abs), where the leftmost bits hold the remainder during iteration.
+- An 8-bit quotient register initialized to zero.
+At each clock cycle (when busy):
+- Shift remainder left by 1 bit and bring in the next quotient bit.
+- Subtract divisor_abs from the left part of the remainder.
+- If subtraction result is >=0, set the quotient bit to 1 and update the remainder with the subtraction result.
+- Else, restore the remainder (no subtraction), and set quotient bit to 0.
+After 8 cycles, apply sign corrections to quotient and remainder if signed.
+Output the remainder in upper 8 bits and quotient in lower 8 bits of result.
+Control res_valid and busy signals to indicate operation progress and completion.

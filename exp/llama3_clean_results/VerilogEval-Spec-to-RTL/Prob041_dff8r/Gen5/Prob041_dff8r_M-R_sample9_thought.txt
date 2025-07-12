@@ -1,0 +1,9 @@
+To refactor the existing code, we will consider a different structural approach. The primary goal is to maintain the same functionality while potentially simplifying the code or making it more efficient. 
+
+Given that the current implementation uses an `always` block to handle the sequential logic of the D flip-flops with synchronous reset, a potential refactoring could involve leveraging the `assign` statement for combinational logic and using the `initial` block or non-blocking assignments within the `always` block for sequential logic. However, since the core functionality involves sequential elements (DFFs), we must stick to the `always` block for the sequential part.
+
+A structural refactoring could involve directly instantiating the D flip-flops within the `TopModule` without defining a separate `DFF` module. This would simplify the hierarchy and might reduce overhead, although the actual area and power savings would depend on the synthesis tool's ability to optimize the design.
+
+Another approach is to use a `for` loop to instantiate the D flip-flops, which could make the code more concise and easier to manage, especially if the number of flip-flops changes in the future.
+
+Given the requirements and aiming to improve the code's readability and maintainability without compromising its functionality, we can choose the latter approach: using a `for` loop within the `always` block to handle the sequential logic of the D flip-flops.

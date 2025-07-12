@@ -1,0 +1,10 @@
+Refactored design with these key changes:
+1. Separated reset logic into its own always block for cleaner initialization
+2. Used continuous assignment for read_data output when read_en is active
+3. Maintained read_data value when read_en is inactive instead of forcing zeros
+4. Simplified write operation block by removing reset handling
+5. Added localparam for address width calculation
+This maintains the same functionality but with:
+- Better timing (removes read_data clearing from critical path)
+- Lower power (reduces unnecessary toggles)
+- Cleaner separation of concerns

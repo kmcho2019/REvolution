@@ -1,0 +1,5 @@
+To optimize PPA (Timing, Power, Area) while preserving functionality, I propose switching the state encoding from 2-bit binary to one-hot encoding. One-hot encoding typically reduces combinational logic depth for next-state logic, thus improving timing (reducing negative slack) at the cost of a slight increase in area. Power might slightly increase due to more flip-flops, but the reduced logic depth and simpler next-state logic often compensate.
+
+Additionally, I will keep the asynchronous reset as requested, but will optimize the next state logic to use simple if-else conditions rather than case statements to reduce mux depth, which may marginally improve timing and power. Output logic remains a simple combinational assignment.
+
+This approach maintains all functionality, provides clearer and simpler next-state combinational logic, and achieves better timing as one-hot encoding allows faster state decoding and transition logic.

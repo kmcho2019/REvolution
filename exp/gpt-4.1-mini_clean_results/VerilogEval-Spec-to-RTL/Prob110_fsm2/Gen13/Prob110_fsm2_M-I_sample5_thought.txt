@@ -1,0 +1,9 @@
+To optimize the existing design for better power and area while maintaining functional correctness and performance, we can remove the explicit clock enable logic that compares next_state and current state. This reduces combinational logic and potential delay on the state register input, potentially improving timing (TNS, WNS) and area slightly.
+
+Instead, rely on the natural stability of the state register with asynchronous reset to avoid unnecessary toggling, as state will only update on a real change. This simplification also reduces logic gates and routing complexity, benefiting area.
+
+The output remains directly driven by state for minimal combinational logic and fastest response.
+
+This simplification favors performance and area at slight expense of power (due to possible toggling), but given the very small design, the trade-off is beneficial overall and still meets all specs exactly.
+
+Thus, the improvement strategy is to simplify the design by removing the clock enable logic, which reduces combinational logic delay and area, while maintaining asynchronous reset and Moore output directly from state. This yields better timing metrics and area without functional loss.

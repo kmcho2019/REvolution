@@ -1,0 +1,14 @@
+Novel Architectural Idea: Bit-Sliced State Machine
+1. **Concept**: Instead of using a traditional case statement, implement the state transitions using bit-sliced logic where each state bit is computed independently based on the current state and input.
+2. **Approach**:
+   - Break down the 2-bit state into individual bits (state[1] and state[0])
+   - Compute each next_state bit separately using Boolean equations derived from the truth table
+   - The output remains a simple check for state D (2'b11)
+3. **Advantages**:
+   - Potentially more efficient in area as it avoids case statement overhead
+   - Parallel computation of state bits may improve timing
+   - More transparent logic implementation that's easier to optimize
+4. **Implementation**:
+   - Derive Boolean equations for next_state[1] and next_state[0] from the transition table
+   - Use continuous assignments for both state bits and output
+   - No need for default case as all combinations are covered by the equations

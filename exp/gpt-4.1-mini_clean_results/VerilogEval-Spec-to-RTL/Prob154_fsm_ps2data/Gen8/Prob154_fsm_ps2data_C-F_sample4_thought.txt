@@ -1,0 +1,5 @@
+Fuse the clarity and power efficiency of Example 2 with the explicit state naming and byte storage clarity of Example 1. Use a 3-state FSM with clear states IDLE, BYTE1, BYTE2. Use load enables on byte registers to reduce toggling and unnecessary updates. Capture bytes only when needed. Assert done and output out_bytes only for one cycle immediately after third byte is received, synchronous to clock and after update of stored bytes.
+
+In next_state logic, only evaluate in[3] in IDLE to reduce switching power. Also, keep the state encoding minimal with 2 bits. Use synchronous active-high reset on all registers.
+
+Combine code style cleanliness and clear register updates from both solutions, ensuring done and out_bytes are updated together in the cycle the third byte is captured. This yields a power-aware, area-efficient, and clean FSM implementation meeting all specs.

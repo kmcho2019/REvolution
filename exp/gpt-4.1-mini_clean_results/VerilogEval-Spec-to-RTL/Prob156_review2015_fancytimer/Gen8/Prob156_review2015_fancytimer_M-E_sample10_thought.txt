@@ -1,0 +1,22 @@
+A clean alternative approach is to structure the design as a well-defined FSM with distinct states:
+
+1. SEARCH: continuously shift in the input data bits, detecting the pattern "1101" with a 4-bit shift register.
+2. LOAD_DELAY: once the pattern is detected, shift in exactly 4 bits MSB-first into a delay register.
+3. COUNT: count down a total number of cycles equal to (delay+1)*1000.
+   - We implement a single 16-bit counter that counts down from (delay+1)*1000 to 0.
+   - For output "count", we derive the remaining "chunk" by dividing remaining cycles by 1000, showing the integer chunk left (counting down from delay to 0).
+   - For example, if remaining cycles is between 1000*(n) and 1000*(n+1)-1, then count = n, with n from delay down to 0.
+4. DONE: after counting completes, assert done and wait for ack from the user.
+5. After ack, return to SEARCH to detect the next pattern.
+
+Advantages of this approach:
+- Only one countdown counter, easier to manage for precise timing.
+- Deriving count output from cycle count by integer division by 1000 ensures consistent timing.
+- State machine is conceptually simple and clearly separated.
+- Pattern detection is clean and reset only when required.
+- Use synchronous reset as specified.
+
+This design exactly counts (delay+1)*1000 cycles by counting down cycle_counter from that value to zero.
+When zero reached, signal done and wait for ack.
+Count output is the current chunk (delay down to 0), derived via cycle_counter/1000.
+counting output is asserted only during COUNT state.

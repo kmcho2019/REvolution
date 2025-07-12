@@ -1,0 +1,22 @@
+The original solution implements a 3-stage pipeline instead of the requested 2-level pipeline, leading to an extra pipeline stage that causes latency mismatch and output delay. The main functional issue is that the final sum is registered at the same clock edge as the output, making the output one cycle behind the sum calculation. Also, extending the multiplicand by adding zeros at the MSB side misaligns the partial products; it should extend at the LSB side to pad zeros for correct partial product placement.
+
+To fix this and meet the original requirements:
+
+- Use exactly two pipeline stages (two register levels) to store intermediate values and control multiplication.
+- Extend inputs by adding zeros at LSB side (shift multiplicand left by size bits with appended zeros at LSB).
+- Generate partial products combinationally based on the original multiplier bits.
+- First pipeline stage: register extended multiplicand and multiplier inputs, and compute partial products.
+- Second pipeline stage: register the sum of partial products, output the final product.
+- Use a generate block for scalable partial product generation.
+- Sum partial products using a parameterizable loop to support changes to "size".
+- Use non-blocking assignments in sequential blocks.
+- Reset all pipeline registers and output to zero on active low reset.
+- Maintain 2-level pipeline latency with synchronized registered outputs.
+
+This approach reduces combinational path depth per stage and aligns partial products correctly, ensuring correct and efficient pipelined multiplication.
+
+The final pipeline stage outputs the sum computed in the previous stage, avoiding output lag and ensuring correct synchronization between partial sums and output.
+
+No handshaking signals are added as they were not requested.
+
+The code is clean, scalable, and matches the problem specification.

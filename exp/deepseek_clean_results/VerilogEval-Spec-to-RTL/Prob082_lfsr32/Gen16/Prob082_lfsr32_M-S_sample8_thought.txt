@@ -1,0 +1,8 @@
+To simplify the LFSR implementation while maintaining functionality:
+1. Instead of using a full 32-bit mask and XOR operation, only implement the necessary XOR operations at the specific tap positions (31, 21, 1, 0)
+2. Directly compute the next state by:
+   - Right shifting the current value
+   - XORing only the tap positions with q[0]
+3. This eliminates the need for mask generation and reduces the XOR operations from 32 to just 4
+4. Maintain the same reset functionality with a simple conditional assignment
+5. The simplified version reduces area and power by removing unnecessary logic while keeping the same timing characteristics

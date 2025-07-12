@@ -1,0 +1,17 @@
+Here's a novel approach using a priority-encoded state transition scheme that leverages the one-hot encoding properties differently:
+
+1. Instead of computing each next_state bit separately, we'll use a priority encoder concept where:
+   - Each state has a unique priority for transition
+   - The output is simply the MSB of the state (D=1)
+
+2. Key innovations:
+   - Use a single 4-input MUX structure for the entire next state logic
+   - Exploit that only one state bit can be active at a time (one-hot)
+   - Implement transition rules as nested ternary operators
+   - Output remains just state[3] (most efficient)
+
+3. Benefits:
+   - More compact logic structure
+   - Potentially better timing due to reduced fanout
+   - Clear mapping from state transition table to code
+   - Maintains all one-hot encoding advantages

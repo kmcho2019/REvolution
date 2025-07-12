@@ -1,0 +1,10 @@
+Instead of toggling the output clock after counting half the NUM_DIV cycles, this design counts full NUM_DIV cycles and toggles the output clock at the end of each count cycle to produce a divided clock with a 50% duty cycle. This is done by counting from 0 up to NUM_DIV - 1, and toggling the output at the rollover, effectively dividing the input clock by NUM_DIV.
+
+Key points:
+- Use a synchronous active-low reset.
+- Use a counter width dynamically calculated from NUM_DIV to support large division factors.
+- Add an assertion to ensure NUM_DIV is an even number at elaboration time.
+- Counter counts from 0 to NUM_DIV-1.
+- At rollover, toggle clk_div.
+
+This approach is simpler, intuitively easier to understand, and produces a clean 50% duty cycle output for even division numbers.

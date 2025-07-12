@@ -1,0 +1,23 @@
+Here's the refactored design with these key changes:
+
+1. **Separate Pattern Detection Logic**:
+   - Use a shift register for pattern detection (1101) with clear separation from delay capture
+   - Pattern detection is now continuous in IDLE state
+
+2. **Simplified State Machine**:
+   - Reduced to 4 clear states with explicit transitions
+   - State transitions now based on counters and pattern match
+
+3. **Counter Logic Improvements**:
+   - Main counter now counts total cycles (0 to (delay+1)*1000-1)
+   - Period calculation done by division (count/1000)
+   - Eliminates separate cycle_counter and period_counter
+
+4. **Output Generation**:
+   - count output uses continuous assignment based on current state
+   - counting and done signals generated directly from state
+
+5. **Cleaner Structure**:
+   - Sequential logic in always block
+   - Combinatorial outputs using assign
+   - Clear separation of pattern detection and counting logic

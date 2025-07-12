@@ -1,0 +1,22 @@
+This solution uses a hierarchical state machine with unified state encoding:
+
+1. Main states are encoded as a combination of direction and action:
+   - Bit 0: Direction (0=left, 1=right)
+   - Bits [2:1]: Action (00=walking, 01=falling, 10=digging, 11=splattered)
+
+2. Single always block handles all state transitions:
+   - Priority-based transitions (fall > dig > bump)
+   - Fall duration counter integrated into state logic
+   - Direction changes only affect walking state
+
+3. Key innovations:
+   - Compact state encoding reduces logic complexity
+   - Unified handling of direction and action
+   - Explicit priority encoding in transition logic
+   - Fall counter reset logic integrated with state changes
+
+4. Benefits:
+   - More efficient implementation
+   - Clearer priority handling
+   - Reduced state transition complexity
+   - Easier to verify correct priority ordering

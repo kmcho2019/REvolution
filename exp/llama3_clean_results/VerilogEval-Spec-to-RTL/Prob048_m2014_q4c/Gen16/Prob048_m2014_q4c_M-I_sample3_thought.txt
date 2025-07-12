@@ -1,0 +1,7 @@
+To improve the existing solution, we focus on optimizing the Power, Performance, and Area (PPA) metrics without compromising the functionality of the D flip-flop with active high synchronous reset. Given that the current implementation is already straightforward and minimal, our strategy will involve simplifying the logic where possible while maintaining adherence to the required functionality. 
+
+We notice that the current implementation uses two separate always blocks: one for combinational logic to determine `mux_out` and another for the sequential logic to assign `q` based on `mux_out` at the positive edge of `clk`. This approach is functionally correct but can potentially introduce unnecessary complexity or overhead. 
+
+Our improvement strategy involves simplifying the logic by directly assigning `q` within the sequential block, eliminating the need for the intermediate `mux_out` signal. This approach reduces the number of registers and combinational logic, potentially leading to improvements in area and power consumption.
+
+Additionally, considering the synthesis tool's optimization settings and exploring techniques like clock gating for power reduction could further enhance the PPA metrics. However, these optimizations would depend on the specific requirements and constraints of the larger system and the capabilities of the synthesis tool used.

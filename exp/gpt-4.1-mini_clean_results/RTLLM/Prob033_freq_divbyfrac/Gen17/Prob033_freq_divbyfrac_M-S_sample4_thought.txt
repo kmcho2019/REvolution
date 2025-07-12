@@ -1,0 +1,7 @@
+To simplify the fractional frequency divider by 3.5, I will use a single counter running on the rising edge of clk that counts from 0 to 6 (7 cycles total). The divided clock toggles to produce periods of 4 and 3 input clock cycles alternately, creating an average division of 3.5.
+
+To improve duty cycle and approximate a fractional division without complex double-edge toggling, I will implement a simple toggle on specific counts: toggle clk_div at count 0 and count 3, generating an uneven period sequence of 4 and 3 cycles.
+
+This approach sacrifices perfect 50% duty cycle but ensures a stable fractional frequency division with a simple synchronous design. It avoids dual-edge complexity and phase-shifting.
+
+Reset initializes counter and output clock. The design is fully synchronous and easily synthesizable.

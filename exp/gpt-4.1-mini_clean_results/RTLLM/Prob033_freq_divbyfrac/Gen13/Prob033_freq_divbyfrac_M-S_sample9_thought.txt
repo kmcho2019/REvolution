@@ -1,0 +1,13 @@
+To simplify the fractional frequency divider by 3.5 using double-edge clocking, avoid separate counters on posedge and negedge which can drift apart. Instead, use a single counter clocked on the positive edge to track the 7-cycle period, and generate two complementary pulse trains:
+
+1. Use the positive edge counter to generate `clk_even`, high for 4 cycles, low for 3 cycles.
+
+2. Generate `clk_odd` by sampling `clk_even` on the negative edge of the input clock to produce a half-cycle delayed version.
+
+3. OR `clk_even` and `clk_odd` to create `clk_div`.
+
+This approach maintains phase shift and fractional division but only requires one counter synchronized to the posedge. Sampling on negedge naturally introduces the half-cycle delay for `clk_odd`.
+
+This reduces complexity and ensures counters stay aligned, while effectively achieving division by 3.5 with a roughly 50% duty cycle.
+
+Reset synchronously clears counter and outputs for deterministic startup.

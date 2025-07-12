@@ -1,0 +1,12 @@
+The feedback indicates the original implementation had issues with handling certain control signal combinations and rotation direction. Here's the improved approach:
+
+1. Maintain the efficient 3-stage design (4-2-1 shifts) but ensure correct bit ordering in concatenations
+2. Implement left rotation (more common in barrel shifters) where bits wrap around to the right
+3. Verify all control combinations work correctly:
+   - ctrl=0: no shift
+   - ctrl=1: shift by 1
+   - ctrl=2: shift by 2
+   - ctrl=3: shift by 3 (1+2)
+   - etc. up to ctrl=7 (4+2+1=7)
+4. Each stage should properly combine with previous shifts when multiple control bits are set
+5. Use proper bit selection in concatenations to ensure correct rotation

@@ -1,0 +1,11 @@
+Refactor the TopModule by separating the combinational logic of the multiplexer and the sequential logic of the flip-flop. Instead of directly coding the mux inside the always block, use a separate wire for the mux output and then register that wire on the clock edge.
+
+This approach clarifies the datapath: first, select the input (mux), then register it. This modular separation makes the code more readable and explicitly shows the combinational mux behavior before registering, which can aid synthesis tools and is a common style.
+
+We keep the same interface and functional behavior:
+- A 2:1 mux selects between r_in and q_in depending on L.
+- The selected data is loaded into Q at each rising clock edge.
+
+This refactoring uses an intermediate wire and an always block, avoiding combinational always blocks, to make it synthesizable and clean.
+
+No initial or reset is added, keeping strict adherence to the original interface.

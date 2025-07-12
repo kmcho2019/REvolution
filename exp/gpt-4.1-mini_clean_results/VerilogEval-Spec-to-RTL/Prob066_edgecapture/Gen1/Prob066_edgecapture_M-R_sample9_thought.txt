@@ -1,0 +1,5 @@
+Retain the same core concept: detect 1-to-0 transitions on each bit by comparing the previous input and current input. Instead of a single always block updating both `out` and `prev_in`, separate the logic into two always blocks for better clarity and potentially improved synthesis. 
+
+One always block will update `prev_in` (the registered previous input), and another always block will update `out` based on the transition condition using the registered `prev_in` value. Both will use synchronous reset. This separation maintains the same functionality but clarifies data flow, making the transition detection and output capture explicit and modular.
+
+This approach also makes it straightforward to add comments and possibly extend or modify the design later. The core logic remains unchanged, ensuring correctness.

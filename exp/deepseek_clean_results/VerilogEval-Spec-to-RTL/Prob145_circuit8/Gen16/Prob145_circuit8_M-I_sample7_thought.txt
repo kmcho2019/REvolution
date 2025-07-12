@@ -1,0 +1,14 @@
+Key improvements made:
+1. Simplified the design to use only positive edge triggering for all state updates
+2. Implemented proper state transition logic where:
+   - p directly follows 'a' when q is 0 (on posedge)
+   - q becomes 1 in the cycle after p was 1
+   - Both p and q reset when 'a' is high during a clock low phase
+3. Removed the negedge sampling to avoid potential timing issues
+4. Added a state register to clearly track the circuit's behavior
+5. Made the reset condition more explicit based on waveform observation
+
+The circuit now correctly implements:
+- p = a when q=0 (updated at posedge)
+- q = previous p value (one cycle delay)
+- Reset condition: when a=1 during clock low, both p and q reset to 0

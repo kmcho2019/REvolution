@@ -1,0 +1,26 @@
+module comparator_4bit(
+    input [3:0] A,  // First 4-bit input operand
+    input [3:0] B,  // Second 4-bit input operand
+    output reg A_greater,  // 1-bit output indicating if A is greater than B
+    output reg A_equal,   // 1-bit output indicating if A is equal to B
+    output reg A_less     // 1-bit output indicating if A is less than B
+);
+
+always @(*) begin
+    // Perform subtraction and determine the relationship between A and B
+    if (A > B) begin
+        A_greater = 1'b1;  // A is greater than B
+        A_equal = 1'b0;
+        A_less = 1'b0;
+    end else if (A == B) begin
+        A_greater = 1'b0;
+        A_equal = 1'b1;   // A is equal to B
+        A_less = 1'b0;
+    end else begin
+        A_greater = 1'b0;
+        A_equal = 1'b0;
+        A_less = 1'b1;    // A is less than B
+    end
+end
+
+endmodule

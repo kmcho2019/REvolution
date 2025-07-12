@@ -1,0 +1,7 @@
+Simplify by directly decoding the water level state from the sensor input based on the given patterns, using a combinational function without enforcing extra constraints. Maintain a single register to track the previous level state (registered at each clock), and update it only when the decoded level differs from the previous. This previous-level register effectively captures the last stable level before the current one, enabling comparison to detect rising level (current > previous).
+
+On reset, initialize the previous level to "below s[0]" (lowest level), so outputs start at max flow.
+
+Outputs are purely combinational based on the current decoded level, and the supplemental flow valve dfr is set if the level rose since the previous stable level.
+
+This avoids complex multiple registers and race conditions, keeping the design clean and reliable.

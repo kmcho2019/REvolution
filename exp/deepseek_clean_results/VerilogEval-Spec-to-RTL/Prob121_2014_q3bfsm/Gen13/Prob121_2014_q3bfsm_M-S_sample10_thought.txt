@@ -1,0 +1,7 @@
+To simplify the solution while maintaining functionality:
+
+1. Remove parameterized states since the state encoding is already clear from the binary values in the table.
+2. Combine the state transition and output logic into a single always block for sequential logic, eliminating the separate combinational next_state logic.
+3. Simplify the output logic by directly using the state bits as specified in the table (z=1 only for states 011 and 100, which correspond to state[2] OR (state[1] AND state[0])).
+4. Maintain synchronous reset to initialize to state 000.
+5. This reduces the number of always blocks and eliminates the need for next_state register, making the code more compact.

@@ -1,0 +1,24 @@
+Improved Lemming State Machine Design:
+
+1. Key Improvements:
+   - Enhanced state transition logic with explicit priority handling (fall > dig > bump)
+   - Proper handling of simultaneous bump_left and bump_right (switch direction regardless)
+   - Clear separation of direction logic from state transitions
+   - Explicit handling of dig command termination while on ground
+   - More robust fall counter implementation with edge case handling
+
+2. State Logic Refinements:
+   - WALK: Explicitly checks ground first (highest priority), then dig, then bumps
+   - DIG: Only active when ground=1, transitions to FALL immediately when ground lost
+   - FALL: Counts cycles until ground, properly handles splat condition at exactly 20 cycles
+   - SPLAT: Permanent terminal state
+
+3. Output Logic:
+   - Direct mapping from state and direction
+   - All outputs mutually exclusive (only one can be active at a time)
+
+4. Optimization:
+   - Single always block for cleaner implementation
+   - Minimal state encoding (2 bits)
+   - Clear reset conditions
+   - Efficient counter implementation

@@ -1,0 +1,10 @@
+Use a three-state encoded state machine (2-bit state) with distinct states: WALK_LEFT, WALK_RIGHT, and FALLING. 
+- Encode states as: 2'b00 = WALK_LEFT, 2'b01 = WALK_RIGHT, 2'b10 = FALLING.
+- The state transition logic is encoded in a combinational block producing next_state based on current state and inputs.
+- On bump_left or bump_right while walking, change direction accordingly.
+- When ground drops from 1 to 0, transition from walking state to FALLING, but store the previous walking direction in a separate register "last_direction".
+- When ground rises from 0 to 1 and state is FALLING, return to the saved last_direction walking state.
+- Bumps during FALLING do not affect direction or state.
+- The asynchronous reset sets state to WALK_LEFT and last_direction to WALK_LEFT.
+- Outputs are decoded from state (walk_left, walk_right, aaah).
+This architecture centralizes state information, makes transitions explicit, and separates falling from walking direction with a stored last_direction for resuming walking after falling.

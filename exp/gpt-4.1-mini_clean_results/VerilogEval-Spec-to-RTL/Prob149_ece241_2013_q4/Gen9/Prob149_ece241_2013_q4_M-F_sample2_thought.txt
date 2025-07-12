@@ -1,0 +1,20 @@
+To fix the issues, I will explicitly define a monotonic water level encoding that matches the physical water level order from lowest to highest, ensuring that comparisons for rising water level (`dfr`) work correctly. I will map:
+
+- BELOW_S0 (no sensors asserted) = 0
+- BETWEEN_S1_S0 (only s[0]) = 1
+- BETWEEN_S2_S1 (s[0] and s[1]) = 2
+- ABOVE_S2 (all sensors asserted) = 3
+
+This encoding is monotonic increasing with water level.
+
+For invalid sensor inputs (any combination other than the four valid ones), I will treat them as BELOW_S0, as the original code did.
+
+I will synchronize the reset properly and force all outputs (including combinational ones) to the reset condition state during reset by creating a registered version of `curr_level`. This way, outputs during reset do not depend on the asynchronous input `s`.
+
+The registered `curr_level_reg` will be updated synchronously. On reset, it will be set to BELOW_S0 to represent "water level low for a long time" condition.
+
+Outputs `fr0`, `fr1`, and `fr2` will be registered for output stability and also set to their reset states when reset is asserted.
+
+`dfr` will be asserted synchronously when the current water level is higher than the previous stored water level, indicating water rising.
+
+This approach ensures consistent, monotonic water level encodings, properly synchronized reset and output states, and correct `dfr` assertion logic.

@@ -1,0 +1,15 @@
+Refactoring the Mealy FSM with these key improvements:
+
+1. Output Registering: Move the MATCH output to a registered output to improve timing closure and reduce glitches. This makes the output synchronous with the clock.
+
+2. State Encoding: Maintain binary encoding but separate IDLE and GOT1001 states clearly by using all 3 available state encodings (2'b00, 2'b01, 2'b10, 2'b11) without reuse.
+
+3. Clock Gating: Add enable logic for the state registers to reduce power consumption when the state isn't changing.
+
+4. Cleaner Structure: Separate the state transition logic and output generation into distinct always blocks for better readability and synthesis optimization.
+
+The improvements will:
+- Improve timing by registering outputs
+- Reduce power with clock gating
+- Maintain small area with binary encoding
+- Keep the same functionality but with better physical implementation characteristics

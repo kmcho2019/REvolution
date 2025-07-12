@@ -1,0 +1,9 @@
+Implement the 12-hour clock as three separate BCD counters for seconds, minutes, and hours, each counting their respective digits directly without intermediate binary counters. Use a synchronous always block with a clear priority for reset, then enable.  
+Seconds and minutes count up in two BCD digits with proper rollover at 60 (tens < 6 and units < 10).  
+The hour is represented as two BCD digits counting 01 to 12 directly, incrementing upon minute rollover.  
+The pm signal toggles when the hour rolls over from 11 to 12.  
+To simplify hour increments, on increment attempt from 12, wrap back to 1 and toggle pm.  
+Use a dedicated combinational function to increment a BCD digit with upper limit checks for modularity (e.g., increment BCD with max).  
+All counters use non-blocking assignments for clean synchronous logic.  
+This design avoids internal binary hour counters and reduces combinational conversions, making the increment logic explicit in BCD domain.  
+It trades off a bit more combinational logic in increments for intuitive BCD counting and clear rollover logic, which can be efficiently synthesized and easy to verify.

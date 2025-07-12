@@ -1,0 +1,12 @@
+Refactor to separate combinational and sequential logic more clearly and explicitly pipeline prediction outputs:
+
+- Keep the GHR as a registered speculative history updated on clock edge.
+- Compute prediction index combinationally from (predict_pc XOR current ghr).
+- Read the PHT entry combinationally at that index.
+- Register prediction outputs (predict_taken and predict_history) in a pipeline register when predict_valid is asserted. This aligns prediction outputs timing explicitly, preventing timing mismatches between combinational PHT reads and registered history outputs.
+- On the clock edge, update PHT and GHR following priority rules:
+  1) If training valid and mispredicted, restore GHR from train_history and update PHT entry.
+  2) Else if training valid and not mispredicted, update PHT entry.
+  3) Else if prediction valid and no mispredicted training, update GHR by shifting in predicted bit.
+- Initialize PHT entries to weakly not taken (01) on asynchronous reset.
+- This structure improves timing alignment and makes prediction outputs fully registered, eliminating combinational-to-sequential mismatches.

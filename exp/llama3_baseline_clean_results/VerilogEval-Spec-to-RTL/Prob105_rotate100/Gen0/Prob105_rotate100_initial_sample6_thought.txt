@@ -1,0 +1,7 @@
+To implement the 100-bit left/right rotator as specified, we will create a module named TopModule. This module will have an internal register to hold the current state of the rotator (q_reg) and use it to generate the output q. We will handle the synchronous load and left/right enable logic as specified. The key idea is to use a case statement to determine the direction of rotation based on the ena input and then apply the appropriate shift/concatenation to the current state of the register to effect the rotation.
+
+- When load is high, we simply load the data into the register.
+- For rotation, based on ena:
+  - If ena is 2'b01, we rotate right by one bit.
+  - If ena is 2'b10, we rotate left by one bit.
+  - For 2'b00 and 2'b11, we do not rotate, effectively leaving the register unchanged.

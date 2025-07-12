@@ -1,0 +1,12 @@
+Novel circular shift register architecture:
+1. Instead of a traditional linear shift, implement a circular buffer
+2. Add a write pointer to track current insertion point
+3. Use pointer arithmetic for circular addressing
+4. Maintain synchronous active-low reset
+5. Output always comes from the "oldest" register (pointer+1 mod 4)
+6. Benefits:
+   - More flexible for future extensions (can add read/write pointers)
+   - Easier to implement parallel load functionality if needed
+   - Clear separation of data storage and pointer logic
+   - Potential power savings by only clocking the active register
+7. Still maintains same external behavior as required

@@ -1,0 +1,9 @@
+The original implementation is already minimal and optimal for PPA, implementing the half adder with only two basic gates (XOR for sum, AND for carry). There is no sequential logic to optimize or complexity to reduce. The outputs are assigned continuously and declared as wires for good synthesis results.
+
+However, one possible micro-optimization is to declare the outputs as reg and implement the logic inside an always_comb block to potentially improve synthesis tool inference and clarity on combinational behavior. Some synthesis tools optimize better with always_comb than continuous assignments, especially when scaling designs.
+
+Also, adding the explicit `always @(*)` block with non-blocking assignments ensures that the combinational logic is properly understood as combinational, which could help with timing analysis in some flows.
+
+While this change does not significantly affect the gate count, area, or power (minimal difference), it improves code clarity and robustness by using the synthesizable always_comb idiom and preventing accidental latch inference in more complex scenarios.
+
+Thus, the improved code uses an always_comb block and reg outputs, maintaining minimal logic but improving style and clarity for future scaling and tool compatibility.

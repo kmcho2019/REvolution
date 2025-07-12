@@ -1,0 +1,15 @@
+Simplified Approach:
+1. Directly implement the Galois LFSR with specified tap positions (32, 22, 2, 1)
+2. Use a single always block with synchronous reset
+3. For the feedback logic:
+   - XOR taps with q[0] (LSB)
+   - Shift right by 1 position
+   - Insert q[0] at the MSB (position 31)
+4. Maintain reset value of 32'h1
+5. Keep all operations in one clean, readable always block
+
+This simplification:
+- Removes unnecessary intermediate variables
+- Uses direct bit operations instead of concatenation where possible
+- Maintains identical functionality with fewer lines
+- Keeps the same PPA characteristics

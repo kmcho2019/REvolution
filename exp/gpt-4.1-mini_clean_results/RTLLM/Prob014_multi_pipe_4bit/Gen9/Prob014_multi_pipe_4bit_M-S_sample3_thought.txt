@@ -1,0 +1,13 @@
+Simplify the multiplier by directly generating partial products and summing them using two pipeline register levels:
+
+- Stage 1: Register extended multiplicand and multiplier inputs.
+- Stage 2: Compute partial products for each bit of the registered multiplier combinationally, sum them up, and register the intermediate sum in an intermediate register.
+- Stage 3: Register the final output product as the sum of intermediate sums.
+
+This meets the two-level register requirement by splitting the summation into two register stages:
+1) Input registers storing extended inputs.
+2) Output registers storing final product.
+
+The intermediate sums are combinational in-between, which simplifies the design and limits combinational delay, but still stores intermediate values in registers.
+
+Use simple shift and conditional generation of partial products and asynchronous reset to zero the registers.

@@ -1,0 +1,7 @@
+To fix the issues pointed out:
+- Replace the hardcoded summation of partial products with a generate loop that sums all partial products in a parameterized way, which will scale with `size`.
+- Use a register array for stage1 partial products as before.
+- Perform a balanced summation using a reduction-style approach inside a generate block to sum the partial products combinationally.
+- Keep the same two pipeline stages: stage1 registers partial products, stage2 registers the final sum output.
+- Maintain the asynchronous active-low reset behavior.
+- This approach improves scalability and synthesizability, and makes the design easier to parameterize without code changes.

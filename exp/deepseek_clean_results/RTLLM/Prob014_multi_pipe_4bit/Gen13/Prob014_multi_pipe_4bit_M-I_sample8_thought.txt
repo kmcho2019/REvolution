@@ -1,0 +1,22 @@
+Improved 4-bit Pipelined Multiplier Design:
+
+Key Improvements:
+1. **Parameter Handling**: Properly expose the 'size' parameter for module configurability
+2. **Register Optimization**: Reduce pipeline registers by combining partial product generation and first-stage addition
+3. **Carry-Save Optimization**: Use carry-save technique for intermediate sums to improve timing
+4. **Power Optimization**: Add clock gating for partial product generation when multiplier bits are zero
+5. **Clear Hierarchy**: Maintain two-stage pipeline but with more efficient implementation
+
+Operation Flow:
+1. First Stage (Cycle 1):
+   - Generate partial products with clock gating
+   - Perform first-level carry-save addition
+   - Store intermediate sums in pipeline registers
+
+2. Second Stage (Cycle 2):
+   - Final addition of carry-save results
+   - Register final output
+
+Reset Behavior:
+- All registers clear synchronously on active-low reset
+- Parameterized design allows easy size modification

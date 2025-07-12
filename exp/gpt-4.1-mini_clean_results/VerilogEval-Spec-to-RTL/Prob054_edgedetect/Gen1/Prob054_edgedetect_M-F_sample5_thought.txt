@@ -1,0 +1,7 @@
+To fix the timing and reduce latency, we should detect the 0->1 transitions by comparing the current input `in` with the registered previous input `prev_in`. Since `prev_in` holds the input value from the previous cycle, we can detect transitions by computing `(~prev_in & in)` in the same clock cycle.
+
+To output a pulse on `pedge` exactly one cycle after the transition, we can simply register the result of this detection once (not twice). This means we only need two registers:
+- `prev_in` to hold the previous cycle's input for edge detection.
+- `pedge_reg` to hold the delayed edge detection result, which is then assigned to output `pedge`.
+
+This approach yields an output pulse on `pedge` precisely one clock cycle after the 0->1 edge occurs on each bit of `in`. It simplifies the design by removing the redundant pipeline stage and ensures correct timing aligned with the problem specification.

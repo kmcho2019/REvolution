@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. Boundary Handling Optimization:
+   - Use ternary operators for boundary conditions (left=0 for q[0], right=0 for q[511])
+   - Eliminate separate wire declarations for left/right neighbors to reduce area
+
+2. State Management:
+   - Directly compute next state in the always block without intermediate wires
+   - This reduces register usage and simplifies the design
+
+3. Parallel Computation:
+   - Maintain full parallel computation of all 512 cells
+   - Use a for-loop in the always block instead of generate for cleaner code
+
+4. Clocking and Loading:
+   - Single always block for synchronous updates
+   - Clear priority to load signal for state updates
+
+Optimizations:
+1. Reduced area by eliminating next_q wires and generate block
+2. Improved timing by combining neighbor selection and XOR in one step
+3. Maintained full parallel computation while simplifying code structure
+4. Cleaner implementation with direct computation in always block

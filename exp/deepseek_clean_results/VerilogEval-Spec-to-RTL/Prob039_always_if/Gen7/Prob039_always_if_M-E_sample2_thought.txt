@@ -1,0 +1,10 @@
+My novel approach uses a hierarchical selection scheme with these key innovations:
+1. **Priority-encoded selection**: Instead of a flat AND operation, we implement a cascaded selection that first checks sel_b1 (higher priority) before evaluating sel_b2
+2. **Conditional operator fusion**: Combine the selection logic directly with the mux operations to minimize logic levels
+3. **Output phase alignment**: Ensure both outputs have identical timing characteristics by using similar structures
+4. **Resource sharing**: The selection condition is implicitly shared between both implementations without explicit wiring
+
+Benefits:
+- Potentially better timing due to reduced logic depth in common case (when sel_b1 is 0)
+- More power-efficient as it avoids unnecessary evaluation of sel_b2 when sel_b1 is 0
+- Maintains clean code structure while optimizing the critical path

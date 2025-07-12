@@ -1,0 +1,10 @@
+Combine the clarity of the shift register with synchronous enable and simple concatenation of bits from Example 2, and the explicit use of the 3-bit select as an address wire from Example 2, but incorporate the use of a combinational always block for the multiplexer output (Z) from Example 1 to allow easier extensibility and clearer intent for combinational logic. This fusion ensures clean separation of sequential logic (the shift register) and combinational logic (the mux), improves readability, and maintains minimal area and power usage by leveraging indexed access for the mux input rather than a case statement.
+
+By explicitly declaring Z as reg and driving it combinationally, it mimics Example 1's clarity while using the compact indexing method from Example 2 for the mux, ensuring efficient logic synthesis. This also makes debugging or future extension easier.
+
+Key points:
+- Use synchronous enable for shifting, shifting in S into Q[0].
+- Use a wire [2:0] address formed by {A,B,C}.
+- Use always @(*) block to assign Z by indexing Q with address.
+- Maintain Q as reg [7:0].
+- Use non-blocking assignments in the clocked always block.

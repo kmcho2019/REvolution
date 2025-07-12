@@ -1,0 +1,7 @@
+The original design is already clean and efficient; however, a slight optimization can be made by removing the 4-bit vector and instead using individual D flip-flop registers for each stage. This can help the synthesis tool better map registers and possibly reduce the switching activity by isolating bits.
+
+Additionally, by using individual registers, we can explicitly model each D flip-flop and potentially enable fine-grained clock gating later (if the design is extended). For now, this approach may slightly improve power and area due to better register inference and reduced combinational fanout.
+
+We maintain the synchronous active-low reset and ensure the output is taken from the last stage flip-flop.
+
+This change trades a simple concatenation operation for a straightforward register shift, which may marginally improve power and area metrics due to potentially simpler combinational logic on input paths.

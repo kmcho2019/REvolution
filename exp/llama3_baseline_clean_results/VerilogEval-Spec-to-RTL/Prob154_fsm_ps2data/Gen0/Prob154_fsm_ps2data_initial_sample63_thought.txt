@@ -1,0 +1,5 @@
+To solve this problem, we'll implement a finite state machine (FSM) that has four states: idle, byte1, byte2, and done. The FSM will stay in the idle state until it receives a byte with in[3]=1. Once this condition is met, the FSM will move to the byte1 state, where it will store the current byte in the most significant byte position of out_bytes. The FSM will then move to the byte2 state, where it will store the next byte in the middle byte position of out_bytes. The FSM will then move to the done state, where it will store the next byte in the least significant byte position of out_bytes and assert the done signal. After the done signal is asserted, the FSM will return to the idle state.
+
+We'll use a counter to keep track of the current state. We'll initialize the counter to 0 (idle state) when the reset signal is asserted. We'll increment the counter when the FSM moves to the next state.
+
+We'll also use a register to store the current byte and the previous two bytes. We'll update this register when the FSM moves to the next state.

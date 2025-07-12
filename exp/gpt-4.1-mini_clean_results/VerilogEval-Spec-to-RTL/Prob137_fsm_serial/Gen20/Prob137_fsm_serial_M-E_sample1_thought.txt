@@ -1,0 +1,5 @@
+Implement the FSM with a binary state encoding and a 4-bit bit counter to track reception progress rather than separate states per bit. This reduces state register width and complexity. The FSM has three main states: IDLE (waiting for start bit), RECEIVE (receiving data bits indexed by the bit counter), and CHECK_STOP (verifying the stop bit). If the stop bit is invalid, transition to an ERROR state that waits for the line to return to idle before restarting.
+
+Data bits are accumulated by shifting the previously accumulated bits right and inserting the incoming bit as the MSB, because the protocol sends LSB first. Alternatively, shifting left and OR'ing in LSB first is also fine; here I'll shift right and insert MSB for variety. The done signal is asserted for one cycle when a valid stop bit is detected.
+
+This approach significantly reduces state complexity, uses a small counter instead of one-hot states for each bit, and simplifies data accumulation logic, optimizing area and potentially power. The FSM remains fully synchronous with an active-high reset, and all operations happen on the positive clock edge.

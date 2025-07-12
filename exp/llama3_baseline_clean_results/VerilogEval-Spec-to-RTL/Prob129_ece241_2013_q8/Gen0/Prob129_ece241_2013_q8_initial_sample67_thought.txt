@@ -1,0 +1,10 @@
+To implement the Mealy-type finite state machine (FSM) that recognizes the sequence "101" on the input signal x, we will design a state machine with three states: IDLE, ONE, and ZERO_AFTER_ONE. The FSM will transition between these states based on the value of the input signal x and the current state. 
+
+1. The IDLE state is the initial state. 
+2. When the FSM is in the IDLE state and x is 1, it will transition to the ONE state.
+3. When the FSM is in the ONE state and x is 0, it will transition to the ZERO_AFTER_ONE state.
+4. When the FSM is in the ZERO_AFTER_ONE state and x is 1, it will transition back to the ONE state, because this is the beginning of another "101" sequence, and output z will be set to 1. 
+5. When the FSM is in the ZERO_AFTER_ONE state and x is 0, or when the FSM is in the IDLE or ONE states and x does not match the transition conditions, it will stay in the same state or transition back to the IDLE state.
+6. The output z will be asserted to 1 when the FSM is in the ZERO_AFTER_ONE state and x is 1, indicating that the sequence "101" has been detected.
+
+The FSM will also have an asynchronous reset input, aresetn, which will reset the FSM to the IDLE state on its negative edge.

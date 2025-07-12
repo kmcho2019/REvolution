@@ -1,0 +1,15 @@
+Fuse the best ideas by implementing a multi-stage pipelined 8-bit unsigned multiplier that splits partial product addition into two pipeline stages to reduce critical path length. 
+
+- Use a 4-stage enable shift register pipeline to track operation.
+- Sample input operands (mul_a, mul_b) into registers when mul_en_in is high.
+- Generate partial products combinationally.
+- Split summation of partial products into two pipeline stages:
+  1. First stage adds partial products in pairs to form four intermediate sums.
+  2. Second stage adds those intermediate sums into the final product.
+- Register partial sums at each stage to reduce combinational delay.
+- Output enable signal derived from MSB of enable pipeline.
+- Output mul_out only when mul_en_out is high, else zero.
+  
+This approach balances latency and throughput with improved timing and power efficiency by reducing the large combinational adder fan-in in a single cycle. Registering partial sums cuts down glitching and switching activity, improving power. Using a 4-stage enable pipeline ensures correct enable synchronization.
+
+The design retains clear synchronous reset and enables logic, and output logic is clean and stable.

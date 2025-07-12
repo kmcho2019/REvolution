@@ -1,0 +1,9 @@
+I will simplify the barrel shifter design by explicitly instantiating the `mux2X1` module for each bit and each shift stage, adhering strictly to the problem requirement.
+
+The `mux2X1` module will be a straightforward 2-to-1 mux that selects between the shifted and unshifted bit based on the control signal.
+
+To avoid using the modulo operator, I'll compute the rotate-left shifted indices using conditional expressions with wrap-around logic, e.g., `(i+shift) < 8 ? (i+shift) : (i+shift-8)`. This avoids synthesis or simulation issues with modulo.
+
+This explicit mux-based design keeps the implementation clear and directly reflects the barrel shifter architecture with three cascaded shift stages controlled by `ctrl[2:0]`.
+
+Overall, this approach is concise, functional, and meets the design specification exactly.

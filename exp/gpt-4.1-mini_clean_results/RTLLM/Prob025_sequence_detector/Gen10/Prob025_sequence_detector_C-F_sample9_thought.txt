@@ -1,0 +1,11 @@
+To create a superior sequence detector for the 4-bit sequence 1001, I will fuse the best ideas from both examples:
+
+- Use a synchronous active-low reset named `rst_n`, matching common testbench conventions.
+- Implement the FSM with a clear 3-bit binary state encoding (efficient in area) but maintain a structured typedef enum for readability.
+- Use Moore FSM style, where the output `sequence_detected` is registered and asserted when the FSM enters the final detection state `S4`. This avoids glitches and reduces switching activity on the output.
+- Carefully design next-state logic to handle overlapping sequences correctly, preserving the functional robustness.
+- Register both state and output signals synchronously on the clock edge to reduce combinational paths and improve timing.
+- Initialize both state and output registers on reset to ensure a known startup condition.
+- The approach balances area efficiency (compact binary encoding) and performance (registered outputs and synchronous reset), while aligning with common naming conventions and minimizing power by reducing glitching on outputs.
+
+This fusion strategy leverages the clarity and power/timing benefits of the second example's registered Moore output and binary states, while ensuring the reset naming and sequence overlapping logic correctness as emphasized in the first example.

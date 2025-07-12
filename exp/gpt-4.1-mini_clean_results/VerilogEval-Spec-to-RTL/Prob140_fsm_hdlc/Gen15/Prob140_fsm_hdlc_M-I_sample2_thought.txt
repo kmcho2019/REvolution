@@ -1,0 +1,16 @@
+To optimize the FSM for better PPA while preserving correctness and synchronous outputs, we can simplify the output logic and reduce combinational dependencies by:
+
+- Removing the separate `prev_in` register. Instead, detect the needed transitions by comparing the current input with the previous state which already encodes the count of consecutive 1s.
+- Modify output conditions to depend only on the current state and current input, eliminating the extra signal and its toggle activity.
+- Implement next state logic and output logic with a single case statement keyed on state and input, to share logic resources and simplify combinational paths.
+- Register outputs as before for synchronous one-cycle assertion.
+- This reduces power by eliminating one register toggle per cycle, shortens critical paths by simplifying output logic, and can slightly reduce area by eliminating `prev_in`.
+- The FSM encoding and reset behavior remain the same to keep minimal state bits and correctness.
+
+Specifically:
+- The `disc` signal (detecting 0111110) corresponds to a transition from state 5 on input 0.
+- The `flag` signal (detecting 01111110) corresponds to a transition from state 6 on input 0.
+- The `err` signal occurs when the next state is S7 (7 consecutive ones).
+Thus outputs can be derived by looking at current state and input only.
+
+This approach keeps the FSM Moore-type with registered outputs asserted one cycle after detection, and maintains the synchronous reset behavior.

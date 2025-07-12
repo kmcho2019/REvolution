@@ -1,0 +1,8 @@
+Fuse the two examples by keeping the explicit tree-structured summation inside popcount17 for minimal combinational depth and better synthesis, while implementing TopModule's summation tree with generate loops like in Example 2 for clean, scalable, and balanced reduction. Additionally, optimize the adder widths per level in the summation tree in TopModule to use minimal bit widths required at each stage, saving area and power. This adaptive-width approach reduces unnecessary wide adders when summing fewer operands. The popcount17 module uses explicit small popcount blocks and adder tree structure, minimizing glitching and critical path inside the partial count units.
+
+Overall:
+- Modular popcount17 with 4-bit popcount + tree addition inside.
+- TopModule uses generate loops and a balanced adder tree for summing 15 partial results.
+- Each tree level sum uses the minimal width needed based on maximum possible sum at that stage.
+- Clear code and scalability with generate loops.
+- Improved PPA by minimal bit-width sums, explicit parallel addition, and balanced reduction tree.

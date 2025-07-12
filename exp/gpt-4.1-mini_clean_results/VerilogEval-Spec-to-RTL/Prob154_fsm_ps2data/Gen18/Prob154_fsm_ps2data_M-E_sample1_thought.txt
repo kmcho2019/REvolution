@@ -1,0 +1,11 @@
+Implement a 2-state FSM with explicit byte count and a shift-register based message buffer:
+
+- Use two states: SEARCH (waiting for sync byte where in[3]=1), and CAPTURE (capturing next two bytes).
+- Maintain a 2-bit byte counter to count bytes in the message (1 to 3).
+- On detecting a sync byte in SEARCH, shift it into the high byte position of a 24-bit shift register and move to CAPTURE state.
+- Each subsequent byte shifts the register left by 8 bits and inserts the new byte at the LSB.
+- When three bytes have been collected, assert done for one cycle, outputting the full 24-bit message in out_bytes.
+- After done, return to SEARCH state.
+- Synchronous active-high reset initializes state and outputs.
+- This approach uses a shift register for the message to reduce datapath multiplexing and allows easier scalability.
+- done is asserted only one cycle immediately after third byte, per spec.

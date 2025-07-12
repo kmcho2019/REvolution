@@ -1,0 +1,9 @@
+To optimize for better PPA while maintaining functionality, we can use a slightly different approach for the neighbor comparisons by leveraging shifts and masks to handle edge bits uniformly. Specifically:
+
+- For out_both, instead of manually setting out_both[99] = 0, shift the input left by 1, AND with the input, and mask off the highest bit, which is invalid.
+- For out_any, similarly shift right by 1, OR with the input, and mask off the lowest bit.
+- For out_different, use a circular left rotation by 1 (i.e., in rotated left by 1 bit) and XOR with in; this is equivalent to XOR with the left neighbor considering wrap-around.
+  
+This avoids explicit slice assignments and separate bit setting, enabling efficient synthesis tools to infer shifters or wires and masks efficiently and potentially reduce area and power. It also avoids concatenation, which can incur area cost.
+
+These minor changes should keep combinational delay similar but potentially reduce gate count and switching activity by simplifying expression and unifying the operations.

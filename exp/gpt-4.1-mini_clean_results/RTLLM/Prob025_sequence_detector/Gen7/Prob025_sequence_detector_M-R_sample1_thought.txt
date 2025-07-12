@@ -1,0 +1,5 @@
+I will refactor the sequence detector by implementing the FSM using an explicit one-hot encoded state machine to simplify the state transition logic. Instead of separate combinational and sequential always blocks for next state logic, I will directly compute the next state logic within the sequential always block. The output `sequence_detected` will be derived combinationally from the state register using assign, allowing immediate output assertion when the final state is reached.
+
+The reset input will be renamed to `reset` for clarity, explicitly active-high as per the problem statement, avoiding confusion from the `_n` suffix. This reset will be synchronous to the clock for clean state initialization.
+
+This approach reduces code complexity, improves readability, and clarifies signal naming and polarity while keeping the same sequence detection behavior and overlapping sequence support.

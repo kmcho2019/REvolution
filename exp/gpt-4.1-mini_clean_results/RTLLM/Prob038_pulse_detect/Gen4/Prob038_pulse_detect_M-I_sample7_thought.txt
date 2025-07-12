@@ -1,0 +1,14 @@
+To optimize the original FSM design for better Performance, Power, and Area (PPA):
+
+1. Performance: Use one-hot encoding for states to speed up the next-state logic, especially beneficial for FPGA implementations where flip-flops are abundant and decoding logic is simpler.
+2. Power: Limit switching activity by carefully controlling output toggling only in the pulse detection state and ensure no glitches by using registered outputs.
+3. Area: Although one-hot increases flip-flop usage, the simplified combinational logic and faster timing can allow for better optimization overall.
+
+Additional improvements:
+- Make output registered (clocked) to avoid glitches and synchronize data_out with clk.
+- Use non-blocking assignments consistently.
+- Combine state transition and output generation in a single sequential always block to simplify control and reduce combinational logic.
+
+This approach improves timing and robustness with minor area cost tradeoff, optimal for typical FPGA or ASIC flows.
+
+The behavior remains exactly as specified: data_out is asserted only for one cycle at the end of the detected pulse pattern (0->1->0).

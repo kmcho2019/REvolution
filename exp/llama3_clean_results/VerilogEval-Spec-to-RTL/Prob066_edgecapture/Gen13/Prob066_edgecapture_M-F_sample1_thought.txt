@@ -1,0 +1,7 @@
+To address the issues identified in the feedback, the new approach involves maintaining the basic idea of using a shift register to track the previous state of the input signal but with crucial modifications to handle the reset condition and ensure that once an output bit is set to 1, it remains set until a reset occurs. 
+
+The logic should be revised to correctly reset all output bits when the reset signal is high. Additionally, we need to ensure that once a bit in the output signal is set due to a falling edge detection, it remains set until the reset signal is asserted. This can be achieved by only updating the output bits based on the detection of a falling edge and not continuously checking the input against the previous state unless a new falling edge is detected or a reset occurs.
+
+Furthermore, simplifying the logic to directly compare the current and previous states of the input to decide the output can enhance performance. To minimize the number of flip-flops and gates, we should aim for a more efficient coding practice that directly addresses the requirements without unnecessary complexity.
+
+A key insight is to separate the logic for detecting falling edges and resetting the output. When the reset signal is high, all output bits should be reset to 0. In the absence of a reset, we should check for falling edges by comparing the current input with the previous state stored in the shift register. If a falling edge is detected for any bit, the corresponding output bit should be set to 1 and remain so until a reset occurs.

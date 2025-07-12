@@ -1,0 +1,10 @@
+To implement the finite state machine (FSM) as described, we'll need to design a state machine that can recognize sequences and maintain outputs based on input conditions. The FSM will start in state A (RESET) and transition through states as it observes inputs x and y and deassertion of the reset signal. It will use a counter to track the sequence of x (1, 0, 1) and another counter to time the waiting period for y after g is set high.
+
+1. Initially, in state A, all outputs are 0, and the FSM waits for the reset signal to be deasserted.
+2. Once resetn is high (reset deasserted), on the next clock cycle, it transitions to state B, setting f to 1 for one cycle.
+3. After state B, it moves to state C, where it starts monitoring the x input for the sequence 1, 0, 1.
+4. Upon recognizing the sequence, it moves to state D, where it sets g to 1 and starts waiting for y to become 1 within two clock cycles.
+5. If y becomes 1 within two cycles, it moves to state E, maintaining g = 1.
+6. If y does not become 1 within two cycles, it moves to state F, setting g = 0 permanently.
+
+Each state will have a specific action and will transition to the next state based on the current state's conditions being met.

@@ -1,0 +1,5 @@
+The existing solution can be simplified by introducing a more straightforward approach to counting 'w' occurrences over a three-clock cycle window. Instead of using a single counter to track both 'w' occurrences and cycles, we can use a simpler state machine that directly counts the occurrences of 'w' = 1 over a three-cycle window once in state B. 
+
+We can maintain the two states: A and B. In state A, the FSM waits for 's' to become 1 to transition to state B. Once in state B, the FSM counts the number of times 'w' is 1 over a three-clock cycle window using a counter. If 'w' is 1 exactly twice in these three cycles, the FSM sets the output 'z' to 1 in the next clock cycle; otherwise, 'z' is set to 0. This approach simplifies the logic for updating the counter and determining 'z'.
+
+To implement this, we can use a counter to keep track of the 'w' occurrences and another signal to track the cycles. When the cycle counter reaches 3, we evaluate the 'w' occurrence counter to determine 'z' and then reset both counters for the next window.

@@ -1,0 +1,5 @@
+The problem specifies only `clk`, `reset`, and `shift_ena` ports and requires enabling `shift_ena` for exactly 4 cycles immediately after synchronous reset, then disable it forever (until the next reset). There is no mention of any pattern detection input. Therefore, the FSM should only respond to the synchronous reset.
+
+To fix the design, remove any pattern detection logic or input. On the rising edge of `clk`, if `reset` is high, load a 3-bit counter with 4. While the counter is nonzero, decrement it each clock cycle, and keep `shift_ena` asserted. Once the counter reaches zero, deassert `shift_ena` and keep it low until the next reset.
+
+This will ensure that after reset, `shift_ena` is asserted for exactly 4 cycles and then never asserted again until reset is asserted again, meeting all specification requirements and eliminating floating inputs.

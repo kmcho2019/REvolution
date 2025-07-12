@@ -1,0 +1,8 @@
+To implement the described finite state machine (FSM), we will define a series of states that the FSM can be in, based on the inputs and the desired behavior. The states can be as follows:
+- State A: Initial state when reset is asserted. Here, f and g are both 0.
+- State B: Transient state right after reset is de-asserted, where f is set to 1 for one clock cycle.
+- State C: Monitoring state for x, where we wait for the sequence 1, 0, 1 to set g to 1.
+- State D: State where g is set to 1 and we start monitoring y.
+- State E: Final state where g remains 1 permanently if y becomes 1 within two cycles, or g remains 0 permanently if y does not become 1 within two cycles.
+
+We'll use a parameterized enum to define these states and implement the logic to transition between them based on the inputs and the current state. We'll also use counters and flags to keep track of the sequences and conditions.

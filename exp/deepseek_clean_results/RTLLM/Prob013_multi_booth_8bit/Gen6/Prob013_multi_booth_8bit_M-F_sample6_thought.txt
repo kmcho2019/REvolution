@@ -1,0 +1,23 @@
+The key issues in the original implementation stem from fundamental Verilog syntax errors and architectural mismatches. Here's the corrected approach:
+
+1. **Fixed Wire Assignments**:
+   - Converted wire 'sel' to reg type since it's assigned in always blocks
+   - Used proper continuous assignments for combinational logic
+
+2. **Constant Part Selects**:
+   - Replaced variable-based bit selects with explicit constant ranges
+   - Implemented Booth encoding for each 2-bit group separately
+
+3. **Simplified Architecture**:
+   - Removed pipelining to focus on correct Booth algorithm implementation first
+   - Used sequential state machine approach with clear counter control
+   - Properly handles sign extension and partial product accumulation
+
+4. **Correct Reset Logic**:
+   - Ensures all registers are properly initialized
+   - Clear state machine control with explicit ready signaling
+
+5. **Radix-4 Implementation**:
+   - Properly examines 3 bits at a time (current pair + previous LSB)
+   - Correctly generates 0, ±1×, ±2× multiplicand values
+   - Accumulates with proper shifting alignment

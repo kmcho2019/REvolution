@@ -1,0 +1,12 @@
+To fix the timing issue in the falling edge detection, we need to properly synchronize the comparison between consecutive clock cycles. Here's the corrected approach:
+
+1. **Two-Stage Pipeline**: We'll maintain two registers to store the input from the previous two clock cycles (prev1_in and prev2_in). This ensures we have stable values from two consecutive cycles for comparison.
+
+2. **Proper Edge Timing**: The falling edge detection will compare prev2_in (two cycles ago) with prev1_in (one cycle ago), ensuring we're looking at values that were properly captured in previous clock cycles.
+
+3. **Sticky Capture**: The detected edges are OR'ed with the current capture value, maintaining the sticky behavior until reset.
+
+Key fixes:
+- Properly synchronized edge detection using values from two previous cycles
+- Eliminates race condition by using fully registered values for comparison
+- Maintains same functionality but with correct timing

@@ -1,0 +1,8 @@
+The previous solution uses a 3-bit shift register and compares the entire pattern, which is efficient but can be simplified further. We can reduce the state tracking to just remembering the previous two states (previous and current data_in values) since we only need to detect the 0->1->0 transition. This reduces the register size from 3 bits to 2 bits while maintaining the same functionality.
+
+Key simplifications:
+1. Use only 2 flip-flops to store the last two values of data_in (prev_data and curr_data)
+2. The pulse is detected when prev_data is 1 and curr_data is 0 (indicating we've seen a 1 followed by 0)
+3. Add an additional condition that we must have seen a 0 before the 1 (stored in a separate flag)
+
+This reduces the register size while keeping the same detection capability.

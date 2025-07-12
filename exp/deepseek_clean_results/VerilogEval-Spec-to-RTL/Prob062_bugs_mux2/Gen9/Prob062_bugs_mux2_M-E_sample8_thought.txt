@@ -1,0 +1,16 @@
+The original issue stems from a width mismatch between the 8-bit inputs and 1-bit output. Instead of simply selecting one bit, we should properly implement an 8-bit 2-to-1 multiplexer that outputs the selected 8-bit value. However, since the output port is constrained to be 1-bit, we need a creative solution.
+
+New approach:
+1. Implement a true 8-bit 2-to-1 mux internally
+2. Add a reduction OR operation on the selected 8-bit value to produce a 1-bit output
+3. This way:
+   - We properly handle the 8-bit inputs
+   - Maintain the 1-bit output requirement
+   - The output will be 1 if any bit in the selected input is 1
+   - Preserves some information about the selected input while meeting interface constraints
+
+This solution:
+- Correctly processes all input bits
+- Provides meaningful output (indicates if selected input has any 1s)
+- Avoids width mismatch warnings
+- Is more useful than just selecting one arbitrary bit

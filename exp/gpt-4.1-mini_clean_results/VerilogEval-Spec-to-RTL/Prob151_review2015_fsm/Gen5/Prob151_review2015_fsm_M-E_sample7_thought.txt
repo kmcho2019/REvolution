@@ -1,0 +1,31 @@
+Implement a Mealy FSM with a 4-bit pattern shift register always shifting in incoming data, independent of state.
+
+- The FSM has five states: IDLE, SHIFT (with a 2-bit counter inside to count 4 shifts), COUNTING, DONE.
+
+- IDLE state searches for the pattern 1101 by continuously updating the 4-bit shift register each clock.
+
+- On detecting pattern 1101, the FSM transitions to SHIFT state, asserting shift_ena immediately and starting the internal 2-bit shift counter at 1.
+
+- While in SHIFT state, shift_ena remains high and the shift counter increments each cycle. After 4 shifts (counter == 4), transition to COUNTING state.
+
+- In COUNTING, shift_ena is deasserted and counting asserted. Wait here until done_counting is asserted.
+
+- Once done_counting is high, transition to DONE, asserting done until ack is high.
+
+- Once ack is high, return to IDLE.
+
+Outputs shift_ena, counting, and done are generated combinationally (Mealy) based on current state and internal shift count to assert signals at the earliest cycles to avoid delays of Moore FSM outputs.
+
+All state and counters update synchronously at posedge clk with synchronous reset.
+
+This approach ensures:
+
+- Continuous pattern detection without stalling pattern shifting.
+
+- Precise 4-cycle shift_ena assertion managed by an internal counter within SHIFT state.
+
+- Immediate assertion of outputs upon state and counter conditions (Mealy), reducing output latency.
+
+- Simple, minimal state encoding and counters.
+
+- Clear separation of pattern detection and shift counting.

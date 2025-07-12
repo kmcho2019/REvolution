@@ -1,0 +1,8 @@
+The waveform suggests that the circuit uses a single clock domain and sequential logic where:
+
+- `p` updates on the rising edge of `clock` based on input `a`.
+- `q` updates on the next rising edge of `clock` based on the previous value of `p`.
+
+In other words, `p` acts as a one-cycle delayed version of `a`, and `q` acts as a one-cycle delayed version of `p`.
+
+This can be implemented using two registers clocked on the positive edge of `clock`: `p` samples `a`, and `q` samples the previous `p`. This avoids dual-edge triggering and matches the waveform behavior with simple sequential logic.

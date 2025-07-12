@@ -1,0 +1,15 @@
+Refactored Design Idea: Parallel Comparison with Reduction Operators
+
+This refactoring maintains the same bit-serial comparison concept but implements it differently by:
+1. Using parallel reduction operators for equality and greater-than checks
+2. Eliminating intermediate wires by computing results directly in assign statements
+3. Using a single 4-input AND for equality check (more efficient than cascaded ANDs)
+4. Computing greater-than as a priority-encoded OR of bit comparisons
+5. Maintaining mutual exclusivity through direct logical relationships
+
+Key Improvements:
+- More compact implementation using reduction operators
+- Single-cycle parallel evaluation maintains same speed
+- Reduced wire count by eliminating intermediate signals
+- Clearer expression of the priority encoding (MSB has highest priority)
+- Maintains all original advantages (early termination effect through priority encoding)

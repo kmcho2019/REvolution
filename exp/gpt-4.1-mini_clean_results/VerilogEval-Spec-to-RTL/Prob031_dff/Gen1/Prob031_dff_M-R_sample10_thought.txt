@@ -1,0 +1,5 @@
+The original code uses an always block triggered on the positive edge of clk to implement the D flip-flop. An alternative way to describe this behavior is to use a continuous assignment with a flip-flop primitive or behavioral modeling using a clocked process inside a named block. However, since a D flip-flop requires edge-triggered sequential logic, using 'assign' alone is not sufficient because 'assign' is for combinational logic.
+
+A different structure is to define a procedural block with a non-blocking assignment inside an explicitly named always block to distinguish the design style. Alternatively, one could define an intermediate signal registered on clk and assign q from it. To keep the behavior the same but the structure different, I will implement the D flip-flop using a two-step approach: register an internal signal on the clock edge and drive output q via a continuous assignment from that internal signal. This style separates sequential logic and output assignment.
+
+This refactoring still implements the same D flip-flop but changes the internal representation.

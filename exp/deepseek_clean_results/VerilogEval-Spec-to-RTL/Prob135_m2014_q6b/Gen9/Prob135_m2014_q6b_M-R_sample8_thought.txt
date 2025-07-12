@@ -1,0 +1,17 @@
+To properly implement the next-state logic for y[1], I'll:
+1. Analyze each state transition where y[1] changes
+2. Create a truth table for y[1] based on current state (y) and input (w)
+3. Use a single assign statement with explicit conditions for each case where y[1] should be 1
+4. Default to 0 for all other cases
+
+Key insights:
+- y[1] becomes 1 when:
+  - From B (001) to C (010) when w=0
+  - From B (001) to D (011) when w=1
+  - From C (010) to D (011) when w=1
+  - From D (011) to F (101) when w=0
+  - From E (100) to D (011) when w=1
+  - From F (101) to C (010) when w=0
+  - From F (101) to D (011) when w=1
+- y[1] stays 1 in E (100) when w=0 (self-loop)
+- All other transitions set y[1] to 0

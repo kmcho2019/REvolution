@@ -1,0 +1,18 @@
+Implement a finite state machine with the following states: IDLE (waiting for start bit), DATA (receiving 8 data bits), STOP_WAIT (waiting for stop bit if previous stop bit was incorrect), and DONE (signaling a correctly received byte).
+
+- In IDLE, wait for input to be 0 (start bit).
+- Once start bit is detected, enter DATA state and count 8 data bits. Data bits are shifted in (although not required for output, the FSM must count them).
+- After 8 bits, check if input is 1 (stop bit).
+  - If stop bit is correct, assert done for one cycle, then go back to IDLE.
+  - If stop bit is incorrect, enter STOP_WAIT state.
+- In STOP_WAIT, stay until input is 1 (stop bit detected), then go back to IDLE.
+- done is asserted for one clock cycle when a full valid byte is received (start bit, 8 data bits, stop bit).
+- Synchronous active-high reset returns FSM to IDLE, clears counters, and deasserts done.
+
+No data output port is required.
+
+Edge cases:
+- If reset occurs anytime, FSM resets.
+- If stop bit missing, FSM waits in STOP_WAIT until stop bit detected.
+
+The FSM transitions on rising edge of clk.

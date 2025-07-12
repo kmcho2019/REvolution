@@ -1,0 +1,14 @@
+To optimize the existing design for better Power, Performance, and Area (PPA):
+
+- Performance: Reduce the critical path by separating the addition into two stages:
+  1) Accumulate partial sums using an internal register updated only when valid_in is high.
+  2) On the 4th valid input, output the accumulated sum.
+  This pipelining reduces the complexity of the combinational logic in a single cycle, improving timing.
+  
+- Power: Register updates will only occur when valid_in is asserted. The accumulator and counter are only enabled on valid_in, lowering switching activity when idle.
+  
+- Area: Minor area reduction by using a one-hot encoded 2-bit counter instead of binary counter can reduce glitches and simplify decode logic, slightly reducing area and dynamic power.
+
+- Maintain synchronous reset and a one-cycle valid_out pulse as before.
+
+These changes collectively improve timing by pipelining the accumulation and reduce power through register enables without increasing complexity or latency.

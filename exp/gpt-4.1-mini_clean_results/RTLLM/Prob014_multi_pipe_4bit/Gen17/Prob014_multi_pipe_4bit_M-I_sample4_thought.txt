@@ -1,0 +1,34 @@
+Improvement Strategy:
+
+The initial solution provides a good 2-stage pipelined 4-bit multiplier with clear separation of partial product summation to reduce combinational delay. However, the pipeline could be refined to better separate combinational logic and registers to truly have two distinct pipeline stages (registers at two levels).
+
+Key improvements:
+
+1. **Two pipeline levels with registers between them**: 
+   - Level 1 registers capture the generated partial products.
+   - Level 2 registers capture the sum of partial products, completing the multiplication.
+
+2. **Split combinational addition across pipeline stages**:
+   - Stage 1: Register all partial products (4 registers).
+   - Stage 2: Combinational sum of registered partial products (no combinational paths longer than addition of two 4 partial products).
+   - Then register the final sum.
+
+3. This approach ensures partial products are captured immediately, then added in the next cycle, and finally output registered in the subsequent cycle, thus truly implementing two pipeline levels with intermediate registers.
+
+4. This improves timing by shortening combinational paths between registers.
+
+5. Retain asynchronous active-low reset (`rst_n`).
+
+6. Use non-blocking assignments for sequential logic.
+
+7. Maintain zero extension of the multiplicand on the MSB side as requested.
+
+8. Keep parameter `size = 4`.
+
+This method better matches the description of "two levels of registers to store intermediate values and control the multiplication process," improving PPA (performance, power, area) by better pipeline balancing and register placement. It also avoids long combinational adders by splitting partial products into registers first.
+
+This solution implements:
+- Pipeline stage 1: registers for each partial product
+- Pipeline stage 2: combinational addition of partial products + register for output
+
+Resulting in a 3-cycle latency multiplier with 2 pipeline register stages.

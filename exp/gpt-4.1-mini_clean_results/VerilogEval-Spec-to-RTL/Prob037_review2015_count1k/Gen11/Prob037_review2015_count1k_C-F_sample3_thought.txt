@@ -1,0 +1,14 @@
+To create a superior counter implementation, fuse the two example approaches by keeping the straightforward and readable structure of Example 2, which uses a single equality check against the terminal count, but optimize the comparator logic by leveraging the partial-bit comparison approach from Example 1.
+
+Specifically, detecting the terminal count (999) can be done by splitting the comparison into two simpler parts—checking the upper 3 bits and the lower 7 bits separately. This reduces the comparator logic depth and gate count compared to a full 10-bit equality check, potentially improving timing and lowering power/area.
+
+At the same time, maintain the clear parameterization and synchronous reset of Example 2. This results in a clean, maintainable codebase with optimized terminal count detection to improve PPA.
+
+The reset remains synchronous active high, and the counter increments on each clock unless it reaches the terminal count, upon which it resets to zero.
+
+Summary:
+- Use parameter for MAX_COUNT=999.
+- Detect MAX_COUNT by checking upper 3 bits == 7 and lower 7 bits == 103.
+- On reset, set q to 0 synchronously.
+- On clock edge, increment q if not at MAX_COUNT; otherwise reset q to 0.
+- This merges Example 1's optimized comparator with Example 2's clean structure.

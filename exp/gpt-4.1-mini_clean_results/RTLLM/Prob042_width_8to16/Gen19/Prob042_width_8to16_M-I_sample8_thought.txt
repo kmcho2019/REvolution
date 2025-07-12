@@ -1,0 +1,7 @@
+The main issue is the premature clearing of `valid_out_next` and `data_out_next` when there is no valid input, causing loss of output validity and data timing correctness.  
+Improvement strategy:  
+- Only update `valid_out_next` and `data_out_next` when a valid second byte arrives (i.e., at the moment of concatenation).  
+- Keep output registers stable and only update or clear `valid_out` synchronously at the next clock cycle after the concatenation.  
+- On cycles with no input, preserve `valid_out_next` and `data_out_next` values to hold output stable until new concatenated data arrives.  
+- Reset all signals properly on reset.  
+This ensures output signals are valid exactly one clock after the second byte input and stable otherwise, fulfilling timing and functional requirements without glitches.

@@ -1,0 +1,9 @@
+To implement the 100-bit left/right rotator module named TopModule, we need to follow these steps:
+- First, we will declare a 100-bit register q to hold the current state of the rotator.
+- On every clock cycle, we will check the load signal. If it's high, we load the data into the q register.
+- If the load signal is low, we check the ena signal. Based on the value of ena, we will perform the corresponding rotation:
+  - If ena is 2'b01, we rotate right by one bit. This means the least significant bit (bit 0) becomes the most significant bit (bit 99).
+  - If ena is 2'b10, we rotate left by one bit. This means the most significant bit (bit 99) becomes the least significant bit (bit 0).
+  - If ena is 2'b00 or 2'b11, we do not perform any rotation.
+- We will use a case statement inside an always block to handle the different conditions based on the ena and load signals.
+- The output q will always reflect the current state of the rotator.

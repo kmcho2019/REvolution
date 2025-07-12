@@ -1,0 +1,9 @@
+Refactor the hierarchical balanced tree approach by implementing the reduction using recursive functions inside a localparam function or task-like construct, but since Verilog doesn't support recursive functions in synthesis, instead implement the balanced reduction using a generate block with a parameterized iterative approach. 
+
+This method flattens the code structure by creating a generic reduction stage function that reduces an input vector of arbitrary width into a smaller vector of half the width by applying the corresponding bitwise operation pairwise, iterating until a single bit remains.
+
+We will implement three separate reduction functions (using generate loops) for AND, OR, and XOR with a uniform staged reduction approach, storing intermediate vectors at each stage. This approach reduces the verbosity of manually coding each level and makes it more scalable and parameterizable.
+
+Finally, output the last single bit for each output. This refactoring retains the balanced tree idea and parallel partial reduction benefits but presents a more scalable and modular code with less repetitive code blocks.
+
+This also eases future modifications (e.g., different input width or operation) by adjusting parameters instead of multiple code edits.

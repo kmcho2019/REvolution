@@ -1,0 +1,10 @@
+The solution can be simplified by:
+1. Removing all optional debug features (state tracking) since they're not required for core functionality
+2. Using direct combinational assignments for all outputs
+3. Recognizing that heater and aircon are mutually exclusive (can't be on simultaneously)
+4. Making fan logic as simple as possible by OR-ing all enable conditions
+
+This results in minimal logic with:
+- Heater = mode AND too_cold
+- Aircon = NOT mode AND too_hot
+- Fan = fan_on OR heater OR aircon

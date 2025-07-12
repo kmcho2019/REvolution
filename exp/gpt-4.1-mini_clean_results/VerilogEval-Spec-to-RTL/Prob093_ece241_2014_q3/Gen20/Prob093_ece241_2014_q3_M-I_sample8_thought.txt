@@ -1,0 +1,22 @@
+To correctly implement the given Karnaugh map using one 4-to-1 multiplexer indexed by {a,b} and produce its four inputs (mux_in[3:0]) from inputs c and d with only 2-to-1 multiplexers, we must assign each mux_in[i] to the column of the K-map (indexed by ab) corresponding to that input. The K-map rows (indexed by cd) define each mux_in[i] as a 2-variable function of c and d.
+
+By enumerating values for each mux_in[i] over cd=00,01,11,10 (c,d):
+- mux_in[0] (ab=00): 0 1 1 1
+- mux_in[1] (ab=01): 0 0 0 0
+- mux_in[2] (ab=11): 0 0 1 0
+- mux_in[3] (ab=10): 1 0 1 1
+
+Each function is implemented with the minimal 2-to-1 mux tree, using only c or d as selectors and constant inputs 0 or 1, and complemented inputs if needed.
+
+The corrected assignments from the detailed truth table are:
+
+- mux_in[0] = c ? 1 : d;  // when c=0 output=d, when c=1 output=1
+- mux_in[1] = 0;          // always zero
+- mux_in[2] = c ? d : 0;  // when c=0 output=0, when c=1 output=d
+- mux_in[3] = c ? 1 : ~d; // when c=0 output=~d, when c=1 output=1
+
+These expressions match the K-map and only use 2-to-1 mux logic with c and d selectors.
+
+This corrects the previously incorrect interpretation and provides minimal hardware, as required.
+
+We implement this in Verilog using conditional (ternary) operators which infer 2-to-1 multiplexers without other logic gates.

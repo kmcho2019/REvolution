@@ -1,0 +1,5 @@
+To improve the given dual-edge triggered flip-flop implementation, I will reduce power and area by removing the explicit transparent latch and instead implement the output selection with a clock-gated mux formed by a simple combinational multiplexer followed by a register clocked on the positive edge. This approach eliminates latch transparency, simplifying timing closure while potentially reducing glitches by registering the mux output before driving `q`. Although the positive and negative edge flip-flops still toggle, this registered mux can reduce glitches on output transitions, hence lowering dynamic power.
+
+Additionally, I will merge the PosEdgeFF and NegEdgeFF modules into the TopModule for simplicity and clarity. The registered mux output approach is synthesizable on FPGAs and avoids illegal sensitivity lists.
+
+This balances power and area improvements without compromising functionality or timing robustness compared to the transparent latch approach.

@@ -1,0 +1,11 @@
+To solve this problem, we need to implement a finite state machine (FSM) that detects 3-byte messages in a PS/2 mouse protocol byte stream. The key points are:
+1. The first byte of each message has in[3]=1
+2. We need to track when we've received 3 bytes in sequence
+3. The FSM should output 'done' in the cycle after the third byte is received
+
+The FSM will have these states:
+- IDLE: Waiting for the first byte (in[3]=1)
+- BYTE2: Received first byte, waiting for second byte
+- BYTE3: Received second byte, waiting for third byte
+
+On reset, we return to IDLE state. In each state, we check the input and transition accordingly, counting bytes until we reach 3 bytes, then output 'done' and return to IDLE.

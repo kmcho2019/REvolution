@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by using the efficient 2-bit binary FSM encoding from Example 1 for minimal area and power, combined with the Mealy-style output logic that asserts data_out combinationally based on current state and input, ensuring pulse detection exactly at the falling edge of the pulse. To improve timing and reduce glitches, register the output data_out on the clock edge while generating it combinationally to avoid glitches and to improve timing stability.
+
+The FSM states will be: IDLE (waiting for data_in=1), HIGH (data_in=1), and LOW (data_in=0 after HIGH). The pulse is detected when transitioning from HIGH to LOW (i.e. the data_in falls from 1 to 0 while in HIGH state). The output data_out will be asserted for one cycle at the clock edge after this detection.
+
+Thus, the design includes:
+- A combinational next state logic based on current state and input.
+- A sequential logic updating the state at posedge clk or async reset.
+- A combinational pulse_detect signal (Mealy output).
+- A registered output data_out to reduce glitches and improve timing.
+
+This hybrid approach combines minimal register count, minimal combinational logic complexity, glitch-free registered output, and a simple FSM for pulse detection, yielding a design well-optimized for performance, power, and area.

@@ -1,0 +1,13 @@
+The main fix is to register the parallel output and dout_valid one cycle after the full 8 bits are shifted in, rather than assigning dout_parallel immediately with the new shift_reg value. 
+
+We will:
+
+- Shift in bits on each valid input, inserting at MSB, shifting older bits down.
+- Use a 4-bit counter counting from 0 to 7 to track how many bits have been received.
+- When cnt reaches 7 (indicating 8 bits just received), assert dout_valid and output the stable shift register value on the next clock cycle.
+- To achieve this, use a separate flag (`data_ready`) registered when cnt reaches 7, then on the next clock cycle assign `dout_parallel` <= shift_reg and `dout_valid` <= 1.
+- Reset counter and data_ready after outputting valid data.
+- This ensures stable output data, avoiding race conditions from assigning output at the same time as shift_reg update.
+- Also ensure dout_valid pulses for only one cycle.
+
+This approach maintains synchronous design principles, stable output timing, and ensures dout_valid pulses exactly one cycle after receiving 8 serial bits, as specified.

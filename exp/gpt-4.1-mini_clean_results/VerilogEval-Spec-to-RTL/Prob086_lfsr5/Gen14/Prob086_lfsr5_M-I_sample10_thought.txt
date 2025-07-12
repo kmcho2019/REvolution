@@ -1,0 +1,9 @@
+To improve the PPA metrics, especially timing (TNS and WNS), I will introduce a combinational next_state signal to hold the next LFSR value before registering it on the clock edge. This eliminates read-after-write hazards and breaks combinational dependencies in the sequential block, improving maximum frequency.
+
+The next_state logic will be pure combinational, computed from the current q value.
+
+This change also improves power by reducing glitching in sequential logic, and area impact is minimal since it only adds a small wire vector.
+
+I will preserve synchronous active-high reset that sets q to 1, and maintain the same tap positions and shift-right Galois LFSR behavior.
+
+This approach better balances performance and power with minimal area overhead.

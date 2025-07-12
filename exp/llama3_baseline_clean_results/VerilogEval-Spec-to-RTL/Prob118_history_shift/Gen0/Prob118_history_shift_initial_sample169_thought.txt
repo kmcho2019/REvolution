@@ -1,0 +1,7 @@
+The module TopModule should be designed with a 32-bit register to hold the branch history. On the positive edge of the clock, it should check for the asynchronous reset signal (areset). If areset is high, the branch history register should be reset to zero.
+
+Next, it should check if a branch misprediction has occurred (train_mispredicted = 1). If so, the branch history register should be loaded with the history after the completion of the mispredicted branch. This history is created by concatenating the train_history with the actual result of the branch (train_taken).
+
+If no misprediction has occurred, the module should then check if a branch prediction is being made (predict_valid = 1). If so, the branch history register should be updated by shifting in the predicted result (predict_taken) from the least significant bit (LSB) side.
+
+Finally, the updated branch history should be assigned to the output predict_history.

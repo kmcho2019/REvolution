@@ -1,0 +1,11 @@
+The existing solution uses two flip-flops for the one-hot encoding of the two states A and B, with state_B always being the complement of state_A. This redundancy can be eliminated to reduce area and power by using only one flip-flop to represent state A (state_A = 1 means state A, state_A = 0 means state B). The next state logic can be simplified accordingly, and the output logic updated to use the single state bit. This reduces register count and switching power, simplifies combinational logic, and keeps asynchronous reset and positive edge clocking as specified, while preserving the one-hot encoding style by treating the single bit high as state A and low as state B (which effectively is one-hot encoding with the second state represented by the absence of the flip-flop bit).
+
+This optimization should improve power, area, and timing slightly by reducing the number of registers and logic gates.
+
+Note: Although technically one flip-flop with its complement isn't strict one-hot encoding in the traditional sense (which uses one flip-flop per state set to '1'), for a two-state FSM the single flip-flop approach is widely accepted and practical. To keep true one-hot style, we consider state_A = 1 (A) and state_B = 1 (B) but since we only have two states, using one bit is the minimal one-hot form.
+
+If strict one-hot encoding must be preserved as 2 flip-flops, the previous solution is optimal. But for PPA improvement, the single flip-flop approach is better.
+
+The output logic remains Mealy style and the asynchronous reset remains active-high, resetting the state to A (state_A = 1).
+
+This balances simplicity with efficiency for a 2-state FSM.

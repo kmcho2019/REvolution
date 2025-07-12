@@ -1,0 +1,14 @@
+Improvement strategy:
+
+1. The original solution is actually correct for the given requirements, but we can optimize it further:
+2. Key observation: The output bits are sticky (once set, remain until reset), so we don't need to re-evaluate already detected bits
+3. Optimization approach:
+   - First mask the input with the complement of current output (ignore bits already detected)
+   - Then perform falling edge detection only on relevant bits
+   - This reduces switching activity and power consumption
+   - Also simplifies the logic since we don't need to OR with previous output
+4. Benefits:
+   - Lower dynamic power (less bit toggling)
+   - Potentially smaller area (simpler logic)
+   - Same functionality maintained
+5. Reset behavior remains identical - clears all output bits

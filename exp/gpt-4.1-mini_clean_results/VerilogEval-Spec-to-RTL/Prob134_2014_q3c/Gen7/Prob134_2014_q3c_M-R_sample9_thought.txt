@@ -1,0 +1,8 @@
+Refactor the design to avoid using an always block for next_state computation by directly using continuous assign statements with conditional (ternary) operators. This reduces the complexity of the code, eliminating the explicit case statement and reg variable, and makes all outputs purely combinational signals driven by assign statements. It keeps the same FSM functionality by expressing next_state bits as combinational logic of y and x, then outputs Y0 and z accordingly.
+
+This style makes the logic more transparent at the gate level and potentially easier for synthesis tools to optimize. It also fully exploits Verilog's strength in expressing combinational logic concisely without always blocks, enhancing readability for purely combinational FSM output generation based on present state and inputs.
+
+Summary:
+- Remove reg and always block.
+- Implement next_state as wire from combinational expressions (ternaries).
+- Drive outputs Y0 and z by assign statements from next_state and y.

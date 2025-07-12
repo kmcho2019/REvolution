@@ -1,0 +1,12 @@
+To optimize the given FSM and shift register design for better power, performance, and area (PPA), I will take the following steps:
+
+1. Remove redundant assignments (e.g., `bit_count <= bit_count;`) to reduce logic and simplify the design.
+2. Use an enable signal for the shift register and bit counter to avoid toggling registers unnecessarily when idle or in WAIT_STOP state, thus reducing power.
+3. Replace the shifting logic `{in, data_shift[7:1]}` with a simpler shift-left by one bit with new LSB input to align with least-significant-bit first convention and potentially reduce muxing complexity.
+4. Change the state encoding from typedef enum to simple `localparam` parameters to potentially reduce logic area and simplify the code.
+5. Combine `done` signal generation with minimal combinational logic and register it, to keep it a single-cycle pulse.
+6. Simplify next state logic by reducing the number of conditions and clarifying the FSM transitions.
+
+These improvements will retain the original functionality, ensure `done` is asserted exactly one cycle when a valid stop bit is detected, and the FSM waits for correct stop bits before restarting reception.
+
+This will optimize critical path delays by reducing combinational muxing, lower dynamic power by gating registers, and slightly reduce area with simpler encodings and logic.

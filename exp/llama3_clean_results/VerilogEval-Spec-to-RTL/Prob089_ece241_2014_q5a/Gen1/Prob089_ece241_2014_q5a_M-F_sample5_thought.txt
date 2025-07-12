@@ -1,0 +1,13 @@
+To address the issues with the provided code, we first need to correct the declaration of the output 'z'. As pointed out in the feedback, 'z' should be declared as a reg instead of a wire to allow for procedural assignment within the always blocks.
+
+Regarding the logic for generating the 2's complement, the current implementation simply inverts the input bits, which is partially correct but does not fully implement the 2's complement process. The 2's complement of a binary number can be obtained by inverting all bits and then adding 1. However, in the context of a serial Moore state machine, we can simplify this process by tracking whether we have encountered the first '1' in the input sequence.
+
+Upon encountering the first '1', we enter a phase where we not only invert subsequent bits but also propagate this inversion. However, the addition of 1 in a serial context translates to handling the carry from the least significant bit (LSB) onwards.
+
+A simpler and more accurate approach to achieve the 2's complement in this serial context is to use a carry bit that gets set when the first '1' is encountered in the input sequence. From that point onwards, the output is determined by inverting the current input bit and the carry. If the carry is '1', it gets propagated to the next bit, effectively adding 1 to the inverted bits.
+
+This process can be implemented using a single state variable to track whether we have seen the first '1' and a carry bit to handle the addition of 1.
+
+The corrected code will thus involve:
+- Declaring 'z' as a reg for procedural assignment.
+- Implementing the logic for generating the 2's complement by inverting bits and handling the carry upon encountering the first '1' in the input sequence.

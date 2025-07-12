@@ -1,0 +1,10 @@
+Implement a multi-cycle IEEE-754 single-precision floating-point multiplier using a simple 4-cycle pipeline controlled by a 3-bit counter. The design breaks down the process into:
+
+1. Cycle 0: Extract sign, exponent, mantissa from inputs; detect special cases.
+2. Cycle 1: Compute sign of output, add exponents with bias adjustment, multiply mantissas (24x24 → 48 bits).
+3. Cycle 2: Normalize product mantissa, adjust exponent if needed.
+4. Cycle 3: Perform rounding (round-to-nearest even), handle overflow/underflow, pack final IEEE-754 result.
+
+This approach reduces combinational path length per cycle, easing timing closure and simplifying the multiplier logic. The output is registered and updated every 4 clock cycles, synchronized by the counter. Rounding bits (guard, round, sticky) are generated from product bits for correct rounding. Special cases (zero, infinity, NaN) are handled in the first cycle with priority logic, and the result is forced accordingly. The reset clears state and output.
+
+Overall, this design balances complexity, latency, and timing by using a small FSM-style cycle counter to sequence multiplication stages.

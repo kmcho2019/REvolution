@@ -1,0 +1,105 @@
+To implement the required function strictly using one 4-to-1 multiplexer selected by signals a and b, and internal 2-to-1 multiplexers with inputs c and d, we can adopt a hierarchical mux structure that directly maps to the K-map.
+
+The K-map output is a function of four variables: a,b,c,d, but the problem fixes the external 4-to-1 mux to use a,b as selectors and mux_in[3:0] inputs, so the outputs for each ab (00, 01, 11, 10) is a function of c and d alone.
+
+Let's break down the K-map by columns (each corresponding to an ab combination):
+
+- For ab=00 (mux_in[0]), the outputs for cd are {0,1,1,1} as per the table.
+
+- For ab=01 (mux_in[1]), all zeros.
+
+- For ab=11 (mux_in[2]), {0,0,1,0}
+
+- For ab=10 (mux_in[3]), {1,0,1,1}
+
+Instead of directly encoding these as mux_in signals with 2-to-1 muxes, we can represent each mux_in output as a hierarchical tree of 2-to-1 multiplexers using c and d as selectors:
+
+1) For each mux_in[i], use a 2-to-1 mux with c as selector selecting between two signals that themselves are 2-to-1 muxes with d as selectors.
+
+So, mux_in[i] = c ? f1 : f0, where f1 and f0 are functions of d using 2-to-1 muxes.
+
+This converts each output into a hierarchy of 2-to-1 muxes only, no gates.
+
+Explicitly for each mux_in:
+
+- mux_in[0] (ab=00):
+
+  cd=00->0,01->1,11->1,10->1
+
+  When c=0:
+
+    d=0 ->0
+
+    d=1 ->1
+
+  When c=1:
+
+    d=0 ->1
+
+    d=1 ->1
+
+  Thus,
+
+    f0 = d ? 1 : 0
+
+    f1 = 1 (constant)
+
+  So mux_in[0] = c ? 1 : (d ? 1 : 0)
+
+- mux_in[1] (ab=01):
+
+  all zeros, just 0
+
+- mux_in[2] (ab=11):
+
+  cd=00->0,01->0,11->1,10->0
+
+  When c=0:
+
+    d=0 ->0
+
+    d=1 ->0
+
+  When c=1:
+
+    d=0 ->0
+
+    d=1 ->1
+
+  So:
+
+    f0 = d ? 0 : 0 = 0
+
+    f1 = d ? 1 : 0
+
+  mux_in[2] = c ? (d ? 1 : 0) : 0
+
+- mux_in[3] (ab=10):
+
+  cd=00->1,01->0,11->1,10->1
+
+  When c=0:
+
+    d=0 ->1
+
+    d=1 ->0
+
+  When c=1:
+
+    d=0 ->1
+
+    d=1 ->1
+
+  So:
+
+    f0 = d ? 0 : 1
+
+    f1 = d ? 1 : 1
+
+  mux_in[3] = c ? (d ? 1 : 1) : (d ? 0 : 1)
+
+This implementation uses only 2-to-1 muxes and constants (which can be wired directly).
+
+Hence, the module will assign mux_in signals as nested ternary operators representing 2-to-1 muxes selected by c and d.
+
+This is a novel hierarchical 2-level mux tree for each mux_in, structurally consistent with the constraints.

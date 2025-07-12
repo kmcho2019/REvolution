@@ -1,0 +1,22 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Key Simplifications:
+   - Reduce counter to 3 bits (0-4) since Radix-4 only needs n/2 iterations (4 for 8-bit)
+   - Use single 16-bit register for both multiplicand and product accumulation
+   - Eliminate separate multiplier register by using shifted bits from product register
+   - Simplify Booth encoding to only examine 3 bits at a time
+
+2. Operation Flow:
+   - On reset: Initialize registers with sign-extended inputs
+   - Each clock cycle:
+     - Examine 3 bits (current two + previous) for Booth encoding
+     - Add/subtract multiplicand (or shifted version)
+     - Arithmetic right shift product register by 2 bits (Radix-4)
+     - Increment counter
+   - Ready signal triggers after 4 iterations
+
+3. Benefits:
+   - Fewer registers (no separate multiplier)
+   - Smaller counter (3 vs 5 bits)
+   - Clearer state progression
+   - Maintains full Radix-4 functionality

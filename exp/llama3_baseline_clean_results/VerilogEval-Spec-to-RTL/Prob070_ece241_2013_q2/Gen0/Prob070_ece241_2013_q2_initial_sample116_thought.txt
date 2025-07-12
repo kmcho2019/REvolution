@@ -1,0 +1,12 @@
+To implement the digital system with the given conditions, we can use a sum-of-products (SOP) form and a product-of-sums (POS) form for the outputs out_sop and out_pos, respectively.
+
+First, we need to determine the SOP expression. Since the system generates a logic-1 for the input combinations 2 (0010), 7 (0111), and 15 (1111), we can write the SOP expression as:
+out_sop = (a'b & b & c'd & d') | (a'b & b & c & d) | (a & b & c & d)
+
+Next, we need to determine the POS expression. Since the system generates a logic-0 for the input combinations 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), and 14 (1110), we can write the POS expression as:
+out_pos = (a | b' | c' | d') & (a | b' | c' | d) & (a | b' | c | d') & (a | b' | c | d) & (a | b | c' | d') & (a | b | c' | d) & (a' | b' | c' | d') & (a' | b' | c | d') & (a' | b | c' | d') & (a' | b | c | d')
+
+However, we can simplify this expression by finding the maximum number of complemented and uncomplemented literals for each variable. The simplified POS expression is:
+out_pos = (a' | b' | c | d) & (a | b' | c' | d) & (a | b | c | d)
+
+This simplified POS expression is obtained by considering the input combinations for which the output is 0 and selecting the terms that cover the maximum number of 0s.

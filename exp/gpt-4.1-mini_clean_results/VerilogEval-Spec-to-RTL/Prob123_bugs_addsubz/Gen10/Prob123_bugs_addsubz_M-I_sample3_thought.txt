@@ -1,0 +1,15 @@
+To optimize the original ripple carry adder implementation for better performance and power efficiency while maintaining correctness:
+
+- Replace the ripple carry adder with the Verilog '+' operator for addition/subtraction, as synthesis tools generally infer optimized carry look-ahead or carry select adders internally. This improves timing by shortening the critical path.
+
+- Use the conditional XOR of B with do_sub and add do_sub as carry-in for two's complement subtraction in one expression: out = a + (b ^ mask) + do_sub, where mask = {8{do_sub}}.
+
+- Calculate the zero flag using reduction NOR on the output to ensure correctness.
+
+- Use continuous assignment for output signals (out and result_is_zero) declared as wire outputs, eliminating the always block and reg types. This reduces register usage and may reduce power by simplifying logic.
+
+- This approach significantly improves PPA by leveraging synthesis tools' adder optimizations, removes explicit carry logic to reduce area, and uses simpler logic to reduce switching power.
+
+- Maintain the same interface (inputs and outputs) but change outputs to wire for continuous assignments to enable simpler synthesis.
+
+This leverages best synthesis practices for add-sub units and zero detection, improving overall PPA over the explicit ripple carry manual implementation.

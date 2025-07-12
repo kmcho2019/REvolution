@@ -1,0 +1,11 @@
+To address the issues in the original code, we need to refine the state transition logic and output assignments to accurately reflect the desired behavior of the finite state machine (FSM). The main corrections involve:
+
+1. **Correct Sequence Detection**: In the `SEQ_DETECT` state, properly handle the detection of the '1, 0, 1' sequence in the input `x`. Ensure that the sequence is correctly recognized and that the FSM transitions to the `WAIT_Y` state once the sequence is detected.
+
+2. **Wait for `y` Logic**: In the `WAIT_Y` state, correct the logic for setting the output `g` based on the input `y` and the timer `y_timer`. The FSM should maintain `g = 1` if `y` becomes 1 within two clock cycles after detecting the sequence. If `y` does not become 1 within this timeframe, `g` should be set to 0.
+
+3. **Output Control**: Ensure that the outputs `f` and `g` are correctly controlled based on the current state and input conditions. `f` should be set to 1 for one clock cycle after the reset is de-asserted, and `g` should be controlled based on the sequence detection and the subsequent `y` input.
+
+4. **Reset and State Transitions**: Verify that the FSM correctly transitions between states based on the input conditions and that the reset functionality is properly implemented. The FSM should return to the `RESET` state upon reset assertion and correctly transition through states based on input conditions.
+
+By addressing these areas, we can ensure that the FSM behaves as intended, correctly controlling the outputs `f` and `g` based on the inputs `x` and `y` and the reset condition.

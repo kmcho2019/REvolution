@@ -1,0 +1,15 @@
+Refactor the design by separating combinational next-state and output logic from the sequential state update, and using continuous assignments for outputs. Use a single flip-flop to store state, updated on the clock's positive edge. Derive the next state and output q as combinational functions of current state and inputs `a` and `b`. The next state logic matches the same truth table but implemented as a combinational assign statement. Output `q` will be combinationally assigned based on the same inputs and current state to reflect the waveform properly.
+
+This separation clarifies the design, avoids blocking vs non-blocking assignment confusion, and uses a more idiomatic Verilog style by employing `assign` for combinational signals and `always @(posedge clk)` for sequential state update. The observable `state` is a registered output, and `q` is purely combinational next-state logic.
+
+Specifically:
+
+- `state` is the flip-flop output updated on clock edge.
+- `next_state` is a wire combinationally assigned based on current `state`, `a`, and `b`.
+- `q` output is assigned to `next_state`.
+- Implement next_state logic exactly as deduced:
+
+  - If (a=0, b=0), next_state = state
+  - If (a=0, b=1), next_state = 1
+  - If (a=1, b=1), next_state = 0
+  - If (a=1, b=0), next_state = ~state

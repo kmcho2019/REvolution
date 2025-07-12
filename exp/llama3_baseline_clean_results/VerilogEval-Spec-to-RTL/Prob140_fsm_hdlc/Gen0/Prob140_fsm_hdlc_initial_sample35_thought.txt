@@ -1,0 +1,11 @@
+The problem can be solved using a Moore-type finite state machine (FSM) with 8 states: S0 to S7. Each state represents the number of consecutive 1s received so far. 
+- S0: Initial state, no consecutive 1s.
+- S1 to S5: 1 to 5 consecutive 1s received.
+- S6: 6 consecutive 1s received, potential flag.
+- S7: 7 consecutive 1s received, error.
+
+The FSM transitions between states based on the input bit. If the input is 0, it resets to S0. If the input is 1, it increments the state until it reaches S6 or S7.
+
+When the FSM reaches S6 and the next input is 0, it signals a discard. When the FSM reaches S6 and the next input is 1, it signals a flag. If the FSM reaches S7, it signals an error.
+
+The FSM will be implemented using a case statement to handle the state transitions and conditional statements to handle the output signals.

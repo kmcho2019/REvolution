@@ -1,0 +1,24 @@
+The problem states that shift_ena should be asserted for exactly 4 clock cycles immediately after a synchronous active-high reset, and then stay low indefinitely until the next reset. The original solution incremented a counter while reset was high, enabling shift_ena for counts less than 4. However, if reset remains high beyond 4 cycles, the counter keeps incrementing unchecked, and shift_ena goes low after 4 cycles of reset, which is correct per spec but may cause unnecessary large counters and unclear code semantics. Moreover, the intent is to enable shift_ena for 4 cycles immediately *after* reset assertion, not necessarily during reset if it is held high for long.
+
+To handle this cleanly and precisely:
+
+1. Use a separate enable counter that triggers when reset transitions from low to high (detect reset rising edge synchronously).
+2. On reset assertion (detected by previous reset sample), start the 4-cycle shift_ena enable cycle.
+3. shift_ena stays high for exactly 4 cycles, counted by a small 3-bit counter.
+4. After 4 cycles, shift_ena is cleared and remains low until the next reset.
+5. The counter saturates to prevent overflow.
+6. This approach works correctly regardless of the duration reset is held high, asserting shift_ena exactly 4 cycles after reset assertion (including the cycle of reset assertion).
+7. The counter and previous reset state are updated synchronously at clk rising edge.
+
+This solution gives clean, robust control over shift_ena timing aligned to reset assertion and precisely 4 cycles enable.
+
+This approach ensures:
+- No counter overflow.
+- shift_ena asserted for exactly 4 cycles upon reset assertion.
+- shift_ena low forever after that until next reset.
+- Handles reset held high for longer without extending shift_ena beyond 4 cycles.
+
+Implementation includes:
+- A register to store the previous reset state for edge detection.
+- A counter to count the shift_ena cycles.
+- Logic to assert shift_ena and increment the counter on the 4 cycles following reset rising edge.

@@ -1,0 +1,9 @@
+Implement a fractional frequency divider by 3.5 using a 7-step cycle counter and double-edge clocking by using two flip-flops clocked on opposite edges of the input clock.
+
+Use a 3-bit counter (0 to 6) clocked on the positive edge to track the fractional division period. Generate a primary divided clock pulse `clk_div_p` which is high for 4 cycles and low for 3 cycles (3.5x division).
+
+To achieve the half-cycle phase shift needed for double-edge clocking, instantiate a second flip-flop `clk_div_n` clocked on the negative edge of the input clock that follows `clk_div_p` with a half-clock delay.
+
+By OR-ing the outputs of these two registers (`clk_div_p` and `clk_div_n`), a smoother fractional divided clock output is produced with a more uniform duty cycle, effectively implementing a divide-by-3.5 clock using double-edge clocking.
+
+This approach uses synchronous registers on both clock edges, avoids combinational phase shifts, and produces a glitch-free fractional clock output.

@@ -1,0 +1,15 @@
+Refactoring Strategy:
+1. Replace the explicit state machine with a counter-based approach using the count register to implicitly track state
+2. Use continuous assignments (assign) for combinational logic where possible to improve readability
+3. Optimize the shift-and-accumulate operation by:
+   - Eliminating the separate shifted_bin register
+   - Calculating the shifted value on-the-fly during accumulation
+4. Simplify done generation by directly monitoring the count value
+5. Maintain the same functionality while reducing register usage
+
+Key Changes:
+- Remove explicit state machine in favor of counter-driven control
+- Use assign for combinational outputs (yout and done)
+- Calculate shifted bin value during accumulation rather than storing it
+- Simplify reset and initialization logic
+- Maintain same timing behavior (16 cycles for multiplication)

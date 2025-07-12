@@ -1,0 +1,11 @@
+The original solution uses a single assignment with bit selection, which is clean and efficient. However, we can refactor it to make the hierarchical nature of the selection more explicit while maintaining the same functionality. Here's the approach:
+
+1. **Explicit Hierarchy**: Break down the selection into two clear steps:
+   - First, select one of 16 groups (using sel[7:4])
+   - Then, select one of 16 4-bit values within that group (using sel[3:0])
+
+2. **Intermediate Group Selection**: Use a wire to hold the selected 64-bit group (16×4 bits) before final selection.
+
+3. **Final Selection**: Choose the 4-bit output from the selected group.
+
+This makes the two-level multiplexing structure more visible in the code while maintaining the same efficient implementation. The synthesis result should be identical since modern tools will optimize this similarly to the original version.

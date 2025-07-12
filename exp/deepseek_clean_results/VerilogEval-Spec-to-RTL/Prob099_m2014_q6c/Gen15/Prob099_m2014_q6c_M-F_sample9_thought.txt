@@ -1,0 +1,14 @@
+To fix the implementation based on the feedback:
+
+1. Correct the output port names to match the problem specification (Y1 and Y3 instead of Y2 and Y4)
+2. Analyze the state transitions to determine the logic for Y1 (next state B) and Y3 (next state D):
+   - Y1 (next state B) comes from:
+     * State A (y[0]) when w=0
+   - Y3 (next state D) comes from:
+     * State B (y[1]) when w=1
+     * State C (y[2]) when w=1
+     * State E (y[4]) when w=1
+     * State F (y[5]) when w=1
+3. Maintain one-hot encoding for state detection
+4. Keep the interface exactly as specified (6-bit y input, 1-bit w input, outputs Y1 and Y3)
+5. Ensure the module resets to state A (implied by one-hot encoding)

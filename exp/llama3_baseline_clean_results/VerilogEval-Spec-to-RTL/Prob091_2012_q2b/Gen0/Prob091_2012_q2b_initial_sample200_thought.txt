@@ -1,0 +1,23 @@
+To implement the state output logic for the given finite-state machine, we can analyze the transitions and use the one-hot encoding to derive the logic for the output signals Y1 and Y3. We will use the input signal w and the current state y to determine the next state.
+
+For Y1, it is high when the next state is B (000010) or D (001000) because in these states, y[1] is 1. Analyzing the transitions:
+- State A (000001) goes to B (000010) when w is 1, so if y[0] is 1 and w is 1, Y1 should be 1.
+- State B (000010) goes to D (001000) when w is 0, so if y[1] is 1 and w is 0, Y1 should be 1.
+- State C (000100) goes to D (001000) when w is 0, so if y[2] is 1 and w is 0, Y1 should be 1.
+- State D (001000) goes to F (100000) when w is 1, but F does not have y[1] as 1, so this transition does not affect Y1.
+- State D (001000) stays in A (000001) when w is 0, but A does not have y[1] as 1, so this transition does not affect Y1.
+- State E (010000) goes to D (001000) when w is 0, so if y[3] is 1 and w is 0, Y1 should be 1.
+- State F (100000) goes to C (000100) when w is 1, but C does not have y[1] as 1, so this transition does not affect Y1.
+
+For Y3, it is high when the next state is D (001000) or E (010000) because in these states, y[3] is 1. Analyzing the transitions:
+- State B (000010) goes to C (000100) when w is 1, but C does not have y[3] as 1, so this transition does not affect Y3.
+- State B (000010) goes to D (001000) when w is 0, so if y[1] is 1 and w is 0, Y3 should be 1.
+- State C (000100) goes to E (010000) when w is 1, so if y[2] is 1 and w is 1, Y3 should be 1.
+- State C (000100) goes to D (001000) when w is 0, so if y[2] is 1 and w is 0, Y3 should be 1.
+- State D (001000) goes to A (000001) when w is 0, but A does not have y[3] as 1, so this transition does not affect Y3.
+- State D (001000) goes to F (100000) when w is 1, but F does not have y[3] as 1, so this transition does not affect Y3.
+- State E (010000) stays in E (010000) when w is 1, so if y[3] is 1 and w is 1, Y3 should be 1.
+- State E (010000) goes to D (001000) when w is 0, so if y[3] is 1 and w is 0, Y3 should be 1.
+- State F (100000) goes to C (000100) when w is 1, but C does not have y[3] as 1, so this transition does not affect Y3.
+
+Now, simplifying these conditions for Y1 and Y3, we can write the Verilog code to implement the logic.

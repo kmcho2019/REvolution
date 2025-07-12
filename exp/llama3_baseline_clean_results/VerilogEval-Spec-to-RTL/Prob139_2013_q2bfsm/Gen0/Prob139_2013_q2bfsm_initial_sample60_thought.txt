@@ -1,0 +1,9 @@
+To solve this problem, we need to design a finite state machine (FSM) that can keep track of its current state and transition to the next state based on the input values. The FSM will have several states: 
+- State A (initial state): The FSM stays in this state as long as the reset input is asserted.
+- State B: The FSM sets output f to 1 for one clock cycle after the reset signal is de-asserted.
+- State C: The FSM monitors the x input and waits for the sequence 1, 0, 1.
+- State D: The FSM sets output g to 1 and monitors the y input.
+- State E: The FSM maintains g = 1 permanently if y becomes 1 within two clock cycles.
+- State F: The FSM sets g = 0 permanently if y does not become 1 within two clock cycles.
+
+We will use a parameterized enum to define the states and a reg variable to store the current state. We will also use a counter to keep track of the number of clock cycles since the FSM entered State D.

@@ -1,0 +1,43 @@
+The given solution is functionally correct but has overlapping terms causing redundant logic. To optimize for power and area, we should factor the expression to reduce the number of product terms and literal usage, which also helps reduce logic depth improving performance.
+
+Analyzing the terms:
+
+f = (~x3 & ~x2 & ~x1)
+  | (~x3 & x2 & ~x1)
+  | (~x3 & x2 & x1 & ~x0)
+  | (x3 & x2 & ~x0)
+  | (x3 & x2 & x1 & x0);
+
+We can factor some terms:
+
+- (~x3 & ~x1) common in first two terms: (~x3 & ~x1 & (~x2 | x2)) = (~x3 & ~x1)
+
+- The last two terms with (x3 & x2): (x3 & x2 & (~x0 | (x1 & x0)))
+
+- The middle term (~x3 & x2 & x1 & ~x0) remains as is.
+
+Putting together:
+
+f = (~x3 & ~x1) | (~x3 & x2 & x1 & ~x0) | (x3 & x2 & (~x0 | (x1 & x0)))
+
+This reduces product terms and literals.
+
+Further simplification:
+
+- (~x3 & ~x1) covers minterms 0 and 1 and also 4 and 5 (some part), but verify with the Karnaugh map:
+
+Actually, it only covers 0,1 and 4,5 include x2=1, so 4 and 5 are covered by (~x3 & x2 & ~x1) in original expression.
+
+But (~x3 & ~x1) includes (~x3 & ~x2 & ~x1) + (~x3 & x2 & ~x1), thus it covers minterms 0,1,4,5 correctly.
+
+Hence, replacing the first two terms with one is valid.
+
+Final expression:
+
+f = (~x3 & ~x1)
+  | (~x3 & x2 & x1 & ~x0)
+  | (x3 & x2 & (~x0 | (x1 & x0)));
+
+This uses only three product terms instead of five, reducing complexity and switching activity.
+
+This is more optimal in power, area, and logic depth, improving PPA while maintaining correctness.

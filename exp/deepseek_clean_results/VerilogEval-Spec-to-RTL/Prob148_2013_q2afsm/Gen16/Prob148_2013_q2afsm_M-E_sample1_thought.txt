@@ -1,0 +1,9 @@
+Novel architectural idea: Implement a hierarchical priority encoder FSM with these key features:
+1. Use one-hot encoding for states to simplify output logic and enable parallel state transitions
+2. Implement a two-stage priority resolution:
+   - First stage: Quick detection of any request
+   - Second stage: Priority-based state transition when in idle state
+3. Use combinational output enables derived directly from state bits
+4. Optimize for minimal clock-to-output delay by making outputs purely combinational functions of state
+5. Include a request-valid signal to reduce unnecessary state evaluations
+6. Use explicit state holding conditions for grant states

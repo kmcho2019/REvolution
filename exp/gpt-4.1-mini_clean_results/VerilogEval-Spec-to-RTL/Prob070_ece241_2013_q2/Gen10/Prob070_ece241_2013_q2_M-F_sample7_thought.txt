@@ -1,0 +1,20 @@
+The original SOP included the term (~a & b & c), which covers inputs 6 (0110) and 7 (0111), but 6 should output 0. Hence, that term is too broad. To fix this, each required logic-1 minterm (2, 7, 15) must be explicitly included:
+
+- 2 (0010): ~a & ~b & c & ~d
+- 7 (0111): ~a & b & c & d
+- 15(1111): a & b & c & d
+
+This exact minterm inclusion prevents undesired logic-1 at 6.
+
+For POS, identify maxterms corresponding to logic-0 outputs (0,1,4,5,6,9,10,13,14). Mark the don't-cares (3,8,11,12) as flexible. Using Karnaugh maps or Quine-McCluskey with these constraints, minimal POS comes out to:
+
+out_pos = (a + b + ~c + d) & (a + ~b + c + ~d) & (~a + ~b + ~c + d) & (~a + ~b + c + ~d)
+
+This includes one extra product term compared to the previous solution, which excludes unwanted minterms properly.
+
+Therefore:
+
+- Implement exact minterms for out_sop.
+- Implement corrected minimal POS as above for out_pos.
+
+This correction strictly matches the required logic and avoids invalid logic-1 outputs.

@@ -1,0 +1,5 @@
+To simplify the design while maintaining functionality, I will use a single synchronous process triggered on the clock. The falling edge detection will be performed inside the always block by comparing the current input with the stored previous input. If a bit transitions from 1 to 0, the corresponding output bit is latched high until reset.
+
+At reset, both the output and the previous input register are cleared to zero. This removes the extra combinational wire for falling edge detection, making the code more concise and easier to understand, while still ensuring correct behavior and synchronous reset.
+
+The key is that detecting falling edges is done synchronously by using a registered version of the previous input. The output bits accumulate all falling edges until reset.

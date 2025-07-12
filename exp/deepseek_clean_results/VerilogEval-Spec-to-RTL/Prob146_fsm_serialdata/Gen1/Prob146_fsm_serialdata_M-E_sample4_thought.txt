@@ -1,0 +1,8 @@
+Here's a novel approach using a shift register with parallel load and a bit counter with early termination detection. The key differences from the standard FSM approach are:
+
+1. Instead of separate states for receiving and stop bit checking, we'll use a single active state with conditional transitions
+2. The shift register will be loaded in parallel when the stop bit is detected, eliminating the need for an extra cycle to output the byte
+3. We'll use a "stuck" bit to handle invalid stop bits, forcing the FSM to remain active until a proper stop bit is seen
+4. The done signal will be generated combinationally based on current state and input
+
+This approach reduces state transitions and combines the data collection and validation into a more streamlined process.

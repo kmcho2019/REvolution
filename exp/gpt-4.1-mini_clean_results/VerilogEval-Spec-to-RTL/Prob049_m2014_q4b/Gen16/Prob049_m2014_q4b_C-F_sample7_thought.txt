@@ -1,0 +1,9 @@
+To combine the strengths of both examples, I will fuse the modular clarity from Example 2 with the clean internal register abstraction of Example 1. Specifically, I will implement the D flip-flop with asynchronous reset as a dedicated submodule using a reg output for synchronous assignment and proper always block sensitivity. Then, in the TopModule, I will instantiate this submodule and internally assign its output reg to a separate internal register q_reg, which will be continuously assigned to the output port q. 
+
+This approach gains these benefits:
+1. Modular and reusable DFF_AsyncReset component facilitates clarity and code reuse.
+2. Using an internal register q_reg inside TopModule allows future expandability and clean separation of internal state and output ports, improving maintainability and avoiding unintended combinational feedback.
+3. Maintaining non-blocking assignments and proper sensitivity ensures correct asynchronous reset behavior.
+4. Continuous assignment of the internal register to output q enables safer output port driving semantics.
+
+This fusion retains the simplicity, correctness, and minimal area/power of the previous designs while enhancing modularity and interface clarity.

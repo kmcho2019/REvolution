@@ -1,0 +1,10 @@
+To refactor the existing code, we can utilize a different approach to implement the finite state machine. Instead of using a counter, we can define a state machine with explicit states to track the receipt of bytes. We can use an `enum` to define the states and an `always_ff` block to handle the state transitions. The `done` signal can be generated using a combinational logic block that checks the current state. This approach allows for a more explicit and readable implementation of the state machine.
+
+Here's an outline of the refactoring steps:
+
+1.  **Define States:** Use an `enum` to define the states of the state machine, including an `IDLE` state, a `BYTE1` state, a `BYTE2` state, and a `BYTE3` state.
+2.  **State Transitions:** Implement the state transitions using an `always_ff` block, which will handle the sequential logic.
+3.  **Combinational Logic:** Use a combinational logic block to generate the `done` signal based on the current state.
+4.  **Reset Logic:** Ensure that the state machine is reset correctly when the `reset` signal is high.
+
+By using an `enum` to define the states and implementing the state machine with an `always_ff` block, we can create a more explicit and maintainable code.

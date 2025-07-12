@@ -1,0 +1,5 @@
+To improve the existing ripple carry adder design for better PPA metrics, replace the ripple carry structure with an 8-bit carry lookahead adder (CLA). CLA architecture reduces carry propagation delay by computing carry signals in parallel using generate and propagate signals, which improves the maximum operating frequency (timing). This also reduces power since less toggling occurs in a long carry chain and potentially reduces area by sharing generate/propagate logic instead of cascading full adders.
+
+We still explicitly compute the sum bits and overflow. Overflow detection remains the XOR of carry-in and carry-out to the MSB. This approach maintains the same functionality but provides better timing and power characteristics, especially for synthesis targeting ASIC or FPGA.
+
+The CLA will be fully combinational and the interface remains unchanged.

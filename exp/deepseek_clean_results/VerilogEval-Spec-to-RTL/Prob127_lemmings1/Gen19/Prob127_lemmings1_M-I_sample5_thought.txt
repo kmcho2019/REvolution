@@ -1,0 +1,20 @@
+To optimize the given solution for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **Performance Optimization**:
+   - The current design has a negative WNS (-0.19ns), indicating a slight timing violation. I'll optimize the next-state logic to reduce the critical path.
+   - Use a direct state transition equation that combines both bump signals in a single expression rather than nested conditionals.
+
+2. **Power Optimization**:
+   - Implement clock gating for the state register when bump inputs are stable.
+   - Use a more power-efficient state encoding (keeping binary encoding as it's optimal for 2 states).
+
+3. **Area Optimization**:
+   - The current area is already minimal (8 um^2), but we can ensure the logic is as compact as possible by:
+     - Using a single assign statement for next-state logic
+     - Merging output logic with state encoding
+
+The improved design will:
+- Eliminate the timing violation
+- Reduce dynamic power through optimized logic
+- Maintain the same minimal area
+- Keep the same Moore machine behavior

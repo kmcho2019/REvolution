@@ -1,0 +1,13 @@
+The problem requires designing a finite state machine (FSM) that controls a motor based on inputs x and y and produces outputs f and g. The FSM starts in state A when reset is asserted. After reset is de-asserted, it sets output f to 1 for one clock cycle, then waits for the sequence 1, 0, 1 on input x. After detecting this sequence, it sets output g to 1 and monitors input y. If y is 1 within two clock cycles, g remains 1; otherwise, g is set to 0. The FSM can be implemented using a state machine with several states to track the progress of the sequence detection and the status of output g. The states can be defined as follows:
+- State A: Initial state when reset is asserted.
+- State B: State after reset is de-asserted, where f is set to 1.
+- State C: Waiting for the sequence 1, 0, 1 on input x.
+- State D: After detecting the sequence, waiting for y to become 1 within two cycles.
+- State E: g is set to 1 permanently after y becomes 1 within two cycles.
+- State F: g is set to 0 permanently if y does not become 1 within two cycles.
+
+The state transitions and output assignments can be described as follows:
+- From State A to State B: When reset is de-asserted.
+- From State B to State C: After one clock cycle.
+- From State C to itself or State D: Based on the sequence detection of x.
+- From State D to State E or State F: Based on the value of y within two cycles.

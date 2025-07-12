@@ -1,0 +1,12 @@
+The main issue in the original code is the improper handling of two's complement negation and width mismatches during concatenation when reconstructing the signed result. To fix this, treat the inputs and outputs as signed variables of width N to leverage Verilog's built-in signed arithmetic instead of manually manipulating sign and magnitude. 
+
+By declaring a and b as signed, we can directly perform subtraction, which inherently handles sign and magnitude properly for fixed-point representation. However, to conform to the problem's specific sign handling logic, especially zero sign clearing, we still extract the sign and magnitude and handle zero explicitly.
+
+The improved approach:
+- Declare inputs and output as signed [N-1:0].
+- Perform c = a - b as signed subtraction for arithmetic correctness.
+- Use an internal signed reg res = a - b.
+- Explicitly clear the sign bit if result is zero.
+- This simplifies the logic, avoids bit-width mismatches, and ensures synthesis-friendly and efficient implementation.
+  
+This approach guarantees correct fixed-point subtraction with parameterized fractional and integer bits, precise sign handling, and no width mismatch errors.

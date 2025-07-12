@@ -1,0 +1,13 @@
+I will implement the decade counter using a simple synchronous process without a separate combinational next-state logic block. The counter will be a 4-bit register that counts from 1 to 10 inclusive, incrementing by one each clock cycle. When the count reaches 10, it wraps back to 1 on the next cycle.
+
+Key points:
+- Synchronous active-high reset sets the count to 1.
+- On each positive edge of clk, if reset is not asserted:
+  - If the current count is 10 (decimal), reset count to 1.
+  - Otherwise, increment count by 1.
+- This approach avoids combinational next-state logic, potentially reducing logic complexity and making the logic easier to infer for some synthesis tools.
+- The output `q` directly represents the current count value.
+- Use a non-blocking assignment inside the always block to maintain correct synchronous behavior.
+- The condition `(q == 4'd10)` is used for checking wrap, which is readable and synthesis-friendly.
+
+This design trades a slightly larger comparator for removing separate combinational logic blocks, aiming for clarity and straightforward implementation.

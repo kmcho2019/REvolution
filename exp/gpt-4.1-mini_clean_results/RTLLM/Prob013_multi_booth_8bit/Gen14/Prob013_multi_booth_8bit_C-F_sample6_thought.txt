@@ -1,0 +1,17 @@
+I will fuse the radix-4 Booth algorithm efficiency from Example 1 with the clean FSM and control/data separation from Example 2, creating a modular, clear design with improved timing and clarity.
+
+Key fusion points:
+- Use the radix-4 Booth recoding and sign-extended inputs for faster multiplication (5 cycles) from Example 1.
+- Employ an explicit FSM with IDLE, RUN, DONE states for clearer control and ready signaling from Example 2.
+- Separate combinational control logic (FSM next state, control signals) from sequential datapath logic (register updates).
+- Use a signed accumulator and registers to handle partial sums and shifted multiplicand multiples.
+- On reset, load inputs with sign extension and initialize all registers.
+- On RUN, in each cycle:
+  - Extract 3 bits from multiplier for radix-4 Booth recoding.
+  - Generate partial product (multiplicand * Booth multiple) using a function.
+  - Accumulate shifted partial product into the accumulator.
+  - Arithmetic shift multiplier right by 2 bits (to proceed in radix-4 steps).
+  - Increment step counter.
+- After 5 steps (for 8-bit multiplier), move to DONE state, assert ready, and output final product.
+- Hold outputs stable until next reset.
+- This approach combines the performance advantage of radix-4 Booth (fewer cycles) with clear, testable FSM structure and synchronous reset from Example 2.

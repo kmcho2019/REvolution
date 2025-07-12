@@ -1,0 +1,10 @@
+To fix the timing misalignment and unreliable phase shifting of clk_neg, we explicitly generate clk_pos and clk_neg as separate pulse trains aligned on clk's edges: clk_pos toggles on the rising edge of clk according to the uneven count cycles, while clk_neg toggles on the falling edge with a similar but phase-shifted pattern. This ensures clk_neg is a stable half-cycle delayed version of clk_pos without asynchronous sampling issues.
+
+Specifically:
+- Use the same 3-bit counter counting 0 to 6 on posedge clk to generate clk_pos.
+- Use a shadow counter toggling on negedge clk to generate clk_neg with the complementary timing.
+- Both counters track the fractional cycles but are offset by half a clock period.
+- This yields clk_pos high for 4 cycles, low for 3 cycles on posedge clk, and clk_neg high for 4 cycles, low for 3 cycles on negedge clk but offset in time.
+- OR'ing clk_pos and clk_neg produces a clock with uniform period and improved duty cycle for a fractional 3.5x division.
+- All registers are reset properly on rst_n.
+This method aligns clk_pos and clk_neg edges to input clock edges, avoiding asynchronous sampling and phase ambiguity.

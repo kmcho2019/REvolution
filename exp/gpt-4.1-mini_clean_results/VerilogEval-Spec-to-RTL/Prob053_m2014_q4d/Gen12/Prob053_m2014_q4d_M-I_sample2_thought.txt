@@ -1,0 +1,13 @@
+The original design correctly implements the described function but relies on initializing 'out' via an initial block, which is simulation-only and not synthesizable in many flows. Since the specification forbids reset, the initial state of 'out' cannot be controlled in hardware, which is an inherent limitation causing startup uncertainty.
+
+To improve:
+1. Remove the initial block to ensure synthesis compatibility.
+2. Use a non-blocking assignment inside the always block, as in the example.
+3. The logic is minimal and optimal; no further PPA optimization is needed.
+4. Document explicitly that the initial output state is undefined on hardware startup due to no reset.
+
+This results in clean and synthesizable code that matches the specification exactly without simulation-only constructs.
+
+If the user is fine with simulation undefined initial output, this is the best solution.
+
+If any initial value is desired in simulation, that can be added separately without affecting synthesis, but here we follow the spec strictly.

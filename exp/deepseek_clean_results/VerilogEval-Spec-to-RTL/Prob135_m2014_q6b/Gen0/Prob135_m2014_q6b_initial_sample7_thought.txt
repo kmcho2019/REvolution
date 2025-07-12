@@ -1,0 +1,23 @@
+To implement the next-state logic for y[1] in the given FSM, we need to analyze the state transitions and determine when y[1] should be 1 in the next state. 
+
+The states are encoded as:
+A: 000 (y[1]=0)
+B: 001 (y[1]=0)
+C: 010 (y[1]=1)
+D: 011 (y[1]=1)
+E: 100 (y[1]=0)
+F: 101 (y[1]=0)
+
+We need to find all cases where the next state has y[1]=1 (states C and D). From the state transitions:
+1. From B (001) when w=0: next state is C (010) → y[1] becomes 1
+2. From B (001) when w=1: next state is D (011) → y[1] becomes 1
+3. From C (010) when w=1: next state is D (011) → y[1] stays 1
+4. From D (011) when w=1: next state is A (000) → y[1] becomes 0
+5. From E (100) when w=1: next state is D (011) → y[1] becomes 1
+6. From F (101) when w=1: next state is D (011) → y[1] becomes 1
+
+Thus, y[1] should be 1 in the next state when:
+- Current state is B (001) regardless of w
+- Current state is C (010) and w=1
+- Current state is E (100) and w=1
+- Current state is F (101) and w=1

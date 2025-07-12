@@ -1,0 +1,7 @@
+The current implementation correctly detects even parity but has a linear XOR chain that creates a longer critical path. To optimize for timing (performance), we can restructure the XOR operations into a balanced tree. This reduces the logic depth from 3 gate delays (for a 4-input XOR chain) to 2 gate delays. The area remains similar (still 4 XOR gates and 1 inverter), but the timing improves significantly for high-frequency operation.
+
+The improved structure will compute:
+1. XOR of a and b in parallel with XOR of c and d
+2. XOR those intermediate results
+3. Invert the final result
+This maintains the same functionality while improving timing performance.

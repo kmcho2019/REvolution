@@ -1,0 +1,13 @@
+After analyzing the feedback, I realize there were two main issues:
+1. Bit selection error: The original code incorrectly used x[4] which doesn't exist in the 4-bit input x[3:0]
+2. Incorrect K-map implementation: The logic didn't properly cover all required cases from the truth table
+
+Here's the corrected approach:
+1. The K-map rows are x[3]x[2] (not x[3]x[4]) and columns are x[1]x[0] (not x[1]x[2])
+2. Looking at the corrected K-map:
+   - f=1 when x[3]x[2] is 11 (for any x[1]x[0] except 10)
+   - f=1 when x[3]x[2] is 10 and x[1]x[0] is not 11
+   - f=0 in other specified cases
+3. We can simplify this to:
+   f = (x[3] & x[2]) | (x[3] & ~x[2] & ~(x[1] & x[0]))
+4. Don't-care conditions are optimized to simplify the expression

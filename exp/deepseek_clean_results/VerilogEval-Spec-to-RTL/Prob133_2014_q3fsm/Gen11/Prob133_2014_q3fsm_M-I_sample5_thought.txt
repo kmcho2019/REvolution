@@ -1,0 +1,14 @@
+Optimization Strategy:
+1. Replace the 3-bit w_samples register with a 2-bit ones counter to reduce area and power
+2. Simplify the window_complete detection by using a single-bit comparison (counter[1])
+3. Eliminate the separate ones_count calculation by directly using the stored count
+4. Gate the counter updates to only occur when needed (state B)
+5. Optimize the evaluate logic to use the precomputed ones count
+6. Maintain the same state encoding and basic structure for timing stability
+
+Key Improvements:
+- Reduced register bits from 3 to 2 (w_samples → ones_count)
+- Simplified counter comparison logic
+- Eliminated redundant adder logic
+- Maintained same state machine behavior
+- Reduced switching activity by gating updates

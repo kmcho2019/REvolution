@@ -1,0 +1,6 @@
+Refactor the design by directly computing the intermediate signals in the top module without instantiating the A and B submodules. Instead, define the logic of A and B as local functions within the top module using continuous assignments. This approach reduces module instantiation overhead while preserving the original logic structure.
+
+Specifically:
+- Replace the two instances of A and two instances of B with signals computed by inline combinational expressions matching the modules' functionality.
+- Maintain the same connectivity: first pair's outputs ORed, second pair's outputs ANDed, then XORed to get final output.
+- This refactoring keeps the logic intact, simplifies code hierarchy, and shows an alternative way of structuring combinational designs.

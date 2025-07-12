@@ -1,0 +1,11 @@
+To improve the design for better PPA (timing, power, and area), I will optimize the carry propagation logic and reduce combinational complexity:
+
+- Replace nested carry wires with per-digit rollover detection and simple increment logic.
+- Use separate enable signals per digit that drive the increment for higher digits, avoiding combinational dependency chains.
+- Register the ena signals to reduce glitches and align enable signals timing with digit increments, trading off slight latency for cleaner timing and reduced toggling.
+- Use simple comparisons only once per digit to check if the digit will rollover, rather than combining complex carry chains.
+- This reduces the critical path length from a chain of combinational logic spanning all digits to localized logic per digit, improving timing.
+- Registering ena also reduces glitching and switching on output lines, reducing power.
+- The overall design remains synchronous with synchronous reset and updates on clock edge.
+
+This approach balances timing improvements with clean logic and stable enables for the upper digits.

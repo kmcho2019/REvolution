@@ -1,0 +1,8 @@
+Fuse the explicit combinational next-state calculation and modularity from Example 1 with the conditional update gating from Example 2 to reduce unnecessary toggling. 
+
+Specifically:
+- Compute both rotate_left and rotate_right signals combinationally to maintain clear and parallel rotate logic, enabling simple next state generation.
+- Use a single always block triggered on clk to synchronously update the register.
+- Update q only when load or rotation is required to reduce unnecessary toggling and power, effectively applying clock enable behavior inside the always block.
+- Use a combinational next_value bus selected by a priority mux (load > rotate left > rotate right > hold) like in Example 1, but only assign q when enable condition is true, else hold q.
+- This retains the clean code structure with generate blocks, concise concatenation-based rotation, and conditional register updates to optimize power while preserving clarity and correctness.

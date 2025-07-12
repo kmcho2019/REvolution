@@ -1,0 +1,20 @@
+Here's a novel approach to implement the D latch using a different architectural concept - a multiplexer-based feedback loop with explicit state retention:
+
+1. **Core Idea**: Instead of using a continuous assignment, we'll implement the latch using an always block with explicit feedback logic. This makes the latching behavior more visible in the code.
+
+2. **Key Features**:
+   - Uses a combinational always block with all inputs in sensitivity list
+   - Explicitly shows the feedback path when not enabled
+   - Avoids inferred latches by clearly specifying all cases
+   - More readable for designers who prefer procedural blocks over continuous assignments
+
+3. **Advantages**:
+   - Clearly separates the enabled and disabled states
+   - More explicit about the memory element behavior
+   - Easier to modify for more complex latch variants
+   - Better synthesis control through procedural coding style
+
+4. **Implementation**:
+   - When enabled, passes input 'd' to output 'q'
+   - When disabled, maintains previous value through feedback
+   - Uses non-blocking assignment for predictable behavior

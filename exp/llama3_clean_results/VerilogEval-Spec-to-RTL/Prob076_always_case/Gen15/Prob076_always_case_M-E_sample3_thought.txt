@@ -1,0 +1,11 @@
+To implement a novel architectural idea for the 6-to-1 multiplexer, we will utilize a decoder and a set of AND gates to select the correct data input based on the `sel` signal. This approach differs from the traditional case statement or if-else chain methods. 
+
+The decoder will be used to generate six decoded signals from the 3-bit `sel` input, where each decoded signal corresponds to one of the possible selections (0 through 5). We will then use these decoded signals to enable the corresponding data input through a set of AND gates. 
+
+Each data input (data0 through data5) will be ANDed with its corresponding decoded signal. The outputs of these AND gates will then be ORed together to produce the final output. 
+
+When the `sel` signal selects a particular data input, the corresponding decoded signal will be high, allowing that data input to pass through the AND gate and contribute to the final output. All other data inputs will have their corresponding decoded signals low, resulting in them being masked out by the AND gates. 
+
+If `sel` is outside the range of 0 to 5, none of the decoded signals will be high, and thus all AND gates will output 0, resulting in the final output being 0, which meets the requirement for handling invalid `sel` values.
+
+This approach is novel because it uses a combination of a decoder and AND-OR logic to implement the multiplexer, which can be an interesting alternative to the more traditional methods, especially in certain digital design contexts where this structure might be beneficial for optimization or integration with other logic.

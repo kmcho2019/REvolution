@@ -1,0 +1,10 @@
+To implement a fractional frequency divider by 3.5 using double-edge clocking, I will generate two separate clock enables from a counter that counts from 0 to 6 (total 7 cycles):
+
+- One enable (ce_pos) will be active for 4 cycles (counts 0 to 3),
+- The other enable (ce_neg) will be active for 3 cycles (counts 4 to 6).
+
+Then, I will generate two internal flip-flops toggling on opposite clock edges (posedge and negedge) triggered by their respective enables. These two internal divided clocks represent half-cycle shifted clocks.
+
+Finally, OR-ing these two internal clocks will create an output clock with an average frequency division of 3.5 and improved duty cycle.
+
+This approach explicitly uses enables synchronized to each clock edge rather than sampling combinational signals asynchronously, improving timing and glitch robustness. The counter increments on the rising edge only. The negedge-triggered flip-flop is enabled based on the counter value from the previous cycle. This architecture ensures proper half-cycle phase shifting and better waveform symmetry.

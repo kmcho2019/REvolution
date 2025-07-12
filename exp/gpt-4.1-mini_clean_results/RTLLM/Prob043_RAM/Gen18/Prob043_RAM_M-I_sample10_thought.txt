@@ -1,0 +1,25 @@
+Improvement Strategy:
+
+To optimize for Power, Performance, and Area (PPA) while keeping functionality and clarity, we will:
+
+1. Use asynchronous reset only for the read_data register to reduce read latency and synchronous resets of RAM, as the initial contents should be 0 and usually RAM blocks can be inferred with initialization in FPGA/ASIC flows, avoiding large reset toggling on the RAM contents.
+
+2. Separate read data into a registered output to improve timing closure by eliminating combinational path from RAM to output. This trades some latency (1 cycle read latency) for better max frequency and glitch elimination, thus reducing dynamic power.
+
+3. Implement RAM as reg array [WIDTH-1:0] RAM [0:DEPTH-1] with synchronous write on posedge clk gated by write_en.
+
+4. Initialize the RAM contents using an initial block for simulation purposes, assuming synthesis tool supports RAM initialization (important especially in FPGA flows). For ASIC, we rely on reset being low initially and synchronous reset optionally.
+
+5. Use synchronous reset only on read_data output register, asynchronously clearing to zero on reset to ensure deterministic output on reset.
+
+6. Remove the synchronous reset of the entire RAM array to avoid large toggle power during reset, leveraging that RAM contents are zero-initialized at start (initial block) or rely on synthesis tool features for initialization or explicit memory initialization files.
+
+This strategy improves power by reducing toggling on the RAM, improves performance by registering output to shorten critical path, and reduces area by avoiding large reset logic for RAM contents.
+
+The user requires the read_data to be cleared on reset, which is handled by the registered output.
+
+Write operation remains synchronous and gated.
+
+Read operation is synchronous (1 cycle latency) with enable gating.
+
+The final code thus ensures dual-port behavior with simultaneous read/write, clear reset of read_data, and a scalable clean implementation.

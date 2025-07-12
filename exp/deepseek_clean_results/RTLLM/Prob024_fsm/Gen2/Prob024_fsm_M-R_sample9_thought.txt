@@ -1,0 +1,18 @@
+Refactoring the Mealy FSM with these key changes:
+
+1. State Encoding: Switch from one-hot to binary encoding to reduce area and power while maintaining reasonable timing performance (3 states can be represented with 2 bits).
+
+2. Output Handling: Make MATCH a continuous assignment (assign) rather than procedural logic for cleaner implementation.
+
+3. State Transitions: Simplify the state transition logic by:
+   - Removing the redundant default case (all states are covered)
+   - Combining the reset logic into a single always block
+   - Using direct state assignments for clarity
+
+4. Parameter Naming: Use more descriptive state names to improve readability.
+
+The new implementation will have these characteristics:
+- 4 states encoded in 2 bits (IDLE, GOT1, GOT10, GOT100, GOT1001)
+- Combinational output using assign statement
+- Cleaner state transition logic
+- Same functional behavior but with better PPA characteristics

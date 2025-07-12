@@ -1,0 +1,10 @@
+A novel approach is to use an 8-bit shift register that samples the input `in` every clock cycle and then compare the two most recent samples to detect 0->1 transitions. Specifically, we keep a 16-bit shift register where the lower 8 bits are the previous cycle's inputs and the upper 8 bits are the current inputs. By shifting in the new `in` at each clock, the top half of the register holds the current input and the bottom half the previous input, so we can detect 0->1 edges as transitions from 0 in the bottom half to 1 in the top half.
+
+To generate the output pulse one cycle after detection, the design stores the detected edges in a register output `pedge`. This approach uses a single shift register and then extracts two 8-bit windows to detect edges, which is architecturally different from storing a separate previous input register.
+
+This shift-register method naturally pipelines the inputs and leverages bit-slicing to detect transitions without explicitly storing a separate "previous input" vector, offering an alternative register structure and data flow that is still fully synchronous and efficient.
+
+Overall, the architecture:
+- Uses a 16-bit shift register to hold two consecutive input samples.
+- Detects 0->1 edges by comparing bit-wise pairs in the two samples.
+- Registers the detected edges as output one cycle after detection.

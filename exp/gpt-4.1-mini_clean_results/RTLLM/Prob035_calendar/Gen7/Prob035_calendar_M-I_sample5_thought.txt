@@ -1,0 +1,10 @@
+To optimize the original solution for better power, performance, and area (PPA), I will apply the following strategies:
+
+1. Use synchronous reset only (remove asynchronous reset on posedge RST) to improve timing by eliminating asynchronous reset paths, which can be problematic at high frequencies.
+2. Add an enable signal for increments that only updates the counters when needed, minimizing toggling and reducing dynamic power consumption.
+3. Use a single always block to keep the design simple and ensure minimal area.
+4. Reduce the bit-width of Hours to 5 bits (sufficient for 0-23).
+5. Minimize the number of conditional checks by using a clean counter rollover logic.
+6. Add comments to clarify the code for better maintainability.
+
+These changes aim to reduce the critical path (by removing asynchronous reset), reduce switching activity (by conditional increments), and keep area minimal while maintaining correct counting behavior.

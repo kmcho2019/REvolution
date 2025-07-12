@@ -1,0 +1,9 @@
+Implement the accumulation using a shift register to store the last 4 valid input data and a combinational adder to sum these 4 stored values when the count reaches 4.
+
+This approach decouples accumulation from sequential addition, instead accumulating inputs in a 4-entry FIFO-like buffer. Each time a valid input arrives, data_in is shifted into the shift register and the count increments.
+
+When count reaches 4, the combinational logic sums all 4 stored inputs simultaneously and outputs the result with valid_out pulsing high for one clock cycle.
+
+This architecture provides the benefit of spreading out addition to combinational logic and can improve timing by not chaining additions sequentially. It also ensures outputs are ready in one cycle when 4 inputs have been collected.
+
+Reset clears shift register and count. valid_out is asserted only on output cycle. This design naturally aligns with streaming input and periodic output without accumulating state sums sequentially.

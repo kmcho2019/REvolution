@@ -1,0 +1,14 @@
+This solution implements a priority-based selection mechanism using a multiplexer architecture:
+
+1. Instead of separate AND gates, we use a 2:1 multiplexer to select between ringer and motor modes
+2. The vibrate_mode input acts as the select line for the mux
+3. The ring signal enables the entire output path (acts as an enable for both outputs)
+4. We generate complementary outputs to ensure mutual exclusivity
+5. This approach clearly shows the selection mechanism and maintains the same logical function
+
+Key advantages:
+- Explicit mux structure makes the selection behavior very clear
+- Single ring signal distribution point reduces fanout
+- Naturally enforces mutual exclusion through the mux structure
+- Same gate count as previous solutions (2 AND gates equivalent)
+- Easily extensible if more modes need to be added later

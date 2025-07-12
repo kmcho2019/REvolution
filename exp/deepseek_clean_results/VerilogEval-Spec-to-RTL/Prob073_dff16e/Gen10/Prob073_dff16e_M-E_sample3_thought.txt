@@ -1,0 +1,16 @@
+Novel Architecture Idea: Segmented Clock-Gated Register Bank
+1. Instead of a monolithic 16-bit register, implement two independent 8-bit register banks
+2. Each bank has its own clock gating controlled by byteena signals
+3. Benefits:
+   - Power savings by gating clocks to inactive byte segments
+   - Clear physical separation between byte groups
+   - Potential for better placement/routing in physical design
+4. Implementation:
+   - Create two 8-bit registers (upper and lower)
+   - Generate gated clocks for each bank
+   - Use synchronous reset for both banks
+   - Combine outputs for final q
+5. Advantages over original:
+   - Explicit clock gating reduces dynamic power
+   - Better modularity for hierarchical designs
+   - More physically aware implementation

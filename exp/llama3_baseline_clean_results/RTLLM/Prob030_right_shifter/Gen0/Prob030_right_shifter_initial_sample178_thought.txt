@@ -1,0 +1,5 @@
+To implement the right shifter module, we first need to define the module with its input and output ports. The module should have a clock signal 'clk' for synchronous operation, an input signal 'd' to be right-shifted, and an output signal 'q' representing the result of the right shift operation. 
+We will use a reg [7:0] q to store the result of the shift operation and initialize it to 0. 
+On each rising edge of the clock, we will right-shift the contents of the q register by one bit using the >> operator and then assign the most significant bit (q[7]) the value of the input signal 'd'. 
+However, since we are using non-blocking assignment inside an always block for synchronous operations, we cannot directly assign q[7] <= d after q <= (q >> 1) because this will not achieve the desired shift and insert operation in a single clock cycle.
+Instead, we need to combine the shift and insert operations into a single statement to ensure that both happen simultaneously on each clock edge.

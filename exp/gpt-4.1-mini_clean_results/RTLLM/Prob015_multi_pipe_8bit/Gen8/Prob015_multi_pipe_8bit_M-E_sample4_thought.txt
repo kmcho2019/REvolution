@@ -1,0 +1,9 @@
+Implement a 3-stage pipeline multiplier by dividing the multiplication process into sequential partial product and addition stages. 
+
+Stage 1: Register inputs and input enable. Generate and register partial products for lower and upper nibble multiplications separately (mul_a low and high 4 bits multiplied by mul_b fully, producing two 12-bit partial sums).
+
+Stage 2: Add the partial products in pairs to generate intermediate sums, registered to break long combinational paths.
+
+Stage 3: Final addition of intermediate sums and alignment shift, producing the final 16-bit product output registered with the output enable. 
+
+This staged addition reduces critical path delay by splitting the addition tree into pipeline registers, improving maximum clock frequency and enabling higher throughput. The output enable is pipelined synchronously with data to ensure valid output signaling. The reset logic zeroes registers for known startup states.

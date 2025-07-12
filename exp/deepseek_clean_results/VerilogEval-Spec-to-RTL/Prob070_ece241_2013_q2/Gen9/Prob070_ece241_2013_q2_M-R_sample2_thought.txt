@@ -1,0 +1,24 @@
+Refactored Approach:
+
+1. Truth Table Analysis (same as before):
+   - True cases: 2 (0010), 7 (0111), 15 (1111)
+   - False cases: 0,1,4,5,6,9,10,13,14
+   - Don't-cares: 3,8,11,12
+
+2. SOP Implementation:
+   - Keep the same minimal SOP expression but implement it more efficiently
+   - Group terms to minimize operations: (~a & c & (~b & ~d | b & d)) | (a & b & c & d)
+   - This reduces the number of operations while maintaining correctness
+
+3. POS Implementation:
+   - Calculate POS properly by considering the false cases
+   - False cases occur when:
+     - c is 0 (for 0,1,4,5,8,9,12,13)
+     - Or specific patterns when c is 1 (6,10,14)
+   - Implement as product of sums of these conditions
+
+4. Refactoring Benefits:
+   - More efficient SOP implementation with fewer operations
+   - Proper POS implementation that matches specification
+   - Clear separation of SOP and POS logic
+   - Still leverages don't-cares for optimization

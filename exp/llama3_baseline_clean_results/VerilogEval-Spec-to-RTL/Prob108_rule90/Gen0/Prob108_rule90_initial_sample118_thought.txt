@@ -1,0 +1,7 @@
+To implement the TopModule, we need to design a module that can load a 512-bit input data into an internal register q and update it according to Rule 90 at each positive clock edge. We will use a 512-bit register to hold the current state of the cellular automaton. The next state of each cell is computed as the XOR of its two neighbors. To handle the boundaries, we will use the fact that q[-1] and q[512] are both zero, so the leftmost and rightmost cells only have one neighbor to consider.
+
+On the positive edge of the clock, if the load signal is high, we load the input data into the register q. Otherwise, we update the register q according to Rule 90. This requires computing the next state of each cell as the XOR of its two neighbors. 
+
+We can use a for loop to iterate over each cell and compute its next state. The leftmost and rightmost cells will be handled separately to account for the zero boundary conditions.
+
+Finally, we will assign the updated values to the output port q.

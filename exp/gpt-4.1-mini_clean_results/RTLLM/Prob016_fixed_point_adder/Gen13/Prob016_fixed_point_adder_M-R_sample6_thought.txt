@@ -1,0 +1,25 @@
+Refactor the fixed-point adder by explicitly implementing the logic as described, but using continuous assignments (`assign`) rather than an `always` block. This aligns with the requirement to:
+
+- Check if the MSBs (sign bits) of `a` and `b` are the same.
+- If same, add the absolute values and assign the sign bit accordingly.
+- If different, subtract the smaller absolute value from the larger one and assign sign depending on which is larger.
+  
+We will:
+
+1. Extract sign bits of `a` and `b`.
+2. Compute absolute values by inverting and adding 1 if negative (two's complement).
+3. Use compare logic on absolute values to determine which is larger.
+4. Compute addition or subtraction accordingly.
+5. Compose the result by setting the MSB (sign bit) as per the problem's rules and concatenating the magnitude bits.
+6. Use a combinational logic path with continuous `assign` statements for clarity and synthesis friendliness.
+7. Keep internal register `res` as a wire reflecting the combinational result.
+
+This approach explicitly implements the required sign-magnitude logic with fixed-point precision, uses parameterized widths, and avoids always blocks for combinational logic.
+
+The output `c` is assigned the result of `res`.
+
+Overflow behavior follows natural wrapping of two's complement subtraction and addition of magnitudes, with the sign bit manually controlled, matching the problem specification.
+
+This respects the fixed-point Q fractional bits implicitly since no scaling is needed for addition/subtraction of fixed-point numbers represented in two's complement.
+
+Overall, this structure cleanly expresses the requested arithmetic and sign logic, improves readability, and strictly follows the problem specification.

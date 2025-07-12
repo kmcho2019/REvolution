@@ -1,0 +1,18 @@
+Instead of directly assigning Y1 and Y3 from the state bits, this approach uses combinational logic expressions derived by explicitly enumerating the predecessor states for B and D according to the FSM transitions. By checking the transitions into state B and D from all states and conditions, we can express Y1 and Y3 as OR of AND conditions:
+
+- State B (y[1]) next-state input Y1 is asserted if:
+  * Current state A (y[0]) and w=1 (A->B on 1)
+  * Current state F (y[5]) and w=1 (F->C on 1, no direct B, so no)
+  Only A->B on 1 applies, so Y1 = y[0] & w
+
+- State D (y[3]) next-state input Y3 is asserted if:
+  * B(0) --0--> D  => y[1] & ~w
+  * C(0) --0--> D  => y[2] & ~w
+  * E(1) --0--> D  => y[4] & ~w
+  * F(1) --0--> D  => y[5] & ~w
+
+So Y3 = ~w & (y[1] | y[2] | y[4] | y[5])
+
+However, to introduce architectural novelty, implement the combinational logic using case statements with a full enumeration of current state and input conditions, mapping to the outputs Y1 and Y3. This helps visualize the FSM next state inputs more explicitly and allows easier expansion/modification.
+
+Use an always_comb block with a case statement on {y, w} to produce Y1 and Y3. This style also isolates combinational logic in one block, which some prefer for clarity and extensibility.

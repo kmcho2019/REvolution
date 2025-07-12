@@ -1,0 +1,89 @@
+module TopModule (
+    input clk,
+    input reset,
+    input data,
+    input done_counting,
+    input ack,
+    output shift_ena,
+    output counting,
+    output done
+);
+
+    // State definitions
+    typedef enum logic [1:0] {
+        IDLE,
+        SHIFT,
+        COUNT,
+        DONE
+    } state_t;
+
+    state_t current_state, next_state;
+    reg [3:0] pattern_reg;
+    reg [1:0] shift_counter;
+
+    // State transition logic
+    always @(posedge clk) begin
+        if (reset) begin
+            current_state <= IDLE;
+            pattern_reg <= 4'b0;
+            shift_counter <= 2'b0;
+        end else begin
+            current_state <= next_state;
+            
+            // Always shift in new data
+            pattern_reg <= {pattern_reg[2:0], data};
+            
+            // Counter for shift cycles
+            if (current_state == SHIFT) begin
+                shift_counter <= shift_counter + 1;
+            end else begin
+                shift_counter <= 2'b0;
+            end
+        end
+    end
+
+    // Next state logic
+    always @(*) begin
+        case (current_state)
+            IDLE: begin
+                if (pattern_reg == 4'b1101) begin
+                    next_state = SHIFT;
+                end else begin
+                    next_state = IDLE;
+                end
+            end
+            
+            SHIFT: begin
+                if (shift_counter == 2'b11) begin  // After 4 cycles
+                    next_state = COUNT;
+                end else begin
+                    next_state = SHIFT;
+                end
+            end
+            
+            COUNT: begin
+                if (done_counting) begin
+                    next_state = DONE;
+                end else begin
+                    next_state = COUNT;
+                end
+            end
+            
+            DONE: begin
+                if (ack) begin
+                    next_state = IDLE;
+                end else begin
+                    next_state = DONE;
+                end
+            end
+            
+            default: next_state = IDLE;
+        endcase
+    end
+
+    // Output logic
+    assign shift_ena = (current_state == SHIFT);
+    assign counting = (current_state == COUNT);
+    assign done = (current_state == DONE);
+
+endmodule

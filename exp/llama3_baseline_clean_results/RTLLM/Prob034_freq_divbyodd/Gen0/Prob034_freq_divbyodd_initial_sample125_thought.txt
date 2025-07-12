@@ -1,0 +1,9 @@
+To implement the frequency divider that divides the input clock frequency by odd numbers, we need to design a module that takes into account both the rising and falling edges of the clock. The idea is to use two counters, one for each edge, and toggle the respective clock dividers when the counters reach half of the divisor value. The final divided clock output will be the logical OR of the two clock dividers. This ensures that the output clock is divided by the odd number specified by the parameter NUM_DIV, regardless of whether the input clock is high or low. 
+The implementation involves the following steps:
+1. Declare the module freq_divbyodd with input ports clk and rst_n, and output port clk_div.
+2. Define the parameter NUM_DIV with a default value of 5.
+3. Initialize two counters, cnt1 and cnt2, to track the rising and falling edges of the clock.
+4. Use two separate clock dividers, clk_div1 and clk_div2, for positive and negative edges of the clock, respectively.
+5. Toggle clk_div1 and clk_div2 when the counters reach half of NUM_DIV.
+6. Derive the final divided clock output clk_div by logically OR-ing clk_div1 and clk_div2.
+7. Initialize the counters and clock divider outputs using the active low reset signal rst_n.

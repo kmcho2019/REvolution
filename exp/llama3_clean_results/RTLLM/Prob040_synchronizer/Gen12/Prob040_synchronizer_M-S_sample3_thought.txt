@@ -1,0 +1,7 @@
+The problem statement requires a multi-bit MUX-based synchronizer to handle data synchronization between two clock domains, clk_a and clk_b. To simplify the solution, we can focus on the essential components and remove any redundant logic. The key components are the data register, the enable data register, and the control registers to delay the enable signal. We can also remove the handshake protocol, as the problem statement guarantees that data_in will remain constant during the period when data_en is high and that the change interval between two adjacent data is at least 10 clk_b clock cycles.
+
+We can simplify the transmitter by directly updating the data register with the input data signal when the enable signal is high. We can also simplify the receiver by directly assigning the output data value based on the delayed enable signal.
+
+The simplified architecture consists of a data register, an enable data register, and two control registers to delay the enable signal. The data register is updated with the input data signal when the enable signal is high. The enable data register is updated with the enable signal, and the control registers delay the enable signal by two clk_b clock cycles. The output data value is assigned based on the delayed enable signal.
+
+This simplified design maintains the functionality of the original solution while reducing complexity and potentially improving PPA metrics.

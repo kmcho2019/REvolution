@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. **Power Optimization**:
+   - Gate the shift computation logic with 'ena' to prevent unnecessary toggling when not shifting
+   - Move sign extension calculation inside the right-shift condition to avoid redundant computations
+
+2. **Area Optimization**:
+   - Combine left and right shift logic into a single unified shift operation
+   - Use arithmetic shift operator (>>>) for right shifts to leverage built-in sign extension
+   - Implement 8-bit shifts using concatenation for better resource sharing
+
+3. **Performance Optimization**:
+   - Simplify the shift selection logic to reduce critical path
+   - Use case statement for clearer and potentially more optimized shift selection
+
+4. **Clock Gating**:
+   - Explicitly maintain the register value when neither load nor ena is active
+
+Key Improvements:
+- Reduced power consumption by gating shift computations
+- Smaller area through unified shift logic and operator usage
+- Cleaner code structure with case statement
+- Maintained performance while improving other metrics

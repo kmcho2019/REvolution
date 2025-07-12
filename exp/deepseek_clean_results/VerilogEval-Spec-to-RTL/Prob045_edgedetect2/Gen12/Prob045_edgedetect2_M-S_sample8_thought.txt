@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. The XOR operation is already the most efficient way to detect any edge (0→1 or 1→0)
+2. We can eliminate the separate output register since the edge detection is purely combinational
+3. Only need to store the previous input value (prev_in) to compare with current input
+4. Make anyedge a wire instead of reg since it's purely combinational logic
+5. This reduces the flip-flop count from 16 to 8 while maintaining identical functionality
+
+Key Changes:
+- Remove output register (anyedge becomes combinational)
+- Keep only prev_in register
+- Use continuous assignment for anyedge calculation
+- Maintain same edge detection behavior with fewer resources

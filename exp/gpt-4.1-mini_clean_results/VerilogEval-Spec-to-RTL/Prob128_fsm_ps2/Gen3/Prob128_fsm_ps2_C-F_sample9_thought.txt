@@ -1,0 +1,5 @@
+To combine the strengths of both examples, I will keep the clear one-hot state encoding and synchronous reset for timing stability and clean initialization. The done signal will be asserted for exactly one cycle immediately after receiving the third byte, gated precisely to avoid unnecessary toggling. I will fully integrate the next state logic and output logic into a single always block triggered on posedge clk for better synthesis and timing.
+
+Additionally, to minimize toggling on done and reduce glitches, done will be asserted only on the cycle the FSM completes BYTE3 state, then cleared immediately. This removes done toggling in other cycles, reducing dynamic power. 
+
+To optimize area slightly, I will keep the one-hot encoding since the FSM is small and simple, which favors fast and easy state decoding. The FSM will stay simple and readable, which helps maintainability. This fusion keeps all advantages: clean state transitions, precise done signaling, and minimal switching activity for better power-performance-area tradeoffs.

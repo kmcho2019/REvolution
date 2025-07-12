@@ -1,0 +1,15 @@
+To fix the implementation based on the feedback, I'll make these key improvements:
+
+1. **Sequence Detection**: Ensure the 1-0-1 sequence detection properly resets only when the sequence is broken. The FSM should stay in the current sequence state if the expected value isn't seen, rather than immediately resetting.
+
+2. **Timeout Logic**: Fix the timeout counter to:
+   - Only increment if y hasn't been detected yet
+   - Stop counting once y is detected
+   - Properly handle the 2-cycle window (0 and 1 count as two cycles)
+
+3. **Output Timing**: Ensure outputs change exactly when specified:
+   - f=1 pulse occurs immediately after reset deassertion
+   - g=1 is set exactly after the complete 1-0-1 sequence
+   - g transitions to permanent state at correct time
+
+4. **State Transitions**: Clean up state transitions to be more precise and match the specification exactly, with proper handling of all edge cases.

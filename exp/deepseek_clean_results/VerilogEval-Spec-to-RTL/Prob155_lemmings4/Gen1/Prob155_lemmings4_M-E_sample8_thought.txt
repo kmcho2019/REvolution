@@ -1,0 +1,24 @@
+Here's a novel approach using separate state machines for direction and action:
+
+1. Split the design into two parallel FSMs:
+   - Direction FSM: tracks left/right walking direction
+   - Action FSM: handles walking/falling/digging/splattered states
+
+2. The direction FSM only changes when:
+   - Not falling/digging/splattered
+   - Receives bump signals
+   - Resets to left
+
+3. The action FSM handles state transitions with priorities:
+   - Falling takes precedence over digging
+   - Digging takes precedence over walking
+   - Splattered is terminal until reset
+
+4. A separate counter tracks fall duration, reset when not falling
+
+5. Outputs are derived from both FSMs' states
+
+Benefits:
+- Clear separation of concerns
+- Direction changes are isolated from action logic
+- Easier to modify/extend individual behaviors

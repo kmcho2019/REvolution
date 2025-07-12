@@ -1,0 +1,11 @@
+To improve the frequency divider module, we will focus on correctly implementing the required logic to divide the input clock frequency by an odd number using two counters, `cnt1` and `cnt2`, to track the rising and falling edges of the clock. We will also ensure that the state machine correctly implements the required logic and that the reset logic initializes all relevant signals and state machine states.
+
+Improvement Strategy:
+1. Implement two counters, `cnt1` and `cnt2`, to track the rising and falling edges of the clock.
+2. Use a state machine to track the clock phases and divide the frequency by an odd number.
+3. Correctly implement the logic to toggle the divided clock output based on the state machine's state.
+4. Optimize the code for better PPA metrics by minimizing unnecessary logic and using efficient state machine implementation.
+
+The state machine will have two states: count and toggle. In the count state, `cnt1` and `cnt2` will increment until they reach half of `NUM_DIV`. Once they reach half, the state machine will transition to the toggle state, where it will toggle the divided clock output and reset the counters. This process will repeat, effectively dividing the input clock frequency by the specified odd number.
+
+To optimize the code for PPA, we will use a simple and efficient state machine implementation and minimize unnecessary logic. We will also use a reset signal to initialize the counters and the state machine.

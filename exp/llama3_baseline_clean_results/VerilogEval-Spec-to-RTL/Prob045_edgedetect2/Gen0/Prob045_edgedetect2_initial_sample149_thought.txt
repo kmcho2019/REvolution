@@ -1,0 +1,8 @@
+To detect any edge transition in an 8-bit input vector, we can use a combination of sequential logic (registers) and combinational logic (bit-wise XOR). Here's the design approach:
+
+1. Store the current input value in a register. This will be used to keep track of the previous input value.
+2. On each positive edge of the clock, update the stored previous input value with the current input value.
+3. Use bit-wise XOR operation to compare the current input value and the previous input value. The XOR operation will produce 1 for each bit position where the input has changed (either 0 to 1 or 1 to 0).
+4. Assign the result of the XOR operation to the output vector anyedge. Since the output is assigned on the next clock cycle, it will be set to 1 the cycle after the input bit has a transition.
+
+This design ensures that any edge transition (either rising or falling) in the input vector is detected and the corresponding output bit is set to 1 on the next clock cycle.

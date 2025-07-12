@@ -1,0 +1,9 @@
+Implement the 4-bit unsigned pipeline multiplier using a two-stage accumulation approach with intermediate registers, but instead of summing all partial products at once, accumulate them serially over two pipeline stages to simplify hardware and clearly separate stages:
+
+1. Extend mul_a and mul_b by zero-padding mul_a to 8 bits (2*size).
+2. First pipeline stage: For each bit i of mul_b, generate the partial product (mul_a_ext shifted by i) only for one bit per clock cycle, accumulating the partial products in a register over multiple cycles is not required since size=4 and we have two pipeline stages.
+3. Use pipeline registers to store partial products corresponding to lower and upper half bits of mul_b.
+4. Second pipeline stage: Add partial products from the first pipeline stage registers.
+5. Output the final result registered in the last stage.
+6. This design uses separate pipeline registers for partial sums to simplify control and supports synchronous reset.
+7. This approach achieves pipelining by splitting addition into two stages, with registers after partial product generation and after addition, simplifying timing and enhancing throughput.

@@ -1,0 +1,11 @@
+To properly implement an 8-bit 2-to-1 mux with inputs `a` and `b` and an 8-bit output `out`, the key is to ensure the output port width matches the input width and the mux logic selects all 8 bits from one input based on `sel`.
+
+A clean, modular approach is to implement the mux with an always block and a procedural assignment. This provides clarity and avoids the width mismatch seen in the previous attempt.
+
+Specifically:
+- Declare `out` as an 8-bit output.
+- Use an always_comb block (or always @* block) that assigns `out = a` when `sel` is 0 and `out = b` when `sel` is 1.
+- This ensures the entire vector is selected properly with no bit slicing or partial assignments.
+- This approach explicitly models a multiplexing behavior suitable for synthesis and simulation.
+
+This differs from the previous bitwise combinational logic and the scalar output by using procedural style with a correctly sized output vector.

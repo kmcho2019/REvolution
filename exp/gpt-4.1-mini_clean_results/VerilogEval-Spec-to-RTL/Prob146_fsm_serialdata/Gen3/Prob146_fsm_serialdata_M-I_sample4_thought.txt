@@ -1,0 +1,11 @@
+To optimize the FSM for better Power, Performance, and Area (PPA), I will add clock enables to the registers so they update only when necessary, reducing unnecessary toggling especially in IDLE and WAIT_STOP states.
+
+Specifically:
+
+- The state register must always update to allow correct transitions.
+- The bit_count and data_shift registers will update only in the RECEIVE state to minimize switching.
+- The done signal will be asserted only in the STOP state when a valid stop bit is detected; otherwise, it remains 0.
+- The bit_count and data_shift will be reset only when the start bit is detected in IDLE state.
+- No register updates occur in WAIT_STOP state except the state register.
+  
+This reduces dynamic power by avoiding unnecessary toggling of registers during idle or wait conditions. It also simplifies done signal generation to a single-cycle pulse, helping timing. The approach maintains full correctness and functionality.

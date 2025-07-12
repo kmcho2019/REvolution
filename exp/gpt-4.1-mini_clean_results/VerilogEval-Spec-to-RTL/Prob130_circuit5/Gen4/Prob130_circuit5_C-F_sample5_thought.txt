@@ -1,0 +1,15 @@
+Fuse the clarity and synthesis-friendly multiplexer structure from Example 1 with the vector concatenation idea in Example 2 to reduce code duplication and improve readability.
+
+Specifically:
+- Use a small array (packed vector) to hold the four input options (b, e, a, d).
+- Instead of shifting (which is costly and increases switching), implement a clean combinational multiplexer using a `case` statement on `c` that uses the lower two bits of `c` to index the inputs when `c < 4`.
+- For `c >= 4`, output 4'hF.
+
+This approach keeps the logic simple and explicit, avoids a barrel shifter, and improves synthesis by explicitly coding the mux while leveraging vector grouping to make the code concise and clear.
+
+This is a clean, readable, and efficient approach that balances performance, power, and area:
+- Performance: No barrel shifter; just a 4-way mux based on `c`.
+- Power: Less switching than shifting entire vector.
+- Area: Minimal mux logic without redundant gates.
+
+The code uses a `reg` for `q` with a combinational always block, making it synthesis-friendly and easily extensible if needed.

@@ -1,0 +1,9 @@
+Refactor the TopModule to explicitly separate the multiplexer logic and the flip-flop storage by using a wire for the mux output and then a sequential always block for the flip-flop. 
+
+Instead of combining the mux and the flip-flop in one always block, first define a combinational wire MUX_OUT that selects r_in when L=1, otherwise q_in, then on the posedge clk, Q is assigned MUX_OUT. 
+
+This structure is functionally equivalent but clearer in separating combinational and sequential logic, which may improve readability and tooling analysis without changing behavior.
+
+Q remains a reg since it holds state. No reset is added, keeping the interface unchanged.
+
+This approach demonstrates an alternative, clean structural style while maintaining the same logic.

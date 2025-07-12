@@ -1,0 +1,10 @@
+To model the behavior of the Lemming using a finite state machine, we can define four states: walking left (WALK_LEFT), walking right (WALK_RIGHT), digging (DIGGING), and falling (FALLING). The initial state should be WALK_LEFT due to the asynchronous reset condition.
+
+The transitions between states are based on the given conditions:
+- If the Lemming is walking and hits an obstacle (bump_left or bump_right), it switches direction.
+- If the ground disappears (ground=0), the Lemming falls and says "aaah!".
+- If the Lemming is walking and told to dig (dig=1) and the ground is present, it starts digging.
+- If the Lemming is digging and reaches the other side (ground=0), it falls.
+- If the Lemming is falling and the ground reappears, it resumes walking in the same direction as before the fall.
+
+We will use a Moore state machine where the outputs are a function of the current state only. We will need to keep track of the original walking direction when the Lemming starts digging or falling to ensure it resumes walking in the correct direction when the ground reappears.

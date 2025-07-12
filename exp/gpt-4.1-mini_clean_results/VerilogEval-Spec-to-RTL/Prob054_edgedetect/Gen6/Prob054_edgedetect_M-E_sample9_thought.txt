@@ -1,0 +1,9 @@
+Instead of registering the entire input vector each cycle, use a two-stage pipeline with a shift register to track past input states and delay the edge detection output accordingly.
+
+This design uses a shift register approach: it stores the current and previous input states in two separate registers. The 0-to-1 transition is detected by comparing these two consecutive stored inputs. To produce the output pulse one cycle after the edge, we register the detection result, introducing a pipeline stage for output.
+
+Though functionally similar to the original, this approach separates state tracking and output generation distinctly, which may help with timing closure in complex systems by distributing the logic.
+
+This also simplifies debugging since each pipeline stage captures a well-defined signal: previous input and edge detection pulse.
+
+This architectural approach is novel compared to the initial one-block, two-register method and shows an alternative design pattern for edge detection with pipelining.

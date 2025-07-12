@@ -1,0 +1,18 @@
+Simplified 3.5x fractional divider design:
+
+1. Core Simplifications:
+   - Eliminate separate counter for phase shift by reusing main counter
+   - Remove intermediate register for delayed counter
+   - Generate phase shift directly from negedge sampling
+
+2. Key Features Maintained:
+   - Preserves exact 3.5x division ratio
+   - Maintains proper duty cycle through direct phase control
+   - Keeps clean reset behavior
+
+3. Simplified Approach:
+   - Single 3-bit counter cycles through 0-6
+   - Base clock generated at posedge (high for 4 cycles)
+   - Phase-shifted clock generated at negedge (high for 4 cycles)
+   - OR both clocks for final output
+   - Reduced logic elements and registers

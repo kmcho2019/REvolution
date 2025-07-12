@@ -1,0 +1,11 @@
+To improve the existing design for better power and timing, I will leverage a synchronous reset approach instead of using an enable signal gating the register update. This can reduce clock gating complexity and improve timing by avoiding combinational gating on the clock enable input.
+
+Specifically:
+- When L is asserted, the flip-flop loads R synchronously (acting as a synchronous load).
+- When E is asserted (and L is not), shift in w.
+- Otherwise, maintain current Q.
+This removes the need for a combined clock enable signal and instead uses a single always block with prioritized conditional logic inside the clocked process.
+
+This typically improves timing by simplifying clock domain control, avoiding gating on clock enables, and preserving power because the flip-flop only changes state when needed. It also reduces combinational delay before the flip-flop. Area impact is minimal.
+
+This trade-off leverages an explicit synchronous load and shift enable inside the clocked always block, which generally leads to better overall PPA than gating the clock enable externally.

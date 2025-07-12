@@ -1,0 +1,19 @@
+Here's a novel state-machine based approach that introduces hysteresis to prevent rapid cycling of the heater/aircon:
+
+1. Instead of purely combinational logic, implement a simple state machine with 4 states:
+   - IDLE: No active temperature control
+   - HEATING: Heater is active
+   - COOLING: Aircon is active
+   - FAN_ONLY: Only fan is active by user request
+
+2. The state transitions incorporate hysteresis:
+   - Only exit HEATING when temperature is comfortably warm (too_cold=0)
+   - Only exit COOLING when temperature is comfortably cool (too_hot=0)
+
+3. Advantages:
+   - Prevents rapid cycling of HVAC equipment
+   - More realistic simulation of real thermostat behavior
+   - Clear separation of control states
+   - Fan control becomes a natural output of the current state
+
+4. The fan is activated either by being in HEATING/COOLING states or by explicit user request (FAN_ONLY state)

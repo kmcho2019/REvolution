@@ -1,0 +1,9 @@
+Implement an 8-bit negative-edge triggered D flip-flop array using a single always block with vector non-blocking assignments for synchronous active-high reset. Instead of a flat register or per-bit always blocks, use an array of individual 1-bit registers inside a packed array to model each flip-flop separately but updated together in a vector manner.
+
+This provides clear separation of bits in simulation and tooling while keeping the synchronous reset and negative-edge clocking clean and power efficient.
+
+The reset vector 0x34 is applied synchronously on reset at negative clock edge, else the D input loads.
+
+The TopModule instantiates this register module directly.
+
+This approach combines clarity of per-bit registers for debugging and simulation with efficient single always block implementation, balancing modularity, power, and timing.

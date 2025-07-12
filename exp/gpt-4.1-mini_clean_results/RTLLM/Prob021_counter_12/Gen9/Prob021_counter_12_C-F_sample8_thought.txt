@@ -1,0 +1,11 @@
+Combine the clarity and modularity of Example 1 with the simplicity and timing advantages of Example 2 by:
+
+1. Using a separate combinational always block to compute the next count value (next_out), which improves code clarity and modularity, making the counter logic easier to understand and modify.
+
+2. Retaining the synchronous always block for registering out with non-blocking assignments and active-low synchronous reset, ensuring clean timing and synthesis.
+
+3. Implementing the terminal count detection using a numeric equality comparison (out == 4'd11) instead of bitwise logic. Modern synthesis tools often optimize numeric equality better than bitwise AND of bits, potentially improving timing and area.
+
+4. Gating count increment by valid_count, reducing switching activity and thus lowering dynamic power.
+
+This fusion yields a clean, modular, synthesizable, low-power, and area-efficient 4-bit counter that counts from 0 to 11 inclusive, resets synchronously with rst_n active low, and pauses counting when valid_count is low.

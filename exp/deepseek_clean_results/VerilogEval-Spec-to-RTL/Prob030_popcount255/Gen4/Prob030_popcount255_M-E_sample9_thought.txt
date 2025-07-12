@@ -1,0 +1,6 @@
+The new approach uses a multi-stage hierarchical counting structure inspired by parallel prefix computation. Instead of processing fixed-size chunks, we'll:
+1. First count '1's in overlapping 3-bit windows (using 3-bit population count LUTs)
+2. Then combine these counts in a logarithmic-depth binary tree of adders
+3. This reduces the critical path from O(n) to O(log n) while maintaining full parallelism
+4. The 3-bit window approach allows efficient LUT-based counting while minimizing intermediate storage
+5. The binary tree structure provides balanced timing paths and efficient resource utilization

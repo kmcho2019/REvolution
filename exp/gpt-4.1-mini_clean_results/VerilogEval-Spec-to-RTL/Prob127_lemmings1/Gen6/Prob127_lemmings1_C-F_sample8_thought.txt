@@ -1,0 +1,5 @@
+Fuse the best aspects of both examples: use a clear two-process FSM structure (separate state register with async reset and combinational next-state logic) from Example 2 for readability and maintainability; incorporate a simplified and consolidated next_state logic that handles all bump conditions in one concise combinational block from Example 1, but optimized with a clear priority scheme.
+
+Further improve power and area by driving only walk_left output from the state and deriving walk_right as its complement, reducing output logic and toggling.
+
+This design keeps a single flip-flop for state, asynchronous reset initializing to WALK_LEFT, and Moore output logic. The next state transitions flip the direction on any bump (left or right), and particularly invert state if both bumps are active, using simple logic to minimize gate count and critical path delay.

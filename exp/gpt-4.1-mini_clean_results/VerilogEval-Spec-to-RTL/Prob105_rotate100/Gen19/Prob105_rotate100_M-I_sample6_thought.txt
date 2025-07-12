@@ -1,0 +1,11 @@
+To optimize for performance, power, and area while maintaining functionality:
+
+- Remove the redundant assignment "q <= q;" to prevent unnecessary toggling and reduce power.
+- Simplify logic by computing next_q combinationally only when load or rotation occurs; otherwise, keep q unchanged implicitly.
+- Use a combinational always block to compute next_q and assign q <= next_q at clock edge, reducing register toggling and improving synthesis results.
+- Implement rotation via vector concatenation which is efficient for synthesis on FPGA and ASIC, avoiding explicit per-bit loops.
+- Prioritize load over rotation.
+- Since ena=00 or 11 means no rotation, just hold state without assignment to avoid glitches and reduce power.
+- This approach keeps critical path simple and only toggles q when necessary.
+
+These modifications improve power and area slightly by reducing unnecessary toggling and improve synthesis friendliness by clarifying data path and control signals.

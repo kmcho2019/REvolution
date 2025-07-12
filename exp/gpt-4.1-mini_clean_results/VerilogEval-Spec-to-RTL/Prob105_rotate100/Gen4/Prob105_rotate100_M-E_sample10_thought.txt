@@ -1,0 +1,11 @@
+Implement the 100-bit rotator using a shift register with explicit separate logic for rotation directions to ensure clarity. Instead of using wide concatenations, break down the rotation into two parts and use a temporary variable to hold the bit that rotates around, making the design easy to follow and potentially help synthesis tools infer better timing paths.
+
+Specifically:
+- On load, synchronously load the 100-bit data into the register.
+- When rotating right (ena == 2'b01), save the least significant bit, shift the register right by one, and assign the saved bit to the most significant bit.
+- When rotating left (ena == 2'b10), save the most significant bit, shift the register left by one, and assign the saved bit to the least significant bit.
+- When ena == 2'b00 or 2'b11, maintain the current register value (no rotation).
+- The design uses a single always block on posedge clk and simple combinational assignments inside it, ensuring synchronous behavior.
+- This explicit splitting may improve clarity and help with timing by avoiding large concatenations.
+
+This is a novel approach relative to direct wide concatenations by explicitly moving bits with shifts and intermediate storage.

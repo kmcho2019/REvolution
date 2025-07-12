@@ -1,0 +1,13 @@
+Novel Architecture Idea: Barrel Shifter with Pre-computed Shift Patterns
+1. Instead of calculating shifts dynamically each cycle, pre-compute all possible shift patterns in parallel
+2. Use a 4:1 multiplexer to select the appropriate shift result based on the 'amount' input
+3. For arithmetic right shifts, implement sign extension through bit replication at the input stage
+4. Use a single always block for clean synchronous operation
+5. Optimize for area by sharing common shift logic between different shift amounts
+
+Key Advantages:
+- Parallel computation reduces critical path delay
+- Clean separation of shift operations
+- Efficient sign handling for arithmetic shifts
+- Simplified control logic
+- Better scalability for larger shift amounts

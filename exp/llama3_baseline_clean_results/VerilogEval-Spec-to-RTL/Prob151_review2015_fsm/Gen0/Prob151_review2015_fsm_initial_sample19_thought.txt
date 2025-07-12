@@ -1,0 +1,11 @@
+To implement the finite-state machine that controls the timer, we will design a Moore machine with the following states:
+- IDLE: search for the pattern 1101
+- SHIFT: shift in 4 more bits after detecting the pattern
+- COUNT: wait for the counters to finish counting
+- DONE: notify the user and wait for acknowledgement
+
+The state machine will use a binary encoding to represent these states and will transition between them based on the inputs (data, done_counting, ack, reset) and the internal state.
+
+When in the IDLE state, the machine checks the input data to detect the pattern 1101. Once detected, it transitions to the SHIFT state and asserts shift_ena for 4 clock cycles. After that, it transitions to the COUNT state and asserts counting. In the COUNT state, it waits for done_counting to go high, then transitions to the DONE state and asserts done. In the DONE state, it waits for ack to go high before transitioning back to the IDLE state.
+
+A 2-bit counter will be used to count the number of clock cycles while in the SHIFT state. This counter will be reset when the state machine transitions to the SHIFT state and will be incremented every clock cycle while in this state.

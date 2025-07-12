@@ -1,0 +1,12 @@
+New approach using parallel state tracking and direct sensor interpretation:
+1. Instead of a traditional state machine, track the current water level directly from sensors
+2. Maintain a history of the previous water level to detect rising/falling conditions
+3. Use combinational logic to determine outputs based on current sensors and previous level
+4. Implement a "debounce" mechanism to prevent rapid toggling of dfr during transitions
+5. Reset initializes to lowest level with all outputs asserted
+
+Key innovations:
+- Eliminates explicit state encoding by directly using sensor values
+- Simpler transition detection by comparing current and previous sensor patterns
+- Outputs are purely combinational functions of sensor states and direction
+- More intuitive mapping between sensor patterns and outputs

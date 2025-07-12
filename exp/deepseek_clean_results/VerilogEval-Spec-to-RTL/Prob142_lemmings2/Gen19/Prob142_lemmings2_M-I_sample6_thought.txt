@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Combine bump_left and bump_right into a single direction toggle signal to reduce critical path
+   - Simplify state transition logic by pre-computing direction changes
+
+2. Power Optimization:
+   - Add clock gating for state register when no transitions are needed
+   - Implement input synchronization for bump signals to reduce glitches
+
+3. Area Optimization:
+   - Merge output logic into state decoding to save gates
+   - Use single comparator for walk outputs since they're mutually exclusive
+   - Add simple ground signal filtering to prevent unnecessary transitions
+
+Key Changes:
+- New direction_toggle signal combines bump logic
+- Clock gating when state is stable
+- Simplified output decoding
+- Ground signal debouncing
+- More efficient state encoding

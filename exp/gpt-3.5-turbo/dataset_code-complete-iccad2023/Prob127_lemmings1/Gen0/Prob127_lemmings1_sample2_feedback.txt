@@ -1,5 +1,0 @@
-The primary issue in the code lies in the way the state machine transitions are structured. In the `LemmingFSM` module, the state machine transitions are based on the inputs `bump_left` and `bump_right`, but the conditions for transitioning between states are not comprehensive. Specifically, in both `WALK_LEFT` and `WALK_RIGHT` states, the conditions only check for the presence of a bump on one side and not the absence of a bump on the other side. This logic is flawed because it does not account for cases where the Lemming can be bumped on both sides simultaneously or where no bumps are detected. 
-
-Additionally, in the current implementation, if a Lemming is bumped on both sides simultaneously (or if no bumps are detected), the state machine will remain in the current state, which is incorrect based on the problem description. The code lacks a condition to handle this scenario appropriately.
-
-To fix the issues and ensure the Lemming FSM behaves as intended, the state transition conditions need to be revised to consider all possible combinations of bump signals and state the machine is currently in.

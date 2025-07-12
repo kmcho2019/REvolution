@@ -1,0 +1,7 @@
+To implement the specified one-hot FSM with multiple active current states in a novel way, I will use parallel intermediate signals for each state's possible next states and then OR those signals to form the final next_state output. This approach keeps the transition logic modular per state and input condition and makes it easy to extend or debug each state's logic independently.
+
+Furthermore, for outputs out1 and out2, rather than using bitwise operations on the full vector, I will explicitly OR the relevant bits to make it clearer and avoid depending on vector arithmetic. This explicit coding of outputs aligns with the per-state modular approach.
+
+This method provides a readable, scalable design style, useful for maintaining and verifying complex FSMs with one-hot encoded states and multiple active bits. It also allows easy insertion of state prioritization or gating if desired in future modifications.
+
+This approach differs from a fully flattened OR assignment because it preserves per-state signal granularity and explicitly names intermediate wires, improving readability and modularity without sacrificing performance.

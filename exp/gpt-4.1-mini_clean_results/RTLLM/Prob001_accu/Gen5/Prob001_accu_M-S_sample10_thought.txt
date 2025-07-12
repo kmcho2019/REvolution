@@ -1,0 +1,8 @@
+To simplify the design while maintaining correct functionality:
+
+1. Use a single always block with synchronous reset.
+2. Accumulate data_in into a 10-bit register only when valid_in is high.
+3. Use a 2-bit counter to count the number of valid inputs; when it reaches 4, output the sum and assert valid_out for one cycle.
+4. Reset accumulator and counter immediately after output.
+5. Default valid_out to 0 to create a one-cycle pulse.
+6. Avoid extra wires or combinational assignments to keep the code minimal and clear.

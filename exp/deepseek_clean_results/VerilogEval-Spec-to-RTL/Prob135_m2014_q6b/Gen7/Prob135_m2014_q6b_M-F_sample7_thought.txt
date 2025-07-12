@@ -1,0 +1,21 @@
+To fix the next-state logic for y[1], we need to:
+1. Re-examine each state transition in the FSM specification
+2. For each transition, determine the next state's y[1] value based on the state encoding:
+   - A(000): y[1]=0
+   - B(001): y[1]=0
+   - C(010): y[1]=1
+   - D(011): y[1]=1
+   - E(100): y[1]=0
+   - F(101): y[1]=0
+3. Correct the transitions that were wrong in the previous implementation:
+   - F (101) to C (010) should set y[1] to 1 (not 0)
+   - Add missing transitions where needed
+4. Remove the default case to ensure all transitions are explicitly specified
+5. Keep the output assignment Y1 = y[1] as required
+6. Use a more systematic approach by listing all possible current state + input combinations
+
+Key corrections:
+- Fix F->C transition (y[1] should be 1)
+- Ensure all transitions are explicitly covered
+- Remove default case to catch any missing transitions
+- Maintain same interface and functionality

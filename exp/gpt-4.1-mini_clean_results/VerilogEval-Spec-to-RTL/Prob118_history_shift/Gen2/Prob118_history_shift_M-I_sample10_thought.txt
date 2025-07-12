@@ -1,0 +1,12 @@
+To optimize the original design for better timing, power, and area (PPA), the main strategy is to minimize switching activity and reduce combinational logic depth inside the sequential block. 
+
+Improvements:
+1. Add a clock enable signal so the 32-bit history register updates only when necessary—i.e., when either a misprediction or a prediction occurs. This reduces switching when idle, lowering dynamic power.
+2. Separate the logic for the next state calculation outside the always block, to reduce combinational logic within the sequential block. Use a simple mux on next_history.
+3. Use a wire for next_history that directly encodes the multiplexed update between misprediction load, prediction shift-in, or holding the current state.
+4. Keep asynchronous reset as requested.
+5. This approach reduces the amount of combinational shifting and concatenation inside the clocked always block, improving timing.
+6. Power savings come from reduced toggling when no update happens.
+7. Area is not increased and may even reduce slightly due to simplified control logic.
+
+Overall, the design preserves the exact functional behavior but adds an enable to update only when necessary and simplifies combinational logic, which will improve PPA.

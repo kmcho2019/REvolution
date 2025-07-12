@@ -1,0 +1,35 @@
+We can simplify the decoding of states by noting that only states B, C, E, and F affect next_y1. Since we only need B, C, E, and F for the expression, we can use minimal conditions.
+
+Notice:
+- B = 001 => y = 3'b001 (y2=0, y1=0, y0=1)
+- C = 010 => y2=0, y1=1, y0=0
+- E = 100 => y2=1, y1=0, y0=0
+- F = 101 => y2=1, y1=0, y0=1
+
+We can reduce the decoding logic by observing patterns:
+
+- B and C have y2=0 and y1 and y0 complementary for each state.
+- E and F have y2=1 and y1=0.
+
+Alternatively, we can directly express next_y1 using y and w without explicit B,C,E,F signals:
+
+From original expression:
+next_y1 = B | F | ((C | E) & w)
+
+Express each term directly:
+B = ~y[2] & ~y[1] & y[0]
+F = y[2] & ~y[1] & y[0]
+C = ~y[2] & y[1] & ~y[0]
+E = y[2] & ~y[1] & ~y[0]
+
+Therefore:
+next_y1 = B | F | ((C | E) & w)
+= (~y2 & ~y1 & y0) | (y2 & ~y1 & y0) | ( ((~y2 & y1 & ~y0) | (y2 & ~y1 & ~y0)) & w )
+
+Note that (~y2 & ~y1 & y0) | (y2 & ~y1 & y0) = ~y1 & y0
+
+Also, (C | E) = (~y2 & y1 & ~y0) | (y2 & ~y1 & ~y0)
+
+To keep it simple, use these directly.
+
+This eliminates intermediate wires B,C,E,F and reduces code size, while maintaining clarity and functionality.

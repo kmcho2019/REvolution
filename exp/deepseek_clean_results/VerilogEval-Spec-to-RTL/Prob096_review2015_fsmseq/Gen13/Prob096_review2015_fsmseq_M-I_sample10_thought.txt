@@ -1,0 +1,15 @@
+To optimize the design for better PPA metrics while maintaining functionality, I propose the following improvements:
+
+1. State Machine Optimization: Replace the shift register with a one-hot encoded FSM to reduce combinational logic depth and improve timing. This should help with the negative slack.
+
+2. Power Optimization: Add an enable signal to prevent unnecessary state updates once the pattern is detected, reducing switching activity.
+
+3. Area Optimization: Use a minimal state encoding (4 states) with direct pattern matching in transitions, eliminating the need for a separate shift register.
+
+4. Clock Gating: While not shown in the code, downstream logic could use start_shifting as a clock gate enable to reduce dynamic power.
+
+The improved design will:
+- Have fewer logic levels in the critical path (better timing)
+- Reduce unnecessary switching (lower power)
+- Maintain similar area by using efficient state encoding
+- Keep the same functionality (assert start_shifting permanently after detection)

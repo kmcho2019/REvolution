@@ -1,0 +1,8 @@
+To implement the Moore machine described, we first need to identify the states and their transitions. The machine has two states, A and B. The output out is determined by the current state (A or B). According to the diagram, the transitions are as follows: 
+- If the current state is B and the input in is 0, the next state is A. 
+- If the current state is B and the input in is 1, the next state remains B. 
+- If the current state is A and the input in is 0, the next state is B. 
+- If the current state is A and the input in is 1, the next state remains A. 
+The output is 1 when the current state is B, and 0 when the current state is A. The areset signal is an asynchronous reset that sets the state to B when high.
+
+The implementation involves using a flip-flop (e.g., always @(posedge clk) for synchronous logic) to store the current state and a combinatorial logic to determine the next state based on the current state and input. Since the reset is asynchronous, we'll use a sensitivity list that includes the areset signal.

@@ -1,0 +1,26 @@
+To improve the design's PPA (Power, Performance, Area), focus on reducing the critical path and power consumption without changing functional behavior:
+
+1. Reduce critical path:
+   - Currently, multiplication is fully combinational in the same cycle, which can be a long delay.
+   - Introduce pipelining by registering the inputs before multiplication to split multiplication delay from accumulation.
+   - Register the product before accumulation so multiplication and accumulation are done in two stages.
+   
+2. Lower power:
+   - With pipelining, clock gating can be easier to apply if needed later.
+   - Smaller switching activity in each pipeline stage improves power.
+
+3. Area:
+   - The pipeline registers add some overhead, but it is minor compared to multiplier complexity.
+   - No change in multiplier width or accumulator width to avoid loss of accuracy.
+
+4. Maintain synchronous reset.
+
+This two-stage pipeline breaks the long combinational path of multiply+add into two shorter clock cycles, enabling higher max frequency and potentially lower power.
+
+Output remains the lower 32 bits of the accumulator register.
+
+No asynchronous resets or reset in sensitivity list to ensure easier synthesis and timing.
+
+Final design:
+- Stage 1: register inputs a,b, compute product combinationally.
+- Stage 2: accumulate the registered product into 64-bit acc.

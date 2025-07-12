@@ -1,0 +1,29 @@
+Instead of using three separate flip-flops for each gate output, I will combine the storage into a single 3-bit register, where each bit corresponds to the stored output of one gate's flip-flop. This not only reduces register declarations but also simplifies synchronous updates and indexing.
+
+On every clock's positive edge, each flip-flop bit is updated with the output of its respective logic gate, computed using input x and either the current stored bit (for XOR) or its complement (for AND and OR) as specified.
+
+The output z is then computed as the NOR of all three stored bits by checking if the entire 3-bit register is zero.
+
+This compact approach keeps the same behavior but with minimal state elements and clean indexing, improving readability and potentially simplifying hardware.
+
+To ensure the flip-flops start at zero as required, I will use an asynchronous active-low reset input (`rst_n`) to explicitly initialize the register to zero at startup, assuming this input is tied low briefly at power-up. This is a common hardware practice and removes ambiguities about power-on states.
+
+If the problem disallows extra inputs, this reset port can be replaced with an internal asynchronous reset signal or synthesis-specific initialization. But for clarity and correctness, an explicit reset is best.
+
+Since the problem specifies only `clk`, `x`, and `z` ports, I will use an internal synchronous reset that initializes on the first clock cycle by a one-cycle pulse generated inside the module. This internal reset is derived from a power-on reset technique by using a power-on signal held low initially (via an initialized register) and cleared after the first clock.
+
+This will guarantee defined startup states without changing the interface or requiring external signals.
+
+The logic will be:
+
+- 3-bit register ff_reg = 3'b000 at start
+- On posedge clk:
+  - If internal reset asserted: ff_reg <= 3'b000
+  - Else:
+    - ff_reg[0] <= x XOR ff_reg[0]
+    - ff_reg[1] <= x AND ~ff_reg[1]
+    - ff_reg[2] <= x OR ~ff_reg[2]
+
+- Output z = NOR of ff_reg bits = (ff_reg == 3'b000)
+
+This solution guarantees known startup states, adheres strictly to the original interface, and consolidates registers for a neat architectural approach.

@@ -1,0 +1,22 @@
+Here's a novel approach using a hierarchical multiplexer structure that leverages the symmetry in the K-map:
+
+1. Observation:
+   - The K-map shows that when cd=00 or cd=10, the output is mostly 1 except for ab=11
+   - When cd=01 or cd=11, the pattern is more complex but shows symmetry in ab
+
+2. Key Idea:
+   - Use cd as primary select lines for a 4:1 mux
+   - Each mux input implements a simplified function of ab
+   - This hierarchical approach reduces logic depth and may improve timing
+
+3. Implementation:
+   - For cd=00: out = !(a & b) [all 1s except ab=11]
+   - For cd=01: out = !b [matches the pattern]
+   - For cd=11: out = a | b [matches the pattern]
+   - For cd=10: out = !a [matches the pattern]
+
+4. Benefits:
+   - Clear separation of concerns (cd vs ab logic)
+   - Potentially better timing due to reduced logic depth
+   - Modular structure that's easy to understand and modify
+   - Efficient implementation using standard cells

@@ -1,0 +1,10 @@
+The original implementation directly computes the even parity as a chain of XNOR operators in a single assign statement. To refactor while preserving the same core logic, I will use an intermediate wire to hold the XOR of inputs a and b, another wire for XOR of c and d, and then combine these two with an XNOR to produce q. This decomposes the logic into smaller parts and changes the expression structure without altering the functionality.
+
+This approach keeps the combinational logic style with assign statements, avoids always blocks (to keep it purely combinational), and provides better clarity on how the parity is computed step-by-step. It can also help synthesis tools to optimize or map gates more explicitly, or facilitate debugging or reuse of intermediate signals.
+
+In summary:
+- Compute ab_xor = a ^ b;
+- Compute cd_xor = c ^ d;
+- Compute q = ~(ab_xor ^ cd_xor) = ab_xor ~^ cd_xor;
+
+This implements the same logic (even parity with inverted XOR) but in a decomposed manner.

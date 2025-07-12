@@ -1,0 +1,29 @@
+To implement the next-state logic for y[1] in the given FSM, we need to analyze the state transitions and determine when y[1] should be 1 in the next state. 
+
+The states are encoded as:
+A: 000 (y[1]=0)
+B: 001 (y[1]=0)
+C: 010 (y[1]=1)
+D: 011 (y[1]=1)
+E: 100 (y[1]=0)
+F: 101 (y[1]=0)
+
+We'll examine each current state and input combination to determine when y[1] should be 1 in the next state:
+1. From A (000): next state is B (001) when w=0 → y[1]=0
+2. From B (001): next state is C (010) when w=0 → y[1]=1
+3. From C (010): next state is E (100) when w=0 → y[1]=0
+4. From D (011): next state is F (101) when w=0 → y[1]=0
+5. From E (100): next state is E (100) when w=0 → y[1]=0
+6. From F (101): next state is C (010) when w=0 → y[1]=1
+
+For w=1 transitions, we only get y[1]=1 when:
+- From C (010) to D (011)
+- From D (011) to A (000) → y[1]=0
+- From E (100) to D (011)
+- From F (101) to D (011)
+
+The pattern shows y[1] is 1 in next state when:
+- Current state is B (001) and w=0 (next state C)
+- Current state is F (101) and w=0 (next state C)
+- Current state is C (010) and w=1 (next state D)
+- Current state is E (100) and w=1 (next state D)

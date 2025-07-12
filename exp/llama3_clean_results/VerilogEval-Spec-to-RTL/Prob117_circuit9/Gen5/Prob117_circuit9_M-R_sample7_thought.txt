@@ -1,0 +1,7 @@
+The original code uses an always block to handle the sequential logic, which includes an if-else statement to check the value of 'a' and accordingly either reset the counter to '4' or increment it. To refactor this code, we can utilize a different approach by using two separate always blocks: one for the reset logic when 'a' is high, and another for the incrementing logic when 'a' is low. 
+
+However, since the requirement is to implement the module with a different structure and potentially utilize combinational logic where possible, we can restructure the code to use a combinational logic approach for the next state calculation, and then use an always block for the sequential update of the state. 
+
+This approach can improve readability and potentially reduce the area required for implementation. The key idea is to calculate the next state of the counter based on the current state and the input 'a', and then update the current state with the next state at every positive edge of the clock. 
+
+The next state calculation can be done using combinational logic, where we assign the next state based on the conditions. If 'a' is high, the next state is always '4'. If 'a' is low, the next state is the current state incremented by '1' unless the current state is '6', in which case the next state wraps around to '0'.

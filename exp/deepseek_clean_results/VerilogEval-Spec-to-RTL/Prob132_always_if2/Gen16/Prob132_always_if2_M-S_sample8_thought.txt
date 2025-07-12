@@ -1,0 +1,11 @@
+Simplification Strategy:
+1. **Direct Output Assignment**: Since both outputs are simple combinational functions of their inputs, we can directly assign them without any procedural blocks
+2. **Remove Redundant Registers**: Change output types from reg to wire as continuous assignments don't need reg types
+3. **Minimize Logic**: Express the logic in the most straightforward way possible while maintaining correct functionality
+4. **Combine Conditions**: For keep_driving, directly implement the logical AND of the two conditions (~arrived and ~gas_tank_empty)
+
+Key Observations:
+- The original bug was due to incomplete if-statements (missing else cases)
+- Both outputs can be expressed as simple combinational functions
+- Wire outputs are sufficient since we're not using procedural assignments
+- The logic can be implemented with minimal gates (just one NOT and one AND gate)

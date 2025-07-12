@@ -1,0 +1,24 @@
+The previous design correctly implements the basic FSM to handle 8-bit to 16-bit concatenation but has subtle timing and input handling issues when valid_in pulses back-to-back without gaps, potentially causing data loss or misalignment.
+
+To improve robustness and correctness:
+
+- Use a 3-state FSM (IDLE, STORE, OUTPUT) to clearly separate states:
+  - IDLE: waiting for first valid_in
+  - STORE: first byte stored, waiting for second valid_in
+  - OUTPUT: latch output and assert valid_out for one cycle, then go back to IDLE
+
+- On the cycle when the second valid_in arrives (STORE state), capture the second byte, but delay valid_out and data_out assertion by one clock cycle (OUTPUT state) to meet timing requirements.
+
+- Valid_out and data_out are registered signals updated only in OUTPUT state.
+
+- Hold the first_byte in STORE state until the second byte arrives.
+
+- This extra state OUTPUT provides a clock cycle delay for valid_out and data_out generation after second byte arrival, matching the spec precisely.
+
+- This FSM structure improves input handling for consecutive valid inputs without data loss and cleanly separates output timing.
+
+- Use nonblocking assignments for all sequential logic.
+
+- Reset sets FSM to IDLE and clears all outputs.
+
+This design explicitly generates valid_out and data_out one clock cycle after receiving the second valid_in, ensures stable output signals, and safely handles continuous or back-to-back valid_in assertions.

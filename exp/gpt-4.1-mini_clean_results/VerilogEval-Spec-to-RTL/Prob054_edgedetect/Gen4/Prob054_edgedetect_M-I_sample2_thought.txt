@@ -1,0 +1,17 @@
+The original design is clean and correct, but it introduces a two-register pipeline (prev_in and pedge) which adds one extra cycle of latency beyond the required one-cycle delay. Because pedge must be asserted the cycle after a 0-to-1 transition, the current design already meets the spec. However, to optimize PPA (timing, power, area):
+
+- We can combine the two registers into one always block using a single register to store prev_in and compute pedge based on its value and the current input, then assign pedge as a registered signal in the same cycle. This reduces the number of registers and logic, slightly reducing area and power.
+
+- Specifically, we store prev_in, then in the same clock edge compute pedge as (~prev_in) & in and register it with non-blocking assignment, relying on the non-blocking assignment semantics (prev_in will have the old in value before update).
+
+- This approach depends on the ordering of non-blocking assignments but is generally safe and widely used in synchronous designs for small vectors.
+
+- By eliminating one always block and a wire, we reduce area and power marginally and may slightly improve timing by reducing register-to-register delay and logic depth.
+
+- We keep an asynchronous reset for initialization.
+
+- The improvement targets minimal code and resource usage while preserving functionality and timing, suitable given the small vector size.
+
+This fused approach leverages the synthesis tools' understanding of non-blocking assignment ordering to simplify the design.
+
+Note: If strict separation and explicitness is required over minimal resource usage, the original two-register design is safer and clearer. But since the question requests an improvement, this approach provides a PPA gain with minor code complexity increase.

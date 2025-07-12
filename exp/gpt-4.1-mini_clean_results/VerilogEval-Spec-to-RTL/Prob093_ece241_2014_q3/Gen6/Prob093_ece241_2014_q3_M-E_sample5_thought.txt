@@ -1,0 +1,74 @@
+We want to implement the given 4-variable function F(a,b,c,d) using one 4-to-1 mux with selectors {a,b} and four inputs mux_in[3:0], each a function of only c,d. Since we cannot use other gates, only muxes, all logic must be built from muxes.
+
+Step 1: Extract the 4 columns of the K-map corresponding to ab=00,01,11,10, these form mux_in[0..3] inputs respectively.
+
+Given K-map for each (a,b) pair is a 2-variable function of (c,d):
+
+ab=00 (mux_in[0]) :
+
+ cd=00 0
+ cd=01 1
+ cd=11 1
+ cd=10 1
+
+This can be expressed as:
+
+For c=0 (cd=00,01): outputs = 0 and 1 → depends on d
+
+For c=1 (cd=10,11): outputs = 1 and 1 → always 1
+
+Use a 2-to-1 mux selecting on c:
+
+mux_in[0] = c ? 1 : d
+
+Implementing 1 as a constant and d directly.
+
+ab=01 (mux_in[1]) :
+
+All zeros → mux_in[1] = 0
+
+ab=11 (mux_in[2]) :
+
+ cd=00 0
+ cd=01 0
+ cd=11 1
+ cd=10 0
+
+This is (c & d) because only when both c=1 and d=1 output is 1.
+
+Implement with mux2:
+
+mux_in[2] = c ? d : 0
+
+ab=10 (mux_in[3]) :
+
+ cd=00 1
+ cd=01 0
+ cd=11 1
+ cd=10 1
+
+Rewrite:
+
+If d=0 output=1 (cd=00,10), if d=1 output depends on c (cd=01->0, 11->1)
+
+So mux_in[3] can be expressed as:
+
+mux_in[3] = d ? c : 1
+
+No inverters or complex logic needed, all realizable by mux2 gates and constants.
+
+Therefore, the entire TopModule only needs to implement the four mux_in bits with 2-to-1 muxes controlled by c or d:
+
+- mux_in[0] = mux2(c, d, 1)
+
+- mux_in[1] = 0
+
+- mux_in[2] = mux2(c, 0, d)
+
+- mux_in[3] = mux2(d, 1, c)
+
+This uses only mux2 components and constants, no inversion muxes required.
+
+This approach is minimal, clean, and fully matches the K-map.
+
+Note: The 4-to-1 mux with selectors a,b is external and not part of this module; TopModule only produces mux_in[3:0].

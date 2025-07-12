@@ -1,0 +1,21 @@
+The module monitors the 3-bit sensor input `s` which indicates water levels at three vertical sensors spaced at 5-inch intervals. We track the current water level category based on which sensors are asserted, as well as the previous water level category. The previous level is stored to determine if the water level increased since last sensor change. This information drives the outputs `fr2`, `fr1`, `fr0`, and `dfr` (supplemental flow).
+
+The water levels are categorized as:
+- Above s[2]: s = 3'b111 (all sensors asserted)
+- Between s[2] and s[1]: s = 3'b110 (s[2]=0, but s[1]=1, s[0]=1)
+- Between s[1] and s[0]: s = 3'b100 (s[2]=0,s[1]=0,s[0]=1)
+- Below s[0]: s = 3'b000 (no sensors asserted)
+
+Since we only have four defined levels, any other combination of sensors should be mapped consistently (e.g. partial sensor readings can be treated by priority).
+
+We will:
+1. On each clock, capture the current water level category.
+2. Compare with the previous water level category to detect if the water level increased.
+3. Drive outputs as per the specification:
+   - Above s[2]: fr2=0, fr1=0, fr0=0, dfr=0
+   - Between s[2] and s[1]: fr0=1, fr1=0, fr2=0, dfr=1 if water level increased
+   - Between s[1] and s[0]: fr0=1, fr1=1, fr2=0, dfr=1 if water level increased
+   - Below s[0]: fr0=1, fr1=1, fr2=1, dfr=1 if water level increased
+4. On synchronous reset, set previous level to "below s[0]" and outputs to all asserted (fr0, fr1, fr2, dfr=1) per requirement.
+
+The main challenge is to define the water level state based on sensors, store previous level, detect level increasing, and drive outputs accordingly.

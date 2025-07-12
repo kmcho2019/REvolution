@@ -1,0 +1,8 @@
+To implement the finite-state machine in the TopModule, we will design a Moore machine with five states: IDLE, S1, S2, S3, and FOUND. The machine starts in the IDLE state, and upon receiving the sequence '1101', it transitions to the FOUND state and sets the start_shifting signal high. The state transitions are triggered on the positive edge of the clock, and the machine resets to the IDLE state when the reset signal is high.
+
+Here's a step-by-step breakdown of the state transitions:
+- IDLE: If data is 1, move to S1. Otherwise, stay in IDLE.
+- S1: If data is 1, move to S2. Otherwise, if data is 0, move to S1 (looking for '11'). If data is not 1, go back to IDLE.
+- S2: If data is 0, move to S3. Otherwise, go back to IDLE if data is 1.
+- S3: If data is 1, move to FOUND. Otherwise, go back to IDLE if data is 0.
+- FOUND: Stay in this state and set start_shifting to 1 until reset.

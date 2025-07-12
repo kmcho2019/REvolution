@@ -1,0 +1,18 @@
+The existing design is solid and meets functional requirements well, but to improve PPA further, we can focus on:
+
+1. Comparator optimization:
+   - Instead of comparing count == freq - 1, which requires a subtractor, we use the comparator count + 1 == freq. This replaces subtraction with an addition comparator, potentially faster.
+
+2. Reducing switching activity:
+   - When freq is zero, keep count and wave_out steady, as before.
+   - Add a registered clock enable signal derived from freq to avoid glitch-induced switching.
+
+3. Simplify the logic to minimize critical path by separating count increment and toggle logic clearly.
+
+4. Ensure non-blocking assignments for synchronous logic and keep a single always block for simplicity.
+
+5. Optional: Initialize wave_out to zero on reset, as is standard.
+
+This approach reduces the comparator complexity (by using addition instead of subtraction), retains the power gating benefits when freq=0, and avoids unnecessary toggling, aiming for improved timing and lower power consumption without increasing area.
+
+Overall, this enhances the critical path and power profile while maintaining clean and synthesizable code.

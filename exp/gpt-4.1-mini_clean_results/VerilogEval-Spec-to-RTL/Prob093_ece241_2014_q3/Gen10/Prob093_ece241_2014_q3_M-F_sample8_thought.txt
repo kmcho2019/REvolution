@@ -1,0 +1,40 @@
+The primary issue lies in the incorrect implementation of mux_in[0]. The current implementation tries to handle the K-map column for ab=00 incorrectly by oversimplifying it. 
+
+Reanalyzing mux_in[0] from the K-map:
+
+ab=00 column:  
+cd=00 (c=0,d=0) -> 0  
+cd=01 (c=0,d=1) -> 1  
+cd=11 (c=1,d=1) -> 1  
+cd=10 (c=1,d=0) -> 1  
+
+We can view mux_in[0] as a function of c and d:
+
+- When c=0: output = d (0->0, 1->1)  
+- When c=1: output = 1  
+
+So mux_in[0] = c ? 1 : d
+
+This is a single 2-to-1 mux with c as selector, d as d0 input, and 1 as d1 input.
+
+The prior code mistakenly used a nested mux with d as selector for c=0 condition, which is not required.
+
+Fix plan:
+
+- For mux_in[0], implement a single 2-to-1 mux with c as selector, d as d0 input, and 1 as d1 input.
+- For mux_in[1], assign 0 directly.
+- For mux_in[2], as before: c selects between 0 (d0) and d (d1).
+- For mux_in[3], as before: c selects between ~d (when c=0) and 1 (when c=1), implemented via two muxes: a mux for ~d using d as selector, then a mux for c.
+
+This reduces complexity and matches the K-map exactly.
+
+Hence, the minimal and correct implementation is:
+
+- mux_in[0] = mux2to1(sel=c, d0=d, d1=1)
+- mux_in[1] = 0
+- mux_in[2] = mux2to1(sel=c, d0=0, d1=d)
+- mux_in[3] = mux2to1(sel=c, d0=(~d), d1=1)
+
+Implementing ~d can be done via a 2-to-1 mux with d as selector between 1 and 0.
+
+This correction will fix the logic errors causing simulation mismatches.

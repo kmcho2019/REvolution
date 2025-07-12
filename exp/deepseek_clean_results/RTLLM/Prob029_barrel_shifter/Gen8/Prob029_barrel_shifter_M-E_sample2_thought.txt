@@ -1,0 +1,16 @@
+Here's a novel approach using a hierarchical multiplexer structure with pre-computed shift patterns:
+
+Key innovations:
+1. Instead of cascaded stages, we pre-compute all 8 possible shift patterns (0-7 positions)
+2. Use a 3-level hierarchical multiplexer to select the final output
+3. Each level of hierarchy corresponds to one control bit
+4. The first level (ctrl[2]) chooses between 0-3 or 4-7 shifts
+5. The second level (ctrl[1]) chooses between even or odd shifts within the range
+6. The third level (ctrl[0]) makes the final selection between adjacent shifts
+
+Advantages:
+- More balanced timing path compared to cascaded stages
+- All shift amounts are equally fast regardless of control pattern
+- Clear separation of selection logic
+- Easier to pipeline if needed
+- More intuitive mapping between control bits and shift amounts

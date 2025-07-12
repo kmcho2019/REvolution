@@ -1,0 +1,14 @@
+To optimize the original FSM-based shift-and-accumulate multiplier for better PPA (Power, Performance, Area), we focus on reducing switching activity and critical path delay. The original design adds the multiplicand shifted on every cycle when LSB of product is 1 and shifts right each cycle.
+
+Improvements:
+1. **Add only when needed:** Perform addition only if the LSB of the multiplier (stored in the lower half of product) is 1; else, just shift right. This avoids unnecessary addition and thus switching activity.
+2. **Separate multiplier and product registers:** Keep the multiplier and product separate to avoid shifting large 32-bit combined registers every cycle, reducing switching and adder complexity.
+3. **Use a dedicated 32-bit product accumulator:** Accumulate partial sums only in product register, shifting product left and multiplier right each cycle, which matches classic shift-and-add multiplication approach.
+4. **Register inputs on start:** Load multiplicand and multiplier registers on start, only once per multiplication.
+5. **Use synchronous reset and non-blocking assignments:** To ensure better synthesis and timing.
+6. **One hot done flag:** Assert done only when operation completes.
+7. **Smaller add width in critical path:** The add occurs only on the product register and multiplicand, no shifting of 32-bit operands before add.
+
+This approach reduces unnecessary additions and large register shifts, minimizing switching, improving timing and power. The design keeps the FSM simple, tracking the number of bits processed (16 cycles).
+
+This classic approach is well-known for good PPA characteristics and clarity.

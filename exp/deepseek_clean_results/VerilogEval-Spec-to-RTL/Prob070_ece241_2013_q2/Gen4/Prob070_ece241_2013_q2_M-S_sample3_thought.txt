@@ -1,0 +1,17 @@
+To correctly implement the specified behavior with minimal complexity:
+1. For out_sop (sum-of-products):
+   - Directly implement the minterms for 2 (0010), 7 (0111), and 15 (1111)
+   - No simplification possible since these are the only cases that should output 1
+   - All other cases will naturally output 0
+
+2. For out_pos (product-of-sums):
+   - Implement maxterms for all cases that should output 0
+   - Group similar terms to minimize the expression:
+     - (b | c) covers 0,1,4,5,6 (when combined with other terms)
+     - Add specific terms for remaining 0-output cases (9,10,13,14)
+   - Use don't-care conditions to minimize the expression where possible
+
+Key optimizations:
+- For SOP, keep it simple with just the required minterms
+- For POS, group terms with common patterns to reduce gate count
+- Both forms will now correctly implement the specified truth table

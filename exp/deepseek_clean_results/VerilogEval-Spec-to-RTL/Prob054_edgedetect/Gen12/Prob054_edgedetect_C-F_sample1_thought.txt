@@ -1,0 +1,17 @@
+After analyzing both examples, I'll create a superior solution by combining their best aspects:
+
+1. From Example 1: The two-stage pipeline (prev_prev_in and prev_in) provides robust edge detection by ensuring we only detect true 0->1 transitions, not just any change from previous cycle.
+
+2. From Example 2: The direct assignment to output register (pedge) eliminates intermediate wires and reduces combinational path length.
+
+Fusion Strategy:
+- Keep the two-stage pipeline for reliable edge detection
+- Implement the output assignment directly in the always block like Example 2
+- Use non-blocking assignments consistently
+- Maintain bitwise operations for parallel processing of all 8 bits
+
+This hybrid approach should:
+- Preserve the robust edge detection of Example 1
+- Gain the timing benefits of Example 2's direct assignment
+- Potentially improve power by reducing unnecessary signal propagation
+- Maintain similar area while improving timing characteristics

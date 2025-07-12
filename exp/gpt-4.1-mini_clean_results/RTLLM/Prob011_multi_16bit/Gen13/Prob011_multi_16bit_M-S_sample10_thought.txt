@@ -1,0 +1,10 @@
+To simplify while keeping functionality intact, I will:
+
+- Maintain the asynchronous active-low reset and clocked process.
+- Use a single 5-bit shift counter `i` running from 0 to 17.
+- When `start` is asserted and `i` is 0, load the multiplicand into `areg` and the multiplier into `breg`.
+- For cycles 1 to 16, if the LSB of `areg` is set, add `breg` to the accumulator `yout_r`.
+- Shift `areg` right by 1 and `breg` left by 1 every cycle during accumulation.
+- Set `done` when `i` reaches 16 and clear it at 17.
+- When `start` is low, reset the shift counter and internal registers to zero.
+- Remove redundant conditions and keep the logic straightforward for better readability and easier verification.

@@ -1,0 +1,9 @@
+To refactor the given code, we will focus on utilizing a different structure while maintaining the core functionality. The original code uses an `always` block to update the `prev_in` and `anyedge_reg` registers on every positive edge of the clock. It then assigns the value of `anyedge_reg` to the output `anyedge`. 
+
+One possible refactoring approach is to simplify the design by directly calculating the edge detection within the `always` block and eliminating the need for a separate `anyedge_reg`. This can be achieved by directly assigning the XOR result of `prev_in` and `in` to `anyedge` in the next cycle, after `prev_in` has been updated.
+
+However, another refactoring strategy is to explore using a purely combinational approach for the edge detection logic, recognizing that the `prev_in` value is only needed from the previous clock cycle. This can be achieved by using a flip-flop to delay the input by one cycle and then performing the edge detection in combinational logic.
+
+In this refactoring, we maintain the sequential logic for storing the previous input (`prev_in`) but move the edge detection logic outside the `always` block, using a continuous assignment (`assign`) to calculate the `anyedge` output. This approach simplifies the design and makes it more modular, separating the sequential storage of the previous input from the combinational logic of edge detection.
+
+The core idea remains the same: detect any edge (0 to 1 or 1 to 0 transition) in the input vector `in` from one clock cycle to the next and set the corresponding bit in the output vector `anyedge` to 1 in the cycle after the transition occurs. The refactored design aims to achieve this with a different structural implementation.

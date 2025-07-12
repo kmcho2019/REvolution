@@ -1,0 +1,31 @@
+Let's interpret the waveform differently and implement a Moore-style FSM with one bit state.
+
+Observing the waveforms:
+
+- `state` is the stored flip-flop value, updated on posedge clk.
+- `q` is a combinational output based on the current state and inputs.
+
+From the waveforms, the behavior can be interpreted as:
+
+- When `b`=1, the state changes depending on `a`:
+  - If `a`=0 and `b`=1, state moves to 1.
+  - If `a`=1 and `b`=1, state moves to 0.
+- When `b`=0, the state remains the same (holds its previous value).
+
+The output `q` depends on `a`, `b`, and the current state:
+
+- `q` is 1 when:
+  - state is 1 and inputs are `a=0,b=0` or `a=1,b=0`.
+  - state is 0 and inputs are `a=0,b=1`.
+- Otherwise, q=0.
+
+This corresponds to a logic where:
+
+- Next state updates on `b`=1: state <= a ^ 1 (state becomes inverted `a` when b=1)
+- Otherwise state remains.
+
+- Output q = (state & ~b) | (~state & ~a & b)
+
+This provides a clean, different architectural solution: state flip-flop updated only on `b`=1 events (b is a kind of enable), and output q is combinational from state and inputs.
+
+This approach is novel and should replicate the waveform behavior.

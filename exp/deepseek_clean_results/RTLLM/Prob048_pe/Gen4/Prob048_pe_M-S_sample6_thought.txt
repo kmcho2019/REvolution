@@ -1,0 +1,8 @@
+The simplified design maintains the core MAC functionality while reducing complexity by:
+1. Removing unnecessary operand isolation logic since reset already handles clearing
+2. Eliminating the full 64-bit product computation when we only need 32-bit result
+3. Combining the multiplication and accumulation into a single expression
+4. Using direct synchronous reset without intermediate signals
+5. Keeping only essential components for the MAC operation
+
+This reduces area and power while maintaining the same timing characteristics (since the critical path remains the multiply-accumulate operation).

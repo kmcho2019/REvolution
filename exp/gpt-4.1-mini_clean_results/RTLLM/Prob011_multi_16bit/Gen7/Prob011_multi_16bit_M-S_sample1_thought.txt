@@ -1,0 +1,5 @@
+Simplify the design by strictly following the original specification of shifting and accumulating based on the bit of the multiplicand (`areg`) at position `i-1`. Use a 5-bit counter `i` (0 to 17) to control operation and done flag generation. 
+
+At i=0, load the multiplicand and multiplier into registers; for i=1 to 16, if bit `i-1` of `areg` is 1, accumulate `breg` shifted left by `i-1`. At i=16, done flag is set; at i=17, done is reset and counter is cleared if start is low. All updates and operations are synchronous with asynchronous active-low reset. This direct shift-and-accumulate method, though less efficient, matches the described spec and simplifies the control logic by removing shifting of registers within the loop and dynamic shifting during addition.
+
+The code explicitly performs shifts only during accumulation, avoiding shifting the multiplier register every cycle.

@@ -1,0 +1,7 @@
+To improve power, area, and maintain timing, we can exploit the symmetry of equality checks: out[i,j] = out[j,i]. Since there are 25 pairs (including self-comparisons), but only 15 unique pairs (including diagonals where inputs are compared with themselves), we can compute each unique pair once and replicate the result for its symmetric counterpart. 
+
+We'll assign the outputs in the order specified, but instead of recomputing symmetric pairs, reuse computed results. This halves the number of XOR gates and NOT gates roughly, reducing area and power. The resulting design is still purely combinational with a short critical path, preserving timing.
+
+To maintain the original output bit ordering, we'll build a 5x5 matrix of outputs with indices [row][col] and fill upper triangular (including diagonal) with computed XNORs, then assign the lower triangular elements by symmetry. Finally, flatten the 5x5 matrix into the 25-bit output vector in the given order.
+
+This strategy reduces gate count, power consumption and area, while keeping the same functionality and output ordering.

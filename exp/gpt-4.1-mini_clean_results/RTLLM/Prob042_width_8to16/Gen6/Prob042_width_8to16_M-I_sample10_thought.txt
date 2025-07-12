@@ -1,0 +1,11 @@
+To ensure synthesis compatibility and stable outputs, rewrite the FSM using Verilog-2001 style without SystemVerilog features (`typedef`, `logic`), use parameters for states, and separate the output register update from the state machine logic cleanly.
+
+Keep outputs registered and only update them on valid second input arrival to avoid glitches. Hold output values stable between valid pairs instead of resetting to zero every cycle.
+
+Use a simple two-state FSM:
+- WAIT_FIRST: when `valid_in` arrives, store input and move to WAIT_SECOND.
+- WAIT_SECOND: when next `valid_in` arrives, concatenate stored and new input, assert `valid_out` for one cycle, then go back to WAIT_FIRST.
+
+By updating `valid_out` and `data_out` registers only on positive clock edge and controlling their updates with a signal, we avoid glitches. Reset sets outputs and internal registers to zero.
+
+This approach improves synthesis friendliness and output stability, ensuring correct post-synthesis functional behavior.

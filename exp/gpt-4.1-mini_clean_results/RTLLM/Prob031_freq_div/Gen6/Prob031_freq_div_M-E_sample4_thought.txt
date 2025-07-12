@@ -1,0 +1,26 @@
+To create a novel frequency divider architecture, I will use a single shared counter that counts up every input clock cycle and derive all three output clocks from this one counter by comparing the counter value against thresholds that correspond to half periods of each output clock frequency.
+
+Specifically:
+
+- The input clock is 100 MHz (10 ns period).
+- CLK_50 is 50 MHz → period 20 ns → toggle every 10 ns → toggle every 1 input cycle.
+- CLK_10 is 10 MHz → period 100 ns → toggle every 50 ns → toggle every 5 input cycles.
+- CLK_1 is 1 MHz → period 1 µs → toggle every 500 ns → toggle every 50 input cycles.
+
+Implementation details:
+- Use a single 7-bit counter (counting from 0 to 99) to cover at least 100 cycles.
+- On each clock cycle, increment the counter modulo 100.
+- For each output clock, toggle its output signal whenever the counter reaches a specified threshold:
+  - CLK_50 toggles every cycle (counter mod 2 == 0)
+  - CLK_10 toggles every 5 cycles (counter mod 10 == 0)
+  - CLK_1 toggles every 50 cycles (counter mod 100 == 0)
+- This way, all clocks are phase-aligned and generated synchronously from one counter, which simplifies synchronization and avoids multiple counters.
+
+Advantages:
+- Single counter reduces hardware resources.
+- Output clocks are phase aligned.
+- Easier to extend for additional frequencies.
+
+Reset logic asynchronously sets outputs and counter to zero.
+
+This approach emphasizes a single-counter synchronous frequency divider with modulo operation and threshold checks rather than independent counters.

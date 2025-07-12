@@ -1,0 +1,7 @@
+Instead of using individual flip-flops or a generate block, we can implement this as a single 8-bit register with asynchronous reset. This approach:
+1. Treats the 8 bits as a unified register rather than separate flip-flops
+2. Uses a single always block for all bits, reducing control logic overhead
+3. Implements the reset using a bitwise AND with a reset mask (though in this case it's equivalent to direct assignment to 0)
+4. Potentially allows for better optimization during synthesis as the tool sees it as a single multi-bit register
+5. Reduces the hierarchical complexity by eliminating the sub-module instantiation
+6. Still maintains all required functionality including positive-edge triggering and async reset

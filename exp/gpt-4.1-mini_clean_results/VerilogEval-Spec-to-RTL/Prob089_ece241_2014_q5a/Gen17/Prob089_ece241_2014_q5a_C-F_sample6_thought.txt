@@ -1,0 +1,7 @@
+Fuse the clean separation of input sampling and state update from Example 1 with the explicit two-state Moore FSM encoding from Example 2 for clarity and maintainability. Keep asynchronous resets on both registers for immediate reset response, but use named localparams for states (S0 and S1) for readability and FSM clarity. Use a simple state transition logic where the state transitions from S0 to S1 on the first sampled '1' bit and remains in S1 thereafter, just like a carry flag.
+
+For output, use the combinational assignment `z = (state == S0) ? x_reg : ~x_reg` to explicitly show Moore output behavior and improve code readability without sacrificing area or performance.
+
+This fusion keeps the minimalistic two-flip-flop FSM structure, clean state machine semantics, and efficient asynchronous reset behavior. It also retains excellent timing characteristics by isolating input sampling and state update, while improving code clarity with named states and clean combinational output logic.
+
+Overall, this design is functionally identical but clearer and easier to maintain than Example 1, with the same performance, power, and area efficiency.

@@ -1,0 +1,8 @@
+To implement the TopModule with the specified interface, we need to design a gshare branch predictor. The predictor will have a 7-bit global branch history register and a 128-entry table of two-bit saturating counters. 
+
+1. The 7-bit global history register will be updated based on the predicted branch direction when a prediction is requested.
+2. When training for a branch is requested, the branch predictor will update the pattern history table (PHT) to train the branch predictor to predict this branch more accurately next time.
+3. If the branch being trained is mispredicted, the branch history register will be recovered to the state immediately after the mispredicting branch completes execution.
+4. The design will ensure that when training and prediction of the same PHT entry happen at the same time, the prediction sees the PHT state before training because training only modifies the PHT at the next positive clock edge.
+
+The module will have two sets of interfaces: one for doing predictions and one for doing training.

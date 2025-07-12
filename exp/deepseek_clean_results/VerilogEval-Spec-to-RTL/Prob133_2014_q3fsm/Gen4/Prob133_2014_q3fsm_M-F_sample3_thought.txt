@@ -1,0 +1,26 @@
+Revised design addressing the feedback issues:
+
+1. **Window Timing Correction**:
+   - Changed window_done to trigger when pos_cnt wraps to 0 (next cycle after completion)
+   - This ensures full 3-bit capture before evaluation
+
+2. **Complete Pattern Matching**:
+   - Implemented full combinatorial check for exactly two 1's
+   - Used bit counting (sum of bits == 2) instead of pattern matching
+   - Covers all 3 possible combinations (011, 101, 110)
+
+3. **Output Timing Fix**:
+   - z_reg now only updates during evaluation cycles
+   - Maintains its value between evaluations (no glitching)
+   - Clear only on reset
+
+4. **Simplified Logic**:
+   - Removed redundant eval_now signal
+   - Directly use window_done for timing control
+   - More efficient bit counting implementation
+
+Key improvements:
+- Correct window boundary detection
+- Comprehensive two-ones detection
+- Stable output between evaluations
+- More efficient implementation

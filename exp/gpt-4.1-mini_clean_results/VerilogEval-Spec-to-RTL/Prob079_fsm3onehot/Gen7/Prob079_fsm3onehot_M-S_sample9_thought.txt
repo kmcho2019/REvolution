@@ -1,0 +1,18 @@
+Notice that the next_state logic can be expressed more compactly by directly mapping each next_state bit to a single conjunction of input and current state bits, avoiding OR gates with multiple inputs. For example, next_state[0] is active if (in=0 and (state A or C)), which can be rewritten as (in=0 and state A) or (in=0 and state C). Instead of ORing state bits first, just sum the two product terms, but since next_state bits are mutually exclusive due to one-hot encoding, summing individual terms directly per next_state bit is simpler. However, we can combine the input conditions and factor out state bits per next_state bit to have fewer logical operators. This reduces logic fan-in and thus complexity.
+
+Specifically:
+- next_state[0] = in=0 and (state A or state C) -> (~in & state[0]) | (~in & state[2]) = ~in & (state[0] | state[2])
+- next_state[1] = in=1 and (state A or state B or state D) = in & (state[0] | state[1] | state[3])
+- next_state[2] = in=0 and (state B or state D) = ~in & (state[1] | state[3])
+- next_state[3] = in=1 and state C = in & state[2]
+
+To simplify, precompute the OR of state bits used frequently:
+- state_0_2 = state[0] | state[2]
+- state_0_1_3 = state[0] | state[1] | state[3]
+- state_1_3 = state[1] | state[3]
+
+Use these precomputed signals to keep expressions simple and logic straightforward. This approach slightly reduces logic gate fan-in and complexity while preserving the function.
+
+Output remains simply the D state bit.
+
+This approach simplifies the logic without changing the behavior.

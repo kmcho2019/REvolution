@@ -1,0 +1,7 @@
+To solve the pulse detection problem, we can use a finite state machine (FSM) approach. The FSM will track the sequence of "data_in" and identify when a pulse occurs. The states can be defined as follows:
+- State 0 (IDLE): Initial state, waiting for the start of a pulse.
+- State 1 (RISING): "data_in" has transitioned from 0 to 1.
+- State 2 (FALLING): "data_in" has transitioned from 1 to 0, indicating the end of a pulse.
+We will use a register "state" to keep track of the current state. The output "data_out" will be set to 1 when we are in the "FALLING" state, indicating the end of a pulse.
+
+We will implement the logic for the FSM inside an always block, sensitive to the positive edge of the "clk" signal and the negative edge of the "rst_n" signal. When "rst_n" is low, the FSM will reset to the IDLE state, and "data_out" will be set to 0.

@@ -1,0 +1,27 @@
+Simplified design approach:
+
+1. **State Machine**:
+   - Use 4 distinct states: IDLE, SHIFT, COUNTING, DONE
+   - Simple binary encoding for minimal logic
+
+2. **Pattern Detection**:
+   - Maintain 4-bit shift register only in IDLE state
+   - Clear pattern only on reset or after full cycle completion
+
+3. **Shift Control**:
+   - Use simple 2-bit counter for exact 4-cycle shift duration
+   - Counter automatically rolls over after 4 cycles
+
+4. **State Transitions**:
+   - Clear transitions based on explicit conditions
+   - No complex conditions or data-dependent transitions
+
+5. **Outputs**:
+   - Direct mapping from states to outputs
+   - No additional combinational logic needed
+
+Key simplifications:
+- Minimal state encoding
+- Explicit cycle counting for shift phase
+- Clear state transition conditions
+- Reduced sequential logic

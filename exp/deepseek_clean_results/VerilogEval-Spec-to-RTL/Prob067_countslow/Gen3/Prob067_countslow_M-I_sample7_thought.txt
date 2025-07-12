@@ -1,0 +1,21 @@
+To optimize the decade counter further for better PPA metrics:
+
+1. Timing Optimization:
+   - Replace the pattern matching (q[3] && q[0]) with direct comparison to 4'b1001 (9)
+   - This simplifies the critical path as modern synthesis tools can optimize constant comparisons efficiently
+   - The comparison will be done only when slowena is active, reducing unnecessary switching
+
+2. Power Optimization:
+   - Move the wrap-around detection inside the slowena condition
+   - This prevents the comparator from switching when the counter is paused
+   - Remove the intermediate count_enable wire to simplify the control logic
+
+3. Area Optimization:
+   - The direct comparison approach uses the same number of gates as pattern matching
+   - The simplified control logic may reduce area slightly
+   - The design remains minimal with only necessary registers and combinational logic
+
+The improved design should:
+- Reduce negative slack by simplifying the control path
+- Lower power consumption by gating comparator activity
+- Maintain the current area efficiency

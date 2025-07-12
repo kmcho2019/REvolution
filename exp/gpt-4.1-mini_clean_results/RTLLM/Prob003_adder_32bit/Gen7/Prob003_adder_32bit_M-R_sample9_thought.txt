@@ -1,0 +1,11 @@
+Refactor the 16-bit CLA module by explicitly defining propagate (P_internal) and generate (G_internal) signals using combinational logic and implement carry computation via a small function that computes all carry signals in parallel using the carry-lookahead equations, rather than via a generate loop. This uses the parallel carry computation formula directly, enhancing clarity and potentially synthesis optimization.
+
+At the top 32-bit adder level, instead of passing carry-in to the upper block as just G_low, compute the actual carry-in using the full block carry-lookahead equation: carry_in_high = G_low | (P_low & Cin). Since Cin=0 here, it reduces to G_low, but we keep the expression for clarity and easy extension.
+
+Also, replace the vector bus mapping from [32:1] to [31:0] with direct concatenation and slicing using part-selects, which is more concise and commonly used.
+
+In the block propagate/generate logic, define explicit functions to compute the block propagate (AND of all bit propagates) and block generate (lookahead carry out), thereby avoiding recursive generate block chains for better readability.
+
+Sum outputs are assigned using continuous assignments without generate loops by concatenation, improving readability and conciseness.
+
+This structural refactor maintains the functional behavior, preserves modularity, and offers clearer hierarchical carry computation and bus mapping without loops where possible.

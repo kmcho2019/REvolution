@@ -1,0 +1,13 @@
+To optimize the population count circuit, I'll implement a more balanced hierarchical approach:
+
+1. First level: Count 1s in groups of 4 bits (64 groups) instead of 3 bits for better balance
+2. Use 3-bit adders for partial sums since max count per 4-bit group is 4 (fits in 3 bits)
+3. Implement a binary tree structure for the final summation to reduce critical path
+4. Handle the remaining 255 % 4 = 3 bits separately
+5. Use continuous assignments throughout for combinational logic
+
+This approach:
+- Reduces the number of partial sums from 85 to 64 + 1 = 65
+- Uses appropriately sized adders (3-bit for first level)
+- Implements a balanced binary tree for final summation
+- Maintains the same functionality with better PPA characteristics

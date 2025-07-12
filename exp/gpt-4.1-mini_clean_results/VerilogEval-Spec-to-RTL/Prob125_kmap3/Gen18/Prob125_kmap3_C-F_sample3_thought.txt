@@ -1,0 +1,25 @@
+Fuse the minimal, factored Boolean expression from Example 1 with the clear, explicit product term structure of Example 2, aiming to eliminate redundancies and minimize gate count.
+
+From Example 2, the function is:
+    out = (~c & a) | (c & ~b) | (c & a)
+
+Note that (c & ~b) | (c & a) = c & (~b | a), so we can factor to:
+    out = (~c & a) | (c & (~b | a))
+
+This matches Example 1’s minimal expression, but with clearer intermediate terms.
+
+To further optimize:
+
+- Share ~b and ~c signals.
+- Implement (~b | a) as an OR gate with inputs a and ~b.
+- Compute out as OR of (~c & a) and (c & (a | ~b)).
+
+This factorization reduces the OR of three AND terms to two ANDs and one OR inside.
+
+It balances readability, minimal gate count, and clean structure, enabling synthesis tools to easily optimize.
+
+We do not use d input as it is don’t-care.
+
+The implementation defines intermediate wires for inverters and OR gates, then combines them into the final output.
+
+This fusion improves clarity and potential PPA by factoring and sharing common signals.

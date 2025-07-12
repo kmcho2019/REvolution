@@ -1,0 +1,13 @@
+To address the issues identified in the feedback, we will revise the state machine logic to correctly handle the stop bit and assert the `done` signal when a valid byte has been received. 
+
+Firstly, we need to modify the logic for the STOP state. Instead of transitioning back to the IDLE state when `in` is high, we should wait until `in` is high (indicating a stop bit) before transitioning back to the IDLE state and asserting `done`. 
+
+Secondly, we need to correct the condition for asserting `done`. It should be asserted when the FSM is in the STOP state and `in` is high (indicating a valid stop bit has been received after 8 data bits).
+
+Thirdly, the assignment of `out_byte` should be corrected. Instead of setting `out_byte` to 0 when `done` is not asserted, we should keep the previously received byte in `out_byte` until a new valid byte is received.
+
+Lastly, we should ensure that the FSM's state transitions and the conditions for these transitions are carefully reviewed to align with the requirements of the serial protocol. Specifically, we need to handle the case where the stop bit is not correctly received and the FSM needs to wait until it finds a stop bit before attempting to receive the next byte.
+
+To achieve this, we can modify the state machine to include an additional state that waits for the stop bit after receiving the data bits. If the stop bit is not received, the FSM will remain in this state until the stop bit is detected.
+
+The revised code will reflect these changes, ensuring that the FSM correctly identifies valid bytes in the serial stream and asserts `done` accordingly.

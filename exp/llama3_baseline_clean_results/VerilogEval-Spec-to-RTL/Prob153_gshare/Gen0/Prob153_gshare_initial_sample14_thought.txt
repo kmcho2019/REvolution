@@ -1,0 +1,9 @@
+To implement the TopModule with the specified interface, we need to follow these steps:
+1. Initialize a 128-entry table of two-bit saturating counters, PHT (Pattern History Table), to store the prediction outcomes.
+2. Initialize a 7-bit global branch history register, ghr, to store the history of branch predictions.
+3. Implement the prediction logic: when predict_valid is high, calculate the index for the PHT using the 7-bit pc and 7-bit global history register, and output the predicted branch direction based on the corresponding PHT entry.
+4. Update the global branch history register at the next positive clock edge for the predicted branch.
+5. Implement the training logic: when train_valid is high, update the corresponding PHT entry based on the actual branch outcome.
+6. If the branch being trained is mispredicted, recover the global branch history register to the state immediately after the mispredicting branch completes execution.
+7. Handle the case where training and prediction occur in the same cycle: prioritize training and ensure that prediction sees the PHT state before training.
+8. Implement asynchronous active-high reset to clear all registers and the PHT.

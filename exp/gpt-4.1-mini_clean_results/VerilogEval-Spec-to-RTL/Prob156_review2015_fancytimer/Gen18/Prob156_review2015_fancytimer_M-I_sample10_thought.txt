@@ -1,0 +1,39 @@
+To fix the off-by-one and timing issues in the counting phase, the approach is refined as follows:
+
+1. **Pattern detection and loading delay:**
+   - Keep pattern detection simple: shift in each new bit at LSB on every clock in IDLE state, checking for 1101 pattern.
+   - Once detected, move to LOAD_DELAY state to shift in 4 bits MSB-first into delay_reg, shifting left and inserting data at LSB each clock.
+
+2. **Counting logic corrected:**
+   - Use a 10-bit cycle counter counting down from 999 to 0 (1000 cycles).
+   - Use a 4-bit segment counter initialized to delay + 1 (number of 1000-cycle segments).
+   - On each clock:
+     - Decrement cycle counter.
+     - When cycle counter reaches zero after decrement, decrement segment counter if segment counter is not zero.
+   - The counting ends after completing all segments, i.e., when segment counter reaches zero **after** a full 1000-cycle count.
+
+3. **Output `count` is assigned to current segment counter - 1 during counting:**
+   - The problem states that when counting starts, count outputs delay for 1000 cycles, then delay-1 for next 1000 cycles, and so on.
+   - Initialize segment counter to delay+1, so count = segment_counter - 1 matches output requirements.
+   - Update count after decrementing counters so that count changes only every 1000 cycles.
+
+4. **State transition:**
+   - Transition from COUNT to WAIT_ACK only after finishing the last 1000-cycle segment (segment_counter reaches zero after cycle_counter hits zero).
+   - This way, exactly (delay+1)*1000 cycles are counted.
+
+5. **Avoid assigning 'x' to outputs; assign zero when don't-care for synthesis friendliness.**
+
+6. **Reset and outputs:**
+   - On reset, clear all registers and set outputs to default (done=0, counting=0, count=0).
+   - In WAIT_ACK state, done=1 until ack=1, then go back to IDLE.
+
+7. **Counters update order:**
+   - Decrement cycle counter first.
+   - If cycle counter reaches zero, decrement segment counter.
+   - Output count based on current segment counter.
+
+This fixes off-by-one timing errors and aligns the output `count` with the remaining segments correctly. The pattern detection remains simple and robust.
+
+Overall, these changes ensure the FSM strictly counts the required duration, outputs proper count values, and asserts `done` and waits for ack correctly.
+
+The improved design ensures synchronous reset, positive-edge clocked logic, and clean FSM structure.

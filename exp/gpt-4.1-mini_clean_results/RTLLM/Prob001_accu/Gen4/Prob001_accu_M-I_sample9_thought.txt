@@ -1,0 +1,11 @@
+To optimize the design for better PPA based on the given metrics and feedback:
+
+1. Avoid double addition on the last data input cycle to reduce combinational path length. Instead, add data_in once per cycle.
+2. Use a next-state combinational logic approach for accumulator and count to separate combinational and sequential parts, helping synthesis tools optimize timing better.
+3. Update data_out and valid_out directly when count reaches 3 and valid_in is high, without extra addition.
+4. Register data_out and valid_out updates only once per cycle to avoid glitches.
+5. Add clock gating implicitly by updating registers only when valid_in is high, to reduce switching activity.
+6. Keep the accumulator and count reset logic synchronous and simple.
+7. The width of accumulator remains at 10-bit as before, sufficient to hold sum of four 8-bit numbers.
+
+This approach lowers critical path delay and dynamic power by reducing redundant additions and separating logic, improving timing and power metrics with minimal area impact.

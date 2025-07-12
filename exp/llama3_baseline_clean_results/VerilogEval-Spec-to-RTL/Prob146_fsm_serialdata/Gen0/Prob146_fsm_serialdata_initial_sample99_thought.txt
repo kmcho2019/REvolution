@@ -1,0 +1,9 @@
+To implement the serial protocol receiver, we can design a finite state machine (FSM) with several states to handle the different stages of byte reception. The FSM will have the following states:
+- Idle: Waiting for a start bit (0) to appear on the input.
+- Receive: Receiving the 8 data bits, with a counter to keep track of the current bit position.
+- Stop: Verifying the stop bit (1) after receiving the 8 data bits.
+- Error: Waiting for a stop bit (1) after a transmission error.
+
+When in the Receive state, we will shift the received bits into a register to build the byte. If the stop bit is not correct after receiving 8 data bits, we will enter the Error state and wait for a stop bit before returning to the Idle state.
+
+The FSM will assert the `done` signal when it is in the Stop state and has verified the stop bit. The `out_byte` will be valid at this time, and will be don't-care otherwise.

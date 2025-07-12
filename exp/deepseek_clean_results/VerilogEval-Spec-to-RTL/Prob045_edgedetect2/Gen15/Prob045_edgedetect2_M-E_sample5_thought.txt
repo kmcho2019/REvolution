@@ -1,0 +1,11 @@
+Novel Architectural Idea:
+Instead of comparing current input with immediately previous input, we'll implement a multi-stage delayed sampling approach. Each input bit is sampled at different clock cycles (with staggered delays) and then combined to detect edges over a longer time window. This provides:
+1. Noise immunity by requiring consistent transitions across multiple samples
+2. Configurable sensitivity window by adjusting delay stages
+3. Potential power savings by reducing false edge detections from glitches
+
+Implementation:
+- Use shift registers to create staggered delayed versions of each input bit
+- Compare current input with multiple delayed versions
+- OR the edge detection results from different time windows
+- This creates a "history-based" edge detector rather than single-cycle

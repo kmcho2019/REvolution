@@ -1,0 +1,21 @@
+I will implement a straightforward gshare branch predictor with the following novel approach to simplify timing and avoid complex pipeline stages:
+
+- Maintain the global history register (GHR) updated only on the clock edge, reflecting the last known state after training or prediction, with training misprediction recovery taking priority.
+
+- Use a single synchronous read port RAM modeled by a 128-entry array of 2-bit saturating counters.
+
+- On a prediction request (predict_valid), compute the index by XORing the current GHR with the input PC. Read the PHT entry combinationally (since it's just an array read for simulation/synthesis) and output:
+  - The prediction (taken if the 2-bit counter MSB is 1).
+  - The GHR value used to index (the current GHR before update).
+  
+- Update the GHR in the next clock cycle with the prediction taken bit when prediction happens.
+
+- When training is valid, update the PHT entry (write) accordingly to the train_taken input.
+
+- If training is a misprediction, restore the GHR to the train_history value immediately (on clock edge), overriding prediction update.
+
+- If both training (with mispredict) and prediction occur in the same cycle, the GHR update prioritizes the training recovery.
+
+This design removes pipeline stages and registers for prediction, ensuring outputs align directly with the input signals and the stable GHR. It favors clarity over deep pipelining, aligning with the specification's expectations about history output and prediction timing.
+
+This single-cycle combinational read and single-register GHR model simplifies the timing: predict outputs correspond exactly to the inputs and the current GHR state, and training updates happen at the clock edge after outputs are produced.

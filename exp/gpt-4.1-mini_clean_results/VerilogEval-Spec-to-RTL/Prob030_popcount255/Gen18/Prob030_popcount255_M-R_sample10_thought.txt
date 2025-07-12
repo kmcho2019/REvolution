@@ -1,0 +1,15 @@
+Refactor the recursive popcount module into an iterative hierarchical adder tree using generate blocks without recursion. Implement the popcount by grouping the 255 input bits into 8-bit chunks, using the structural popcount8 module for each chunk, and then summing all partial counts through a balanced binary adder tree until one 8-bit output remains.
+
+This approach:
+
+- Removes recursion for easier synthesis and clearer structure.
+- Keeps the popcount8 module as a base building block.
+- Uses generate loops and for-loops to instantiate all partial popcounts and subsequent adders.
+- Handles the non-power-of-two number of input chunks by padding the last chunk with zeros as needed.
+- Uses explicit wires and loops to create a balanced summation tree of popcount outputs.
+- Ensures all additions happen on appropriately sized buses, avoiding overflow.
+
+Advantages:
+- Flattened structure improves synthesis and readability.
+- Balanced summation minimizes logic depth.
+- Clear data flow from input through popcount8 blocks to final sum.

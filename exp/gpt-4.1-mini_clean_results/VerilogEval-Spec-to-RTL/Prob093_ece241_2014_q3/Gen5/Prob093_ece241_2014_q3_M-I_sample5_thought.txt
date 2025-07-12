@@ -1,0 +1,64 @@
+The previous implementation correctly maps the 4-to-1 mux inputs (mux_in) as functions of c and d to reflect each ab column of the Karnaugh map. However, the issue seems to stem from the mapping between inputs c,d and the K-map rows order.
+
+The K-map orders cd as 00,01,11,10, which corresponds to c=0 d=0, c=0 d=1, c=1 d=1, c=1 d=0 respectively. This ordering means the least significant bit of cd is d, and the most significant bit is c. 
+
+If the previous code interprets c and d as cd={c,d}, that is consistent. But the K-map ordering for cd values is not in natural binary order; it's Gray code order: 00,01,11,10.
+
+Thus, the prior code's logic expressions assume natural binary ordering, but the K-map uses Gray code ordering for c and d.
+
+To fix this, we should remap or reinterpret the inputs c,d to match the Gray code order.
+
+A simple way to implement this is to swap or remap inputs so that for the internal mux_in assignments, the correct row ordering is used.
+
+One approach is to create a "row selector" signal r = {c, d} and remap it from Gray code to binary or reorder assignments accordingly.
+
+Alternatively, we can redefine the mux_in assignments with correct logic by substituting the row numbers according to the Gray code pattern:
+
+- Row 0 (cd=00): c=0,d=0
+- Row 1 (cd=01): c=0,d=1
+- Row 2 (cd=11): c=1,d=1
+- Row 3 (cd=10): c=1,d=0
+
+We notice that row 3 (cd=10) is c=1, d=0, which is 3rd row in Gray code but binary would place 10 as 2.
+
+Since conditional operator syntax is easier with binary, the best way is to map c and d to new signals c_gray and d_gray corresponding to K-map rows:
+
+Define an internal 2-bit vector `cd_gray` such that:
+
+- cd_gray=0 (00) when c=0,d=0
+- cd_gray=1 (01) when c=0,d=1
+- cd_gray=2 (10) when c=1,d=0
+- cd_gray=3 (11) when c=1,d=1
+
+But our K-map order is 00,01,11,10 which corresponds to binary indices 0,1,3,2 (Gray code order).
+
+Thus, row_index_gray = {c, d} maps to binary indices as follows:
+
+- 00 -> 0 (index 0)
+- 01 -> 1 (index 1)
+- 11 -> 3 (index 3)
+- 10 -> 2 (index 2)
+
+To work easily, we can reorder our logic functions to match this mapping by using a "row index" calculated as `row = {c, d}` but with the 2nd bit swapped, or just use conditional operators that take into account this order.
+
+Alternatively, since we have only four inputs, we can directly write mux_in[x] as functions of c and d with multiple nested 2-to-1 muxes to exactly implement the mapping per K-map row.
+
+I will implement each mux_in as a hierarchical mux tree reflecting the Gray code order of cd:
+
+- For each mux_in[x], assign output as per K-map for rows 00,01,11,10 (in that order).
+- For example, mux_in[0] outputs for rows: 0,1,1,1.
+- Implement using two levels of 2-to-1 muxes on c and d where selection is in order consistent with Gray code (d selects first between rows 00 & 01 and rows 11 & 10, then c selects between these groups).
+
+This avoids confusion with binary vs Gray code row ordering.
+
+By doing this, we maintain only 2-to-1 muxes inside TopModule, as required, and the 4-to-1 mux outside uses selectors a and b.
+
+This approach fully respects the K-map and input interpretation.
+
+This also resolves the mismatch issue because the mux inputs now are guaranteed to be in the correct order matching the K-map row ordering.
+
+Final step: implement each mux_in bit as a nested 2-to-1 mux based on c and d selectors, carefully ordering selections to match Gray code order of cd.
+
+This will guarantee correctness and minimal logic using only multiplexers.
+
+No other gates are used.

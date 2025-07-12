@@ -1,0 +1,5 @@
+The original design using a parameterized XOR reduction module is clear and modular but adds a slight overhead in hierarchy that is not strictly necessary for such a simple parity calculation. Since synthesis tools typically generate optimal XOR trees for the built-in reduction operator, removing the intermediate module (XorTree) and directly using the reduction operator in the TopModule will slightly reduce area and possibly power by eliminating one level of hierarchy and ports.
+
+This flattening approach maintains clarity while minimizing gate count and interconnect overhead. Given that timing and power are already minimal, the main gain is area reduction and simpler design.
+
+Thus, the improved strategy is to compute the parity directly in TopModule using the built-in reduction XOR operator and remove the parameterized XorTree module. This approach is optimal for performance, power, and area in a simple parity calculation.

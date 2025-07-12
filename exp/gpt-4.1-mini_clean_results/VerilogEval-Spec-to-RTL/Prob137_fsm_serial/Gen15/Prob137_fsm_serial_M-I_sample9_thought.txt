@@ -1,0 +1,16 @@
+To optimize the FSM for better PPA while maintaining correctness and simplicity, I will:
+
+- Introduce an enable signal for the shift register and bit counter updates to reduce unnecessary toggling outside of the RECEIVE state, thus lowering dynamic power.
+- Slightly reorder the shift direction to shift right and insert the new bit into MSB, which is a common synthesis-friendly pattern and might improve timing on some tools.
+- Encode FSM states using one-hot encoding to simplify next-state logic and potentially reduce combinational delay, trading a few flip-flops for improved performance.
+- Keep 'done' signal generation synchronous and one-cycle wide.
+- Retain synchronous reset and positive edge clock.
+- Keep the WAIT_STOP state logic to handle framing errors robustly.
+
+These changes should reduce toggle rates on registers and combinational logic, potentially improving power and performance slightly while keeping area small.
+
+The bit shifting change is optional but typically easier for synthesis tools to handle as a right shift plus MSB insertion, and with a slight tweak in counting direction, it still correctly collects LSB-first data bits.
+
+I will also ensure shift register and counter are only enabled when needed.
+
+Overall, these tweaks aim at lowering dynamic power and improving timing without changing the fundamental FSM operation or output behavior.

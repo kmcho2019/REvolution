@@ -1,0 +1,13 @@
+To optimize the given 32-bit carry-lookahead adder for better performance and area (PPA), I will improve the internal 16-bit CLA module by replacing the simple ripple-style carry computation loop with a parallel-prefix carry computation scheme. This reduces carry propagation delay within the 16-bit blocks significantly. The main improvements are:
+
+- Replace the linear carry generation in cla_16bit with parallel prefix logic:
+  - Compute group propagate (P) and generate (G) pairs for adjacent stages using a tree structure.
+  - Use a Kogge-Stone like prefix network internally for fast carry computation.
+- Maintain outputs for block propagate and generate as before, computed from the prefix logic.
+- This parallel-prefix approach reduces the critical path delay inside each 16-bit block, thereby improving overall frequency.
+- Keep the top-level adder_32bit module unchanged, reusing the two 16-bit CLA instances and block-level carry computation.
+- Keep bit indexing consistent with the original design ([32:1] ports converted internally to [31:0]).
+- The prefix network uses only combinational logic and no registers, preserving purely combinational design.
+- This design balances a modest increase in area (due to prefix logic) with a significant speed gain.
+
+The result is a modular 32-bit CLA using two fast 16-bit CLA blocks with internal parallel prefix carry computation, reducing delay and enhancing performance while preserving clarity and correctness.

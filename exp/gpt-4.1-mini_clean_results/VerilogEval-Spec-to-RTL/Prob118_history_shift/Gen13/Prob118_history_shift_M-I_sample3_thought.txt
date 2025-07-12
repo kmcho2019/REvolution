@@ -1,0 +1,17 @@
+The existing design is functionally correct, clean, and synthesizable, but can be optimized for better timing and power by reducing the wide 32-bit multiplexing and unnecessary toggling. To achieve this:
+
+1. Instead of using two 32-bit vectors (loaded_history and shifted_history) with a 2-to-1 mux implemented as a full 32-bit selection, we can use a 2-level update approach that avoids large wide muxes:
+
+   - Prioritize the misprediction load: when train_mispredicted=1, load the new history directly.
+   - Else if predict_valid=1, shift the existing history in one bit.
+   - Else hold the current value.
+
+2. This can be achieved by encoding the next state logic with conditional operators and only performing the minimal data movement necessary.
+
+3. Also, we can use clock enable signal to gate the register update only when needed (either on misprediction load or valid prediction shift), which reduces toggling and potentially lowers dynamic power.
+
+4. Synthesis tools typically handle asynchronous reset well, but the asynchronous reset can also be implemented as a synchronous reset if the environment prefers it. However, since asynchronous reset is specified, we keep it.
+
+These optimizations reduce the mux complexity and toggle rates, potentially improving the critical path delay (TNS/WNS) and lowering dynamic power, while keeping area similar or slightly improved.
+
+Below is the improved implementation with a clock enable signal and minimized data muxing.

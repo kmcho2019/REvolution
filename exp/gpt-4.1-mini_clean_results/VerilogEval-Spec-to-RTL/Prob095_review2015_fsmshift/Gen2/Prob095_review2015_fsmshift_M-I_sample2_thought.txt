@@ -1,0 +1,13 @@
+To correctly implement shift_ena asserted for exactly 4 cycles after synchronous reset, then held low forever until the next reset, we need a reliable counter that starts counting on the cycle where reset is asserted. 
+
+Key improvements:
+1. Use a register 'ena_count' that loads 4 on the rising edge where reset is high, then decrements each cycle.
+2. Assign shift_ena combinationally from the current ena_count value to avoid any 1-cycle output lag.
+3. Make sure shift_ena immediately reflects the new counter value on the current clock cycle for precise timing.
+4. Since the problem states no other inputs for pattern detection, we keep the design focused on reset behavior.
+
+By assigning shift_ena outside the sequential block (combinationally) or at least after updating ena_count in the sequential block, the output timing aligns with expectations, eliminating mismatches.
+
+This approach keeps the logic simple and synthesizable, with minimal flip-flops and combinational logic for better PPA.
+
+Note: If later pattern detection is needed, an input can be added to trigger shift_ena for 4 cycles similarly.

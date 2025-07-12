@@ -1,0 +1,11 @@
+To improve PPA (performance, power, and area) of the original straightforward design, we focus on reducing switching activity and simplifying the clocked logic.
+
+Key improvement strategies:
+1. **Clock enable**: Register updates only when load is asserted or the new state differs from the current state. This reduces toggling and dynamic power.
+2. **Local next_state computation** remains combinational and simple, but we add a comparison of next_state and q to gate the clock enable.
+3. **Synchronous load takes priority** and bypasses the comparison.
+4. This approach avoids changing the functional behavior but saves power by reducing unnecessary register toggles.
+5. Area impact is minimal since the comparison is a 512-bit equality check (which synthesis can optimize).
+6. Timing impact is potentially positive by breaking the always block into conditional writes and enabling flip-flops only when needed.
+
+This solution improves power by gating register updates without adding complex pipelining or logic depth, maintaining performance and area close to the original.

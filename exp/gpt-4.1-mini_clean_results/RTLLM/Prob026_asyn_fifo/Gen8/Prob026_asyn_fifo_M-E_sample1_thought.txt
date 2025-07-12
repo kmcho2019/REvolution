@@ -1,0 +1,16 @@
+This new design uses a classic asynchronous FIFO architecture with separate read and write controllers and dual-port RAM, but it explicitly separates and names each functional block for clarity and maintainability.
+
+Key ideas:
+- Dual-port RAM submodule is instantiated as a black box with specified interface.
+- Write and read pointers use Gray codes of width PTR_WIDTH+1 bits (to distinguish wrap-around).
+- Binary pointers are maintained internally and converted to Gray for synchronization.
+- Dedicated synchronizer modules for pointer crossing use two flip-flop synchronizers for metastability mitigation.
+- The FIFO full and empty logic is implemented by comparing Gray-coded pointers after synchronization, with full condition defined by the MSB bits inversion and lower bits equality.
+- Addresses for RAM are taken from the lower bits of the binary pointer (PTR_WIDTH bits).
+- Read data is registered only on read enable to reduce switching.
+- All pointer arithmetic uses non-blocking assignments on respective clocks with active-low async reset.
+- Parameters WIDTH and DEPTH are configurable.
+- The design is modular, separating concerns clearly to facilitate debugging and potential reuse.
+- Gray to binary and binary to Gray conversion functions are defined locally.
+- A separate synchronizer module is implemented for pointer synchronization to emphasize modularity.
+This approach balances clarity, modularity, and correct asynchronous FIFO semantics.

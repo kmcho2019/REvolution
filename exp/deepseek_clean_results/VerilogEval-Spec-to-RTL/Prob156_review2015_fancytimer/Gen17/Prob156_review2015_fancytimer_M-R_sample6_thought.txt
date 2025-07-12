@@ -1,0 +1,26 @@
+Refactored Approach: Simplified State Machine with Explicit Counting Control
+
+1. **State Machine Simplification**:
+   - Reduce to 4 clear states: IDLE, PATTERN, CAPTURE, COUNT
+   - Merge DONE into COUNT state using a flag
+   - Eliminate separate DETECT state by combining with PATTERN
+
+2. **Cycle Counting Optimization**:
+   - Use single 14-bit counter (enough for 15*1000=15000 cycles)
+   - Calculate target cycles when delay is captured
+   - Compare current count against target instead of chunk counting
+
+3. **Pattern Detection**:
+   - Maintain 4-bit shift register continuously
+   - Transition to CAPTURE when pattern matches
+
+4. **Output Logic**:
+   - Generate 'counting' from state directly
+   - Calculate 'count' output mathematically during COUNT state
+   - Use registered done flag for clean timing
+
+Key Improvements:
+- Simplified state transitions
+- More accurate cycle counting
+- Clearer separation of pattern and counting phases
+- Reduced logic complexity

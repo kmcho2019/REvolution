@@ -1,0 +1,7 @@
+Fuse the separation of combinational rotation logic and sequential register update from Example 1 with the explicit conditional update and power optimization approach from Example 2. Specifically:
+- Use a combinational block to compute `q_next` based on current `q` and `ena`.
+- In the sequential block, prioritize synchronous `load` to assign `data`.
+- Otherwise, update `q` only if rotation is enabled (ena == 01 or 10), otherwise keep `q` unchanged to reduce switching power.
+- This avoids unnecessary register toggling when no rotation or load occurs.
+- Maintain clear comments and straightforward concatenation-based rotation for readability and synthesis friendliness.
+This fusion clarifies combinational and sequential roles, improves power by reducing unnecessary toggling, and retains simple, synthesizable logic suitable for a 100-bit wide rotator.

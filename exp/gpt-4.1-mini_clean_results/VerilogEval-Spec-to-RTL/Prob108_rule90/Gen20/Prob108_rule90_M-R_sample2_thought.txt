@@ -1,0 +1,8 @@
+Refactor the design to use a single 512-bit register to hold the state and compute the next state fully combinationally in one step, then update the register on clock edge. This avoids partitioning into blocks and the complex boundary wiring between blocks. Instead:
+
+- Use a combinational wire `next_state` computed by XORing each bit's neighbors, with boundary bits treated as zero.
+- Implement next_state computation with a simple generate loop over 512 bits.
+- Update the registered state on each positive clock edge, loading `data` on load.
+- Output the current state directly.
+
+This approach simplifies the design by removing hierarchical blocks and boundary signals, making the code more straightforward and potentially improving timing by removing inter-block dependencies. The logic for each bit remains the same, but now the entire 512-bit state is updated atomically, which may help synthesis tools optimize the wide vector operations better.

@@ -1,7 +1,0 @@
-The issues in the code can be pinpointed through the simulation log:
-1. The initial state assignment in the `initial` block for `current_state` is incorrect. It should be non-blocking (`<=`) instead of blocking (`=`).
-2. The indexing of `current_state` and `next_state` is defined as 2 bits `{1:0}` instead of 2 bits `{0:1}`. This incorrect indexing affects the state transitions and causes incorrect behavior in the circuit.
-3. In the `always` block for state transitions, the condition for the next state computation is based on the current state, but the current state is not updated synchronously with the clock. This leads to incorrect state transitions.
-4. The `next_state` computation logic does not align with the expected behavior outlined in the problem description, resulting in incorrect output mismatches.
-
-These issues together contribute to the observed output mismatches during simulation.

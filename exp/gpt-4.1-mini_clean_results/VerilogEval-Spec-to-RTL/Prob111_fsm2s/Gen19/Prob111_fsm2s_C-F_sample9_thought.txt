@@ -1,0 +1,11 @@
+I will fuse the best ideas from both examples as follows:
+
+- Use localparams for clear and maintainable state encoding (from both).
+- Implement next-state logic as a combinational always block with a clear case-based style for better synthesis and readability, merging the concise conditional style with the clarity of an always block.
+- Maintain a synchronous active-high reset that sets the state to OFF.
+- Update the state register at every clock edge; omit the conditional update check to avoid potential timing or synthesis complexities, since this rarely yields significant power savings in small FSMs and can add control path complexity.
+- Drive the Moore output purely from the current state using a continuous assignment, ensuring minimal combinational delay and clean coding style.
+- Use non-blocking assignments in sequential always blocks.
+- Avoid unnecessary registers or extra logic to keep area and power minimal.
+
+This combination balances clarity, synthesis friendliness, and simple power optimization without risking timing or synthesis issues. The explicit always block for next state helps synthesis tools optimize and debug better, and omitting the conditional state update maintains a consistent clocking scheme that typically yields better timing and power outcomes in simple FSMs.

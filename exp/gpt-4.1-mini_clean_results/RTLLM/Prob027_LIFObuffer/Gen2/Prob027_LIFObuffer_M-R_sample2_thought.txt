@@ -1,0 +1,5 @@
+Refactor the LIFObuffer by separating combinational and sequential logic more distinctly, and use an explicit stack pointer update strategy where SP points to the next free slot (0 means empty, 4 means full). Use non-blocking assignments consistently and eliminate in-place stack_mem writing inside a decrement operation by writing to stack_mem[SP]. The push operation writes data at SP, then increments SP; pop operation decrements SP, then reads data from SP. This style matches conventional stack pointer behavior and makes pointer arithmetic clearer.
+
+Also, update dataOut only on pop in the sequential block and compute flags EMPTY and FULL purely combinationally using assign statements.
+
+This approach simplifies the logic and makes it easier to understand, while preserving the functionality and improving code clarity.

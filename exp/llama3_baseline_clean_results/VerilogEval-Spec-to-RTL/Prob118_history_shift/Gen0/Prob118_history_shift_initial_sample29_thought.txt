@@ -1,0 +1,12 @@
+To implement the TopModule, we need to design a 32-bit global history shift register 
+that updates its state based on the input signals. The module should have the following 
+functionalities: 
+1. On every positive edge of the clock, check the input signals to determine the next 
+state of the shift register.
+2. If areset is asserted, reset the shift register to zero.
+3. If predict_valid is asserted, shift in predict_taken from the LSB side to update 
+the branch history for the predicted branch.
+4. If train_mispredicted is asserted, load the branch history register with the history 
+after the completion of the mispredicted branch.
+5. If both predict_valid and train_mispredicted are asserted at the same time, the 
+misprediction takes precedence.

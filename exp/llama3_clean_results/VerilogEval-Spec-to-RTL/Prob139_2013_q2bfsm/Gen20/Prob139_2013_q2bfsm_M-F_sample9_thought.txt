@@ -1,0 +1,15 @@
+To address the issues in the existing code, we will re-design the finite state machine (FSM) with a focus on simplicity and clarity. We will use a more straightforward state transition logic and implement the sequence detection and 'g' output logic in a more intuitive way.
+
+We will define four states:
+- `IDLE`: The initial state where the FSM waits for the reset signal to be de-asserted.
+- `SET_F`: The state where 'f' is set to 1 for one clock cycle.
+- `SEQ_DETECT`: The state where the sequence '1, 0, 1' is detected on the 'x' input.
+- `G_CTRL`: The state where 'g' is controlled based on the 'y' input.
+
+We will use two counters: `x_seq_count` to track the sequence on the 'x' input and `y_count` to monitor the 'y' input in the `G_CTRL` state.
+
+In the `SEQ_DETECT` state, we will check for the sequence '1, 0, 1' on the 'x' input and transition to the `G_CTRL` state when the sequence is detected. In the `G_CTRL` state, we will use the `y_count` to monitor the 'y' input and set 'g' to 1 permanently if 'y' becomes 1 within two clock cycles. If 'y' does not become 1 within two clock cycles, we will set 'g' to 0 permanently.
+
+We will also simplify the logic for updating 'g' based on the current state and 'y' input, making it more intuitive and easier to understand.
+
+To improve the code in terms of Power, Performance, and Area (PPA) metrics, we will focus on reducing switching activity, simplifying the logic, and using efficient state encoding.

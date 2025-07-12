@@ -1,0 +1,14 @@
+Here's a novel approach using a binary counter-based state machine:
+1. Instead of traditional states, use a 2-bit counter to track progress through the sequence
+2. Counter increments when matching partial sequences:
+   - 00: initial state
+   - 01: saw '1' (first bit)
+   - 10: saw '10' (first two bits)
+   - 11: saw '101' (complete sequence)
+3. Reset counter to 00 on mismatch
+4. Mealy output is asserted when counter transitions to 11
+5. Benefits:
+   - Uses arithmetic progression instead of shift registers
+   - Naturally handles overlapping sequences
+   - Clear state progression visible in counter value
+   - Minimal logic operations

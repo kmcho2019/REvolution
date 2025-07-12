@@ -1,0 +1,11 @@
+To improve the original design's PPA, I will further simplify the boundary signal wiring to remove the generate loop for boundaries, replacing it with direct assignments in combinational logic. This reduces wiring complexity and net overhead, potentially improving area and timing. 
+
+Additionally, I will flatten the design by removing the intermediate array of wires (block_q) and directly instantiate the 8 blocks with explicitly named signals for clarity and slightly better synthesis results.
+
+Also, I will implement a simple clock gating scheme at the top module level to disable state updates when load is active, thereby saving dynamic power during loading since the next state calculation is unnecessary in that cycle.
+
+The clock gating is done using a gated clock (generated internally) for the Rule90 blocks, disabling their updating logic when load=1, allowing only load data to update registers. This reduces toggling in the next_state logic during load cycles.
+
+This clock gating approach is simple and likely beneficial since loading happens less frequently than state updates, reducing switching power in combinational logic. It adds minimal overhead compared to per-block gating.
+
+Overall, this yields a design with potentially lower power from reduced toggling during load, simplified wiring for better area and timing, and no loss in functionality.

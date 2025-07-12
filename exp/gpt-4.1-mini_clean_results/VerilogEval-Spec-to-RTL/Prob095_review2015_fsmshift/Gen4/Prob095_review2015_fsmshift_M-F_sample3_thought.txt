@@ -1,0 +1,9 @@
+To fix the design, we must assert shift_ena for exactly 4 consecutive clock cycles starting immediately *when reset is asserted* (synchronously active high). That means during the reset cycles themselves, shift_ena should be high for 4 cycles, and then once reset is deasserted, shift_ena goes low and stays low indefinitely until the next reset.
+
+We implement a 2-bit or 3-bit counter that increments on every clock cycle while reset remains high, counting how many reset cycles have occurred. shift_ena is asserted while the counter is less than 4. After counting 4 cycles during reset, shift_ena is deasserted.
+
+Because reset is synchronous, we handle it in the always @(posedge clk) block. On reset high, count increments and shift_ena is asserted if count<4. When reset goes low, count and shift_ena reset to zero and low respectively, remaining low until next reset.
+
+This approach ensures shift_ena is asserted exactly during the first 4 reset cycles, matching the problem statement and testbench expectations.
+
+No additional state is needed beyond the counter since the shift_ena assertion period is tied directly to reset being high and counting 4 cycles of it.

@@ -1,0 +1,8 @@
+To solve this problem, we can design a Mealy-type finite state machine (FSM) with three states: S0, S1, and S2. The FSM starts in S0 and transitions to the next state based on the input signal x. When the sequence "101" is detected, the output signal z is asserted to logic-1. We will use a negative edge triggered asynchronous reset to reset the FSM to S0 when aresetn is low.
+
+The state transitions and output logic can be summarized as follows:
+- S0: If x is 1, transition to S1. If x is 0, stay in S0. z is 0.
+- S1: If x is 0, transition to S2. If x is 1, stay in S1. z is 0.
+- S2: If x is 1, transition to S1 and assert z to 1. If x is 0, transition to S0. z is 1 only when the sequence "101" is detected.
+
+We will use Verilog's case statement to implement the state transitions and output logic.

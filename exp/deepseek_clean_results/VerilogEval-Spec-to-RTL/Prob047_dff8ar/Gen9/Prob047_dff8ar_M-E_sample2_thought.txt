@@ -1,0 +1,8 @@
+Instead of instantiating 8 individual DFFs, we can implement this as a single 8-bit register with asynchronous reset. This approach:
+1. Uses a single always block for all 8 bits, reducing synthesis overhead
+2. Maintains clean vector operations for the entire byte
+3. Still provides individual bit control through the vector notation
+4. Eliminates the generate block overhead
+5. Potentially allows better optimization during synthesis as the tool sees it as one register rather than separate components
+6. Uses non-blocking assignments for proper sequential logic behavior
+7. Explicitly shows the reset value as 8'b0 for clarity

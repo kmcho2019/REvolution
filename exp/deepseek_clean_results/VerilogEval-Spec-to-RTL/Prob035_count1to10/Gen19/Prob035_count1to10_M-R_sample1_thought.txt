@@ -1,0 +1,20 @@
+Refactoring Approach:
+1. Separate combinational and sequential logic:
+   - Move the counter logic to combinational block using assign
+   - Keep only the register update in sequential block
+   - This makes the design more modular and easier to analyze
+
+2. Use explicit terminal count comparison:
+   - Replace bitwise detection (q[3] & q[1]) with direct comparison to 4'b1010
+   - Makes the intent clearer while maintaining efficiency
+
+3. Split the logic:
+   - Calculate next state value in combinational logic
+   - Apply synchronous reset and register update in sequential block
+   - This separation often helps with synthesis optimizations
+
+Key Benefits:
+- Clear separation of combinational and sequential logic
+- More readable terminal count condition
+- Maintains same functionality with identical PPA metrics
+- Potentially better for formal verification due to explicit state transitions

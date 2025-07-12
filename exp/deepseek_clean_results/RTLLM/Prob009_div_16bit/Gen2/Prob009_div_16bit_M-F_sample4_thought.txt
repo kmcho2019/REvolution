@@ -1,0 +1,10 @@
+To fix the 16-bit divider implementation:
+1. Correct the remainder width to properly handle 16-bit dividend processing
+2. Implement proper shift-and-subtract algorithm where we:
+   - Compare 9-bit segments (8-bit divisor + carry)
+   - Maintain proper remainder propagation through all bits
+   - Correctly update quotient bits
+3. Fix final remainder assignment to properly reflect the division result
+4. Handle division by zero case completely by setting both outputs to zero
+5. Use a single always block for cleaner implementation
+6. Ensure proper bit-width comparisons at each step

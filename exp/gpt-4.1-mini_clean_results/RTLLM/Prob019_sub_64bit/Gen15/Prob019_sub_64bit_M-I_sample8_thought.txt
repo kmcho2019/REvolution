@@ -1,0 +1,20 @@
+The current design uses four 16-bit CLA subtractors connected in series with borrow chaining, causing a long carry chain across the 64-bit width which hurts timing and power.
+
+To optimize PPA, I will:
+
+- Replace the four 16-bit CLA blocks with a single full 64-bit carry-lookahead subtractor. This eliminates inter-block carry ripple and reduces critical path delay.
+- Use a hierarchical carry-lookahead approach:
+  - Divide 64 bits into 16 4-bit blocks.
+  - Compute propagate/generate signals per 4-bit block.
+  - Use a 16-bit carry-lookahead over these block-level signals for fast carry computation.
+- Within each 4-bit block, use simple ripple logic for carry generation to minimize complexity and area.
+- This balances a shorter carry chain with reduced complexity compared to full flat 64-bit CLA.
+- Keep overflow detection logic unchanged, as it is already optimal.
+  
+This approach reduces the carry chain length from 4 blocks of 16 bits ripple to a 16-block 4-bit carry-lookahead structure, improving maximum frequency and reducing power and area by simplifying logic and reducing unnecessary stages.
+
+The single-module design also reduces wiring and overhead.
+
+Overall, this design trades slightly more complex carry generation logic for substantially better timing and power.
+
+I will implement the 64-bit subtractor as A + (~B) + 1 with the described hierarchical CLA logic.

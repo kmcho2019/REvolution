@@ -1,0 +1,5 @@
+To improve the PPA metrics of the existing design, particularly power and performance, I will add a clock enable (ce) signal that disables counter updates when the counter has already reached zero and load is not asserted. This will reduce unnecessary toggling of the counter register, saving dynamic power and potentially improving timing by reducing switching activity.
+
+The clock enable signal will be high only when the counter is non-zero or when load is asserted. The counter register will update only when ce is high, effectively gating the counter updates. This is still consistent with the problem statement and uses only a single D flip-flop register for the counter.
+
+This small enhancement can decrease power and slightly improve timing without impacting area noticeably, as it uses only simple gating logic. The terminal count signal remains combinationally derived from the zero detection of the counter register.

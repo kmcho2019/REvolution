@@ -1,0 +1,9 @@
+To improve the solution, we need to correct the encoding scheme used for the output `pos` to accurately reflect the position of the first '1' bit in the input vector `in`. 
+
+Our strategy involves maintaining the existing structure of checking each bit position from most significant to least significant and assigning the output based on the first '1' bit encountered. However, we will correct the assignment of the output `pos` to follow a straightforward binary encoding, where `2'b00` represents the 1st position (LSB), `2'b01` represents the 2nd position, `2'b10` represents the 3rd position, and `2'b11` represents the 4th position (MSB). 
+
+However, we need to adjust the output values to represent the correct position. Since we're checking from MSB to LSB, we can simply assign the position based on the bit index plus one (since indexing starts at 0). For the MSB (4th position), we assign `2'b11`, for the 3rd position, we assign `2'b10`, for the 2nd position, we assign `2'b01`, and for the LSB (1st position), we assign `2'b00`. 
+
+We will check for the MSB (4th position) first and assign `2'b11` to `pos` if it is '1'. Then, we will check for the 3rd position and assign `2'b10` to `pos` if it is '1'. Next, we will check for the 2nd position and assign `2'b01` to `pos` if it is '1`. Finally, we will check for the 1st position (LSB) and assign `2'b00` to `pos` if it is '1'. If none of the bits are '1', `pos` will remain `2'b00`, indicating that no '1' bits were found in the input vector.
+
+To optimize the code for better PPA metrics, we will ensure that the combinational logic is minimized and the code structure remains simple and easy to synthesize. We can achieve this by using a single always block with conditional statements to check for the first '1' bit in the input vector and assign the correct position to the output `pos`.

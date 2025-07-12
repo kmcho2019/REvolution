@@ -1,0 +1,19 @@
+To optimize the 4-bit comparator for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **Power Optimization**:
+   - Replace full subtraction with carry/borrow lookahead logic to minimize switching activity
+   - Compute equality first and use it to potentially gate other computations
+
+2. **Area Optimization**:
+   - Implement hierarchical bit-wise comparison (MSB first) to avoid full subtraction
+   - Share logic between greater/less conditions using the equality result
+
+3. **Performance**:
+   - Reduce critical path by breaking down the comparison into parallel bit-wise operations
+   - Use carry-chain optimization for faster borrow propagation
+
+The new approach will:
+1. First check for equality (A == B)
+2. For non-equal cases, perform MSB-first comparison
+3. Generate outputs using mutually exclusive conditions
+This reduces logic depth and eliminates unnecessary arithmetic operations.

@@ -1,0 +1,20 @@
+To implement a dual-edge triggered flip-flop without using illegal sensitivity lists or two separate flip-flops, use a clock frequency doubling approach combined with a single positive edge-triggered flip-flop and a toggle signal.
+
+The idea is:
+- Generate a clock enable pulse that toggles on both edges of the original clk by XOR-ing delayed versions of clk (or using both posedge and negedge clocks on a divided clock).
+- Use a clock enable signal that is asserted for one half of the clock period (around each clock edge).
+- Use a single positive edge-triggered flip-flop clocked by a doubled-frequency clock or by the main clk and gated by this enable pulse.
+- On each pulse of the enable, sample the input d and update output q.
+- This emulates dual-edge triggering by only capturing on clk edges but without a negedge flip-flop.
+
+This architecture only requires one positive edge flip-flop and some logic to generate the enable pulses synchronized to both edges of clk, reducing area and simplifying timing compared to two flip-flops plus a latch. It can be implemented using a clock domain crossing technique or a small delay to generate the enable pulse on both edges.
+
+For pure RTL portability and no delay primitives, use a toggling register clocked by clk to generate an enable on both edges:
+
+- Create a toggle flip-flop toggling on every clk edge (with some trick).
+- Use this toggle to generate a clock enable signal that pulses twice per clk cycle.
+- Use a positive edge flip-flop with clock enable to capture d on both edges.
+
+This approach avoids illegal sensitivity lists, uses only posedge clocks, and requires one flip-flop plus combinational logic.
+
+Below is the detailed RTL implementation using a toggling signal generated from clk's posedge to emulate dual-edge capture.

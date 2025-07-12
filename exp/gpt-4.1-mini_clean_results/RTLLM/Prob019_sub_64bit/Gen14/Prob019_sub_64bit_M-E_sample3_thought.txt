@@ -1,0 +1,13 @@
+I will implement a 64-bit subtractor using a single 64-bit ripple borrow subtractor with simple combinational logic for clarity and minimal area. Although ripple borrow is slower than carry-lookahead, this design is straightforward and easy to understand, suitable for applications where area or design simplicity is favored over raw speed.
+
+The subtractor will perform A - B by using A + (~B) + 1, implemented bitwise with borrow propagation from LSB to MSB.
+
+Overflow detection logic will follow the signed subtraction overflow rules:
+- Positive overflow: A is positive, B is negative, result is negative.
+- Negative overflow: A is negative, B is positive, result is positive.
+
+This is implemented by comparing the sign bits (MSB) of A, B, and result.
+
+This approach differs from the previous design by using a simple ripple borrow chain instead of carry lookahead blocks. It minimizes control and intermediate signals but incurs a longer critical path.
+
+The code will be fully combinational and self-contained without submodules for simplicity.

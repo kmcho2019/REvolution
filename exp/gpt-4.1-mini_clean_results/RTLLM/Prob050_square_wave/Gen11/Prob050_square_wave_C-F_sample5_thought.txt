@@ -1,0 +1,9 @@
+Fuse the best features of both examples by: 
+1) Retaining a synchronous active-low reset for robust initialization and system integration.  
+2) Computing freq_minus_one outside the always block for clear and efficient comparison without subtraction inside sequential logic.
+3) Using a clock enable signal (clk_en) to freeze counting and toggling when freq is zero, preventing unnecessary switching and reducing power.
+4) Keeping count steady (not resetting) when clk_en is deasserted to minimize switching power.
+5) Using a simple comparator (count == freq_minus_one) rather than a 9-bit addition with overflow to keep area and timing minimal and straightforward.
+6) Maintaining a single always block with non-blocking assignments for clarity, synthesis friendliness, and correct sequencing.
+
+This fusion balances timing, power, and area by avoiding unnecessary toggling, minimizing logic complexity, and using simple comparison-based toggle detection. It avoids resetting count unnecessarily and prevents switching when freq=0, leveraging clock enable gating. The design remains simple and clean for ease of understanding and synthesis.

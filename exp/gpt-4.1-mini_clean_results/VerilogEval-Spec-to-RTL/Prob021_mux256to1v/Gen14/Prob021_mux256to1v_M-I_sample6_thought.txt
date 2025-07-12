@@ -1,0 +1,21 @@
+The previous design uses a three-level mux tree with 16-to-1 muxes at the first stage, which introduces high fan-in and wide input buses (64 bits per mux), increasing area and switching power. To improve PPA:
+
+1. Use a more balanced mux tree with smaller fan-in at each stage to reduce critical path and power.
+2. Replace the first stage of 16-to-1 muxes with four 4-to-1 muxes feeding a 4-to-1 mux, effectively implementing a 16-to-1 mux as a two-level tree of 4-to-1 muxes.
+3. Structure the overall hierarchy as:
+   - Stage 1: sixty-four 4-to-1 muxes (sel[1:0]) over groups of 4 inputs
+   - Stage 2: sixteen 4-to-1 muxes (sel[3:2])
+   - Stage 3: four 4-to-1 muxes (sel[5:4])
+   - Stage 4: final 4-to-1 mux (sel[7:6])
+4. This makes a 4-level mux tree, but each mux has only 4 inputs, reducing mux input size and switching.
+5. Implement a single 4-to-1 4-bit mux module and use generate loops with structured slicing.
+6. Avoid large input buses at any single mux; slice the input vector directly per mux to reduce wiring complexity.
+7. This balanced approach reduces both maximum mux input size and mux count at later stages, leading to lower area, power, and delay.
+
+Resulting benefits:
+- Smaller mux fan-in per stage reduces combinational delay.
+- Lower input bus widths reduce switching power.
+- More levels trade some depth for better fan-in balance.
+- More modular and scalable design.
+
+I will implement this 4-level 4-to-1 mux tree accordingly.

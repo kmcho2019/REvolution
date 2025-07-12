@@ -1,0 +1,7 @@
+The main goal of this refactoring is to improve synthesizability, performance, and area optimization. The original code used a for loop within an always block to update the state of the cellular automaton. However, this approach can lead to issues with timing and area due to the large number of logic gates required to implement the loop.
+
+To address these concerns, we can restructure the code to use a combination of combinational logic and sequential logic. Specifically, we will use a series of assign statements to calculate the next state of each cell, and then use a single always block to update the state registers. This approach allows us to take advantage of the parallelism inherent in the Rule 90 automaton, as each cell's next state only depends on its current state and the states of its neighbors.
+
+Additionally, we will use a clock gating technique to reduce power consumption. We will only update the state registers when the load signal is not asserted, which reduces the number of unnecessary state updates.
+
+Overall, this refactoring aims to create a design that is synthesizable, efficient in terms of timing and power, and optimized for area consumption.

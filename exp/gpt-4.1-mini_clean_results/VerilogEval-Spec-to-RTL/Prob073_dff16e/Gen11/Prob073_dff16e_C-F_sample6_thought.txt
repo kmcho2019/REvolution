@@ -1,0 +1,10 @@
+I will fuse the clean, byte-wise conditional update style from Example 1 with the mask-based partial update logic of Example 2 to achieve both clarity and efficiency. Specifically, I use a byte-enable mask to gate updates and selectively update each byte only if enabled, minimizing toggling and preserving unmodified bytes without unnecessary bitwise OR/AND operations. 
+
+To optimize power and prevent unnecessary toggling when no bytes are enabled, I add a clock-enable style guard using the combined byteena signal, avoiding flip-flop input changes when no byte is enabled. This reduces dynamic power while maintaining a simple always block and synchronous active-low reset, triggered on posedge clk.
+
+This approach keeps minimal combinational logic before the flip-flops—avoiding a full bitwise mask application each cycle—yet cleanly handles byte enables with straightforward conditional assignments per byte. It also preserves the simple and efficient style from Example 1 while incorporating mask awareness from Example 2 to guide the conditional logic.
+
+In sum, this solution balances readability, power efficiency, and performance by:
+- Using a combined enable signal to gate updates
+- Using clean byte-wise conditional assignments instead of full bitwise masking
+- Maintaining synchronous active-low reset and a single always block for all DFFs

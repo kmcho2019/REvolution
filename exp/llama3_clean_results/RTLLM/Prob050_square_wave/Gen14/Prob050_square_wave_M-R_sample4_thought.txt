@@ -1,0 +1,9 @@
+The existing code for the square wave generator is functionally correct but can be refactored for potential improvements in Power, Performance, and Area (PPA) metrics. To achieve this, we can restructure the design to utilize combinational logic where possible and minimize the use of sequential logic. 
+
+One approach is to use a counter and a comparator to determine when to toggle the output. However, instead of using an always block for both the counter and the comparator, we can separate these into different blocks. The counter can be implemented using an always block to increment on each clock cycle, and the comparator can be implemented using combinational logic to determine when to toggle the output.
+
+We will introduce a new signal, `toggle`, which is set high when the counter reaches the specified frequency. This signal can then be used to toggle the `wave_out` signal. 
+
+By separating the counter and the comparator logic, we aim to simplify the design, potentially reducing the critical path delay and thus improving performance. Additionally, by minimizing the sequential logic and using combinational logic where possible, we aim to reduce power consumption.
+
+This refactoring maintains the core functionality of the original design while exploring alternative structural implementations that could offer improvements in PPA metrics.

@@ -1,0 +1,16 @@
+The state machine has only two states: walk_left (0) and walk_right (1). On any bump, it switches direction accordingly: bump_left means walk_right, bump_right means walk_left, and if both bumps occur simultaneously, it toggles the current state.
+
+We can express this behavior succinctly by noting that when both bumps occur, state toggles; when bump_left only, state becomes 1; when bump_right only, state becomes 0; and when no bumps occur, state remains the same.
+
+This can be expressed as:
+
+- If bump_left and bump_right: next_state = ~state
+- Else if bump_left: next_state = 1
+- Else if bump_right: next_state = 0
+- Else next_state = state
+
+This can be directly implemented with a simple nested conditional assignment in the sequential always block without complex logic expressions, reducing combinational logic complexity while maintaining the same functionality.
+
+The asynchronous positive edge reset remains to initialize the state to walk_left.
+
+Outputs remain simple: walk_left = ~state, walk_right = state.

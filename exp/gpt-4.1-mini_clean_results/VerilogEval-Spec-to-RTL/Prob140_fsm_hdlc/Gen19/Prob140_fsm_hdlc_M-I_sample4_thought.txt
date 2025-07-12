@@ -1,0 +1,11 @@
+To improve PPA (Timing, Power, Area) over the original solution, we focus on minimizing switching activity and simplifying combinational logic:
+
+- Separate the update of the counter and the output logic into two steps:
+  * Counter updates only when input changes or reset occurs, reducing unnecessary toggling.
+  * Outputs are registered signals computed from the stable counter state from the previous cycle.
+- Use an explicit Moore FSM style with states encoded as the count of consecutive ones (0-7), but store only the minimum bits needed (3-bit counter saturating at 7).
+- Implement output logic as pure combinational functions of the state (counter) only, avoiding dependence on current input directly. This allows registering outputs only once per cycle based on stable state, reducing glitches.
+- Introduce a simple clock gating enable signal to freeze the counter when input=0 (so no consecutive ones), thus reducing switching on idle zero inputs.
+- Use non-blocking assignments properly and synchronous reset.
+- Since the problem states Moore FSM, outputs depend on current state only, so derive them from the current counter without current input, so disc and flag signal will be delayed one cycle implicitly, matching requirement.
+- This approach reduces toggling in outputs and counter, reduces combinational path complexity and glitching, and provides slightly better timing and power.

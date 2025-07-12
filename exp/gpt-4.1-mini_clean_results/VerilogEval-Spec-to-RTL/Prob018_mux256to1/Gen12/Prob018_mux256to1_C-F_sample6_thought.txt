@@ -1,0 +1,29 @@
+Fuse the low fan-in, balanced hierarchical approach from Example 1 with the simple, continuous-indexed muxing style from Example 2 to optimize power, area, and timing.
+
+Fusion Strategy:
+- Use a 3-level hierarchy for better timing balance (as in Example 1):
+  Level 0: 64 Mux4to1 muxes selecting from 4 bits each using sel[1:0] — very low fan-in.
+  Level 1: 16 Mux4to1 muxes selecting from Level 0 outputs using sel[3:2].
+  Level 2: 4 Mux4to1 muxes selecting from Level 1 outputs using sel[5:4].
+  Level 3: Final Mux4to1 mux selecting among Level 2 outputs using sel[7:6].
+  
+- The remaining bits sel[7:6] control the last mux, and sel[5:0] control lower muxes.
+- Each mux is implemented explicitly using continuous assignment with direct indexing, avoiding large-case or always blocks for better synthesis.
+- This decomposes the 256-to-1 mux into only 4-to-1 muxes, limiting fan-in, reducing power and area.
+- The hierarchy uses continuous assignments and generate loops for concise code.
+- This approach deepens mux levels moderately (4 levels), but with very low fan-in per mux and simple logic, potentially improving timing and power over large 16-to-1 muxes or complex 8-to-1 mux internals.
+- The design is modular, easy to maintain and verify.
+- Use explicit continuous assignment mux4to1 module for clarity.
+
+Overall, this fusion leverages:
+- The minimal fan-in and modularity from Example 1’s mux decomposition.
+- The clean continuous assignment style and indexing from Example 2.
+- The balanced hierarchy avoids large fan-in muxes and keeps logic simple.
+
+This design is expected to optimize PPA better by:
+- Reducing individual mux fan-in (max 4 inputs).
+- Keeping hierarchy balanced (four levels).
+- Using simple indexing to minimize area and power.
+- Enabling easy pipelining later if needed.
+
+Hence, the final code will define a 4-to-1 mux and build a 256-to-1 mux with four hierarchy levels of 4-to-1 muxes driven by portions of sel.

@@ -1,0 +1,7 @@
+To optimize power and potentially area without increasing delay, I will hierarchically reduce the 100 input bits into smaller chunks, then combine their results. This approach can help synthesis tools implement the functions as balanced trees explicitly, possibly reducing critical path and toggling activity compared to a direct 100-input reduction.
+
+Specifically, I will split the input into 10 chunks of 10 bits each. For each chunk, I will compute partial AND, OR, and XOR. Then, I combine these 10 partial results to generate the final outputs. This reduces the fan-in of each gate to 10 instead of 100, creating a more balanced and structured reduction tree.
+
+Using generate blocks for chunk processing keeps the code clean and scalable. The final outputs remain purely combinational and are implemented with continuous assignments.
+
+This explicit hierarchical reduction can improve synthesis quality by guiding it towards smaller balanced logic trees, reducing the maximum fan-in and thus improving timing and possibly lowering power and area.

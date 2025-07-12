@@ -1,0 +1,27 @@
+Revised fractional divider design addressing feedback issues:
+
+1. **Initialization Fix**: Ensure both phases start in known states (both low) during reset for clean startup.
+
+2. **Phase Generation Correction**:
+   - Phase A: 4 cycles high (0-3), 3 cycles low (4-6)
+   - Phase B: 3 cycles high (0-2), 4 cycles low (3-6)
+   - Both generated on positive edge for better synchronization
+
+3. **Phase Shifting**:
+   - Create delayed version of Phase A (shifted by half cycle)
+   - Use negative edge flip-flop for precise half-cycle delay
+
+4. **Output Combination**:
+   - Use OR instead of XOR to properly combine phases
+   - This creates uniform 3.5x division when combined with shifted phases
+
+5. **Simplified Architecture**:
+   - Remove separate sync module
+   - Directly use negative edge for phase shifting
+   - Clear state machine with explicit cycle counting
+
+Key improvements:
+- Proper phase alignment through unified positive-edge generation
+- Correct duty cycle through accurate cycle counting
+- Cleaner output combination logic
+- More reliable initialization

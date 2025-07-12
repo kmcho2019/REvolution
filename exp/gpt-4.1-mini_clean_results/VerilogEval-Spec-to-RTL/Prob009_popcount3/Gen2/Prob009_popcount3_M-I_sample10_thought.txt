@@ -1,0 +1,9 @@
+The original implementation is already minimal and efficient for a 3-bit population count. However, to potentially improve power and area slightly, we can implement the population count using a simple combinational logic approach with less arithmetic addition. Specifically, we can reduce the number of adders and use a LUT-like approach with bitwise logic to calculate the count, since the input size is very small (3 bits). This can marginally reduce gate usage and toggle activity.
+
+One approach is to implement a small combinational logic directly from input bits to output bits:
+- The least significant output bit (out[0]) is 1 if there is an odd number of ones in the input (XOR of all bits).
+- The most significant output bit (out[1]) is 1 if the population count is 2 or 3, which can be expressed using pairwise AND conditions or a small OR of ANDs.
+
+This logic reduces the additions to simple ANDs and XORs, potentially minimizing area and power compared to a small adder tree synthesis.
+
+While the performance improvement is likely minimal due to the small logic size, this approach may have better power and area characteristics by eliminating arithmetic addition and replacing with simple gates.

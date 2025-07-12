@@ -1,0 +1,12 @@
+To create a superior decade counter, I will combine the clarity and modularity of the second example's separated next-state logic with the simple and robust synchronous reset approach from the first example.
+
+Key fusion points:
+- Use a single always block triggered on the positive clock edge, with synchronous active-high reset handled first.
+- Compute the next count combinationally as q + 1 modulo 10, but implement this efficiently by using a conditional expression (ternary operator) that resets q to 0 when it reaches 9.
+- Avoid separate clock enable signals or extra conditionals to simplify the control path, which can reduce logic depth and improve timing.
+- Use non-blocking assignments in sequential logic for correctness.
+- Keep the 4-bit register to hold counts from 0 to 9.
+- By merging the next-state logic into one clean conditional expression without case statements or separate enable signals, we reduce combinational complexity and switching activity, achieving better PPA.
+- The design maintains readability and synthesis friendliness, ensuring a good balance between power, performance, and area.
+
+This fusion preserves the modular combinational logic idea, synchronous reset reliability, minimal combinational complexity, and avoids unnecessary state encoding or branching, thus enhancing timing and power efficiency over both examples.

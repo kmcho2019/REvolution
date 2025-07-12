@@ -1,0 +1,7 @@
+To implement the 5-bit maximal-length Galois LFSR, we first need to understand the basic structure of a linear feedback shift register and how the taps affect the shifting. Given that our taps are at positions 5 and 3, we'll have to ensure that when shifting right, the bits at these positions are XORed with the least significant bit (LSB) before being shifted. The Galois LFSR shifts right, meaning the new value for the most significant bit (MSB) is determined by the XOR of the tap positions and the LSB, while other bits simply shift right.
+
+We'll use a 5-bit register to hold the current state of the LFSR. On each clock edge, we calculate the new value for the MSB by XORing the bits at the tap positions (5 and 3, noting that Verilog uses 0-based indexing, so these are actually positions 4 and 2) with the LSB. We then shift all bits to the right, with the calculated value becoming the new MSB.
+
+At reset, we set the LFSR output to 1, which means we need to initialize our register with a value that reflects this. Since it's a 5-bit register and we want it to start with a '1', we initialize it with '1XXXX' where 'X' can be any value since after the first clock, the LFSR will start its sequence.
+
+Given the need for a maximal-length LFSR, the tap positions are chosen such that the sequence generated is of maximum length, which is 2^n - 1 for an n-bit LFSR. For a 5-bit LFSR, this means the sequence should be 2^5 - 1 = 31 states long before repeating, excluding the all-zero state.

@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. **Power Optimization**:
+   - Gate the shift computation logic with 'ena' to prevent unnecessary toggling
+   - Move sign extension calculation inside right-shift condition to reduce dynamic power
+   - Use clock gating for the register update to minimize power consumption
+
+2. **Area Optimization**:
+   - Share common logic between 1-bit and 8-bit shifts
+   - Implement 8-bit shifts using parameterized concatenation
+   - Remove redundant sign extension calculation when not needed
+
+3. **Performance Optimization**:
+   - Simplify the shift selection logic to reduce critical path
+   - Use parallel shift amount calculation instead of nested if-else
+   - Optimize multiplexer structure for faster path
+
+Key Improvements:
+- Conditional shift computation only when enabled
+- More efficient sign extension handling
+- Shared shift logic between 1-bit and 8-bit operations
+- Cleaner control flow with parallel shift calculation
+- Reduced switching activity for better power metrics

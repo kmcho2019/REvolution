@@ -1,0 +1,8 @@
+Instead of separate states for left/right variants of each action, we can:
+1. Use a direction register to track current walking direction (left/right)
+2. Have three main states: WALKING, FALLING, DIGGING
+3. The direction register persists through state changes
+4. Bump signals only affect the direction in WALKING state
+5. Priority is handled by checking conditions in order: fall > dig > bump
+
+This reduces the state space from 6 to 3 states while maintaining all functionality. The direction is stored separately, making state transitions cleaner and more maintainable.

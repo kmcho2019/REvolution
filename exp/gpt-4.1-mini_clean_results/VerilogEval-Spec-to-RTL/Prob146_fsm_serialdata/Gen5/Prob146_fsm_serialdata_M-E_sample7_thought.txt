@@ -1,0 +1,15 @@
+I will implement the serial byte receiver FSM using a one-hot encoded state machine with 5 states: IDLE, START_BIT, DATA_BITS, STOP_BIT, and WAIT_STOP. This design adds an explicit START_BIT state that validates the start bit over one clock cycle before moving to data reception, which provides a clearer separation of concerns and potentially simpler timing analysis.
+
+Data bits will be received and shifted into a register, but instead of shifting left or right every clock cycle, I will store each bit at a position indexed by a bit counter, making it a "bit-indexed load" rather than a shift. This avoids a shift operation on the register and can reduce combinational logic depth on the data path.
+
+The FSM transitions:
+
+- IDLE: line idle at 1, waits for start bit (0). When 0 detected, go to START_BIT.
+- START_BIT: confirm start bit (should be 0). If yes, reset bit counter and go to DATA_BITS; if not, return to IDLE.
+- DATA_BITS: receive 8 bits, store each bit at bit_count position, increment bit_count. After 8 bits, go to STOP_BIT.
+- STOP_BIT: check stop bit (should be 1). If yes, output the byte, assert done for one clock cycle, return to IDLE.
+- WAIT_STOP: if stop bit invalid, wait here until line goes to 1 (stop bit/idle) before returning to IDLE.
+
+The done output is a pulse asserted for one cycle only on a valid stop bit detection. All signals are updated on the positive clock edge with synchronous reset.
+
+This architecture provides explicit validation of the start bit, minimizes combinational data path by avoiding shifts, uses one-hot encoding for potentially improved timing, and clearly separates error recovery in WAIT_STOP.

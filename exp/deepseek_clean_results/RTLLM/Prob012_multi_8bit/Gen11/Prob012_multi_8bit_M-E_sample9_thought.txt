@@ -1,0 +1,18 @@
+This design implements a modified Booth encoding scheme (Radix-4) for more efficient multiplication:
+
+1. First, we encode the multiplier (B) using Booth encoding to reduce the number of partial products by half
+2. The Booth encoder generates control signals for each 3-bit window of the multiplier:
+   - 000/111: +0
+   - 001/010: +A
+   - 011: +2A
+   - 100: -2A
+   - 101/110: -A
+3. Each partial product is properly sign-extended and shifted
+4. A Wallace tree compresses the partial products efficiently
+5. Final carry-propagate adder produces the result
+
+Advantages:
+- Fewer partial products (4 vs 8) means smaller adder tree
+- Booth encoding handles negative numbers correctly
+- Balanced Wallace tree provides good timing characteristics
+- Power efficient due to reduced switching activity

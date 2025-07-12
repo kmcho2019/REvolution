@@ -1,0 +1,15 @@
+Refactoring Strategy:
+1. Expression Simplification:
+   - The original solution uses a NOR implementation with 4 product terms
+   - We can simplify this to 3 terms by combining (a & b & (~c | ~d)) and (b & ~c & d) into (b & (~c | (a & ~d)))
+   - This reduces the number of OR operations while maintaining the same logic
+
+2. Structural Change:
+   - Instead of one large NOR operation, break it into intermediate signals
+   - This improves readability and may help synthesis tools with optimization
+   - Use continuous assignments (assign) for clarity
+
+3. Logical Equivalence:
+   - Maintain the same truth table as the original K-map
+   - Verify that all essential prime implicants are covered
+   - Ensure no logical redundancy exists in the new expression

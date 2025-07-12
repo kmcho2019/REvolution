@@ -1,0 +1,12 @@
+Simplified approach:
+1. Use a 2-bit counter to track 4 cycles (0-3)
+2. shift_ena should be high when counter < 4 (i.e., not 3)
+3. Reset behavior:
+   - Immediately set counter to 0 (first cycle)
+   - Count up to 3 (total 4 cycles)
+   - Then stay at 3 (shift_ena stays low)
+4. Key simplifications:
+   - Remove separate 'done' register (implied by counter value)
+   - shift_ena is simply (counter != 3)
+   - Still maintains exact 4-cycle assertion
+   - Fewer registers (only 2 bits needed)

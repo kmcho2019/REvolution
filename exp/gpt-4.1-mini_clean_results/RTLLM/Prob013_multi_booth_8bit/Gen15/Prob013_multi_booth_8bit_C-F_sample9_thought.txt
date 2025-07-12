@@ -1,0 +1,22 @@
+To combine the best of both examples, I will design a radix-4 Booth multiplier that clearly separates the control FSM and the datapath. Following Example 1, I will use radix-4 Booth encoding (3 bits) to halve the iteration count to 5 cycles (since 8-bit inputs produce up to 4 pairs + extra bit for Booth recoding). I will:
+
+- Use a 3-state FSM (IDLE, RUN, DONE) for clarity and control.
+- On reset, load inputs sign-extended into registers.
+- Use combinational logic to decode the Booth code (3 bits) and generate partial product.
+- Update an accumulator (product) by adding the partial product shifted by 2*step bits.
+- Shift the multiplier register arithmetic right by 2 bits each cycle, as in radix-4 Booth.
+- Increment step counter until completion (5 cycles).
+- Output the final product and assert ready at DONE.
+
+This approach unites Example 1's radix-4 logic and FSM clarity with Example 2's structured control signals and clean separation of combinational and sequential logic.
+
+Additional improvements:
+- Use typedef enum for FSM state clarity.
+- Avoid unnecessary sign extensions by choosing consistent register widths.
+- Keep the accumulator wider (18 bits) to prevent overflow in intermediate sums.
+- Register outputs only in DONE state.
+- Set rdy = 1 only in DONE state.
+- Use non-blocking assignments in sequential logic, combinational logic outside.
+- Fully comment the code.
+
+This fusion yields a robust, clean, synthesizable radix-4 Booth multiplier for 8-bit signed inputs with minimal cycles (5), clean separation of concerns, and clear ready signaling.

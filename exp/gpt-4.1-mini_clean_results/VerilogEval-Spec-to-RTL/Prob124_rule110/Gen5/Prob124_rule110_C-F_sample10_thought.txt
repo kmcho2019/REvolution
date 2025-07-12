@@ -1,0 +1,12 @@
+Fuse the clean and explicit next-state computation from Example 2, which uses a dedicated function and explicit boundary handling, with the concise boolean expression and simple indexing idea from Example 1. To improve clarity and synthesis friendliness, avoid the function inside the generate block accessing out-of-range indices. Instead, use a small combinational block that pads q with zeros at boundaries, forming a 514-bit vector {0, q, 0}. This lets us uniformly index left, center, and right neighbors without conditional logic or function calls.
+
+Implement the next state as next_q[i] = (~left & center) | (center ^ right), where left = q_ext[i+2], center = q_ext[i+1], right = q_ext[i]. Update q synchronously on clk. On load, q is loaded with input data immediately.
+
+This fusion provides:
+- Explicit and uniform neighbor access without conditional or function calls for simpler and possibly faster synthesis.
+- Clear, compact Rule 110 logic with a well-known minimized boolean formula.
+- A single always block for sequential logic, and purely combinational next-state logic.
+- No redundant complexity or unnecessary serial update logic.
+- Boundary handling implicit in zero-padded extended vector.
+
+The result should maintain clarity and correctness, be synthesis-friendly, and have clean timing and power characteristics.

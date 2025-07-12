@@ -1,0 +1,9 @@
+Refactor the design to use a finite state machine (FSM) approach and synchronous logic only on the positive clock edge, avoiding explicit negedge triggered logic. The FSM will cycle through states representing each clock tick count, toggling two internal flip-flops at specific counts (0 and halfway point), representing the half-period toggles of clk_div1 and clk_div2. Then combine these flip-flops to form the output clk_div.
+
+By removing negedge-triggered always block and replacing cnt_reg by a state-based approach with synchronous logic, the timing is simplified and synthesis friendliness improved. The clk_div2 toggling is synchronized within the same positive edge clock domain with state encoding instead of a delayed cnt. This preserves the dual-edge effect but within a single clock domain.
+
+Also, we implement clk_div1 and clk_div2 toggling in one always block with conditions derived from the state. This way, the design is fully synchronous, easier to analyze, and synthesis tools can better optimize it.
+
+The overall functionality remains the same: toggling clk_div1 and clk_div2 on count 0 and HALF_DIV, and combining both outputs with OR to generate clk_div, which divides the input clock frequency by the odd NUM_DIV parameter.
+
+We keep the compile-time odd check for NUM_DIV and use parameterized widths.

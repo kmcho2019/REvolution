@@ -1,0 +1,13 @@
+To solve this problem, we can design a finite state machine (FSM) that takes into account the various states of the Lemming and the transitions between them. A novel architectural idea here is to use a hybrid approach that combines a Moore state machine with a counter-based mechanism to track the fall duration and the Lemming's walking direction. 
+
+We can define an enumeration of states that includes WALKING_LEFT, WALKING_RIGHT, FALLING, DIGGING, and SPLATTERED. The state machine will transition between these states based on the input signals, such as bump_left, bump_right, ground, and dig.
+
+To handle the walking direction, we can use a separate register to store the current direction. When the Lemming is bumped, we can toggle the walking direction.
+
+To implement the fall counter, we can use a counter that increments when the Lemming is in the FALLING state. When the Lemming hits the ground, we can check the fall counter to determine if the Lemming should splatter.
+
+The digging mechanism can be implemented by checking the dig signal when the Lemming is in the WALKING state. If the dig signal is active, we can transition to the DIGGING state.
+
+The output signals can be assigned based on the current state of the machine. For example, when the Lemming is in the WALKING_LEFT state, we can set the walk_left signal to 1.
+
+By using a hybrid approach that combines a Moore state machine with a counter-based mechanism, we can accurately model the behavior of the Lemmings and implement the required functionality.

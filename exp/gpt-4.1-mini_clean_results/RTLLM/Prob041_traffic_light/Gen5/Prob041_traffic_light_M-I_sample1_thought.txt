@@ -1,0 +1,5 @@
+To optimize the existing traffic light FSM for better power, performance, and area (PPA), I will introduce clock enable logic to the timer and state registers. This prevents unnecessary toggling of registers when the timer is not decremented or state not changed, reducing power consumption. Also, I will separate state transitions from timer counting to clarify logic and aid synthesis tools for optimization.
+
+Additionally, I'll use a parameterized state encoding with enumerated localparams, and simplify combinational logic in next state/timer calculation. The shortened_flag logic will be refined to set only when a pass_request arrives and the timer is shortened, avoiding redundant updates. Outputs will remain combinational.
+
+This approach preserves correctness while minimizing switching activity, slightly reducing area by avoiding unnecessary logic toggling and clarifying timing paths to potentially improve clock frequency.

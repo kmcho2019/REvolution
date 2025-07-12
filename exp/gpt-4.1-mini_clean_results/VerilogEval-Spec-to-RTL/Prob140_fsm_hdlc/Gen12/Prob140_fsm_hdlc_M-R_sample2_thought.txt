@@ -1,0 +1,14 @@
+Refactor the design by implementing the FSM with explicit state encoding using one-hot style states representing the count of consecutive ones (0 to 7). This approach replaces the saturating counter with separate state signals for clarity. The next state and outputs are expressed as combinational `assign` statements outside of any always block. The state registers update synchronously on the clock.
+
+Outputs `disc`, `flag`, and `err` are Moore outputs registered one cycle after the condition is detected, so they are assigned from combinational signals derived from current state and input.
+
+This approach uses explicit states and combinational assigns to clarify FSM structure and data flow, improving readability and making output logic combinational and simple. It still asserts outputs for exactly one clock cycle after the condition occurs and resets properly on synchronous reset.
+
+The state encoding is as follows:
+- S0: zero consecutive ones seen
+- S1 to S6: 1 to 6 consecutive ones
+- S7: error (7 or more ones)
+
+This replaces the 3-bit counter with one-hot state signals and the next state combinational logic with a simple `assign` expression using conditional operators.
+
+This style may help clarify the FSM behavior and facilitate modifications or expansions in the future.

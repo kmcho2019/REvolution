@@ -1,0 +1,15 @@
+To implement the Lemming's behavior, we can use a finite state machine (FSM) with several states:
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALL: The Lemming is falling.
+- DIG: The Lemming is digging.
+
+We need to use an enumeration to represent the different states of the FSM. 
+When areset is asserted, the FSM resets to the WALK_LEFT state.
+In the WALK_LEFT and WALK_RIGHT states, the FSM checks the bump_left, bump_right, and ground signals to determine the next state.
+If ground is 0, the FSM transitions to the FALL state.
+If dig is 1 and ground is 1, the FSM transitions to the DIG state.
+In the FALL state, the FSM checks the ground signal to determine when to transition back to the WALK_LEFT or WALK_RIGHT state.
+In the DIG state, the FSM checks the ground signal to determine when to transition to the FALL state and then back to the WALK_LEFT or WALK_RIGHT state.
+We need to use a register to store the current state and another register to store the previous direction.
+We also need to use combinational logic to determine the next state and the outputs of the FSM.

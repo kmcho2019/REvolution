@@ -1,0 +1,18 @@
+Here's an alternative approach using multiplexers to implement the Karnaugh map logic:
+
+1. First, observe that when c=0 (top two rows of K-map):
+   - Output is 0 when ab=00 or 01 (regardless of d)
+   - Output is 1 when ab=10 or 11
+   This can be simplified to a when c=0 (since a=0 for first two cases, a=1 for last two)
+
+2. When c=1 (bottom two rows of K-map):
+   - Output is 0 only when ab=01
+   - Output is 1 otherwise
+   This is equivalent to ~b | a
+
+3. We can implement this using a 2:1 mux where:
+   - Select line is c
+   - Input 0 (when c=0) is a
+   - Input 1 (when c=1) is ~b | a
+
+This implementation is logically equivalent but uses a different architectural approach with explicit multiplexing.

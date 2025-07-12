@@ -1,0 +1,9 @@
+Instead of using conventional state encoding, I'll implement the state machine using a 6-bit shift register where each bit represents being in a particular state. This "one-hot-like" approach offers:
+
+1. **Parallel Transition Logic**: Each state's next state logic can be computed independently in parallel
+2. **Simplified Output Logic**: The output z is simply the OR of states E and F
+3. **Fast Transitions**: State changes are simple bit shifts with minimal combinational logic
+4. **Power Gating**: Inactive states remain at 0, reducing dynamic power
+5. **Reset Efficiency**: Only needs to set one bit (state A) on reset
+
+The shift pattern is carefully designed so each state's position indicates where the next state bits should be shifted based on input w. This creates a very regular structure that's both area and power efficient.

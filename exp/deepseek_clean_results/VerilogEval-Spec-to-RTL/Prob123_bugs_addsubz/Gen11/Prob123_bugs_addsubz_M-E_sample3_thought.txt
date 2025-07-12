@@ -1,0 +1,9 @@
+Here's a novel approach using a carry-save adder (CSA) structure for the adder-subtractor:
+
+1. **Parallel Computation**: Compute both addition and subtraction simultaneously using separate paths, then select the correct result using a multiplexer. This avoids the need for conditional inversion and carry-in logic.
+
+2. **Early Zero Detection**: Implement the zero flag by checking if all bits of the selected result are zero using a reduction NOR operation. This is done in parallel with the result selection.
+
+3. **Resource Sharing**: While computing both operations in parallel might seem redundant, modern synthesis tools can optimize this by sharing common sub-expressions between the add and subtract paths.
+
+This approach provides a more balanced timing path since both operations are computed independently, and the selection happens at the end. The zero detection is also simplified to a direct comparison.

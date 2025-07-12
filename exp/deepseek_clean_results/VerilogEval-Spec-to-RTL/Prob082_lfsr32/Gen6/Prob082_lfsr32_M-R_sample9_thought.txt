@@ -1,0 +1,14 @@
+To refactor the LFSR implementation while maintaining the same functionality:
+1. Move the combinational logic outside the always block using continuous assignments
+2. Create a next_state calculation that can be assigned in one step
+3. Keep the sequential part simple with just the register update
+4. This separates combinational and sequential logic more clearly
+5. The tap positions remain the same (31, 21, 1, 0)
+6. The feedback is still q[0] (LSB)
+7. Reset behavior remains synchronous setting q to 32'h1
+
+Benefits:
+- Clear separation of combinational and sequential logic
+- Potentially better synthesis optimization
+- More readable structure
+- Same PPA characteristics as original

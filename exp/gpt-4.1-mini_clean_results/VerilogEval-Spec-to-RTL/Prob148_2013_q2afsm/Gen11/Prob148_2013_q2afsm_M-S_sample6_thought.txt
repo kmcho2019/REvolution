@@ -1,0 +1,12 @@
+Simplify the FSM by encoding the states with 2-bit binary values since we only have four states (A, B, C, D). Use 2-bit encoding to reduce state register width from 3 bits to 2 bits, which simplifies hardware and logic. Map states as:
+
+- A = 2'b00 (idle)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+Use a single 2-bit register for state and next_state. Implement synchronous active-low reset to go to state A.
+
+Output grant signals g will be generated combinationally based on the current state, where only the corresponding grant bit is set.
+
+This binary encoding reduces flip-flop count, logic complexity, and makes the FSM easier to understand and synthesize while preserving functionality and priority logic.

@@ -1,0 +1,9 @@
+To solve this problem, we can design a finite state machine (FSM) that monitors the sensor inputs and controls the flow rate outputs accordingly. The FSM will have four states, each corresponding to a specific water level range: above the highest sensor, between the highest and middle sensors, between the middle and lowest sensors, and below the lowest sensor.
+
+The FSM will use a binary encoding for the states, with two bits (state[1:0]) to represent the four states. The state transitions will be based on the sensor inputs and the current state.
+
+We will use an always block to update the state and determine the output signals 'fr2', 'fr1', 'fr0', and 'dfr' based on the current state and sensor inputs.
+
+To determine the supplemental flow rate signal (dfr), we will compare the current sensor state with the previous sensor state. If the current level is higher than the previous level, we will set 'dfr' to 1.
+
+We will use a combination of always blocks and continuous assignments to update the state, determine the output signals, and reset the FSM to a known state when the reset signal is asserted.

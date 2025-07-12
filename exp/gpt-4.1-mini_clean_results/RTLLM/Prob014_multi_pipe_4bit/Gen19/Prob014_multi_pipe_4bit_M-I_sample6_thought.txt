@@ -1,0 +1,35 @@
+The main issue in the original design is that all partial products are added combinationally in one clock cycle in stage 2, which does not align with the requirement to use two pipeline register levels to store intermediate sums and control the multiplication process. The problem expects a pipeline multiplier that accumulates partial products across two stages of registers, not a combinational summation of all partial products in one stage.
+
+To fix this:
+
+1. **Extend inputs:** Extend the multiplicand (mul_a) by `size` zeros at the MSB side to produce an extended input of width 2*size.
+
+2. **Partial product generation:** Generate all partial products combinationally for each bit of mul_b as before.
+
+3. **Stage 1 register:** Capture the partial products in registers at stage 1.
+
+4. **Stage 2 register:** Instead of combinationally adding all partial products at once, perform the partial products accumulation in two pipeline stages:
+
+   - At stage 1 registers, store partial products for each bit.
+   
+   - At stage 2 registers, sum partial products progressively in pairs, for example:
+     - sum1 = stage1_pp0 + stage1_pp1 (stored in stage2 registers)
+     - sum2 = stage1_pp2 + stage1_pp3 (stored in stage2 registers)
+   
+5. **Final output:** After stage 2 registers capture these sums, in the next clock cycle output the sum of sum1 + sum2 registered as the final product.
+
+6. **Pipeline register count:** This approach introduces two levels of registers storing intermediate values: 
+   - stage1_pp[i]: partial products registers
+   - stage2_sum[i]: sums of pairs of partial products
+
+   The final addition to produce mul_out can be done in a simple registered adder after stage2_sum to meet the pipeline stages requirement.
+
+7. **Latency:** This design results in a pipeline latency of three cycles, which is acceptable if the problem allows it; otherwise, the last addition can be done combinationally before output register to maintain two pipeline levels.
+
+8. **Reset:** All registers asynchronously reset to zero on `rst_n` low.
+
+This structured pipeline approach reduces combinational logic depth per cycle, aligns with the problem's pipeline requirement, and fixes functional issues.
+
+To summarize, the key change is breaking the addition of four partial products into two pairs summed in stage 2 registers, then finally summing these two pairs at output register stage. This respects the "two levels of registers" pipeline structure.
+
+Below is the corrected and clean Verilog implementation with this pipeline structure.

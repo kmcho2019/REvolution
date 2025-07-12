@@ -1,0 +1,14 @@
+To improve the existing LIFO buffer design for better timing and power while maintaining correctness, I will:
+
+- Avoid the use of subtraction inside the stack memory index during pop operation by precomputing the pop address in a register, thus improving timing closure.
+- Register the pop address one cycle before reading the dataOut to break the read-after-decrement hazard. This means the popped data will appear one cycle after the pop command.
+- Use a separate registered pop_addr to address the stack memory synchronously.
+- Update dataOut synchronously on pop by reading from stack_mem at pop_addr.
+- This pipeline approach reduces critical path from combinational address subtraction and memory read on the same clock edge.
+- Push operation remains the same.
+- Maintain the same combinational logic for push_en and pop_en to gate operations.
+- Do not clear stack_mem on reset or pop to reduce toggling.
+- Keep flags EMPTY and FULL combinational from SP.
+- Overall, the one-cycle latency on pop dataOut is a minor tradeoff for improved timing and reduced power.
+
+This will help improve timing (less combinational complexity on dataOut path) and slightly reduce power by avoiding complicated addressing logic within the sequential block.

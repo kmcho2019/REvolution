@@ -1,0 +1,26 @@
+Refactored Architecture: "Parallel Computation ALU with Continuous Assignments"
+
+Key Refactoring Changes:
+1. Continuous Assignment Paradigm:
+   - Replaced always block with continuous assignments for all outputs
+   - Enables more transparent data flow and potential synthesis optimizations
+
+2. Operation Group Separation:
+   - Arithmetic, logical, shift, and comparison operations computed in parallel
+   - Final result selected via a single multiplexer structure
+
+3. Optimized Flag Generation:
+   - Zero flag uses direct bitwise reduction
+   - Carry/overflow computed only when needed for arithmetic ops
+   - Negative flag derived directly from result MSB
+
+4. Simplified Control Logic:
+   - Operation selection through hierarchical conditional assignments
+   - Clear separation between operation computation and result selection
+
+Implementation Highlights:
+- All intermediate results computed continuously in parallel
+- Final result selection through priority-encoded assignment
+- Flag generation directly tied to operation results
+- Explicit operation enable signals for better readability
+- Maintains same functionality while improving code structure

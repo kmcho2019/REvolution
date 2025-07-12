@@ -1,0 +1,11 @@
+To design a traffic light controller with the specified requirements, I will implement a finite state machine (FSM) that transitions between four states: idle, red, green, and yellow. The FSM will use a counter to keep track of the time spent in each state. The pedestrian button press will be handled by checking the current state and adjusting the counter accordingly. 
+
+The main idea is to use a hierarchical approach, where the top-level module controls the overall state transitions, and sub-modules handle the counter and output signal generation. This approach will make the code more modular and easier to maintain.
+
+The top-level module, `traffic_light`, will have four states: `idle`, `red`, `green`, and `yellow`. Each state will have a corresponding counter value that determines how long the state remains active. When the pedestrian button is pressed during the green state, the counter will be adjusted to ensure that the remaining time is no more than 10 clocks.
+
+The counter will be implemented as a separate module, `counter`, which will take the current state and pedestrian button press as inputs and generate the next state and counter value as outputs.
+
+The output signals, `red`, `yellow`, and `green`, will be generated based on the current state and will be updated at the end of each clock cycle.
+
+To optimize the design, I will use a one-hot encoding scheme for the states, which will reduce the number of states and transitions. I will also use a power-efficient counter design that only increments or decrements the counter when necessary.

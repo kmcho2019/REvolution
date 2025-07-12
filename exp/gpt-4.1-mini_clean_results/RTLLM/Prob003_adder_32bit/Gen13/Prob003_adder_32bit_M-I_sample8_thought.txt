@@ -1,0 +1,18 @@
+To improve the original 32-bit CLA design, the main focus is to reduce the carry propagation delay and optimize area/power without losing clarity and modularity.
+
+Key improvements:
+1. **16-bit CLA block internal carry logic:**
+   Replace the simple ripple carry generation inside the 16-bit CLA block with a two-level hierarchical carry-lookahead logic to reduce carry path delay. Instead of generating carry signals in a simple loop, implement group generate and propagate signals for 4-bit sub-blocks and then combine them hierarchically for faster carry computation. This reduces logic depth from O(n) to O(log n).
+
+2. **Block generate logic:**
+   Similarly, compute the block-level generate signal from the 4-bit group generates and propagates for efficient carry-out generation.
+
+3. **Power and area:**
+   By using hierarchical lookahead, the number of intermediate signals toggling per bit can be reduced, decreasing dynamic power. The logic depth reduction also reduces glitches, helping power and timing.
+
+4. **Maintain 1-based input/output interface:**
+   Keep the top-level 32-bit adder interface unchanged for compatibility.
+
+The strategy balances better timing through hierarchical CLA, keeping modular 16-bit blocks, and not increasing area significantly by reusing hierarchical computation patterns. This approach avoids complex parallel prefix adders for simplicity while yielding a meaningful timing improvement.
+
+In summary, the 16-bit CLA will be split into four 4-bit CLA sub-blocks, each with their own P and G. The 4-bit sub-block carries will be generated via lookahead logic, and those outputs will be combined to produce the final carry chain and block propagate/generate signals efficiently.

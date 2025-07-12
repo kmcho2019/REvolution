@@ -1,0 +1,13 @@
+Refactor the FSM using an explicit Moore FSM style with:
+
+- Binary state encoding for fewer flip-flops.
+- Separate registers for state and output signals f, g.
+- Use synchronous reset (active low) with clean sequential logic.
+- Implement the x input pattern detection using a 3-bit shift register updated on each clock only in the relevant state.
+- Detect pattern 1,0,1 from the updated shift register synchronously.
+- Use a separate small counter to monitor 'y' input for two cycles after pattern detection.
+- Use combinational logic for next-state and next-output calculation.
+- Outputs f and g driven by registered signals updated every clock.
+- Ensure that the one-cycle pulse on f after reset and one-cycle pulse on g after detecting pattern are precisely timed.
+- Minimize combinational logic in state transitions by keeping output assignments in sequential block based on state registers.
+- This structure increases clarity, separates output and state registers cleanly, and fixes off-by-one counting for y monitoring by incrementing counter after checking y condition.

@@ -1,0 +1,14 @@
+Improvement strategy:
+1. Maintain the same core FSM approach but optimize state encoding for better PPA
+2. Use one-hot encoding instead of binary for potentially better timing and simpler decode logic
+3. Reduce state bits from 3 to 5 (one-hot) since modern FPGAs/ASICs handle one-hot well
+4. Keep synchronous reset behavior identical
+5. Simplify output logic by directly using one state bit as output
+6. Add explicit default case for better synthesis results
+
+Benefits:
+- One-hot encoding typically results in faster FSMs with simpler next-state logic
+- Output logic becomes trivial (just one state bit)
+- More predictable timing in physical implementation
+- Maintains same functional behavior as original
+- Easier to modify if requirements change

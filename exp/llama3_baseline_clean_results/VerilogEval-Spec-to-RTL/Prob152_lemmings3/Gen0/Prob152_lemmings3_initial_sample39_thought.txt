@@ -1,0 +1,13 @@
+To implement the Lemming behavior, we need to model it as a Moore state machine. We can define the states as follows: 
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+
+The state machine will transition between these states based on the input signals. When the ground disappears, the Lemming will transition to the FALLING state. When the ground reappears, the Lemming will transition back to the walking state it was in before falling. 
+
+When the dig signal is high and the Lemming is walking on ground, it will transition to the DIGGING state. It will continue digging until it reaches the other side, at which point it will fall. 
+
+The state machine will also change direction when bumped, but only if the Lemming is not falling or digging. 
+
+We can implement this state machine using a Verilog module with a case statement to handle the different states and transitions.

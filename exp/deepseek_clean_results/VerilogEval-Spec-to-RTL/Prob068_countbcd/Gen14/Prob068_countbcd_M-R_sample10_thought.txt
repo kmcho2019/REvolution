@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Replace the hierarchical BCD_Digit modules with a flat implementation using always blocks for each digit
+2. Use continuous assignments for the enable signals (ena) to maintain parallel computation
+3. Keep the synchronous reset and positive-edge triggered behavior
+4. Maintain the same BCD counting logic but implement it directly in the TopModule
+5. Simplify the structure by removing submodules while keeping the same functionality
+
+Key changes:
+- Eliminated submodule hierarchy for potentially better synthesis optimization
+- Kept parallel enable computation to avoid ripple delay
+- Used direct always blocks for each digit's counting logic
+- Maintained identical interface and functionality
+- Reduced module count for simpler verification

@@ -1,0 +1,12 @@
+The existing design correctly implements an 8-bit CLA adder with explicit carry computations and overflow detection, but the carry logic is implemented as a ripple carry within a CLA framework. This can be optimized to a true carry lookahead logic that precomputes block carry signals faster, reducing the critical path delay.
+
+Improvement strategy:
+- Implement a fully parallel carry lookahead adder using carry lookahead logic equations to compute carry signals in parallel rather than sequentially.
+- Use group propagate and generate signals to compute carries at once, minimizing carry chain delay.
+- Simplify the interface by removing the carry_in (cin) input since the top module always uses zero.
+- Remove the separate carry_into_msb output and compute overflow directly inside the top module using the final carry computations.
+- This improves timing (lower WNS and TNS) by reducing carry chain depth.
+- Logic complexity will increase slightly but is still small for 8 bits.
+- Keep code readable and synthesizable.
+
+This approach better balances latency and area for 8-bit addition and improves power by reducing long carry chains.

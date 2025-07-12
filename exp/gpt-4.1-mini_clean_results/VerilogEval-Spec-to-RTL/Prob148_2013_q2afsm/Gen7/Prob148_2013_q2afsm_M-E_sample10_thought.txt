@@ -1,0 +1,20 @@
+This solution uses binary encoding of states with a 2-bit state register. The four states are:
+
+- 2'b00: A (idle)
+- 2'b01: B (grant device 0)
+- 2'b10: C (grant device 1)
+- 2'b11: D (grant device 2)
+
+Using binary encoding reduces the number of flip-flops from 3 to 2 compared to one-hot encoding, potentially improving area and power.
+
+The FSM logic:
+- In idle (A), the next state depends on the highest priority request. Priority order is r[0], then r[1], then r[2].
+- In grant states (B, C, D), remain if the respective request remains asserted; otherwise go back to idle (A).
+
+Outputs g are derived combinationally based on current state: g[0] = 1 in state B, g[1] = 1 in C, g[2] = 1 in D, else 0.
+
+Active-low synchronous reset sets state to A.
+
+Separate always blocks are used for state register and next-state logic. Outputs are assigned combinationally with a combinational always block for clarity.
+
+This approach balances simplicity, area, and power by minimizing flip-flops and straightforward logic.

@@ -1,0 +1,25 @@
+After analyzing the feedback, here's my improved approach:
+
+1. **Synchronous Outputs**: Move all output assignments to the synchronous always block to prevent glitches and ensure proper timing.
+
+2. **f Pulse Control**: 
+   - Generate f=1 only in STATE_B for exactly one cycle
+   - Clear f immediately in the next state (STATE_C)
+
+3. **Strict Sequence Detection**:
+   - STATE_C: Wait for first x=1
+   - STATE_D: Must see x=0 next
+   - STATE_E: Must see x=1 to complete sequence
+   - Any deviation returns to STATE_C
+
+4. **y Monitoring with Precise Timeout**:
+   - Use a dedicated counter that starts when entering STATE_F
+   - Check y first before counting cycles
+   - Transition to permanent state after exactly 2 cycles if y not found
+   - Clear counter when leaving STATE_F
+
+5. **Output Stability**:
+   - Maintain g value permanently in STATE_G
+   - Reset all outputs when reset is asserted
+
+This ensures strict adherence to timing requirements and correct sequence detection.

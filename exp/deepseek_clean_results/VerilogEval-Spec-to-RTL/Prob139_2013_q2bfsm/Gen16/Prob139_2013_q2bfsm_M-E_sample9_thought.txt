@@ -1,0 +1,17 @@
+Here's a novel approach using a combination of shift registers and counters:
+
+1. **State Machine Simplification**: Use only 2 states (IDLE and ACTIVE) since the pattern detection and timeout can be handled with registers and counters.
+
+2. **Pattern Detection**: Implement a 3-stage shift register for x that updates every cycle, allowing us to detect the 1-0-1 sequence in parallel.
+
+3. **Timeout Mechanism**: Use a 2-bit counter for the y monitoring phase that:
+   - Starts when g is first set
+   - Resets if y=1 is detected
+   - Freezes the counter when timeout occurs or y=1 is detected
+
+4. **Output Control**:
+   - f is a one-shot pulse generated immediately after reset
+   - g is set when pattern is detected and remains set based on y condition
+   - Outputs maintain their values until next reset
+
+This approach reduces state transitions and handles timing requirements through counters and registers rather than complex state logic.

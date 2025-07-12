@@ -1,0 +1,15 @@
+To optimize the sequence detector's PPA based on the provided metrics and analysis, I will:
+
+1. Change the FSM encoding from binary to one-hot encoding. Although one-hot uses more flip-flops, it typically reduces combinational logic complexity and can improve timing (positive WNS and less negative TNS).
+
+2. Maintain synchronous active-low reset for consistency and integration ease.
+
+3. Add an enable signal for the output register to reduce unnecessary toggling, decreasing power consumption by updating sequence_detected only when next_state changes or is S4.
+
+4. Keep output assertion as a one-cycle pulse on entering the S4 state.
+
+5. Preserve overlapping detection by adjusting next state logic with one-hot states.
+
+6. Use more explicit next state naming with one-hot state bits for clarity and timing benefits.
+
+This approach should reduce critical path delays, slightly increase area due to more flip-flops, and decrease power from reduced toggling on output register. Overall, it should improve timing and power metrics while keeping area reasonable.

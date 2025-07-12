@@ -1,0 +1,10 @@
+To implement the finite state machine (FSM) described, we will use a minimal number of states. Given the requirements, we can see that the FSM primarily needs to be in two main states after the initial reset state A: one state to check the condition for 'w' over three clock cycles (State B), and possibly additional states to keep track of the number of 'w' instances seen during these cycles. However, since the output 'z' is determined based on the count of 'w' over a fixed window of three cycles and we don't need to remember the count over multiple windows, we can minimize the number of states by using a counter within the state machine to track the number of 'w' instances.
+
+The FSM will transition from state A to state B when 's' goes high. Once in state B, it will start checking 'w' over the next three cycles. To implement this, we can use a single state (B) with a counter that increments every cycle for three cycles, resetting after the third cycle. The output 'z' will be set based on the count of 'w' instances at the end of the third cycle.
+
+We'll need to implement the following:
+1. A state machine with at least two states (A and B).
+2. A counter to keep track of the cycles since entering state B and to count 'w' instances.
+3. Logic to determine 'z' based on the 'w' count at the end of the three cycles.
+
+The key insight is recognizing that we don't need a separate state for each condition (like counting 'w' instances) but can manage these conditions within a single state by using counters and conditional logic.

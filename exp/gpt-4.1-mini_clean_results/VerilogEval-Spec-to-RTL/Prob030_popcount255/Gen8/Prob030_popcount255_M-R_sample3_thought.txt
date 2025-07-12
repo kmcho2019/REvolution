@@ -1,0 +1,9 @@
+Refactor the popcount17 module to use a parallel addition structure with explicit intermediate signals but without generate loops, relying on manual wiring of sums to make the adder tree structure clearer and more direct. This approach avoids generate loops in popcount17 for clarity and explicitness.
+
+At the top level, instead of multiple generate loops for summations, flatten the summation stages using explicitly named wires and direct assignments to emphasize the data flow and reduce hierarchy.
+
+Use continuous assignments (`assign`) for all logic, making the design purely combinational, and use explicit zero-extensions where needed.
+
+This refactoring improves code readability and debuggability by making the dataflow and addition stages explicit and linear, avoiding nested generate loops, but retains the same balanced hierarchical addition approach for performance.
+
+No functionality changes are made; only structural and stylistic changes aim to improve clarity and maintainability.

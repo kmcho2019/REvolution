@@ -1,0 +1,11 @@
+To optimize the implementation while maintaining the same functionality, I'll make these key changes:
+1. Simplify the state transition logic by recognizing that state_B is persistent once entered
+2. Combine the state transition and output logic more efficiently
+3. Use a single always block for state transitions to reduce redundant logic
+4. Maintain one-hot encoding but optimize the combinational expressions
+
+The key insights are:
+- Once in state B, we never return to state A
+- The output z can be expressed as x XOR state_B
+- Next state A is only active when currently in A and x=0
+- Next state B is active when either in B or (in A and x=1)

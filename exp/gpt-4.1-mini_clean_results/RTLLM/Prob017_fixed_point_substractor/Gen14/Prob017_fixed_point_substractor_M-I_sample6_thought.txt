@@ -1,0 +1,32 @@
+The given solution uses signed subtraction on two's complement inputs, which correctly handles fixed-point subtraction inherently, as long as inputs and outputs share the same Q format.
+
+The module is fully combinational and handles zero by explicitly clearing the sign bit if the result is zero. This is good and concise.
+
+However, the parameter Q is unused internally; it's only for documentation and potential extension. Since the fixed-point format is represented in two's complement directly, the subtraction can be done as a simple signed subtraction without special fractional handling. This matches the requirement of the problem.
+
+To make the solution more aligned with the problem's stated conditions about handling sign and magnitude logic explicitly (same sign subtraction vs different sign addition of absolute values), I will explicitly implement this logic rather than rely on signed subtraction alone.
+
+This means:
+- Extract sign bits of a and b.
+- Compare signs.
+- If signs are the same, subtract magnitudes.
+- If different, add magnitudes and determine result sign based on magnitude comparison.
+- When result is zero, force sign bit to 0.
+- Output the result in two's complement fixed-point format.
+
+Implementing this explicit sign/magnitude logic helps clarify that the fixed-point arithmetic respects the problem's requirements.
+
+Additionally:
+- Use parameters for bit widths.
+- Internal registers only if needed; else wires.
+- Signed arithmetic to simplify magnitude operations.
+- The code will handle overflow by truncation naturally because the result is limited to N bits.
+
+This explicit approach ensures the problem specification is fully met and self-documenting, while still being efficient and synthesizable.
+
+I will also include comments for clarity.
+
+Overall improvement:
+- Explicit sign and magnitude handling per problem statement.
+- Proper zero sign bit clearing.
+- Same combinational approach.

@@ -1,5 +1,0 @@
-The code attempts to detect bits changing from 1 to 0 by performing an XOR operation between the current input and the previous input to identify the changed bits, followed by a masking operation to filter out the bits that changed from 1 to 0.
-
-The issue lies in the masking operation `out = changed_bits & ~in;`. The intention was to filter out the bits that changed from 1 to 0, but the operation instead filters out bits that are currently 0 in the `in` vector, not the bits that changed from 1 to 0.
-
-This incorrect logic leads to mismatches in the simulation results, as the output `out` will not accurately capture the bits that changed from 1 to 0 in consecutive clock cycles. This flaw in the logic causes the significant number of mismatches observed in the simulation log.

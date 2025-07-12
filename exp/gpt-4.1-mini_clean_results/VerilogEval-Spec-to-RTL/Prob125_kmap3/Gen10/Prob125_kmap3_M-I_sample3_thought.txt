@@ -1,0 +1,13 @@
+Analyze the Karnaugh map carefully and exploit the don't-care conditions (d) to simplify the logic further. The original solution uses a combined form (not_c & a) | (c & (a | ~b)). We can try to reduce the expression further by using the Karnaugh map directly and optimizing via minimal sum of products or product of sums forms.
+
+From the Karnaugh map, note that the output is mostly '1' when a=1 regardless of other inputs or when b=0 and c=1. In other words, the function can be simplified to out = a | (c & ~b).
+
+This eliminates the extra AND of not_c & a from the original solution and reduces the logic to a simple OR of 'a' and 'c & ~b'. This reduces gate count (only one AND and one OR plus one NOT), minimizes area, and likely reduces power by having fewer gates and fewer switching nodes.
+
+Thus, the improved logic is:
+
+  out = a | (c & ~b)
+
+The don't-care d inputs are ignored again, choosing a convenient logic function.
+
+This approach improves area and power while maintaining performance.

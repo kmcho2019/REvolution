@@ -1,0 +1,10 @@
+Use a single 2-bit state register encoding all conditions: 00 = walk_left, 01 = walk_right, 10 = fall_left, 11 = fall_right. The low bit encodes direction (0=left,1=right), high bit encodes falling (0=walking,1=falling). On reset, state = walk_left (00).
+
+On each clock tick:
+- If falling (state[1]=1), stay falling unless ground=1, then switch to walking with same direction (low bit unchanged).
+- If walking (state[1]=0) and ground=0, transition to falling with same direction.
+- If walking and ground=1, bumps cause state direction bit updates: bump_left sets direction to right (1), bump_right sets direction to left (0), bump both flips direction.
+
+Outputs decoded from state: walk_left=state==00, walk_right=state==01, aaah=state[1]==1.
+
+This compact encoding merges walking/falling and direction into one register, simplifying next-state logic and output decoding with a single always block. It directly models problem states and transitions with minimal logic.

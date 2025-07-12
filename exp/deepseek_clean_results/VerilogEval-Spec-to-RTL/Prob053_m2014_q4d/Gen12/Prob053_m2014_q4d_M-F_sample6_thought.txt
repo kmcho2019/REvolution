@@ -1,0 +1,8 @@
+The feedback indicates the issue is with the undefined initial state of the flip-flop. Since the problem doesn't specify a reset signal, we need to handle the initial state differently. Here's the solution:
+
+1. Keep the same basic structure of XOR feedback to flip-flop
+2. Initialize the flip-flop output (out) to a known state (0) to avoid undefined behavior
+3. Use an initial block to set the initial value (this is synthesizable in most FPGAs)
+4. Maintain the positive-edge triggered behavior with no reset as specified
+5. The initialization ensures deterministic behavior from the first clock cycle
+6. The circuit still implements: out(t) = in(t-1) XOR out(t-1) after initialization

@@ -1,0 +1,11 @@
+Fuse the two examples by maintaining the clear separation of states and direction from Example 1, with a robust and precise bump direction update logic from Example 2 that exactly matches the specification for handling bump_left, bump_right, and simultaneous bumps.
+
+Keep the asynchronous reset and Moore output style from both. Use a small enumerated type for states (WALK, FALL, DIG, SPLAT) and a separate 1-bit direction register (0=left, 1=right). 
+
+Prioritize transitions with fall > dig > bump as in Example 1. Implement the fall counter saturating at 31 and triggering splat if falling duration > 20 cycles when ground returns.
+
+Use explicit and minimal combinational logic to reduce toggling and increase clarity, e.g., by combining bump inputs but branching explicitly in walking mode to correctly set direction.
+
+Keep default next_state assignments to current state for safety.
+
+This fusion leads to concise, readable, and fully functional FSM that follows the spec precisely, with robust bump direction behavior, efficient state and direction handling, and clean reset logic.

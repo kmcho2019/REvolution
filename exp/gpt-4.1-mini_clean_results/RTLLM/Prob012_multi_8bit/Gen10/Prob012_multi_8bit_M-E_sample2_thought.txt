@@ -1,0 +1,12 @@
+Implement an iterative shift-and-add multiplier using a simple FSM-like approach in combinational logic, emulating the classic multiplication algorithm without explicit looping constructs. The design accumulates the product bit-by-bit by conditionally adding the multiplicand when the current least significant bit of the multiplier is set, then shifting both operands appropriately. This approach uses a single 16-bit register for the product initialized to zero, and iteratively processes each bit of B from LSB to MSB, adding (A shifted left by current bit index) if the bit is 1, achieving multiplication by sequential partial summation and shifting in a purely combinational way via a generate-for loop unrolled at elaboration time.
+
+This method closely mimics hardware shift-and-add multiplier behavior but expressed in purely combinational style, with no balanced adder tree and no pre-computed partial products arrays, resulting in a simpler, resource-efficient, and easy-to-understand design suitable for synthesis.
+
+Key points:
+- Iteratively check each bit of B.
+- For each set bit, add A shifted by the bit index to an accumulator.
+- Accumulator width is 16 bits, product output is assigned from accumulator.
+- Shifts implemented using left-shift operator and bit concatenations.
+- Entire logic is combinational, no clock or registers.
+
+This direct iterative addition method implements the classical shift-and-add multiplication without balanced tree optimization, providing a clean and minimal hardware multiplication approach.

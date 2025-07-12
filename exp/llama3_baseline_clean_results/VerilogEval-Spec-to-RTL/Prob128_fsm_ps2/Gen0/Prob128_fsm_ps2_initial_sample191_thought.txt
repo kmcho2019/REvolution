@@ -1,0 +1,8 @@
+The TopModule will implement a finite state machine (FSM) to detect the message boundaries in the PS/2 mouse protocol byte stream. The FSM will have four states: IDLE, BYTE1, BYTE2, and BYTE3. 
+
+1. In the IDLE state, the module will discard incoming bytes until it finds a byte with in[3] = 1. When such a byte is found, it will transition to the BYTE1 state.
+2. In the BYTE1 state, the module will wait for the next byte, which will be considered as the second byte of the message, and then transition to the BYTE2 state.
+3. In the BYTE2 state, the module will wait for the next byte, which will be considered as the third byte of the message, and then transition to the BYTE3 state.
+4. In the BYTE3 state, the module will signal the receipt of a message by asserting the done signal and then return to the IDLE state.
+
+The reset signal will be used to reset the FSM to the IDLE state.

@@ -1,0 +1,21 @@
+Refactoring Strategy:
+1. Critical Path Optimization:
+   - Replace cascaded rollover conditions with parallel detection
+   - Pre-compute BCD hour digits using continuous assignments
+   - Simplify hour counter logic by removing intermediate comparators
+
+2. Power Optimization:
+   - Make all counters ena-gated to prevent unnecessary toggling
+   - Keep PM toggle logic minimal (only updates on hour changes)
+
+3. Structural Changes:
+   - Use continuous assignments for BCD increment logic where possible
+   - Combine related operations into single always blocks
+   - Use explicit rollover flags for clearer timing
+
+Key Improvements:
+- Parallel rollover detection instead of cascaded
+- Pre-computed BCD hour digits
+- Consolidated counter logic
+- All counters now properly ena-gated
+- Simplified hour counter with direct BCD output

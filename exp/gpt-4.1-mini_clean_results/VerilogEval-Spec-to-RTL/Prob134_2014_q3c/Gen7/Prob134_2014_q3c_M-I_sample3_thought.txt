@@ -1,0 +1,11 @@
+To optimize for better PPA, introduce a registered present state within the module instead of treating the input y as the present state. This aligns with conventional FSM implementation for better timing predictability and synthesis optimization. The input y will serve as the asynchronous reset or initial state input, while the internal state register updates on clk using next_state logic derived from the current internal state and input x. Outputs z and Y0 are then derived from the internal registered state and computed next_state accordingly.
+
+This approach improves timing (performance) by synchronizing state transitions with clk, reducing combinational path length on output signals. Area and power can also benefit by the synthesis tools optimizing the registered FSM. Also, explicitly encoding z as a function of internal state helps avoid redundant logic. This design matches industry-standard FSM coding styles and ensures clean PPA tradeoffs.
+
+Summary of improvements:
+- Add internal 3-bit state register updated on clk.
+- Use input y as asynchronous reset or initial state load.
+- Next state combinational from current state and input x.
+- Output z depends on current registered state.
+- Output Y0 depends on next_state LSB.
+- This results in a synchronous FSM with outputs combinationally derived, enhancing performance and timing closure without increasing area or power substantially.

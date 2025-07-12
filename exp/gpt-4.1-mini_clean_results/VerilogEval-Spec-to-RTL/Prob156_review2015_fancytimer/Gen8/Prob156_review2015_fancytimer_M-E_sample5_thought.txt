@@ -1,0 +1,21 @@
+To implement this timer cleanly, I will use a clear multi-state FSM with states:
+
+1. IDLE: Waiting for the 4-bit start pattern 1101 serially.
+2. LOAD_DELAY: Shift in exactly 4 bits of delay MSB first.
+3. COUNTING: Count the requested number of 1000-cycle blocks, counting cycles internally.
+4. DONE: Assert done and wait for ack.
+
+Key architectural decisions:
+
+- Use a 4-bit shift register to detect the pattern 1101 during IDLE.
+- When pattern detected, move to LOAD_DELAY.
+- In LOAD_DELAY, on each clock, shift delay bits MSB first by shifting left and inserting data at LSB; after 4 bits, capture delay.
+- For the timer count, use a block counter (10-bit) counting cycles 0 to 999; on each 1000 cycles, decrement a "blocks_remaining" counter initialized as delay+1.
+- Outputs:
+  - counting asserted only during COUNTING.
+  - count shows current blocks remaining - 1 (counts down delay down to 0).
+  - done asserted only in DONE state.
+- Only load delay bits during LOAD_DELAY state; ignore data in other states.
+- Use synchronous reset to reset all registers and FSM to IDLE.
+- This clean separation and explicit counters ensures accurate timing and no glitches.
+- count output is undefined outside COUNTING but will be held at last value for simplicity.

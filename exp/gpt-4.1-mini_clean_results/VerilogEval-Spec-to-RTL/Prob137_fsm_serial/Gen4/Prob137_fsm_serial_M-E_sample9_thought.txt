@@ -1,0 +1,7 @@
+Use a Moore FSM with 5 states including a dedicated START_BIT_WAIT state to confirm the start bit by sampling it twice, reducing susceptibility to glitches.  
+On detecting a low start bit, transition to DATA_RECEIVE state where an 8-bit shift register captures the data bits, LSB first, using a counter to track bit reception.  
+After receiving all 8 bits, transition to STOP_BIT_CHECK to verify the stop bit is high. If correct, assert 'done' for one cycle and return to IDLE.  
+If stop bit is invalid, move to STOP_BIT_WAIT state, which keeps waiting until a high stop bit is observed before returning to IDLE.  
+All logic including 'done' signal assertion is synchronous and done pulse is a single clock cycle.  
+The shift register loads bits by shifting right and inserting the new bit at MSB to receive LSB first serial data.  
+This architecture emphasizes state clarity and robustness by explicit start bit confirmation and separate stop bit wait state.

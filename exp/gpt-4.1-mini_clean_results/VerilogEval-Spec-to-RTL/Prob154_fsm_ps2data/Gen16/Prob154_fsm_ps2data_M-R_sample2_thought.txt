@@ -1,0 +1,7 @@
+Refactor the FSM by separating the state and counter logic from the output register updates for clearer structure.  
+Use an explicit 2-bit counter to track how many bytes have been collected, advancing only when the start byte condition is met and new bytes arrive.  
+Manage done as a registered pulse that asserts only on the cycle after the third byte is stored.  
+Implement out_bytes as a shift register: on receiving a valid byte, shift in the new byte at the LSB and push older bytes up.  
+Reset is handled synchronously as specified.  
+This approach decouples state counting from output updates, which can aid readability and synthesis tools, while still maintaining minimal registers and the original FSM behavior.  
+Also, assign out_bytes and done only inside the clocked block to avoid glitches, but use intermediate wires for byte-ready detection to simplify the logic.

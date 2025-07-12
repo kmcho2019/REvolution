@@ -1,0 +1,7 @@
+Refactor the sequential logic into an explicit two-stage shift register using internal registers, updated on the rising edge of the clock. Instead of using nonblocking assignments inside a single always block with intertwined dependencies, separate the state registers p_reg and q_reg internally. Assign outputs p and q as continuous assignments from these registers. Initialize the internal registers to unknown (1'bx) to reflect the waveform's initial undefined state.
+
+On each rising clock edge:
+- q_reg captures the previous p_reg value
+- p_reg updates to input a if q_reg is 0, otherwise holds its value
+
+This keeps the behavior the same but uses an internal state approach and continuous assignments to outputs to clearly separate state and outputs and better reflect initial unknown conditions.

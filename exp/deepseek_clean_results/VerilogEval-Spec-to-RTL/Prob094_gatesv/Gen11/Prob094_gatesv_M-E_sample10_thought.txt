@@ -1,0 +1,6 @@
+Instead of handling each bit individually, we can use vector operations with shifted versions of the input to compute all bits simultaneously. This approach:
+1. Creates a left-shifted version of the input for out_both (to check current and left neighbor)
+2. Creates a right-shifted version of the input for out_any (to check current and right neighbor)
+3. Uses a circular left shift for out_different (to implement the wrap-around requirement)
+4. Masks out the unused bits (out_both[3] and out_any[0]) explicitly
+This method reduces the number of operations and makes the code more scalable for wider vectors.

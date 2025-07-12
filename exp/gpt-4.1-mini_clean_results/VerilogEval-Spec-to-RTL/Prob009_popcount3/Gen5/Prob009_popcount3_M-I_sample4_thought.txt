@@ -1,0 +1,14 @@
+The current design is already minimal in logic and optimal for a 3-bit population count. It uses minimal gates with simple XOR and majority logic, producing the correct 2-bit binary count. Since the PPA metrics indicate very low power and small area with zero timing slack, there's little room for improvement in delay or power.
+
+However, a slight improvement could be achieved by rearranging the expression for the MSB (out[1]) into a simpler logic form with fewer gates or gate levels. The current majority logic uses three AND gates feeding two OR gates. Rewriting out[1] as (in[0]&in[1])|(in[1]&in[2])|(in[0]&in[2]) is minimal for three inputs. 
+
+An alternative is to use a small adder to compute the population count using Verilog addition: out = in[0] + in[1] + in[2]; This arithmetic style can be optimized by synthesis tools into efficient logic with possibly even fewer gates or shorter delay.
+
+Given modern synthesis tools handle addition efficiently, changing to an adder-based approach might reduce gate delay (because the addition can be done with carry-save or optimized adder trees), and potentially power due to simpler netlist.
+
+Therefore, the improvement strategy is:
+- Implement the population count as a simple addition of the input bits rather than explicit gate logic.
+- Rely on synthesis tools to generate optimal gate structures.
+- This will maintain correctness, possibly improve timing, and keep power and area low or even lower.
+
+This slight change can be beneficial especially if synthesis tools map addition to balanced logic efficiently, improving PPA subtly without increasing complexity.

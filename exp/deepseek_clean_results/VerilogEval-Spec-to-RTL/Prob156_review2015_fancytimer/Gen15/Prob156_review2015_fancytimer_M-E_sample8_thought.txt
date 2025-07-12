@@ -1,0 +1,27 @@
+Novel Pipeline Architecture Approach:
+
+1. **Parallel Pattern Matching**:
+   - Use a 4-stage shift register with combinatorial pattern detection
+   - Eliminates need for explicit state tracking during pattern detection phase
+
+2. **Two-Phase Counting**:
+   - Phase 1: Capture delay value using a dedicated 4-bit shift counter
+   - Phase 2: Implement precise timing using two counters:
+     * Outer counter (4-bit) tracks (delay+1) intervals
+     * Inner counter (10-bit) counts 1000 cycles per interval
+
+3. **Smart State Encoding**:
+   - Use one-hot encoding for clear state transitions
+   - States: IDLE, CAPTURE_DELAY, COUNTING, NOTIFY
+
+4. **Output Generation**:
+   - count output directly driven by outer counter
+   - counting/done outputs derived from current state
+   - Automatic reset on ack using state transition logic
+
+Key Innovations:
+- Parallel pattern detection improves timing
+- Separate counters for delay capture and timing
+- Clear state transitions with one-hot encoding
+- Efficient counting using nested counters
+- Reduced combinatorial logic compared to enum-based FSM

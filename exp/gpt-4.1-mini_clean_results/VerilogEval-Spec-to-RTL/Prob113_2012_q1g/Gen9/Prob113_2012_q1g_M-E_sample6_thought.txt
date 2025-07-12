@@ -1,0 +1,11 @@
+A different approach is to implement the function using a combinational case statement driven by the input vector x[3:0]. This approach directly encodes the Karnaugh map's truth table. Each 4-bit input combination is mapped to a 1 or 0 in the case statement, allowing explicit control of the output for every input without a minimized expression.
+
+This method has the following characteristics:
+- Clearly reflects the truth table explicitly, avoiding errors in algebraic simplification.
+- Makes it easy to verify correctness by referencing the Karnaugh map.
+- Enables straightforward modification if the function changes.
+- Slightly larger synthesized logic than minimized expressions but straightforward and readable.
+  
+The module uses always_comb (or always @* in older Verilog) to assign output f based on input x, enumerating all input combinations producing f=1 according to the Karnaugh map.
+
+This approach represents a novel architectural style from the previous Boolean expression solution.

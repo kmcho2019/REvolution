@@ -1,0 +1,7 @@
+To design the barrel shifter module, we first need to understand the control signal's bits and how they determine the amount of shift. The 3-bit control signal `ctrl` has three bits: `ctrl[2]`, `ctrl[1]`, and `ctrl[0]`, which control shifts by 4, 2, and 1 positions, respectively. 
+
+We will implement this using a series of multiplexers (`mux2X1`) that select between the shifted input and the original input at each stage. The shifting happens in stages: the first stage shifts by 4 positions if `ctrl[2]` is high, the second stage shifts by 2 positions if `ctrl[1]` is high, and the third stage shifts by 1 position if `ctrl[0]` is high.
+
+The `mux2X1` submodule will be designed to select between two input values based on the `sel` signal, which determines which bit is used in the shifted output at each stage. 
+
+For the barrel shifter, we will instantiate multiple `mux2X1` modules to achieve the desired shifts at each stage.

@@ -1,0 +1,7 @@
+To implement the two-bit saturating counter in the TopModule, we need to follow these steps:
+- On the positive edge of the asynchronous reset (areset), reset the counter to 2'b01 (weakly not-taken).
+- On the positive edge of the clock (clk), check the value of train_valid.
+- If train_valid is 1, then check the value of train_taken.
+- If train_taken is 1, increment the counter (up to a maximum of 3). If train_taken is 0, decrement the counter (down to a minimum of 0).
+- If train_valid is 0, keep the counter value unchanged.
+We will use an always @(posedge clk or posedge areset) block to handle the sequential logic and implement the saturating counter behavior.

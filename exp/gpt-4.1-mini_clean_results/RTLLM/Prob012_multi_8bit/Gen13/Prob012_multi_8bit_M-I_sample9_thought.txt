@@ -1,0 +1,11 @@
+To optimize the existing combinational multiplier for better performance and area, I will replace the linear accumulation chain with a balanced adder tree structure. This reduces the critical path by parallelizing the addition of partial products, effectively lowering delay and improving maximum clock frequency potential.
+
+The strategy:
+- Generate all 8 partial products as before (A shifted by each set bit in B).
+- Sum pairs of partial products in parallel (level 1), then sum pairs of sums (level 2), continuing until a single final sum is obtained.
+- This balanced tree reduces the adder depth from 7 (linear) to 3, improving timing significantly.
+- The structure remains combinational, straightforward to implement, and synthesis-friendly.
+- This approach tends to reduce power by decreasing switching activity duration in deep ripple additions.
+- Area is balanced since fewer long chains of adders are needed.
+
+Overall, this balanced tree maintains correctness while improving timing and power without increasing area substantially.

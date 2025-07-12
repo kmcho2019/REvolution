@@ -1,0 +1,16 @@
+Fusion Strategy:
+1. State Machine: Use a clean 2-bit binary encoding (from both examples) with separate combinational/sequential blocks for better readability and timing
+2. Timing Parameters: Maintain explicit parameters (GREEN/YELLOW/RED_TIME) but optimize counter width to 6 bits (sufficient for max 60 count)
+3. Pedestrian Logic: Implement immediate counter adjustment when request comes during green phase, but only if cnt > MIN_GREEN (10)
+4. Counter Logic: Use efficient decrement approach with state-based reload values, checking cnt==1 for transitions (lower comparator delay)
+5. Output Assignment: Direct combinational assignments for minimal logic (from both examples)
+6. Reset Handling: Clear initialization of state and counter (from Example 2)
+7. Optimization: Add clock gating hint for counter during stable states to reduce power
+
+Key Improvements:
+- Clear state machine separation for better synthesis
+- Optimized counter comparison (cnt==1)
+- Efficient pedestrian request handling
+- Minimal output logic
+- Power-aware design with clock gating hint
+- Balanced parameterization and optimization

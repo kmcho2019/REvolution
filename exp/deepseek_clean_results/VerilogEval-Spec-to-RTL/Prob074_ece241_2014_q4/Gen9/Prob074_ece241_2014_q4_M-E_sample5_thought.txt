@@ -1,0 +1,17 @@
+Here's a novel architectural approach using a time-multiplexed design with a single D flip-flop and a state machine controller:
+
+1. Instead of three separate flip-flops, we'll use one shared flip-flop and process each gate operation sequentially over three clock cycles
+2. A 2-bit counter will cycle through three states (00, 01, 10) to select which gate operation to perform
+3. The shared flip-flop will store the result of the current operation
+4. A small state machine will:
+   - In state 0: Compute XOR (x XOR flip-flop output)
+   - In state 1: Compute AND (x AND flip-flop output complement)
+   - In state 2: Compute OR (x OR flip-flop output complement)
+5. The NOR operation will be performed on the stored results from previous cycles
+6. This reduces hardware at the cost of taking three cycles to produce each output
+
+Advantages:
+- Significant area savings (only one flip-flop instead of three)
+- Sequential processing allows sharing of logic gates
+- Maintains correct functionality over time
+- Demonstrates an alternative state machine approach

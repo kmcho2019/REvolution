@@ -1,0 +1,15 @@
+The original solution has the right structure but needs refinement in state transitions and output logic. Key improvements needed:
+
+1. Output Logic: Walking outputs (walk_left/walk_right) should only be active in pure walking states (WALK_LEFT/WALK_RIGHT), not during digging states. This matches the problem description that digging suppresses walking behavior.
+
+2. Transition Priorities: Need to strictly enforce the priority order: falling > digging > direction switching. The current implementation handles this but could be more explicit.
+
+3. State Reduction: We can optimize by tracking direction separately from action, reducing from 6 to 4 states (WALK, FALL, DIG) plus a direction flag. This reduces state encoding bits.
+
+4. Edge Cases: Better handle simultaneous inputs by strictly following the priority order in all cases.
+
+The improved solution uses:
+- 2 bits for state (WALK, FALL, DIG)
+- 1 bit for direction (left/right)
+- Clear priority ordering in transitions
+- Simplified output logic matching requirements exactly

@@ -1,0 +1,5 @@
+Refactor the design by implementing the counter as a one-hot encoded shift register that shifts out zeros starting from an initial value representing 4 ones on synchronous reset. The shift_ena output is driven by the LSB of this shift register, which stays high for exactly 4 clock cycles after reset and then remains low. This avoids explicit counting and subtraction, relying on simple shift operations to produce the desired enable pulse length.
+
+This structure uses a 4-bit register where the bits represent the remaining enable cycles. On reset, the register is loaded with 4 ones ("1111"). On each clock, the register shifts right by one bit, introducing zeros at the MSB. The shift_ena output is the LSB of the register, which is '1' for the first 4 cycles after reset and then '0' afterwards. This method clearly maps the enable duration to the number of shift cycles and simplifies the logic, avoiding potential off-by-one errors from counting down.
+
+All operations remain synchronous on the positive clock edge with synchronous active-high reset.

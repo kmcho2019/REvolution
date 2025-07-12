@@ -1,0 +1,15 @@
+Here's a novel approach using a binary decision tree structure for the priority encoder. Instead of using traditional combinational logic, we'll implement a tree of multiplexers that naturally encodes the priority order:
+
+1. The decision tree will check bits from highest to lowest priority (bit 3 down to bit 0)
+2. Each level of the tree will either:
+   - Output the current position if the bit is high
+   - Pass the decision to the next lower priority bit if the current bit is low
+3. This creates a cascading effect where higher priority bits override lower ones
+4. The structure naturally handles the "all zeros" case by defaulting to 0
+5. This approach may offer better timing characteristics as it forms a balanced tree
+
+The advantages are:
+- Clear priority ordering visible in the structure
+- Potentially better timing due to balanced paths
+- Easy to scale to larger encoders
+- No need for complex Boolean expressions

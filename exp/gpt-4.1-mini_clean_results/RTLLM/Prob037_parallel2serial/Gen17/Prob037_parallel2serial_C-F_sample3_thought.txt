@@ -1,0 +1,11 @@
+To improve upon both examples, the design will capture the parallel input `d` into an internal 4-bit register on the cycle when the last bit (LSB) has been output (i.e., when the counter reaches 3). This stabilizes the data and prevents glitches caused by changes in `d` during serial output, reducing power consumption.
+
+A 2-bit counter will track the bit position (0 to 3), outputting bits from MSB to LSB as `data[3 - cnt]`. This indexing is clean and minimal.
+
+The `valid_out` signal will be asserted for one clock cycle right when new data is loaded (at `cnt == 0`), indicating that the MSB is being output — meeting the requirement exactly.
+
+By registering the data and controlling when it updates (only once every 4 cycles), the design reduces combinational toggling on `dout`. Also, valid_out timing precisely matches the MSB output, as requested.
+
+This fusion preserves the low area and simplicity of the indexed approach, while adding a small data register for power and glitch improvements. The synchronous reset and simple counter logic ensure good timing closure.
+
+Overall, this approach achieves a balanced and optimized parallel-to-serial converter with improved power and reliability without area or complexity increase.

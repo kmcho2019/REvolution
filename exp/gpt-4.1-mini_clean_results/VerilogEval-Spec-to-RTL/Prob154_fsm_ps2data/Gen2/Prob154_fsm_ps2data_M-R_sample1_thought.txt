@@ -1,0 +1,8 @@
+Refactor the FSM to use a one-hot encoded state machine with three states: IDLE, BYTE2, BYTE3.  
+Eliminate the separate DONE_STATE; instead, assert done and update out_bytes combinationally in the cycle when the third byte is latched.  
+Use registers to store each received byte as they arrive.  
+done is asserted synchronously for one cycle right after the third byte arrives.  
+Synchronous reset clears all state and registers.  
+Combine done and out_bytes updates inside the same sequential always block triggered by clk to ensure correct timing alignment.  
+Use explicit state encoding and avoid combinational next state logic by updating state registers directly in the clocked block.  
+This approach aligns done assertion and output validity exactly when the third byte is received, matching the specification and example waveform.

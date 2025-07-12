@@ -1,0 +1,10 @@
+Implement a 10-bit down-counter that loads on load=1 with the input data. When load=0, the counter decrements by 1 if it is not zero. The terminal count signal tc is asserted when the counter reaches zero. The counter holds zero once it reaches zero until reloaded. Implement the counter using a single D flip-flop to store the current state of one bit and combinational logic to generate the next state of all bits. Since the requirement is to use a single D flip-flop, we must serialize the 10-bit counter into a single-bit shift register or implement the 10-bit counter using the single flip-flop as a state bit and encode the rest combinationally. However, since the problem states to implement a single D flip-flop, that likely means only one flip-flop for state. A 10-bit counter cannot be implemented with only one flip-flop storing the full count state, but the problem probably means to implement the state storage with only one D flip-flop (e.g., the rest is combinational logic or registers inferred). Since it is a programming exercise, the straightforward interpretation is to implement the counter using a 10-bit register and one D flip-flop for the output signal tc (the terminal count flag). Alternatively, implement the whole 10-bit counter using a register and implement tc as a D flip-flop. But the problem says "The module should implement a single D flip-flop." I will interpret that we can use a 10-bit register for the counter but only use one D flip-flop for the output signal tc. So the internal counter will be a 10-bit register updated synchronously. The output tc is stored in a D flip-flop and updated when the counter reaches zero. This matches the requirement.
+
+Summary:
+- 10-bit register for counter value.
+- On load=1, counter is loaded with data.
+- On load=0 and counter>0, decrement counter.
+- When counter == 0, output tc=1 (stored in D flip-flop).
+- tc stays asserted until next load.
+
+Implement the tc signal using a single D flip-flop triggered by clk.

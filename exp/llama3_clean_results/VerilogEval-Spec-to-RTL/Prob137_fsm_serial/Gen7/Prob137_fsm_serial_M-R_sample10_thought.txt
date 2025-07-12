@@ -1,0 +1,11 @@
+To refactor the existing code, we will focus on optimizing the state machine structure, reducing unnecessary logic, and minimizing switching activity to improve the PPA metrics. 
+
+One approach to simplify the state machine is to merge the IDLE and RECEIVE states into a single state, as they share some common logic. We can also remove the separate always block for resetting the 'done' signal and integrate it into the main always block. 
+
+Another optimization is to use a single register to keep track of the received bits, instead of using a shift register and a separate counter. This approach can reduce the area usage and simplify the logic. 
+
+Additionally, we can reorder the logic to minimize unnecessary updates to the shift register and reduce switching activity. For example, we can only shift the register when a new bit is needed, and reset the 'done' signal only when necessary.
+
+To optimize the state machine encoding, we can use a more efficient encoding scheme, such as one-hot encoding, to reduce the combinational logic depth and improve the effective clock period.
+
+We will also investigate the possibility of removing the WAIT_STOP state and instead using a separate flag to indicate when to wait for a stop bit. This approach can simplify the state machine and reduce the logic complexity.

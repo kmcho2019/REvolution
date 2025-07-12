@@ -1,0 +1,9 @@
+To optimize for power and area, I will exploit the symmetry of pairwise equality: equality(a,b) = equality(b,a). Hence, we only need to compute the 15 unique comparisons in the upper (or lower) triangle of the 5x5 matrix, including the diagonal. The remaining 10 elements are symmetric. 
+
+I will organize the 25 output bits in a fixed indexing order matching the original specification: out[24] = a vs a, ..., out[0] = e vs e. For each pair (row i, col j), where i,j in [0..4], out[24 - (5*i + j)] = ~(input[i] ^ input[j]).
+
+I will compute only the upper triangle (i <= j) comparisons once, store them in a small array, and then fill out the symmetric lower triangle by reusing the results. This reduces duplicated logic and switching activity, thus improving power and area without adding latency.
+
+I will implement this with loops and generate blocks for clarity and scalability. The final output is constructed by carefully mapping indices to the proper bits in 'out' vector.
+
+This approach reduces redundant gates and switching, improving PPA, while retaining the exact output bit ordering and combinational logic.

@@ -1,0 +1,18 @@
+To simplify the pipelined unsigned 8-bit multiplier design while maintaining functionality:
+
+- Use a straightforward 3-stage pipeline:
+  1. Register inputs and input enable.
+  2. Generate partial products from the registered inputs.
+  3. Sum all partial products in a single registered stage.
+
+- Track the enable signal through a simple 3-bit shift register pipeline to produce mul_en_out aligned with output.
+
+- Partial products are generated using conditional shifts based on multiplier bits.
+
+- Sum partial products by adding all shifted multiplicand parts in one go at the final pipeline stage.
+
+- Registers only update when mul_en_in is high; otherwise, hold previous value.
+
+- Output mul_out is driven by the registered sum only when mul_en_out is asserted; otherwise, zero.
+
+This approach reduces the number of intermediate pipeline registers and complexity of staged summation, simplifying design and verification while preserving pipelining and output valid signaling.

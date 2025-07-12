@@ -1,0 +1,13 @@
+To fix the issues identified in the feedback, the following steps will be taken:
+
+1. **Review and Correct Update Logic for 'global_history'**: Ensure that when both `train_valid` and `predict_valid` are high in the same cycle, the `global_history` is updated based on the training information. This means prioritizing training over prediction for updating `global_history`. To achieve this, we need to re-evaluate the conditional statements within the always block to correctly handle the update of `global_history` based on the highest priority operation (training).
+
+2. **Correct Handling of Simultaneous Prediction and Training**: Modify the code to correctly handle the scenario where `predict_valid` and `train_valid` are both high in the same cycle. The current state of `global_history` should be used for prediction purposes, and then `global_history` should be updated based on the training information at the next clock edge.
+
+3. **Improve Cache Update Logic**: Simplify the cache update logic by removing unnecessary checks for overflow and underflow. Instead, use a more straightforward approach to update the cache values, allowing the counters to saturate naturally.
+
+4. **Ensure Predictions Use Current State**: Ensure that when making a prediction, the current state of `global_history` is used, and it is updated after considering the training information if `train_valid` is high.
+
+5. **Review Critical Path and Timing**: To ensure the predictor operates correctly and within the desired clock period, review the critical path through the predictor. This includes ensuring that the update of `predict_taken` and `predict_history` is correctly timed with respect to the update of `global_history` and the cache.
+
+By addressing these areas, we can correct the functional errors in the given code, improve its overall design and functionality, and ensure that the branch predictor operates as intended.

@@ -1,0 +1,7 @@
+Refactor the design to implement an explicit Moore FSM with named states representing counts of consecutive ones from 0 to 7+. This clarifies the state transitions and decouples state encoding from numeric counters. Outputs (disc, flag, err) are registered and assigned based purely on the current state, preserving Moore machine behavior.
+
+Use a synchronous always block to update the current state based on the input bit, and another synchronous block to update the outputs from the current state. This explicit state-based FSM improves code readability and may simplify synthesis tools' optimization of state encodings. It also emphasizes the FSM nature of the design instead of implicit counting.
+
+The output signals remain registered and asserted for one cycle after the corresponding sequence is detected, as required. The reset state corresponds to zero consecutive ones seen previously (equivalent to a prior input of zero).
+
+This approach differs from the saturating counter implementation by making states explicit and separating next state logic from output logic, adhering more strictly to classic FSM design principles.

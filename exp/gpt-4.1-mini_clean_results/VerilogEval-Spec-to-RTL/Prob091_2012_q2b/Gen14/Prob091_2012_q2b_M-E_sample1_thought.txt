@@ -1,0 +1,13 @@
+Use direct combinational logic for Y1 and Y3 outputs derived from explicit inspection of FSM transitions and the one-hot encoding.
+
+- For Y1 (next input for state B, y[1]): only transition is from A (y[0]) when w=1, so Y1 = y[0] & w.
+
+- For Y3 (next input for state D, y[3]): it is reached from states B(y[1]), C(y[2]), E(y[4]), or F(y[5]) when w=0.
+
+Thus, Y3 = ~w & (y[1] | y[2] | y[4] | y[5]).
+
+This approach is more explicit, directly enumerating contributing states, improving readability and traceability.
+
+Implement all logic inside TopModule without submodules for simplicity and to avoid cross-module optimization overhead.
+
+Add comments linking back to the FSM transitions for maintainability.

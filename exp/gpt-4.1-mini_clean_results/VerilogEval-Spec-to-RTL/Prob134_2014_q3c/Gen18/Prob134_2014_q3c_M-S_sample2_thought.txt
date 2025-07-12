@@ -1,0 +1,8 @@
+The FSM next state logic depends on the current state y and input x, with next state bits clearly defined in the table. Since the FSM only uses 5 states (000,001,010,011,100), others can default to 000. The output z is high only for states 011 and 100. To simplify:
+
+- Use a combinational always block with a compact case statement for next_state based on y and x.
+- Default unlisted states to 3'b000 for simplicity.
+- Assign output z as a simple logic check on y.
+- Assign Y0 directly from next_state[0].
+
+This reduces the number of combinational expressions, improves readability, and retains exact behavior without complex boolean expressions.

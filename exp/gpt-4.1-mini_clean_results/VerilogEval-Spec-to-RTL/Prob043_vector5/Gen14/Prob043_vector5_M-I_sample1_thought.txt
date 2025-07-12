@@ -1,0 +1,7 @@
+To optimize for area and power, we leverage the symmetry of the equality comparison: out[i,j] = out[j,i]. Instead of computing all 25 pairwise comparisons independently (which duplicates symmetric entries), we compute only the upper-triangular half of the 5x5 matrix (including diagonal), and then mirror these values to the lower half in the output bit vector.
+
+We'll pack the inputs into a vector for easier indexing. Using a nested generate loop, we'll only compute out[i*5+j] for j >= i and assign that value. For j < i, we'll assign out[i*5+j] = out[j*5+i], reflecting the upper triangle.
+
+This approach reduces the number of XNOR operations from 25 to 15, saving logic gates and switching power without any performance penalty. Using generate loops also improves code compactness and maintainability.
+
+The final bit order and mapping remain exactly as specified.

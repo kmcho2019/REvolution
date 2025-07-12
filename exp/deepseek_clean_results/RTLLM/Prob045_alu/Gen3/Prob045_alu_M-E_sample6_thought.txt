@@ -1,0 +1,25 @@
+Here's a novel pipelined ALU design with operation pre-decoding and speculative flag calculation:
+
+1. Operation Pre-Decoding:
+   - Classify operations into 4 groups (arithmetic, logical, shift, special) in first stage
+   - Generate control signals for each group in parallel
+
+2. Speculative Flag Calculation:
+   - Compute all possible flags in parallel before operation selection
+   - Select correct flags based on final operation using muxes
+
+3. Pipelined Structure:
+   - Stage 1: Operation decoding and operand preparation
+   - Stage 2: Actual computation
+   - Stage 3: Flag generation and result selection
+
+4. Optimized Shifter:
+   - Single barrel shifter with configurable direction/arithmetic
+   - Shift amount always comes from b[4:0] (SLLV/SRLV/SRAV pre-shift a)
+
+Key innovations:
+- Parallel operation decoding reduces critical path
+- Speculative flag calculation improves timing
+- Unified barrel shifter saves area
+- Pipelined structure enables higher clock speeds
+- Early operand preparation for shifts

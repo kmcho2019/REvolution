@@ -1,0 +1,28 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the state transitions based on the input w and the current state. Given the one-hot encoding for the states A to F, we can derive the next state logic by analyzing the transitions. 
+
+For Y1 (input of state flip-flop y[1]), which corresponds to state B (000010), we need to find when the FSM transitions to state B. According to the FSM, state B is reached from state A when w = 1. Thus, Y1 should be 1 when the current state is A and w = 1.
+
+For Y3 (input of state flip-flop y[3]), which corresponds to state D (001000), we need to identify transitions to state D. State D is reached from states B, C, E, and F under specific conditions of w. 
+
+By analyzing the transitions:
+- From A to B when w = 1.
+- From B to D when w = 0.
+- From C to D when w = 0.
+- From E to D when w = 0.
+- From F to D when w = 0.
+
+Thus, Y1 (for state B) will be 1 when the current state is A and w = 1.
+Y3 (for state D) will be 1 when the current state is B, C, E, or F and w = 0, or when the current state is E and w = 1 (since E transitions to itself when w = 1 but we are looking at the input to the flip-flop for D, which does not directly involve E's self-transition).
+
+Given the one-hot encoding:
+- A = 000001
+- B = 000010
+- C = 000100
+- D = 001000
+- E = 010000
+- F = 100000
+
+Y1 should be the result of (current state is A) AND (w = 1).
+Y3 should be the result of ((current state is B) OR (current state is C) OR (current state is E) OR (current state is F)) AND (w = 0).
+
+Let's implement this logic in Verilog.

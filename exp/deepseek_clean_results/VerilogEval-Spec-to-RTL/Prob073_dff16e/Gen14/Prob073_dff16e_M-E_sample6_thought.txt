@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Implement a distributed register approach using individual DFFs with shared control logic
+2. Create a hierarchical structure where:
+   - Each bit has its own DFF with local enable control
+   - Enable signals are generated from byteena and distributed to appropriate bits
+   - Reset is handled at the individual DFF level
+3. Benefits:
+   - Fine-grained control over each bit's behavior
+   - Potential for better clock gating optimization in synthesis
+   - More flexible for future modifications (e.g., individual bit enables)
+   - Clear visibility into each bit's operation during debugging
+4. The design uses generate blocks to efficiently instantiate all 16 DFFs while maintaining clean code structure

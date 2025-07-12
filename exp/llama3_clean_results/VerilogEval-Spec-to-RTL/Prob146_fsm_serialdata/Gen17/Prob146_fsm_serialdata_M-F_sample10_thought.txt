@@ -1,0 +1,10 @@
+To address the issues identified in the feedback, we will modify the state machine to correctly handle the bit counter, stop bit verification, and the assignment of the 'done' signal. We will also correct the width of the bit counter to ensure it can count up to 8.
+
+The main modifications will include:
+1. Correcting the bit counter to be 4 bits wide, allowing it to count from 0 to 8.
+2. Modifying the condition to transition from the DATA state to the STOP state, ensuring that all 8 data bits are received.
+3. Handling the case when the stop bit is not received correctly, by staying in the STOP state until a stop bit (1) is detected.
+4. Removing the redundant assignment of 'done' in the combinational logic block, to avoid potential glitches and inconsistencies.
+5. Ensuring that 'out_byte' is assigned the correct value when 'done' is asserted.
+
+By making these modifications, we can ensure that the state machine correctly identifies received bytes from the serial stream, asserts the 'done' signal at the correct time, and outputs the correctly received data byte.

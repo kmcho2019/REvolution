@@ -1,0 +1,14 @@
+The original implementation uses q = (a & (c|d)) | (b & (c|d)), factoring out (c|d). Since (a & (c|d)) | (b & (c|d)) = (a|b) & (c|d), we can simplify further by sharing two common OR gates rather than AND-OR. This reduces the logic depth and gate count from three gates to two gates (two OR gates and one AND gate), improving performance and area slightly.
+
+By expressing q = (a | b) & (c | d), we can implement with just two OR gates feeding a single AND gate, which typically is faster and consumes fewer resources than the original factoring.
+
+Hence, the improved solution:
+- Compute a_or_b = a | b
+- Compute c_or_d = c | d
+- Output q = a_or_b & c_or_d
+
+This reduces logic depth, gate count, and toggling paths (two OR gates feeding an AND), improving performance and power.
+
+It also aligns perfectly with the waveform and is functionally equivalent.
+
+Thus, this approach improves PPA by minimizing logic levels and shared signals, and makes the code clearer by directly matching the function.

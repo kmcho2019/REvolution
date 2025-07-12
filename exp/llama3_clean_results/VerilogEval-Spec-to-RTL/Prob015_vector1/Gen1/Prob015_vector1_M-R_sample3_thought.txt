@@ -1,0 +1,5 @@
+To refactor the existing code, we will maintain the same core functionality but change the structure of the module. Instead of using continuous assignments (`assign`), we can use an `always` block with a combinational logic sensitivity list (`@(*)`) to achieve the same result. This approach is more commonly seen in sequential logic designs but can also be applied to purely combinational circuits for consistency or when migrating to designs that might require sequential elements in the future.
+
+The `always @(*)` block will automatically re-evaluate whenever any of the input signals change, which for this module means whenever the `in` signal changes. This ensures that the outputs (`out_hi` and `out_lo`) are updated accordingly without needing to explicitly list all input dependencies as in the case of `assign` statements.
+
+This refactoring maintains the same functionality but introduces a different structure that might be preferred in certain design contexts or when integrating this module with other parts of a larger design that primarily use `always` blocks for combinational logic.

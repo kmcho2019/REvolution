@@ -1,0 +1,27 @@
+Here's the corrected approach addressing all feedback points:
+
+1. **Revised Level Encoding**: 
+   - Use 4 distinct states to properly represent all water levels:
+     * 3: Above s[2] (all sensors active)
+     * 2: Between s[2] and s[1] (s[1:0] active)
+     * 1: Between s[1] and s[0] (only s[0] active)
+     * 0: Below s[0] (no sensors active)
+
+2. **Accurate Sensor Priority**:
+   - Fix casez statement to properly prioritize sensor readings from top to bottom
+   - Explicitly handle all possible sensor combinations
+
+3. **Correct Output Logic**:
+   - fr0 active when level ≤ 2 (below or at s[2])
+   - fr1 active when level ≤ 1 (below or at s[1])
+   - fr2 active only when level = 0 (below s[0])
+   - dfr active when detecting rising transition (previous level < current level)
+
+4. **Proper Reset Initialization**:
+   - Initialize to level 0 (below all sensors)
+   - Set all outputs high as specified
+   - Clear history buffer to indicate stable low level
+
+5. **Transition Detection**:
+   - Maintain single previous level register (sufficient for detecting transitions)
+   - Only activate dfr for valid rising transitions between operational levels

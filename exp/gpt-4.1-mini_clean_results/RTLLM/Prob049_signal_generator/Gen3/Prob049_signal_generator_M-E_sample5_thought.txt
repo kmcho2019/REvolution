@@ -1,0 +1,10 @@
+To implement the triangle wave generator differently, we can use a direction flag and a single always block that increments or decrements the wave value accordingly without explicitly using a state variable with a case statement. Instead, the direction bit acts like a toggle signal that switches when the wave reaches the boundaries (0 or 31).
+
+We will:
+- Use a 5-bit register `wave` for the output.
+- Use a 1-bit register `state` to indicate direction: 0 for incrementing and 1 for decrementing.
+- On each clock, update wave based on the current direction.
+- Flip the direction flag when the wave hits the max (31) or min (0).
+- Handle asynchronous reset by clearing wave and direction.
+
+This approach uses minimal control logic and avoids a case statement, relying on combinational logic within the sequential block for a clean, elegant solution.

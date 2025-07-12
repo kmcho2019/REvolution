@@ -1,0 +1,9 @@
+The original design's main issue is the lack of explicit reset, which synthesis tools ignore because initial blocks are not synthesized. To fix this, I will add a synchronous reset logic internally by using a reset signal generated during the first clock cycle. Since the interface must remain unchanged (no reset input), I will implement a power-on-reset scheme inside the module by introducing an internal reset signal generated from a small counter or a reset state.
+
+However, since the problem states all inputs and outputs as one bit and no reset input, and the initial condition is to start flip-flops at zero, I can use a simple synchronous reset implemented via a reset FSM or a counter that holds the flip-flops in zero for one clock cycle after power-up. This makes the design self-resetting without requiring external signals.
+
+To keep it simple and minimal overhead, I will add a single-bit internal reset that is asserted only during the first clock cycle after power-up (detected via an initialized register that clears after one clock). On the reset cycle, the flip-flops are cleared synchronously. Afterwards, they behave as normal.
+
+This approach solves the initial condition problem for synthesis compatibility without changing the interface, and maintains minimal PPA impact.
+
+I will also keep the combinational logic as in the original design, since it is already minimal and efficient.

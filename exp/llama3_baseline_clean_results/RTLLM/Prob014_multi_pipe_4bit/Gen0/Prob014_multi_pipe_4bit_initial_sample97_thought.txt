@@ -1,0 +1,9 @@
+To implement the 4-bit unsigned number pipeline multiplier, we first need to understand the concept of multiplication using the partial product method. This method involves shifting the multiplicand (mul_a) based on the position of the bit in the multiplier (mul_b) and adding the shifted values to obtain the final product. 
+
+In the Verilog implementation, we will use a generate block to perform multiplication for each bit position of the multiplier. We will extend the input signals by adding "size" number of zero bits at the most significant bit positions. 
+
+We will use two levels of registers to store the intermediate values and control the multiplication process. The first level of registers will store the partial products, and the second level will store the sum of these partial products. 
+
+The module will perform the add operation on the positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n). If the reset signal (rst_n) is low, indicating a reset condition, the registers will be set to 0. If the reset signal (rst_n) is high, the registers will be updated with the sum of the corresponding partial products.
+
+Finally, the module will calculate the final product on the positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n). If the reset signal (rst_n) is low, indicating a reset condition, the product output (mul_out) will be set to 0. If the reset signal (rst_n) is high, the product output (mul_out) will be updated with the sum of registers.

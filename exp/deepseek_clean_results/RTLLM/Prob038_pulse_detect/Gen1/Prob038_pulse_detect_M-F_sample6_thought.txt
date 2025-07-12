@@ -1,0 +1,10 @@
+To properly detect the 0->1->0 pulse sequence, we need to fix the state machine behavior:
+1. In GOT_1 state, we should stay in GOT_1 if we receive another 1 (waiting for the final 0)
+2. Only transition back to IDLE when we receive the final 0 (completing the sequence)
+3. Output should be asserted for exactly one cycle when the full sequence is detected
+4. Reset should properly initialize all states and outputs
+
+The key changes are:
+- Modify GOT_1 state transition logic to stay in GOT_1 for consecutive 1s
+- Keep output logic the same (it was correct)
+- Ensure clean state transitions and proper reset behavior

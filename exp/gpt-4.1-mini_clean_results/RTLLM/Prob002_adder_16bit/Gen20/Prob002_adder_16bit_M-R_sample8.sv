@@ -1,0 +1,49 @@
+module adder_8bit (
+    input  [7:0] a,
+    input  [7:0] b,
+    input        Cin,
+    output [7:0] sum,
+    output       Cout
+);
+    wire [8:0] carry;
+    assign carry[0] = Cin;
+
+    genvar i;
+    generate
+        for (i = 0; i < 8; i = i + 1) begin : bit_adder
+            assign sum[i] = a[i] ^ b[i] ^ carry[i];
+            assign carry[i+1] = (a[i] & b[i]) | (a[i] & carry[i]) | (b[i] & carry[i]);
+        end
+    endgenerate
+
+    assign Cout = carry[8];
+endmodule
+
+
+module adder_16bit (
+    input  [15:0] a,
+    input  [15:0] b,
+    input         Cin,
+    output [15:0] y,
+    output        Co
+);
+    wire carry_mid;
+
+    // Lower 8-bit adder instance
+    adder_8bit adder_low (
+        .a(a[7:0]),
+        .b(b[7:0]),
+        .Cin(Cin),
+        .sum(y[7:0]),
+        .Cout(carry_mid)
+    );
+
+    // Upper 8-bit adder instance
+    adder_8bit adder_high (
+        .a(a[15:8]),
+        .b(b[15:8]),
+        .Cin(carry_mid),
+        .sum(y[15:8]),
+        .Cout(Co)
+    );
+endmodule

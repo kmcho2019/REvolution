@@ -1,0 +1,9 @@
+The issue arises from mixing a registered output (walk_left) driven inside a combinational always block with a continuous assignment for walk_right. This can cause timing mismatches and glitches in simulation.
+
+To fix this, both outputs should be synchronous and registered, derived from the registered state to ensure outputs change only on clock edges and remain stable throughout the clock cycle, consistent with a Moore machine.
+
+Therefore, move both walk_left and walk_right assignments inside the sequential always block triggered by clk and areset. On reset, outputs reflect WALK_LEFT state, and on normal operation, outputs are assigned based on the current state.
+
+This guarantees both outputs update simultaneously with the state, eliminating race conditions and simulation mismatches.
+
+The FSM logic and state transitions remain unchanged.

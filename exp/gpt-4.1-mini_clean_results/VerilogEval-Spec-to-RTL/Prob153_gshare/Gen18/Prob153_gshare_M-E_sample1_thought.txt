@@ -1,0 +1,27 @@
+Implement a gshare predictor with explicit separation of the stable (committed) global history register (GHR_committed) and a speculative global history register (GHR_speculative) used for prediction. Prediction reads directly from the committed GHR (the history before speculative update) and produces outputs combinationally. The predicted taken output and predicted history correspond to the GHR state before any updates.
+
+At the positive clock edge:
+
+- First, update the Pattern History Table (PHT) based on training input (train_valid), updating the counter indexed by train_pc XOR train_history.
+
+- Next, update the committed GHR:
+
+  - If a training misprediction is indicated (train_valid & train_mispredicted), restore GHR_committed to train_history, effectively recovering from the pipeline flush.
+
+  - Else if a prediction occurs (predict_valid), update GHR_committed speculatively by shifting in the predicted taken bit.
+
+  - Otherwise, keep GHR_committed unchanged.
+
+The speculative GHR is generated combinationally as {GHR_committed[5:0], predicted_taken}, used internally to predict future branches if desired (not required here, but kept conceptually).
+
+This design cleanly separates the stable history state (used for indexing training updates and outputting predict_history) from speculative updates from predictions. Prediction outputs reflect the committed GHR state, satisfying the requirement that predict_history outputs the history register used for the prediction.
+
+This approach also naturally prioritizes training misprediction recovery over speculative updates since GHR_committed is restored on train_mispredicted, ensuring pipeline flush recovery.
+
+The PHT is a 128-entry array of 2-bit saturating counters, indexed by XOR of 7-bit PC and 7-bit GHR (use train_history for training, committed GHR for prediction). The PHT updates are done synchronously at clock edge.
+
+This architecture prevents races in GHR updates, explicitly models speculative and committed states, and respects the priority of training recovery over prediction, while keeping prediction outputs combinational and valid immediately.
+
+The asynchronous reset sets all PHT counters to weakly not taken (2'b01) and clears GHR_committed.
+
+This approach fulfills all requirements and cleanly solves issues with timing and output correctness.

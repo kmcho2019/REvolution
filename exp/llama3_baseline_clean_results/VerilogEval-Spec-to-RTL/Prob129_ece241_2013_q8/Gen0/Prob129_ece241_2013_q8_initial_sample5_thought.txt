@@ -1,0 +1,9 @@
+To implement the Mealy-type finite state machine, we can define three states: IDLE, S1, and S2. 
+The IDLE state is the initial state where we start looking for the sequence "101". 
+When we encounter a '1' in the IDLE state, we transition to the S1 state. 
+In the S1 state, if we encounter a '0', we transition to the S2 state. 
+In the S2 state, if we encounter a '1', we assert the output signal z to logic-1 and transition back to the S1 state. 
+We also need to handle the case where we are in the S1 state and encounter another '1', in which case we stay in the S1 state. 
+Similarly, we handle the case where we are in the S2 state and encounter a '0', in which case we stay in the S2 state. 
+If we are in the IDLE state and encounter a '0', we stay in the IDLE state. 
+The FSM should also have a negative edge triggered asynchronous reset to reset the state machine to the IDLE state.

@@ -1,0 +1,12 @@
+Refactor the FSM by separating state, outputs, and data shift register logic into distinct always blocks for clarity and correct timing. 
+
+Specifically:
+- Use a shift register updated every clock regardless of state to detect the pattern 1101 in the data input. This avoids timing dependency between shift_ena assertion and pattern detection.
+- Drive outputs based on the current state in a dedicated sequential block, ensuring outputs change synchronously with state transitions, avoiding glitches.
+- Use a synchronous state transition block that uses the current state and inputs to determine next state.
+- Use a shift counter only active in SHIFT state to count exactly 4 cycles for shifting delay bits.
+- The FSM states remain: IDLE (pattern detect), SHIFT (shift delay bits), COUNTING (wait for done_counting), DONE (assert done until ack).
+- On reset, initialize state and registers properly.
+- This separation ensures pattern detection is independent and continuous, outputs are synchronous and stable, and state transitions are cleanly controlled.
+
+This refactoring resolves timing and functional issues due to outputs driven by next_state, shift register timing, and shift counter updates.

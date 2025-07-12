@@ -1,0 +1,45 @@
+Both examples provide the same final expression for f, which perfectly covers the Karnaugh map 1s:
+
+f = (~x2 & ~x3 & ~x1) | (x2 & (~x0 | (x1 XNOR x3)))
+
+Example 1 replaces XNOR with its AND-OR form to avoid XOR gates, potentially favoring synthesis tools that target AND/OR/NOT gate libraries. Example 2 expresses the same logic but is also clear and minimal.
+
+The superior fusion:
+- Use the compact and minimal factored expression as base.
+- Keep the explicit AND-OR form of XNOR to maximize synthesis friendliness.
+- Introduce a direct 16-entry LUT style decoding in the form of a ROM-based function is an option, but likely overkill and less readable.
+- Use internal wires for clarity but reduce redundant signals by merging expressions where possible.
+- Factor the logic slightly to reduce gate count and improve power by sharing terms.
+- The Karnaugh map reveals some overlapping implicants. Analyzing for consensus terms:
+
+  From the function table, the minterms with output=1 are at:
+  x=0000, 0010, 1000, 1001, 1010, 1100, 1101, 1110, 1111
+  (using [x3 x2 x1 x0] for bits, or per given order)
+
+- By mapping these minterms, the expression in factored form covers all:
+
+  f = (~x2 & ~x3 & ~x1) 
+    | (x2 & (~x0 | (x1 & x3) | (~x1 & ~x3)))
+
+- We can factor further to:
+
+  f = (~x2 & ~x3 & ~x1) 
+    | (x2 & (~x0 | x1_xnor_x3))
+
+- For the XNOR part, instead of declaring separate wires for ~x1 and ~x3, we can merge these into one wire to reduce signal count:
+
+  let w1 = x1 & x3
+  let w2 = ~(x1 | x3) = ~x1 & ~x3
+
+- So x1_xnor_x3 = w1 | w2
+
+- Implementing ~x1 & ~x3 using ~ (x1 | x3) saves one NOT gate compared to separate inverters.
+
+- Final expression:
+
+  f = (~x2 & ~x3 & ~x1) 
+    | (x2 & (~x0 | (x1 & x3) | (~(x1 | x3))))
+
+This avoids redundant inverters, reduces net count, and maintains synthesis-friendly AND/OR/NOT gates only.
+
+This optimized expression balances readability, minimal logic depth, area, and power. The implementation uses minimal intermediate wires and leverages De Morgan's law for the XNOR equivalent.

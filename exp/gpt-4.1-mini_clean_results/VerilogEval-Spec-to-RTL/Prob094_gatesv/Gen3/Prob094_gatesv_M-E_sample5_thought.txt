@@ -1,0 +1,9 @@
+To create a novel architectural approach, I will use bit-shifting to align neighbors and then perform bitwise operations:
+
+- For out_both: Left-shift `in` by 1 to align each bit with its left neighbor. AND this with original `in`. Since in[3] has no left neighbor, mask out out_both[3] by zeroing it.
+
+- For out_any: Right-shift `in` by 1 to align each bit with its right neighbor. OR this with original `in`. Since in[0] has no right neighbor, mask out out_any[0] by zeroing it.
+
+- For out_different: Use a circular left rotation by 1 bit of `in` (wrap-around shift) and XOR with `in` to get bits that differ from their left neighbor considering wrap-around.
+
+This bit-shift approach eliminates explicit indexing and concatenation, making it compact and clearly aligned to the neighbors concept.

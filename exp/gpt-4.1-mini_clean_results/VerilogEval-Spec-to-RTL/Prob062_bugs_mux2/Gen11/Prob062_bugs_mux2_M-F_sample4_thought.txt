@@ -1,0 +1,13 @@
+The key issue is the output width mismatch: the output `out` is a single bit, but `a` and `b` are 8-bit vectors.
+
+The original code attempts bitwise operations between `sel` and the vectors `a` and `b`, but outputs only one bit. This causes truncation and incorrect behavior.
+
+To fix this while preserving the output as a scalar bit, the mux should select one single bit from `a` and `b` based on `sel`.
+
+Without any further specification, a logical choice is to select the least significant bit (bit 0) from each vector.
+
+Hence, the correct mux behavior is:
+- If sel=0, output `a[0]`
+- If sel=1, output `b[0]`
+
+This can be expressed cleanly with the ternary operator on bits:

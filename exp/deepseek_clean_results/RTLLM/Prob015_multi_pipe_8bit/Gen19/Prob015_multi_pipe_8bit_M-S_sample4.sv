@@ -1,0 +1,49 @@
+module multi_pipe_8bit (
+    input wire clk,
+    input wire rst_n,
+    input wire mul_en_in,
+    input wire [7:0] mul_a,
+    input wire [7:0] mul_b,
+    output reg mul_en_out,
+    output reg [15:0] mul_out
+);
+
+    // Pipeline stage 1 registers (input)
+    reg [7:0] mul_a_reg, mul_b_reg;
+    reg en_reg;
+    
+    // Partial products with operand isolation
+    wire [15:0] pp0 = mul_b_reg[0] ? {8'b0, mul_a_reg} : 16'b0;
+    wire [15:0] pp1 = mul_b_reg[1] ? {7'b0, mul_a_reg, 1'b0} : 16'b0;
+    wire [15:0] pp2 = mul_b_reg[2] ? {6'b0, mul_a_reg, 2'b0} : 16'b0;
+    wire [15:0] pp3 = mul_b_reg[3] ? {5'b0, mul_a_reg, 3'b0} : 16'b0;
+    wire [15:0] pp4 = mul_b_reg[4] ? {4'b0, mul_a_reg, 4'b0} : 16'b0;
+    wire [15:0] pp5 = mul_b_reg[5] ? {3'b0, mul_a_reg, 5'b0} : 16'b0;
+    wire [15:0] pp6 = mul_b_reg[6] ? {2'b0, mul_a_reg, 6'b0} : 16'b0;
+    wire [15:0] pp7 = mul_b_reg[7] ? {1'b0, mul_a_reg, 7'b0} : 16'b0;
+    
+    // Final product computation
+    wire [15:0] product = pp0 + pp1 + pp2 + pp3 + pp4 + pp5 + pp6 + pp7;
+    
+    // Pipeline control
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            // Reset all registers
+            mul_a_reg <= 8'b0;
+            mul_b_reg <= 8'b0;
+            mul_out <= 16'b0;
+            en_reg <= 1'b0;
+            mul_en_out <= 1'b0;
+        end else begin
+            // Stage 1: Input registration
+            mul_a_reg <= mul_a;
+            mul_b_reg <= mul_b;
+            en_reg <= mul_en_in;
+            
+            // Stage 2: Output registration
+            mul_out <= product;
+            mul_en_out <= en_reg;
+        end
+    end
+
+endmodule

@@ -1,0 +1,15 @@
+To improve the existing combinational 16-bit by 8-bit divider, I will reduce the combinational critical path delay and slightly optimize area and power by restructuring the division process into two always blocks as per the original request, while preserving full combinational behavior.
+
+Improvement strategy:
+1. Use two combinational always blocks:
+   - The first always block registers inputs into local registers (`a_reg`, `b_reg`) on any change in inputs, modeling a latch of inputs within combinational logic for better clarity and consistent read in the next block.
+   - The second always block performs the division using a procedural loop, computing quotient and remainder stepwise by shifting and subtracting, similar to the generate loop approach but fully contained in a single procedural block.
+2. This approach improves synthesis friendliness as it uses classic procedural code rather than generate loops and multiple intermediate wires.
+3. Quotient bits and remainder are computed in a loop iterating 16 times, simulating the long division method with bitwise shifts.
+4. No registers are inferred since all blocks are combinational (`always @*`), ensuring purely combinational output.
+5. The remainder is properly zero-extended to 16-bit output.
+6. Comments clarify the logic, enabling maintainability.
+7. This refactoring may allow synthesis tools to optimize and potentially share logic more effectively, reducing gate count and power, and clarifying timing.
+8. The output ports remain the same as requested.
+
+This fulfills the problem requirements to implement the divider with two always blocks, using combinational logic, and following the described algorithm, while being structurally clear and synthesizable.

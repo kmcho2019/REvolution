@@ -1,0 +1,12 @@
+The existing code for the frequency divider module `freq_divbyfrac` can be refactored to improve its structure and performance. The core idea of achieving a 3.5x fractional frequency division by generating two uneven clock periods and then phase-shifting them remains the same. However, the implementation can be simplified and optimized.
+
+One approach to refactoring the code is to use a combination of combinational logic and sequential logic to generate the intermediate divided clock signals `clk_int1` and `clk_int2`. Instead of using a state machine with multiple states, we can use a single counter to keep track of the clock cycles and generate the phase-shifted pulses.
+
+We will use the following strategies to refactor the code:
+
+1.  **Simplified Counter Logic**: Implement a counter that cycles through 7 clock cycles (MUL2_DIV_CLK = 7) to generate the intermediate divided clock signals.
+2.  **Combinational Logic for Phase-Shifted Pulses**: Use combinational logic to generate the phase-shifted pulses for `clk_int1` and `clk_int2` based on the counter value.
+3.  **Efficient Clock Output Logic**: Optimize the final divided clock output `clk_div` generation to minimize combinatorial logic and reduce switching activity.
+4.  **Improved Reset Logic**: Verify and optimize the reset logic to ensure correct initialization and minimal overhead.
+
+By applying these strategies, the refactored code will be more efficient, easier to understand, and better optimized for area and power consumption.

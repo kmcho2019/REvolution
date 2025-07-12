@@ -1,0 +1,23 @@
+The existing FSM design is functionally correct and compact, with a clear Mealy output and overlapping sequence detection. To optimize PPA further, I will:
+
+1. Simplify state encoding by using one-hot encoding instead of binary states. One-hot often improves timing because next-state logic becomes simpler (direct logic rather than decoding states).
+2. With one-hot encoding, the combinational logic for next state and MATCH can be expressed more straightforwardly as combinational assignments.
+3. Eliminate the function call for next state, replacing it with simple combinational logic to reduce logic levels.
+4. Keep the synchronous state register with non-blocking assignments and synchronous reset.
+5. Use a Mealy output (MATCH) combinationally derived from current state and input to minimize output delay.
+
+One-hot encoding for 6 states means 6 bits for state, and typically faster transitions. For small FSMs, this often improves timing with a minor area increase, but given the existing area is already very small, this tradeoff is acceptable and can reduce logic depth and power.
+
+The state encoding will be:
+- S0 = 000001 (initial)
+- S1 = 000010
+- S2 = 000100
+- S3 = 001000
+- S4 = 010000
+- S5 = 100000
+
+Next state and output logic will be expressed using simple combinational assignments.
+
+This approach improves timing by simplifying combinational next-state logic and maintaining minimal logic levels for output MATCH. The clarity of one-hot also improves maintainability.
+
+This code also follows the problem instructions exactly and supports continuous overlapping detection.

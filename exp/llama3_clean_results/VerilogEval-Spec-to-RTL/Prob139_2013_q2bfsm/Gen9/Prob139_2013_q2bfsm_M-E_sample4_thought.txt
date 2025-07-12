@@ -1,0 +1,9 @@
+A novel approach to implement the finite state machine is to use a hierarchical state machine structure. The top-level state machine will handle the reset and initial state transitions, while the sub-state machines will handle the sequence detection and waiting logic for `y`. This approach will simplify the implementation and reduce the number of states.
+
+We will use a main state machine to control the overall flow, with two sub-state machines: one for sequence detection and another for waiting for `y`. The main state machine will transition between the sub-state machines based on the inputs and outputs.
+
+The sequence detection sub-state machine will use a counter to keep track of the sequence `x = 1, 0, 1`. Once the sequence is detected, the main state machine will transition to the waiting sub-state machine.
+
+The waiting sub-state machine will use a timer to wait for `y` to become 1 within at most two clock cycles. If `y` becomes 1 within the time limit, the main state machine will set `g` to 1 permanently. If `y` does not become 1 within the time limit, the main state machine will set `g` to 0 permanently.
+
+This hierarchical approach will reduce the complexity of the implementation and make it easier to maintain and modify.

@@ -1,0 +1,11 @@
+The original design implements the even parity function of four inputs using a balanced XNOR tree, which is already efficient in terms of gate count, timing, and power. To improve PPA, I will consider a simplified single-line implementation of parity using the reduction XOR operator in Verilog, which some synthesis tools optimize into a minimal XOR/XNOR tree or a dedicated parity gate.
+
+Using the Verilog reduction XOR (~^) operator on all four inputs directly expresses the function as `q = ~(a ^ b ^ c ^ d)` (XNOR of all inputs). This concise code gives the synthesis tool freedom to optimize the parity logic possibly better than manually instantiating gates.
+
+Thus, the improvement strategy is:
+- Use a single-line continuous assignment with reduction XOR to express even parity.
+- This reduces RTL complexity and lets synthesis tools handle optimization.
+- It can slightly reduce logic depth and area by collapsing into a single parity primitive if supported.
+- The logic functionality remains unchanged and matches the waveform exactly.
+
+In summary, this concise implementation is expected to yield equal or better PPA results, with simpler RTL and maintainability.

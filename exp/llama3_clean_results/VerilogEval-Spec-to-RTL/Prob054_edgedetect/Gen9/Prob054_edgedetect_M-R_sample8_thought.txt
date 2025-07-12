@@ -1,0 +1,9 @@
+To refactor the provided Verilog code for the TopModule, we will focus on maintaining the same functionality while potentially improving the design for better Power, Performance, and Area (PPA) metrics. The original code effectively detects positive edge transitions in the 8-bit input vector and outputs a signal indicating the occurrence of such transitions. However, it uses an `always` block with non-blocking assignments for sequential logic.
+
+Our refactoring strategy involves utilizing a combination of combinational logic for the edge detection and sequential logic for storing the previous state of the input. We can achieve the same functionality by directly assigning the output `pedge` using a continuous assignment (`assign`) statement outside of any `always` block for the combinational part, but since the previous state needs to be stored, we will keep an `always` block for that purpose.
+
+The key idea here is to simplify the design by minimizing the use of sequential logic where possible and ensuring that the combinational logic is straightforward and easy to optimize. By using `assign` statements for the output logic, we make it explicit that this part of the design is combinational, which can help synthesis tools optimize the logic more effectively.
+
+However, since we need to store the previous state (`prev_in`), we cannot avoid using an `always` block entirely. Instead, we'll use it solely for updating `prev_in` at each clock edge, keeping the rest of the logic combinational.
+
+This approach does not fundamentally change the functionality or the PPA metrics significantly but clarifies the design's intent and potentially makes it easier to understand and maintain.

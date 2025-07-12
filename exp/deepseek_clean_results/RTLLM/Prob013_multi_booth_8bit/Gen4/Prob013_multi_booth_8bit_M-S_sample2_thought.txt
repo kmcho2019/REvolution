@@ -1,0 +1,26 @@
+To simplify the Radix-4 Booth multiplier while maintaining correct functionality:
+
+1. **Basic Operation**:
+   - Use standard Radix-4 Booth algorithm (3-bit window)
+   - Process 2 bits per cycle (4 cycles for 8-bit multiplication)
+
+2. **Simplified Datapath**:
+   - Maintain only essential registers: multiplicand, multiplier, product
+   - Use 2-bit counter (since we only need 4 cycles)
+   - Include previous LSB for proper Booth encoding
+
+3. **Direct Implementation**:
+   - Calculate partial products on-the-fly
+   - Simple arithmetic right shift for multiplier
+   - No separate shifting of multiplicand needed
+
+4. **Optimized Control**:
+   - Single always block for synchronous logic
+   - Clear reset behavior
+   - Straightforward ready signal generation
+
+5. **Key Improvements**:
+   - Proper sign extension initialization
+   - Correct Booth encoding cases
+   - Accurate cycle counting
+   - Simplified state management

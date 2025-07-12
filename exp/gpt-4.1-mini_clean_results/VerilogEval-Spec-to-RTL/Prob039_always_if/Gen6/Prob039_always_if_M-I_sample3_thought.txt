@@ -1,0 +1,13 @@
+The original solution is already clean, minimal, and functional with a shared use_b signal for both output assignments. To optimize PPA (power, performance, and area) further, one possible improvement is to reduce switching activity by gating the procedural output only when it differs from the assign output. Since both outputs implement the same logic, and assuming both outputs must be present, this can avoid redundant toggling in out_always.
+
+Additionally, using non-blocking assignments (<=) inside the always block can improve coding style consistency and help synthesis tools better infer combinational logic with minimal glitches, especially in larger designs. This small change can positively influence performance in real silicon.
+
+Finally, annotating out_always as wire through an assign statement instead of reg and always block may save area and power, but as the spec wants an if statement implementation, we keep the procedural block but optimize it as described.
+
+Hence, the improvement strategy is:
+- Use non-blocking assignment in always block.
+- Add a simple condition to assign out_always only if its new value is different from current, to reduce unnecessary switching (optional minor power optimization).
+- Keep use_b shared signal for clarity.
+- Maintain combinational always @(*) sensitivity.
+
+This keeps the design clear, synthesizable, and slightly improved in power and coding style.

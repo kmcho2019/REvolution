@@ -1,0 +1,13 @@
+The original design uses a single combinational stage to sum all eight partial products at once, resulting in a large combinational critical path that limits frequency and increases power. To improve performance and power efficiency, I will pipeline the partial sum accumulation over multiple stages, reducing the adder width per stage and shortening critical path delay. 
+
+I will split the summation into three pipeline stages:
+1) Stage 1: Generate partial products (8 partial 16-bit operands).
+2) Stage 2: Sum partial products pairwise, reducing 8 operands to 4 partial sums.
+3) Stage 3: Sum those 4 partial sums into 2 sums.
+4) Stage 4: Final sum of the last 2 partial sums to produce the output product.
+
+Each summation stage will have registers to pipeline results, and enable signals will be pipelined accordingly through 4 stages. This deeper pipeline reduces max combinational delay each cycle, improving frequency and power, at the cost of increased latency.
+
+This design keeps the control structure with input enable controlling input registers, and output enable signaling valid output, shifted through the pipeline stages. The output is registered and gated by the final enable.
+
+This approach balances pipeline depth and complexity to optimize timing and power while preserving functionality and throughput.

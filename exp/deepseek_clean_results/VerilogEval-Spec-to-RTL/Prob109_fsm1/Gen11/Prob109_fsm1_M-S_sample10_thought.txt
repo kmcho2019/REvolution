@@ -1,0 +1,9 @@
+To simplify the Moore machine implementation:
+1. Remove the intermediate next_state wire since it's not necessary
+2. Directly compute the next state in the always block
+3. Simplify the state transition logic by recognizing that:
+   - When in state A: next state is ~in (0->B, 1->A)
+   - When in state B: next state is in (0->A, 1->B)
+4. Maintain asynchronous reset to state B
+5. Keep output as simple state comparison
+This reduces logic complexity by eliminating the multiplexer structure and using direct state equations.

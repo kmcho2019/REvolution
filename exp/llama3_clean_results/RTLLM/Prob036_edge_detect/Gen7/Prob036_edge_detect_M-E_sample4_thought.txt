@@ -1,0 +1,9 @@
+To create a novel solution for the edge detection module, we can utilize a Finite State Machine (FSM) approach. This method allows us to explicitly define the states and transitions of the module based on the input signal `a` and the clock signal `clk`. The FSM can have two main states: `IDLE` and `EDGE_DETECTED`. 
+
+In the `IDLE` state, the module waits for a transition on the input signal `a`. When a transition is detected (either rising or falling), the FSM moves to the `EDGE_DETECTED` state. In this state, the corresponding output signal (`rise` or `down`) is set to 1 for one clock cycle to indicate the edge detection. 
+
+After setting the output signal, the FSM returns to the `IDLE` state to wait for the next transition on `a`. This approach ensures that the output signals are synchronized with the clock and remain set to 1 for only one clock cycle after detecting an edge.
+
+The FSM can be implemented using an `always` block that is sensitive to the positive edge of the clock signal and the reset signal. The current state and the next state are determined based on the current state, the input signal `a`, and the previous state of `a`.
+
+This novel architectural idea allows for a clear and structured implementation of the edge detection logic, making it easier to understand and maintain the code.

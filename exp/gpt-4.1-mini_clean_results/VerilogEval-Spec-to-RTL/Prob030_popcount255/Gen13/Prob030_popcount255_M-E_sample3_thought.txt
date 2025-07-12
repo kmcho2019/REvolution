@@ -1,0 +1,11 @@
+Implement a parallel popcount using a parallel prefix adder (Kogge-Stone style) approach on a bitwise level rather than chunk sums. 
+
+Specifically:
+- Use a two-level approach: first reduce 255 bits down to partial sums of 3 bits each using 3-input counters (ternary counters) implemented as 2-bit outputs per group of 3 bits.
+- This converts 255 bits into 85 groups of 3 bits (85*2=170 bits total).
+- Then reduce these 170 bits with a fast carry-lookahead adder tree designed for parallel prefix summation to get the final 8-bit count.
+- This approach reduces the number of sequential addition stages by working directly with small counters and then a parallel prefix adder tree instead of sequential summation of chunk sums.
+- The 3-bit counters minimize the number of intermediate signals and provide a balanced reduction tree.
+- The final parallel prefix adder efficiently sums all partial counters with logarithmic depth.
+- Overall, this architecture trades slightly more complex low-level counters and prefix adders for faster overall performance and potentially better area by avoiding large wide adders in a chain.
+- The module remains fully combinational and scalable.

@@ -1,0 +1,19 @@
+To improve the PPA (performance, power, area) of the original radix-4 Booth multiplier, I will apply the following optimizations while preserving functionality:
+
+1. Simplify sign extension by using Verilog signed casts and built-in sign-extension rather than manual concatenations, reducing logic depth and area.
+
+2. Apply clock gating to accumulator updates: only update accumulator when partial_product is non-zero, reducing unnecessary switching and dynamic power.
+
+3. Replace manual shift of multiplicand and multiplier with arithmetic right shift operations to clarify intent and enable easier optimization by synthesis tools.
+
+4. Remove the FSM states IDLE and DONE since the original problem states reset initializes the module and multiplication proceeds immediately; instead, use a simple synchronous process with a 5-step counter and an rdy flag, simplifying control logic and area.
+
+5. Use 5-step counter (from 0 to 4) since radix-4 multiplies 8-bit numbers in 5 cycles, removing redundant state encodings and minimizing control registers.
+
+6. Keep partial product combinational logic separated and clean.
+
+7. After multiplication done, hold output and rdy stable until next reset.
+
+This yields a cleaner, more hardware-friendly design with fewer registers and simpler control, lowering area and power, and potentially improving timing.
+
+Note: This design fully respects the original problem ports and behavior, and provides the ready signal as specified.

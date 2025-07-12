@@ -1,0 +1,12 @@
+The design can be simplified by directly updating the register `q` inside one always block triggered by the rising clock edge. Instead of using a separate combinational signal for `next_q`, I will put the conditional logic inline with non-blocking assignments.
+
+The behavior is:
+- If `shift_ena` is high, shift `q` right by one bit, inserting `data` into MSB.
+- Else if `count_ena` is high, decrement `q`.
+- Else keep `q` unchanged.
+
+Since both enables are never asserted simultaneously in normal use, and the problem states this case is don't-care, priority is simply shift over count.
+
+No initial or reset is defined, so `q` will power up in an unknown state (which is acceptable).
+
+This approach reduces lines of code and complexity while clearly showing sequential update with prioritized enable signals.

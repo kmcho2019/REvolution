@@ -1,0 +1,16 @@
+The design requires a finite state machine (FSM) with four states:
+1. IDLE: Waiting for the start byte (in[3] = 1)
+2. BYTE1: First byte received, waiting for second byte
+3. BYTE2: Second byte received, waiting for third byte
+4. DONE: All three bytes received, assert done signal
+
+The FSM transitions:
+- From IDLE to BYTE1 when in[3] is 1
+- From BYTE1 to BYTE2 on next valid byte
+- From BYTE2 to DONE on next valid byte
+- From DONE back to IDLE (to look for next message)
+
+We'll need:
+1. A state register
+2. A shift register to accumulate the 3 bytes
+3. Control logic for state transitions and output generation

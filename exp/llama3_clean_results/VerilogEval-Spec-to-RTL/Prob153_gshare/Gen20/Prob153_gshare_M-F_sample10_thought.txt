@@ -1,0 +1,9 @@
+To address the issues identified in the feedback, I will focus on synchronizing the updates of the internal registers and tables with the positive clock edge, ensuring that all sequential logic is triggered at the same time. This includes updating the `history` register and the `pht` table.
+
+First, I will modify the `history` update logic to occur at the positive edge of the clock, removing the asynchronous update at the negative edge. This will ensure that the `history` register is updated consistently with the prediction logic.
+
+Next, I will update the `pht` table at the positive edge of the clock, ensuring that the updates are synchronized with the prediction logic. To handle the case where training and prediction occur in the same cycle, I will introduce a flag to indicate whether training should take precedence over prediction.
+
+To further improve the design, I will re-examine the reset logic to ensure that the asynchronous reset is properly handled. This includes resetting all internal registers and tables to their initial state when the reset signal is asserted.
+
+By synchronizing the updates of the internal registers and tables with the positive clock edge and introducing a flag to handle training precedence, I expect to resolve the mismatches in the output and improve the overall functionality of the gshare branch predictor.

@@ -1,0 +1,9 @@
+The existing Verilog code for the finite-state machine (FSM) can be refactored to improve its structure and readability. One approach is to utilize a more modular design, separating the combinational logic for state transitions and output signal generation from the sequential logic that updates the state and internal registers. This can involve using `assign` statements for the output signals and a single `always` block for the state and internal register updates.
+
+A key aspect of the refactoring will be to ensure that the pattern detection logic is correct and efficient. Instead of shifting the pattern register, we can use a combination of registers to store the last few bits of the input data stream. This will allow us to simplify the pattern detection logic.
+
+Additionally, we can simplify the logic for the `shift_ena` signal by using a counter that starts when the pattern is detected and counts up to 4, ensuring that `shift_ena` remains high for exactly 4 clock cycles.
+
+The state machine itself can be designed with a focus on clarity and simplicity, ensuring that each state has a clear and distinct set of output signals. The transitions between states will be based on the current state and the input conditions (`done_counting` and `ack`).
+
+To improve readability and maintainability, we will use parameterized values for the states and utilize meaningful variable names throughout the code. The use of `assign` statements for the output signals will help in clearly separating the combinational logic from the sequential logic.

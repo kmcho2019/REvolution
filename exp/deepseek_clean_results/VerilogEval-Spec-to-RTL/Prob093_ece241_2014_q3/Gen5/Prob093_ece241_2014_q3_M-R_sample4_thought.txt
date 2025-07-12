@@ -1,0 +1,21 @@
+To correctly implement the Karnaugh map using the specified multiplexer structure, we need to carefully analyze each output bit's requirements:
+
+1. mux_in[0] (ab=00): Needs to output 0,1,1,1 for cd=00,01,11,10 respectively
+   - This can be implemented as (c OR d) which matches all cases except cd=00
+   - Need to force 0 when cd=00 using a 2-to-1 mux that selects between 0 and (c OR d) based on (c NOR d)
+
+2. mux_in[1] (ab=01): Always 0 - simple constant assignment
+
+3. mux_in[2] (ab=11): Needs to output 0,0,1,0 for cd=00,01,11,10
+   - This is equivalent to (c AND d) - only true when both inputs are 1
+   - Can implement with a 2-to-1 mux that selects 0 or d based on c
+
+4. mux_in[3] (ab=10): Needs to output 1,0,1,1 for cd=00,01,11,10
+   - This can be implemented as (NOT d) OR c
+   - Need to force 1 when cd=00 using a 2-to-1 mux
+
+The implementation will use:
+- One 2-to-1 mux for mux_in[0]
+- One 2-to-1 mux for mux_in[2]
+- One 2-to-1 mux for mux_in[3]
+- Direct assignment for mux_in[1]

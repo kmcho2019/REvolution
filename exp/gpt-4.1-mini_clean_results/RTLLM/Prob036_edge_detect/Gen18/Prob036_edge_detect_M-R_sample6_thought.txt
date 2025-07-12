@@ -1,0 +1,9 @@
+The original design uses a sequential always block with asynchronous reset to register the previous value of 'a' and combinational logic to generate the edge detection signals. To refactor while keeping the core idea, I will:
+
+- Replace the asynchronous reset with a synchronous reset for better timing closure and design simplicity.
+- Implement the edge detection outputs as registered signals updated within an always block, making both the storage of previous 'a' and edge outputs synchronous.
+- This ensures that the rise and down signals are asserted for exactly one clock cycle after detecting the edge, and then automatically cleared.
+- The design becomes fully synchronous with no asynchronous reset, which can be advantageous in certain FPGA or ASIC flows.
+- Comments will be added for clarity.
+
+This approach preserves the functionality (one-cycle pulse synchronous edge detection) but changes the structure by registering both previous 'a' and the edge outputs in a single always block with synchronous reset.

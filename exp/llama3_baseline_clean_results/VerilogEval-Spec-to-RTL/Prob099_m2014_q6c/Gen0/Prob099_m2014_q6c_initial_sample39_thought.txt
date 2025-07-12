@@ -1,0 +1,16 @@
+To implement the next-state logic for signals Y1 and Y3, we first need to understand the state transitions as defined in the given state machine. We then apply the one-hot encoding for the states A through F. The next-state logic can be derived by examining the transitions and applying them to the one-hot encoded states.
+
+- For Y1 (corresponding to state B), Y1 will be 1 in the next state if the current state is A and the input w is 1, or if the current state is C and the input w is 1, or if the current state is E and the input w is 0, because these are the transitions that lead to state B.
+- For Y3 (corresponding to state D), Y3 will be 1 in the next state if the current state is B and the input w is 1, or if the current state is C and the input w is 1, or if the current state is D and the input w is 1, or if the current state is E and the input w is 1, because these are the transitions that lead to state D.
+
+Given the one-hot encoding:
+- A: 000001
+- B: 000010
+- C: 000100
+- D: 001000
+- E: 010000
+- F: 100000
+
+We can express Y1 and Y3 in terms of y[5:0] and w:
+- Y1 = (y[0] & w) | (y[2] & w) | (y[4] & ~w)
+- Y3 = (y[1] & w) | (y[2] & w) | (y[3] & w) | (y[4] & w)

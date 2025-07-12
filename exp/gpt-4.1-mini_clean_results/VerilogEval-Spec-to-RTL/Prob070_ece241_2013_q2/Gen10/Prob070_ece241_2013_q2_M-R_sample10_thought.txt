@@ -1,0 +1,8 @@
+The original code uses direct combinational assignments with minimal SOP and POS forms, but contains errors in term coverage. To fix this while keeping the core logic the same, I will:
+
+- Explicitly combine the inputs into a 4-bit vector and use a case statement inside a combinational always block to define the output, clearly specifying 1, 0, and don't-care cases.
+- From this case statement truth table, derive the correct SOP and POS by direct evaluation.
+- Then, define out_sop and out_pos as registers updated in the always block.
+- Finally, assign outputs from these registers.
+
+This approach improves readability and correctness by explicitly mapping input patterns to outputs and avoiding any implicit mistakes in algebraic expressions. The refactoring keeps the same logic function but structures it as a combinational process instead of direct assign statements.

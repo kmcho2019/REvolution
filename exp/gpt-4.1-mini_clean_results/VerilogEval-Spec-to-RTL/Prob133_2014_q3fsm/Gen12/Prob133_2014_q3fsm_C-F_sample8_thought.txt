@@ -1,0 +1,11 @@
+Fuse the minimal two-state FSM and the simple counters from both examples while optimizing power and timing by gating counter updates only when in state B, reducing unnecessary toggling in state A. Keep separate 2-bit cycle counter and w accumulator for clarity and minimal area.
+
+Implement synchronous reset and positive edge triggered sequential logic.
+
+Accumulate w counts and increment the cycle counter only in state B with enable, so the registers toggle only when needed. At the end of the 3-cycle window (cycle count == 2), output z is asserted in the next clock cycle if exactly two out of three w values were 1 (using the sum of previous w_accum and current w).
+
+This fusion preserves minimal state encoding and register usage while improving power by gating register updates and improving timing by separating logic cleanly and avoiding combinational feedback loops.
+
+Register output z with one-cycle delay after the three-sample window to meet the spec, avoiding glitches.
+
+Overall, the design balances simplicity, minimal states and registers, reduced toggling for power efficiency, and clean combinational logic for better timing.

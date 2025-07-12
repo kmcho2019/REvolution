@@ -1,0 +1,11 @@
+Instead of using a hierarchical min2 comparator tree, I will implement the minimum finder using a single combinational block that compares all four inputs directly with conditional expressions. This approach leverages Verilog's ability to chain conditional operators to find the minimum among multiple inputs without intermediate modules.
+
+Specifically, I will implement a nested conditional expression in one assign statement that compares the four inputs in a single expression:
+
+- First find the smaller between `a` and `b`
+- Then compare that result with `c`
+- Finally compare that with `d` to get the overall minimum.
+
+This approach minimizes module instantiations and logic depth, resulting in a flat combinational expression for the minimum. It trades off explicit modularity for a straightforward, easily readable single-line comparison logic.
+
+Such flattening can reduce interconnect complexity and may improve timing slightly by eliminating extra routing stages, while still being fully synthesizable and easy to understand.

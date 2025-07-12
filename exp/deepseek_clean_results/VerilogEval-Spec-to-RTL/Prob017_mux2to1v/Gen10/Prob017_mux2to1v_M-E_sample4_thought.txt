@@ -1,0 +1,10 @@
+Instead of a flat 100-bit mux, we'll implement a hierarchical structure:
+1. Divide the 100 bits into 10 slices of 10 bits each
+2. Use a common enable signal derived from 'sel'
+3. Each slice has its own 2:1 mux with shared control
+4. The enables are generated once and distributed
+5. Benefits:
+   - Potentially better physical implementation (localized routing)
+   - Enables power gating at slice level if needed
+   - More scalable for very wide buses
+   - Clear hierarchy for timing analysis

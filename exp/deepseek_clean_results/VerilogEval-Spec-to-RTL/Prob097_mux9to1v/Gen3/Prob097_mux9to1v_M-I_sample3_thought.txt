@@ -1,0 +1,18 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Power Optimization:
+   - Add an early check for sel > 8 to avoid unnecessary case evaluations when output is constant
+   - This reduces switching activity in the mux logic for unused cases
+
+2. Area Optimization:
+   - Use a hierarchical mux structure (tree of 2:1 muxes) which typically synthesizes more efficiently
+   - This approach may reduce area by allowing better resource sharing
+
+3. Performance:
+   - Maintain similar timing characteristics by keeping the critical path balanced
+   - The hierarchical structure may actually improve timing in some synthesis scenarios
+
+The improved design will:
+- First check if sel is in the unused range (9-15) for power savings
+- Then implement the 9:1 mux as a tree of smaller muxes for area efficiency
+- Maintain the same functionality with all outputs high for sel=9-15

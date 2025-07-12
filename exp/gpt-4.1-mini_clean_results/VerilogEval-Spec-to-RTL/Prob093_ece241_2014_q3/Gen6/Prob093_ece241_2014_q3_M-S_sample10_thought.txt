@@ -1,0 +1,25 @@
+The problem requires creating inputs for a 4-to-1 mux selected by inputs a,b (external to TopModule), where each mux input is a function of c and d only, to implement the given 4-variable function from the K-map.
+
+Since TopModule only has inputs c and d and outputs mux_in[3:0], the goal is to produce mux_in[i] = f_i(c,d) corresponding to each fixed ab combination (00,01,11,10).
+
+From the K-map, extract the 4 functions f_0 to f_3 for ab=00,01,11,10 columns respectively. Each is a function of c,d only.
+
+Minimize each function and implement each using only 2-to-1 multiplexers (and constants) to keep it simple.
+
+Key observations and simplifications:
+
+- mux_in[0] (ab=00): f_0(c,d) = 1 except when c=0,d=0 → f_0 = c + d
+
+- mux_in[1] (ab=01): f_1(c,d) = 0 always
+
+- mux_in[2] (ab=11): f_2(c,d) = c & d
+
+- mux_in[3] (ab=10): f_3(c,d) = (~d) + c
+
+Implement these minimal functions using 2-to-1 mux primitives with constants only, no other gates.
+
+The final implementation uses at most two 2-to-1 muxes for f_3 and one each for f_0 and f_2, ensuring minimal complexity.
+
+Assign mux_in bits in order: mux_in[0] for ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, mux_in[3] for ab=10.
+
+This approach is clean, minimal, and fully consistent with the problem's constraints.

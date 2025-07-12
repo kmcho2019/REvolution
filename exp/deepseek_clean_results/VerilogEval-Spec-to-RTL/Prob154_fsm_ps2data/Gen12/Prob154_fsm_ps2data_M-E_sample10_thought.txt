@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of storing bytes separately, use a 24-bit shift register that shifts in new bytes from the left. This eliminates the need for separate byte storage logic.
+2. Smart State Tracking: Use a counter to track valid bytes received, reducing state transitions to just IDLE and ACTIVE states.
+3. Early Done Calculation: Pre-calculate the done signal one cycle early to meet timing requirements.
+4. Power Optimization: Only shift when in ACTIVE state and only update output registers when done is about to be asserted.
+5. Reset Handling: Clear all registers synchronously while maintaining X propagation during reset.
+
+Key Advantages:
+- Reduced logic complexity by using shift register
+- Fewer state transitions (only 2 states needed)
+- Early done calculation improves timing
+- Power efficient by minimizing register updates
+- Clean reset behavior

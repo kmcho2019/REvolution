@@ -1,0 +1,3 @@
+Refactor the edge detector by storing only the previous input vector in a single 8-bit register instead of a 2-bit shift register per bit. The positive edge detection can then be done combinationally by comparing the current input and the stored previous input. To avoid combinational output and improve timing, register the output pedge on the clock edge. Use non-blocking assignments and keep the code clean and straightforward. This approach reduces register count from 16 flip-flops to 16 flip-flops total (8 for prev_in and 8 for pedge), reduces area and power, and potentially improves timing by pipelining the pedge output.
+
+This structure preserves the one-cycle delay on pedge asserted after a 0-to-1 transition, while simplifying the code and hardware.

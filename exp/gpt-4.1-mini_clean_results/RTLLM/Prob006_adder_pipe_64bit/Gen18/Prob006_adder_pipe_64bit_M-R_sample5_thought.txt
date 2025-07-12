@@ -1,0 +1,11 @@
+Refactor the 64-bit pipelined ripple carry adder by clearly separating the pipeline stages and ensuring data and control signals shift every clock cycle, regardless of input enable. Use arrays of registers for operands, sums, and carry signals, and make sure they all advance synchronously. 
+
+Key improvements:
+- Always shift operand slices through pipeline registers each clock cycle, loading new inputs at stage 0 when `i_en` is asserted.
+- Initialize carry-in at stage 0 to zero when new data is loaded.
+- Compute sum and carry for each stage using nonblocking assignments within a single clocked `always` block.
+- Pipeline enable signals track data flow precisely.
+- Assemble final result after all stages complete by concatenating sum slices and last carry in a dedicated combinational block, avoiding sequential overwriting.
+- Output enable (`o_en`) is asserted when the output data is valid and synchronized to the pipeline.
+
+This approach ensures a fully pipelined design producing a valid 65-bit sum after 8 clock cycles, with stable and correct outputs and handshake signals.

@@ -1,0 +1,15 @@
+The original solution uses a fully combinational approach generating all partial products and summing them in a balanced adder tree, which is fast but area-heavy and power-intensive. To optimize for power and area while still maintaining combinational logic and correctness, I will implement a serial shift-and-add multiplier using a small FSM. This approach processes each bit of the multiplier one by one, conditionally adding the multiplicand shifted appropriately. This reduces simultaneous switching and hardware usage by reusing a single adder and registers to accumulate the result over 8 cycles. This sequential implementation greatly reduces area and dynamic power at the cost of latency (8 clock cycles), a common tradeoff in resource-constrained designs. The module will have a clock and reset input to control the iterative multiply operation and output a valid signal when done.
+
+If the problem requires purely combinational logic with no clock, this sequential approach won't fit. Since the user only specified input/output ports without clock or reset, and requested the shift-and-add method, a better approach is to implement a fully combinational logic that sums partial products in a balanced tree (as before), but optimize by using generate statements with a more area-efficient adder tree.
+
+Therefore, to balance latency and area without adding clock/reset ports, I'll implement a combinational multiplier using the canonical shift-and-add approach but optimize the summation by generating partial products and summing them in a ripple-style adder chain instead of a balanced tree (the ripple style uses less complex adder logic, with less hardware duplication). Additionally, I will implement partial products and add them sequentially in a for loop using generate to reduce area.
+
+This keeps the implementation fully combinational without added latency or control signals while reducing area and power by simpler adders. This approach mirrors the classical shift-and-add method without full parallel summation, trading timing for reduced area.
+
+Summary of improvements:
+- Use a single 16-bit accumulator wire to add partial products sequentially.
+- Generate partial products only if the corresponding bit of B is set.
+- Use a for-generate loop with incremental addition to sum the partial products, simulating the shift-and-add approach combinationally.
+- This approach reduces the number of adders instantiated, reducing area and power compared to the fully parallel balanced tree.
+
+This meets the problem constraints and improves area and power metrics while keeping the design purely combinational.

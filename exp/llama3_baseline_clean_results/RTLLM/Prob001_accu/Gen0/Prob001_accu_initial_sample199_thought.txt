@@ -1,0 +1,16 @@
+To implement the serial input data accumulation module, we can use a finite state machine (FSM) to track the number of valid input data received and accumulate the sum of these data. We will have two states: an idle state and an accumulation state. In the idle state, we wait for the valid_in signal to be set to 1. Once valid_in is 1, we transition to the accumulation state and start counting the number of valid input data. We also accumulate the sum of the input data. When we have received four valid input data, we output the accumulated sum and set valid_out to 1 for one cycle. We then reset the counter and the accumulator.
+
+We will use a counter to keep track of the number of valid input data received, and a register to accumulate the sum of the input data. We will also use a flag to indicate when the output is valid.
+
+We will use the following signals:
+- clk: clock input
+- rst_n: active-low reset signal
+- data_in: 8-bit input data
+- valid_in: input signal indicating readiness for new data
+- valid_out: output signal indicating when 4 input data accumulation is reached
+- data_out: 10-bit output data representing the accumulated sum
+
+We will use the following variables:
+- cnt: counter to keep track of the number of valid input data received
+- sum: accumulator to keep track of the sum of the input data
+- output_valid: flag to indicate when the output is valid

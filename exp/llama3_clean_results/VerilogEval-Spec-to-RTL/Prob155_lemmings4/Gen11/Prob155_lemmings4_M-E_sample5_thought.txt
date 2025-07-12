@@ -1,0 +1,15 @@
+To solve this problem, we can design a finite state machine (FSM) that utilizes a hierarchical approach. We can break down the Lemming's behavior into two main modes: walking and non-walking. The walking mode can be further divided into walking left and walking right, while the non-walking mode can include falling, digging, and splattered states.
+
+A novel architectural idea here is to use a two-level state machine, where the top-level state machine controls the mode (walking or non-walking), and the bottom-level state machine controls the specific state within the mode. This approach allows us to simplify the state transitions and make the code more modular and easier to maintain.
+
+We can define an enumeration of top-level states that includes WALKING and NON_WALKING. The bottom-level state machine can have its own enumeration of states that includes LEFT, RIGHT, FALLING, DIGGING, and SPLATTERED.
+
+To handle the walking direction, we can use a separate register to store the current direction. When the Lemming is bumped, we can toggle the walking direction.
+
+To implement the fall counter, we can use a counter that increments when the Lemming is in the FALLING state. When the Lemming hits the ground, we can check the fall counter to determine if the Lemming should splatter.
+
+The digging mechanism can be implemented by checking the dig signal when the Lemming is in the WALKING mode. If the dig signal is active, we can transition to the DIGGING state.
+
+The output signals can be assigned based on the current state of the machine. For example, when the Lemming is in the WALKING mode and the bottom-level state is LEFT, we can set the walk_left signal to 1.
+
+By using a hierarchical approach with a two-level state machine, we can accurately model the behavior of the Lemmings and implement the required functionality.

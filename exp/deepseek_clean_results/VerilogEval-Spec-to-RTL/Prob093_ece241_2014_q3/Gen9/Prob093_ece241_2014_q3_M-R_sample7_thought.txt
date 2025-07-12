@@ -1,0 +1,23 @@
+Refactored Approach: Direct Truth Table Implementation with Minimal Muxes
+
+1. Key Insights:
+   - Each mux_in[x] corresponds to a column in the K-map (ab combination)
+   - We can derive each output directly from the truth table
+   - Need to implement each output using only 2-to-1 muxes (no other gates)
+
+2. Truth Table Analysis:
+   - mux_in[0] (ab=00): 0,1,1,1 (for cd=00,01,11,10)
+   - mux_in[1] (ab=01): Always 0
+   - mux_in[2] (ab=11): 0,0,1,0
+   - mux_in[3] (ab=10): 1,0,1,1
+
+3. Implementation Strategy:
+   - mux_in[0]: Use c as select - when c=1 output 1, else output d
+   - mux_in[1]: Hardwired 0
+   - mux_in[2]: Use c AND d (implemented with muxes)
+   - mux_in[3]: Use c as select - when c=1 output d, else output ~d
+
+4. Refactoring Changes:
+   - Same logic but using only assign statements
+   - More explicit about mux implementations
+   - Clearer mapping to K-map requirements

@@ -1,0 +1,11 @@
+To improve the existing design for better PPA, we optimize the counter condition to count from 0 up to (freq-1) instead of up to freq. This reduces comparator complexity and makes the count range more intuitive with minimal logic.
+
+We also implement a clock enable (count_en) signal that is active only when freq is non-zero. This disables counter increment and toggling when freq=0, reducing switching activity and dynamic power.
+
+We make the reset synchronous and active-high as before, keeping predictable timing.
+
+Overall, the design toggles wave_out at every terminal count (when count reaches freq-1), resetting count to zero afterward.
+
+This approach reduces critical path due to simplified comparator, lowers dynamic power via clock gating on the counter, and maintains minimal area using only one counter register and one output register.
+
+Non-blocking assignments and a single always block for sequential logic ensure clean synthesis. The input ports are clk, rst, freq, and output wave_out as required.

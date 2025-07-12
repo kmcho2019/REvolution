@@ -1,0 +1,9 @@
+Refactor by decomposing the 8-bit register into 8 individual 1-bit D flip-flop modules, each with synchronous active-high reset to 0 or 1 depending on the corresponding bit in the reset value 0x34. The flip-flops are triggered on the negative edge of clk.
+
+This structure:
+- Makes the design more explicit about individual flip-flops and their reset behavior.
+- Facilitates potential fine-grained control or modification per bit in the future.
+- Maintains the same functionality but changes hierarchical style.
+- Demonstrates how to instantiate multiple instances instead of a single vector register.
+
+Each DFF module handles one bit with synchronous reset and negedge clocking. TopModule instantiates 8 of these modules for bits [0..7].

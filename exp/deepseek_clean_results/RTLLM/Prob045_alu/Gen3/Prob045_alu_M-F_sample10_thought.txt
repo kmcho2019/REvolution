@@ -1,0 +1,24 @@
+The key issues to address from the feedback are:
+
+1. Carry Calculation Fix:
+   - Need to properly handle the carry-out for 32-bit operations by extending the sum to 33 bits
+   - This allows correct detection of carry in both ADD/ADDU and SUB/SUBU operations
+
+2. Optimization Improvements:
+   - Implement a unified 33-bit adder/subtractor for all arithmetic operations
+   - Simplify flag generation logic by combining related conditions
+   - Maintain the existing efficient shift implementation
+   - Keep the clean operation selection structure
+
+3. Flag Generation:
+   - Zero flag remains simple comparison
+   - Negative flag directly from MSB
+   - Overflow only for signed operations (ADD/SUB)
+   - Carry only for unsigned operations (ADDU/SUBU)
+   - Flag output specifically for SLT/SLTU results
+
+The fixed implementation will:
+- Correct the carry calculation by using 33-bit arithmetic
+- Maintain all functionality while being more robust
+- Keep the clean operation selection structure
+- Optimize flag generation logic

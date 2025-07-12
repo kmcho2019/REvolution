@@ -1,0 +1,14 @@
+Fuse the strengths of both examples by encoding seconds and minutes as two separate BCD digits (units and tens) with simple rollover logic (like Example 1) to minimize combinational complexity and logic depth for those counters, improving timing and power.
+
+For hours, use a compact BCD two-digit register and a dedicated hour increment function similar to Example 2 to simplify hour counting and toggling PM, but leverage the digit-wise approach for seconds/minutes for clearer rollover control.
+
+This hybrid approach:
+- Reduces critical path by avoiding nested increments for seconds/minutes (digit-based increments for simple carry).
+- Maintains clear hour increment logic with concise wrap-around and PM toggle.
+- Uses combinational assignments cleanly separated from sequential logic, facilitating easier timing closure.
+- Implements synchronous reset with immediate preset to 12:00 AM.
+- Avoids unused code and redundant comparisons by integrating explicit digit limits for seconds/minutes, and focused hour increment rules.
+- Improves area by limiting complex comparisons and leveraging small functions selectively.
+- Keeps power in check by gating increments to ena and minimizing combinational complexity.
+
+The resulting design is efficient, clear, and robust for a 12-hour BCD clock with PM indicator.

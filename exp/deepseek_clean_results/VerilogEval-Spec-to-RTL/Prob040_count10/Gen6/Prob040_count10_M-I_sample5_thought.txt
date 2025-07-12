@@ -1,0 +1,11 @@
+Optimization strategy for better PPA metrics:
+1. Timing Improvement: Replace the combinational check with a registered terminal count signal to break the critical path
+2. Power Optimization: Add clock gating for the increment logic when counter is at maximum value (9)
+3. Area Optimization: Maintain minimal logic while improving other metrics
+4. Maintain functionality: Keep synchronous reset and decade counting behavior
+
+Key changes:
+- Registered terminal count detection to improve timing predictability
+- Conditional increment with clock gating concept (though actual gating would need additional clock tree)
+- Simplified control logic by separating reset and count logic
+- Maintain same efficient 9 detection (q[3] & q[0]) but with registered version

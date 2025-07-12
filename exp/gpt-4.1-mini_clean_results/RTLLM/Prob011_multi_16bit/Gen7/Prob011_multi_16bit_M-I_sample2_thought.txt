@@ -1,0 +1,13 @@
+To improve the original design's performance, power, and area (PPA), I will focus on reducing unnecessary register toggling and thus saving power, while maintaining correctness and timing. Specifically:
+
+1. Introduce clock enable signals to update registers only when necessary, especially yout_r accumulator which now only updates when areg[0] == 1, preventing unnecessary toggling.
+
+2. Remove redundant self-assignments (e.g., yout_r <= yout_r) to minimize switching.
+
+3. Simplify done flag logic by explicitly setting done at i==16 and clearing it when start is deasserted or reset occurs, removing the delayed clear at i==17 to reduce logic complexity.
+
+4. Keep areg and breg_ext shifting logic on every cycle during active multiplication to preserve correct operation and timing.
+
+This selective register enabling reduces power by minimizing transitions, slightly improves timing by lowering switching activity, and can reduce area by allowing synthesis to optimize register usage better.
+
+The control flow remains clean and consistent with the original spec.

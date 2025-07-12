@@ -1,0 +1,39 @@
+To optimize the counter for better performance and power, replace the explicit comparison (q == 999) with a wrap-around approach using arithmetic properties. Since the counter counts 0 to 999 inclusive, and 1000 decimal is 0x3E8 in hex, we can add 1 every cycle and use modular arithmetic to wrap the counter naturally: when q + 1 equals 1000, reset to 0. However, this is similar to the original approach and still requires a comparison.
+
+An alternative is to implement the counter as a modulo-1000 counter using a standard 10-bit adder with a carry-out. Since 1000 is not a power of two, we can't rely on natural binary overflow, but we can check for the carry-out from the 10-bit addition (q + 1). If the addition result is 1000 or higher, reset to zero.
+
+However, the carry-out from adding 1 to q is only 1 when q=1023, which is outside our count range. So carry-out isn't useful here.
+
+Instead, the key is to reduce comparator complexity. Notice 999 decimal = 10'b11_1110_0111 (binary).
+
+We can detect 999 by checking:
+
+- bits [9:7] == 3'b111 (7 decimal)
+
+- bits [6:0] == 7'b1100111 (103 decimal)
+
+We can check high bits once, and low bits once, potentially optimizing the comparator to two AND gates chained rather than a single 10-bit comparator.
+
+Alternatively, use a single 10-bit comparator but let synthesis optimize.
+
+To further reduce switching activity (power), implement clock enable logic so that counting stops when reset is active or counter reaches 999 (and immediately resets). But since counting continuously is required, no clock gating is needed.
+
+Another approach is to use a ring counter or a Johnson counter with decoding for the terminal count 999, but this complicates design and likely increases area.
+
+Hence, the best improvement is code cleanup and a slightly optimized comparator by explicitly splitting comparator check into two parts (upper bits and lower bits). This can reduce logic depth and help synthesis optimize.
+
+Also, use parameter for terminal count for better readability and reusability.
+
+The reset remains synchronous active high as specified.
+
+Summary:
+
+- Use parameter for terminal count 999.
+
+- Split comparator check to upper and lower bits.
+
+- Same synchronous reset.
+
+- Keep increment logic.
+
+This should help synthesis tools generate better PPA due to smaller comparator logic depth.

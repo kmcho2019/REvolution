@@ -1,0 +1,14 @@
+The original implementation is functionally correct but may have a large combinational delay due to the 16-step iterative subtraction implemented combinationally, leading to a long critical path and potential area overhead from replicated subtractors/comparators.
+
+To optimize for better PPA (power, performance, and area):
+
+- Break the logic into two combinational always blocks as required, separating input registering and computation.
+- In the first always block, latch inputs into registers (a_reg, b_reg) combinationally; this slightly simplifies and isolates inputs from computation logic, enabling some synthesis optimization.
+- In the second always block, perform the division logic based on registered inputs, which may help synthesis tools with optimization and improves clarity.
+- Use a loop with indexed bit extraction and subtraction, but optimize remainder concatenation by using a shift-left plus next bit approach instead of concatenation to simplify hardware.
+- Represent remainder as 9 bits to hold the shifted-in bit, perform subtraction with divisor, and update remainder and quotient accordingly.
+- Place the final 8-bit remainder in the lower bits of output odd, zero higher bits.
+- The two-block approach helps synthesis tools isolate input latching and logic calculation for possible optimizations, reduces glitching, and can ease timing closure.
+- This separation is explicitly requested and provides better design hygiene without increasing complexity.
+
+This approach achieves the same functional behavior with minor structural improvements to facilitate synthesis optimizations, potentially reducing critical path and area overhead slightly.

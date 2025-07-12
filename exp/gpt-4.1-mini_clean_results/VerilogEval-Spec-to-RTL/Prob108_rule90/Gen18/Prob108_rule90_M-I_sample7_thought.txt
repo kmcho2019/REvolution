@@ -1,0 +1,19 @@
+To improve the PPA (performance, power, area) of the existing Rule 90 512-bit CA implementation, I will apply the following optimizations:
+
+1. **Break boundary combinational dependencies via registering boundary signals**:  
+   The current design directly wires neighbors between blocks, creating a long combinational path chain through boundary bits (`block_q[i-1][63]` and `block_q[i+1][0]`). This limits maximum clock frequency. By registering boundary bits on each clock, we pipeline the boundary signals and reduce the critical path length.
+
+2. **Minimize toggling and power by clock gating or enabling only when state changes or on load**:  
+   However, since the cellular automaton updates every cycle inherently, clock gating gains are limited unless the state is static, which is generally not the case here. Instead, we keep the logic simple.
+
+3. **Retain modular 64-bit block design for manageable area and timing**:  
+   The modular design balances complexity and area well. Pipelining boundaries will slightly increase register count but can significantly improve timing.
+
+4. **Add boundary registers in TopModule**:  
+   We'll add registers to hold the left and right boundary signals for each block and update them every clock cycle, thereby breaking the combinational chain.
+
+5. **Maintain synchronous reset/load behavior**.
+
+This approach trades a small increase in latency (by 1 cycle in boundary info propagation) for improved clock frequency and potentially lower dynamic power due to shorter combinational paths and better timing closure.
+
+Overall, the design will be fully synchronous, maintain functional correctness, and gain improved timing and area efficiency by easing critical path delays related to inter-block boundary communication.

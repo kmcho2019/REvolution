@@ -1,0 +1,30 @@
+To improve the frequency divider code, we will address the issues mentioned in the feedback. The main problems lie in the generation of intermediate clocks and the phase-shifting logic. We will simplify the counter logic and use a more straightforward approach to generate the intermediate clocks.
+
+First, we will use a single counter to cycle through the 7 clock cycles required for 3.5x division. We will generate two intermediate divided clocks: one with 4 cycles (clk_div_int1) and another with 3 cycles (clk_div_int2).
+
+Next, we will implement the phase-shifting logic using a separate signal (clk_div_phase_shifted) to avoid any potential race conditions. We will use a simple logical OR to combine the two intermediate clocks, ensuring that the clocks are properly aligned and phase-shifted.
+
+To improve the design, we will also add a duty cycle correction to ensure that the final fractional divided clock output has a uniform period. We will use a separate signal (clk_div_duty_corrected) to apply the duty cycle correction.
+
+The key parameters for this design remain the same:
+- MUL2_DIV_CLK: The number of clock cycles to divide the input clock frequency. For 3.5x division, MUL2_DIV_CLK = 7.
+
+We will use the following approach to generate the intermediate divided clocks:
+- When the counter is between 0 and 3 (4 cycles), generate the first intermediate clock (clk_div_int1).
+- When the counter is between 4 and 6 (3 cycles), generate the second intermediate clock (clk_div_int2).
+
+We will then phase-shift these clocks by half a clock period to produce the final fractional divided clock output (clk_div).
+
+To ensure proper synchronization and avoid any potential issues, we will use the following logic:
+- The counter is reset when it reaches MUL2_DIV_CLK.
+- The intermediate clocks are generated based on the counter value.
+- The phase-shifting is applied to the intermediate clocks to produce the final fractional divided clock output.
+
+To optimize the design for better PPA, we will minimize the number of flip-flops and combinational logic gates used. We will also reduce the complexity of the logic to improve the area and power consumption of the design.
+
+We will use the following optimization strategies:
+- Use a single counter to reduce the number of flip-flops.
+- Simplify the logic for generating the intermediate clocks and phase-shifting.
+- Minimize the number of combinational logic gates used.
+
+By using this approach, we can ensure that the frequency divider produces a smooth and accurate fractional divided clock output while optimizing the design for better PPA.

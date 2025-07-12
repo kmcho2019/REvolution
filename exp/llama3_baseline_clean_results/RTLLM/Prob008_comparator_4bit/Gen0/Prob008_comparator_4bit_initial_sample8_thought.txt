@@ -1,0 +1,13 @@
+To implement the 4-bit comparator module, we will first define the module with its input and output ports. Then, we'll perform the subtraction operation A - B using combinational logic. We will use the result of this subtraction to determine whether A is greater than, equal to, or less than B. The output encoding will ensure that the outputs (A_greater, A_equal, A_less) are mutually exclusive, meaning only one of the three outputs can be high (1) at any given time.
+
+The subtraction operation can be implemented by using a full subtractor for each bit. However, to simplify the implementation and avoid explicit borrow generation, we can use a more straightforward approach based on the properties of binary subtraction.
+
+We'll calculate the result of A - B and check for any borrow. If a borrow occurs, it means A is less than B. If no borrow occurs, we check the result. If the result is non-zero, A is greater than B. If the result is zero, A is equal to B.
+
+To ensure mutual exclusivity, we'll use a simple logic that sets A_greater high when the most significant bit (MSB) of the result is 1 (indicating a positive result), A_less high when a borrow is detected, and A_equal high when the result is zero.
+
+However, since we're dealing with binary numbers and looking for a simple comparison, we can directly compare the bits from MSB to LSB (Least Significant Bit) without explicitly performing subtraction. This can be achieved by using a series of if-else statements or conditional logic in Verilog.
+
+We will assign the outputs (A_greater, A_equal, A_less) based on the comparison of A and B from the most significant bit to the least significant bit. If A's MSB is 1 and B's MSB is 0, A is greater than B. If A's MSB is 0 and B's MSB is 1, A is less than B. If both MSBs are the same, we compare the next bits until we find a difference or reach the LSB.
+
+If all bits are the same, A is equal to B. This approach simplifies the logic and avoids the need for explicit subtraction and borrow detection.

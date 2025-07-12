@@ -1,0 +1,9 @@
+To fix the implementation:
+1. The main issue is the undeclared 'feedback' variable which needs to be declared as a reg since it's assigned in a procedural block
+2. The LFSR logic itself is correct:
+   - Taps at positions 32,22,2,1 (0-based: 31,21,1,0)
+   - Feedback is q[0] (LSB before shift)
+   - Shift happens first, then XOR with feedback at tap positions
+3. The XOR operations don't need to be conditional on feedback - they can be done unconditionally since XOR with 0 is a no-op
+4. Reset behavior remains the same (initialize to 32'h1)
+5. All assignments should use non-blocking (<=) for sequential logic

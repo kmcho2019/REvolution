@@ -1,0 +1,17 @@
+To implement a novel architectural idea for the PS/2 mouse protocol message boundary detection, we can utilize a buffer-based approach combined with a simple state machine. This design will use a buffer to store the incoming bytes as they are received and a finite state machine (FSM) to manage the state transitions based on the received bytes and their corresponding in[3] bit values.
+
+The key components of this approach are:
+
+1.  **Byte Buffer:** A register to store the incoming bytes as they are received.
+2.  **FSM:** A simple FSM with states to represent the different stages of message reception (SEARCH, BYTE1, BYTE2, BYTE3).
+3.  **Counter:** A counter to keep track of the number of bytes received since the start of a message (indicated by a byte with in[3]=1).
+
+The workflow will be as follows:
+
+-   Start in the SEARCH state, waiting for a byte with in[3]=1 to indicate the start of a message.
+-   Upon receiving a byte with in[3]=1, move to the BYTE1 state and store the byte in the buffer.
+-   For each subsequent byte received, move to the next state (BYTE2, then BYTE3) and store the byte in the buffer.
+-   Once three bytes have been stored in the buffer, assert the 'done' signal in the next clock cycle and reset the buffer and state.
+-   If at any point a byte with in[3]=1 is received while not in the SEARCH state, it indicates the start of a new message, so reset the buffer and state to SEARCH and then move to BYTE1.
+
+This approach allows for efficient detection of message boundaries and ensures that the 'done' signal is correctly asserted after the third byte of each message.

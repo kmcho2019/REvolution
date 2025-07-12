@@ -1,0 +1,11 @@
+The original design is logically sound and aligns well with the requirement: it detects 1→0 transitions per bit by comparing the previous input and the current input, then accumulates the detected transitions in the output until reset. The most common cause for mismatch is the initialization of `prev_in` at reset to zero, which prevents detecting any falling edge on the very first cycle after reset.
+
+To fix the mismatch issue, initialize `prev_in` at reset to all ones (`32'hFFFFFFFF`) instead of zeros. This ensures that if the input starts at zeros after reset, no false falling edges are detected, but if the input is initially 1s, the transition to 0s is correctly detected.
+
+Also, to maintain consistent synchronous reset behavior, ensure all state registers initialize accordingly.
+
+No changes are needed for the core logic as it is already optimal for performance, area, and power given the problem. This fix should eliminate the functional mismatches.
+
+If further PPA optimization is desired, the design is quite minimal, but clock gating or output gating might be applied in a larger system. For now, correctness is the priority.
+
+Hence, the improved code differs only in resetting `prev_in` to all ones instead of zeros.

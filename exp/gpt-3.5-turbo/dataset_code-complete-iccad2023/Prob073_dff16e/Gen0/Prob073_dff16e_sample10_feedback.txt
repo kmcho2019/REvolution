@@ -1,7 +1,0 @@
-The simulation log indicates mismatches in the output 'q', with a large number of samples having discrepancies. 
-
-1. The `q` output is incorrectly updated in the `always` block. Instead of properly updating the lower and upper bytes of the 16 D flip-flops based on the `byteena` inputs, the code is directly storing the input `d` values into intermediate registers `d_lower` and `d_upper`. This leads to the wrong behavior when the `byteena` signals are used to update the flip-flops.
-
-2. Specifically, the issue lies in how `d_lower` and `d_upper` are assigned with `d[7:0]` and `d[15:8]` respectively, without considering the enable signals. This design flaw results in incorrect behavior and mismatches in the simulation output.
-
-To resolve the issues and match the design intent, the code should properly update the `q_lower` and `q_upper` registers based on the `byteena` signals, considering when to update the lower and upper bytes of the flip-flops according to the design requirements.

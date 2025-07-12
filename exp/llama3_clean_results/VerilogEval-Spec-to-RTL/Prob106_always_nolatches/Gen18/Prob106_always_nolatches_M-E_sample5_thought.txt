@@ -1,0 +1,7 @@
+To develop a novel architectural idea for the TopModule, we can consider an approach that leverages parameterized modules to create a scalable and maintainable design. This concept involves defining a generic module for detecting specific scancodes and then instantiating this module multiple times, each with different parameters for the scancodes corresponding to the arrow keys. 
+
+The generic module, named `ScancodeDetector`, will have two inputs: the 16-bit scancode and a 16-bit parameter representing the target scancode to detect. It will have one output, indicating whether the input scancode matches the target scancode. By using this module, we can avoid repetitive code and make it easier to add or modify scancode mappings in the future.
+
+To enhance the design's efficiency and simplicity, we can use `assign` statements with logical operations to directly drive the outputs based on the inputs from the `ScancodeDetector` instances. This approach allows for continuous assignment and eliminates the need for `always` blocks, potentially improving synthesis results.
+
+The key advantage of this novel architecture is its scalability and flexibility. If additional scancodes need to be recognized in the future, this can be achieved by simply instantiating more `ScancodeDetector` modules with the appropriate parameters, without modifying the existing code. This modular design also promotes better understanding and maintainability of the codebase.

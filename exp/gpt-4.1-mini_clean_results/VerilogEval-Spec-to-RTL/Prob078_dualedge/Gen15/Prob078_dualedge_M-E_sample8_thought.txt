@@ -1,0 +1,5 @@
+Implement the dual-edge triggered flip-flop by sampling the input `d` on the positive edge and storing the sampled data, then using the negedge of the clock to update the output `q` with the stored value from the previous positive edge. This creates a two-stage pipeline where the first stage samples the input on the posedge and the second stage updates output on the negedge, effectively combining two edges to capture data changes on both clock edges.
+
+This approach uses only two flip-flops clocked on opposite edges but avoids multiplexing based on the clock level, reducing potential glitch and timing issues on combinational muxes. It essentially creates a "master-slave" type flip-flop behavior where the "master" samples on posedge and the "slave" updates on negedge, with the output `q` reflecting a dual-edge-triggered behavior.
+
+This design ensures all clock edges are used, requires no combinational mux controlled by clock level, and uses only legal always blocks with posedge and negedge separately, making it FPGA-friendly and synthesis-compliant.

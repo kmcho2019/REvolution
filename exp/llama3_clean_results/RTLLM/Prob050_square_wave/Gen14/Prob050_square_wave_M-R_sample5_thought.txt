@@ -1,0 +1,7 @@
+The provided code is a simple square wave generator with variable frequency. It uses a counter-based approach, where a counter increments on each rising edge of the clock signal, and when the counter reaches the specified frequency, it resets and toggles the output signal.
+
+To refactor this code, we can simplify the design by removing the unnecessary temporary register `temp_wave_out` and directly updating the `wave_out` signal in the sequential logic block. Additionally, we can use a single `always` block to handle both the counter increment and the output toggle, as the combinatorial logic for the output assignment is minimal and does not justify a separate `always` block.
+
+Furthermore, to reduce power consumption, we can ensure that the counter only increments when necessary, and the output only toggles when the counter reaches the specified frequency. This can be achieved by using non-blocking assignments and optimizing the conditional statements within the `always` block.
+
+By simplifying the logic and reducing unnecessary register updates, we aim to create a design that is not only functionally correct but also optimized for power and area, providing a superior solution to the problem.

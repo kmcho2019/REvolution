@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+1. Logic Sharing: Observe that both ModuleA and ModuleB compute (x^y) as an intermediate result. We can compute this once and share it.
+2. Output Remapping: Instead of instantiating duplicate modules, compute each unique output once and route as needed.
+3. Direct Output Calculation: The final output z can be expressed as:
+   z = [(x^y & x) | ~(x^y)] ^ [(x^y & x) & ~(x^y)]
+   This simplifies to z = (x & ~y) ^ (x & y & ~x) which further reduces to z = x & ~y
+4. Implementation: Single XOR for shared term, then direct logic for outputs, eliminating redundant computations.
+
+Key Advantages:
+- Eliminates all duplicate module instances
+- Reduces gate count by sharing common sub-expressions
+- Maintains same functionality with simpler implementation
+- Potentially better timing due to reduced logic levels

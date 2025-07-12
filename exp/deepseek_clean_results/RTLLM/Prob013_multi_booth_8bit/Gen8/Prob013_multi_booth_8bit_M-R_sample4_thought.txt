@@ -1,0 +1,23 @@
+Refactored Radix-4 Booth Multiplier Design:
+
+1. State Machine Approach:
+   - Implement explicit states (IDLE, COMPUTE, DONE) for clearer control flow
+   - State transitions driven by counter and reset signals
+   - More readable than single always block approach
+
+2. Separated Combinational Logic:
+   - Use assign statements for Booth encoding selection
+   - Move product update logic to combinational block
+   - Clear separation between control and datapath
+
+3. Improved Counter Logic:
+   - Maintain 3-bit counter but with explicit state control
+   - Counter only increments in COMPUTE state
+   - Ready signal tied directly to DONE state
+
+Key Refactoring Benefits:
+- Better readability with explicit state machine
+- Clear separation of control and datapath
+- More maintainable structure
+- Same efficient Radix-4 operation (4 iterations for 8-bit)
+- Preserves all original functionality

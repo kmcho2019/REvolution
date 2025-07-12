@@ -1,0 +1,10 @@
+Refactor the multiplier into a simple finite state machine (FSM) with three states: IDLE, LOAD, and CALC.  
+- IDLE waits for the start signal.  
+- LOAD captures inputs and initializes registers in one cycle.  
+- CALC performs up to 16 shift-and-add cycles.  
+
+Use an explicit bit counter to track progress.  
+Separate combinational logic for next-state and outputs from sequential logic.  
+Implement the shift-and-accumulate within a sequential always block, but control register updates only in the CALC state for cleaner control and power efficiency.  
+The done flag is asserted at the end of CALC and cleared on reset or new start.  
+This approach clarifies control flow, reduces redundant register writes by gating updates based on state, and clearly separates FSM control from datapath, improving maintainability and potential timing optimizations.

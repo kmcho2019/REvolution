@@ -1,0 +1,21 @@
+Refactoring Strategy:
+
+1. **Separate Pattern Detection Logic**:
+   - Use a dedicated shift register for pattern detection
+   - Clear pattern register only when leaving IDLE state
+
+2. **Explicit State Encoding**:
+   - Use one-hot encoding for clearer state transitions
+   - Separate state transition logic from output logic
+
+3. **Counter Optimization**:
+   - Combine delay and cycle counters into a single 14-bit counter (since max count is 16*1000=16000)
+   - Calculate count output directly from counter value (count = (counter-1)/1000)
+
+4. **Output Generation**:
+   - Use continuous assignments for outputs where possible
+   - Make counting and done signals purely combinatorial based on state
+
+5. **Simplified Control Flow**:
+   - Reduce nested conditions in state machine
+   - Make transitions more explicit and linear

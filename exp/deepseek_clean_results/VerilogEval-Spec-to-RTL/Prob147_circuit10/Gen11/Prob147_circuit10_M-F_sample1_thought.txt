@@ -1,0 +1,20 @@
+Corrected design approach:
+1. State behavior analysis:
+   - State toggles when (a & ~b) is true at clock edge (e.g., 75ns transition)
+   - Also toggles when (~a & b) is true (e.g., 45ns transition)
+   - Essentially state changes when a != b
+2. Output q logic:
+   - q is 1 when (state & ~b) is true
+   - Also 1 when (~state & a & b) is true
+   - This matches all q transitions in waveform
+3. Implementation:
+   - Single flip-flop for state storage
+   - State updates when a XOR b is true
+   - Output q combines state and input conditions
+   - Maintains edge-triggered behavior
+
+Key improvements:
+- Correct state transitions for all cases in waveform
+- Accurate q output generation matching all test cases
+- Still uses single flip-flop design
+- Matches timing requirements

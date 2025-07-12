@@ -1,0 +1,15 @@
+The improvement strategy involves addressing the functional errors identified in the feedback, specifically in handling the reset condition and the transition to the next state. Additionally, the code will be optimized for better Power, Performance, and Area (PPA) metrics.
+
+To correct the functional errors, the following changes will be made:
+- The `done` signal will be explicitly reset when `reset` is high to ensure correct behavior immediately after a reset.
+- The state machine's transition logic will be modified to correctly acknowledge the receipt of a byte before transitioning to the next state.
+
+For optimization, the following strategies will be employed:
+- Using a more efficient state encoding scheme to minimize the number of states and transitions, thus reducing area and power consumption.
+- Minimizing the number of logic levels to reduce propagation delay and improve performance.
+- Optimizing the combinational logic to reduce area and power consumption.
+
+The improved design will utilize a binary counter, `byte_count`, to keep track of the byte sequence. The `done` signal will be asserted in the cycle immediately after the third byte of each message was successfully received. The state machine will have the following conditions:
+- If the current state is IDLE and `in[3] = 1`, then the state transitions to BYTE1.
+- If the current state is BYTE1, BYTE2, then the state increments the byte counter.
+- If the current state is BYTE3, then the `done` signal is asserted and the state resets to IDLE.

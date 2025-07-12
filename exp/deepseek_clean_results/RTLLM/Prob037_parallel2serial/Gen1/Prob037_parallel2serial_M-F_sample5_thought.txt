@@ -1,0 +1,12 @@
+The corrected parallel-to-serial converter will work as follows:
+1. On reset (rst_n=0), all registers are cleared
+2. When new 4-bit parallel data arrives, it's loaded into a shift register
+3. A 2-bit counter keeps track of which bit is being output (0-3)
+4. At each clock cycle:
+   - If counter is 0 (first bit), load new parallel data
+   - Perform right shift to expose next bit (MSB to LSB order)
+   - Increment counter
+5. The MSB of the shift register is always output before shifting
+6. valid_out is high for all cycles when serial data is being output
+7. The shift operation preserves data integrity by rotating rather than padding
+8. Output sampling happens before any register updates to avoid race conditions

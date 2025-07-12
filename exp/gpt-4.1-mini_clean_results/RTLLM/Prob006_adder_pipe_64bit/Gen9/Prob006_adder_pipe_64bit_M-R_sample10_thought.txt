@@ -1,0 +1,11 @@
+Refactor the 64-bit pipelined ripple carry adder by explicitly separating combinational addition stages from pipeline registers for sums, carries, and enables.
+
+Instead of performing all additions inside a single always block, implement combinational adders that compute sum and carry-out for each 8-bit stage based on input operands and carry-in from the previous stage. Then, register the sums, carries, and enable signals on clock edges.
+
+This decouples combinational logic from sequential logic, improving clarity and possibly synthesis results.
+
+Pipeline registers are updated each clock cycle with async reset to clear registers. The final output result and output enable signals are registered from the last pipeline stage.
+
+The final 65-bit sum concatenates the carry-out from the most significant stage with all 8-bit sums from LSB to MSB.
+
+This approach maintains the eight-stage 8-bit pipeline structure but uses separate combinational adders and sequential registers, making the data flow more explicit and modular.

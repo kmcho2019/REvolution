@@ -1,0 +1,28 @@
+To refactor the given code, we will address the issues mentioned in the feedback and analysis. The main goal is to create a correct and efficient finite-state machine (FSM) that accurately implements the timer functionality as specified in the problem statement.
+
+Firstly, we will simplify the design by using a single state variable and a structured state machine definition. This can be achieved by defining an enum for the states and using a single always block to manage the state transitions and signal assignments.
+
+Secondly, we will correct the pattern detection logic by using a reg variable to capture the pattern and ensuring that the pattern detection is correctly reset when the state machine is reset or when the pattern is detected.
+
+Thirdly, the shifting stage will be modified to correctly assert the shift_ena signal for exactly 4 clock cycles after the pattern is detected, and then deassert it.
+
+Fourthly, the counting stage and the done/ACK stage will be revised to correctly assert the counting and done signals based on the shifting_complete and counting_complete conditions, respectively.
+
+Lastly, the reset logic will be simplified and made consistent throughout the state machine to ensure that all signals are correctly reset when the reset signal is high or when the ack signal is received.
+
+To optimize the design for better PPA (Power, Performance, and Area), we can consider the following strategies:
+- Minimize the number of flip-flops and combinational logic to reduce area and power consumption.
+- Optimize the state machine to minimize the number of state transitions, which can help reduce power consumption.
+- Use clock gating to disable the clock signal to unused portions of the design, reducing power consumption.
+
+By addressing these issues and simplifying the design, we can create a more efficient and correct FSM that meets the requirements of the problem statement.
+
+In this refactored code, we will use a different structure by implementing the state machine using a single always block with a case statement for the state transitions. We will also use assign statements to simplify the signal assignments.
+
+We will use a reg variable "pattern_detected" to indicate when the pattern has been detected, and a reg variable "shifting_complete" to indicate when the shifting stage is complete. We will also use a reg variable "counting_complete" to indicate when the counting stage is complete.
+
+The state machine will have the following states:
+- IDLE: The initial state, where the state machine waits for the pattern to be detected.
+- SHIFT: The state where the state machine shifts in the duration bits.
+- COUNT: The state where the state machine waits for the counters to finish counting.
+- DONE: The state where the state machine notifies the user and waits for the ack signal.

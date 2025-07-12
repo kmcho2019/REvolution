@@ -1,0 +1,5 @@
+The existing pulse detection module can be improved by introducing a novel architectural idea that leverages a counter-based approach to detect pulses. This approach involves using a counter to track the number of clock cycles for which the input signal `data_in` remains high after a rising edge. If the counter reaches a specific value (in this case, 3), it indicates that a pulse has been detected, and the output signal `data_out` is set to 1.
+
+The new architecture consists of a finite state machine (FSM) with two main states: IDLE and PULSE_DETECT. In the IDLE state, the module waits for a rising edge on `data_in`. Once a rising edge is detected, the module transitions to the PULSE_DETECT state and starts incrementing the counter. If the counter reaches 3, the module sets `data_out` to 1 and then resets the counter. If `data_in` falls before the counter reaches 3, the module resets the counter and transitions back to the IDLE state.
+
+This counter-based approach simplifies the pulse detection logic and reduces the number of states required in the FSM, making the design more efficient and scalable.

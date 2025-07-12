@@ -1,0 +1,10 @@
+The original design is already minimal and efficient: it uses a simple combinational assignment with bit slicing and concatenation to reverse the byte order. This approach has zero latency, minimal area, and minimal power since it only wires signals without additional logic.
+
+To improve power, performance, or area meaningfully at this scale is challenging. However, an alternative approach is to implement the byte reversal with a generate-for loop that assigns each byte independently. This may allow some synthesis tools to optimize routing better by enabling more localized swapping or simpler routing resources.
+
+Thus, the improvement strategy is to replace the explicit concatenation with a generate loop that assigns each output byte to the corresponding input byte in reversed order. While this may not drastically change PPA, it might yield some improvements in routability or synthesis optimizations depending on the tool.
+
+In summary:
+- Functionally identical
+- Uses generate loop for clarity and possible tool optimization
+- Maintains combinational logic with no registers or state

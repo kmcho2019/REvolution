@@ -1,0 +1,26 @@
+The previous design attempted to update p and q on different clock edges, causing synchronization and timing mismatches with the given waveform.
+
+The waveform indicates that:
+- p is updated on the rising edge of the clock, reflecting the input a and possibly some stored internal state.
+- q changes only at the falling edge or when clock is low, and seems to latch or hold some previous state of p or related logic.
+
+However, the waveform also shows q is stable and does not toggle within a single clock cycle, indicating q is likely updated synchronously at the clock's rising edge, but reflecting a different state variable.
+
+To avoid the complexity and uncertainty of dual-edge triggered logic, we can implement a synchronous sequential circuit with one clock edge (rising edge).
+
+By analyzing the waveform:
+
+- p goes high on rising clock edges when input a is high, or when p is already high and q is low.
+- q goes high on the next clock cycle after p becomes high.
+- q resets only when p resets to zero.
+
+This behavior can be modeled by two registers updated at the rising clock edge:
+
+- p_next = a | (p & ~q);
+- q_next = p | q;  (q stays high once set, as the waveform shows q remains at 1 until p drops)
+
+Initialize both p and q to zero.
+
+This model respects the waveform transitions, and updates both outputs synchronously on the rising edge, which resolves timing issues and matches the observed state transitions.
+
+This single clock edge approach will produce stable outputs aligned with the waveform.

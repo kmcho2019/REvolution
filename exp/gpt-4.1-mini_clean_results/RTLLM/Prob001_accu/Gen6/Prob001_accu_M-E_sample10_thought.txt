@@ -1,0 +1,13 @@
+Use a shift register approach to store each valid input data as it arrives, accumulating the sum only when four data items are collected. Specifically, maintain an 8-bit 4-entry shift register that shifts in new data on valid_in. A 2-bit counter tracks the number of valid inputs stored.
+
+When the counter reaches 4 (i.e., after loading the 4th data), compute the sum of all four 8-bit entries at once using a combinational adder tree. Output this sum and pulse valid_out for one cycle. After output, clear the counter to start accumulating the next four inputs.
+
+Advantages:
+- Data storage is explicit, making debugging and potential modifications easier.
+- The accumulation of four data points is done combinationally in one step, simplifying control logic.
+- The valid_out pulse generation and clearing logic is clean and separated from data loading.
+- This architecture naturally separates data input and output phases, avoiding accumulator update on each cycle.
+- The accumulator width is 10 bits to cover max sum of four 8-bit inputs (4 * 255 = 1020).
+- Synchronous reset clears registers and counter.
+
+This design trades slightly more area for registers (shift register of 4x8 bits) for simpler control and potentially easier timing closure.

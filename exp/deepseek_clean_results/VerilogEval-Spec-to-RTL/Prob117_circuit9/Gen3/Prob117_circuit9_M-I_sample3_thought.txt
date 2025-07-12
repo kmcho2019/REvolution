@@ -1,0 +1,12 @@
+The current implementation has a critical flaw - it doesn't maintain the value of q when 'a' is high. To fix this while keeping the design simple:
+
+1. Maintain the initial value of 4 (3'b100)
+2. Only update q on clock edges when 'a' is low
+3. When 'a' is low, implement the increment with wrap-around at 6
+4. When 'a' is high, q should retain its value (implicit in Verilog by not assigning)
+
+The improved version:
+- Explicitly handles both cases (a high and low)
+- Maintains correct behavior per waveform
+- Still uses minimal code
+- Properly implements the hold/increment functionality

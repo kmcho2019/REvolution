@@ -1,0 +1,21 @@
+Refactor the float_multi module to a pipeline-like multi-cycle FSM design that separates combinational and sequential logic clearly and avoids runtime variable part-selects.
+
+Key changes:
+
+- Replace the complicated PACK state handling of subnormal shifting inside always block with a separate combinational function or combinational logic that handles variable right shifts safely using a loop or bitwise operations.
+
+- Precompute the sticky bit for subnormals by OR-reducing the shifted-out bits iteratively to avoid variable part-select.
+
+- Use always_comb blocks for pure combinational calculations like normalization shifts and rounding decisions to clearly separate data flow from state control.
+
+- Split the states into: IDLE (wait), LOAD (capture inputs), CHECK_SPECIAL (special cases), MUL (mantissa multiply & exp add), NORMALIZE (shift mantissa to normalized form), ROUND (apply round-to-nearest-even), PACK (final output assembly).
+
+- Use packed fixed-width vectors and signed arithmetic consistently for exponents.
+
+- Use explicit shift loops or generate for sticky bit calculation, avoiding variable indexing in part-selects.
+
+- Maintain all intermediate signals as registers assigned only on clock edges.
+
+This approach maintains IEEE 754 correctness, supports subnormals, NaN, infinity, rounding, normalization, and overflow/underflow.
+
+This structure improves code clarity, simulation compatibility, and robustness while preserving the original algorithm and operation sequencing.

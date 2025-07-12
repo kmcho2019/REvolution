@@ -1,0 +1,11 @@
+To correctly implement the pulse detection module, we need to:
+1. Track the exact 3-cycle pattern (0->1->0) by storing the last two input values
+2. Use a state machine approach with explicit states for each step of the detection
+3. Only assert data_out when we've seen the complete sequence
+4. Reset properly to initial state
+
+The improved solution will:
+- Use a 2-bit shift register to track the last two input values
+- Implement combinational logic to detect the sequence 0->1->0
+- Output will be high only when current input is 0 and previous two were 1 then 0
+- This ensures we only detect complete pulses and maintain proper timing

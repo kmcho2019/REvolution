@@ -1,0 +1,13 @@
+To simplify the division while maintaining functionality, treat the dividend and remainder as a 24-bit register, where the upper 16 bits hold the dividend and the lower 8 bits hold the remainder being built. 
+
+At each of the 16 iterations, extract the top 8 bits of this 24-bit register, compare with the divisor:
+- If greater or equal, subtract divisor and set quotient bit to 1,
+- Else set quotient bit to 0.
+
+Then shift the 24-bit register left by 1 to bring in the next dividend bit into the remainder region.
+
+This eliminates complicated bit slicing and concatenations, keeping the iteration straightforward. 
+
+Declare a single always @(*) block using integer index for iteration, updating quotient and remainder registers accordingly.
+
+Finally, assign the quotient (16 bits) and remainder (lower 8 bits of the 24-bit reg) to outputs. The remaining 8 bits of remainder output can be zero-padded as the remainder is at most 8 bits wide.

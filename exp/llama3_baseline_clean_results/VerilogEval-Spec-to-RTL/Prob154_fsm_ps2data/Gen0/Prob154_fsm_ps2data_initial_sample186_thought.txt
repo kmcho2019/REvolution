@@ -1,0 +1,13 @@
+To implement the required functionality, we need to design a finite state machine that can recognize message boundaries based on the input byte stream. The FSM should have states to handle the process of discarding bytes until it finds one with in[3]=1 (which is assumed to be the first byte of a message), and then signal the receipt of a message once all 3 bytes have been received.
+
+The states can be defined as follows:
+- IDLE: The initial state where the FSM waits for the first byte of a message (in[3]=1).
+- BYTE1: The state after the first byte of a message has been received.
+- BYTE2: The state after the second byte of a message has been received.
+- DONE: The state where all 3 bytes of a message have been received, and the FSM signals the receipt of the message.
+
+In addition to these states, we need to implement a datapath module to store the received bytes and output them whenever a message is received. The datapath module should have three registers to store the three bytes of a message.
+
+The control unit of the FSM should generate the necessary control signals to manage the datapath module, such as load signals for the byte registers.
+
+The output out_bytes should be valid whenever the done signal is asserted, and it should output the 24-bit message (3 bytes) in the correct order.

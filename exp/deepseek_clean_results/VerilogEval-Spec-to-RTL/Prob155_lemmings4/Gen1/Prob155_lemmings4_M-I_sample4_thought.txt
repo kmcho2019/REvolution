@@ -1,0 +1,15 @@
+The original solution has a critical issue with using $past() which isn't available in standard Verilog. To fix this, we need to:
+1. Track the previous walking direction explicitly using a register
+2. Correct the fall counter comparison to use >= 20
+3. Simplify the state transitions by:
+   - Removing $past() dependency
+   - Adding a direction register to remember walking direction
+4. Ensure all outputs are properly zeroed in SPLAT state
+5. Make the state encoding more efficient
+
+Improvements:
+- Add dir_reg to track walking direction (left/right)
+- Fix fall counter comparison to >= 20
+- Simplify FALL state transition logic
+- Use one-hot encoding for better timing if needed
+- Combine related conditions for cleaner code

@@ -1,0 +1,16 @@
+I'll refactor the state machine implementation while maintaining the exact same functionality. The key changes will be:
+
+1. **State Encoding**: Use one-hot encoding instead of binary for potential timing benefits in larger FSMs (though minimal impact here).
+
+2. **Output Logic**: Move the output logic into the always block to make it registered, which can help with timing closure in some cases.
+
+3. **State Transitions**: Implement the transitions using parallel assignments rather than a case statement for a different coding style.
+
+4. **Reset Handling**: Keep synchronous reset but implement it with a different coding pattern.
+
+The refactored version will:
+- Maintain identical functionality
+- Use one-hot state encoding (A=01, B=10)
+- Register the output
+- Use parallel state transition logic
+- Still be fully synchronous

@@ -1,0 +1,12 @@
+To fix the observed timing and functional mismatches, I will revise the FSM as a fully Moore machine with outputs depending only on the current state to avoid glitches and ensure stable outputs. I will implement the synchronous reset properly, carefully control state transitions to align outputs exactly as specified, and update internal counters on the clock edge based on the current state.
+
+Key improvements:
+- Outputs f and g assigned only based on current state (Moore), preventing glitches.
+- Use a state machine with clear states representing each required condition, including explicit states for asserting f and g pulses.
+- Implement a 3-bit shift register for x updated synchronously and pattern detection done based on the current contents of the shift register and state.
+- For y monitoring, use a counter incremented synchronously while in the monitor state, transitioning to permanent states after 2 cycles if no y=1 is detected.
+- Avoid combinational feedback loops in output or next-state logic.
+- Carefully reset counters and registers only on reset or state changes as required.
+- This strictly synchronous design will align output assertion with clock edges as required by the spec, eliminating the large number of mismatches reported.
+
+This improved version adheres strictly to the spec and solves timing issues by being a clear Moore machine with sequential logic deciding all outputs and transitions.

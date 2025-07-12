@@ -1,0 +1,10 @@
+Refactor the 4-stage shift register by eliminating the reusable DFF module and the generate loop, and instead implement the entire shift register as a single 4-bit register updated synchronously in one always block. This simplifies the design, reduces module instantiations and wiring overhead, and may improve synthesis results by allowing the tool to infer a compact shift register. The synchronous active-low reset remains. The output is taken from the last bit of the shift register.
+
+This approach:
+- Collapses the chain into one vector register.
+- Uses one always block triggered on posedge clk.
+- Implements synchronous active-low reset inside the always block.
+- Updates the vector by shifting left and inserting the new input at the LSB.
+- Outputs the MSB as out.
+
+This refactoring improves area and power by avoiding multiple modules and nets while maintaining identical functionality and timing behavior.

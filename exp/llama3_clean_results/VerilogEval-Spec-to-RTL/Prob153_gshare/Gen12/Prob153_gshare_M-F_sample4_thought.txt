@@ -1,0 +1,9 @@
+The main issue with the existing code is that it does not correctly handle the case where a training request and a prediction request occur in the same cycle. The training request should take precedence, and the global history register should be updated accordingly. 
+
+To fix this, we can introduce a new signal, 'train_global_history', which stores the value of 'train_history' when 'train_valid' and 'train_mispredicted' are high. We then use this signal to update 'next_global_history' when 'train_valid' and 'train_mispredicted' are high, ensuring that the training request takes precedence.
+
+Additionally, we need to ensure that the prediction sees the PHT state before training. This is already achieved by the sequential nature of the always blocks, as the prediction request uses the current state of the PHT, and the training request updates the PHT at the next positive clock edge.
+
+We also need to make sure that the reset is asynchronous, which is already implemented in the provided Verilog code.
+
+By addressing these issues, we can ensure that the branch predictor functions correctly, providing accurate predictions and updates to the global history and PHT.

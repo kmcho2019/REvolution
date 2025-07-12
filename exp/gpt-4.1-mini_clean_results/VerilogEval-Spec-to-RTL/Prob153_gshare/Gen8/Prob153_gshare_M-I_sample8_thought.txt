@@ -1,0 +1,23 @@
+The main improvement is to strictly separate combinational prediction and sequential state updates while respecting the priority of training with misprediction. To do this:
+
+- The prediction outputs (`predict_taken` and `predict_history`) should be registered on the rising edge of `clk` whenever `predict_valid` is high, capturing the PHT state and current GHR *before* the GHR is updated speculatively.
+
+- The combinational prediction index is computed using the current GHR and `predict_pc`.
+
+- At the rising clock edge, first update the PHT if `train_valid` is high by saturating the counter indexed by `train_pc ^ train_history`.
+
+- Next, update the GHR following the priority:
+  1. If `train_valid` and `train_mispredicted` are asserted, recover the GHR to `train_history`.
+  2. Else if `train_valid` (non-mispredicted), update GHR to `train_history` (committed branch outcome).
+  3. Else if `predict_valid`, update GHR speculatively by shifting in the predicted bit.
+  4. Else hold GHR.
+
+- This ensures misprediction recovery preempts speculative updates and preserves correctness.
+
+- The prediction output registers reflect the GHR and PHT state used for that prediction, i.e., the state before updating.
+
+- This separation prevents race conditions, aligns with the pipeline behavior, and matches the problem specification.
+
+- Initialization uses asynchronous reset to clear GHR and PHT to weakly not taken.
+
+This clean ordering and explicit handling of priority ensure the predictor works correctly and efficiently.

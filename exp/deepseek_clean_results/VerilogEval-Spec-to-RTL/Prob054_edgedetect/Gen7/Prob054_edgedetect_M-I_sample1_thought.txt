@@ -1,0 +1,18 @@
+Based on the PPA metrics and feedback, here's an improved strategy:
+
+1. Power Optimization:
+   - Add clock gating for the prev_in register when inputs are stable
+   - This reduces dynamic power by preventing unnecessary clock toggles
+
+2. Area Optimization:
+   - Maintain the current minimal logic structure
+   - Avoid adding complex control logic that would increase area
+
+3. Performance Preservation:
+   - Keep the simple combinational path (AND-NOT)
+   - Ensure clock gating doesn't introduce timing issues
+
+The improved solution adds a clock gating cell that:
+- Tracks input changes to determine when prev_in needs updating
+- Only enables clock when inputs have changed from previous cycle
+- Maintains all original functionality while reducing power

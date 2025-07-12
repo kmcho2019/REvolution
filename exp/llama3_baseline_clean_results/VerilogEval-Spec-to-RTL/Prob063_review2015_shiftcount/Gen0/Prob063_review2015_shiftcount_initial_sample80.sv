@@ -1,0 +1,28 @@
+module TopModule (
+    input clk,
+    input shift_ena,
+    input count_ena,
+    input data,
+    output [3:0] q
+);
+
+reg [3:0] q_reg;
+
+always @(posedge clk) begin
+    if (shift_ena) begin
+        // Shift in data from MSB when shift_ena is 1
+        q_reg <= {data, q_reg[3:1]};
+    end else if (count_ena) begin
+        // Decrement the counter when count_ena is 1
+        if (q_reg == 4'b0000) begin
+            // Handle underflow by staying at 0
+            q_reg <= 4'b0000;
+        end else begin
+            q_reg <= q_reg - 1'b1;
+        end
+    end
+end
+
+assign q = q_reg;
+
+endmodule

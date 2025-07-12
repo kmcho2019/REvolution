@@ -1,0 +1,5 @@
+To implement the game logic, we will first load the initial state into the grid when the load signal is high. Then, at every clock cycle, we will update the state of each cell based on the number of its alive neighbours. We will use a toroidal 16x16 grid, which means the sides wrap around to the other side of the grid. We will count the alive neighbours for each cell and update its state accordingly.
+
+We can calculate the number of alive neighbours by checking the eight possible positions around each cell: (x-1, y-1), (x, y-1), (x+1, y-1), (x-1, y), (x+1, y), (x-1, y+1), (x, y+1), (x+1, y+1). If a neighbour is outside the grid, we will wrap around to the other side of the grid to get its state.
+
+After counting the alive neighbours, we will apply the game rules: if a cell has 0 or 1 alive neighbours, it becomes dead; if it has 2 alive neighbours, it stays the same; if it has 3 alive neighbours, it becomes alive; if it has 4 or more alive neighbours, it becomes dead.

@@ -1,0 +1,5 @@
+Refactor the FSM implementation to use a traditional always_comb block (in Verilog, always @(*) ) for next-state and output logic instead of ternary operators assigned to wires. Use a case statement to decode current state and input for next_state and output signals, improving readability and synthesis friendliness. Keep state and output registers updated synchronously in an always @(posedge clk) block. Store the count of consecutive ones as the FSM state encoded as a 3-bit count rather than named states, making the FSM resemble a counter with boundary conditions.
+
+The output signals disc, flag, and err are set based on transitions between states and input bits as per the Moore FSM definition. We maintain a synchronous reset initializing the FSM and output signals.
+
+This refactoring retains the core logic but clearly separates combinational and sequential parts with structured case statements, which can improve synthesis optimization and make the design easier to verify and maintain.

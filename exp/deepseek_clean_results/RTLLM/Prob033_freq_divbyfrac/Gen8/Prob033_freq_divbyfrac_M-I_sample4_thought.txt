@@ -1,0 +1,16 @@
+Improved design strategy for robust 3.5x fractional clock divider:
+1. Single unified counter approach instead of dual counters to avoid synchronization issues
+2. Use both clock edges for precise half-cycle timing control
+3. Implement a state machine with explicit period control:
+   - 4-cycle high period
+   - 3-cycle low period
+4. Generate two phase-shifted versions of the divided clock:
+   - Primary clock (0° phase)
+   - Complementary clock (180° phase shifted)
+5. Combine phases using a glitch-free OR operation
+6. Key improvements:
+   - Eliminates counter synchronization problems
+   - Guaranteed glitch-free output
+   - Perfect 50% duty cycle in final output
+   - Lower power consumption (single counter)
+   - Better timing closure

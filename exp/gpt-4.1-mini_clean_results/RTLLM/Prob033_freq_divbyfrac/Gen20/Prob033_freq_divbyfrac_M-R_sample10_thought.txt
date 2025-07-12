@@ -1,0 +1,13 @@
+Refactor the fractional divider by 3.5x using a 7-step counter with two flip-flops toggling at distinct counts, but instead of toggling both on the same edge at count 0, we stagger toggle points to avoid simultaneous toggling, preserving half-cycle phase offset. Use combinational logic derived from the counter to determine the states of two intermediate clocks without relying on toggling flip-flops, effectively implementing the divide-by-7 half-cycle pattern as two pulse trains that are half a cycle out of phase.
+
+Key changes:
+
+1. Use a 3-bit counter running 0 to 6 at posedge clk with synchronous reset.
+2. Generate clk_divA and clk_divB by combinational logic functions of the counter to produce square waves with uneven high/low periods corresponding to 4 and 3 counts, phase shifted by half a cycle.
+3. clk_divA is high when count is in [0..3], low in [4..6] (4 high half-cycles, 3 low half-cycles).
+4. clk_divB is high when count is in [3..6], low in [0..2] (4 high half-cycles shifted by 3 counts = 1.5 clk cycles, i.e., half clock cycle offset).
+5. Final output clk_div is OR of clk_divA and clk_divB, yielding a clock with period 7 half-cycles (3.5 input clocks) and improved 50% duty cycle.
+6. All signals are registered synchronously to avoid glitches.
+7. This combinational mapping ensures fixed timing and consistent phase offset without toggling flip-flops.
+
+This approach avoids simultaneous toggling at the same count, produces stable intermediate clocks with known patterns, and achieves a smooth fractional division with balanced duty cycle.

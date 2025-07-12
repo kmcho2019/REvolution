@@ -1,0 +1,9 @@
+The main issue is that `prev_level` should always hold the last stable level *before* the current stable level update, so that when the water level changes, we can correctly detect if the level has increased or decreased compared to the previous stable level. In the given code, `prev_level` is updated at the same time as `stable_level`, but the order of assignment in a sequential block means `prev_level` is updated after `stable_level`, thus both might end up equal during the comparison, causing incorrect `dfr` behavior.
+
+To fix this, we must carefully update `dfr` by comparing `new_level` against `prev_level` before updating `prev_level` and `stable_level`. Moreover, on reset, we initialize `prev_level` and `stable_level` to the lowest level (BELOW_S0) and assert all flow valves including `dfr`.
+
+Also, the decoding function is extended to treat any sensor pattern not corresponding exactly to the four known stable states as the closest lower level, ensuring stability and coverage for noisy sensor inputs. This avoids abrupt changes and incorrect `dfr` assertions due to transient or invalid sensor patterns.
+
+Finally, `dfr` is updated only when the level changes, otherwise it holds its previous value.
+
+This ensures that `dfr` correctly opens supplemental flow valve only on upward level changes, outputs represent nominal flows per stable level, and reset initializes the system to low water level with all flows open.

@@ -1,0 +1,25 @@
+Refactored Design Approach:
+
+1. State Machine Restructuring:
+   - Replace counter with explicit state machine (IDLE, COMPUTE, DONE)
+   - More readable and maintainable control flow
+   - Clear state transitions
+
+2. Separated Combinational Logic:
+   - Use assign statements for output signals
+   - Move product calculation to combinational block
+   - Keep sequential elements in always block
+
+3. Proper Radix-4 Implementation:
+   - Maintain 17-bit working registers (16-bit + previous LSB)
+   - Correct 2-bit shift operations
+   - Proper Booth encoding cases
+
+4. Timing Improvements:
+   - Pre-calculate possible product updates
+   - Reduce critical path by separating arithmetic
+
+5. Reset Handling:
+   - Clear state machine on reset
+   - Proper initialization of all registers
+   - Sign extension handled in initialization

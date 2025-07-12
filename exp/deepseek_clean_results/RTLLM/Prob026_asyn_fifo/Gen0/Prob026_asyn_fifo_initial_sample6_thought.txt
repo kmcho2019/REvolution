@@ -1,0 +1,8 @@
+The asynchronous FIFO design involves several key components:
+1. Dual-port RAM for data storage with separate read/write clocks
+2. Write controller with binary pointer and Gray code conversion
+3. Read controller with binary pointer and Gray code conversion
+4. Synchronizers for cross-clock domain pointer transfer
+5. Full/empty detection logic using Gray code comparison
+
+The design uses Gray codes for pointers to safely cross clock domains and prevent metastability. The full condition is detected when the write pointer is one cycle ahead of the read pointer (with MSB different but other bits same). The empty condition is detected when pointers are equal.

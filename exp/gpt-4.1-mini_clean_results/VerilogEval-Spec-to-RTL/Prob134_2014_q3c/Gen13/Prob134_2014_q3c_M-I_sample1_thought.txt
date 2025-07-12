@@ -1,0 +1,5 @@
+Optimize the original design for better area and power by replacing the function-based output `z` calculation with a simple combinational lookup using a 5-bit vector indexed by the present state, since only 5 states (000, 001, 010, 011, 100) are valid. This reduces logic levels and eliminates the function overhead. Similarly, encode next state transitions as two arrays for x=0 and x=1 indexed by `y` to simplify and flatten logic, improving synthesis optimization.
+
+Remove unnecessary `reg` types where possible and use continuous assignments for both outputs and next state, making the design purely combinational and more synthesis-friendly. This will reduce logic complexity, area, and dynamic power. Keep the `clk` input for interface consistency, even though unused.
+
+This approach maintains functional correctness and clarity while lowering logic depth and LUT count, aiming for improved PPA metrics.

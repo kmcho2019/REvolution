@@ -1,0 +1,11 @@
+To create a distinct approach, I'll implement a simple 4-cycle pulse generator using a shift register style counter rather than a down-counter. The idea is:
+
+- Use a 4-bit shift register to represent the enable sequence.
+- On synchronous reset, load the shift register with 4 ones (binary 1111).
+- On each clock cycle, shift right by one bit, effectively counting down the 4 cycles.
+- shift_ena output is assigned from the least significant bit of the shift register.
+- When the shift register shifts out all ones (becomes zero), shift_ena stays low forever until the next reset.
+- This method inherently produces a 4-cycle wide pulse without explicit decrementing logic, making the implementation structurally different.
+- All logic is synchronous to the positive clock edge with active-high synchronous reset.
+
+This approach guarantees exactly four cycles of shift_ena asserted immediately after reset and then low forever, matching the spec.

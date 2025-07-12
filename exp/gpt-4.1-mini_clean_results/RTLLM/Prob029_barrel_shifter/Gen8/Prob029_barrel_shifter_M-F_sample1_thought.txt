@@ -1,0 +1,5 @@
+To fix the multiple-definition error for the `mux2X1` module, we should integrate its functionality directly inside the barrel shifter module rather than having a separate module definition. Since `mux2X1` is very simple—a 2-to-1 mux for one bit—we can replace its instantiations with ternary operators inline in the generate loops.
+
+This removes the need for a separate `mux2X1` module entirely and avoids any duplication or multiple-definition issues in the project environment. The shifting and selection logic remains identical, preserving the original design intent.
+
+Thus, the barrel shifter becomes a single module with generate blocks that use ternary operators to select between the original bit and the rotated bit according to the control bits, efficiently implementing the staged shifts.

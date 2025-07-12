@@ -1,0 +1,29 @@
+Implement a single FSM with five clear states: IDLE (searching for pattern), LOAD_DELAY (shift in 4 delay bits MSB first), SETUP_COUNT (initialize counters), COUNTING (count down the timer), DONE (assert done and wait for ack).
+
+Key differences and improvements:
+
+- Use a 4-bit shift register for pattern detection in the IDLE state, shifting left and inserting new bit at LSB each cycle, so oldest bit is MSB; detect 1101 pattern.
+
+- When pattern is detected, transition to LOAD_DELAY to shift in the 4 delay bits MSB first; input bits shifted into delay register by shifting left and inserting new bit at LSB, matching MSB-first input.
+
+- After 4 delay bits loaded, move to SETUP_COUNT state to initialize counters:  
+  - `segment_count = delay + 1`  
+  - `cycle_counter = 0`
+
+- In COUNTING state, increment cycle_counter every clock. When cycle_counter == 999, reset cycle_counter to 0 and decrement segment_count.
+
+- Output `count` holds the current segment_count (remaining time segments). For each segment_count value, the count output holds that value for 1000 cycles, fulfilling the output timing requirements.
+
+- When segment_count reaches zero and 1000 cycles completed, transition to DONE state, assert done signal, and wait for ack signal.
+
+- When ack asserted, go back to IDLE and resume search.
+
+- All registers updated on posedge clk and synchronous active-high reset.
+
+- This design uses explicit separate SETUP_COUNT state for clarity and ensures delay+1 segments counted.
+
+- Pattern detection and delay loading occur only in respective states to avoid glitches.
+
+- Outputs `count`, `counting`, and `done` clearly reflect FSM states.
+
+This structure clearly separates concerns, aligns with problem timing requirements, and should be robust and easy to verify.

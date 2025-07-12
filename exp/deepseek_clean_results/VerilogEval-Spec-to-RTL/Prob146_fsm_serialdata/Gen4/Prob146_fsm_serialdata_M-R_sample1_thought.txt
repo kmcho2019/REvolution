@@ -1,0 +1,24 @@
+To refactor the solution while maintaining the same core functionality, I'll make these structural changes:
+
+1. State Machine Restructuring:
+   - Use one-hot encoding for states instead of binary
+   - Move next-state logic to combinational always block
+   - Separate state registers from data path
+
+2. Output Generation:
+   - Use continuous assignments for done signal
+   - Make out_byte update synchronous with done assertion
+
+3. Bit Counting:
+   - Use a separate counter for tracking received bits
+   - Implement clear counter logic on state transitions
+
+4. Stop Bit Handling:
+   - Explicitly wait for stop bit before returning to IDLE
+   - Only assert done when valid stop bit is detected
+
+The key improvements in this refactored version:
+- Clear separation of combinational and sequential logic
+- One-hot encoding for potentially better timing
+- More explicit state transition conditions
+- Cleaner output signal generation

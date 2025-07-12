@@ -1,0 +1,7 @@
+Fuse the clarity and explicit combinational next state logic and asynchronous reset style from Example 1 with the power optimization clock enable technique from Example 2. Retain the clear localparam state encoding and separate combinational always block for next state logic for readability and formal verification friendliness. Implement the output as a direct assignment from state (out = state) to reduce unnecessary combinational logic gates, enhancing area and power efficiency.
+
+Add a clock enable signal that compares next_state and current state to avoid updating the state register unnecessarily, thus minimizing flip-flop toggling and dynamic power. The asynchronous reset remains active-high and resets state to OFF, preserving correct initialization.
+
+This fusion maintains the simplicity and minimal area of the first example, improves power by avoiding unnecessary state toggles like in the second example, and slightly reduces logic by assigning output directly from the state bit. The modular separation of next state and output logic also enhances readability and verification.
+
+This approach balances performance, power, and area optimally for such a simple Moore FSM with asynchronous reset.

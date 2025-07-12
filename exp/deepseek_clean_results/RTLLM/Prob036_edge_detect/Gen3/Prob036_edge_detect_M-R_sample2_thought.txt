@@ -1,0 +1,12 @@
+The original implementation uses a combination of sequential and combinational logic. We can refactor this to:
+1. Use a single always block for both sequential storage and edge detection
+2. Make the outputs registered (flip-flop outputs) instead of combinational
+3. This approach provides better timing characteristics as the outputs are now synchronized with the clock
+4. The edge detection logic remains the same but is now part of the sequential block
+5. The outputs will be 1 for exactly one clock cycle after each edge
+
+Benefits:
+- All outputs are now registered, improving timing closure
+- More robust against glitches
+- Still maintains the same functionality but with registered outputs
+- Clearer state transition in a single always block

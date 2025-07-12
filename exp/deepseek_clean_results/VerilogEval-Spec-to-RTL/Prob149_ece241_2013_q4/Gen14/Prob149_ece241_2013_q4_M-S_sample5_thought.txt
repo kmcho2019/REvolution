@@ -1,0 +1,15 @@
+Simplified approach with these key changes:
+
+1. **Direct Sensor Mapping**: Eliminate state machine and directly use sensor inputs to determine outputs, since the logic is purely combinational based on current sensor readings.
+
+2. **Simplified Output Logic**:
+   - fr0: active when s[0] is not asserted (below s[0]) or between s[1] and s[0]
+   - fr1: active when below s[0] or between s[1] and s[0]
+   - fr2: active only when below s[0] (no sensors active)
+   - dfr: track previous sensor state to detect rising water level
+
+3. **Reset Handling**: Reset forces all outputs high (simulating lowest level)
+
+4. **Reduced Complexity**: Removes state registers and encoding, using only sensor inputs and a single register for previous state comparison.
+
+This maintains all functionality while being more straightforward and easier to verify.

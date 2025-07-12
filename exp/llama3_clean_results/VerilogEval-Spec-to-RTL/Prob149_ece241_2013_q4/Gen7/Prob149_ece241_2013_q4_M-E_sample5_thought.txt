@@ -1,0 +1,11 @@
+The goal is to implement a module named TopModule that accurately controls the input flow rate based on the water level as detected by three sensors placed vertically at 5-inch intervals. The system should have an active-high synchronous reset that resets the state machine to a state equivalent to if the water level had been low for a long time.
+
+To achieve this, we can use a Finite State Machine (FSM) that tracks the current state of the water level and the previous state to determine the correct output for the flow rate valves. The FSM will have states corresponding to the water level being above the highest sensor, between the highest and middle sensors, between the middle and lowest sensors, and below the lowest sensor.
+
+We will use a more systematic approach to encode the states and determine the next state and outputs based on the current state and input. This approach will involve using a state register to keep track of the current state and combinational logic to determine the next state and outputs.
+
+For the reset logic, we will ensure that the FSM is reset to the state corresponding to the water level being low, which means all sensors are inactive, and the flow rate valves are open.
+
+The supplemental flow valve (dfr) will be controlled based on the transition from a lower to a higher water level state. This will involve comparing the current state with the previous state to detect any increases in the water level.
+
+By using an FSM, we can create a more structured and scalable design that is easier to understand and modify. This approach will also help us to minimize the complexity of the logic and reduce the number of registers and combinational logic gates.

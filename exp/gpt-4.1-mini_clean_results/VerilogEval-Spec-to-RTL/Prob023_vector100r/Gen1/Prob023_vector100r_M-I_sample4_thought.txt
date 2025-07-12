@@ -1,0 +1,15 @@
+Since the original design is purely combinational and minimal already, further improvements in performance or area are limited. However, to reduce power, we can register the output to break the direct combinational path and reduce switching at the output by updating the output only on a clock edge. This introduces a one-cycle latency but can significantly lower dynamic power due to reduced glitches and toggling on output signals. 
+
+Assuming a clock is available (which is typical for power optimization), we add a clock input and use a flip-flop based pipeline stage for the reversed output. This also aligns with practical designs that often register outputs to improve timing and reduce glitching.
+
+If no clock is allowed, the combinational solution is optimal.
+
+Therefore, the improved module adds a clock input and registers the reversed bits on the rising edge of the clock.
+
+This change:
+- Adds a clock input.
+- Registers reversed bits into output register on the clock.
+- Retains full bit-width reversal.
+- Reduces dynamic power by avoiding direct continuous toggling of output lines.
+
+The tradeoff is one cycle latency, which is acceptable for many designs and preferable for power/robustness.

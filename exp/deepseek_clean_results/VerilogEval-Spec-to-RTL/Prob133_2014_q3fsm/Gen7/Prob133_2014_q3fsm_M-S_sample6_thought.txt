@@ -1,0 +1,10 @@
+Simplification Strategy:
+1. State Reduction: Keep only 2 states (A/B) as they're essential
+2. Counting Optimization: Replace 3-bit shift register with a 2-bit counter tracking number of 1's in current window
+3. Cycle Counting: Use simple 2-bit counter (0-2) to track window position
+4. Output Logic: Calculate z immediately when window completes (cycle_count=2)
+5. Key Changes:
+   - Eliminate shift register (w_history) in favor of direct counting
+   - Simplify ones_count calculation to use increment/decrement
+   - Maintain same state transition logic
+   - Reduce register bits from 5 (state+cycle_count+w_history) to 3 (state+cycle_count+count)

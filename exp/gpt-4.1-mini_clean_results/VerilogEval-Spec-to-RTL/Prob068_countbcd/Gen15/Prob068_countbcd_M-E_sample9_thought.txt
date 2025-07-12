@@ -1,0 +1,13 @@
+I will implement a 4-digit BCD counter using four separate 4-bit registers, each representing a digit (ones, tens, hundreds, thousands). Each digit increments only when its enable signal is asserted, tightly controlling when each digit changes to reduce switching activity.
+
+The enable signals (ena) will be generated sequentially as follows:
+
+- ena[0]: asserted when ones digit is about to rollover (9 -> 0), enabling tens increment.
+- ena[1]: asserted when tens digit is about to rollover, enabling hundreds increment.
+- ena[2]: asserted when hundreds digit is about to rollover, enabling thousands increment.
+
+The incrementing logic uses synchronous sequential logic with simple conditionals for rollover detection and carry propagation. This modularizes the design and simplifies timing because each digit is updated independently, minimizing combinational carry chains.
+
+On reset, all digits reset to zero. Output q is composed by concatenating the four digits from thousands to ones.
+
+This approach reduces the critical path because carry generation is decoupled by registers instead of nested combinational increments. It also reduces switching by only updating digits when needed, and the separate registers make the code more intuitive and easier to maintain.

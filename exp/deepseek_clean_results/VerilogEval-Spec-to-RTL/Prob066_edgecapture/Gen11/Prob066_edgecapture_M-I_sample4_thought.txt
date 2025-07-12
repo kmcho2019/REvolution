@@ -1,0 +1,15 @@
+Improved solution with correct edge detection and optimized pipeline:
+
+1. **Correct Pipeline Ordering**: Fix the edge detection by properly aligning the pipeline stages. We'll use a single delay stage (prev_in) to store the previous cycle's input, then compare it with the current input for falling edge detection.
+
+2. **Simplified Logic**: Remove the unnecessary second pipeline stage since we only need to compare current input with the previous cycle's value. This reduces register usage and improves timing.
+
+3. **Efficient Sticky Capture**: Maintain the sticky capture mechanism but implement it more efficiently by directly OR'ing the edge detection results with the current captured state.
+
+4. **Reset Handling**: Keep synchronous reset functionality to clear all registers.
+
+Key improvements:
+- Correct falling edge detection (1→0 transition)
+- Reduced pipeline stages from 2 to 1 (better PPA)
+- Maintains all required functionality
+- Clear and concise implementation

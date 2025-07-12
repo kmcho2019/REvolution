@@ -1,0 +1,10 @@
+Refactor the FSM using a Moore machine style with the following improvements:
+- Separate the combinational next-state logic from sequential state and output registers cleanly.
+- Use the current state for output generation instead of next_state to avoid off-by-one cycle issues.
+- Implement the x-sequence detection with an explicit smaller sub-state or counter to track the three required bits, avoiding ambiguous repeated input handling.
+- Use a dedicated 2-bit counter for monitoring y in the "monitor y" state, incrementing only when in that state, and properly check after 2 full clock cycles.
+- Outputs f and g are purely registered and depend only on the current state, ensuring stable, glitch-free outputs.
+- Synchronous active-low reset drives all registers to known start state.
+- This structure improves clarity, timing correctness, and matches the problem specification exactly.
+
+This approach cleanly separates combinational next state logic and registered outputs driven by current state, eliminating timing mismatches seen in the previous design.

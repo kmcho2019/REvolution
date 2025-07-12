@@ -1,0 +1,5 @@
+To improve PPA without changing the functionality, minimize redundant wiring and simplify the neighbor access logic. Instead of creating a wide padded wire for all 512 bits, use a single 514-bit register that shifts in zeros at boundaries, reducing intermediate signals and avoiding large concatenations. This slightly reduces area and power by simplifying wiring. Also, use a localparam with the Rule 110 truth table and implement combinational logic with a case statement inside a function, improving clarity and enabling synthesis optimization.
+
+Additionally, replacing the generate-for loop with a single always_comb block that iterates through cells reduces gate duplication and may help synthesis tool optimizations for area and timing by enabling resource sharing. Since the state is updated synchronously, keep q as a register.
+
+This approach aims at cleaner logic, simpler boundary handling, and potential resource sharing to improve area and power, while possibly improving timing through reduced complexity in combinational logic.

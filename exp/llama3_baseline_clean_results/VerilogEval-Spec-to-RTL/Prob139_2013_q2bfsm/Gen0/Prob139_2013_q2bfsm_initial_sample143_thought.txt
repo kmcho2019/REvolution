@@ -1,0 +1,10 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that meets the specified requirements. The FSM will have several states to track the sequence of x and y inputs. We will use a Moore machine model where the outputs depend only on the current state. 
+
+1. The FSM starts in state A (reset state) when the resetn signal is low.
+2. When resetn is high, the FSM transitions to state B, where it sets f to 1 for one clock cycle.
+3. After state B, the FSM enters state C, where it monitors the x input for the sequence 1, 0, 1.
+4. If the sequence is detected, the FSM transitions to state D, where it sets g to 1 and monitors the y input for a high value within two clock cycles.
+5. If y becomes 1 within two clock cycles, the FSM transitions to state E, where g remains 1.
+6. If y does not become 1 within two clock cycles, the FSM transitions to state F, where g remains 0.
+
+We will use a 3-bit state register to encode the six states. We will also use two counters to track the sequence of x and the number of clock cycles since g was set to 1.

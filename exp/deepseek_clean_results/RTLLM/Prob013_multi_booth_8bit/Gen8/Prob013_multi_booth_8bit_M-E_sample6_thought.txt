@@ -1,0 +1,18 @@
+This design introduces a hybrid serial-parallel Radix-4 Booth multiplier with the following innovations:
+
+1. **Hybrid Processing**: Combines serial multiplier scanning with parallel partial product generation for optimal area-speed tradeoff.
+
+2. **Optimized State Encoding**: Uses a 3-state FSM (IDLE, PROCESS, DONE) with cycle counting embedded in the PROCESS state.
+
+3. **Sign-Preserving Shift Logic**: Implements a novel sign-extension technique during right shifts that maintains correct arithmetic properties.
+
+4. **Early Completion Detection**: Adds logic to detect when remaining bits are all sign bits to potentially terminate early.
+
+5. **Multi-Cycle Accumulation**: Uses a carry-save accumulator that operates over multiple cycles for large products.
+
+Key features:
+- Only requires 4 cycles for 8-bit multiplication (Radix-4)
+- Minimal state machine complexity
+- Correct sign handling throughout operation
+- Optimized for both power and performance
+- Clear separation of control and datapath

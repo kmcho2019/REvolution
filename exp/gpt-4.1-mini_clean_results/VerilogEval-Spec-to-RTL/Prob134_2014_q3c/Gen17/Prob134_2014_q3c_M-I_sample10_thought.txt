@@ -1,0 +1,13 @@
+To improve the PPA of the existing FSM next state and output logic:
+
+1. Remove multiple explicit equality comparisons for the present state by encoding the next state and output as ROM-style lookups using combinational logic with a small LUT approach. This reduces the number of comparators and logic gates.
+
+2. Implement the next state and output z as simple vector multiplexers indexed by {y, x}, i.e., treat {y, x} as a 4-bit address to a precomputed next_state and output vector. This converts multiple equality checks into a single indexing operation, reducing logic and switching.
+
+3. Use a single wire lookup to generate the 4-bit vector that combines next_state[2:0] and output z, then assign next_state bits and z accordingly. This shares decoding resources and minimizes redundant logic.
+
+4. Since unused states (101, 110, 111) are unspecified, assign them safe defaults (e.g., 000 next state and z=0), ensuring glitch-free outputs without extra decoding.
+
+5. Keep the interface and combinational logic style but minimize logic depth, aiding timing and reducing dynamic power from toggling multiple equality gates.
+
+This approach balances logic simplicity, power reduction from fewer transitions, and smaller area by cutting down comparator count and sharing logic resources for next_state and output generation.

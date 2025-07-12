@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+1. Instead of using a traditional concatenation approach, implement the LFSR using a case statement that selects between reset and operational modes
+2. For the operational mode, use a bitwise XOR mask that identifies all tap positions simultaneously
+3. Create a mask where only the tap positions (32, 22, 2, 1) are set to 1
+4. XOR the entire register with this mask when q[0] is 1 (LSB feedback)
+5. Always perform a right shift operation
+6. This approach:
+   - Reduces the combinatorial path by using parallel XOR operations
+   - Makes the tap positions clearly visible in a single mask definition
+   - Simplifies the always block logic
+   - Potentially improves timing by reducing the critical path
+   - Maintains the same functionality while offering a different implementation style

@@ -1,0 +1,9 @@
+I will refactor the traffic light controller by separating the FSM and timer logic more clearly and using a Moore FSM style with explicit next state and output registers. I'll use a state machine encoded with `localparam` and implement synchronous resets and updates without explicit enable signals, relying on conditional assignments in sequential blocks for clarity and easier timing analysis.
+
+Instead of multiple always_comb blocks, I'll consolidate combinational next-state logic and timer adjustment in one always block. The pedestrian pass request will be handled by updating the timer only if conditions are met, and outputs will be registered in the state register block for timing consistency.
+
+Outputs (red, yellow, green) will be driven from state registers directly, ensuring a clean separation between combinational and sequential logic. This reduces logic duplication and eases verification.
+
+Also, I will add comments to clarify functionality and ensure the counter never underflows. The counter will count down each clock cycle except when newly loaded or shortened due to pass_request.
+
+Overall, this refactoring keeps the original functionality but presents it in a classic FSM style with clear state/timer separation and registered outputs, making it easier to understand and maintain.

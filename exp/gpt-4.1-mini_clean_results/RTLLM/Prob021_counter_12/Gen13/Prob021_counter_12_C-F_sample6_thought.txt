@@ -1,0 +1,12 @@
+Fuse the straightforward equality check for terminal count detection (out == 4'd11) from Example 1 with the synchronous enable structure and clear combinational next-state logic from Example 2 to maximize clarity, minimize logic depth, and improve timing.
+
+Specifically:
+
+- Use a simple equality comparator (out == 4'd11) for terminal count detection, as modern synthesis tools optimize comparators efficiently, possibly better than manual bitwise AND/NOT logic.
+- Keep combinational next count logic separated from sequential update for modularity and ease of verification.
+- Keep reset synchronous active low to avoid asynchronous reset issues and improve timing closure.
+- Increment only when valid_count is high; hold output when low to reduce unnecessary toggling (power savings).
+- Use non-blocking assignments in sequential logic for reliable synthesis.
+- Avoid clock gating to maintain signal integrity and timing predictability.
+
+This fusion optimizes for clean, easily understood code that synthesis tools can efficiently optimize, balancing performance, power, and area well.

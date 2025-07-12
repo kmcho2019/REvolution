@@ -1,0 +1,20 @@
+Refactor the design to explicitly decode the water level states by matching exact sensor assertion patterns, avoiding priority-based logic that may misclassify levels. Define explicit level detection wires for the four possible sensor patterns, ensuring correctness:
+
+- ABOVE when s == 3'b111
+- BETWEEN1 when s == 3'b110
+- BETWEEN0 when s == 3'b100
+- BELOW when s == 3'b000
+
+Ignore any other sensor combinations (treat as BELOW or invalid).
+
+Implement the prev_level and curr_level as state registers updated synchronously on clock. On reset, initialize both to BELOW (all valves open). Update prev_level only when a level change occurs (when the newly decoded level differs from curr_level), else hold prev_level. Update curr_level every clock with the new decoded level (even if no change).
+
+Compute nominal flows combinationally from curr_level with clear case statements, directly encoding the specification (fr0, fr1, fr2 asserted as per level).
+
+Determine supplemental flow valve (dfr) assertion combinationally by checking that level changed and curr_level > prev_level (rising level).
+
+Drive outputs synchronously registered to align outputs with clock, improving timing clarity.
+
+This approach matches the problem spec strictly and avoids oversimplified priority encodings. It cleanly separates decoding, state update, and output logic, improving readability and ensuring the state machine properly tracks the previous and current water levels for accurate dfr assertion.
+
+The explicit matching of sensor states to water levels guarantees correct nominal flow outputs and avoids misclassifications that caused previous fr2 mismatches.

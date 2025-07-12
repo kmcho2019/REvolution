@@ -1,0 +1,28 @@
+Novel approach using hierarchical logic decomposition:
+
+1. Key Insight:
+   - Instead of direct SOP/POS minimization, break the problem into sub-functions
+   - First detect special patterns, then combine them strategically
+
+2. Pattern Detection:
+   - Create intermediate signals for important patterns:
+     - pattern_2: Detects input = 2 (0010)
+     - pattern_7: Detects input = 7 (0111)
+     - pattern_15: Detects input = 15 (1111)
+     - common_abc: Detects when a,b,c are all 1 (helps multiple cases)
+
+3. SOP Implementation:
+   - Combine pattern detectors with OR logic
+   - Special handling for case 7 which requires d=1
+
+4. POS Implementation:
+   - Create inverted pattern detectors for forbidden cases
+   - Combine using AND logic for all cases where output should be 0
+   - Explicitly handle each forbidden input combination
+
+Advantages:
+   - More modular and readable
+   - Explicit handling of all edge cases
+   - Easier to debug and modify
+   - Maintains correct functionality for all specified cases
+   - Naturally handles don't-care conditions

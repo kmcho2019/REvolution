@@ -1,0 +1,14 @@
+The original design is already minimal, using a single flip-flop for one-hot encoding, and correctly implements the FSM with asynchronous reset. To slightly improve power and timing, we can replace the combinational next_state_A logic with a direct state transition controlled by input x, avoiding the AND gate and inverter. Also, using an enumerated localparam for clarity without increasing area or delay can help maintain code readability.
+
+Specifically, since the FSM has only two states (A=1, B=0), and transitions from A to B when x=1 and stays in B, we can express next_state_A simply as (state_A & ~x), which is already minimal. However, by assigning next_state_A inside the always block directly, we can reduce combinational logic elements outside the flip-flop. 
+
+Additionally, we can register the output z to avoid glitches in Mealy output caused by combinational logic feeding the output directly; this also can reduce glitches and hence dynamic power. This may marginally increase latency by one clock cycle but improves power and signal integrity.
+
+Summarizing improvements:
+- Move next_state_A logic inside the always block.
+- Register output z to prevent glitches and reduce dynamic power.
+- Keep one-hot encoding using single bit.
+- Maintain asynchronous active-high reset.
+- Add comments for clarity.
+
+Overall, these minor changes improve power (by reducing glitches) and possibly timing robustness, with a negligible area increase (one extra flip-flop for output register).

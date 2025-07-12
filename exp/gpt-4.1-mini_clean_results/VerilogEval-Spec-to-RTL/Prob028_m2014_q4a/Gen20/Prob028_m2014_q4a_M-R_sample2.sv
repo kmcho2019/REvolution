@@ -1,0 +1,13 @@
+module TopModule (
+    input wire d,
+    input wire ena,
+    output reg q
+);
+
+    always @(ena or d) begin
+        if (ena)
+            q = d;   // transparent when enabled
+        // no else branch, q holds value when ena is low (latch inferred)
+    end
+
+endmodule

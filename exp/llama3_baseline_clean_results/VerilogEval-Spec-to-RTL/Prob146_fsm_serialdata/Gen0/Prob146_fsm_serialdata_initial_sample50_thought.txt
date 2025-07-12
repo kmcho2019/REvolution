@@ -1,0 +1,7 @@
+To design the finite state machine (FSM) for the serial receiver, we'll define several states to track the reception process: idle, start, data, and stop. 
+1. **Idle**: The initial state where the FSM waits for a start bit (0) to begin receiving a byte. 
+2. **Start**: After detecting a start bit, it transitions to receiving the data bits.
+3. **Data**: The FSM receives 8 data bits. Since the least significant bit is sent first, we need to properly align the bits as we receive them.
+4. **Stop**: After receiving 8 data bits, the FSM waits for a stop bit (1) to confirm the byte's reception.
+
+We will use a counter to keep track of the number of data bits received and a shift register to construct the byte being received. The `done` signal is asserted when the FSM successfully receives a byte, which happens when it finds a stop bit after receiving 8 data bits.

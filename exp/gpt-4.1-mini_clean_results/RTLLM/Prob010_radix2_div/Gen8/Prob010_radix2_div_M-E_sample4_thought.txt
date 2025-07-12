@@ -1,0 +1,39 @@
+To implement the radix-2 divider supporting both signed and unsigned 8-bit division, I will follow a classical restoring division approach but with a novel architectural design:
+
+1. **Operand Preparation:**
+   - On `opn_valid`, latch dividend and divisor.
+   - Determine signs for signed division and convert operands to their absolute values.
+   - Initialize a 17-bit shift register `SR` where the top 9 bits represent the remainder (initialized to 0) and the bottom 8 bits represent the dividend_abs.
+   - Precompute `neg_divisor` = -divisor_abs (for subtraction).
+
+2. **Division Iteration:**
+   - For 8 cycles, do:
+     - Shift left `SR` by 1 bit.
+     - Subtract divisor_abs from the remainder part by adding `neg_divisor`.
+     - If the subtraction yields a positive or zero remainder, set the shifted-in LSB of quotient to 1 and update remainder accordingly.
+     - Otherwise, restore remainder (keep old remainder before subtraction) and set quotient bit to 0.
+
+3. **Control FSM and Counter:**
+   - Use a counter to track cycles (1 to 8).
+   - Use a start flag that enables iterations.
+   - At completion (after 8 iterations), clear start flag.
+
+4. **Sign Correction:**
+   - Quotient sign = dividend_sign XOR divisor_sign.
+   - Remainder sign = dividend_sign.
+   - Apply two’s complement negation where necessary.
+
+5. **Output:**
+   - Combine remainder (upper 8 bits) and quotient (lower 8 bits) in `result`.
+   - Assert `res_valid` when ready.
+
+6. **Handshaking:**
+   - Wait for `res_ready` to clear `res_valid`.
+
+This design aligns well with the problem statement's requirements:
+- `SR` holds combined remainder and quotient.
+- `neg_divisor` precomputed once for efficient subtraction.
+- Clear FSM with states IDLE and RUN.
+- Division proceeds bit-by-bit for 8 cycles.
+
+This approach is straightforward, hardware-friendly, and respects the required interface and behavior.

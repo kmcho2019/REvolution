@@ -1,0 +1,23 @@
+module TopModule (
+    input        clk,
+    input        load,
+    input  [9:0] data,
+    output       tc
+);
+
+    reg [9:0] counter;
+
+    wire counter_nonzero = |counter;
+    wire enable = load | counter_nonzero;  // only update when load or counting
+    wire [9:0] next_counter = load ? data :
+                             (counter_nonzero ? counter - 10'd1 : counter);
+
+    always @(posedge clk) begin
+        if (enable) begin
+            counter <= next_counter;
+        end
+    end
+
+    assign tc = ~(|counter);  // terminal count when counter is zero
+
+endmodule

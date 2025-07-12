@@ -1,0 +1,27 @@
+Improved Design Strategy:
+
+1. Pattern Detection:
+- Maintain pattern register continuously (don't clear after detection)
+- Only check for pattern match in IDLE state
+- This allows back-to-back pattern detection without resetting
+
+2. State Machine:
+- Keep same 4 states but improve transitions
+- Add explicit shift counter reset when entering SHIFT state
+- Transition to COUNT immediately when shift_count reaches 3 (before increment)
+- Use non-blocking assignments for all state transitions
+
+3. Output Logic:
+- Keep direct combinatorial outputs
+- Ensure shift_ena is exactly 4 cycles by proper counter control
+- Maintain strict one-hot-like output behavior (only one output active at a time)
+
+4. Reset Handling:
+- Clear all registers synchronously
+- Ensure clean startup state
+
+Key Improvements:
+- Continuous pattern detection enables repeated operation
+- Precise 4-cycle shift_ena guaranteed
+- Clean state transitions with proper timing
+- Maintains all original requirements

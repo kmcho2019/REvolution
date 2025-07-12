@@ -1,0 +1,10 @@
+To implement the XOR gate three ways distinctly while showcasing a different architectural approach, I will:
+
+1. Use three separate logic paths explicitly to emphasize structural differences rather than sharing intermediate wires.
+2. For the assign statement (out_assign), directly assign the XOR of inputs a and b, as a simple continuous assignment.
+3. For the combinational always block (out_always_comb), use a procedural block with blocking assignments (=) to clearly demonstrate standard combinational style, triggered on changes of inputs a or b.
+4. For the sequential always block (out_always_ff), create a small register stage with an intermediate register (reg xor_reg) to hold the XOR value, updating on the positive edge of clk. This register stores the XOR value of a and b at the clock edge, then outputs it via out_always_ff, showing the explicit pipeline step.
+5. Make all outputs declared as reg except for out_assign which is a wire, matching the assignment methods.
+6. This design intentionally separates the combinational and sequential paths more clearly and avoids sharing wires, to illustrate distinctly different RTL styles for the same function.
+
+This approach helps in teaching contexts or cases where explicit pipeline registers and clearly segmented logic are desired, with minimal logic reuse between different styles.

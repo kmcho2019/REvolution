@@ -1,0 +1,17 @@
+After carefully analyzing the Karnaugh map and the feedback, here's a simplified approach:
+
+1. Key observations from the K-map:
+   - When x[3]x[2] = 00: f is 1 only when x[1]x[0] = 00 or 10 (top-left and top-right corners)
+   - When x[3]x[2] = 01: f is always 0
+   - When x[3]x[2] = 11: f is 1 except when x[1]x[0] = 10
+   - When x[3]x[2] = 10: f is 1 except when x[1]x[0] = 11
+
+2. Simplified grouping:
+   - Group 1: ~x[3] & ~x[2] & ~x[1] (covers 0000 and 0010)
+   - Group 2: x[3] & x[2] & ~(x[1] & ~x[0]) (covers 1100,1101,1111 but not 1110)
+   - Group 3: x[3] & ~x[2] & ~(x[1] & x[0]) (covers 1000,1001,1010 but not 1011)
+
+3. Final expression:
+   f = (~x[3] & ~x[2] & ~x[1]) |
+       (x[3] & x[2] & ~(x[1] & ~x[0])) |
+       (x[3] & ~x[2] & ~(x[1] & x[0]))

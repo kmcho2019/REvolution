@@ -1,0 +1,28 @@
+The original design correctly implements the full parallel update of the 512-cell Rule 110 CA, but it creates a large 512-wide combinational logic feeding directly into a register, which may cause timing and power issues due to wide fanout and heavy switching.
+
+To optimize PPA (timing, power, and area), we adopt the following strategy:
+
+1. **Pipeline the combinational logic**: Instead of computing all 512 cells' next states in one combinational stage, split the logic into two pipeline stages:
+   - Stage 1: Compute partial next state per cell with a simplified logic or pre-encoding.
+   - Stage 2: Register the final next state.
+   This reduces the combinational path delay, improving timing.
+
+2. **Reduce combinational logic duplication**:
+   - Use a lookup table (LUT) implemented as a small combinational function or case statement that maps the 3-bit neighborhood pattern to the next cell state.
+   - This avoids expression evaluation for every cell and may improve synthesis optimization.
+
+3. **Partition the 512-bit vector into smaller chunks**:
+   - Doing the next state computation in chunks using generate loops is fine, but adding registers between helps timing.
+
+4. **Clock gating and power optimization**:
+   - Implement clock gating or use enable signal for the registers to avoid unnecessary toggling when load is high.
+   - However, as load and next state update are mutually exclusive, the simple mux before the register is sufficient and better than gated clocks in many cases.
+
+5. **Boundary conditions** remain the same (neighbors outside bounds are zero).
+
+The implementation here will:
+- Compute the next state combinationally using a small LUT via case statement.
+- Add a pipeline register stage to hold the next state before it is loaded into `q`.
+- Use non-blocking assignments with a mux controlled by `load`.
+
+This approach improves timing by breaking the combinational path, reduces power by controlling toggling, and may reduce area slightly by synthesizer-friendly LUT implementation.

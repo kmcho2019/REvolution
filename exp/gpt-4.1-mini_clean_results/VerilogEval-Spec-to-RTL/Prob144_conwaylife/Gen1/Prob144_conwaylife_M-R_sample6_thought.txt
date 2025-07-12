@@ -1,0 +1,9 @@
+Refactor the design by separating the combinational neighbor count and next state calculation into a dedicated function that returns the next cell state given the current grid and a cell position. This promotes cleaner code and can help synthesis tools infer better structures.
+
+Use a generate block to build the next state combinationally as a vector of bits, by instantiating a small piece of logic for each cell using the function. This replaces nested for-loops in always blocks.
+
+Implement the wrapping arithmetic using bitwise masking instead of modulo operations, since the grid size is 16 (2^4), to reduce arithmetic complexity and improve efficiency.
+
+Keep the register update logic in an always block sensitive to the clock edge and load signal.
+
+This approach modularizes neighbor counting, uses generate for clarity and parallelism, and optimizes wrapping logic with bitwise operations, which may improve synthesis results and readability while keeping behavior identical.

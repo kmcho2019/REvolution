@@ -1,0 +1,28 @@
+Novel Architectural Idea: Hybrid Carry-Select with Conditional Sum Adder (CSA) for 64-bit Subtraction
+
+1. **Core Subtraction Logic**:
+   - Implement a hybrid approach combining carry-select and conditional sum adder techniques
+   - Divide the 64-bit operation into 8 blocks of 8 bits each
+   - Each block computes two possible results in parallel: one assuming carry-in=0 and one assuming carry-in=1
+   - Use multiplexers to select the correct result based on the actual carry-in from previous block
+
+2. **Overflow Detection**:
+   - Implement early overflow detection by examining the MSB block's carry-out and sign bits
+   - Compare the actual carry-out with the expected carry-out based on operand signs
+   - This provides faster overflow detection than waiting for full result computation
+
+3. **Power Optimization**:
+   - Use conditional computation - only the selected result path consumes dynamic power
+   - Implement operand isolation for unused computation paths
+   - Use clock gating for the multiplexer selection logic
+
+4. **Area Efficiency**:
+   - Share common logic between the two parallel computations in each block
+   - Use hierarchical multiplexing to reduce overall routing complexity
+   - Optimize carry propagation between blocks
+
+Key Advantages:
+- Faster than pure ripple-carry while using less area than full carry-lookahead
+- Parallel computation enables better timing
+- Conditional execution reduces power consumption
+- Early overflow detection improves critical path

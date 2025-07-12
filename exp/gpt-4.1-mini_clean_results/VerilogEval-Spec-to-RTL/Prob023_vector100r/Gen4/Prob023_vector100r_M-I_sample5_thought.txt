@@ -1,0 +1,5 @@
+The original design uses multiple instances of a parameterized BitRevN module to reverse each 10-bit chunk and then reverses the chunk order. While modular and clear, this incurs some overhead in module instantiations and intermediate wiring. To optimize for area and potentially power while keeping performance similar, the design can be flattened by implementing the entire 100-bit reversal in a single generate loop within TopModule, removing the BitRevN module.
+
+This avoids module instantiation overhead and reduces logic duplication by directly assigning output bits from reversed input bits. The 100-bit vector reversal is straightforward and can be done with a single loop indexing the input bits in reverse order. This simplification should reduce area and wiring complexity and slightly improve power due to fewer hierarchical boundaries and simpler net structures.
+
+The design remains purely combinational, easy to verify, and synthesizes efficiently, targeting better area and power metrics while preserving the same functionality and performance.

@@ -1,0 +1,7 @@
+To fix the barrel shifter implementation according to the feedback, we need to explicitly implement the 2-to-1 multiplexers (`mux2X1`) for each bit and stage as required by the original problem statement. The shifting must be a left rotation instead of a right rotation, matching the testbench expectations.
+
+The approach is to create the `mux2X1` module as a simple 1-bit 2-to-1 multiplexer and use it at each bit for each stage (shift by 4, 2, and 1). Each stage will take the previous stage's output and either rotate the bits left by the specified amount or leave them unchanged, controlled by the corresponding `ctrl` bit.
+
+By chaining these three stages of mux arrays, each controlled by one bit of `ctrl`, we perform the total shift specified by the 3-bit control input. This ensures the output is the input rotated left by the sum of the shifts specified in `ctrl`.
+
+This approach follows the problem's requirement explicitly, maintains clarity, and matches the direction (left rotation) expected by the testbench.

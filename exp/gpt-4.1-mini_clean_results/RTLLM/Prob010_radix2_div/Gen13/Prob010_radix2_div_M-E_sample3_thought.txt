@@ -1,0 +1,9 @@
+Implement a radix-2 iterative divider supporting signed and unsigned 8-bit inputs by separating control and data path clearly.  
+On a new operation (opn_valid), latch inputs and signs, compute absolute values for signed operations.  
+Use two 17-bit registers: remainder (17 bits to hold remainder shifted left by one) and divisor (9 bits) plus a quotient register (8 bits).  
+At each clock cycle, shift remainder left, subtract divisor, and set quotient bit based on whether subtraction succeeded (non-negative remainder).  
+Perform 8 iterations controlled by a 4-bit counter.  
+After completion, apply sign corrections to quotient and remainder before output.  
+Manage result valid flag properly, ensuring synchronous operation.  
+All internal variables declared at module scope to avoid illegal declarations inside procedural blocks.  
+This design uses separate registers for remainder and quotient, which simplifies partial updates, avoids complex combined shift registers, and increases clarity.

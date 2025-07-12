@@ -1,0 +1,5 @@
+The original design is functionally correct and clean but uses three separate always blocks for the counters and toggles, which can create duplicated logic and might slightly increase area and power. To optimize for power and area without sacrificing timing, merge the three counters into a single always block. This reduces control logic duplication and may improve synthesis optimization by sharing common control signals. Also, using synchronous reset only (removing asynchronous reset) simplifies the reset path and might improve timing on some FPGA architectures.
+
+Further, by carefully ordering the counter updates and toggles, the toggling events happen just once per clock edge, preventing glitches. The counters are minimal-sized and well-sized already, so no change there.
+
+This merged and synchronous-reset-only implementation should slightly reduce area and power while maintaining the same functionality and timing.

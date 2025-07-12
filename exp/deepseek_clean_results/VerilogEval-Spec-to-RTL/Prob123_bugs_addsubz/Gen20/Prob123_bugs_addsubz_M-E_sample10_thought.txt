@@ -1,0 +1,21 @@
+My novel approach focuses on leveraging parallel computation and early zero detection to optimize both performance and power:
+
+1. **Dual-Path Computation**:
+   - Compute both addition and subtraction simultaneously in parallel
+   - Use a multiplexer to select the correct result based on do_sub
+   - This eliminates the need for conditional inversion and reduces critical path
+
+2. **Early Zero Detection**:
+   - Perform zero detection on both computation paths in parallel
+   - Combine the zero flags with the operation select signal
+   - This allows faster zero flag generation as it doesn't wait for the final result mux
+
+3. **Power Optimization**:
+   - Only the selected computation path's result drives the output
+   - Unused path's switching activity doesn't propagate to outputs
+   - Reduction in dynamic power compared to conditional inversion approaches
+
+4. **Area Efficiency**:
+   - Shares zero detection logic between both paths
+   - Uses simple muxing for final result selection
+   - Maintains clean combinational logic structure

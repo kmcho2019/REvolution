@@ -1,0 +1,13 @@
+Fuse the best of both examples by keeping the two-level hierarchy of sixteen 16-to-1 muxes followed by one final 16-to-1 mux, as in both examples for clarity and modularity. Use the balanced 4-to-1 mux tree inside each 16-to-1 mux from both examples (two-level 4-to-1 mux trees) for low fan-in and efficient logic.
+
+Then optimize the top module by flattening the final selection stage: instead of instantiating another 16-to-1 mux for the final stage, implement the final selection by directly indexing the 16-bit vector from the outputs of the sixteen 16-to-1 muxes. This reduces one mux level in the logic, lowering delay and area at the top hierarchy.
+
+This fusion yields:
+- Inside each 16-to-1 mux: low fan-in balanced 4-to-1 mux tree (2 levels).
+- Level 0 (input selection): 16 instances of Mux16to1 with 4-to-1 mux trees.
+- Level 1 (final selection): direct vector indexing of 16 intermediate outputs instead of another mux16to1 instance, reducing overall mux tree depth from 3 levels to 2 levels plus the internal 2-level mux16to1.
+- This achieves lower latency (fewer mux stages), smaller area (one less mux16to1 module), and clearer code.
+- Leverages synthesis tools' efficient support for vector indexing to optimize final mux stage.
+- Preserves modularity inside mux16to1 for ease of verification and reuse.
+
+This fusion provides an improved tradeoff between performance, power, and area while keeping code clarity and modularity.

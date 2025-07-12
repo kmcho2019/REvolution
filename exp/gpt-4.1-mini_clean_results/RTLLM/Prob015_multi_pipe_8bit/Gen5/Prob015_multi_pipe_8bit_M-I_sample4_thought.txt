@@ -1,0 +1,16 @@
+To optimize the design for better PPA without increasing pipeline depth, the main issue is the large combinational adder summing all eight 16-bit partial products at once, which affects timing and power. 
+
+Improvement strategy:
+- Break down the summation into a balanced 3-stage pipeline:
+  - Stage 1: Register inputs and generate partial products.
+  - Stage 2: Sum partial products in pairs (4 adders summing 2 operands each) and register results.
+  - Stage 3: Sum the Stage 2 results in pairs (2 adders) and register results.
+  - Stage 4: Final sum of the two Stage 3 results registered as output.
+
+This reduces the maximum combinational delay at each stage, allowing higher clock frequencies and less switching per stage, which reduces power.
+
+Additionally:
+- Keep a 4-bit enable pipeline to track valid data through stages.
+- Input registers update only when mul_en_in is high.
+- Outputs are registered and gated by mul_en_out at final stage.
+- This staged addition better balances hardware complexity and pipeline latency (4-cycle latency).

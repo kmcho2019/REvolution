@@ -1,0 +1,15 @@
+The waveform pattern matches an even parity function on the four inputs (a, b, c, d), which is logically the XNOR of all four inputs. Instead of directly using XNOR or chaining XOR/XNOR operators, I will implement the parity function by counting the number of ones in the inputs using a small combinational adder approach and then outputting the parity bit.
+
+The idea:
+- Use a 2-bit counter to add bits a, b, c, and d.
+- Then output q as the inverse of the least significant bit (LSB) of the count (since even parity means the count of ones modulo 2 is zero).
+  
+Steps:
+- Sum a and b to get sum1 (2 bits).
+- Sum c and d to get sum2 (2 bits).
+- Sum sum1 and sum2 (2 bits) to get total_sum (3 bits, but 2 bits suffice since max count is 4).
+- The parity bit q = ~total_sum[0], i.e., output 1 when total number of 1s is even.
+
+This approach differs from direct XNOR logic by explicitly counting set bits and then deriving parity, demonstrating a small arithmetic method to implement parity combinationally.
+
+This implementation also clearly separates stages and could be extended for more inputs or different widths.

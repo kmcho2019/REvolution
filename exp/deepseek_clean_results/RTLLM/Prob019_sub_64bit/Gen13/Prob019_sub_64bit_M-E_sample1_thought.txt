@@ -1,0 +1,26 @@
+Novel Architecture: Hybrid Carry-Select with Early Overflow Detection
+
+Key Innovations:
+1. **Segmented Carry-Select Adder**:
+   - Divide the 64-bit operation into 8-bit segments for balanced performance/area
+   - Each segment computes both possible results (with carry=0 and carry=1)
+   - Final carry chain selects between segment results
+
+2. **Early Overflow Prediction**:
+   - Detect potential overflow by examining only the MSB segment (bits [63:56])
+   - Parallel computation of overflow conditions during subtraction
+   - Eliminates need for full-width result examination
+
+3. **Optimized Sign Handling**:
+   - Special handling for sign bits to minimize critical path
+   - Direct comparison of segment boundaries for faster overflow detection
+
+4. **Resource Sharing**:
+   - Reuse intermediate results between subtraction and overflow logic
+   - Shared carry propagation between adjacent segments
+
+Advantages:
+- Faster than pure carry-lookahead for 64-bit widths
+- Lower area than full carry-select implementations
+- Early overflow detection reduces critical path
+- Balanced pipeline potential for high-frequency designs

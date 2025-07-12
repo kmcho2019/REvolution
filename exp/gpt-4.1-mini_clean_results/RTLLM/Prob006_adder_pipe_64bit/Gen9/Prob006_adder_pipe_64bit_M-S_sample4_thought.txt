@@ -1,0 +1,11 @@
+To simplify the design while maintaining functionality, I will implement a 64-bit ripple carry adder pipelined at the bit level with registers for sum and carry bits.
+
+Instead of using arrays of single-bit registers, I will use vectors to represent the pipeline registers for the carry chain and sums, shifting them through pipeline stages on each clock.
+
+Key points:
+- Register the inputs adda and addb on i_en assertion.
+- Use a pipeline of registers for carry and sums that progress one bit per clock cycle, effectively a shift-register style pipeline.
+- Delay the input enable signal through a shift register to generate o_en aligned with the result.
+- The final 65-bit sum will be output after 64 cycles of processing.
+- The design keeps code simple with vectors and minimal generate constructs, improving readability and synthesis friendliness.
+- Reset clears registers and disables output.

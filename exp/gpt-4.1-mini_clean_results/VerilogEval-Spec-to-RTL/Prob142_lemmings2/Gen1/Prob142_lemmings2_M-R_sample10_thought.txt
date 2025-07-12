@@ -1,0 +1,15 @@
+Refactor the design by splitting the FSM state and the walking direction into separate registers. Use a 1-bit direction register (0 = left, 1 = right) to remember walking direction. Have a separate falling state register (1 = falling, 0 = walking). On reset, start walking left and not falling.
+
+On each clock, if falling, remain falling until ground returns; output aaah=1, no walking signals asserted. Bumps during falling do not affect direction.
+
+When not falling and ground disappears, go to falling.
+
+When not falling and ground present, bumps control direction: bump_left sets direction to right, bump_right sets direction to left; bump_left and bump_right together also change direction accordingly (if both, direction flips). We implement bump logic to precisely set direction as per problem description.
+
+Outputs are combinational: walk_left = walking and direction==0, walk_right = walking and direction==1, aaah = falling.
+
+This separation simplifies state and direction management and clarifies bump direction handling, avoiding the pitfalls of encoding direction in multi-bit states and next state logic with ambiguous bump conditions.
+
+The asynchronous reset will clear falling and direction to walk left.
+
+This implementation meets the problem requirements with clearer state management and explicit handling of bump inputs.

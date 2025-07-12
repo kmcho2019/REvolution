@@ -1,0 +1,11 @@
+Refactor the FSM by separating the next state logic into a purely combinational always block that drives a next_state signal, and have a synchronous always block update the state register on clk or asynchronously reset. The output remains Moore style, driven only by the state register.
+
+This approach makes the next state logic explicit and modular, which aids readability and debugging, and is a common FSM coding style.
+
+Specifically:
+- Use a combinational always block for next_state logic based on current state and input.
+- Use a separate sequential always block for state update with asynchronous reset.
+- The output is assigned from the current state.
+- Keep state encoding the same (one bit), and asynchronous reset to state B.
+
+This structure differs from the original by making next state combinational and separate from state update, improving clarity while keeping logic equivalent.

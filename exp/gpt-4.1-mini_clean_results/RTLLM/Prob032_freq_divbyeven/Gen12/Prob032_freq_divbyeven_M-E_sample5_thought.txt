@@ -1,0 +1,13 @@
+Instead of counting up to half the division factor and toggling the output, this new approach uses a two-phase counter that counts from 0 to NUM_DIV-1 and toggles the output only when the count reaches the midpoint. This eliminates the need for calculating half the division parameter explicitly. 
+
+We use a 4-bit counter (or wider if NUM_DIV > 16) that increments each clock cycle and resets after reaching NUM_DIV-1. The output clock toggles at exactly the midpoint of the count sequence, so the output has a 50% duty cycle.
+
+This method is simple and scalable for any even NUM_DIV and uses only one counter and a toggle condition rather than separate next-state calculations.
+
+On reset, counter and output are cleared to zero. On each clock edge, increment the counter. When counter == NUM_DIV/2, toggle clk_div. When counter == NUM_DIV-1, reset counter.
+
+This ensures clk_div toggles every NUM_DIV/2 cycles, dividing the frequency by NUM_DIV, while maintaining a clean, synchronous design.
+
+We also enforce that NUM_DIV is even by a runtime check.
+
+This design is self-contained and generic.

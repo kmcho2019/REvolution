@@ -1,0 +1,7 @@
+To implement a simplified radix-2 divider for 8-bit signed or unsigned integers, we will design a module named `radix2_div` with the specified input and output ports. We'll use a synchronous approach with a clock signal `clk` for operation and a reset signal `rst` to initialize or reset the module. The division process will be controlled by the `opn_valid` signal, indicating a valid operation request. 
+
+Upon receiving a valid operation request, the module will save the inputs and initialize variables for the division process, including a shift register `SR` for holding the remainder and quotient, `NEG_DIVISOR` for the negated absolute value of the divisor, and a counter `cnt` to track the division steps.
+
+The division process will involve iterative subtraction and shifting, controlled by the `start_cnt` signal, which is set to 1 when the operation starts. The process checks the most significant bit of `cnt` to determine when the division is complete. 
+
+After the division is complete, the result is made valid through the `res_valid` signal, which is managed based on the reset, counter, and result consumption.

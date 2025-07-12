@@ -1,0 +1,11 @@
+To fix the existing code and provide a correct implementation, we can modify the finite state machine to properly handle the start bit, data bits, and stop bit. The key idea is to introduce a `WAIT_START` state to wait for the start bit, a `RECEIVE_DATA` state to receive the 8 data bits, and a `CHECK_STOP` state to verify the stop bit.
+
+In the `WAIT_START` state, we will wait for the start bit (0) and then transition to the `RECEIVE_DATA` state. In the `RECEIVE_DATA` state, we will shift in the incoming data bits and increment a bit counter. Once the bit counter reaches 8, we will transition to the `CHECK_STOP` state.
+
+In the `CHECK_STOP` state, we will check if the current input is a stop bit (1). If it is, we will assert the `done` signal and output the received data byte. If the stop bit is not present, we will transition to a `WAIT_STOP` state, where we will wait for a stop bit before returning to the `WAIT_START` state.
+
+To handle the bit counter and shift register correctly, we will only increment the bit counter and shift in the data bit when we are in the `RECEIVE_DATA` state. We will also reset the bit counter and shift register when we transition to the `WAIT_START` state.
+
+To eliminate the inconsistent updates of the `done` signal, we will only set `done` to 1 in the `CHECK_STOP` state when the stop bit is correct, and reset it to 0 in all other states.
+
+By making these changes, we can ensure that the finite state machine correctly receives and processes the serial data, and asserts the `done` signal only when a byte is correctly received.

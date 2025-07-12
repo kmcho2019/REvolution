@@ -1,0 +1,9 @@
+I will implement the decoder using continuous assignment logic without any always block. By using combinational assign statements directly on outputs, driven by bitwise equality checks, the design eliminates any reg types and procedural blocks, simplifying the logic for synthesis and simulation.
+
+This approach uses direct boolean expressions for each arrow key by comparing the 16-bit input to the specific known scancode constants. Outputs are mutually exclusive since only one scancode can be present at a time.
+
+This style can be advantageous for very small decoding logic by minimizing logic levels, reducing synthesis complexity, and enabling parallel detection of multiple keys (if input changes). It also avoids the need for default reset logic and is fully synthesizable with straightforward RTL.
+
+This also allows for easy scaling if more keys are added by simply OR-ing more comparisons or adding more assign statements.
+
+Overall, this is a purely combinational approach using assign statements to decode arrow keys from the full 16-bit scancode.

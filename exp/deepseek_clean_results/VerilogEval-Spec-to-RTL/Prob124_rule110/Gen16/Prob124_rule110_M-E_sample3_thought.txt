@@ -1,0 +1,11 @@
+Novel Architecture: Shift Register with Parallel State Computation
+1. **Shift Register Core**: Use a 514-bit shift register (512 cells + 2 boundary cells) to naturally handle the left/right neighbors without special cases.
+2. **Boundary Integration**: The extra bits at both ends (q[-1] and q[512]) are hardwired to 0 and don't need storage.
+3. **Parallel Computation**: Compute next states for all cells simultaneously by examining the shift register's current state.
+4. **Efficient Loading**: The load operation directly injects data into the main 512-bit register while maintaining boundary conditions.
+
+Advantages:
+- Eliminates boundary condition checks in the generate loop
+- More natural representation of the cellular automaton's neighborhood
+- Reduced logic complexity by leveraging the shift register structure
+- Maintains full parallel computation capability

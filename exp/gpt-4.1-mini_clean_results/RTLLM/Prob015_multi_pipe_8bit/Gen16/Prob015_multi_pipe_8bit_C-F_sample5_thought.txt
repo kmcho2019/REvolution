@@ -1,0 +1,19 @@
+Fuse the best ideas from both examples to design a balanced, multi-stage pipeline that improves timing and maintains clear enable signal synchronization:
+
+- Pipeline stages:
+  1. Input sampling: Register inputs and input enable signal.
+  2. Partial product generation: Generate each partial product from multiplier bits and multiplicand shift, and register them.
+  3. Partial sums accumulation: Break summation into two pipeline stages using a balanced binary adder tree:
+     - Stage 3: Add pairs of partial products and register results.
+     - Stage 4: Add pairs of stage 3 sums and register results.
+  4. Final addition: Add remaining two sums to get the final product and register it.
+  
+- The enable signal is propagated through a 5-bit shift register, matching the pipeline depth, ensuring output enable is aligned with the product.
+
+- Output product is gated by mul_en_out, zero otherwise.
+
+This pipeline balances the addition logic over several clock cycles, significantly shortening combinational paths and enabling higher clock frequencies. By registering partial products before summation, and using an adder tree with pipeline registers, switching activity is reduced per cycle, improving power. This approach also distributes area by using multiple smaller adders rather than one large wide adder.
+
+The design maintains clean control of enable signals and data alignment through the pipeline. It improves timing and power over single-cycle summation while preserving correctness and throughput.
+
+Overall, this fusion yields a high-performance, power-efficient, and area-effective pipelined 8-bit unsigned multiplier.

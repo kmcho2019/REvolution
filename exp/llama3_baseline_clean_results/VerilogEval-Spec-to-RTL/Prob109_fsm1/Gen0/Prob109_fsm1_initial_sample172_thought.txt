@@ -1,0 +1,15 @@
+To implement the given Moore machine, we first need to understand the state transitions. The machine starts in state B when reset is high. In state B, if the input 'in' is 0, it transitions to state A, and if 'in' is 1, it stays in state B. In state A, if 'in' is 0, it transitions to state B, and if 'in' is 1, it stays in state A. 
+
+The output 'out' for a Moore machine is determined solely by the current state. Since the machine has two states (A and B), we can assign 'out' to be 0 when in state A and 1 when in state B, based on the given state diagram. This choice doesn't affect the functionality of the state machine but is a common way to assign outputs in a Moore machine.
+
+We'll use a two-state encoding for simplicity: let's say state A is encoded as 0 and state B as 1. The next state logic and output logic can be derived directly from the state transition diagram.
+
+The next state (NS) logic can be expressed as:
+- If current state (CS) is B (1) and 'in' is 0, NS = A (0).
+- If CS is B (1) and 'in' is 1, NS = B (1).
+- If CS is A (0) and 'in' is 0, NS = B (1).
+- If CS is A (0) and 'in' is 1, NS = A (0).
+
+This logic can be simplified into a Verilog implementation using an if-else statement or a case statement within a sequential always block.
+
+For the output logic, since 'out' is 0 in state A and 1 in state B, 'out' is essentially the same as the current state.

@@ -1,0 +1,7 @@
+I will simplify the design by removing the intermediate combinational register xor_comb_wire. Instead, the clocked always block will compute the XOR directly from inputs a and b at each clock edge, eliminating the extra combinational reg and logic. 
+
+- out_assign will remain a continuous assign of a ^ b.
+- out_always_comb will remain assigned in an always_comb block as a ^ b.
+- out_always_ff will be assigned synchronously in an always_ff block, computing a ^ b directly without any intermediate signals.
+
+This reduces logic and net count, while preserving all three distinct coding styles and functionality. The sequential output remains delayed by one clock cycle as required.

@@ -1,0 +1,10 @@
+To optimize the original design for better PPA while preserving functionality:
+
+- Remove the asynchronous reset since the waveform starts with X and immediately updates q on the first clock edge. This reduces area and eliminates possible reset-related glitches.
+- Replace the constant assignment q=4 when a=1 with a conditional update that only changes q if q != 4. This reduces unnecessary toggling and thus dynamic power.
+- Similarly, for counting when a=0, update q only when it changes (q increments modulo 7), to minimize switching.
+- Implement the modulo-7 counting more succinctly with a wrap-around using a ternary operator.
+- Use a single always block clocked on posedge clk.
+- Keep q as reg [2:0] for 3-bit width.
+- The small logic change reduces toggling on q, improving power without impacting timing significantly.
+- Maintain non-blocking assignments for synchronous updates.

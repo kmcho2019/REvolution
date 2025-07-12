@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Maintain the excellent timing characteristics (0ns violations) by keeping the simple combinational logic
+2. Reduce power consumption by adding clock gating for the a_prev register to prevent unnecessary toggles
+3. Keep the minimal area footprint by maintaining the current register and gate count
+4. Ensure the design remains fully synchronous and meets all functional requirements
+5. The clock gating will only update a_prev when 'a' changes, reducing dynamic power when 'a' is stable
+
+Key Changes:
+1. Add a clock enable signal (a_change) that detects when 'a' has changed from previous value
+2. Only update a_prev when a_change is true
+3. Maintain same rise/down detection logic for consistent timing

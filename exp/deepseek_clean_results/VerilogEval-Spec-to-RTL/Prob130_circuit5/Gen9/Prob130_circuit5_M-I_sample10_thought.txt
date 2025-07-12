@@ -1,0 +1,11 @@
+To optimize the solution, I'll focus on:
+1. Replacing the 16-bit concatenation with a 4:1 mux structure to reduce area and power
+2. Simplifying the invalid selection logic by directly controlling the mux with c[1:0] when valid
+3. Using a default 'f' output when c >=4 to eliminate the mask operation
+4. Making the selection logic more direct and reducing unnecessary signal propagation
+
+The improved approach:
+- Use c[1:0] directly as mux select when c <4
+- Output 'f' (all 1s) when c >=4
+- This eliminates the 16-bit bus and mask operations
+- Results in cleaner, more efficient logic

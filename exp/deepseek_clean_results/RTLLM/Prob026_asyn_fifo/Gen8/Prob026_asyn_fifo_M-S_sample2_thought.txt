@@ -1,0 +1,30 @@
+Simplified Design Approach:
+
+1. Core Components:
+   - Single module implementation (no submodules) for better readability
+   - Keep essential FIFO functionality: async operation, full/empty flags
+   - Remove non-essential features (almost full/empty thresholds)
+
+2. Pointer Management:
+   - Direct Gray code generation without separate binary pointers
+   - Simplified full/empty detection logic
+   - Single clock domain for each pointer
+
+3. Memory Interface:
+   - Integrated dual-port RAM within main module
+   - Simplified address generation from Gray codes
+
+4. Synchronization:
+   - Fixed 2-stage synchronizers (proven sufficient)
+   - Clear separation of clock domains
+
+5. Reset Handling:
+   - Simple async resets for each domain
+   - Clear initialization of all registers
+
+Key Simplifications:
+- Removed submodule hierarchy
+- Eliminated binary pointer conversion
+- Simplified flag generation logic
+- Reduced parameterization to essentials
+- Maintained robust async operation

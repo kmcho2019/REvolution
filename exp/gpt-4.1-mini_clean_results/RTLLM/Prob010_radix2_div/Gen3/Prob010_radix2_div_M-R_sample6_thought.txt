@@ -1,0 +1,9 @@
+Refactor the radix-2 division module by using an explicit FSM with defined states to manage the division process, which clarifies control flow and separates combinational and sequential logic cleanly. 
+
+Use registers to hold the dividend, divisor, quotient, and remainder, and keep track of the iteration with a counter. On opn_valid, capture inputs and start the process. Each clock cycle, perform one step of the division: shift left the remainder and quotient, subtract the divisor if possible, and update quotient bit accordingly.
+
+Manage the signedness separately by storing sign bits and taking absolute values at start. After division completes, apply sign correction to quotient and remainder.
+
+Use only synchronous always blocks for state and data updates. The result is output when ready, with res_valid indicating completion.
+
+This approach simplifies debugging and ensures clean separation of operations while preserving the radix-2 algorithm and requirements.

@@ -1,0 +1,13 @@
+Implement a dual-GHR scheme: keep two global history registers—one "committed" GHR reflecting the confirmed branch outcomes after training, and one "speculative" GHR reflecting predictions made in the fetch stage. 
+
+- The committed GHR (`commit_ghr`) updates only on training commits or misprediction recovery, representing the known, correct history state.
+- The speculative GHR (`spec_ghr`) tracks speculative updates from predictions to enable correct prediction outputs without interfering with training updates.
+- Prediction outputs (`predict_taken`) are generated combinationally by indexing the PHT with the speculative GHR XORed with the predicted PC.
+- The `predict_history` output reflects the speculative GHR state at the prediction request cycle to report the history used for that prediction.
+- Training updates modify the PHT and update the committed GHR with priority given to mispredictions (which restore the committed GHR), ensuring recovery happens correctly.
+- Speculative GHR updates on prediction requests only if no training misprediction is occurring simultaneously; if training mispredict happens, the speculative GHR is reset to committed GHR (branch recovery).
+- This cleanly separates speculative and committed state, avoids race conditions between training and prediction updates to GHR, and ensures correct timing of prediction and training actions.
+- All registers update on clock edge; outputs (prediction and history) are combinational or registered as specified.
+- PHT is a 128-entry array of 2-bit saturating counters updated synchronously on training.
+
+This architecture avoids conflicts by tracking speculative history separately, ensures the outputs correspond to the history used for prediction, and faithfully implements GShare with training and prediction interfaces and correct update priority.

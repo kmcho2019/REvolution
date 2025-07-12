@@ -1,0 +1,57 @@
+By inspecting the Karnaugh map and the previous optimized expression, we can attempt to simplify further by merging terms to reduce literals and product terms.
+
+From the Karnaugh map:
+
+f = 1 at minterms: 0,3,8,9,11,12,13,14
+
+Expressed as x[3:0]:
+
+0  = 0000  
+3  = 0011  
+8  = 1000  
+9  = 1001  
+11 = 1011  
+12 = 1100  
+13 = 1101  
+14 = 1110
+
+Grouping these minterms:
+
+- The block where x[3]=1 and x[2]=1 and x[1] can be anything but x[0]=0 or 1 includes 12,13,14,11.
+- The block with x[3]=0, x[2]=0, x[1]=0 includes 0 and 3.
+- The block with x[3]=1, x[2]=0 and x[1]=0 includes 8 and 9.
+
+A simplified sum of products expression is:
+
+f = (~x3 & ~x2 & ~x1)
+  | (x3 & x2)
+  | (x3 & ~x2 & ~x1)
+
+This covers:
+
+- (~x3 & ~x2 & ~x1): minterms 0 and 1 (only 0 is 1 in map, but 1 is zero, so this covers minterm 0 correctly)
+- (x3 & x2): covers 12,13,14,11 where x3=1 and x2=1
+- (x3 & ~x2 & ~x1): covers 8 and 9 (x3=1,x2=0,x1=0)
+
+Check if these cover all ones:
+
+- 0 (0000): covered by first term
+- 3 (0011): not covered directly; check if covered elsewhere
+- 3 = 0011 (x3=0,x2=0,x1=1,x0=1) -- first term fails (x1=1), second no (x3=0), third no
+
+So 3 is missing. Need to cover 3.
+
+Try to add term (~x3 & ~x2 & x1 & x0): covers minterm 3.
+
+So final expression:
+
+f = (~x3 & ~x2 & ~x1)
+  | (~x3 & ~x2 & x1 & x0)
+  | (x3 & x2)
+  | (x3 & ~x2 & ~x1)
+
+This has 4 product terms, simpler than previous 3 terms but with fewer literals per term and more balanced.
+
+Alternatively, use a 3-level logic for simplicity and clarity.
+
+This expression maintains correctness and is easier to synthesize and understand, possibly improving area and power due to simpler literals.

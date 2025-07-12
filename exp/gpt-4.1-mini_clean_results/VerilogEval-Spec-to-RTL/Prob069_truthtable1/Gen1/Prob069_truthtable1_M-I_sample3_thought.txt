@@ -1,0 +1,9 @@
+The original logic expression f = (~x3 & x2) | (x3 & x1) is already minimal in terms of boolean operations and gate count. To optimize for power, area, and performance further, we can implement the logic using a 2-to-1 multiplexer style structure controlled by x3:
+
+f = x3 ? x1 : x2
+
+This is logically equivalent to the original but uses a single 2:1 MUX structure, which can sometimes be more efficient in hardware, reducing gate count and possibly improving timing and power by lowering gate transitions.
+
+This mux implementation uses less logic (one 2:1 mux) rather than separate AND and OR gates, which may yield better PPA in synthesis.
+
+Hence, I will implement f as a mux selecting between x2 and x1 based on x3.

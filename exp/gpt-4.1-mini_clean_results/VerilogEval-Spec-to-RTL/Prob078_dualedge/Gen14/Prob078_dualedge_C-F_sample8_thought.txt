@@ -1,0 +1,10 @@
+To create a superior dual-edge triggered flip-flop, I will combine the modularity and simplicity of separate positive and negative edge FFs from both examples with a glitch-minimized, synthesizable output selection method that avoids latches and illegal sensitivity lists:
+
+- Instantiate two EdgeFF modules parameterized for posedge and negedge sampling of the input `d`.
+- Instead of using a latch or an always block with multiple signals in sensitivity list, implement a registered output selector flip-flop clocked on the positive edge of `clk` that samples the output of a combinational mux between `q_posedge` and `q_negedge`.
+- The mux selects `q_posedge` or `q_negedge` based on the current clock level (`clk`), which is stable except near edges, minimizing glitches.
+- Registering the mux output on the positive clock edge breaks combinational paths, reduces glitches, and aids timing closure by synchronizing output changes to the clock.
+- This approach avoids transparent latches that can cause hold time issues, uses only supported sensitivity lists, and reduces glitch-induced power usage compared to a purely combinational mux or latch.
+- The result is a modular, clean, glitch-reduced, and FPGA-synthesis-friendly dual-edge FF emulation with minimal timing and power risks.
+
+This fusion balances clean modular code, glitch minimization, synthesis legality, and ease of timing closure better than either purely muxed or latched output selection in previous examples.

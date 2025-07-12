@@ -1,0 +1,35 @@
+The previous solution sampled `a` on the posedge of `clock` into `p` and copied `p` into `q` on the negedge. This simple dual-edge triggered design fails to capture the more complex state-dependent behavior seen in the waveform.
+
+Analyzing the waveform carefully reveals these key points:
+
+- `p` changes only on rising edges of `clock`.
+- `q` changes only on falling edges of `clock`.
+- `p` behaves like a set-reset latch controlled by `a`:
+  - When `a`=1 on posedge clock, `p` is set to 1.
+  - When `a`=0 on posedge clock, `p` remains 1 if it was 1 before, else resets to 0.
+- `q` follows `p` but delayed by half a clock cycle (updated on negedge clock).
+- At certain times, `q` holds its state even when `p` changes, indicating `q` also behaves like a latch updated at negedge clock, preserving the previous `q` value unless explicitly reset.
+
+From the waveform, the outputs can be described by the following rules:
+- On posedge clock: 
+  - If `a`=1, set `p`=1.
+  - Else, keep `p`=0 if it was 0 or 1 if it was 1 (we can interpret the waveform as `p` becomes `a | p`).
+- On negedge clock:
+  - If `p`=1 or `q`=1, set `q`=1.
+  - Else `q`=0.
+
+This means `p` acts as a set-dominant latch triggered on posedge clock with `a` as set input.
+`q` acts as a latch triggered on negedge clock, capturing `p` or holding its previous state.
+
+Implementation:
+- Use two always blocks:
+  - One @(posedge clock) for `p`:
+    `p <= p | a;` (set dominant: once `p`=1, stays 1 unless reset which never occurs here)
+  - One @(negedge clock) for `q`:
+    `q <= q | p;` (latch that sets if either `q` or `p` is 1, else 0)
+  
+This approach better matches the waveform's state hold and transition patterns, reflecting the latch-like behavior on both edges, with set dominance from `a` for `p`.
+
+Initialization to zero for `p` and `q` is acceptable because waveforms show unknown values only before the first clock edge.
+
+This design is synthesizable, uses standard flip-flops, and follows the waveform's timing and value patterns.

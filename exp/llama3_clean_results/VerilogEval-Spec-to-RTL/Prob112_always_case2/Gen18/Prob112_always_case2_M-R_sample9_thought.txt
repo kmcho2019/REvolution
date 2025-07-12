@@ -1,0 +1,9 @@
+To refactor the given Verilog code for a 4-bit priority encoder, we will maintain the core logic but utilize a different structural approach. Instead of directly using conditional statements within an `assign` statement, we can declare a variable or a wire and then use conditional statements to determine its value.
+
+The idea here is to keep the logic as straightforward as possible while potentially making it easier to understand and modify. We will use a series of `if` statements within an `always` block to assign the output `pos` based on the input vector `in`. This approach allows for a more procedural view of the logic, which some designers might find more intuitive.
+
+The key to this refactoring is ensuring that the output `pos` is correctly updated based on the priority of the '1' bits in the input vector. Since we're scanning from most significant to least significant, the first '1' bit encountered will determine the output value.
+
+To handle the case where no '1' bits are present in the input vector, we will initialize `pos` to '00' by default and only update it if a '1' bit is found. This ensures that the module behaves as specified when all input bits are '0'.
+
+By using an `always` block with combinational logic (`@(*)`), we ensure that the output `pos` is updated whenever any of the input bits change, maintaining the combinational nature of the priority encoder.

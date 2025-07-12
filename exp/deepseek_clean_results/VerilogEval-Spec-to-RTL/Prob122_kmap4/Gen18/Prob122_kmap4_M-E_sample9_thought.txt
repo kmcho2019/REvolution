@@ -1,0 +1,14 @@
+Here's a novel approach using a lookup table (LUT) implementation with multiplexers. Instead of using XOR gates, we'll treat the inputs as address lines to a 16x1 memory that stores the output pattern. This approach:
+
+1. Treats the 4 inputs as a 4-bit address (d,c,b,a)
+2. Uses a 16-bit constant representing the Karnaugh map output values
+3. Selects the appropriate bit using a multiplexer structure
+
+Advantages:
+- Conceptually simple and straightforward to implement
+- Easy to modify if the truth table changes
+- Doesn't rely on recognizing XOR patterns
+- Demonstrates an alternative implementation style
+
+The 16-bit constant is constructed by reading the Karnaugh map row-wise (dc=00 to 11, ab=00 to 11 for each dc):
+0101 1010 0101 1010 (binary) = 0x5A5A

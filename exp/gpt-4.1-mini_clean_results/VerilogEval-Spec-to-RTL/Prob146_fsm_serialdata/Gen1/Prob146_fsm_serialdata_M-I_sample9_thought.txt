@@ -1,0 +1,10 @@
+To improve the given FSM for better power and potentially timing, I will add clock enable signals to the sequential registers so they only update when necessary. This reduces unnecessary toggling in the IDLE and WAIT_STOP states, lowering dynamic power.
+
+Specifically:
+- The bit_count and data_shift registers will only update in the RECEIVE state.
+- The done signal is asserted only for one cycle when the byte is correctly received.
+- The state register must always update, so no clock gating there.
+
+The next_state logic and output logic remain combinational and unchanged for clarity and minimal area impact.
+
+This optimization reduces switching in IDLE and WAIT_STOP states and maintains functional correctness.

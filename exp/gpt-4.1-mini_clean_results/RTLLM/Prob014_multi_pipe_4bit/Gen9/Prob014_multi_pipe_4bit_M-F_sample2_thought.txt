@@ -1,0 +1,34 @@
+To fix the design while adhering strictly to the two-stage pipeline register requirement and improving synthesis friendliness and timing:
+
+1. Explicitly extend inputs by prepending `size` zeros outside any registers (combinationally), then register these extended inputs and the multiplier bits as stage 1 registers.
+
+2. Generate partial products as stage 1 registered outputs for each bit of `mul_b` by left-shifting the extended multiplicand or zero if the bit is 0.
+
+3. At the second stage, register the sum of the partial products. This splits multiplication into two pipeline stages with registers between them:
+
+   - Stage 1 registers: extended multiplicand and multiplier bits
+   - Stage 2 registers: sum of partial products
+
+4. This approach avoids a large combinational adder with multiple inputs by generating partial products in registers first, then summing them at the next clock edge and registering the result.
+
+5. This structure keeps combinational critical paths shorter and aligns well with synthesis tools, improving timing and clarity.
+
+6. Use explicit parameters and widths and add comments for clarity.
+
+7. The reset (`rst_n`) is asynchronous active-low, clearing all registers to zero.
+
+8. The multiplication is unsigned, no sign extension is required.
+
+This respects the original requirements:
+
+- Inputs extended by `size` zeros on MSBs
+
+- Generate block for partial products per multiplier bit
+
+- Two levels of registers: stage 1 for inputs, stage 2 for partial sum
+
+- Reset logic included
+
+- Output updated in stage 2
+
+This fixes the possible synthesis and simulation issues related to parameter usage and large combinational blocks.

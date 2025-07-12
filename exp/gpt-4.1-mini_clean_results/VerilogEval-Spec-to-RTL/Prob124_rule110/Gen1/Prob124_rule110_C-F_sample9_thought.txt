@@ -1,0 +1,18 @@
+Combine the clean, resource-efficient rule lookup from Example 2 with the explicit functional clarity of Example 1. Use the 8-bit localparam encoding for Rule 110 to avoid a multi-case function call, improving area and power by a simpler combinational expression. To reduce combinational path length and improve timing compared to fully combinational next-state logic, split the next-state calculation into a registered pipeline stage: compute next_q combinationally, then register it. 
+
+Also, instead of creating separate wires for left, center, and right neighbors within a generate loop, perform boundary padding once by concatenating zeros on the edges to simplify neighbor indexing and eliminate conditionals inside the loop, which reduces mux overhead and improves synthesis quality.
+
+Thus:
+- Create a padded 514-bit vector: 1 zero bit at MSB side + q[511:0] + 1 zero bit at LSB side.
+- For cell i, neighbors are padded_q[i+2] (left), padded_q[i+1] (center), padded_q[i] (right).
+- Use these 3 bits as index into the RULE110 localparam to get next_q[i].
+- Register q synchronously with load or next_q.
+- Use generate loop with simple indexing, no conditionals.
+
+This fusion yields:
+- A minimal and fast combinational logic for next_q,
+- Reduced boundary condition complexity,
+- Lower area and power from simpler mux logic,
+- Good timing by separating combinational and sequential logic clearly.
+
+This approach balances clarity, efficiency, and synthesis friendliness better than both examples individually.

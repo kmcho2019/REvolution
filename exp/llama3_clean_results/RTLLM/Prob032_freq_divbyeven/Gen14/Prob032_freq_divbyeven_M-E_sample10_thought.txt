@@ -1,0 +1,7 @@
+The novel architectural idea for the frequency divider module (`freq_diveven`) is to utilize a more modular and scalable approach by leveraging the concept of a "toggling" signal generator. This approach introduces a new internal signal (`toggle`) that is responsible for toggling the divided clock output (`clk_div`) at the appropriate time. The main idea is to split the logic into two primary components: 
+1. **Counter Logic**: A counter (`cnt`) that counts up to `NUM_DIV - 1`, similar to the original approach, but with a focus on reducing the complexity of the logic.
+2. **Toggle Logic**: A separate logic block that generates the `toggle` signal based on the counter's value. This signal will be used to toggle the `clk_div` output.
+
+The key novelty in this approach is the decoupling of the counter logic from the toggle logic, making the design more modular and easier to extend or modify. For example, if the requirement changes to divide by odd numbers or to implement a more complex division scheme, the toggle logic can be adjusted independently without affecting the counter logic.
+
+Moreover, this design takes into account the requirement for `NUM_DIV` to be an even number by ensuring the counter counts up to `NUM_DIV - 1`, thereby maintaining the even division factor without needing to adjust the counter limit or implement additional logic for handling odd division factors.

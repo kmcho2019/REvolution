@@ -1,0 +1,23 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Key Simplifications:
+   - Remove explicit state machine (IDLE/CALC/DONE) since counter can track progress
+   - Combine combinational and sequential logic into single always block
+   - Eliminate next_* registers by directly assigning in sequential block
+   - Reduce pre-computed values to only what's needed for current operation
+
+2. Optimized Control:
+   - Use counter to track both state and iteration count
+   - Ready signal generated directly from counter value
+   - Reset initializes all registers in one operation
+
+3. Maintained Functionality:
+   - Same Radix-4 Booth algorithm
+   - Same interface and behavior
+   - Preserves correct signed multiplication
+
+Benefits:
+- Reduced register usage
+- Simpler control flow
+- Fewer intermediate signals
+- Same functionality with less code

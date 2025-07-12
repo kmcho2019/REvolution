@@ -1,0 +1,19 @@
+The main issue is that the bump-induced direction switching occurs whenever bump signals are detected in the WALK state, without properly blocking bumps that coincide with the ground disappearing or reappearing edges. The problem states that bumps in the same cycle as ground disappearing or reappearing do not affect direction.
+
+To fix this, explicitly exclude bumps from affecting direction if a ground edge (fall or rise) happens in the same cycle in the WALK state. Since fall has highest precedence, state transition to FALL on ground falling edge overrides direction flip and bump logic. Only if the Lemming remains walking on ground (i.e., no fall or dig initiated this cycle), bumps should flip direction.
+
+Therefore, inside WALK state, process in this order:
+
+1. If ground_fell → state FALL (no direction change)
+
+2. Else if dig command and ground → state DIG (no direction change)
+
+3. Else if bumped and no ground edge this cycle → flip direction
+
+Updating `prev_ground` at the start of the sequential block is fine, but make sure bump is ignored on ground edges by adding conditions.
+
+This preserves Moore FSM structure and the output logic, while fixing direction changes during ground edge cycles as specified.
+
+No direction change occurs on bumps during falling, digging, or ground edge cycles.
+
+The fix is to gate the bump-based direction flip by `~ground_fell & ~ground_rose` in the WALK state.

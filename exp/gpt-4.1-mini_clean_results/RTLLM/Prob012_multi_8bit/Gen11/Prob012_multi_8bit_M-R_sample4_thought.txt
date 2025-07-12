@@ -1,0 +1,7 @@
+Refactor the design to compute the product purely using a procedural combinational always block that iteratively performs the shift-and-add multiplication. Instead of generating and summing partial products in parallel and using multiple adders, use a single register to accumulate the sum, scanning each bit of B in sequence and adding the appropriately shifted A to the accumulator when that bit is set.
+
+This approach preserves the shift-and-add algorithm concept explicitly, making the iterative process clearer. The combinational always block mimics the traditional algorithmic description of multiplication, with a loop from bit 0 to 7 of B checking and adding shifted A accordingly. It improves code clarity by showing exactly how the multiplier works step-by-step, avoiding generate loops and multiple adders.
+
+The final product is assigned from the accumulator at the end of the always block. This version still produces a purely combinational multiplier, but with a single combinational loop and accumulation register.
+
+This restructuring provides an alternative clear algorithmic description of shift-and-add multiplication that is easy to understand and verify.

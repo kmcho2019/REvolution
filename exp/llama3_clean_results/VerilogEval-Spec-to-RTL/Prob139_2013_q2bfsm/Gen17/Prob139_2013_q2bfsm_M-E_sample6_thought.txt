@@ -1,0 +1,7 @@
+To address the finite state machine problem, a novel approach can be employed by utilizing a counter-based sequence detector for the 'x' input sequence, and a separate counter for the 'y' timeout. This approach simplifies the state machine by reducing the number of states and transitions, making the code more efficient and easier to maintain.
+
+The key idea is to use a single state machine with two counters: one for detecting the 'x' sequence and another for handling the 'y' timeout. The 'x' sequence detector will increment its counter for each correct sequence element (1, 0, 1) in successive clock cycles. Once the sequence is detected, the FSM will transition to the state where it waits for 'y' within a certain number of clock cycles.
+
+The 'y' timeout counter will start incrementing when the FSM enters the "Wait for y" state. If 'y' is detected within the specified timeout period, the FSM will set 'g' high permanently. If the timeout period expires without detecting 'y', the FSM will set 'g' low permanently.
+
+This counter-based approach simplifies the state machine, reduces the number of states and transitions, and improves code readability and maintainability.

@@ -1,0 +1,10 @@
+Novel approach using a state machine with explicit state encoding:
+1. Instead of using shift operations, implement a 3-bit counter to track the current active bit position
+2. Use a decoder to convert the counter value to a one-hot output
+3. The counter increments on each clock cycle, wrapping around after reaching 7
+4. Reset initializes the counter to 0, which maps to 8'b00000001
+5. Advantages:
+   - Explicit state tracking makes the design more debuggable
+   - Decouples the counting logic from output generation
+   - Easier to modify for non-sequential patterns if needed
+   - More tool-compatible as it avoids array slice operations

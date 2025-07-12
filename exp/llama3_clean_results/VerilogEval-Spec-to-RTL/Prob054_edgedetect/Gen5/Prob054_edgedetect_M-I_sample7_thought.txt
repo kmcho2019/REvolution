@@ -1,0 +1,17 @@
+To improve the provided Verilog code for better Power, Performance, and Area (PPA) metrics, we will analyze the current implementation and identify potential areas of optimization. 
+
+The current design uses a non-blocking assignment (`<=`) within the `always` block for sequential logic, which is already a good practice for performance. The loop within the `always` block could be simplified or unrolled for potentially better performance, but given the small size of the input (8 bits), this might not yield significant improvements.
+
+One potential improvement is to minimize unnecessary switching activity. The current design updates the `prev_in` register and checks for transitions on every clock cycle, which is necessary for its functionality. We can explore if the logic can be simplified or optimized to reduce switching activity without compromising functionality.
+
+Given the PPA metrics provided, the area is relatively low, and the power consumption is also quite low. The timing metrics (`tns` and `wns`) indicate no significant timing issues. Therefore, the focus should be on minor optimizations that do not compromise functionality while aiming to slightly reduce power consumption and area usage, if possible.
+
+One strategy could be to simplify the logic inside the `always` block, potentially reducing the number of operations or the complexity of the operations. We can also explore if any synthesis directives or compiler optimizations can be applied to further improve the PPA metrics without changing the code's functionality.
+
+Based on the provided feedback, we notice that the current implementation seems to be quite straightforward and doesn't contain any long critical paths. The use of a for loop in the always block could potentially introduce some delay, but the synthesis tool should be able to optimize this efficiently.
+
+In terms of power, the code has a relatively simple structure, which is good for low power consumption. The use of a register to store the previous state of the input signal may introduce some power overhead due to the clock signal. However, optimizing the clock tree or using clock gating might not be feasible without affecting the functionality.
+
+For area, the current implementation seems to be quite area-efficient, and there might not be much room for improvement. We could consider using more efficient encoding schemes for the output signal, but this would require a more detailed analysis of the specific requirements and constraints of the problem.
+
+Our improvement strategy will be to slightly modify the current implementation to reduce switching activity and minimize the number of operations within the `always` block. We will also explore the use of synthesis directives to further optimize the PPA metrics.

@@ -1,0 +1,5 @@
+To implement the TopModule with the given interface, we will use a finite state machine (FSM) with three states: idle, byte1, and byte2. The FSM will start in the idle state and wait for a byte with in[3] = 1. Once such a byte is received, it will transition to the byte1 state. In this state, it will store the current byte as the first byte of the message. Then, it will transition to the byte2 state, where it will store the next byte as the second byte of the message. After that, it will transition back to the byte1 state to store the third byte of the message. Finally, it will assert the done signal and output the 24-bit message. The reset signal will be used to reset the FSM to the idle state.
+
+The datapath will consist of a set of registers to store the bytes of the message. The output out_bytes will be a concatenation of these registers.
+
+The state machine will be implemented using a case statement inside an always block, which will be triggered on the positive edge of the clock. The reset signal will be handled using an if statement inside the always block.

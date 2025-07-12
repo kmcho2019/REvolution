@@ -1,0 +1,10 @@
+To optimize the 64-bit Johnson counter for better PPA (Performance, Power, Area), the main leverage comes from reducing combinational logic delay and minimizing switching activity. While the original design is already simple and concise, a small improvement can be achieved by implementing the shift operation as a dedicated shift register with a feedback input instead of concatenating slices every clock. This can reduce the logic levels and improve timing.
+
+Specifically:
+- Use a single feedback wire calculated once per clock cycle to feed the MSB input.
+- Shift right by assigning Q[i] <= Q[i-1] for i=63 down to 1, and set Q[63] to the computed feedback bit based on Q[0].
+- This register-style shift reduces combinational fanout and complexity of the concatenation.
+- This approach should yield better timing and possibly lower dynamic power by simplifying logic and spreading it across register stages.
+- The reset remains synchronous active-low and clears Q to zero.
+
+This technique trades off a slightly longer always block for improved register transfer logic structure and timing. The logic delay for determining MSB insertion remains simple (depends only on Q[0]), but the shifting is done explicitly through registers rather than a wide concatenation, which can be more efficient in many synthesis flows.

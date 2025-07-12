@@ -1,0 +1,14 @@
+The key corrections needed are:
+1. Change outputs from Y2/Y4 to Y1/Y3 as specified
+2. Y1 corresponds to next state A (y[0]), which occurs from:
+   - Current state A with w=1
+   - Current state D with w=1
+3. Y3 corresponds to next state D (y[3]), same as previous Y4 logic
+4. Maintain one-hot encoding benefits by directly using current state bits
+5. Keep the same module name as specified (TopModule)
+
+The corrected implementation will:
+- Use y[0] for state A, y[1] for B, etc. per one-hot encoding
+- Implement Y1 as the OR of all transitions leading to state A
+- Implement Y3 as the OR of all transitions leading to state D
+- Keep combinational logic structure for next-state outputs

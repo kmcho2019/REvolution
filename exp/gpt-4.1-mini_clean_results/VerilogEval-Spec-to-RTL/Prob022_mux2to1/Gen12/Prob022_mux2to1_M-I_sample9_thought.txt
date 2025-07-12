@@ -1,0 +1,13 @@
+The initial implementation is already minimal and optimal for a 1-bit 2-to-1 mux using continuous assignment, yielding minimal logic, area, and power. Given the already zero timing slack and negligible power and area, further RTL-level optimization is unlikely to improve PPA significantly.
+
+However, a slight coding style improvement can be made by using the built-in Verilog primitive `mux1` (if supported by the synthesis tool) or by explicitly instantiating a mux primitive to ensure optimal gate-level mapping. Since standard Verilog doesn't define `mux1`, and for portability, the current continuous assignment is best.
+
+Alternatively, to marginally improve power by preventing switching of unused input signals, one might gate the inputs internally based on sel, but this usually incurs extra logic and may increase area and delay.
+
+Therefore, the best PPA-friendly approach remains the existing continuous assignment.
+
+Improvement strategy: 
+- Retain continuous assignment for optimal logic inference.
+- Add explicit port directions and types for clarity.
+- Include a comment on synthesis directives for further tool optimizations if needed.
+- No change in logic, maintaining minimal area and zero timing slack.

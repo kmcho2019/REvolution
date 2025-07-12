@@ -1,0 +1,12 @@
+Here's a novel approach using a lookup table implementation with minimal logic gates:
+
+1. Observe that the output depends on all 4 input bits, making a full truth table approach possible.
+2. Instead of complex logic expressions, we'll implement a simple 4-to-1 multiplexer pattern:
+   - Use x[3] and x[4] as selector bits for a 4-way mux
+   - Each mux input will be a simplified expression based on x[1] and x[2]
+3. For each x[3]x[4] case:
+   - 00: Output 0 (all don't-cares can be 0)
+   - 01: Output x[1] & x[2] (matches required 1 in 11 column)
+   - 11: Output ~(x[1] & x[2]) (covers all 1s except don't-cares)
+   - 10: Output ~x[2] | x[1] (covers required 1s in 00,01 columns)
+4. This approach uses simple gate-level operations while correctly implementing the K-map.

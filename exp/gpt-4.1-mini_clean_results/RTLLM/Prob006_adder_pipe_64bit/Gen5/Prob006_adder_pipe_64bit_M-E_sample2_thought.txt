@@ -1,0 +1,17 @@
+Implement a 64-bit pipelined ripple carry adder with a fine-grained pipeline that processes 4 bits per stage, yielding 16 pipeline stages. This approach balances pipeline latency and resource usage by using small 4-bit ripple carry adders in series.
+
+Each pipeline stage:
+- Registers input operands (4-bit slices from adda and addb) and carry-in from previous stage.
+- Computes the 4-bit sum and carry-out combinationally.
+- Registers the sum and carry-out for the next stage.
+- Propagates the valid enable signal through the pipeline.
+
+The initial carry-in to stage 0 is zero. The carry-out of each stage feeds the carry-in of the next stage, synchronized via pipeline registers.
+
+At the pipeline's end, the 16 partial sums are concatenated to form the 64-bit result, plus the last carry-out as the MSB to produce a 65-bit output.
+
+The pipeline enable signal (o_en) is asserted only when the entire pipeline has valid data, i.e., after 16 clock cycles of latency following i_en asserted.
+
+This design enables high clock frequency with small adders per stage and clean pipeline register boundaries, making it suitable for FPGA or ASIC synthesis. It also aligns the output enable with the valid sum result.
+
+Reset (rst_n) synchronously clears pipeline registers and output signals.

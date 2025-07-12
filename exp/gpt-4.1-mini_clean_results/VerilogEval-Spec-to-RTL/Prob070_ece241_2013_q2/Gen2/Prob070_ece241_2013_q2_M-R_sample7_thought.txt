@@ -1,0 +1,23 @@
+To refactor the design, I will derive the minimal sum-of-products (SOP) and product-of-sums (POS) expressions explicitly from the truth table and implement them directly using Boolean algebra expressions.
+
+- The inputs a,b,c,d represent a 4-bit number (a is MSB, d is LSB).
+- The output out_sop is 1 when the input equals 2, 7, or 15.
+- The output out_pos is the minimal product-of-sums equivalent of that same function.
+
+Using Karnaugh map simplification or Boolean algebra, the minimal SOP for out_sop is:
+
+out_sop = (!a & b & !c & !d) + (!a & b & c & d) + (a & b & c & d)
+
+- 2 = 0 1 0 0  -> !a b !c !d
+- 7 = 0 1 1 1  -> !a b c d
+- 15= 1 1 1 1  -> a b c d
+
+The minimal POS for out_pos corresponds to the complement of the zeros, which after simplification is:
+
+out_pos = (a + b + c + !d) & (a + !b + !c + d) & (!a + !b + c + d)
+
+This implementation replaces direct equality checks with direct Boolean expressions, using assign statements. This structure is cleaner, relies purely on combinational logic, and matches the minimal forms explicitly.
+
+This approach adheres strictly to the problem’s requirement to implement minimal SOP and POS forms, avoids large equality comparators, and is synthesizable with minimal logic gates.
+
+Thus, the refactored module will directly express out_sop and out_pos as Boolean expressions, using only assign statements.

@@ -1,0 +1,11 @@
+The goal is to simplify the existing finite state machine (FSM) solution while maintaining its functionality. To achieve this, we will analyze the FSM's states and transitions, then apply simplification techniques where possible. 
+
+First, observe that the current implementation uses a one-hot encoded state register with three states: IDLE, RECEIVE, and ERROR. We can simplify the state machine by removing the explicit ERROR state, as its functionality can be merged into the IDLE state. 
+
+When the stop bit is incorrect, the FSM currently transitions to the ERROR state and waits for a stop bit before returning to the IDLE state. This can be simplified by having the FSM directly wait for a stop bit in the IDLE state after an incorrect stop bit, thus eliminating the need for a separate ERROR state.
+
+Additionally, we can simplify the shift register and bit count logic. Instead of using a 9-bit shift register, we can use a 8-bit shift register and a separate flag to track the start bit. This simplification reduces the complexity of the shift register logic.
+
+We will also review the done signal reset logic to ensure it is optimized and does not introduce unnecessary complexity.
+
+Lastly, we will ensure that the FSM's transitions and logic are optimized to reduce power consumption and improve performance by minimizing unnecessary operations and reducing switching activity.

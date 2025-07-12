@@ -1,0 +1,21 @@
+Based on the PPA metrics and feedback, here's an improved strategy:
+
+1. Timing Optimization:
+   - Implement Gray coding for state transitions to reduce critical path
+   - Add output registers to break timing paths (registered outputs)
+   - Maintain the same state transition logic but with Gray encoding
+
+2. Power Optimization:
+   - Use Gray coding to minimize bit transitions between states
+   - Add clock gating for the state register when in idle state (STATE_A)
+   - Keep outputs registered to reduce switching activity
+
+3. Area Optimization:
+   - Maintain 2-bit state encoding (optimal for 4 states)
+   - Keep minimal output logic
+   - The small area penalty from output registers is justified by timing improvements
+
+The improved solution will:
+- Reduce timing violations with Gray coding and registered outputs
+- Lower power consumption through reduced switching activity
+- Maintain similar area while improving overall PPA

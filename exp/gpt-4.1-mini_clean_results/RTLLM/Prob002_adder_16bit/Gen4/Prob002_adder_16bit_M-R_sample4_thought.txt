@@ -1,0 +1,9 @@
+To refactor the 16-bit adder design while keeping the core idea of composing it from two 8-bit adders, I will change the internal implementation of the 8-bit adder module from a generate-for loop to an explicit chain of 1-bit full adder submodules. This hierarchical approach modularizes the design more explicitly, showing the bitwise full adders clearly and their interconnection through carry signals.
+
+This refactor highlights structural clarity by defining a separate 1-bit full adder module that is instantiated eight times inside the 8-bit adder. The 16-bit adder remains the same, instantiating two 8-bit adders in series.
+
+Using submodules for 1-bit full adders can help readability and easier customization for further logic or optimization. This approach explicitly connects all carries and sums through wires rather than relying on generate blocks.
+
+The design remains fully combinational, with clear hierarchy and modularity. This is a classic approach to building ripple-carry adders that clarifies the underlying logic, contrasting with the original generate-block style.
+
+No blocking or nonblocking always blocks are used; everything remains assign-driven combinational with module instantiations.

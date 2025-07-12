@@ -1,0 +1,6 @@
+To implement the Lemmings state machine as described, we can break down the design into several key components:
+1. **State Transition Logic**: The machine needs to transition between states based on inputs like `bump_left`, `bump_right`, `ground`, and `dig`. The primary states can be considered as `walking_left`, `walking_right`, `falling`, `digging`, and `splattered`.
+2. **Fall Counter**: To track how long a Lemming has been falling, we need a counter that increments each clock cycle the Lemming is in the air (`ground = 0`) and resets when the Lemming hits the ground or starts walking again.
+3. **Splatter Condition**: If the fall counter exceeds 20 cycles when the Lemming hits the ground, the machine should transition to the `splattered` state.
+4. **Output Logic**: The outputs `walk_left`, `walk_right`, `aaah`, and `digging` are determined by the current state of the machine.
+Given the complexity of the problem, we'll use an enumerated type in Verilog to define the states, which will make the code more readable and easier to maintain.

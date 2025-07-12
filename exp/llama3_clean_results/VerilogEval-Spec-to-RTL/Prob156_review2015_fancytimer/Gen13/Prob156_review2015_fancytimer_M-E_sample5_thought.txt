@@ -1,0 +1,9 @@
+The new architectural idea is to implement a hybrid FSM and counter-based design. This design uses two separate counters: one to count the clock cycles and another to keep track of the delay. The FSM is used to manage the state transitions and control the counters. 
+
+The design starts in the IDLE state, where it waits for the input sequence 1101. Once the sequence is detected, it transitions to the DETECT_DELAY state, where it shifts in the next 4 bits to determine the delay. 
+
+After the delay is determined, it transitions to the COUNTING state, where it starts counting the clock cycles. The counting process is managed using two counters: one to count the clock cycles (counter) and another to keep track of the delay (delay_counter). 
+
+The FSM uses a separate counter to count the number of clock cycles that have passed since the start of the counting process. When this counter reaches 1000, it decrements the delay_counter and updates the count output. This process continues until the delay_counter reaches 0.
+
+Once the counting is complete, the FSM transitions to the DONE state, where it asserts the done signal and waits for the ack signal to be asserted. Once the ack signal is asserted, the FSM transitions back to the IDLE state, resetting the counting process.

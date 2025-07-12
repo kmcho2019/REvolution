@@ -1,0 +1,9 @@
+I will fuse the two examples by maintaining a single always block triggered on posedge clk for synchronous operation and active-low reset, but instead of explicitly re-assigning q when a byte enable is not asserted, I will leverage conditional non-blocking assignments only when the byte enable is high. This reduces redundant self-assignments, simplifying the resulting logic and potentially improving synthesis outcomes for timing and area.
+
+Additionally, I will implement explicit clock-enable style gating per byte by conditionally updating the flip-flops only when their corresponding byteena bit is set. This eliminates unnecessary toggling and dynamic power consumption on bytes that are not enabled to update.
+
+To further optimize, I will create a 16-bit write-enable mask derived from byteena and use it to selectively update q by combining the mask with the input data, enabling the entire register to be updated in a single non-blocking assignment with a bitwise multiplexer formed via mask logic.
+
+This approach merges the power benefits of clock enables per byte with the area and performance benefits of a clean, single assignment without redundant self-assignments or multiple conditional branches. It also keeps the reset logic synchronous and active-low, resetting q fully to zero.
+
+The resulting code will be compact, clean, and synthesize efficiently, maximizing power savings by avoiding unnecessary toggling while minimizing combinational logic complexity.

@@ -1,0 +1,13 @@
+The original solution correctly implements an 8-bit 2-to-1 mux but might have area/power inefficiencies. To optimize for PPA (Power, Performance, Area):
+
+1. The ternary operator is good for readability but may not always yield the most optimal implementation
+2. We can use a case statement which typically synthesizes to efficient multiplexer structures
+3. For an 8-bit bus, we'll use a generate block to create parallel muxes for each bit
+4. This approach gives the synthesis tool more flexibility to optimize the implementation
+5. We maintain the same functionality while potentially reducing area and power
+
+The improved version will:
+- Be functionally identical
+- Potentially use fewer gates
+- Have better timing characteristics
+- Be more power efficient

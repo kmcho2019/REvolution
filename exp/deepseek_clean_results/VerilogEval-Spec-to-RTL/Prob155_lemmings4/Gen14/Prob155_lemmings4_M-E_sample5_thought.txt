@@ -1,0 +1,27 @@
+Novel Lemming State Machine Design:
+
+1. Hierarchical State Approach:
+   - Split behavior into two layers: primary states (walking/falling/digging) and direction states (left/right)
+   - This separation simplifies direction handling and makes transitions clearer
+
+2. Event-Driven Priority Logic:
+   - Implement explicit priority checks before state transitions
+   - Use a dedicated combinational block to determine the highest priority action
+
+3. Smart Fall Counter:
+   - Track falling duration continuously while ground=0
+   - Only evaluate splatter condition when landing (ground transitions 0→1)
+
+4. Direction Preservation:
+   - Maintain direction separately from main state
+   - Only update direction when in WALKING state and not falling/digging
+
+5. Output Generation:
+   - Generate outputs purely based on current state and direction
+   - Use simple combinational logic for clarity
+
+Key Advantages:
+- Clear separation of concerns between movement and actions
+- Explicit priority handling prevents ambiguity
+- More maintainable and extensible structure
+- Better matches the problem's behavioral requirements

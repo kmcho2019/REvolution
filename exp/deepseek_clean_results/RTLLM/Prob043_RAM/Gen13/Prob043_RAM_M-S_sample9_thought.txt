@@ -1,0 +1,10 @@
+Simplification approach:
+1. Remove read_en signal since RAMs typically output data continuously (more natural behavior)
+2. Keep synchronous write with reset
+3. Make read_data output combinational without enable (always outputs current address contents)
+4. Benefits:
+   - Eliminates unnecessary control logic
+   - Reduces area by removing read enable circuitry
+   - Maintains full functionality (write still controlled by write_en)
+   - More intuitive interface (address always outputs data)
+5. Note: This matches typical RAM behavior where reads are always enabled

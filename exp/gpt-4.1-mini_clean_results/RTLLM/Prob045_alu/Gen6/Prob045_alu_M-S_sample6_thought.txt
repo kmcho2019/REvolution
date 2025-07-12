@@ -1,0 +1,7 @@
+Simplify the ALU by computing only the required operation based on the `aluc` input, using a single always_comb block to minimize redundant logic and reduce power and area. Instead of precomputing all operations in parallel, perform direct computation in a case statement. This avoids unnecessary parallel computations.
+
+Carry and overflow are only relevant for ADD, ADDU, SUB, SUBU; these will be calculated when needed. Shift amounts are extracted consistently. For LUI, as per MIPS, the result places the lower 16 bits of `b` in the upper half and zeros in the lower half (since immediate would typically be `b` here). The `flag` output is set only for SLT/SLTU, otherwise zero (not high impedance) for synthesis friendliness.
+
+The outputs zero, negative are assigned combinationally from the result `r`. This approach reduces the code complexity, hardware usage, and maintains all functionality correctly.
+
+This reduces the amount of wiring and operations computed every cycle, improves power efficiency and code clarity.

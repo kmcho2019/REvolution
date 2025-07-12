@@ -1,0 +1,12 @@
+Use one-hot encoding for FSM states to reduce decoding logic complexity and make transitions explicit. Represent the direction as a separate bit flag and maintain the fall timer as a separate counter. Implement the FSM as purely synchronous logic with an asynchronous reset that initializes walking left state. Use individual state bits (walk_left_state, walk_right_state, dig_state, fall_state, splat_state) to represent the current state, which simplifies combinational next-state logic and output assignments.
+
+Encode states as:
+- walk_left_state = 1'b1 means walking left
+- walk_right_state = 1'b1 means walking right
+- dig_state = 1'b1 means digging
+- fall_state = 1'b1 means falling
+- splat_state = 1'b1 means splatted (no actions)
+
+Transitions check bump signals and ground/dig flags in a clear priority order. Fall timer increments only in falling state, saturating at 31 to avoid overflow. On reset, set walk_left_state to 1 and clear others. This approach uses straightforward combinational next-state logic with one-hot state encoding, improving clarity and potentially synthesis efficiency.
+
+Outputs are direct reflections of the current one-hot states and direction. This design is modular and easy to extend or modify if needed.

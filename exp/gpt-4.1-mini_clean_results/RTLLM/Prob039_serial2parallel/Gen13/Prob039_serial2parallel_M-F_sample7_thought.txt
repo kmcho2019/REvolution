@@ -1,0 +1,15 @@
+To fix the issues, we will use a proper 4-bit counter to count from 0 to 7, ensuring clear and consistent counting of the 8 bits received. The shifting operation will place the incoming serial bit at the MSB of an 8-bit shift register on each valid input.
+
+Crucially, we must assign dout_parallel only after the shift_reg has been updated and the counter indicates all 8 bits are received. Since registers update on the clock edge, we must use the value of the shift register *after* the shift, i.e., use the updated shift_reg at the next clock cycle to update dout_parallel.
+
+To solve this, we update shift_reg and cnt on the rising edge; then, when cnt reaches 7 (meaning the next input is the 8th bit), we latch the completed 8-bit data from shift_reg into dout_parallel on the next clock cycle and assert dout_valid for only one cycle.
+
+This can be done by checking when cnt == 7 in the current cycle after increment, then on the next cycle assign dout_parallel <= shift_reg and dout_valid <= 1.
+
+Alternatively, keep the logic as is but assign dout_parallel and dout_valid after the shift_reg and counter update have occurred, by checking if the counter reached 7 in the previous cycle (using an extra signal or by careful ordering).
+
+Here, the simplest fix is to assign shift_reg and cnt first, and then, if cnt==7 in the next cycle, assign dout_parallel <= shift_reg and dout_valid <= 1'b1. We can implement this by checking cnt==7 after increment.
+
+Also, fix the comment about the counter width to 4 bits to match the requirement.
+
+This approach ensures dout_parallel always holds the last 8 bits received, dout_valid pulses high exactly one cycle after the last bit is shifted in, and the design is clean and synchronous with no combinational hazards.

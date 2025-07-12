@@ -1,0 +1,9 @@
+To implement the described finite state machine (FSM) in the TopModule, we can approach the problem by first considering the states needed for the FSM. The initial state (A) and the state after transitioning from A to B based on the 's' input are apparent. However, to achieve the functionality of examining 'w' over three clock cycles and setting 'z' accordingly with minimal states, we need to think about how to encode the required behavior into the FSM's states and transitions.
+
+Given the constraints, we can observe that once the FSM enters state B, it essentially needs to count the occurrences of 'w=1' over a window of three clock cycles and then output 'z' based on this count. This implies that we don't necessarily need a separate state for each of the three cycles but rather a mechanism to track the count of 'w=1' occurrences and the current cycle within the three-cycle window.
+
+We can achieve this with two states: one for the reset state (A) and another for the active state (B), where the active state handles the counting and 'z' output logic. The FSM stays in state A as long as 's=0' and transitions to state B when 's=1'. In state B, it examines 'w' over three cycles and sets 'z' to 1 if 'w' is 1 exactly twice in those three cycles; otherwise, 'z' is 0.
+
+To implement this logic with as few states as possible, we will use a counter to keep track of the number of 'w=1' occurrences and another counter to keep track of the current cycle within the three-cycle window. The output 'z' is determined by the count of 'w=1' occurrences after every three cycles.
+
+We also need to ensure that the FSM resets properly when the 'reset' input is high, returning to state A and resetting any counters or outputs as necessary.

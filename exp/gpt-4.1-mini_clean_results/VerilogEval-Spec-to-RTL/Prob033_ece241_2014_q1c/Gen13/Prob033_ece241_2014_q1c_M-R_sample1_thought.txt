@@ -1,0 +1,15 @@
+Refactor the original design by eliminating the parameterized RippleCarryAdder module and implementing the full 8-bit ripple carry adder directly inside TopModule using a generate loop with combinational assign statements.
+
+The design approach is:
+
+1. Use an internal wire vector to hold carry signals between each bit.
+
+2. Compute sum bits and carry bits bitwise using assign statements without separate full adder modules.
+
+3. Initialize carry-in at bit 0 to 0.
+
+4. After completing the 8-bit addition, detect overflow by XORing the carry into the MSB and the carry out of the MSB (i.e., carry[6] and carry[7]).
+
+This refactoring keeps the same functionality but improves compactness and clarity by integrating the adder logic directly in TopModule with a simple, flat structure, avoiding the extra module and carry bus outputs.
+
+This also reduces module overhead and makes the carry signals purely internal, potentially reducing unnecessary I/O signal toggling.

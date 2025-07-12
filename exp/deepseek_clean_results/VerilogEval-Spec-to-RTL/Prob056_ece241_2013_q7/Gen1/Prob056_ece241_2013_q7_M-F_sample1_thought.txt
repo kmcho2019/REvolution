@@ -1,0 +1,9 @@
+The feedback indicates the behavioral simulation works correctly but synthesis has issues, likely due to the feedback path (Q <= Q) being problematic for some synthesis tools. To make the design more synthesis-friendly while maintaining the same functionality:
+
+1. We'll keep the same case structure but explicitly handle all cases
+2. The Q <= Q case (hold state) is technically correct but some tools might optimize it away
+3. We can make the design more robust by:
+   - Using a default case (though not strictly needed here)
+   - Ensuring all paths are explicitly covered
+   - Using non-blocking assignments for proper sequential behavior
+4. The functionality remains identical to the truth table requirements

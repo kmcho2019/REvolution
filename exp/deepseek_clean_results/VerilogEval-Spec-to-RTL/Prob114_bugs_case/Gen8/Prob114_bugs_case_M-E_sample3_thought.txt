@@ -1,0 +1,13 @@
+Here's a novel approach using a lookup table (LUT) implemented with a memory array and address decoding:
+
+1. Instead of using case statements or parallel comparisons, we'll implement a small 256x5 memory (8-bit address, 5-bit data)
+2. The memory will store both the 4-bit output and valid bit for all possible 8-bit inputs
+3. Only the valid scancodes will have non-zero entries (output + valid bit)
+4. This approach:
+   - Uses a single memory access for both output and valid generation
+   - Scales efficiently to larger code sets
+   - Has deterministic timing (single memory lookup)
+   - Can be optimized for area using memory compiler tools
+   - Simplifies adding new codes (just update the initialization)
+5. The memory is initialized with all zeros except for the 10 valid codes
+6. The 5-bit output is split into the 4-bit value and valid signal

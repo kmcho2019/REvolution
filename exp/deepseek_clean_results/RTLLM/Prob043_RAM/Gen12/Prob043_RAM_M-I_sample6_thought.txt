@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Register the read output to improve timing (address WNS violation)
+2. Add clock gating for write operations to reduce power
+3. Optimize reset logic to only clear memory when truly needed
+4. Maintain previous read value when not enabled to reduce switching power
+5. Use localparam for derived constants to improve readability
+6. Benefits:
+   - Better timing closure with registered output
+   - Reduced dynamic power through clock gating and output hold
+   - Cleaner reset implementation
+   - Maintains same functionality while improving PPA metrics
+
+Key Changes:
+- Added output register for read_data with enable
+- Implemented clock gating for write operations
+- Simplified reset to only clear on actual reset
+- Modified read_data behavior to hold previous value
+- Added localparam for address width calculation

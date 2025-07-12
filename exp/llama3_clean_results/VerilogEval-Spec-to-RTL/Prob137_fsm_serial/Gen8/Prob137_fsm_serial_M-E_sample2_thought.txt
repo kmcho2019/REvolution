@@ -1,0 +1,5 @@
+To improve the solution, we can design a finite state machine (FSM) that operates in two main modes: idle and receiving. The FSM will transition from idle to receiving when a start bit is detected. Once in the receiving mode, the FSM will collect the 8 data bits and verify the stop bit. If the stop bit is valid, the FSM will assert the 'done' signal and return to the idle mode. If the stop bit is not valid, the FSM will remain in the receiving mode until a valid stop bit is detected.
+
+The novel architectural idea is to use a shift register to collect the incoming bits, eliminating the need for a counter. The shift register will be loaded with the incoming bit on every clock cycle while the FSM is in the receiving mode. This approach simplifies the logic and reduces the area consumption.
+
+Additionally, we can use a flag to track whether the start bit has been detected, and another flag to indicate whether the stop bit is expected. This approach simplifies the state machine logic and makes it easier to implement.

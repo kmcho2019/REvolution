@@ -1,0 +1,15 @@
+Refactor the 64-bit pipelined ripple carry adder by:
+
+1. Using `parameter` (not `localparam`) for `DATA_WIDTH`, `STG_WIDTH`, and `STAGES` to enable parameter override flexibility.
+
+2. Eliminating the multi-dimensional reg arrays and replacing them with shift-register style pipelines (using vectors and shifting).
+
+3. Separating combinational sum computation with continuous `assign` statements, performing addition of each 16-bit slice plus carry from the previous stage.
+
+4. Storing intermediate sums and carry outs in registers updated in a synchronous always block on `clk` and `rst_n`.
+
+5. Using a single pipeline register vector to synchronize the input operands and enable signal through each stage.
+
+6. Outputting the concatenated sum and final carry out after the last pipeline stage, with `o_en` generated from a pipeline register tracking `i_en`.
+
+This approach simplifies the pipeline data handling, avoids complex reg arrays, and cleanly separates combinational addition from sequential pipeline registers. The pipeline stages flow through operand slices and carry signals, storing partial sums and carries at each clock edge, with `o_en` aligned to data validity.

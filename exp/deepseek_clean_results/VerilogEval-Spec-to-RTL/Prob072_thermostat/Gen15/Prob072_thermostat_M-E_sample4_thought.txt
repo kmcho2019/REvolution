@@ -1,0 +1,18 @@
+Instead of pure combinational logic, we can implement this as a simple state machine with 4 states:
+1. IDLE: No heating/cooling needed
+2. HEATING: Heater is on
+3. COOLING: Aircon is on
+4. FAN_ONLY: Only fan is requested
+
+This approach provides:
+- Clear separation of modes and states
+- Potential for easier future expansion (adding more states/features)
+- More explicit control flow that's easier to debug
+- Similar area/power as combinational version
+- Same functionality but with different implementation approach
+
+The state transitions will be:
+- IDLE → HEATING when mode=1 & too_cold=1
+- IDLE → COOLING when mode=0 & too_hot=1
+- Any state → FAN_ONLY when fan_on=1 (highest priority)
+- Return to IDLE when conditions no longer met

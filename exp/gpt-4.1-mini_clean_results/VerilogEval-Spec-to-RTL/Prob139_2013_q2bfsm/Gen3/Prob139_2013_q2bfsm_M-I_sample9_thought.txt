@@ -1,0 +1,22 @@
+The main issue is the off-by-one counting and timing of monitoring y in state D. The FSM should monitor y for *up to two clock cycles after entering D*, i.e., on the first and second cycle in D. If y==1 on any of those two cycles, move to permanent success (E). If y!=1 after those two cycles, move to permanent failure (F). 
+
+To fix this precisely, d_count should start at 0 when entering D and count the number of elapsed cycles in D. After counting two cycles (d_count==2), if y!=1, go to F. If y==1 at any time during those two cycles, go immediately to E.
+
+Also, the original code increments d_count on the *same* clock that state changes, which can cause timing mismatch. Instead, d_count should be updated based on next_state so that on the first cycle in D, d_count=0, second cycle d_count=1, and after two cycles (d_count==2) time expires.
+
+For clean logic:
+
+- On state transition into D, reset d_count to 0.
+- While in D, increment d_count each cycle.
+- If y==1 at any time in D, move to E.
+- If d_count reaches 2 and y!=1, move to F.
+
+This clear interpretation removes off-by-one errors and matches "within at most two clock cycles" monitoring.
+
+Also, keep outputs registered and driven purely by current state to avoid timing mismatch.
+
+This fix preserves original FSM structure but improves correctness in D, output timing, and transitions, eliminating mismatches.
+
+Optional minor optimization: remove some redundant conditions for clarity, keep state encoding 3 bits for minimal logic.
+
+Overall this fix guarantees correct timing of f=1 pulse, correct sequence detection, correct y-monitoring period, and proper permanent outputs for g.

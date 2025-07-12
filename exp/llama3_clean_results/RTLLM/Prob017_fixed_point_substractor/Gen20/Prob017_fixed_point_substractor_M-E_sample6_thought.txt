@@ -1,0 +1,7 @@
+The novel architectural idea for the fixed-point subtractor module involves a two-stage approach. The first stage handles the subtraction of the integer parts of the input operands, considering their signs. The second stage focuses on the subtraction of the fractional parts, maintaining the fixed-point precision defined by parameters Q and N. This approach ensures accurate and precise arithmetic operations while minimizing potential errors due to sign mismatch or overflow.
+
+To handle different sign cases and zero results efficiently, we introduce a sign detector and a zero handler. The sign detector determines the sign of the result based on the comparison of the absolute values of the input operands. The zero handler explicitly sets the sign bit to 0 when the result is zero, ensuring correct handling of this edge case.
+
+The internal register `res` is used to store the result of the subtraction operation, allowing for pipelining and improving the overall performance of the design. The use of `always @(*)` blocks ensures that the result is updated whenever any of the input operands change, providing a combinatorial implementation of the fixed-point subtractor.
+
+To optimize the design for synthesizability, we break down the subtraction logic into simpler, more manageable parts. This involves using temporary variables to store intermediate results, which can help reduce the complexity of the combinational logic and improve the design's overall efficiency.

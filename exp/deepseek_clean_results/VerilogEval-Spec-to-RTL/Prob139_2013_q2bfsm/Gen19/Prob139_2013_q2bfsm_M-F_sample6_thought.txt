@@ -1,0 +1,24 @@
+Here's the corrected approach based on the feedback:
+
+1. **State Machine Fixes**:
+   - Make FINAL_HIGH and FINAL_LOW true terminal states that can only be exited by reset
+   - Remove any transitions out of these final states to ensure g remains permanent
+
+2. **Counter Logic Correction**:
+   - Only increment y_counter when in MONITOR_Y state and y=0
+   - Freeze counter when reaching maximum count (2)
+
+3. **Output Handling**:
+   - Set g to 1 immediately when entering MONITOR_Y state (as specified)
+   - Maintain g value in final states without changes
+   - Ensure f is only high for one cycle after reset
+
+4. **Reset Behavior**:
+   - Clear all registers and return to RESET state on reset
+   - Properly initialize all signals
+
+Key improvements:
+- Strict adherence to permanent output requirement
+- Correct counter behavior during y monitoring
+- Clear terminal state handling
+- Maintained proper timing for all outputs

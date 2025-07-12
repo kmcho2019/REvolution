@@ -1,0 +1,17 @@
+The main issues in the original implementation relate to timing control during the green phase and proper handling of the pedestrian request. Here's the improvement strategy:
+
+1. Fix the green phase timing:
+   - Ensure the counter properly counts down from 60 to 1
+   - When pedestrian request comes, correctly shorten to 10 cycles if >10 remain
+   - Maintain normal operation when no request or when <=10 cycles remain
+
+2. Improve state transitions:
+   - Ensure smooth transitions between all states (red->green->yellow->red)
+   - Maintain correct timing for each phase (10, 60, 5 cycles respectively)
+
+3. Optimize the implementation:
+   - Simplify the state machine logic
+   - Remove redundant registers
+   - Make counter handling more straightforward
+
+The improved version will maintain all required functionality while being more robust and easier to understand.

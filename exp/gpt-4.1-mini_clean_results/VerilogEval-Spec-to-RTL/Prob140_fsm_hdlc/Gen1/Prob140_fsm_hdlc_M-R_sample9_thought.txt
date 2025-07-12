@@ -1,0 +1,27 @@
+Refactor the FSM to separate the state transition logic and the output logic clearly.
+
+- Use a registered state and registered outputs (`disc`, `flag`, `err`), all updated on the positive clock edge.
+
+- Calculate `next_state` combinationally based on current `state` and `in`.
+
+- Determine the outputs (`disc`, `flag`, `err`) purely from the current `state` to enforce Moore FSM behavior.
+
+- To assert `disc` and `flag` outputs one cycle after detecting the respective sequences, add intermediate states representing the output assertion cycle.
+
+For example:
+
+- When 5 consecutive ones are detected and input=0, transition to a dedicated state `S5_disc` where `disc`=1 is asserted for one cycle, then return to `S0`.
+
+- When 6 consecutive ones are detected and input=0, transition to a dedicated state `S6_flag` where `flag`=1 is asserted for one cycle, then return to `S0`.
+
+- The error state `S7` remains as before.
+
+Thus, the FSM states:
+
+- S0 (0 ones), S1 (1 one), ..., S5 (5 ones), S5_disc (discard zero after 5 ones), S6 (6 ones), S6_flag (flag after 6 ones), S7 (error).
+
+This structure cleanly separates outputs as Moore outputs depending only on the current state, and ensures output signals `disc` and `flag` are asserted exactly one cycle after detecting the condition.
+
+The reset state is S0.
+
+This style improves clarity, strictly follows the Moore FSM output requirements, and ensures correct timing for output signals.

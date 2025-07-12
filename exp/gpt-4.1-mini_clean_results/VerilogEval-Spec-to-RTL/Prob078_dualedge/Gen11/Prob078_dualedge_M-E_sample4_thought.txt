@@ -1,0 +1,11 @@
+To implement a dual-edge triggered flip-flop without using illegal sensitivity lists or dual-edge flip-flops directly, a novel approach is:
+
+- Use a single positive-edge triggered flip-flop clocked by the original clock `clk`.
+- Create an auxiliary toggle flip-flop clocked by the inverted clock `~clk` that tracks data changes at the negative edge.
+- Use an XOR of these two flip-flop outputs to detect if a negative-edge data sample differs from the positive-edge sample.
+- Combine the outputs with a small state machine inside a positive-edge triggered process that updates the final output `q` accordingly.
+- This avoids transparent latches or level-sensitive latches and relies purely on positive-edge triggered flip-flops, which are FPGA friendly.
+- The auxiliary flip-flop effectively samples data on the negative edge (by clocking it with inverted clock).
+- The output `q` is updated at positive edges by selecting the most recent sampled data (from either positive or negative edge).
+- This approach creates a single clock domain positive-edge triggered state machine that models dual-edge behavior through the sampled data and auxiliary flip-flop.
+- The code uses synchronous logic only with clean positive edge triggers, no asynchronous or level-sensitive latches.

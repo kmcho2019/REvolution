@@ -1,0 +1,23 @@
+Novel Architecture Idea:
+1. Hierarchical Processing:
+   - Divide the 100-bit input into 10 segments of 10 bits each
+   - Process each segment independently in parallel
+   - This reduces fanout and improves timing characteristics
+
+2. Edge Case Optimization:
+   - For out_both and out_any, handle edge bits separately
+   - Use dedicated logic for segment boundaries to maintain correctness
+
+3. Wrapped XOR Optimization:
+   - Implement the wrap-around using circular shift registers
+   - This provides better physical implementation characteristics
+
+4. Resource Sharing:
+   - Reuse intermediate results between similar operations
+   - Share common subexpressions between outputs
+
+Benefits:
+- Better timing due to reduced fanout
+- Improved placement characteristics from segmentation
+- More predictable routing with localized processing
+- Potential power savings from reduced long-distance routing

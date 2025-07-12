@@ -1,0 +1,11 @@
+Refactor the design to use a separate combinational function that computes the next state of a single cell given the current grid and cell coordinates. Then, use a generate block to instantiate 256 combinational "next cell" assignments for each cell. This approach avoids nested loops and large combinational always block, potentially improving synthesis by enabling more parallelism and simpler logic structure.
+
+The neighbor counting is done in a dedicated function called `count_neighbors`, using wrap-around with simple masking. The next cell value is determined by the same Game of Life rules implemented in a `next_cell_state` function.
+
+The 256-bit next state vector is assembled via continuous assignments using a generate loop.
+
+Sequential logic simply updates `q` at clock edge, loading `data` when `load` is high or the generated next state otherwise.
+
+This modular and generate-based approach clarifies the design, may help synthesis tools optimize better, and reduces complexity in a single combinational block, trading off some verbosity.
+
+Note: the indexing scheme remains the same, with bit-shift based addressing for clarity and efficiency.

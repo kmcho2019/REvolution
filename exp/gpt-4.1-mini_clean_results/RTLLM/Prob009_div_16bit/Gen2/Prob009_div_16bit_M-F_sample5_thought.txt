@@ -1,0 +1,23 @@
+To fix the combinational division implementation, the iterative division process must be carefully aligned with the algorithm described:
+
+- Directly use inputs `A` and `B` without unnecessary combinational latching.
+- Initialize an 8-bit remainder with the top 8 bits of the 16-bit dividend (`A[15:8]`).
+- For each of the 8 remaining bits in the dividend (`A[7:0]`), from MSB to LSB (bit 7 down to 0), do:
+  - Concatenate the remainder (8 bits) with the next dividend bit, forming a 9-bit value.
+  - Compare this 9-bit partial dividend with the divisor.
+  - If partial dividend >= divisor, set the current quotient bit to 1, subtract divisor from partial dividend to update the remainder.
+  - Else, quotient bit is 0, and remainder is the partial dividend.
+- The final quotient is 16 bits, where the upper 8 bits come from the initial remainder initialization (which is the top 8 bits of A), followed by the quotient bits computed from the iteration.
+- Actually, the initial remainder is used only to seed the partial dividend; the quotient bits correspond to the 8 bits processed in iteration and the remaining bits are zeros.  
+- However, since the problem description mentions a 16-bit quotient, each iteration sets one quotient bit, so the iteration must run 16 times.
+- Therefore, we extend the process for all 16 bits:  
+  - Start with an empty remainder (0 bits).  
+  - For i from 15 down to 0:  
+    - Shift remainder left by 1 bit, shift in `A[i]` from MSB to LSB.  
+    - Compare remainder with divisor.  
+    - If remainder >= divisor, quotient bit `i`=1, remainder -= divisor; else quotient bit `i`=0.  
+- This approach exactly matches classical long division and the problem description: extracting high bits (remainder shifted left concatenated with next dividend bit), comparing with divisor, updating quotient and remainder each iteration.
+- Use a single combinational always block triggered on `A` or `B`.
+- No intermediate latching of inputs is needed.
+- Output quotient and remainder (8-bit remainder zero-extended to 16 bits).
+- This approach fixes the partial dividend formation and loop iteration issues and properly implements the combinational division.

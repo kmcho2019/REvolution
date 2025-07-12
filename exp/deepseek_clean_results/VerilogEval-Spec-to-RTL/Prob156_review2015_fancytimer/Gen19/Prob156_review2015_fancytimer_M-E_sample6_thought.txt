@@ -1,0 +1,16 @@
+Here's a novel approach using a shift-and-count architecture with parallel pattern matching:
+
+1. **Parallel Pattern Matching**: Instead of serial shifting, we'll use a 4-bit comparator to detect '1101' in parallel from the last 4 received bits. This reduces latency in pattern detection.
+
+2. **Two-Phase Counter**: 
+   - A micro-counter counts 1000 cycles (0-999)
+   - A macro-counter counts the delay phases (delay[3:0] down to 0)
+   This provides precise timing without complex arithmetic.
+
+3. **Early Capture Mechanism**: The delay value is captured in a separate register while simultaneously checking for the start pattern, ensuring no bits are missed.
+
+4. **Glitch-Free Outputs**: All outputs are registered and updated only at state transitions to prevent intermediate glitches.
+
+5. **Smart State Encoding**: Uses one-hot encoding for clearer state transitions and easier debugging.
+
+The key innovation is the parallel pattern matching combined with the dual-phase counting system, which provides both accurate timing and efficient pattern detection.

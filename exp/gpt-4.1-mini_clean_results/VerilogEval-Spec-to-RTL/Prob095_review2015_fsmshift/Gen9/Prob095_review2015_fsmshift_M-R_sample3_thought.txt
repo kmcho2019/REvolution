@@ -1,0 +1,10 @@
+To clearly separate the FSM states and ensure `shift_ena` is asserted for exactly 4 clock cycles after a synchronous active-high reset, I will implement a simple two-state FSM with a 3-bit counter.
+
+- The FSM has two states: IDLE and ENABLE.
+- On reset, FSM goes to ENABLE state and counter is loaded with 4.
+- In ENABLE state, `shift_ena` is asserted, and the counter counts down each clock cycle.
+- When counter reaches zero, FSM transitions to IDLE state where `shift_ena` is deasserted forever until next reset.
+- This approach explicitly models the enable duration as a state and counter, improving clarity and fixing off-by-one issues.
+- `shift_ena` will be assigned directly from FSM state to avoid timing issues.
+
+This structure also easily allows future extension for other events like pattern detection triggering the enable again.

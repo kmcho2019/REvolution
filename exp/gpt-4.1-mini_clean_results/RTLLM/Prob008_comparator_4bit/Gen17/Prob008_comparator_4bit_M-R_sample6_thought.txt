@@ -1,0 +1,11 @@
+I will refactor the code by explicitly implementing the 4-bit subtraction using full adder logic with borrow signals, rather than using vectorized borrow generate and propagate signals. This means:
+
+- Use a chain of 4 one-bit subtractors (full subtractor logic) that compute the difference bits and borrow outputs.
+- Compute the borrow signals step-by-step from the least significant bit to the most significant bit.
+- Determine A_less from the final borrow out.
+- Determine A_equal by comparing A and B with equality signals combined using a reduction AND.
+- Determine A_greater as the complement of (A_less or A_equal).
+
+This approach uses basic full subtractor logic rather than borrow generate/propagate, which is equally combinational but structurally different and conceptually clear. It avoids generate loops and vectorized signals for borrow and relies on simpler assign statements in a straightforward manner.
+
+The outputs remain mutually exclusive and the logic is purely combinational.

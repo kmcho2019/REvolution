@@ -1,0 +1,11 @@
+After carefully analyzing the Karnaugh map, I can simplify the logic by:
+1. Observing that f=1 when either:
+   - x[3]x[4] is 11 (regardless of x[1]x[2] except when x[1]x[2]=10)
+   - x[3]x[4] is 10 and x[1]x[2] is not 11 or 10
+   - x[3]x[4] is 01 and x[1]x[2] is 11
+
+2. This can be expressed more simply as:
+   f = (x[3] & x[4]) | (x[3] & ~x[4] & ~x[2]) | (~x[3] & x[4] & x[1] & x[2])
+
+3. Further simplification shows we can combine terms to use fewer gates:
+   f = x[3] | (x[4] & x[1] & x[2])

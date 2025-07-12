@@ -1,0 +1,11 @@
+To fix the pipeline timing and data dependency issues, we refactor by explicitly separating each pipeline stage with registers that store both inputs and partial sums. The inputs `mul_a` and `mul_b` are registered in stage 0, then partial products are generated combinationally from these registered inputs.
+
+In stage 1 (first pipeline register level), partial products are computed and stored as sums of pairs (0+1 and 2+3) into registers. These registers are updated on the clock edge.
+
+In stage 2 (second pipeline register level), the two sums from stage 1 are added and stored into registers. Finally, in the third clock cycle, the output register captures this final sum.
+
+This approach fully respects the clock boundaries between stages, avoids combinational dependencies on signals being updated in the same clock cycle, and cleanly pipelines the multiply operation with two levels of addition registers as required. 
+
+The inputs are extended by prepending zeros to MSB side, consistent with the specification. Partial products are generated combinationally from registered inputs and multiplier bits.
+
+Overall, the design ensures synchronous update of pipeline registers at clock edges, correct reset behavior, and stable final output after two pipeline stages of addition.

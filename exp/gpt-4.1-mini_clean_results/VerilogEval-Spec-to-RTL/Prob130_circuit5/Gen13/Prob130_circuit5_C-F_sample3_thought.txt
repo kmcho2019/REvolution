@@ -1,0 +1,12 @@
+To fuse the strengths of both examples, I will implement the multiplexer using a case statement inside a combinational always block, which synthesis tools optimize very well for timing and area. This structure provides clear and explicit decoding of `c`, helping synthesis infer minimal logic with better control over switching activity.
+
+Additionally, I will combine this with gating of the selected input only—assigning `q` directly from the input selected by `c`—and for out-of-range `c` values output a constant `4'hF`. This avoids unnecessary switching on unselected inputs, as only one input bus drives the output at a time.
+
+This approach:
+- Maintains low switching activity like example 1 by avoiding AND/OR gating on all inputs simultaneously.
+- Offers the clean and readable control flow of example 2.
+- Enables synthesis tools to infer efficient multiplexers with minimal gates and short critical paths.
+- Keeps power and area optimized by explicit case decoding and output assignment.
+- Enhances timing by avoiding cascaded ternary operators.
+
+Overall, this combines explicit select decoding for clean logic, input gating via single output assignment to reduce toggling, and simple control flow to aid synthesis for best PPA.

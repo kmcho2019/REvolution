@@ -1,0 +1,42 @@
+To implement the K-map function with a single external 4-to-1 mux indexed by inputs {a,b} (not inputs to TopModule) and mux_in[3:0] as its data inputs, we need to define each mux_in[i] as a function of inputs c and d only.
+
+Given the K-map values for each ab column:
+
+- ab=00 (mux_in[0]): values for cd=00,01,11,10 → 0,1,1,1  
+- ab=01 (mux_in[1]): all zeros → 0,0,0,0  
+- ab=11 (mux_in[2]): values → 0,0,1,0  
+- ab=10 (mux_in[3]): values → 1,0,1,1  
+
+We will implement each mux_in[i] purely using 2-to-1 multiplexers controlled by c and d, without any direct use of logic gates.
+
+A new approach:
+
+1. Define a 2-to-1 mux module.
+
+2. For each mux_in[i], build a small tree of 2-to-1 muxes to implement the function from the truth table for inputs c and d.
+
+3. Use the input bits in order d (MSB) and c (LSB) as selector signals for the muxes. For each output bit, use a two-stage 2-to-1 mux cascade to select the correct output bit from the four combinations of cd.
+
+For example, for mux_in[0], the output at cd=00 is 0, cd=01 is 1, cd=11 is 1, cd=10 is 1.
+
+Build as:
+
+- Use one mux (mux_low) with c as selector between cd=00 and cd=01 outputs → between 0 and 1.
+
+- Use another mux (mux_high) with c as selector between cd=10 and cd=11 outputs → between 1 and 1.
+
+- Finally, use a mux with d as selector between mux_low and mux_high outputs.
+
+This approach applies for all mux_in[i], building their logic exactly as defined in the K-map, strictly with 2-to-1 muxes.
+
+Finally, assign the mux_in bits accordingly to the order specified:
+
+- mux_in[0] = ab=00 column
+
+- mux_in[1] = ab=01 column
+
+- mux_in[2] = ab=11 column
+
+- mux_in[3] = ab=10 column
+
+This method ensures exact matching of the K-map values and uses only 2-to-1 multiplexers, conforming to the problem constraints.

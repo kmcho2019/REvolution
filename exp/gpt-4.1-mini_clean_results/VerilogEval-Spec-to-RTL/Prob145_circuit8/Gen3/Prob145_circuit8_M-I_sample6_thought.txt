@@ -1,0 +1,31 @@
+The waveform shows a sequential circuit where outputs 'p' and 'q' are initialized at 0 after the first clock edge, and thereafter 'p' goes high on clock edges where input 'a' is high, and 'q' follows 'p' but with a one-clock cycle delay.
+
+More precisely:
+- Both 'p' and 'q' update on the posedge of 'clock'.
+- 'p' is set to 1 if 'a' is 1 at the clock edge.
+- Otherwise, 'p' remains unchanged (holds its previous value).
+- 'q' updates to the previous value of 'p' at each clock edge, effectively delaying 'p' by one clock cycle.
+- Initialization: 'p' and 'q' start at 0 at simulation start (from the first valid outputs at 25ns).
+
+This behavior matches the observed waveform:
+- At time 90ns and subsequent posedges, when 'a' = 1, 'p' becomes 1.
+- 'q' latches 'p' from the previous clock.
+- When 'a' = 0, 'p' holds its previous value, until reset or 'a' sets it again.
+- At some point, 'p' is reset to 0 when no 'a' occurs and the waveform at 175ns resets 'p' and 'q' to 0.
+
+Thus, the logic is:
+- On posedge clock:
+    p <= a | (p & ~reset_condition)
+    q <= previous p
+
+Since no asynchronous reset is specified, we will initialize p and q in an initial block.
+
+Here, the reset condition isn't explicit, but from waveform we infer p resets when a = 0 and possibly some time after q = 1. For simplicity, and to fit waveform, assume p sets whenever a = 1; else, p holds its value.
+
+Implementing exactly the waveform implies just:
+- p <= a ? 1 : p; (set p to 1 if a=1, else hold)
+- q <= p;
+
+This matches the waveform pattern for all times given.
+
+This approach also simplifies the design and matches sequential circuit behavior with no ambiguous transitions.

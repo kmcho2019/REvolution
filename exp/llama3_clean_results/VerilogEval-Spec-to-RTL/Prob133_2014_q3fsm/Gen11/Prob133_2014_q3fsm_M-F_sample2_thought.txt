@@ -1,0 +1,13 @@
+To fix the existing code, we need to revise the finite state machine's logic to correctly implement the state transition and output generation. The main idea is to maintain a single state variable and a counter to track the three cycles. We will also use a separate counter to count the number of `w` = 1 in the previous three cycles. The state transition will be revised to correctly handle the `w` input and the counting mechanism.
+
+In the revised code, when the FSM is in State B, it will correctly increment `cycle_count` and `w_count` based on the `w` input. After three clock cycles, the FSM will transition to the Check Z state, where it will set the output `z` based on the count of `w` = 1 in the previous three cycles. The FSM will then wait for the next clock cycle before transitioning back to State B to start the next three cycles.
+
+To optimize the design for better PPA (Power, Performance, and Area), we will aim to reduce the number of states and variables while maintaining the functionality. The improved code will use a single state variable, a counter for the three cycles, and a counter for `w` = 1. The state transition logic will be simplified, and the output generation will be based on the count of `w` = 1 in the previous three cycles.
+
+The FSM will also be modified to correctly handle the reset condition. When `reset` is high, the FSM will reset all its internal variables, including `z`, to their initial values.
+
+To fix the code, we will make the following changes:
+- Revise the state transition logic to correctly handle the `w` input and the counting mechanism.
+- Add a separate counter to count the number of `w` = 1 in the previous three cycles.
+- Modify the FSM to wait for the next clock cycle to check the value of `z` after transitioning to the Check Z state.
+- Correctly handle the reset condition by resetting all internal variables, including `z`, to their initial values.

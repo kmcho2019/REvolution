@@ -1,0 +1,12 @@
+The TopModule will be implemented as a finite state machine (FSM) that progresses through several states to receive a byte. 
+The states can be: 
+1. IDLE: wait for the start bit, 
+2. DATA: collect the 8 data bits, 
+3. STOP: check the stop bit, 
+4. ERROR: wait for the stop bit if the stop bit was incorrect.
+In the IDLE state, the FSM waits for the input to be 0 (start bit). 
+When a start bit is detected, it moves to the DATA state and starts collecting the 8 data bits. 
+In the DATA state, it checks if 8 bits have been collected and moves to the STOP state if so. 
+In the STOP state, it checks if the stop bit is 1. If it is, it asserts done and outputs the collected byte; otherwise, it moves to the ERROR state.
+In the ERROR state, it waits for the stop bit (input to be 1) before moving back to the IDLE state.
+The FSM also includes a synchronous reset to return to the IDLE state when the reset signal is high.

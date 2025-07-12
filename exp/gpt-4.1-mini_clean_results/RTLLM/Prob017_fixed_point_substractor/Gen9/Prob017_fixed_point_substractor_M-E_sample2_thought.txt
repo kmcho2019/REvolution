@@ -1,0 +1,22 @@
+To implement a fixed-point subtractor that handles signs and zero detection explicitly as requested, I will take a different architectural approach:
+
+1. Extract sign bits and absolute magnitudes of inputs `a` and `b` explicitly.
+2. Based on signs of `a` and `b`:
+   - If same sign, perform magnitude subtraction and keep the sign.
+   - If different signs, perform magnitude addition and determine sign based on which magnitude is larger.
+3. Use magnitude comparison to determine the sign for the result.
+4. After obtaining the signed magnitude result, detect zero explicitly and force the output to zero with sign bit zero.
+5. Internally, magnitude operations will be unsigned to simplify addition/subtraction of absolute values.
+6. The final result is reassembled with the computed sign and magnitude to form the fixed-point signed output.
+7. All operations are combinational, stored in intermediate regs to clarify steps.
+8. This design emphasizes manual sign and magnitude handling rather than relying on Verilog signed arithmetic to demonstrate the concept clearly.
+
+This approach explicitly implements the logic described in the problem statement, showing clear sign handling and zero sign resetting, avoiding implicit signed arithmetic operators.
+
+This also allows easy parameterization for the fixed-point word size (N) and fractional bits (Q).
+
+No clock or sequential logic is used to keep the design purely combinational.
+
+The final output `c` is assembled from sign + magnitude bits, and zero detection is done explicitly on the magnitude to clear sign bit if zero.
+
+This design serves as a more educational and manual handling of fixed-point signed subtraction that aligns strictly with the specification.

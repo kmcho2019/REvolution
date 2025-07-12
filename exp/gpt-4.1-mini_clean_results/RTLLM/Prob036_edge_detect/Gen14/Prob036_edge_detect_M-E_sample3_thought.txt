@@ -1,0 +1,7 @@
+Instead of using just one register to hold the previous state of 'a', this design uses a 2-bit shift register to store the last two samples of the input signal 'a'. On each clock, the oldest sample is discarded, and the newest sample is loaded. By examining the pattern of the two most recent samples, the design can detect rising and falling edges.
+
+This has a subtle benefit: the edge outputs can be generated synchronously as registered outputs rather than combinational outputs, ensuring that rise and down signals are asserted and held for exactly one clock cycle in a fully synchronous manner without any combinational dependence on input 'a'.
+
+On reset, the shift register is cleared to 0. On each clock, the shift register shifts left by one bit and captures current 'a'. Then, rise is asserted when the stored sample was 0 and the current sample is 1; down is asserted when the stored sample was 1 and the current sample is 0. These output signals are registered on the clock and thus are glitch-free and aligned.
+
+This architecture uses two flip-flops for the shift register and two for the outputs, resulting in a fully synchronous design that is robust and easy to integrate in synchronous environments. It also decouples the edge detection outputs from asynchronous combinational logic, possibly improving timing predictability in complex systems.

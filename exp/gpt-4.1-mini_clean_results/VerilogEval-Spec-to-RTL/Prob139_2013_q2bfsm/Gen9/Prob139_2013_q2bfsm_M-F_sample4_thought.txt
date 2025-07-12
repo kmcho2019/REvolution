@@ -1,0 +1,28 @@
+The main issues were subtle timing and counting mistakes in the original FSM implementation.
+
+Key fixes:
+
+1. **Y Monitoring Counter Off-by-One:**  
+   The problem states we watch y for at most two clock cycles after g=1 is set. So we count exactly two cycles. The original code waited until y_count == 2 before transitioning, effectively allowing three cycles.  
+   Fix: Initialize y_count to zero upon entering Y_MONITOR, increment on each cycle, and if y_count == 1 and y==0 on the next cycle (the second cycle), then move to G_OFF_PERM. Thus counting exactly two cycles (y_count=0 and y_count=1).
+
+2. **Pattern Detection Shift Register and Timing:**  
+   We must ensure that the pattern "1,0,1" is detected as the last three values of x in three consecutive clocks. The shift register should shift left, inserting the newest x at LSB.  
+   Pattern "1,0,1" means bits [2:0] = 3'b101, where bit 2 is oldest, bit 0 newest.  
+   The code already correctly shifts `{x_shift[1:0], x}`. This is correct.  
+   The transition to Y_MONITOR must occur the clock AFTER the last bit of pattern is sampled, so it aligns with problem spec.
+
+3. **Synchronous Reset Handling:**  
+   Resetn is synchronous active low. When resetn is low, state is IDLE, outputs low. When resetn transitions high, on next clock FSM moves to F_PULSE, asserting f=1 for exactly one clock.
+
+4. **Output Assignments:**  
+   Output f=1 only in F_PULSE for exactly one cycle.  
+   Output g=1 in Y_MONITOR and G_ON_PERM (permanent), else 0.
+
+These fixes ensure the FSM precisely meets the timing requirements and output behavior specified.
+
+All other FSM states and transitions remain logically consistent.
+
+Also, I replaced the SystemVerilog enum with Verilog-2001 style parameters for better compatibility.
+
+This results in fewer simulation mismatches and correct output timing.

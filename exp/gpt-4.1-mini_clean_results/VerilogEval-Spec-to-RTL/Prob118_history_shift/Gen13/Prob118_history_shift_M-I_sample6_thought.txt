@@ -1,0 +1,12 @@
+To improve the PPA of the existing design, I will leverage a built-in shift register primitive if available (e.g., a dedicated shift register or FPGA SRL primitives) to reduce combinational delay and area from manual concatenation. Since a direct primitive may not be universally portable in Verilog, I'll implement a register with a mux selecting the update source to avoid wide concatenation logic in a single cycle, which can improve timing.
+
+Also, I will use clock gating to reduce power by only updating the register when an update event (predict_valid or train_mispredicted) occurs. To safely implement clock gating with asynchronous reset, I will create an enable signal and use an enable register with a simple clock gating style.
+
+This approach reduces switching activity and combinational logic in the critical path, improving timing and power without increasing area significantly.
+
+The asynchronous reset remains positive edge triggered to meet the spec.
+
+Summary of changes:
+- Use a registered enable signal to gate updates and reduce unnecessary toggling.
+- Use a mux to select the new value to load (mispredicted vs predict update) instead of concatenation in the sequential always block.
+- Keep asynchronous reset as is.

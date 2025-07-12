@@ -1,0 +1,23 @@
+To achieve a clean fractional divide-by-3.5 clock using double-edge clocking without relying on negedge clock domain logic (which risks metastability and glitches), I propose the following novel architecture:
+
+- Use a modulo-7 counter incremented on the rising edge of the input clock. The counter runs from 0 to 6, representing the 7 base clock cycles.
+
+- Generate two output clocks (`clk_pos` and `clk_neg`) entirely within the posedge clock domain but staggered in time by generating each with carefully chosen toggle points that create a 3.5x frequency division and produce two signals phase-shifted by approximately half a clock cycle.
+
+- For `clk_pos`: toggle high at count 0, toggle low at count 4 (period = 7 cycles, high for 4, low for 3).
+
+- For `clk_neg`: toggle high at count 3, toggle low at count 0 (next cycle), effectively starting half-cycle delayed relative to `clk_pos` (approximately 3 counts after clk_pos high), creating a phase shift.
+
+- Instead of sampling at negedge or dual clocks, use a 2-bit sub-counter toggled at twice the input clock frequency, generated using a flip-flop clocked by the input clock and its delayed version (or using a simple internal clock doubling technique).
+
+- This internal "double frequency" enable clock is used to toggle `clk_neg` at intermediate points, simulating half clock period shifts inside one clock domain.
+
+- Because real clock doubling is tricky inside FPGA logic, implement the double frequency enable using a toggle flip-flop clocked at the input clock to create a 2-phase clock enable signal.
+
+- Use this enable to advance the `clk_neg` toggling by half a clock cycle within the posedge clock domain without crossing clock domains.
+
+- Finally, OR the two clocks to create the fractional frequency divided output with balanced duty cycle and no glitches.
+
+- All logic is synchronous with the input clock only and uses synchronous reset.
+
+This approach avoids issues with negedge logic and metastability, and uses clock enable and internal toggling to simulate half-cycle phase shifts inside the single clock domain, ensuring glitch-free fractional frequency division.

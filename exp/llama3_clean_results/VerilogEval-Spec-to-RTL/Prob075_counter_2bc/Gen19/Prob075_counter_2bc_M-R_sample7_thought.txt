@@ -1,0 +1,5 @@
+To refactor the given Verilog code for the two-bit saturating counter, we will utilize a different approach while maintaining the same core functionality. Instead of using a finite state machine (FSM) with explicit state definitions, we can directly implement the counter's behavior using arithmetic operations. This approach simplifies the code and potentially improves readability and maintainability.
+
+The refactored design will use a single register to hold the counter value. It will increment the counter when `train_valid` and `train_taken` are both high, decrement it when `train_valid` is high and `train_taken` is low, and keep the counter unchanged when `train_valid` is low. The counter will saturate at its minimum (0) and maximum (3) values.
+
+We will use the `always` block for sequential logic to update the counter register based on the inputs. The use of conditional statements within the `always` block will ensure that the counter updates according to the specified rules. Additionally, we will include an asynchronous reset to initialize the counter to the "weakly not-taken" state (2'b01) when `areset` is asserted.

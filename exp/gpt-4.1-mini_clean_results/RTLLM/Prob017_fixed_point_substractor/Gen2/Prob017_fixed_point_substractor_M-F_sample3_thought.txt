@@ -1,0 +1,11 @@
+To fix the issues and improve synthesis friendliness, simplify the design by leveraging Verilog signed arithmetic, avoiding explicit absolute value calculations and manual sign manipulations. Represent inputs and outputs as signed vectors. Since fixed-point numbers in two's complement naturally support signed subtraction, directly perform c = a - b.
+
+Then handle the zero-result sign bit explicitly: if the subtraction result is zero, force the sign bit (MSB) to zero.
+
+This approach eliminates the complex branching and two's complement operations on magnitude and sign, allowing the synthesis tool to infer an efficient subtractor.
+
+Make sure to use signed declarations for inputs, outputs, and internal signals, and maintain parameterized widths. This also resolves the problem with parameter propagation since signed logic is standard.
+
+Finally, implement this in a purely combinational assign statement for output, with a small combinational block or continuous assignment to clear the sign bit for zero result.
+
+This design is simpler, clearer, synthesizable, and matches the required fixed-point subtraction semantics.

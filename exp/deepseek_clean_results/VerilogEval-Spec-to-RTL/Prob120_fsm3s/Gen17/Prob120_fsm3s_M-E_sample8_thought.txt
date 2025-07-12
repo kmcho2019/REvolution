@@ -1,0 +1,11 @@
+I'll implement the FSM using a 2-bit counter with conditional counting logic. The key insights are:
+1. States can be represented by counter values (A=00, B=01, C=10, D=11)
+2. State transitions can be implemented as controlled counter operations:
+   - Hold (no count) for A->A and B->B
+   - Increment for A->B and C->D
+   - Decrement for B->C and D->B
+   - Reset to 0 for C->A
+3. The output is simply the MSB of the counter (state D has MSB=1)
+4. Reset initializes the counter to 00 (state A)
+
+This approach leverages arithmetic operations for state transitions rather than explicit next-state logic, potentially reducing combinational complexity. The counter operations are carefully chosen to match the state transition table while minimizing logic.

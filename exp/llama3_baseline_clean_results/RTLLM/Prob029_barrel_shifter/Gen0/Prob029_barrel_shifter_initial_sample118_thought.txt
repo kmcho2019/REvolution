@@ -1,0 +1,8 @@
+To design the barrel_shifter module, we need to implement a series of 2-to-1 multiplexers that shift the input by 4, 2, and 1 positions based on the control signal. Each stage of multiplexers will be controlled by a bit of the control signal, and the output of each stage will be passed to the next stage for further shifting if required. The mux2X1 submodule will be used to select between the shifted input and the original input at each stage.
+
+The design will consist of three stages:
+1. Shift by 4 positions: This stage will be controlled by ctrl[2]. If ctrl[2] is high, the input will be shifted by 4 positions.
+2. Shift by 2 positions: This stage will be controlled by ctrl[1]. If ctrl[1] is high, the intermediate result from the previous stage will be shifted by 2 positions.
+3. Shift by 1 position: This stage will be controlled by ctrl[0]. If ctrl[0] is high, the intermediate result from the previous stage will be shifted by 1 position.
+
+Each stage will use a series of mux2X1 submodules to select between the shifted input and the original input.

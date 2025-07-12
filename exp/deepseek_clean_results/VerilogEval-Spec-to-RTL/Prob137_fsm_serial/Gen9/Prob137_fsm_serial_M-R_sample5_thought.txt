@@ -1,0 +1,12 @@
+I'll refactor the code with these key changes:
+1. Use a one-hot encoding for the FSM states to potentially improve timing
+2. Separate the state transition logic and output logic into distinct always blocks
+3. Use non-blocking assignments consistently
+4. Make the 'done' output combinational rather than registered
+5. Simplify the WAIT state by combining it with STOP state behavior
+
+The main benefits will be:
+- Clearer separation of state transition and output logic
+- One-hot encoding may help with timing closure
+- Combinational 'done' signal responds immediately when stop bit is valid
+- Reduced state count by eliminating WAIT state (handled in STOP state)

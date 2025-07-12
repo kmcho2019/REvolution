@@ -1,0 +1,16 @@
+Combine the clarity and correctness of Example 1 with the staged shifting concept from Example 2, but implement the shift operation in a single combinational block using a case statement to minimize combinational logic depth and avoid conditional nested shifts. Use explicit concatenations for arithmetic right shifts to preserve sign extension, as in Example 1, since it is synthesis-friendly and clear.
+
+Specifically:
+- On load, synchronously load data.
+- On enable (and not load), perform shift according to amount:
+  * 00: shift left by 1
+  * 01: shift left by 8
+  * 10: arithmetic shift right by 1 (preserve sign)
+  * 11: arithmetic shift right by 8 (preserve sign)
+- Use a combinational shift_val wire calculated before the register update to reduce complexity inside the clocked always block.
+- This reduces combinational logic fan-in and makes the critical path clearer.
+- Retain non-blocking assignments for good synchronous style.
+- Avoid unnecessary intermediate registers like stage1.
+- This fusion maintains simplicity, clarity, and good synthesis results, potentially improving timing and area compared to Example 2 while preserving PPA benefits.
+
+This approach fuses Example 1's direct and clear shift operations with Example 2's intent for better PPA by cleanly separating combinational shift logic and synchronous register update.

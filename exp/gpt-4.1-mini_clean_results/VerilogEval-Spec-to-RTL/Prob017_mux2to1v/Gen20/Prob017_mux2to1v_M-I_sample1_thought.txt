@@ -1,0 +1,8 @@
+To optimize the existing design for better PPA while keeping the modular clarity, I will reduce the number of instantiated mux modules by increasing the chunk size from 20 bits to 50 bits (only two instances covering the entire 100 bits). This reduces instantiation overhead and routing complexity, potentially improving area and power by simplifying the interconnect. The vectorized conditional assignment inside each chunk mux remains, preserving minimal combinational logic and good synthesis friendliness. 
+
+Also, flattening the hierarchy more aggressively by using a single large 100-bit mux without submodules could be an option, but it reduces modularity and reusability. Instead, two 50-bit chunk muxes strike a good balance between modularity and PPA improvement, reducing the number of module instances by more than half from five to two.
+
+This approach:
+- Decreases instance count and routing overhead.
+- Keeps vectorized mux logic for minimal combinational paths.
+- Should lower dynamic power and area due to simpler routing and fewer hierarchical boundaries.

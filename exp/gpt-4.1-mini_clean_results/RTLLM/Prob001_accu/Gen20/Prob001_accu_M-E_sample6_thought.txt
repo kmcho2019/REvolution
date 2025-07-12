@@ -1,0 +1,13 @@
+An alternative architectural approach is to accumulate input data in a shift register of length 4 and then sum all four stored values in a combinational step only when four valid inputs have been collected. 
+
+Key points:
+1. Maintain a 4-element register array to store incoming valid data_in values sequentially.
+2. Use a 2-bit counter to track how many valid inputs have been stored.
+3. When the count reaches 3 (indicating the 4th data just arrived), perform a combinational sum of all four stored values and output the result with valid_out asserted for one cycle.
+4. Reset the count after output, but keep stored data unchanged (or optionally cleared).
+5. This method separates accumulation storage and summation, which can reduce the accumulation adder critical path since summation occurs only once per 4 inputs.
+6. Sum width is 10 bits to accommodate max 4 * 255 = 1020.
+7. The valid_out signal pulses for exactly one cycle when output is valid.
+8. This approach provides a fresh architectural idea with clear pipeline stages: storage and then summation/output, which may allow improved timing or easier addition of more stages later.
+
+This design trades register usage for potentially better timing of adder path and clean output timing.

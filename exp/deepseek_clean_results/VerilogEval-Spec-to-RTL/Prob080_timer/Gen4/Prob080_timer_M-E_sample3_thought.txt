@@ -1,0 +1,12 @@
+Here's a novel approach using a shift register instead of a traditional counter:
+1. Instead of a binary counter, use a 10-bit shift register with a single '1' that shifts right
+2. The '1' position represents the remaining count (when it reaches LSB, time is up)
+3. Loading initializes the shift register with a '1' at the MSB position
+4. Each clock cycle shifts the '1' right by one position
+5. Terminal count is detected when the '1' reaches the LSB
+
+Advantages:
+- No arithmetic operations needed (no subtractor)
+- Simple shift operation is potentially faster
+- Terminal count detection is just checking the LSB
+- Power efficient as only one bit toggles per cycle

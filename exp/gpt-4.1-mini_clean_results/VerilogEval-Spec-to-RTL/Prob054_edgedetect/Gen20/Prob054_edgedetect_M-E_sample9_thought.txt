@@ -1,0 +1,7 @@
+Instead of explicitly storing the previous input sample and then comparing to detect a rising edge, this design uses an 8-bit shift register implemented as a register array. Each clock cycle, the new input vector shifts into the LSB position of the register, effectively preserving the last two samples as a 16-bit vector internally (concatenation of current and previous input states).
+
+By taking advantage of this shift register, we compute the positive edge detection by comparing adjacent bits inside the shift register vector. More specifically, for each bit, we check if it was 0 in the previous sample (bit position i) and 1 in the current sample (bit position i+8). This idea provides a flexible and scalable edge detection scheme with minimal extra registers (only a single 16-bit shift register to hold two samples, reducing direct dependency on two separate registers).
+
+The pedge output is registered synchronously, delaying it by one clock cycle, consistent with the requirement.
+
+This architectural change from separate previous and current input registers to a concatenated shift register potentially simplifies timing paths and allows easier extension to more samples or bits if needed, and is a novel take compared to the classical storage of just the previous input.

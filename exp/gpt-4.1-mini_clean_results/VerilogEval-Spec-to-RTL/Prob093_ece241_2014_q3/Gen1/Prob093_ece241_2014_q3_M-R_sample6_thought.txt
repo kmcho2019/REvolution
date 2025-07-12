@@ -1,0 +1,13 @@
+Refactor the code by using more systematic decomposition of each mux_in[i] function into 2-to-1 muxes with explicit selectors c and d, ensuring every path matches the K-map exactly. Use a hierarchical approach:
+
+- For each mux_in[i], pick a selector (c or d) to split the 4 combinations of (c,d) into two pairs of 2.
+
+- Implement each pair with another 2-to-1 mux, choosing inputs 0 or 1 constants as needed.
+
+- Use assign statements for clarity and conciseness.
+
+This approach avoids any ambiguity about which mux input corresponds to which input bit and guarantees exact match to the K-map by carefully verifying each case.
+
+The external 4-to-1 mux (not part of TopModule) uses signals a,b as selectors and mux_in as inputs, so TopModule's job is to produce mux_in[3:0] matching each ab column's function of c and d only.
+
+This new implementation respects that and strictly uses only muxes (no logic gates), encoded as conditional assignments mimicking 2-to-1 mux behavior.

@@ -1,0 +1,18 @@
+Simplified approach using Boolean algebra from K-map:
+1. Analyze the K-map to identify essential prime implicants
+2. Observe that f is true in two main patterns:
+   - When x[3]x[2] is 00 and x[1]x[0] is 00 or 10 (top-left and top-right corners)
+   - When x[3]x[2] is 11 and x[1]x[0] is not 10 (all except bottom-right)
+   - When x[3]x[2] is 10 and x[1]x[0] is not 11 (all except top-right)
+3. This can be expressed as:
+   f = (~x[3]&~x[2]&~x[1]&~x[0]) |  // 0000
+       (~x[3]&~x[2]&x[1]&~x[0])  |  // 0010
+       (x[3]&x[2]&~x[0])         |  // 1100,1101,1111
+       (x[3]&~x[2]&~x[1])        |  // 1000,1001
+       (x[3]&~x[2]&x[0])            // 1001,1010
+4. Further simplify by combining terms:
+   f = (~x[3]&~x[2]&~x[0]) |        // Covers 0000,0010
+       (x[3]&x[2]&~x[0])   |        // Covers 1100,1101
+       (x[3]&x[2]&x[1])    |        // Covers 1111
+       (x[3]&~x[2]&~x[1])  |        // Covers 1000,1001
+       (x[3]&~x[2]&x[0])             // Covers 1001,1010

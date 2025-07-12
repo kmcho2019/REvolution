@@ -1,0 +1,9 @@
+To improve PPA, I will optimize the fall_timer logic to reduce switching and combinational complexity. Specifically, I will freeze the fall_timer when not falling by default keeping next_fall_timer equal to the current fall_timer, only incrementing and saturating it during falling. This prevents unnecessary counter resets and switching when in walk or dig modes. This also preserves the fall duration count correctly.
+
+I will simplify the bump logic for direction: any bump_left or bump_right causes direction flip unconditionally in walking mode, since the problem states hitting either side flips direction (including both sides simultaneously). So direction toggles if bumped on left or right.
+
+Initializing next_state variables at the start reduces logic duplication. The asynchronous reset remains as required.
+
+This reduces switching activity on fall_timer, slightly simplifies next_direction logic, and keeps the FSM behavior intact.
+
+Outputs remain Moore style as before.

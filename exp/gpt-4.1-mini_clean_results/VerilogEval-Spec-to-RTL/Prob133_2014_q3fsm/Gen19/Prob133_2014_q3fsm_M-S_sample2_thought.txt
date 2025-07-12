@@ -1,0 +1,7 @@
+The FSM can be implemented with just two states, A and B. In state A, we wait for s=1 to transition to B. In state B, we count three consecutive clock cycles, accumulating how many times w=1 during these cycles. After the third cycle, in the next clock cycle, output z=1 if exactly two w=1's were counted; else z=0.
+
+To simplify, instead of using separate next-state and next-counter signals, I will update counters and state synchronously within a single always block. The output z can be generated combinationally based on a flag registered to delay the output by one cycle after counting.
+
+This reduces combinational logic and code complexity while preserving correct timing and behavior.
+
+Synchronous reset is preserved, and all sequential logic triggers on posedge clk.

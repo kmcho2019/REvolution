@@ -1,0 +1,12 @@
+Implement the 3.5x fractional divider using a single rising-edge counter and a two-step toggling approach to synthesize the fractional clock output.
+
+- Use a 3-bit counter counting from 0 to 6 (7 cycles total).
+- Define two toggle points to generate uneven high and low times: 
+  - Toggle output on counts 3 and 6 to create high interval of 4 cycles and low interval of 3 cycles.
+- Generate a raw divided clock (`clk_raw`) that toggles at these points, resulting in a 7-cycle period.
+- To achieve a half-cycle phase shift, generate a delayed version of `clk_raw` by registering `clk_raw` at the mid-point of the input clock cycle (simulate half-cycle delay by using a flip-flop clocked at the input clock's half period).
+- Since we can't have a half-cycle clock natively in pure Verilog, approximate this by using a DDR output or a double-flip-flop with a half-cycle delayed enable signal.
+- Alternatively, implement a simple delay register clocked at the rising edge with a phase-shifted version of the clock (e.g., using a separate input delayed clk or a shift register).
+- Then OR the original `clk_raw` and its delayed version (`clk_delayed`) to generate the final fractional clock, which will have uniform combined periods and improved duty cycle.
+
+This method avoids sampling at the negedge, uses a well-defined toggle scheme, and simulates half-cycle phase shifting by delay register, suitable for FPGA/ASIC without relying on negative edge clocks, ensuring glitch-free and balanced output.

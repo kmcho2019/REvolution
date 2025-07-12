@@ -1,0 +1,13 @@
+To simplify the 4-bit comparator, I will:
+
+- Perform a direct subtraction using a 4-bit adder with two's complement of B (B's inversion plus 1) to get the difference.
+- Since we only need to know if A > B, A = B, or A < B, the sign of the subtraction result indicates A < B, and zero indicates equality.
+- Use a ripple borrow logic implemented as chained bits or use the sign bit of subtraction result for A_less.
+- Use simple equality detection by comparing A and B directly.
+- Avoid explicit borrow generate/propagate signals and complicated lookahead logic.
+- Outputs are mutually exclusive:
+  - A_equal is high if A == B
+  - A_less is high if A < B (sign bit of A-B)
+  - A_greater is high if neither A_equal nor A_less is asserted.
+
+This approach simplifies the design by leveraging subtraction sign and direct equality checking without explicit borrow lookahead, reducing logic complexity while preserving correctness.

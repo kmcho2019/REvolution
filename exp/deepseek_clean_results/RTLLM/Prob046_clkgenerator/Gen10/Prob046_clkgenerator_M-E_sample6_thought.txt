@@ -1,0 +1,14 @@
+Novel Architecture Idea: Waveform Table Approach
+1. Instead of using a counter, pre-compute the entire clock waveform in a ROM table
+2. Store one full period of the clock signal in a circular buffer
+3. Use a pointer to cycle through the table entries at base clock rate
+4. Advantages:
+   - Perfectly precise waveform generation (no counter timing variations)
+   - Easy to implement non-50% duty cycles if needed
+   - Lower power since only the pointer toggles at high frequency
+   - Can implement complex waveforms by changing table contents
+5. Implementation:
+   - Create a parameterized ROM containing the waveform
+   - Use a simple pointer counter to cycle through the table
+   - Output the current table value
+   - Reset initializes pointer to 0

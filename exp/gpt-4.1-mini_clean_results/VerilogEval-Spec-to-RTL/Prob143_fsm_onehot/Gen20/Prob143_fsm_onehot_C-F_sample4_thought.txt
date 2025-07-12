@@ -1,0 +1,12 @@
+Combine the scalability and maintainability of Example 1’s for-loop approach for next_state generation with Example 2’s hierarchical grouping for next_state[0] to reduce fan-in and improve timing.
+
+- Use a combinational always block with blocking assignments and a for-loop over current states to accumulate next_state bits for states other than S0.
+- Implement next_state[0] separately with hierarchical OR groups for all states transitioning to S0 on input=0, minimizing fan-in and improving timing.
+- Merge contributions to next_state[0] both from the loop (states transitioning to S0 on input=1 do not exist here, so no conflict) and from the explicit grouped logic for input=0 paths to S0.
+- This fusion leverages the loop’s scalability for handling multiple active states easily and keeps critical next_state[0] logic optimized and clear.
+- Outputs are computed outside the always block using concise bitmasking for synthesis efficiency and clarity.
+- Use blocking assignments inside the always block to guarantee combinational semantics.
+- Provide detailed comments to clarify logic for maintainability.
+- The resulting design optimizes clarity, scalability, timing (via fan-in reduction for next_state[0]), and correctness while supporting multiple simultaneously active states.
+
+This hybrid solution is superior by combining the explicitness and performance optimizations of Example 2 with the flexibility and maintainability of Example 1.

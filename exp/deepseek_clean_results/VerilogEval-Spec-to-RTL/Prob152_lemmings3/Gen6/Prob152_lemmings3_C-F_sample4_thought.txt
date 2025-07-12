@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. State Encoding: Use 3 states (WALK, FALL, DIG) with direction embedded in the WALK state, totaling 3 bits (2 for state + 1 for direction only in WALK state). This reduces register count while maintaining clarity.
+
+2. Priority Handling: Implement strict priority (fall > dig > bump) using nested if-else in the WALK state, but evaluate conditions in parallel where possible to reduce critical path.
+
+3. Output Logic: Use registered outputs to reduce glitching power while maintaining Moore machine properties. Outputs are purely state/direction dependent.
+
+4. Transition Logic: Optimize by:
+   - Only evaluating direction changes in WALK state
+   - Using state-specific conditions to minimize unnecessary logic evaluation
+   - Combining state and direction updates in single always block
+
+Key Improvements:
+- Reduced state transitions by only updating direction in WALK state
+- Registered outputs for lower power
+- Parallel condition evaluation where possible
+- Clear separation of concerns while maintaining optimal PPA

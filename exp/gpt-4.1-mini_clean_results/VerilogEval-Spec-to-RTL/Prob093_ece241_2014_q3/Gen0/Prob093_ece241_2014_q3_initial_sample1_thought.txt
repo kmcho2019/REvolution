@@ -1,0 +1,196 @@
+We need to implement the K-map function f(c,d,a,b) using a 4-to-1 multiplexer controlled by inputs {a,b}. The 4-to-1 mux selects one of mux_in[3:0], where each mux_in bit corresponds to one combination of {a,b}:
+
+- ab=00 -> mux_in[0]
+- ab=01 -> mux_in[1]
+- ab=11 -> mux_in[2]
+- ab=10 -> mux_in[3]
+
+The task is to implement the logic inputs mux_in[3:0] purely from c and d using only 2-to-1 multiplexers (plus the single 4-to-1 mux at the end). No other gates are allowed.
+
+Step 1: Extract the logic function from the K-map for each ab value:
+
+For each fixed ab, the output depends on cd:
+
+- For ab=00 (mux_in[0]):
+
+  cd: 00->0, 01->1, 11->1, 10->1
+
+- For ab=01 (mux_in[1]):
+
+  cd: 00->0, 01->0, 11->0, 10->0
+
+- For ab=11 (mux_in[2]):
+
+  cd: 00->0, 01->0, 11->1, 10->0
+
+- For ab=10 (mux_in[3]):
+
+  cd: 00->1, 01->0, 11->1, 10->1
+
+Step 2: For each mux_in[i], simplify and implement using 2-to-1 muxes controlled by c or d.
+
+Recall 2-to-1 mux: out = sel ? in1 : in0
+
+Try to write each mux_in bit as a multiplexer tree on inputs c, d:
+
+---
+
+mux_in[0]: (ab=00)
+
+cd | out
+00 | 0
+01 | 1
+11 | 1
+10 | 1
+
+We can view 'cd' as c d:
+
+c d | out
+0 0 | 0
+0 1 | 1
+1 1 | 1
+1 0 | 1
+
+Look at 'd': when d=0, output = 0 if c=0,d=0 else 1 if c=1,d=0
+
+Try selecting on d:
+
+if d=0: output is (c ? 1 : 0) == c
+
+if d=1: output is 1 (both 01 and 11 ->1)
+
+So mux_in[0] = d ? 1 : c
+
+This can be implemented by a 2-to-1 mux with select=d, inputs 1 and c.
+
+---
+
+mux_in[1]: (ab=01)
+
+cd | out
+00 |0
+01 |0
+11 |0
+10 |0
+
+Constant 0.
+
+---
+
+mux_in[2]: (ab=11)
+
+cd | out
+00 |0
+01 |0
+11 |1
+10 |0
+
+Only 11->1, else 0.
+
+Check if we can implement with a mux:
+
+If select c:
+
+c=0 -> out=0 for both d=0,1
+
+c=1 -> d=0 =>0, d=1=>1
+
+Thus:
+
+out = c & d
+
+But we cannot use AND gates, only muxes.
+
+Implement c & d using muxes:
+
+Using c as selector:
+
+out = c ? d : 0
+
+So, mux with select=c, inputs 0 and d.
+
+---
+
+mux_in[3]: (ab=10)
+
+cd | out
+00 |1
+01 |0
+11 |1
+10 |1
+
+Check if output can be expressed via d first:
+
+d=0: cd=00 (1), 10(1)
+
+d=1: cd=01(0), 11(1)
+
+If select on d:
+
+d=0 -> out = 1 (for c=0,1)
+
+d=1 -> out = c (since 01->0,11->1)
+
+Thus:
+
+out = d ? c : 1
+
+Implemented as mux with select d, inputs 1 and c
+
+---
+
+Summary mux_in lines:
+
+mux_in[0] = d ? 1 : c
+
+mux_in[1] = 0
+
+mux_in[2] = c ? d : 0
+
+mux_in[3] = d ? c : 1
+
+Now implement 0 and 1 constants via 1'b0 and 1'b1
+
+Implement these muxes using 2-to-1 multiplexers only.
+
+Define a 2-to-1 mux module:
+
+mux2(sel,in0,in1) => out = sel?in1:in0
+
+Then mux_in lines are formed by mux2.
+
+---
+
+Finally, output mux_in[3:0], input ports c,d as given.
+
+All mux_in bits are combinational logic.
+
+The higher-level 4-to-1 mux using {a,b} selects among mux_in[].
+
+We only implement the mux_in generation part.
+
+---
+
+Implementation plan:
+
+- Implement mux2 module.
+
+- Implement mux_in lines using mux2:
+
+  mux_in[0] = mux2(d, c, 1)
+
+  mux_in[1] = 0
+
+  mux_in[2] = mux2(c, 0, d)
+
+  mux_in[3] = mux2(d, 1, c)
+
+---
+
+This meets requirements:
+
+- Only 2-to-1 muxes used to build mux_in.
+
+- A single 4-to-1 mux outside selects among mux_in by {a,b}
+
+- No other logic gates used.

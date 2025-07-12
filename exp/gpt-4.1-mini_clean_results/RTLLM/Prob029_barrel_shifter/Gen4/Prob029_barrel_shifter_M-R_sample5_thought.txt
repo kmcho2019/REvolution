@@ -1,0 +1,14 @@
+Refactor the barrel shifter to strictly follow the staged mux2X1 approach as described: use three stages corresponding to shifts by 4, 2, and 1 bits controlled by ctrl[2], ctrl[1], and ctrl[0], respectively.
+
+Each stage uses a set of 2-to-1 multiplexers selecting between the unshifted and shifted input (or intermediate result) based on the relevant ctrl bit. 
+- Stage 1 shifts input by 4 bits if ctrl[2] = 1.
+- Stage 2 shifts the Stage 1 output by 2 bits if ctrl[1] = 1.
+- Stage 3 shifts the Stage 2 output by 1 bit if ctrl[0] = 1.
+
+By doing so, we preserve the problem's required modular mux2X1 design with a simple, clean, combinational logic implementation.
+
+This design directly follows the problem's original specification and makes the shifting modular, explicit, and easy to verify. It also avoids complex variable indexing by explicitly wiring shifted and non-shifted versions and selecting between them with multiplexers controlled by each ctrl bit.
+
+The mux2X1 submodule is implemented and instantiated for each bit at each stage.
+
+Overall, this matches the original instructions perfectly, is synthesizable, and easy to understand.

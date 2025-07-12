@@ -1,0 +1,23 @@
+Improvement Strategy:
+1. Common Subexpression Elimination:
+   - Extract ~in as a shared signal since it's used in next_state[0] and next_state[2]
+   - Extract state[2] as a shared signal since it's used in next_state[1] and next_state[3]
+
+2. Logic Simplification:
+   - Optimize next_state[1] to use state[0] | state[1] | state[3] when in=1 (more direct mapping to state transitions)
+   - Maintain the simple output logic since it's already optimal
+
+3. Timing Balance:
+   - Ensure all next_state computations have similar path lengths
+   - Keep expressions at 2-input gate level where possible
+
+4. Power Optimization:
+   - Reduce switching activity by minimizing logic operations
+   - Share common terms to reduce redundant computations
+
+Key Advantages:
+- Reduced logic operations through sharing
+- Balanced timing paths
+- Lower power consumption
+- Maintained or improved area efficiency
+- Preserved correct functionality

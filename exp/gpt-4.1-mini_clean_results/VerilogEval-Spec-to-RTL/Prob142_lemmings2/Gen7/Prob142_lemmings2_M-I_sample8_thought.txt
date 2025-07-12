@@ -1,0 +1,29 @@
+To optimize for better PPA, the design can be simplified by encoding the FSM into a single 2-bit state register rather than separate direction and falling bits. This reduces register count and logic complexity slightly. By encoding states explicitly as four states representing walking left/right and falling left/right, the direction is implicitly preserved when falling, eliminating the need for separate direction register.
+
+This approach helps in:
+- Minimizing flip-flop count from 2 to 2 bits but combined as one register, potentially enabling simpler next-state logic.
+- Simplifying combinational next-state logic by a case statement rather than separate variables and conditionals.
+- Potentially improving timing due to more straightforward state decoding.
+- Avoiding separate direction and falling signals reduces interdependent signals and can help synthesis optimizations.
+- Moore outputs are derived directly from the state bits.
+
+The asynchronous reset will still reset to walking left.
+
+This encoding is:
+
+2-bit state:
+00 = walking left
+01 = walking right
+10 = falling left
+11 = falling right
+
+Transitions:
+- When walking and bumped on either side (or both), switch walking direction.
+- When ground disappears (ground=0) while walking, go to falling same direction.
+- While falling, bump inputs ignored; when ground reappears (ground=1), resume walking same direction.
+- aaah is asserted when in falling state (states 10 or 11).
+- walk_left when walking left state (00), walk_right when walking right state (01).
+
+This approach reduces separate signal overhead and helps synthesis to merge logic efficiently.
+
+The rest of the logic (async reset, posedge clock) remains the same.

@@ -1,0 +1,10 @@
+To optimize the existing 4-stage shift register for better performance, power, and area (PPA):
+
+- Merge the shift register into a single vector register as before, since it is already minimal area and good for performance.
+- Introduce an enable signal internally to only shift when the input changes or when needed to reduce unnecessary switching power (though shifting every cycle is common, gating when input is stable can save power).
+- Use synchronous active-low reset as specified, but ensure reset releases are clean.
+- Minimize combinational logic on the output by directly connecting the MSB.
+- Simplify the code to remove parameterization since the width is fixed at 4, reducing tool overhead slightly.
+- Add a clock enable signal that gates the shift operation only if input or the shift register contents actually change to reduce toggling and power.
+- Use non-blocking assignments and keep the synchronous reset.
+- This approach maintains clean RTL while potentially reducing switching power, with negligible area overhead for the gating logic.

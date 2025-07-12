@@ -1,0 +1,11 @@
+The original design is functionally correct and clean, but it uses SystemVerilog `typedef enum` which might reduce tool compatibility with pure Verilog simulators or synthesis tools. To maximize portability and clarity, I will replace the `typedef enum` with traditional Verilog `localparam` constants for state encoding.
+
+Also, the original design uses synchronous active-low reset (`reset_n`) which is acceptable, but synchronous resets can increase clock-to-Q delay. For better timing (PPA improvement), I will convert the reset to an asynchronous active-low reset, which is a common industry practice for FSMs to reduce logic depth on the clock path and improve timing closure.
+
+The FSM will remain binary encoded as before. The output `sequence_detected` is asserted one cycle when the FSM reaches the final state (S4).
+
+The state transitions remain unchanged and correctly handle overlapping sequences.
+
+Finally, I will clearly comment the active-low asynchronous reset behavior to avoid confusion.
+
+This approach maintains the same functionality, improves timing through asynchronous reset, and increases tool compatibility by avoiding SystemVerilog features.

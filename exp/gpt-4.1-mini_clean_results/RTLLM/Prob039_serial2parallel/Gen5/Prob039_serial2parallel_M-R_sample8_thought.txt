@@ -1,0 +1,15 @@
+Refactor the design by separating the shift register and counter logic from the output and valid signal generation. Use an always block for synchronous shift register and counter updates on valid input data, and generate the output data and valid flag combinationally based on the counter value. This approach keeps the shift register and counter updates clean and then asserts dout_valid combinationally when 8 bits have been received (counter == 7).
+
+Also, we can shift the serial input into the shift register by shifting left, placing the earliest bit at MSB and newest at LSB, which aligns well with the requirement to put the earliest input at the most significant bit of the output. The original design shifted right, but shifting left with input at LSB is more intuitive and common.
+
+Finally, make sure dout_valid is asserted only for one clock cycle right after the 8th bit is received, based on a delayed internal signal.
+
+This structure improves clarity and makes the design easier to verify and understand.
+
+Summary:
+- Shift left: shift_reg <= {shift_reg[6:0], din_serial}
+- Counter counts up to 7 on valid data.
+- Output dout_parallel = shift_reg when counter == 7.
+- dout_valid asserted synchronously for one cycle when counter == 7.
+
+This avoids reconstructing the shifted data on output and clearly separates sequential logic from output logic.

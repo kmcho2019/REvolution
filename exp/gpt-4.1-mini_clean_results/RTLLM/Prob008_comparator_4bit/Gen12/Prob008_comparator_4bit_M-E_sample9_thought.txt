@@ -1,0 +1,12 @@
+I will implement the 4-bit comparator using a cascade of 1-bit comparators, each producing three signals: bit-level A_greater, A_equal, and A_less. These signals will be combined hierarchically in combinational logic to produce the overall 4-bit comparison outputs. 
+
+The approach:
+- At each bit, compare A[i] and B[i], generating signals that indicate whether A is greater, equal, or less at that bit.
+- Since the most significant bit (MSB) has the highest priority, the final outputs are resolved by propagating priority from MSB down to LSB.
+- The final A_greater is true if the MSB bits differ with A greater or if the MSB bits are equal and a lower bit comparison indicates A_greater.
+- Similarly for A_less.
+- A_equal is true if all bits are equal.
+
+This modular approach leverages multiple simple bit-level comparators combined by logic, avoids borrow or carry chains, and naturally produces mutually exclusive outputs. The code uses generate blocks for scalability and clarity.
+
+This method may have slightly increased area but can improve timing by parallelizing bit-level comparisons and reducing long carry/borrow chain dependencies.

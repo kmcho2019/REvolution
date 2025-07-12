@@ -1,0 +1,5 @@
+To fix the synthesis issues and simplify the design, leverage the native two's complement arithmetic support in Verilog. Since inputs and outputs are in two's complement fixed-point format, the subtraction can be directly performed using `c = a - b;`. This inherently handles sign and magnitude correctly without explicit magnitude/sign extraction, magnitude comparison, or conditional sign restoration. 
+
+To meet the requirement of an internal register `res` storing the result, use a single combinational always block to assign `res` as the difference `a - b`. Then assign `c` directly from `res`. For the zero-result edge case, explicitly set the sign bit of `res` to zero if the result is zero, ensuring consistent sign representation for zero. This approach preserves fixed-point precision as `a` and `b` share the same scaling and bit widths.
+
+This design is simpler, synthesizable, and optimal in performance, area, and power, while functionally equivalent to the more complex magnitude/sign logic. The testbench remains applicable unchanged.

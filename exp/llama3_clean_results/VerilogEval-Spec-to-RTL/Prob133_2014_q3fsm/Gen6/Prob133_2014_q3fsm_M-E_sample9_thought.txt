@@ -1,0 +1,13 @@
+To create a novel architectural solution for the given finite state machine problem, we can use a counter-based approach along with a flag to track the validity of the 'w' signal pattern. The idea involves the following steps:
+
+1. **State Machine**: Implement a two-state machine as before, transitioning from state A to state B based on the 's' input. However, once in state B, we will use a counter to track the number of clock cycles since entering state B.
+
+2. **Pattern Detection**: Instead of using a shift register, we will count the number of 'w' signals that are '1' within a three-clock-cycle window after entering state B. We can achieve this by using a counter that increments with each 'w' = 1 and resets after every three clock cycles.
+
+3. **Output Logic**: The output 'z' is set to '1' if the count of 'w' = 1 within the last three clock cycles is exactly two. This can be implemented using a simple combinational logic statement.
+
+4. **Reset Mechanism**: Ensure that all counters and flags are reset when the FSM returns to state A or when the reset signal is asserted.
+
+This approach simplifies the logic for detecting the pattern of 'w' signals and ensures that the output 'z' is correctly set based on the condition specified in the problem statement.
+
+The use of counters and flags provides a clear and straightforward method for tracking the 'w' signal patterns and generating the output 'z', making the design more intuitive and easier to understand and verify.

@@ -1,0 +1,7 @@
+The existing code attempts to capture the transition from 1 to 0 in the input signal and maintain the corresponding output bits high until reset. However, it has some issues, such as not accounting for cases where the input remains low across multiple clock cycles and not explicitly maintaining the output state once set. 
+
+To refactor this code, we can maintain the same core idea but implement it using a different structure. One approach is to use a state machine-like implementation, where each bit of the output has a separate register that gets set when a falling edge is detected for the corresponding input bit and remains set until the reset signal is asserted. 
+
+We can achieve this by using a simple sequential logic for each bit, checking the current and previous states of the input to detect a falling edge, and then setting the corresponding output bit accordingly. This approach ensures that once an output bit is set due to a falling edge, it stays set until the reset condition is met.
+
+The new code will use the same overall architecture but will refine the logic within the always block to correctly capture the transition, set the output bits, and retain their state until reset.

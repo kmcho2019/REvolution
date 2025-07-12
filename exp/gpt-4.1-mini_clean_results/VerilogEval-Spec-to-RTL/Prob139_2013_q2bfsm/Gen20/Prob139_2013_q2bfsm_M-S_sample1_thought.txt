@@ -1,0 +1,22 @@
+I will simplify the FSM by using a minimal number of states and a straightforward encoding. The FSM will have these states:
+
+- A: reset state, outputs f=0, g=0
+- B: after reset de-assertion, output f=1 for one cycle
+- C: monitor input x to detect pattern 1,0,1 in three successive cycles
+- D: output g=1 for one cycle immediately after detecting pattern
+- E: hold g=1 while monitoring y for at most two cycles; if y=1 within this time, stay in state with g=1 permanently; else, go to g=0 permanently
+- F: g=1 permanently
+- G: g=0 permanently
+
+I will:
+
+- Use binary encoding with a 3-bit state reg.
+- Separate sequential and combinational logic properly.
+- Use a 3-bit shift register to track last 3 x samples.
+- Use a 2-bit counter to count cycles monitoring y.
+- Initialize and reset properly on synchronous active low reset.
+- Perform pattern detection on updated x_shift value.
+- Carefully count y monitoring cycles so that y is monitored for exactly two cycles.
+- Outputs f and g are registered synchronous outputs.
+
+This approach reduces complexity by avoiding unnecessary one-hot encoding or large param sets and clarifies logic flow while maintaining exact behavior.

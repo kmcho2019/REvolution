@@ -1,0 +1,22 @@
+Here's a novel approach using separate state machines for direction and action:
+
+1. Split the design into two parallel state machines:
+   - Direction FSM: tracks left/right walking direction
+   - Action FSM: handles walking/falling/digging/splatter states
+
+2. Key advantages:
+   - Clear separation of concerns
+   - Simplified transition logic in each FSM
+   - Easier to maintain priority rules (fall > dig > direction change)
+   - More modular design
+
+3. Special features:
+   - Direction is preserved during falls/digs
+   - Fall timer only counts during actual falls
+   - Clean handling of splatter condition
+   - Explicit priority encoding in transition logic
+
+4. The two FSMs communicate through:
+   - Current direction (left/right)
+   - Action state (walk/fall/dig/splatter)
+   - Shared ground/dig/bump inputs

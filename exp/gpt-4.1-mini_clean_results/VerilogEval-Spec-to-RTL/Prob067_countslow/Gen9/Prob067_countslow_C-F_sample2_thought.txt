@@ -1,0 +1,7 @@
+To fuse the strengths of both examples, I will implement a synchronous decade counter with a single 4-bit register `q` serving both as state and output to minimize registers and area. Like Example 2, I will use a simple arithmetic increment with a ternary operator for wrap-around from 9 back to 0, ensuring minimal combinational logic and efficient synthesis.
+
+To further improve clarity and performance, I will explicitly add a clock enable (slowena) gating the increment logic. This avoids unnecessary toggling when counting is paused, reducing power. The synchronous reset will clear `q` to 0.
+
+Additionally, I will separate the combinational next value logic from the sequential block, which can improve readability and enable synthesis tools to optimize timing paths better. This structure also helps ensure `q` updates only on clock edges.
+
+Overall, this design is minimal and clear, uses only one register for state/output (reducing area), uses simple arithmetic wrap-around for performance, and leverages enable gating for lower power. This fusion balances clarity, power, area, and timing efficiency.

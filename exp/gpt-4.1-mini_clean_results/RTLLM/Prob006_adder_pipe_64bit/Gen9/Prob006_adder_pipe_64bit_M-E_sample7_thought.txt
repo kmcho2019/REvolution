@@ -1,0 +1,13 @@
+Implement a 64-bit ripple carry adder as a pipeline with multiple stages, each stage handling a fixed chunk of bits (e.g., 8 bits), so the pipeline has 8 stages (64/8 = 8). Each pipeline stage performs an 8-bit addition with an input carry and outputs a sum segment and a carry-out. Pipeline registers latch the partial sums and carry between stages.
+
+This chunked approach reduces each pipeline stage complexity and provides natural pipeline boundaries. Each clock cycle, data moves to the next stage with registered carry-in and operand chunks. The input enable signal (i_en) propagates through a shift register matching the pipeline length to produce the output enable (o_en).
+
+The final 65-bit result concatenates all 8 sum chunks and the last carry-out bit.
+
+Key points:
+- Pipeline stage count = 8
+- Each stage adds 8 bits and carry-in from previous stage
+- Registers hold operand chunks, carry-ins, and partial sums per stage
+- Result assembled after last stage completes
+- Output enable delayed by 8 cycles to indicate valid result
+- Active-low reset clears pipeline registers

@@ -1,0 +1,10 @@
+To implement the TopModule, we can use a reg to hold the shift register value. 
+We will use an always block with a sensitivity to the positive edge of the clk signal. 
+Inside the always block, we first check if load is high, in which case we load the shift register with the data.
+If load is not high, we check if ena is high. If it is, we perform the shift operation according to the amount.
+If amount is 2'b00, we shift left by 1 bit. 
+If amount is 2'b01, we shift left by 8 bits.
+If amount is 2'b10, we shift right by 1 bit, performing an arithmetic right shift.
+If amount is 2'b11, we shift right by 8 bits, performing an arithmetic right shift.
+If ena is not high, we simply retain the current value of the shift register.
+Finally, we assign the shift register value to the output q.

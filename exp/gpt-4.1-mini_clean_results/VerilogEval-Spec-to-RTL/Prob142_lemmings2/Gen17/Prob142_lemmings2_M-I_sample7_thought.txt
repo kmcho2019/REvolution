@@ -1,0 +1,11 @@
+To improve the PPA (timing, power, area) over the original clean design, focus on minor refinements while preserving clarity and correctness:
+
+- Replace the multiple nested if-else with a single expression combining bump_left and bump_right into a single signal "bumped", since bumping on either side causes flipping or direction switch. This reduces logical complexity slightly.
+- Use a single if condition for bump presence when walking: if bumped on either or both sides, flip direction or set direction accordingly. This reduces redundant conditional branches.
+- Use explicit blocking assignments in combinational block for slight synthesis friendliness.
+- Consider synchronous reset if allowed, but since spec requires async areset, keep async.
+- Keep the 2-bit state encoding unchanged for area and minimalism.
+- Add comments about signals and logic for clarity.
+- Minor code style improvements to potentially help synthesis tools optimize better (like declaring wires for bump detection).
+
+These subtle changes should reduce logic levels and improve power slightly by cutting redundant checks. The overall FSM behavior is unchanged. Outputs remain Moore style decoding from state bits. This approach preserves readability and synthesis friendliness with a modest PPA improvement potential.

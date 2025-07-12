@@ -1,0 +1,14 @@
+The original solution uses a simple carry-lookahead style but effectively computes carries sequentially (c[i+1] depends on c[i]), limiting speed to ripple-carry performance and area due to direct OR-AND chains.
+
+To improve PPA, I will implement a Kogge-Stone parallel prefix carry-lookahead adder for the 8-bit adder. This structure calculates carries in O(log n) stages, drastically reducing carry propagation delay and improving frequency. It also reduces glitching power by minimizing carry chain delay and logic depth.
+
+Key improvements:
+- Use separate propagate (p) and generate (g) signals per bit.
+- Build the carry tree in parallel prefix manner with black and grey cells.
+- Final sums computed with XOR of propagate and carry-in signals.
+- Modular implementation with reusable prefix cell modules.
+- Keep purely combinational logic.
+
+This approach increases combinational logic levels somewhat but reduces the critical path delay by avoiding ripple propagation, enhancing max frequency (lower TNS, WNS). Area is modestly increased but better organized, and power may reduce due to less glitching.
+
+Overall, this solution is a classic high-performance 8-bit parallel prefix adder suitable for ASIC/FPGA.

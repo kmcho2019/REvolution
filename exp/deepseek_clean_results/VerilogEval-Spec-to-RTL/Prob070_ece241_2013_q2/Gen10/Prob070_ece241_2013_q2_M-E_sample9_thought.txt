@@ -1,0 +1,15 @@
+Novel approach using a hybrid lookup-table and logic optimization:
+
+1. Instead of pure combinational logic, use a 4-bit input to index into a small lookup table (LUT) that stores the desired outputs.
+2. The LUT will be implemented using a case statement that explicitly lists all 16 possible input combinations.
+3. For out_sop:
+   - Only implement the true cases (2,7,15) explicitly
+   - All other cases default to 0 (including don't-cares)
+4. For out_pos:
+   - Implement by inverting the false cases (0,1,4,5,6,9,10,13,14)
+   - All other cases default to 1 (including don't-cares)
+5. Advantages:
+   - Explicit truth table implementation ensures correctness
+   - Easy to verify and modify
+   - No risk of optimization errors
+   - Clear separation between specified and don't-care cases

@@ -1,0 +1,8 @@
+The circuit always sets `q` to 4 on the clock edge when `a` is high, otherwise it increments `q` modulo 7 along the sequence 4->5->6->0->1->2->3->4. This modulo-7 counting sequence can be simplified by arithmetic since the sequence cycles through 0 to 6 with a fixed offset. Specifically, when `a` is low, `q` increments modulo 7, which can be done using simple arithmetic: `(q + 1) % 7`.
+
+To simplify, we can:
+- Use arithmetic modulo 7 with a small check for the wrap-around by resetting to 0 when `q` is 6.
+- Assign `q` directly on the positive clock edge.
+- When `a` is high, assign 4 directly.
+
+This reduces the complexity by removing the case statement and combinational next state logic, and uses direct arithmetic and a simple condition, making the design more concise and still functionally correct.

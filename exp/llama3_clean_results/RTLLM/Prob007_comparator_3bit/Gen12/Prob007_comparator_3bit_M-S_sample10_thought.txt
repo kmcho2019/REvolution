@@ -1,0 +1,7 @@
+To simplify the existing solution, we can maintain the core comparison logic but focus on reducing unnecessary elements. The current implementation uses an `always` block with combinational logic to compare the input binary numbers A and B and assign the results directly to the output signals. 
+
+One potential simplification is to remove the `reg` keyword from the output signals. In Verilog, when using an `always` block without any sensitivity list or with `@(*)`, which implies all inputs are being monitored, the outputs can be inferred as wires (combinational logic) instead of registers (sequential logic). This simplification aligns with the combinational nature of the comparator module.
+
+Additionally, since the logic is inherently combinational and the sensitivity list includes all inputs via `@(*)`, the code is already optimized for readability and synthesis. The comparisons are straightforward and directly assigned to the outputs, which is both efficient and easy to understand.
+
+Therefore, the simplified solution maintains the essence of the original but with a minor adjustment to the output declarations, making the code slightly more concise and adhering to best practices for combinational logic.

@@ -1,0 +1,13 @@
+To optimize the existing Rule 90 implementation for better Power, Performance, and Area (PPA), I will simplify the clock enable logic to avoid the potentially costly comparison (q_out != next_state) which adds combinational logic on the clock enable path and could reduce max frequency and increase area.
+
+Instead, I will use the load signal alone as the clock enable (CE). When load is high, the state loads new data; when low, the state always updates to next_state each cycle. This reduces the clock enable logic to a simple gate, improving timing and area.
+
+Since the combinational XOR computations are simple and balanced, there's minimal impact on power to always update each cycle. Removing the (q_out != next_state) check reduces toggle gating complexity and associated logic area.
+
+I will keep the modular 64-bit blocks and boundary assignments as is for clarity and scalability.
+
+This approach trades some potential dynamic power savings (by updating every cycle regardless of state change) for simpler logic and likely better timing and area. This is often favorable in ASIC/FPGA implementations.
+
+Additionally, I will clean up the boundary assignments to remove the generate loop and assign them explicitly for better synthesis inference and slightly reduced wiring overhead.
+
+This results in a simpler, cleaner, and faster design with minimal area and power penalty.

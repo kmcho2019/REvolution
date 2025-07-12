@@ -1,0 +1,5 @@
+The original implementation uses a combinational always block with a case statement to select q based on c. This is functionally correct but can be optimized for better area and power by using a continuous assignment with a ternary operator, which many synthesis tools handle more efficiently as direct multiplexers.
+
+Replacing the always block with a continuous assignment can reduce logic overhead and potentially reduce switching activity, since it avoids the overhead of a procedural block. The logic is simple: for c=0 output b, for c=1 output e, for c=2 output a, for c=3 output d, else output 4'hF.
+
+This optimization preserves the exact functional behavior while potentially improving power and area by leveraging more straightforward logic inference.

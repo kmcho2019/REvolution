@@ -1,0 +1,10 @@
+The problem requires designing a multi-bit MUX-based synchronizer that operates with two different clock domains (clk_a and clk_b) and ensures that input data_in remains constant during the period when the enable signal data_en is high. A novel approach to this problem involves utilizing a dual-clock FIFO (First-In-First-Out) buffer to synchronize the data between the two clock domains. This method provides a more robust and scalable solution, especially when dealing with multi-bit data and variable enable signal durations.
+
+Here's a high-level overview of the proposed architecture:
+
+1. **Dual-Clock FIFO**: Implement a FIFO buffer that can operate with two different clocks (clk_a for writing and clk_b for reading). This FIFO will store the input data_in when data_en is high.
+2. **Write Enable Logic**: Control the writing of data into the FIFO based on the enable signal data_en and the clock clk_a. Ensure that data_in is only written into the FIFO when data_en is high.
+3. **Read Enable Logic**: Manage the reading of data from the FIFO based on the delayed enable signal (two clk_b cycles delayed) and the clock clk_b. This ensures that data is only read out when the enable signal has been high for at least two clk_b cycles.
+4. **Reset and Synchronization**: Include appropriate reset logic for both clock domains to ensure proper initialization and synchronization of the FIFO and enable signals.
+
+By utilizing a dual-clock FIFO, this design provides a flexible and efficient way to synchronize data between two clock domains, accommodating the constraints on data_in and data_en.

@@ -1,0 +1,5 @@
+To improve PPA, I will simplify the terminal count detection by replacing the partial comparator with a single subtraction-based zero detect, which tends to have less logic depth than comparing upper and lower bits separately. This can reduce critical path delay and area since a single comparator logic replaces two.
+
+Additionally, I will introduce an enable signal that disables counting when the terminal count is reached to reduce switching activity (power). The counter will increment only when enabled, resetting and enabling on reset or terminal count.
+
+This change retains synchronous reset and non-blocking assignments. The code remains clean, with possibly better timing, reduced power consumption, and slightly reduced area from simpler comparator logic and less toggling at the max count boundary.

@@ -1,0 +1,33 @@
+To improve the design clarity and potentially fix subtle timing and control issues, I will refactor the TopModule as follows:
+
+1. **State Machine Structure:**  
+   Implement the FSM using a standard two-process style:  
+   - One synchronous process to update state and registers on the clock edge.  
+   - One combinational process to compute next state and next values.
+
+2. **Pattern and Delay Shift Registers:**  
+   Use a shift-left register with insertion at LSB to match MSB-first serial input ordering. Since bits arrive MSB first, the first received bit is the MSB of the pattern/delay. We can shift left and insert at LSB if we store bits reversed, but it's simpler and more intuitive to shift right with new bit at MSB. The previous code used right-shift with insertion at MSB, which is correct for MSB-first input. I will keep that but explicitly comment and align usage.
+
+3. **Counters for Timing:**  
+   - Use a 10-bit cycle counter counting 0..999 for 1000 cycles per tick.  
+   - Use a 5-bit tick counter initialized to delay+1 and decrement at each 1000-cycle tick.
+
+4. **Counting Output:**  
+   The `count` output must be stable during each 1000-cycle tick and decrease by one at each tick completion. I will update `count` in synchronous logic after detecting cycle counter wrap to ensure correct timing alignment.
+
+5. **Outputs:**  
+   `counting` asserted only in COUNT state.  
+   `done` asserted only in WAIT_ACK state.  
+   During other states, `count` is set to zero (don't care).
+
+6. **Reset:**  
+   Synchronous reset resets state and all relevant signals.
+
+7. **Refactor:**  
+   - Use an explicit register for `count` that updates synchronously.  
+   - Separate next-state and next-data logic clearly.  
+   - Avoid extra flags like `entered_count_state`; instead initialize counters when transitioning to COUNT.  
+   - Implement FSM state transition logic in a combinational always block.  
+   - Use case statements for clarity and completeness.
+
+This refactoring will enhance readability and maintain timing correctness by making counter updates and output updates occur in a single synchronous process, reduce complexity in first-cycle detection, and clarify pattern/delay shifting and detection.

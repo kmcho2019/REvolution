@@ -1,0 +1,19 @@
+The main issue is that the prediction output must reflect the GHR state used for indexing *at the moment of prediction request*, which is the GHR *before* being updated by the predicted outcome. Since the GHR updates on the clock edge after prediction, if multiple predictions happen in successive cycles, combinationally outputting ghr can cause timing mismatches.
+
+To fix this:
+
+- Create a *prediction history register* (a pipeline register) that captures the current GHR synchronously on the clock edge when predict_valid is asserted. This register holds the GHR state used to make the prediction and is output directly at the next cycle, matching the pipeline timing and keeping outputs stable.
+
+- Similarly, hold the prediction index and prediction bit in registers so outputs are stable and consistent with pipeline timing.
+
+- The combinational prediction logic reads from the current GHR and PHT to produce the prediction bits *for the next cycle*. Then on the clock edge, if predict_valid is high (and training mispredict is not taking priority), the GHR is updated speculatively.
+
+- For training, the PHT updates on the clock edge based on the provided train_pc and train_history, and if train_mispredicted is true, the GHR is recovered to train_history (taking priority over speculative update).
+
+- Prediction update to GHR only happens if no training misprediction in the same cycle.
+
+- This scheme decouples prediction outputs (which are registered) from the combinational GHR state, ensuring stable and accurate predict_taken and predict_history outputs that match the problem’s timing requirements.
+
+- Maintain asynchronous reset clearing PHT and GHR registers.
+
+This approach strictly sequences and pipelines the predictor outputs to avoid combinational mismatches and conforms to the spec’s priority and timing requirements.

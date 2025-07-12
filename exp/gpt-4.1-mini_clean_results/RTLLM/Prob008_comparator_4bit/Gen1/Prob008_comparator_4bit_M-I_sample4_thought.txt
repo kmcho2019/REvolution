@@ -1,0 +1,15 @@
+To improve the original 4-bit comparator implemented using subtraction with borrow logic, focus on reducing critical path delay and area while maintaining correctness and the problem constraints.
+
+Improvement strategy:
+- Simplify borrow generation expressions by using standard full subtractor logic:
+  borrow_out = (~A & B) | ((~A ^ B) & borrow_in)
+- Replace explicit XOR and borrow logic with structured generate loops or module instantiation to reduce repetitive code and improve maintainability.
+- Separate equality detection from subtraction: compute equality as a direct bitwise XNOR of inputs, reducing unnecessary dependency on subtraction result.
+- Use the subtraction borrow-out only to determine if A < B.
+- If no borrow and inputs are equal, A_equal=1.
+- Else if no borrow and not equal, A_greater=1.
+- This separation reduces logic on critical path and simplifies signal fanout.
+- Use continuous assignments and generate block to keep combinational implementation and easy to scale.
+- This approach minimizes logic duplication and might marginally reduce power and area due to simpler equality check and borrow logic.
+
+The improved code implements the subtractor with borrow chain per bit in a generate loop and uses a dedicated equality check, while keeping outputs mutually exclusive.

@@ -1,0 +1,7 @@
+I will fuse the best ideas of both examples to produce a clear, modular, and efficient FSM design. From Example 1, I adopt one-hot state encoding to enhance timing and simplify combinational next-state logic. From Example 2, I adopt the clean separation of concerns: separate always blocks for state register, data shifting with bit counter, and output logic. I keep the synchronous reset active high.
+
+I will reduce unnecessary default assignments to minimize logic and optimize flip-flop enable signals for power efficiency. The shift register will be updated only in the RECEIVE state, with a simple right shift inserting the new bit at MSB to receive LSB first. The bit counter increments only when shifting. The done signal asserts for one clock cycle in the STOP_CHECK state only if the stop bit is correct, accompanied by a registered output byte.
+
+To break the critical path through the stop bit input, I add a register stage to sample the input bit before stop bit checking, slightly improving timing. WAIT_STOP state waits for idle (stop bit 1) before returning to IDLE.
+
+Overall, the design is a clean, modular FSM with one-hot encoding for better timing, clear data shift and counter logic, enable signals to reduce switching, and registered input sampling to improve timing on the stop bit path. This fusion balances clarity, performance, power, and area.

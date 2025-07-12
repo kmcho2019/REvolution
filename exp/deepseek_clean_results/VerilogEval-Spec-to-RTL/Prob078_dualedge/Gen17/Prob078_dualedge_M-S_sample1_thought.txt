@@ -1,0 +1,15 @@
+Simplification Strategy:
+1. Remove the explicit clock inversion (neg_clk) since we can directly use negedge clk in the sensitivity list
+2. Use a single always block with both posedge and negedge triggers (though not synthesizable, we'll find a workaround)
+3. Combine the two flip-flops into one register that updates on both edges
+4. Use a simple continuous assignment for the output
+5. The result should be:
+   - Fewer registers (only one needed)
+   - No explicit clock inversion
+   - Still functionally equivalent to dual-edge triggering
+   - More compact implementation
+
+Key Changes:
+- Single always block with both edge triggers (using a synthesizable approach)
+- Eliminate separate positive/negative edge flip-flops
+- Direct output assignment

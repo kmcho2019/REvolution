@@ -1,0 +1,18 @@
+module TopModule(
+    input clk,
+    input a,
+    output reg q
+);
+
+reg prev_a;
+
+always @ (posedge clk) begin
+    prev_a <= a;
+    if (a && prev_a) begin
+        q <= 0;
+    end else if (!a) begin
+        q <= 1;
+    end
+end
+
+endmodule

@@ -1,0 +1,15 @@
+To optimize PPA while preserving the same functionality, I will keep the binary-encoded FSM for minimal area and power but improve timing and power by gating the bit counter and shift register updates only when needed (i.e., in RECEIVE state). This reduces unnecessary toggling and switching activity.
+
+The shift register will only shift in data bits during RECEIVE state; otherwise, it holds its value, minimizing activity and improving power.
+
+Similarly, the bit counter increments only in RECEIVE; otherwise resets to zero.
+
+The done signal remains asserted for one cycle in the STOP state only upon a valid stop bit.
+
+I will also re-arrange the shift register so it shifts in LSB first correctly (the same way as before, shifting right with MSB loaded with 'in'), ensuring matching of serial LSB-first input.
+
+This gating reduces toggle rate in IDLE, STOP, and ERROR_WAIT states, improving power and potentially timing by reducing data path activity.
+
+The FSM next state logic remains combinational but simpler with clear state transitions.
+
+Overall, this fine-tuning balances area, power, and performance without changing the FSM encoding or interface.

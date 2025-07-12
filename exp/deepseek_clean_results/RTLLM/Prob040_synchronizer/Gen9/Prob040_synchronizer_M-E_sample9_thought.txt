@@ -1,0 +1,13 @@
+Novel Handshake Synchronizer Architecture:
+1. Instead of direct enable synchronization, implement a request/acknowledge protocol between clock domains
+2. When data_en goes high in clk_a domain, generate a pulse (req) to clk_b domain
+3. clk_b domain responds with an acknowledge (ack) after capturing data
+4. Data is only updated when both request and acknowledge are active
+5. This provides better metastability protection and clear handshake signaling
+6. The protocol ensures data is stable during transfer and prevents glitches
+
+Key Advantages:
+- More robust synchronization with explicit handshaking
+- Clear separation of control and data paths
+- Better metastability protection through pulse synchronization
+- Maintains all original requirements while adding reliability

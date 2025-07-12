@@ -1,0 +1,14 @@
+To correctly implement the 32-bit Galois LFSR with taps at positions 32, 22, 2, and 1:
+1. The LFSR shifts right on each clock cycle
+2. The feedback comes from the LSB (q[0])
+3. Taps are implemented by XORing specific bits with q[0]:
+   - Bit 32 (q[31]) = q[31] ^ q[0]
+   - Bit 22 (q[21]) = q[21] ^ q[0]
+   - Bit 2 (q[1]) = q[1] ^ q[0]
+   - Bit 1 (q[0]) remains as q[0] (no self-XOR)
+4. All non-tapped bits simply shift right
+5. Reset initializes to 32'h1 synchronously
+6. The correct shifting operation should:
+   - Keep all bits except taps shifting normally
+   - Apply XOR to tap positions as specified
+   - The new MSB comes from q[31] ^ q[0]

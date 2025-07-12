@@ -1,0 +1,16 @@
+module TopModule(
+    input clk,
+    input j,
+    input k,
+    output reg Q
+);
+
+wire Q_next;
+
+assign Q_next = (j & ~Q) | (~k & Q);
+
+always @(posedge clk) begin
+    Q <= Q_next;
+end
+
+endmodule

@@ -1,0 +1,11 @@
+To optimize the existing design for better power and timing without breaking the requirement for asynchronous reset, I will:
+
+- Split the asynchronous reset and clock domains cleanly to reduce any unnecessary toggling.
+- Use a generate loop for explicit per-bit DFFs rather than a vector assignment. This might help synthesis tools infer flip-flops with async reset more efficiently.
+- Add synthesis attributes/pragmas to help tools recognize asynchronous reset, possibly improving timing and power.
+- Retain non-blocking assignments for sequential logic clarity and correctness.
+- Keep comments for maintainability.
+- Although the current parameterized module is compact, explicit per-bit DFFs with attributes may yield better area and power results on some synthesis flows by better matching technology cells.
+- This approach preserves modularity and clarity but improves PPA by promoting better inference of async resets per bit.
+
+The fundamental behavior and interface remain unchanged.

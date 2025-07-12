@@ -1,0 +1,24 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Register the read output to break the combinational path and improve timing closure
+   - This will eliminate the negative slack by adding a pipeline stage
+
+2. Power Optimization:
+   - Maintain previous read value when read_en=0 instead of forcing zeros
+   - This reduces unnecessary switching activity on the output
+
+3. Area Optimization:
+   - Remove the initial block since initialization isn't strictly required
+   - Use explicit 3-bit addresses (for DEPTH=8) instead of $clog2
+   - This saves some decoding logic
+
+4. Read-During-Write Behavior:
+   - Make behavior explicit by adding bypass logic for same-address conflicts
+   - This improves reliability without significant PPA impact
+
+Key Changes:
+- Added registered read output
+- Modified read enable behavior
+- Simplified address handling
+- Added write-through bypass
+- Removed initialization

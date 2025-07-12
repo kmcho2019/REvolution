@@ -1,0 +1,15 @@
+To fix the clock division by an odd number, both counters should count from 0 to NUM_DIV-1 and toggle their respective clk_div signals exactly once per cycle at the same relative count value: the half count (floor(NUM_DIV/2)).
+
+Specifically:
+- On the positive edge of clk, cnt1 increments and when it reaches HALF_COUNT, clk_div1 toggles. cnt1 resets after NUM_DIV-1.
+- On the negative edge of clk, cnt2 increments similarly and toggles clk_div2 also at HALF_COUNT, then resets after NUM_DIV-1.
+
+This symmetrical toggling ensures that clk_div1 and clk_div2 pulses are staggered and combined to generate a nearly 50% duty cycle divided clock signal when OR'ed together.
+
+The counters reset after counting up to NUM_DIV-1 to keep the full period consistent.
+
+The output clk_div is assigned as the OR of clk_div1 and clk_div2, combining positive and negative edge toggles.
+
+This design matches the requirement to divide the input frequency by an odd number with good duty cycle, and resolves the prior mismatches and timing inconsistencies.
+
+Reset asynchronously initializes all counters and outputs to zero.

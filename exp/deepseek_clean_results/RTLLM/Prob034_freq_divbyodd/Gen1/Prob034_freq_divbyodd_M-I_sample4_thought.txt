@@ -1,0 +1,20 @@
+To improve the odd frequency divider, I'll implement these key changes:
+
+1. Correct Duty Cycle Generation:
+   - For odd division (N), the high/low periods should be (N+1)/2 and (N-1)/2 cycles respectively
+   - Use separate thresholds for rising and falling edges to achieve 50% duty cycle
+
+2. Simplified Counter Logic:
+   - Single counter running at double rate (both edges)
+   - Eliminate the need for two separate counters and clock signals
+   - Reduce logic complexity and improve timing
+
+3. Edge-Aligned Toggle:
+   - Toggle output when counter reaches (N-1)/2 and (N-1)
+   - This ensures proper phase alignment and duty cycle
+
+4. Reset Synchronization:
+   - Clear counter and output on reset
+   - Ensure clean startup behavior
+
+The improved version maintains the same functionality but with better timing and area characteristics.

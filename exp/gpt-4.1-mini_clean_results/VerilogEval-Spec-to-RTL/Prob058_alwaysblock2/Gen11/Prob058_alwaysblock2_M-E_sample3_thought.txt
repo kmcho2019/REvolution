@@ -1,0 +1,7 @@
+To provide a distinctly different architectural approach for the same functionality, I will implement the XOR operation with three methods that share no intermediate signals to avoid data dependencies.
+
+1. The assign statement will implement the direct XOR output combinationally.
+2. The combinational always block will compute XOR from inputs independently and store the result in a reg output.
+3. The clocked always block will implement a two-stage pipeline: first stage is a combinational XOR result stored in an intermediate register, and second stage registers this intermediate result at the clock's positive edge to produce the final delayed output.
+
+This design introduces a pipeline register in the sequential path, making the delayed output depend on XOR computed in the previous clock cycle. It demonstrates a pipelined sequential design for a single-bit operation, contrasting from the original example’s immediate combinational to sequential data flow. This also avoids sharing wires or regs between the three outputs, emphasizing independent logic paths.

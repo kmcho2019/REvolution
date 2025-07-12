@@ -1,0 +1,15 @@
+To optimize the 4-bit comparator for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **Hierarchical Comparison**: Instead of full subtraction, compare bits from MSB to LSB. This reduces logic depth and area by terminating early when inequality is found.
+
+2. **Efficient Logic Implementation**:
+   - Use bitwise equality comparison (XNOR) for A_equal
+   - Implement greater/less comparison using priority encoding from MSB
+   - Remove the subtraction operation to save area and power
+
+3. **Output Logic Optimization**:
+   - Generate A_equal using a 4-input AND of XNOR gates
+   - Generate A_greater and A_less using cascaded comparison logic
+   - Maintain mutual exclusivity with minimal additional logic
+
+This approach reduces power by eliminating unnecessary arithmetic operations and improves timing by reducing logic depth from 4 bits to a maximum of 4 levels (worst case).

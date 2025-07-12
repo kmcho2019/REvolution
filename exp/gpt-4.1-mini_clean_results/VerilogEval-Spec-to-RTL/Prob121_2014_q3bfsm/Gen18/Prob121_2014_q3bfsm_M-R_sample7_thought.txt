@@ -1,0 +1,5 @@
+Refactor the FSM to use one always block for both next state and output logic with a combined state machine implementation, implementing output `z` as a registered (sequential) output rather than purely combinational. This makes the output synchronous to the clock which can help with timing closure and reduces glitches on `z`. Also, use separate combinational logic for next state, but declare output logic within the clocked block to register `z`.
+
+Instead of separate always blocks for next state and output, we implement the output update synchronous with the state updates. The next state logic is combinational using a function or a case expression within an assign statement.
+
+This structure offers a slightly different style: a combinational next state function with registered output, ensuring stable outputs and edge-aligned transitions, while keeping the FSM modular and readable.

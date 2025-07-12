@@ -1,0 +1,6 @@
+I will implement the 64-bit subtractor using a split approach: divide the 64-bit inputs into four 16-bit chunks and perform subtraction with borrow propagation between chunks. Each 16-bit chunk subtraction will be handled with a small dedicated subtractor block that outputs the difference and borrow out. This hierarchical structure can help in better timing optimization by localizing carry propagation and potentially enabling easier pipelining or parallelism.
+
+For overflow detection, I will use the final 64-bit result and the sign bits of inputs and result as per the given condition:
+- Overflow occurs if sign_A != sign_B and sign_result != sign_A
+
+The module is fully combinational and cleanly structured, promoting modular design and clarity. This chunked approach provides an alternative to a single large carry-lookahead adder by splitting the complexity into smaller units with explicit borrow chaining, which may be beneficial for certain synthesis or physical design flows.

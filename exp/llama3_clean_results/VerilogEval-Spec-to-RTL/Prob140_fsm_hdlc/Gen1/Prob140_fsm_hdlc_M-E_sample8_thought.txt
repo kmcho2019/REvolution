@@ -1,0 +1,12 @@
+To solve this problem, we can design a Moore-type finite state machine (FSM) with a novel architectural approach. Instead of using a traditional state machine with multiple states, we can use a single counter to track the number of consecutive 1s and a set of flags to track the detection of specific patterns.
+
+The key idea is to use a 3-bit counter to count the number of consecutive 1s. When the counter reaches 5, we assert the 'disc' signal to indicate that a bit needs to be discarded. When the counter reaches 6 and the next bit is 0, we assert the 'flag' signal to indicate the beginning or end of a frame. If the counter reaches 7 or more, we assert the 'err' signal to indicate an error.
+
+We can also use a set of flags to track the detection of specific patterns. For example, we can use a flag to indicate whether the previous bit was 1 or 0. This allows us to detect the sequence "0111110" and assert the 'disc' signal accordingly.
+
+The outputs will be:
+- disc: Asserted when a bit needs to be discarded (after 5 consecutive 1s).
+- flag: Asserted when a frame boundary is detected (6 consecutive 1s followed by a 0).
+- err: Asserted when an error occurs (7 or more consecutive 1s).
+
+The transitions between states will be based on the current counter value and the input bit. When the FSM detects a pattern, it will assert the corresponding output signal.

@@ -1,0 +1,9 @@
+To optimize the design for better power, performance, and area, implement an explicit Moore FSM with clearly named states representing the count of consecutive ones from zero to seven or error. This replaces the saturating counter with state encoding, which can reduce logic complexity and improve timing by minimizing arithmetic operations.
+
+Add an enable signal so the state only updates when the input changes the count (i.e., on input=1 or after input=0 resets to zero state). This reduces unnecessary toggling and dynamic power.
+
+Also, assert outputs only in the states corresponding to disc, flag, or err conditions, ensuring outputs are registered and only change when states change, reducing output switching.
+
+Use a one-hot or binary-encoded FSM for clarity; here, a 4-bit binary encoding covers states from zero up to error (7 or more ones). The reset state is zero (representing previous input zero).
+
+This explicit FSM style improves PPA by reducing combinational arithmetic, registering outputs synchronously with the FSM states, and minimizing toggling with an enable signal.

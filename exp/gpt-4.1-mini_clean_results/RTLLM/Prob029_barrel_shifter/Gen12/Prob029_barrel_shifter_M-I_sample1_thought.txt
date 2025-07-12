@@ -1,0 +1,22 @@
+The given design correctly implements an 8-bit barrel shifter using mux2X1 modules for each bit in three stages corresponding to shifting by 4, 2, and 1 bits.
+
+To improve PPA (power, performance, and area) while satisfying the requirement to use mux2X1 modules:
+- Remove redundant mux2X1 instantiations by leveraging bitwise conditional assignments.
+- However, since the problem explicitly requires the use of mux2X1 modules for each bit at each stage, full removal is not possible.
+- The original code is already clean and well-structured with generate loops.
+- To optimize, we can:
+  * Make the mux2X1 a `function` inside the barrel_shifter to reduce module overhead (this depends on tool support).
+  * Use continuous assignments with conditional operators for mux functionality if allowed.
+  * Use localparam for shift amounts for clarity (already done).
+  * Add instance names including indices and stages to aid in debugging and synthesis.
+  * Avoid recomputing `(i + shift) % 8` multiple times by defining a function for indexing.
+  
+Given the requirement of using mux2X1 modules explicitly, the best achievable improvements are clarity and minor cleanup.
+
+Therefore, the improvements:
+- Add a function to calculate rotated index modulo 8 to clarify the indexing.
+- Provide explicit instance names including stage and bit index.
+- Keep the original module mux2X1.
+- Add comments clarifying the rotation logic.
+
+This approach maintains modularity, readability, and synthesis friendliness with a slight increase in clarity and naming conventions.

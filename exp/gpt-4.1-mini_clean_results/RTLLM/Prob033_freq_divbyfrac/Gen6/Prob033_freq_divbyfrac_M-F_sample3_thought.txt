@@ -1,0 +1,18 @@
+The main issue is the timing mismatch between clk_intA (updated at posedge clk) and clk_intB_phase_shift (updated at negedge clk). Simply sampling clk_intB at negedge clk does not guarantee a clean half-cycle phase shift, especially since clk_intB changes only at posedge clk, which can cause clk_intB_phase_shift to have glitches or incorrect overlap with clk_intA.
+
+To fix this:
+- Use a single synchronous counter incremented at posedge clk.
+- Generate clk_intA and clk_intB as combinational signals directly from the current counter value, eliminating register delays in these signals.
+- Generate clk_intB_phase_shift by registering clk_intB at negedge clk, providing a true half-cycle delayed version of clk_intB.
+- To ensure no glitches, both clk_intA and clk_intB_phase_shift are stable signals clocked from the same clock edges but phase-shifted by half clock, and their OR will provide a smooth output.
+
+The key improvement is to make clk_intA and clk_intB purely combinational signals driven directly from the counter value, preventing any synchronization delay mismatch and ensuring that clk_intB_phase_shift is a clean half-cycle delayed copy of clk_intB.
+
+Also:
+- Reset logic remains asynchronous active-low.
+- Counter resets to zero.
+- Output clk_div is the OR of combinational clk_intA and half-cycle delayed clk_intB_phase_shift.
+
+This approach guarantees proper phase alignment and duty cycle, eliminating glitches caused by mismatched registering of clk_intA and clk_intB.
+
+Thus, the design uses one posedge clock domain counter, combinational pulse generation, and a single negedge clock flip-flop to realize a stable fractional divide-by-3.5 clock.

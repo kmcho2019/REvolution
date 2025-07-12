@@ -1,0 +1,23 @@
+Simplified 4-bit Pipelined Multiplier Design:
+
+Key Simplifications:
+1. **Eliminate Redundant Registers**: Instead of storing all partial products separately, accumulate them progressively
+2. **Single Pipeline Stage**: Use just one intermediate register for accumulation
+3. **Direct Calculation**: Compute partial products and accumulate in one step per cycle
+4. **Simplified Reset Logic**: Clear all registers with single reset condition
+5. **Reduced Wiring**: Minimize internal signal routing by combining operations
+
+Operation Flow:
+1. First Cycle:
+   - Generate all partial products
+   - Accumulate first two partial products (pp0 + pp1)
+   - Store intermediate sum in pipeline register
+
+2. Second Cycle:
+   - Add remaining partial products (pp2 + pp3)
+   - Combine with previous sum
+   - Output final result
+
+Reset Behavior:
+- All registers clear synchronously on active-low reset
+- Pipeline naturally refills in two cycles after reset

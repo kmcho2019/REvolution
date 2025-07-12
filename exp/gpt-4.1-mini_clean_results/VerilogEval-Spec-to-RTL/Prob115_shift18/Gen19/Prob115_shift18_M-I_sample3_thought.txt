@@ -1,0 +1,21 @@
+To improve PPA (performance, power, area), replace the large parallel shifts by a hierarchical two-stage shift approach that splits the shift into 8-bit and 1-bit shifts controlled by the amount bits. This reduces the number of large wide multiplexers and shift logic.
+
+Specifically, decompose shifting into:
+
+1. Direction-based path: select either left or right shift.
+2. Amount-based path: first shift by 8 bits (if requested), then by 1 bit (if requested).
+
+For left shifts:
+
+- Shift left by 8 bits if amount[0] = 1, else no shift.
+- Then shift left by 1 bit if amount[1] = 0 (direction bit) and amount[0] controls 8-bit shift.
+
+For right shifts:
+
+- Similarly, shift right by 8 bits and then by 1 bit with sign extension, controlled similarly.
+
+This approach uses fewer large multiplexers and splits the logic into smaller, cascaded shifts. It reduces combinational complexity and power by limiting the number of bits switching per stage and avoiding multiple parallel large shifts computed simultaneously.
+
+The design still maintains synchronous load and enable.
+
+This hierarchy eliminates full parallel 4-way multiplexing, improving timing and area while maintaining functionality.

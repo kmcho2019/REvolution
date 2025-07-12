@@ -1,0 +1,16 @@
+To simplify the design while maintaining functionality, I'll make these key changes:
+
+1. State Encoding: Switch from one-hot to binary encoding (2 bits) for the 4 states to reduce area and power.
+
+2. State Logic: Merge the WAIT and STOP states into a single STOP_WAIT state since they share similar functionality (waiting for stop bit).
+
+3. Control Logic: Remove the pipelined done signal since immediate response is acceptable here, reducing latency.
+
+4. Shift Register: Keep the simple shift register but remove clock gating since the power savings may not justify the added complexity for this small design.
+
+5. Counter: Maintain the 3-bit counter but simplify its control logic by combining with state transitions.
+
+The simplified FSM will have:
+- IDLE: Waiting for start bit (0)
+- RECEIVE: Collecting 8 data bits
+- STOP_WAIT: Verifying stop bit (1) or waiting for it

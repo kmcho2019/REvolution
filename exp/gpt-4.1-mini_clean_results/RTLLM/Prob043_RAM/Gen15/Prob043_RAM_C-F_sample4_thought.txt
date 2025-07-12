@@ -1,0 +1,8 @@
+Fuse the best aspects from both examples by:
+1. Using a synchronous reset and write always block triggered on posedge clk and negedge rst_n, ensuring proper asynchronous reset behavior, which may be preferred for some FPGA/ASIC designs and meets the original problem statement.
+2. Initializing all RAM entries to zero on reset using a for-loop to ensure deterministic memory state.
+3. Using minimal addressing width derived from $clog2(DEPTH) to optimize resource usage.
+4. Keeping the read operation combinational with read_en gating to output zero when disabled, allowing simultaneous read and write without read latency.
+5. Carefully defining port widths and directions consistent with the parameterized WIDTH and DEPTH.
+6. Adding clear comments to enhance readability.
+This fusion keeps the asynchronous reset requested, synchronous write, combinational gated read, and deterministic initialization, combining clarity and practical dual-port RAM implementation.

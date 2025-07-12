@@ -1,0 +1,7 @@
+Refactor the design to eliminate the first always block that registers inputs combinationally and instead use direct wire assignments from inputs A and B. The division process remains fully combinational and is implemented with a for-generate construct creating a chain of intermediate remainders and quotient bits.
+
+The refactored code moves away from two always blocks, instead using only continuous assignments and generate loops, simplifying the code and slightly reducing logic and power by removing unnecessary combinational registers a_reg and b_reg.
+
+This approach retains the same bitwise iterative division method, with each iteration comparing the shifted remainder plus next dividend bit against the divisor, updating quotient bits accordingly. It structures the code around wires exclusively and composes outputs from these signals.
+
+This preserves the fully combinational behavior, but the input signals are not "registered" in the combinational sense, as that has minimal benefit in this context, streamlining the design.

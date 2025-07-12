@@ -1,0 +1,7 @@
+The provided Verilog code implements a 32-bit global history shift register with support for rolling back state in response to a pipeline flush caused by a branch misprediction. To refactor this code, we will maintain the same functionality but explore alternative structures.
+
+One potential refactoring involves using a combination of `always` blocks for sequential logic and `assign` statements for combinational logic. We will introduce intermediate signals to hold the next state of `predict_history`, calculated based on the current state and input conditions. This approach can improve readability by separating the combinational logic from the sequential update.
+
+We will define `next_predict_history` using `assign` statements, which will encapsulate the logic for determining the next state of `predict_history` based on the current state and input signals. Then, we will use an `always` block to update `predict_history` with the value of `next_predict_history` on the positive edge of the clock, while also handling the asynchronous reset.
+
+This refactoring aims to maintain the core functionality while potentially enhancing readability and modularity.

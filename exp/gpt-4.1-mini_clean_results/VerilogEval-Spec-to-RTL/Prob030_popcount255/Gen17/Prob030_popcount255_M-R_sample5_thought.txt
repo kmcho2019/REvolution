@@ -1,0 +1,9 @@
+Refactor the recursive popcount_generic module into a purely combinational function-based implementation using Verilog functions for popcount calculation to avoid generate blocks and always blocks. This eliminates multiple module instantiations and leverages simple combinational arithmetic for each recursion step.
+
+Specifically:
+- Implement a recursive Verilog function popcount_func that returns the population count for any input width.
+- Use this function directly inside assign statements to compute partial counts for each 51-bit chunk.
+- Sum the partial counts with a balanced adder tree using assign statements.
+- Remove popcount2 and popcount3 modules as their functionality is embedded in the function.
+
+This approach reduces hierarchical overhead, flattens the design, simplifies the code, and may improve synthesis results by enabling more straightforward logic optimization and better timing due to a flatter logic tree.

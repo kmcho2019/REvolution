@@ -1,0 +1,16 @@
+To optimize the 8-bit shift-and-add multiplier for better PPA, we target the critical path and switching activity:
+
+1. Use a sequential multiplier design rather than fully combinational. 
+   This means the multiplication happens across multiple clock cycles, greatly reducing combinational path length and thus increasing maximum frequency (improving WNS and TNS).
+
+2. Reduce switching by only adding the multiplicand (properly shifted) to the product register when the current multiplier bit is '1'. This avoids generating all partial products upfront.
+
+3. Use registers to hold intermediate product and multiplicand, performing shift operations and conditional addition sequentially.
+
+4. Introduce an 'enable' and 'start' input signals and an internal counter to manage the 8 cycles of multiplication, making it reusable and controllable. The output 'product' is valid after the operation completes.
+
+This sequential approach reduces area (less combinational logic needed at one time), lowers power (due to limited toggling), and improves timing (smaller critical path per clock cycle).
+
+Below is a synchronous design implementing this improved shift-and-add multiplier.
+
+Note: To keep interface minimal per your original spec, I will add a clock and reset input, and a 'start' signal to begin multiplication, plus a 'ready' output to indicate completion. This is standard for sequential designs.

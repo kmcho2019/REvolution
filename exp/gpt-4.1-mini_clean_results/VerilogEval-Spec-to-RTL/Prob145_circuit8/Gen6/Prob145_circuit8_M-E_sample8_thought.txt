@@ -1,0 +1,26 @@
+The waveform suggests that p and q form a 2-bit state register that changes state on clock edges depending on input a.
+
+Observing the behavior:
+- Initially, p and q are unknown.
+- On the first rising clock edge, p is set to 0 (reset).
+- On falling clock edges, q updates to reflect p's value.
+- p seems to sample input 'a' only when q is 1.
+- When q is 0, p remains 0 regardless of a.
+- When q=1, p follows 'a' on the rising edge.
+- On falling edges, q captures p.
+- This creates a sequence: q acts as an enable flag; p is updated only if q=1; q remembers previous p.
+
+Implementing this:
+- Reset p and q to 0 at simulation start.
+- At posedge clock:
+    - If q==1, then p <= a; else p <= 0.
+- At negedge clock:
+    - q <= p.
+    
+This matches the waveform where p goes high only after q=1, and q follows p at falling clock edges, forming a two-step latch enabling p's responsiveness to 'a' only after q is set.
+
+This also explains the persistent states and the delayed response of q to p.
+
+This design uses two non-overlapping clock edges for p and q updating, consistent with the waveform timing.
+
+This new idea effectively decouples when p can be set by 'a' through the state of q.

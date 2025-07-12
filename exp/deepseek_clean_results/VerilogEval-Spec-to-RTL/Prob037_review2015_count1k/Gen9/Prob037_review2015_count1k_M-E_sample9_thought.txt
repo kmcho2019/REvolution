@@ -1,0 +1,13 @@
+Novel Approach: Split Counter with Carry Propagation
+1. Instead of a single 10-bit counter, implement two separate counters:
+   - A 6-bit counter (0-63) for the lower bits
+   - A 4-bit counter (0-15) for the upper bits
+2. The lower counter increments every cycle and generates a carry when it reaches 63
+3. The upper counter increments only when the lower counter wraps around
+4. Combine the outputs to form the final 10-bit count (upper_counter * 64 + lower_counter)
+5. Special case handling when count reaches 999 (15*64 + 63 = 1023) to reset
+6. Benefits:
+   - Potentially better timing due to smaller counters
+   - Clear separation of counting domains
+   - More modular design that could be extended easily
+   - Different architectural approach from standard solutions

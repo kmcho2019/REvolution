@@ -1,0 +1,9 @@
+Refactor the frequency divider by implementing each clock divider as an independent always block with synchronous reset and explicit counting logic without separate combinational next-state logic. Use direct counter increments and toggle outputs inside their respective always blocks, simplifying control flow.
+
+Specifically:
+- Keep CLK_50 toggled directly on each clock edge.
+- For CLK_10 and CLK_1, use separate always blocks with counters that count up to their half periods and toggle the output clocks when counters reach the terminal count, then reset counters.
+- Use synchronous reset in all always blocks for easier synthesis and predictable timing.
+- Avoid combinational always blocks for next-state logic, instead embed logic inside the sequential blocks for better clarity on state transitions.
+- Keep minimal counter widths.
+This approach enhances modularity and readability by isolating each frequency divider’s logic and uses only synchronous resets, facilitating integration in typical synchronous designs.

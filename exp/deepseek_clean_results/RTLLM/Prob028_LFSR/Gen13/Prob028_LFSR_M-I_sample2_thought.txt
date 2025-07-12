@@ -1,0 +1,16 @@
+**Optimized 4-bit LFSR with Improved PPA:**
+
+1. **Register Optimization**: Combine the state register and output register into a single register to reduce flip-flop count and power consumption.
+
+2. **Simplified Feedback**: Maintain the proven x^4 + x^3 + 1 polynomial but implement it more efficiently by directly using the XOR result in the shift operation.
+
+3. **Reset Value Selection**: Initialize to 4'b0001 (as before) which is optimal for both power-on state and sequence generation.
+
+4. **Direct Output Assignment**: Eliminate the combinational always block by directly assigning the register to output, reducing logic levels.
+
+Key Improvements:
+- Reduced register count (4 FFs instead of potential 8)
+- Eliminated unnecessary combinational logic
+- Maintained maximum length sequence (15 states)
+- Lower dynamic power from reduced switching
+- Same functionality with better PPA metrics

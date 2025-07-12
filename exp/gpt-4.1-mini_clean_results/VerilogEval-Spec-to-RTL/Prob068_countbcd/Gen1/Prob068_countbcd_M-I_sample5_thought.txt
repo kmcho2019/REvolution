@@ -1,0 +1,9 @@
+The main issue in the original design is that the enable signals (ena) are generated and consumed within the same clock cycle to increment the next digit, which violates synchronous design principles and causes race conditions. To fix this, I will implement a carry chain approach that computes all digit increments combinationally before updating registers on the clock edge, ensuring correct rollover and enable signaling.
+
+The approach:
+- On every clock edge, if not reset, compute the increment and carry chain for all 4 digits simultaneously.
+- Generate enables for digits 1 (tens), 2 (hundreds), and 3 (thousands) based on whether the previous digit rolled over.
+- Update the registers together with the computed values, ensuring consistent synchronous logic.
+- Reset clears all digits and enables.
+
+This design avoids the enable-use-in-the-same-cycle problem and ensures all logic is synchronous and stable.

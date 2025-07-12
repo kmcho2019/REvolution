@@ -1,0 +1,5 @@
+To refactor the provided Verilog code for the decade counter, we can restructure the logic to utilize a combination of combinational and sequential logic blocks. Instead of using a single `always` block for the entire counter logic, we can separate the reset and counting logic. We'll use an `always` block for the sequential part (update of the counter) and `assign` statements for the combinational part (next state logic and output assignment). This separation can improve readability and maintainability of the code.
+
+We'll introduce a separate signal to hold the next state value, which will be determined based on the current state and the control inputs (reset and count wraparound condition). This next state value will then be used to update the counter register on the positive edge of the clock.
+
+The core idea remains the same: to count from 0 to 9 and then reset to 0, with a synchronous reset to 0 when the reset input is high. The new structure will make the code slightly more modular and potentially easier to analyze and optimize.

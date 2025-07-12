@@ -1,0 +1,13 @@
+To optimize the original design for better power and area without changing functionality, we should reduce redundant computation and unnecessary toggling. The original design calculates both rotate_left and rotate_right every cycle even if only one or no rotation occurs. 
+
+Improvement strategy:
+- Compute only the required rotated version based on ena using a combinational mux for the entire 100-bit vector, rather than separate per-bit ternary operators.
+- Use a single combinational always block or a combination of continuous assignments to select the next state, avoiding replication of mux logic per bit.
+- Add a clock enable signal that activates the register update only when load or ena requests rotation; otherwise, hold the value, which helps reduce switching activity and power.
+- This clock enable gating does not require explicit clock gating (which can be tricky in ASIC or FPGA) but is implemented as a conditional register update inside the sequential block.
+- The design still uses a synchronous load, and the logic prioritizes load over rotation.
+- This approach reduces the number of multiplexers, as the entire 100-bit vector is selected at once, potentially reducing LUT usage and simplifying routing.
+- It also avoids unnecessary simultaneous computation of both rotation directions.
+- Keep the rotate vectors as wires for easy and fast combinational operations.
+
+Overall, these changes streamline the logic and reduce switching, improving power and area while maintaining timing.

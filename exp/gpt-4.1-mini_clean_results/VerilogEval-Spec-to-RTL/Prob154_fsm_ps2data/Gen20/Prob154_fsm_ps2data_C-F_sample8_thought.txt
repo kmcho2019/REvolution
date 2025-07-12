@@ -1,0 +1,12 @@
+Fuse the best elements of both solutions by maintaining the simple 2-bit FSM with clearly defined WAIT_SYNC, BYTE2, and BYTE3 states, and by using a shift-register style approach for out_bytes to consolidate register updates and minimize toggling:
+
+- Use a single 24-bit shift register (out_bytes) that shifts left by 8 bits and loads the new byte in the least significant byte position each cycle a valid byte is accepted.
+- Accept the first byte (with in[3]=1) to initialize out_bytes by loading it into the top byte and zeroing lower bytes, then shift subsequent bytes in at BYTE2 and BYTE3 states.
+- Assert done only for one cycle immediately after the third byte is received (i.e., at BYTE3 state).
+- This reduces multiplexing and partial byte register writes, minimizing toggling and glitch power, improving timing, and reducing area.
+- Synchronous reset sets state and out_bytes to zero.
+- Clear done every cycle except when asserting it for the third byte.
+- Keep combinational next-state logic straightforward.
+- This design leverages the concise FSM and done gating from both examples and replaces partial byte updates with an efficient shift register method to optimize power, timing, and area.
+
+Overall, this fusion simplifies datapath logic, lowers register switching, and enhances maintainability without losing functionality.

@@ -1,0 +1,24 @@
+To improve the given implementation's power and area efficiency while maintaining clarity, avoid explicit decoding of each state with multiple AND gates. Instead, use minimized boolean expressions directly derived from y bits to represent states B, C, E, and F for the next_y1 logic.
+
+By expressing the next_y1 logic in terms of y2, y1, y0, and w without intermediate decoded signals, we reduce the number of gates and switching nodes. This reduces power and area by minimizing unnecessary signals and gate counts, while keeping the critical path minimal.
+
+The final expression derived from the original next_y1 = B | F | ((C | E) & w) is:
+
+- B = (~y2)&(~y1)&y0
+- C = (~y2)&y1&(~y0)
+- E = y2&(~y1)&(~y0)
+- F = y2&(~y1)&y0
+
+So next_y1 = B + F + (C + E)*w
+
+Simplify inside terms:
+
+C + E = (~y2)&y1&(~y0) + y2&(~y1)&(~y0) 
+
+Keep as is, then expand final equation and implement directly with minimal logic.
+
+This reduces overall logic from decoding plus ORs into fewer logic gates and reduces toggling on decoded state signals, improving power and area.
+
+Output Y1 remains next_y1.
+
+This approach keeps timing fast by using simple combinational logic without intermediate wires.

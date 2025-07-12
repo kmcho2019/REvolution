@@ -1,0 +1,8 @@
+To implement a byte receiver FSM for a serial communication protocol with start bit (0), 8 data bits, and stop bit (1), we need to design a state machine with the following states:
+1. IDLE: Wait for start bit (0)
+2. RECEIVE: Shift in 8 data bits (LSB first)
+3. STOP: Verify stop bit (1)
+4. DONE: Signal successful byte reception
+5. ERROR: Wait for stop bit if not found
+
+The FSM transitions between these states based on the input bit and current state. The 'done' output is asserted when a complete byte is successfully received (including valid stop bit). The FSM resets synchronously to IDLE state.

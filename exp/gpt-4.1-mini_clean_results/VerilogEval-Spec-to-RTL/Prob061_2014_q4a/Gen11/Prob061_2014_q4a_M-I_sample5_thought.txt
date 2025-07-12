@@ -1,0 +1,11 @@
+The initial design uses a combinational block to generate Q_next and a sequential block to update Q on the clock edge. This approach is clear and synthesizes well, but it updates Q every clock cycle, potentially causing unnecessary switching when E and L are both zero (holding state).
+
+To improve power (reduce switching activity) and slightly reduce area, I will incorporate a gated load style: only update Q when shifting (E=1) or loading (L=1). Otherwise, Q remains stable and the register does not toggle, reducing dynamic power.
+
+This can be done by conditioning the register update inside the clocked block, so Q only changes when needed.
+
+This approach might slightly increase clock gating complexity if done physically, but from HDL perspective it reduces toggling by not updating the state unnecessarily.
+
+The code is still simple, and timing impact should be minimal as the critical path inside the clock edge is small.
+
+This trades off a small timing benefit for power saving and potentially slightly smaller area by not constantly toggling the register output.

@@ -1,0 +1,19 @@
+To implement the TopModule, we need to follow these steps:
+
+1. Define the internal signals and variables required for the branch predictor, including the global branch history register, the pattern history table (PHT), and the index calculation.
+
+2. Implement the prediction logic, which hashes the PC and global branch history to access the PHT, and generates the predicted branch direction and the updated global branch history.
+
+3. Implement the training logic, which updates the PHT based on the actual branch outcome, and recovers the global branch history if the branch was mispredicted.
+
+4. Handle the cases where training and prediction occur in the same cycle, giving precedence to training.
+
+5. Implement the asynchronous reset logic to reset the module when the areset signal is high.
+
+Here's the high-level design idea:
+
+- The module will have two main parts: one for prediction and one for training.
+- The prediction part will calculate the index, access the PHT, and generate the predicted branch direction and updated global branch history.
+- The training part will update the PHT and recover the global branch history if necessary.
+- The module will handle concurrent training and prediction by giving precedence to training.
+- The module will be reset asynchronously when the areset signal is high.

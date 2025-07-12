@@ -1,0 +1,19 @@
+Here's a novel approach using carry-select adder architecture with early zero detection:
+
+1. **Parallel Computation**:
+   - Compute both addition and subtraction simultaneously using separate paths
+   - Use a mux to select the correct result based on do_sub
+
+2. **Early Zero Detection**:
+   - Implement zero detection in parallel with the arithmetic operations
+   - Compare operands directly for special cases (like a == b when subtracting)
+
+3. **Power Optimization**:
+   - Gate the unused computation path to save power
+   - Use operand isolation for the non-selected operation
+
+4. **Timing Advantage**:
+   - Both operations complete in parallel, making selection just a mux delay
+   - Zero flag can be ready before the final result due to early detection
+
+This approach trades some area for potentially better timing and power characteristics in certain scenarios.

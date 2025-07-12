@@ -1,0 +1,6 @@
+The existing design cleverly concatenates the inputs plus a fixed 4'hF to a 20-bit vector and selects the output nibble by shifting based on c. To optimize power and area while maintaining performance, I propose:
+
+- Replace multiplication (idx * 4) with a direct bit-shift operation for clearer intent and synthesis efficiency.
+- Use a simple case statement to directly select q based on c, limiting the logic only to required comparisons without forming a wide bus and shift operations.
+- Clamp c values >= 5 to output 4'hF explicitly.
+This case-based multiplexer reduces unnecessary wide shifting logic, potentially reducing area and power due to simpler multiplexers, while preserving zero-delay combinational output.

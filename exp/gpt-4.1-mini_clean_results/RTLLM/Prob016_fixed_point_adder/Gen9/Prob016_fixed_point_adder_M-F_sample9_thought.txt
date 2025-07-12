@@ -1,0 +1,11 @@
+To address the feedback, I will improve the fixed_point_adder module by making the inputs and output signed. This allows leveraging Verilog's native signed arithmetic operators directly, simplifying the magnitude and sign extraction steps. Instead of manually converting between two's complement and magnitude and manually selecting addition or subtraction based on sign bits, the code will perform a direct signed addition, which inherently handles sign and magnitude correctly.
+
+However, since the problem requires internal absolute value addition and subtraction logic, I will still compute magnitudes and compare them for correctness, but use signed types to simplify conversions and assignments.
+
+Additionally, to maintain parameterization and synthesis friendliness, the module will declare inputs and outputs as signed, and implement the internal logic using signed operations. The output `c` will be a reg assigned combinationally inside an always_comb block (SystemVerilog), or always @(*) for Verilog-2001, ensuring no latch inference.
+
+I will also ensure all parameters are declared as parameter and should be passed explicitly during instantiation in testbenches.
+
+Overall, this approach aligns better with synthesis tools, reduces combinational complexity, and improves readability and maintainability.
+
+Note: Since the module must strictly follow the problem description, I will keep the magnitude addition and subtraction with sign handling but implement it using signed types and cleaner assignments.

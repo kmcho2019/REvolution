@@ -1,0 +1,25 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace case statement with if-else for potentially better synthesis
+   - Combine combinational and sequential logic into single always block to reduce path delay
+   - Remove intermediate next_Q register to simplify critical path
+
+2. Power Optimization:
+   - Maintain existing low-power structure
+   - Avoid unnecessary logic transitions by keeping the same priority structure
+
+3. Area Optimization:
+   - Simplify to single always block reduces some mux logic
+   - Remove redundant next_Q register saves area
+
+Key Changes:
+1. Single always block with non-blocking assignments
+2. Direct if-else priority structure
+3. Maintain same functional behavior but with potentially better PPA
+4. Keep clear priority: Load > Shift > Hold
+
+Expected Benefits:
+- Improved timing by reducing critical path
+- Slight area reduction by removing next_Q register
+- Maintain same power characteristics
+- Simpler code structure

@@ -1,0 +1,12 @@
+The key improvements needed are:
+1. Proper state tracking to remember the previous water level (not just previous sensor values)
+2. Correct output logic based on the exact sensor patterns and water level definitions
+3. Accurate dfr determination based on whether we're transitioning from a lower level
+4. Proper synchronous reset behavior that initializes all outputs and state correctly
+
+New approach:
+- Use a state register to track current water level (4 possible levels)
+- Implement a state machine with transitions based on sensor inputs
+- Outputs are determined by current state and transition direction
+- dfr is asserted only when moving to a higher level and in states that allow supplemental flow
+- Reset initializes to the lowest level state with all outputs high

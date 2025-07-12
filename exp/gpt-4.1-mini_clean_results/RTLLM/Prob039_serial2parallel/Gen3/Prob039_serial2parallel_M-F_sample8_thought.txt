@@ -1,0 +1,21 @@
+The original code's main logic and shifting method is correct and meets the requirement of placing the first received serial bit at the MSB (bit 7). The feedback indicates that dout_valid is never asserted likely due to timing or assignment issues rather than a fundamental logic error.
+
+To fix this, I will:
+
+1. Keep shift_reg updated on every valid input by shifting in `din_serial` to the MSB side (`{din_serial, shift_reg[7:1]}`), as per spec.
+
+2. Use a 4-bit counter `cnt` that increments on every valid data input. When `cnt` reaches 7 (meaning 8 bits have been received, from 0 to 7), latch the `shift_reg` to `dout_parallel` and assert `dout_valid` for one cycle.
+
+3. Importantly, assign `dout_parallel <= shift_reg` rather than `{din_serial, shift_reg[7:1]}` to avoid double shifting confusion, because `shift_reg` already contains the latest shifted data.
+
+4. Reset `cnt` to zero immediately after outputting the parallel data and asserting `dout_valid`.
+
+5. Ensure `dout_valid` is only asserted for one clock cycle immediately after receiving the 8th bit.
+
+6. Set `dout_valid` to 0 otherwise, including when `din_valid` is low.
+
+By applying these changes, the code will clearly separate counting, shifting, and output logic, and should resolve the simulation timeout issue by making sure `dout_valid` asserts correctly once 8 bits are received.
+
+Additionally, the reset (`rst_n`) asynchronously resets all registers for a clean start.
+
+This approach retains synchronous design on the rising edge of clk with active low reset, meeting the problem specification.

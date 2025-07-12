@@ -1,0 +1,7 @@
+To fix the code, we need to address the issues identified in the feedback. Firstly, the 'shift_ena' signal should be asserted for exactly 4 clock cycles after detecting the pattern '1101', and the 'shift_cnt' should be incremented correctly. We can achieve this by using a counter that increments every clock cycle while 'shift_ena' is asserted, and then deasserts 'shift_ena' when the counter reaches 4. 
+
+Secondly, the state machine should correctly transition from 'SHIFT' to 'COUNT' and assert 'counting' while in the 'COUNT' state. This can be achieved by ensuring that the 'shift_cnt' is correctly checked and the state machine transitions to 'COUNT' only after 'shift_ena' has been asserted for 4 clock cycles.
+
+Lastly, the state machine should correctly transition from 'COUNT' to 'WAIT_ACK' and assert 'done' while in the 'WAIT_ACK' state. This can be achieved by properly handling the 'done_counting' input and ensuring that the state machine transitions to 'WAIT_ACK' only after 'done_counting' is high.
+
+To optimize the code for PPA, we can simplify the state machine's logic and reduce the number of registers used. We can achieve this by removing unnecessary variables and using a more compact state encoding.

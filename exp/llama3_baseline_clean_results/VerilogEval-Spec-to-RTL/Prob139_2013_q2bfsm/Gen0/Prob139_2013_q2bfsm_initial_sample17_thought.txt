@@ -1,0 +1,10 @@
+To implement the described finite state machine (FSM), we can break down the functionality into several states and transitions based on the input conditions. We start with a reset state (A) where the FSM remains as long as the reset input is active. Upon reset de-assertion, we transition to a state where output f is set to 1 for one clock cycle (state B). Then, we enter a state (C) where we monitor input x for the sequence 1, 0, 1 over three consecutive clock cycles. After detecting this sequence, we set output g to 1 and enter a state (D) where we monitor input y. If y becomes 1 within two clock cycles, we stay in this state with g = 1. If y does not become 1 within two cycles, we transition to a state (E) where g is set to 0. We use a counter to keep track of the number of clock cycles in certain states and a sequence detector for the x input sequence.
+
+The states can be defined as follows:
+- A: Reset state
+- B: Set f = 1 for one clock cycle after reset
+- C: Monitor x for sequence 1, 0, 1
+- D: Monitor y while g = 1
+- E: Set g = 0 if y does not become 1 within two cycles
+
+We use a 3-bit sequence detector for x (current bit and the two previous bits) and a 2-bit counter for monitoring y after g is set to 1.

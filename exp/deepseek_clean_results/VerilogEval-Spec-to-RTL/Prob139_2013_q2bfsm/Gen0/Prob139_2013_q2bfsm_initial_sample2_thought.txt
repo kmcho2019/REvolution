@@ -1,0 +1,13 @@
+To implement this FSM, we need to:
+1. Define states (A, B, C, D, E, F) to represent different phases of operation
+2. Implement state transitions based on inputs x and y
+3. Generate outputs f and g according to the state and input conditions
+4. Use synchronous reset to initialize the FSM to state A
+
+State breakdown:
+- A: Initial state (reset), sets f=1 on next cycle
+- B: After f pulse, waits for x=1
+- C: After x=1, waits for x=0
+- D: After x=0, waits for x=1 (completing 1-0-1 sequence)
+- E: After sequence detected, sets g=1 and checks y within 2 cycles
+- F: Final state (either g stays 1 or goes 0 permanently)

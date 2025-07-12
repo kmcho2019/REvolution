@@ -1,0 +1,14 @@
+Novel Lemming State Machine Architecture:
+
+1. **Hierarchical State Encoding**: Use a two-level state encoding with primary states (walking, digging, falling) and secondary direction states (left, right)
+2. **Fall Duration Tracking**: Implement a dedicated fall timer module that automatically resets when not falling
+3. **Event Prioritization**: Use a priority encoder to handle concurrent events according to the specified precedence (fall > dig > bump)
+4. **State Preservation**: Maintain the original walking direction in a separate register during non-walking states
+5. **Output Generation**: Derive outputs from both current state and preserved direction information
+
+Key Innovations:
+- Hierarchical state encoding reduces complexity by separating movement and action states
+- Dedicated fall timer simplifies splatter condition checking
+- Explicit priority encoder ensures correct event handling order
+- Direction preservation register maintains consistency during state transitions
+- Modular design improves maintainability and debug capability

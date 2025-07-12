@@ -1,0 +1,25 @@
+Implement a multi-cycle IEEE-754 single-precision floating-point multiplier using a simple finite state machine (FSM) controlled by a 3-bit counter. The multiplication process is broken down into stages synchronized by the clock:
+
+1. Cycle 0 (counter=0): Extract sign, exponent, and mantissa from inputs 'a' and 'b', detect special cases (zero, infinity, NaN), and compute output sign.
+
+2. Cycle 1 (counter=1): Handle special cases early: if either operand is NaN or if zero * infinity is detected, prepare the result accordingly. For normal or denormal values, prepare adjusted exponents and mantissas (with implicit leading 1 for normals). Start mantissa multiplication.
+
+3. Cycle 2 (counter=2): Perform 24x24-bit mantissa multiplication to produce a 48-bit intermediate product. Compute raw exponent sum adjusted by bias.
+
+4. Cycle 3 (counter=3): Normalize the product: if the product's MSB is set, shift mantissa right by 1 and increment exponent, else keep as is. Extract rounding bits (guard, round, sticky).
+
+5. Cycle 4 (counter=4): Apply IEEE rounding-to-nearest-even logic. Adjust exponent if rounding causes carry out. Detect overflow/underflow.
+
+6. Cycle 5 (counter=5): Assemble the final IEEE-754 result considering special cases and edge conditions.
+
+7. Cycle 6 (counter=6): Output the final result on 'z'.
+
+This pipeline-like multi-cycle design balances combinational complexity and clock frequency, easing timing constraints by spreading computations over multiple cycles.
+
+Registers store intermediate signals between cycles: mantissas, exponents, signs, special case flags, and partial results. The output register is updated only at the final cycle.
+
+This approach enhances timing and area trade-offs compared to a fully combinational single-cycle design, suitable for FPGA or ASIC implementations requiring moderate throughput with reduced critical path delay.
+
+All arithmetic operations and checks are synchronous to the clock, and 'rst' resets the FSM and outputs.
+
+Detailed comments and clear state transitions ensure maintainability and correctness per IEEE-754 spec.

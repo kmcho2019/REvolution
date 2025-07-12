@@ -1,0 +1,23 @@
+Revised fixed-point adder design addressing all requirements:
+
+1. **Parameter Handling**: Properly integrate Q and N parameters throughout the design, ensuring correct fixed-point arithmetic.
+
+2. **Sign Handling**: Implement explicit sign comparison logic to determine when to add/subtract absolute values as per requirements.
+
+3. **Absolute Value Operations**: 
+   - When signs match: add magnitudes and keep common sign
+   - When signs differ: subtract smaller magnitude from larger, set sign accordingly
+
+4. **Precision Maintenance**: 
+   - Properly account for Q fractional bits in all operations
+   - Maintain full N-bit width throughout calculations
+
+5. **Overflow Handling**: 
+   - Detect overflow by comparing result sign with operand signs
+   - Saturate result to maximum/minimum representable value on overflow
+
+6. **Implementation Strategy**:
+   - Use magnitude comparison for subtraction cases
+   - Implement proper sign determination logic
+   - Handle all edge cases (zero, max negative, etc.)
+   - Maintain clean parameterized design

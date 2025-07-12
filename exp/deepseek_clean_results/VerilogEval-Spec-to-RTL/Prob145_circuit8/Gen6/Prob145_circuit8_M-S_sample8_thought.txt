@@ -1,0 +1,11 @@
+After carefully re-examining the waveform, I realize the circuit can be implemented more simply:
+1. p simply follows input 'a' with a one-clock-cycle delay
+2. q follows p with another one-clock-cycle delay (total two cycles from 'a')
+3. Both outputs are synchronous flip-flops triggered by positive clock edges
+4. No need for separate a_prev register since p can directly capture 'a'
+
+Key simplifications:
+- Remove intermediate a_prev register
+- Directly chain p and q flip-flops
+- Initialize outputs to 0 (matches waveform)
+- Still maintains correct timing relationships

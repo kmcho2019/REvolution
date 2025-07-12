@@ -1,0 +1,17 @@
+I will fuse the strengths of both example designs by implementing the shift register as a straightforward 32-bit register updated on the clock edge with asynchronous reset, prioritizing misprediction updates over prediction updates. To optimize power and timing, I will use a clock enable signal (`update_enable`) that triggers register updates only when the new history differs from the current one, reducing unnecessary switching. 
+
+To avoid the potentially costly 32-bit equality comparator on every cycle, I will optimize the update enable condition by checking the update source signals first, and only when an update is signaled, the history changes accordingly, so the enable can be derived simply from `predict_valid | train_mispredicted` since updates always change history in this application (shift in a new bit or load corrected history). This avoids comparing full 32-bit vectors each cycle, reducing critical path delay and area from the comparator.
+
+The shift register update will be done inside the sequential always block to keep the design clean and synthesis-friendly. I will keep the combinational logic minimal—just deciding the next history value based on input priority, and using non-blocking assignments in the sequential block.
+
+This solution balances clarity, power efficiency (via clock gating), minimal combinational logic to reduce critical path, and synthesis friendliness. The asynchronous reset is preserved as required.
+
+Summary of fusion:
+- Priority to misprediction update (flush) over prediction update.
+- Single 32-bit shift register, youngest branch at LSB.
+- Clock enable signal gating updates on valid changes to reduce toggling.
+- Avoid wide equality comparison by deriving update enable from update signals.
+- Minimal combinational logic for next state calculation.
+- Clear separation of combinational and sequential logic.
+
+This approach improves power by gating the clock enable, improves timing by eliminating 32-bit comparators, and keeps area minimal.

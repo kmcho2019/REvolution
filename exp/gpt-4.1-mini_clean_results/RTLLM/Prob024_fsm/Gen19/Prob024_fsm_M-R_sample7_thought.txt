@@ -1,0 +1,17 @@
+I will refactor the FSM by encoding the states as a 3-bit binary state variable instead of one-hot encoding. This will reduce the number of flip-flops and potentially simplify the state register logic.
+
+The states correspond to how many bits of the sequence "10011" have been matched:
+
+S0 = 3'b000: no bits matched (idle)
+S1 = 3'b001: matched '1'
+S2 = 3'b010: matched '10'
+S3 = 3'b011: matched '100'
+S4 = 3'b100: matched '1001'
+
+I'll implement the state transitions using a combinational always block with a case statement on the current state and input. The Mealy output MATCH will be generated combinationally based on current state and input, asserted only when the final input '1' completes the sequence.
+
+This binary-encoded FSM is functionally identical but uses fewer flip-flops and clearer state transition logic. It is also easier to understand and maintain, with explicit state naming and direct case-based transitions.
+
+The reset will asynchronously set the FSM to idle state S0 and clear MATCH synchronously on the clock edge.
+
+This restructuring improves area and clarity while maintaining the Mealy FSM behavior and overlapping pattern detection.

@@ -1,0 +1,19 @@
+Revise the combinational divider to correctly perform the 16-bit dividend by 8-bit divisor division in a single combinational block, while keeping the input latching block as requested.
+
+Improvements:
+- Use only one main always block to implement the division algorithm.
+- Model the division as a classic restoring division algorithm, iterating from the highest dividend bit down to the lowest.
+- At each iteration:
+  - Shift remainder left by 1 and concatenate current dividend bit.
+  - Compare remainder with divisor (8 bits).
+  - If remainder >= divisor:
+    - Subtract divisor from remainder.
+    - Set quotient bit to 1.
+  - Else set quotient bit to 0.
+- Use a wider remainder register (9 bits) to avoid overflow during shifting and subtraction.
+- Produce a 16-bit quotient and 8-bit remainder.
+- Zero-extend remainder to 16 bits on output.
+- Maintain two always blocks as requested: one combinational latch of inputs, one combinational division process.
+- The quotient bits are assigned from highest bit (bit 15) to lowest bit (bit 0), following the natural order of division.
+
+This approach strictly implements the classic combinational restoring division algorithm and matches the requested division behavior, ensuring correct quotient and remainder.

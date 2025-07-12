@@ -1,0 +1,20 @@
+Implement the division precisely as described: starting by extracting the top 8 bits of the dividend (matching divisor width) as initial remainder, compare with divisor to set the quotient bit, then concatenate the remainder with the next dividend bit on the right, and continue stepwise until all 16 bits are processed.
+
+To achieve this:
+- Use two always blocks as requested:
+  1. The first updates internal regs a_reg and b_reg with inputs A and B.
+  2. The second performs the combinational division following the specified algorithm:
+     - Initialize the remainder with the highest 8 bits of a_reg.
+     - For each quotient bit position from MSB (15) down to LSB (0):
+       - Compare remainder with b_reg; if remainder >= b_reg, set quotient bit = 1 and update remainder = remainder - b_reg; else quotient bit = 0.
+       - Concatenate remainder with next dividend bit to the right (i.e., shift remainder left by 1, bring in next dividend bit).
+- After processing all bits, output quotient as result, and output remainder zero-extended to 16 bits as odd.
+- Handle division by zero by setting quotient and remainder to zero.
+- This method strictly follows the problem's division process, differing from classic long division by starting with the top bits and concatenating in the dividend bits one by one after subtraction.
+- This approach matches the specification and should fix test failures.
+
+Maintain synthesizability and clarity, using only blocking assignments in combinational always blocks.
+
+The output remainder is kept as 8-bit internally and zero-extended to 16 bits outside as required.
+
+This approach uses two always blocks as specified, adheres exactly to the problem statement, and avoids the function-based approach that deviated from the problem's custom division procedure.

@@ -1,0 +1,7 @@
+Refactor the design by implementing the FSM using one always_ff block for sequential logic (state, counters, shift register, done) and separate continuous assignments (`assign`) for combinational outputs derived from the state. Use localparam for state encoding instead of typedef enum for broader compatibility with Verilog-2001 tools. 
+
+The done output will be a registered pulse asserted when the stop bit is correctly detected. Keep all registers updated synchronously, but move next state logic fully combinational into a separate always_comb block to isolate state transitions clearly.
+
+Shift the received bits into the shift register LSB-first by shifting left and inserting the input bit at bit 0, which matches the serial protocol's least significant bit first convention better and improves code clarity.
+
+This structure (sequential state and data update block + combinational next_state block + continuous output assignments) improves readability and modularity while maintaining the FSM correctness and synchronous reset behavior.

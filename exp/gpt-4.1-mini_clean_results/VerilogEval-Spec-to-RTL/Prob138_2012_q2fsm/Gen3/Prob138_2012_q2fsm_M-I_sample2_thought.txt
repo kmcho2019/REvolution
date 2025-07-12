@@ -1,0 +1,16 @@
+To optimize the FSM for better performance and potentially reduce power, I will convert the binary state encoding into one-hot encoding. One-hot encoding uses one flip-flop per state, simplifying next-state logic to mostly AND/OR gates rather than decoding binary states, which can improve timing and reduce combinational logic complexity.
+
+Specifically:
+
+- Use one-hot encoding with six bits, one per state.
+- State register will be 6 bits wide, with only one bit set at a time representing the current state.
+- Next-state logic will be encoded as combinational logic that activates only the next state bit.
+- The synchronous reset will clear all bits except the bit corresponding to state A.
+- Output z is 1 when in states E or F (their one-hot bits).
+- Separate always blocks will be maintained for state registers and combinational next-state logic.
+- Use non-blocking assignments in sequential always block, and blocking assignments in combinational block.
+- The next-state logic will be implemented as a combinational always block using if-else statements instead of case statements for potentially simpler synthesis in one-hot FSMs.
+
+This change will likely increase flip-flop count from 3 to 6, but reduce combinational logic complexity, likely improving maximum clock frequency (reducing critical path) and potentially reducing dynamic power due to simpler combinational logic.
+
+Overall, this approach trades some area for improved timing and power efficiency, matching common industrial practices for moderate state count FSMs where timing is critical.

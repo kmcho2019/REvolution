@@ -1,0 +1,9 @@
+To optimize the original 64-bit Johnson counter for better PPA (performance, power, and area), I will leverage the intrinsic property of Johnson counters: they are essentially shift registers with a complemented feedback bit. Instead of explicitly concatenating the entire 64-bit vector on each clock, I can use a shift register style assignment to minimize combinational routing and fanout.
+
+Specifically, I will:
+- Use a generate loop to assign Q[i] from Q[i+1], simplifying logic to mostly flip-flops with minimal combinational gates.
+- Compute the new MSB (Q[63]) directly from the inverted LSB (Q[0]), avoiding large concatenations.
+- This reduces critical path to a single flip-flop delay plus an inverter.
+- This approach can map better to hardware shift-register primitives and reduce switching power and routing congestion.
+
+Functionality remains the same: on reset Q is zero, on each clock edge, Q shifts right by one bit, and MSB = ~LSB.

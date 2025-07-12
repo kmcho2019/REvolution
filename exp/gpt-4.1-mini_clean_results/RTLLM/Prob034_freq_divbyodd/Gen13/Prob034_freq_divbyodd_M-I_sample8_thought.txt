@@ -1,0 +1,11 @@
+To optimize the existing dual-edge odd frequency divider for better performance, power, and area (PPA), I will:
+
+- Retain the dual-edge counter concept to maintain odd division, but synchronize both counters to the positive clock edge. This avoids negative-edge-triggered flip-flops, simplifying timing closure and improving synthesis results.
+- Implement both counters as positive-edge triggered by internally gating the clock for the "negative-edge" counter. This is achievable by sampling clk with a delay or using a derived clock enable signal. However, to avoid complexity, a simpler approach is to combine both counters in one posedge block.
+- Use a single counter running from 0 to NUM_DIV*2 -1 to create a symmetrical waveform with a period equal to the input clock divided by NUM_DIV.
+- Generate the output clock by toggling clk_div at specific counter values that correspond to rising and falling edges spaced evenly, producing a 50% duty cycle approximated waveform.
+- This approach reduces from two counters to one, removing negedge triggered registers, improving timing, reducing area and power.
+- The clk_div output is a registered signal, eliminating glitches from combinational OR of separate signals.
+- Parameter validation remains for odd NUM_DIV.
+- Asynchronous reset resets counter and clk_div.
+- This design balances better timing and glitch reduction with simplicity, removing dual clock domain issues.

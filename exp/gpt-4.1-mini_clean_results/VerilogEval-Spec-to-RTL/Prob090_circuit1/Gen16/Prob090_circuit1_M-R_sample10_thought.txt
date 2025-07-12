@@ -1,0 +1,5 @@
+The original design implements an AND gate using three NOR gates as a structural hierarchy with instantiated modules. To refactor while preserving the core logic (AND function realized via NOR gates), I will remove the separate NorGate module and implement the entire logic directly inside AndGate using continuous assign statements and intermediate signals. 
+
+Specifically, I will use continuous assignments to build the inverted inputs (NOT a and NOT b) via NOR logic (a NOR a = NOT a), then use NOR of those inverted inputs to generate AND. This flattens the hierarchy by removing module instantiations but keeps the universal-gate implementation style with clear intermediate signals.
+
+The TopModule will instantiate this refactored AndGate module, maintaining modularity and clarity but with a more concise and readable structure. This approach preserves the educational universal-gate realization but simplifies the design by using assign statements inside one module rather than sub-module instantiations.

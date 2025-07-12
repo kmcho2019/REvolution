@@ -1,0 +1,15 @@
+To implement the required Moore-type finite state machine, we first need to define the states that the machine will go through. The states will correspond to the number of consecutive 1s received so far. However, to account for the condition that requires the detection of 6 consecutive 1s to signal a flag, we'll need a state to recognize when we've seen 6 ones in a row.
+
+The states can be defined as follows:
+- S0: Initial state or reset state (behaves as if the previous input was 0).
+- S1 to S6: States representing the detection of 1 to 6 consecutive 1s.
+- S_ERR: Error state (7 or more consecutive 1s).
+
+The transition between these states will depend on the current state and the input bit. If the input is 0, we reset to S0. If the input is 1, we move to the next state until we reach S6. When we reach S6 and receive another 1, we go into the error state S_ERR.
+
+For the output signals:
+- disc: Asserted when we move from S5 to S6 (indicating a bit needs to be discarded because we've seen 5 consecutive 1s and are expecting a 0 for proper decoding but received a 1 instead).
+- flag: Asserted when we are in S6 and receive a 0 (indicating the end of a frame).
+- err: Asserted when we are in S_ERR (indicating an error due to 7 or more consecutive 1s).
+
+The FSM will be implemented using a case statement within an always block to define the state transitions and output signals based on the current state and input.

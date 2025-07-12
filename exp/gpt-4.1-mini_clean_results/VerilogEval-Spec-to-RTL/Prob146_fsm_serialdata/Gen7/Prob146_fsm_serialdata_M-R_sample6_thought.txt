@@ -1,0 +1,7 @@
+I will refactor the FSM by separating the state register, the data register, and the done logic into distinct always blocks to improve clarity and modularity. The next state logic will remain combinational, but the output done signal will be generated as a registered pulse derived from state and input conditions, emphasizing clean separation between combinational and sequential logic.
+
+Additionally, I will implement a shift-in mechanism using a case statement inside the receive state to explicitly shift in the LSB first instead of using concatenation, improving readability. The bit counter will be updated in the same always block as the data shift, reducing interdependencies.
+
+The reset will still be synchronous and active high.
+
+This restructuring keeps the FSM behavior intact, keeps done asserted for one clock cycle when the stop bit is detected correctly, and maintains the wait-until-idle recovery mechanism when the stop bit is invalid. It improves code readability and clarity by clearly separating concerns and uses explicit sequential logic blocks instead of mixed assignments.

@@ -1,0 +1,7 @@
+To improve PPA (power, performance, area), I will integrate the start_byte condition directly in the always block to remove the extra wire, which can slightly reduce area and combinational logic depth. I will also use a one-hot style 3-bit state machine with explicit states to minimize logic transitions on the count/state register by toggling only one bit at a time. This approach can reduce power by minimizing switching activity while maintaining clarity.
+
+The done signal will remain a single-cycle pulse after the third byte reception. The synchronous reset remains active-high and synchronous for timing reliability.
+
+By explicitly encoding states as IDLE (waiting), BYTE1 (received first byte), BYTE2 (received second byte), and done after BYTE3 (third byte), the FSM transitions are very clear and enable synthesis tools to optimize the logic better.
+
+Overall, these changes reduce combinational logic and state toggling, potentially improving timing margin and reducing power with minimal impact on area.

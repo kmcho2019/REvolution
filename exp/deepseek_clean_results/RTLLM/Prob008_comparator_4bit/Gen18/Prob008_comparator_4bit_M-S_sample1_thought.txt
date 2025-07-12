@@ -1,0 +1,17 @@
+Simplified Strategy: Direct Bitwise Comparison with Priority Encoding
+
+1. Key Simplifications:
+   - Remove intermediate wire arrays (bit_eq, bit_gt) to reduce area
+   - Use direct bitwise comparison with priority encoding for greater/less detection
+   - Simplify mutual exclusivity by deriving A_less directly from other outputs
+
+2. Architectural Changes:
+   - Single parallel equality check (AND of XNORs)
+   - MSB-first comparison with simple OR reduction for greater detection
+   - Eliminate redundant logic by deriving A_less as !(A_greater OR A_equal)
+
+3. Benefits:
+   - Reduced logic levels (faster critical path)
+   - Fewer intermediate signals (lower area)
+   - Maintains correct functionality and mutual exclusivity
+   - Clearer and more maintainable code

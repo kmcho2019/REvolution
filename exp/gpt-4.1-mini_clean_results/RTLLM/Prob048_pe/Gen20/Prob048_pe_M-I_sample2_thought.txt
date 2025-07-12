@@ -1,0 +1,14 @@
+To optimize the original design for better PPA (performance, power, area), we can add an enable signal that controls when the accumulator updates. This reduces unnecessary toggling and power consumption when no accumulation is needed. Also, switching from a synchronous reset to an asynchronous reset reduces the critical path on the clock. 
+
+Additionally, to improve timing, partition the 64-bit adder by registering the product first before accumulation, thereby pipelining the multiplication and addition. This breaks the long combinational path in one cycle, improving max frequency.
+
+The output remains the lower 32 bits of the 64-bit accumulator to avoid data loss.
+
+Summary of improvements:
+- Add an input enable signal (enable) to gate accumulator updates.
+- Change reset to asynchronous active-high for faster reset response.
+- Pipeline multiplication by registering product before accumulation.
+- Keep accumulator width 64-bit to prevent overflow.
+- Update output as before.
+
+This approach balances complexity with meaningful improvements in PPA without changing the functional specification.

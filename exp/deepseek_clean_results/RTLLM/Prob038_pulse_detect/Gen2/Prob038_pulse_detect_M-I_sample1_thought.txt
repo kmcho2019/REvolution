@@ -1,0 +1,18 @@
+The original solution correctly detects the 010 pattern using a shift register approach, but we can optimize it further for power and area while maintaining performance:
+
+1. Power Optimization:
+   - Add a state flag to only perform comparisons when we're potentially in a pulse sequence (after seeing 01)
+   - This reduces unnecessary comparison operations when data_in is stable at 0 or 1
+
+2. Area Optimization:
+   - Replace the 3-bit shift register with a 2-bit version since we only need to track the last two samples to detect transitions
+   - Use a state bit to remember if we're in the middle of a pulse sequence
+
+3. Performance:
+   - Maintain single-cycle detection capability
+   - Keep the critical path minimal by using simple combinational logic
+
+The improved design will:
+- Use 2-bit shift register instead of 3-bit
+- Only perform pattern matching when we've seen a 0->1 transition
+- Maintain the same functionality with fewer registers

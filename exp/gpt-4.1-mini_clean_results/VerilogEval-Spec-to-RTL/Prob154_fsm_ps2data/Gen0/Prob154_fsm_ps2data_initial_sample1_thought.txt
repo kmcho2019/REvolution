@@ -1,0 +1,23 @@
+Implement a finite state machine with three states:
+- WAIT_SYNC: waiting for a byte with in[3]=1, discarding bytes until found.
+- BYTE2: store first byte, wait for second byte.
+- BYTE3: store second byte, wait for third byte.
+
+On the clock edge:
+- If reset is asserted, return to WAIT_SYNC, clear output and done.
+- Otherwise:
+  - In WAIT_SYNC: if in[3] == 1, move to BYTE2, store first byte.
+  - In BYTE2: store second byte, move to BYTE3.
+  - In BYTE3: store third byte, assert done next cycle, output the three bytes concatenated as out_bytes.
+    After done, return to WAIT_SYNC.
+
+Done signal should be asserted exactly one cycle after receiving third byte.
+
+The 24-bit output out_bytes is arranged so that:
+- out_bytes[23:16] = first byte
+- out_bytes[15:8]  = second byte
+- out_bytes[7:0]   = third byte
+
+Implement synchronous reset and data registers, done signal asserted in the cycle after third byte reception.
+
+Ensure that out_bytes and done are updated on the positive edge of clk.

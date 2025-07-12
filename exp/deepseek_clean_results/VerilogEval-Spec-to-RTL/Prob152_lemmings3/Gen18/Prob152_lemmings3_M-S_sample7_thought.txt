@@ -1,0 +1,11 @@
+To simplify the Lemming state machine:
+1. Reduce to just 2 states (WALK and FALL) since digging can be handled as a walking substate
+2. Track direction with a single bit (0=left, 1=right)
+3. Implement priority handling directly in state transitions:
+   - Fall has highest priority (ground=0)
+   - Dig is only active when walking on ground (ground=1)
+   - Bumps only affect direction when walking on ground and not digging
+4. Make outputs purely combinatorial based on current state and direction
+5. Eliminate the dig_active register by incorporating dig state into WALK state transitions
+6. Use asynchronous reset for initialization to walk left
+7. Simplify output logic by directly using state and direction

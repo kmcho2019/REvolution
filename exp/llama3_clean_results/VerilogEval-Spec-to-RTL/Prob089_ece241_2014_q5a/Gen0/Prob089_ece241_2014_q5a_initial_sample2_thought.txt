@@ -1,0 +1,21 @@
+To implement a serial 2's complementer Moore state machine, we first need to understand the 2's complement process. The 2's complement of a binary number is obtained by flipping all bits of the original number and then adding 1. 
+
+We can implement this process in a state machine by keeping track of the bits we've seen so far. We'll have two states: an idle state and a calculate state. 
+
+When the reset is released, we'll move to the calculate state and start accepting input bits. For each input bit, we'll flip the bit and add it to our internal representation of the number. 
+
+However, because we're working with a Moore state machine, our output (Z) is determined solely by the current state and not by the input. 
+
+This means that we need to calculate the 2's complement as we receive the input bits and then output the bits in the correct order. 
+
+To simplify this process, we can think of the 2's complement calculation as a two-step process: flipping all the bits (which we can do as we receive them), and then adding 1 to the result.
+
+We can keep track of whether we need to add 1 to the result using an internal signal. 
+
+Once we've received all the input bits, we can output the 2's complement in the correct order, which will be the same order we received the original bits because we're working with a serial input.
+
+However, given that the machine should accept input numbers of arbitrary length and stop when reset is asserted, we need to rethink our approach slightly. 
+
+We'll use a register to accumulate the input bits and flip them as we go. When we need to add 1 to get the 2's complement, we'll do so by setting the least significant bit of our register to 1 if we encounter a '1' in the input stream, effectively carrying a '1' through our calculations.
+
+Our output will simply be the bit we calculate for each position, based on the input we've received so far and whether we've flipped bits or need to add 1.

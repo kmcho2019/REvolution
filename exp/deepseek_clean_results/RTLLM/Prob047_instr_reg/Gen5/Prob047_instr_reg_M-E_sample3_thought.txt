@@ -1,0 +1,13 @@
+I propose a dual-stage pipelined architecture with shadow registers that:
+1. Uses a two-stage pipeline to improve timing (helps with the negative slack)
+2. Implements shadow registers that only update when needed, reducing power consumption
+3. Separates the control and data paths for better synthesis optimization
+4. Uses a priority encoder for the fetch signal to simplify control logic
+5. Implements clock gating for the shadow registers based on fetch activity
+
+Key innovations:
+- Pipeline stage 1: Capture and decode fetch signals
+- Pipeline stage 2: Update registers and generate outputs
+- Shadow registers remain unchanged when not being written, saving power
+- Clock gating controlled by fetch signal changes
+- Priority encoding simplifies the control logic

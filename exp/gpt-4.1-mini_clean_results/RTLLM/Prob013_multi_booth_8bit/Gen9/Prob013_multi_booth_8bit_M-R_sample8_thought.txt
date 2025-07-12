@@ -1,0 +1,12 @@
+Refactor the multiplier to use a two-process FSM structure separating state transitions and datapath operations for clarity and modularity. 
+
+Key changes:
+1. Use a separate synchronous process for state machine transitions and counter management.
+2. Use a combinational process to determine the partial addition operation for each cycle.
+3. Implement radix-2 Booth multiplication logic as per the original spec, but with clearer datapath and control separation.
+4. Initialize multiplier, multiplicand, and product at reset in one always block, then update product and multiplicand shifts in the data path process.
+5. Output the final product and ready signal from registered variables updated on state transitions.
+6. Avoid mixing datapath and control logic in a single always block to improve readability and maintainability.
+7. Keep the ready signal asserted until the next reset, as per the original requirement.
+
+This separation provides cleaner synthesis mapping and easier verification/debugging while preserving the original behavior.

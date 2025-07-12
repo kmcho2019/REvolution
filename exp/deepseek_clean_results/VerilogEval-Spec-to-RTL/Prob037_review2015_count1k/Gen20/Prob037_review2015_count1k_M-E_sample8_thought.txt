@@ -1,0 +1,9 @@
+Novel Architectural Idea:
+Instead of using a standard binary counter with a comparator for rollover, we can implement a linear-feedback shift register (LFSR) style counter that naturally wraps around at 999. This approach:
+1. Uses a 10-bit register like before but with custom increment logic
+2. Implements a "pseudo-random" sequence that cycles through 0-999
+3. The increment logic will be designed to ensure the sequence counts sequentially from 0 to 999
+4. Reset forces the counter to 0
+5. The design eliminates the need for a separate comparator for terminal count detection
+6. May offer better timing as the rollover is built into the increment logic
+7. Uses a custom increment pattern that guarantees sequential counting

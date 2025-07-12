@@ -1,0 +1,11 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that can track the current water level based on the sensor inputs and adjust the flow rate accordingly. The FSM should have states corresponding to each possible combination of sensor inputs. We will use a Moore machine, where the output depends only on the current state. The state will be determined by the current sensor values and the previous state. When the water level rises, the Supplemental flow valve should be opened if the previous level was lower. We will use a variable to keep track of the previous level.
+
+The FSM will have the following states:
+- Below s[0]: No sensors asserted
+- Between s[0] and s[1]: Only s[0] asserted
+- Between s[1] and s[2]: s[0] and s[1] asserted
+- Above s[2]: s[0], s[1], and s[2] asserted
+
+The output will be determined based on the current state and the previous state.
+
+We will also include an active-high synchronous reset that resets the state machine to the "Below s[0]" state, where all four outputs are asserted.

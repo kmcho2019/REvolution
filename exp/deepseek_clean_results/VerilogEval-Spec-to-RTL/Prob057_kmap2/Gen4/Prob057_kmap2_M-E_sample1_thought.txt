@@ -1,0 +1,15 @@
+1. Let's approach this differently by identifying the largest possible groupings in the Karnaugh map for optimal simplification:
+
+2. Key observations from the K-map:
+   - The four corners (cd=00,ab=00; cd=00,ab=10; cd=10,ab=00; cd=10,ab=10) form a group that can be expressed as ~d & ~b
+   - The entire cd=11 column (except ab=00) forms another group: c & d
+   - The cd=01,ab=00 and cd=01,ab=10 cases can be combined as ~c & d & ~b
+   - The cd=10,ab=01 case stands alone as c & ~d & ~a & b
+
+3. This leads to a much simpler expression:
+   out = (~d & ~b) |       // Corner grouping
+         (c & d) |         // Entire cd=11 column
+         (~c & d & ~b) |   // Combined cd=01 cases
+         (c & ~d & ~a & b) // Single cd=10 case
+
+4. This covers all 1's in the K-map with minimal terms and no overlaps with 0's.

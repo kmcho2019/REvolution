@@ -1,0 +1,15 @@
+To improve the given calendar module for better performance, power, and area (PPA) metrics, the following strategies are applied:
+
+1. **Single Always Block for Counters:** Combine the seconds, minutes, and hours counters into a single always block. This approach simplifies the control logic, reduces duplicated logic for rollover detection, and decreases the combinational path complexity by sequencing increments in a single clock cycle.
+
+2. **Use Enable Signals for Counters:** Instead of checking `Secs==59` multiple times across separate blocks, generate enable signals internally within the combined always block to gate increments for minutes and hours. This reduces logic complexity and switching activity.
+
+3. **Avoid Redundant Comparisons:** By structuring the increments sequentially (seconds increments first, then minutes if seconds roll over, then hours if minutes roll over), redundant comparisons of seconds and minutes at every clock edge are avoided.
+
+4. **Consistent Bit Widths:** Keep `Hours` at 5 bits (0-23), `Mins` and `Secs` at 6 bits (0-59) as requested, avoiding any confusion.
+
+5. **Power Optimization by Minimizing Register Toggles:** By only updating minutes and hours when their respective rollovers occur, toggling on these counters is reduced, saving dynamic power.
+
+6. **Clear Comments and Simple Code:** Maintain code readability and straightforward logic to aid maintainability and help synthesis tools optimize the design.
+
+This combined approach aims to reduce critical path delay (improving timing), limit toggling (reducing power), and simplify logic (saving area).

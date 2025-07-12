@@ -1,0 +1,18 @@
+To fuse the best ideas from both examples, we take the clean modular FSM structure from Example 1 with explicit next state logic and asynchronous reset, which is good for clarity and debug-ability, and combine it with the stylistic improvements from Example 2, specifically the use of continuous assignment for Moore output (thus output is a wire, not a reg) to reduce inferred logic and power.
+
+The next state logic will remain combinational and explicit, which aids synthesis tools in optimization and is more readable. The output is driven purely by the state via a continuous assignment, ensuring minimal registers and logic for output.
+
+This fusion yields:
+- Clear separation of next state logic and state register with async reset
+- Moore output driven by continuous assignment (wire)
+- Single-bit state encoding, minimal combinational logic
+- Asynchronous reset to state B as required
+
+This approach is slightly more verbose than Example 2 but improves clarity, maintainability, and may help synthesis optimizations while keeping minimal logic and power. It's a better balance between clarity, correctness, and optimization potential.
+
+In summary:
+- Use two localparams for states A and B
+- Use reg for state and next_state
+- Combinational always block for next_state logic
+- State register with asynchronous reset
+- Output driven continuously from state (wire out)

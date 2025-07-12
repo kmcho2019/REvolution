@@ -1,0 +1,9 @@
+To implement the specified finite state machine, we can utilize a different architectural approach. Instead of directly implementing the logic gates and flip-flops as separate components, we can utilize a more hierarchical design. The idea involves creating a parameterizable module for the D flip-flop and another for the three-input NOR gate. Then, we can create instances of these modules within our TopModule, connecting them according to the problem's specifications. This approach allows for a more modular design, potentially making it easier to manage complexity and debug the circuit.
+
+For the logic gates (XOR, AND, and OR), we will directly implement their functionalities within the always_comb block, as this keeps the design concise and straightforward. Each gate's second input will be connected to the output of its corresponding flip-flop or the complement of the output, as specified. The outputs of the gates will then be used as inputs to their respective D flip-flops.
+
+The key to this novel approach is the modularization of the design, which not only improves readability but also facilitates the reuse of components in other potential designs. By encapsulating the D flip-flop and the NOR gate logic within separate modules, we can easily modify or replace these components without affecting the rest of the design.
+
+To ensure the D flip-flops are initialized to zero, we can explicitly set their initial values within their respective modules. This guarantees that the finite state machine starts in the correct state, aligning with the problem's requirements.
+
+Overall, this hierarchical and modular design approach provides a clean, efficient, and scalable way to implement the finite state machine as specified.

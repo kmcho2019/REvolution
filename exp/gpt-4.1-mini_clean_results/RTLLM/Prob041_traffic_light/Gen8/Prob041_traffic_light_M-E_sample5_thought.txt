@@ -1,0 +1,7 @@
+I will implement the traffic light controller as a Moore finite state machine with explicit states representing each traffic light color phase. The internal counter counts down from the preset duration for each state, and state transitions occur when the counter reaches zero.
+
+To handle the pedestrian pass_request, I introduce logic that, only during the green state, adjusts the remaining green time to be no more than 10 cycles if the remaining time is currently longer. This is done by comparing the counter value and setting it to 10 if necessary at the clock edge, making the controller responsive to the pass_request asynchronously but safely.
+
+Outputs (red, yellow, green) are purely combinational and directly derived from the current state. The pedestrian light color is paired logically but not implemented separately.
+
+This design uses a simple synchronous reset and state update, avoiding separate enable signals for registers to keep logic simple and clear. The code uses enumerated states for clarity and a single always block for state and timer updating, ensuring clean and readable code with minimal combinational complexity.

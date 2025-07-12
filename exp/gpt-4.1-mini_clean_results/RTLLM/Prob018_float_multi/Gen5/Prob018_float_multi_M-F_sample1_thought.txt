@@ -1,0 +1,22 @@
+To fix the previous code according to the feedback:
+
+1. Use a 3-bit counter as specified, and explicitly encode states using parameters for clarity.
+2. Separate combinational logic (e.g., special case detection, rounding decision) from sequential logic to avoid multiple assignments to the same reg within one clock cycle.
+3. Remove local variable declarations inside sequential blocks; instead, use pipeline registers for intermediate rounded mantissa and exponent.
+4. Perform rounding as a separate combinational step before registering output results.
+5. Avoid multiple assignments to the output `z` in one cycle by registering a single final result after deciding the output value in a combinational block.
+6. Maintain nonblocking assignments consistently.
+7. Handle normalization carefully, accounting for possible mantissa overflow after rounding.
+8. Keep the three-cycle pipeline: 
+   - Cycle 0: extract fields, detect special cases.
+   - Cycle 1: multiply mantissas, add exponents, compute sign.
+   - Cycle 2: normalize product, prepare rounding signals, round mantissa, adjust exponent.
+   - Cycle 3 (or at cycle 2 end): finalize output including special cases and overflow/underflow handling.
+   
+This approach clarifies the datapath, ensures synthesis-friendly style, and correct handling of rounding and special cases.
+
+The code will now have:
+- Explicit states via parameters.
+- Pipeline registers for all intermediate values.
+- Dedicated combinational blocks for rounding calculation.
+- Single output assignment per cycle.

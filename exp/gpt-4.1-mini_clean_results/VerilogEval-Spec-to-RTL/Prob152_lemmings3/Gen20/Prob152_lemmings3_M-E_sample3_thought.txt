@@ -1,0 +1,26 @@
+Use a two-process FSM approach splitting the concerns of direction and mode separately to simplify state tracking and combinational complexity.
+
+Implement a 1-bit direction register (0=left, 1=right) updated only on bumps while walking (not falling or digging).
+
+Implement a 2-bit mode register with three states:
+  - WALK (00)
+  - FALL (01)
+  - DIG (10)
+
+Make mode transitions prioritized as per spec: falling if ground lost, then digging if commanded on ground and walking, otherwise walking.
+
+Use synchronous reset to initialize direction to left and mode to WALK.
+
+Use separate combinational logic to compute next_mode and next_direction with clear priority and no nested conditionals, minimizing logic depth.
+
+Outputs derive from direction and mode:
+
+- walk_left/walk_right asserted only when mode is WALK and digging is not active (mode DIG means digging active)
+- aaah asserted only in FALL mode
+- digging asserted only in DIG mode
+
+This clean separation of direction and mode reduces combinational logic depth by avoiding combined state bits and avoids orthogonal flags outside of mode, improving clarity and potentially timing.
+
+Because bump handling affects only direction when walking, direction updates are simple. Mode handles behavior transitions with priority.
+
+This approach also naturally encodes the priority and mutual exclusivity of modes without complex nested conditions.

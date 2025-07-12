@@ -1,0 +1,12 @@
+The problem involves designing a finite state machine (FSM) with one-hot encoding. To implement the next-state signals Y2 and Y4, we need to analyze the state transitions and derive the logic equations for each signal. 
+
+The one-hot encoding uses 6 bits to represent the states A to F as follows: 
+A = 000001, B = 000010, C = 000100, D = 001000, E = 010000, F = 100000.
+
+From the given state machine, we can see that Y2 (y[1]) is set to 1 in states B and C. 
+Y2 is set when the current state is A and the input w is 1 (A -> B), or when the current state is B and the input w is 0 (B -> C), or when the current state is E and the input w is 0 (E -> C, but this is not possible since E is only reachable when w = 1, so this transition can be ignored), or when the current state is F and the input w is 1 (F -> C).
+
+Similarly, Y4 (y[3]) is set to 1 in state D. 
+Y4 is set when the current state is B and the input w is 1 (B -> D), or when the current state is C and the input w is 1 (C -> D), or when the current state is E and the input w is 1 (E -> D), or when the current state is F and the input w is 1 (F -> D), or when the current state is D and the input w is 1 (D -> A, but this will be ignored since we are calculating the next state).
+
+Using these transitions, we can derive the logic equations for Y2 and Y4.

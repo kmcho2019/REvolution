@@ -1,0 +1,12 @@
+To fix the parameter mismatch causing elaboration failures, the module parameter names should match the testbench or usage expectations. The feedback indicates the testbench uses parameters named DATA_WIDTH and STG_WIDTH, so we rename the module parameters accordingly.
+
+Also, the current output concatenation is hardcoded for 4 stages, which is not generic or scalable. We fix this by building the output concatenation dynamically inside an always block using a loop and intermediate variables, ensuring correct ordering from LSB stage 0 to MSB stage STAGES-1.
+
+This also makes the code robust if the number of pipeline stages changes.
+
+So the fix:
+- Rename module parameters from WIDTH and STAGES to DATA_WIDTH and STG_WIDTH.
+- Use a generate-style loop or procedural concatenation inside the always block to build the result dynamically from sum_pipe.
+- Keep the rest of the logic intact since it is functionally correct.
+
+This will solve the parameter mismatch and improve correctness and scalability.

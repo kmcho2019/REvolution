@@ -1,0 +1,15 @@
+To implement the finite-state machine for the timer, we'll define the states as follows:
+- IDLE: searching for the pattern 1101
+- SHIFT: shifting in 4 more bits after the pattern is detected
+- COUNT: waiting for the counters to finish counting
+- DONE: notifying the user and waiting for acknowledgement
+- RESET: resetting the state machine to search for the next pattern
+
+We'll use a counter to keep track of the number of bits shifted during the SHIFT state. We'll also use a combinational logic to check for the pattern 1101.
+
+When the pattern is detected, we'll transition from IDLE to SHIFT, and assert shift_ena for exactly 4 clock cycles.
+After that, we'll transition to COUNT, and wait until done_counting is high.
+Once the counters finish counting, we'll transition to DONE, and notify the user by asserting the done signal.
+We'll then wait until ack is high before being reset to IDLE.
+
+We'll use a synchronous reset to reset the state machine to IDLE when reset is high.

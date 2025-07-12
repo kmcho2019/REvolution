@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. Leverage one-hot encoding properties to eliminate redundant logic
+2. Directly assign outputs based on current state without intermediate logic
+3. Simplify next-state logic by recognizing mutually exclusive states
+4. Combine related conditions where possible
+5. Remove unnecessary OR operations by observing state transitions
+
+Key Changes:
+- Simplified S_next by recognizing it's just S transitions (from S, S1, S110)
+- Simplified S1_next to only depend on S state
+- Optimized shift_ena to use a range check (B0-B3 are consecutive in encoding)
+- Simplified Count_next and Wait_next by observing they're complementary
+- Direct state bit usage for all outputs

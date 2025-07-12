@@ -1,0 +1,23 @@
+Improvement Strategy:
+1. State Machine Approach: Replace counter with explicit states for better PPA:
+   - Fewer transitions (only relevant state changes)
+   - Simpler comparison logic (direct state checks)
+   - Reduced switching activity
+
+2. Output Optimization:
+   - Only update outputs when conditions are met (reduces power)
+   - Registered outputs maintain timing consistency
+
+3. State Encoding:
+   - Use one-hot encoding for faster state comparisons
+   - 8 states (IDLE + 1-6 ones + ERROR) fits well in one-hot
+
+4. Reset Handling:
+   - Clear all states and outputs on reset
+   - Maintain synchronous behavior
+
+Key Benefits:
+- Faster timing: One-hot comparisons are simpler than counters
+- Lower power: Reduced state transitions and output toggling
+- Smaller area: One-hot encoding is efficient for small state machines
+- Clearer logic: Explicit states make behavior more readable

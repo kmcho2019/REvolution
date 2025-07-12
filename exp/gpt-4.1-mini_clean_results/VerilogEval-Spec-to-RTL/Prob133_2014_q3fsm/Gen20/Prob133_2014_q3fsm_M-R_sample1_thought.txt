@@ -1,0 +1,15 @@
+I will refactor the FSM to use an explicit Moore-style finite state machine with a more modular structure separating state registers, output logic, and next-state logic clearly.
+
+Instead of packed next-state registers, I will use separate always blocks for next state logic and output logic.
+
+The output z will be registered synchronously and depends only on the FSM state and counters, making it a Moore output.
+
+Counters will be updated conditionally inside the clocked always block, removing the combinational "next" variables for counters. This slightly simplifies logic and aids clarity.
+
+The FSM states will be encoded as parameters as before.
+
+This style improves code readability and maintainability while keeping the same functionality, using synchronous reset and positive clock edge triggering.
+
+It also avoids conditional arithmetic in combinational logic by updating counters in the clocked process.
+
+Overall, the functionality and logic remain identical with minimal impact on PPA but cleaner structure.

@@ -1,0 +1,9 @@
+To refactor the given code, we will maintain the core idea of using a finite state machine (FSM) to determine the output signals 'fr2', 'fr1', 'fr0', and 'dfr' based on the input sensor values. However, we will restructure the code to simplify the state machine transitions and output logic.
+
+We will use a different approach to determine the state transitions by directly checking the sensor values instead of using a large case statement. This will make the code more concise and easier to understand.
+
+Additionally, we will introduce a new variable 'prev_state' to keep track of the previous state, which will help in determining when to assert 'dfr' (the Supplemental flow valve). This will be done by comparing the current state with the previous state.
+
+We will also use continuous assignments instead of the always block for the output logic to make the code more readable and efficient.
+
+The reset logic will remain the same, with an active-high synchronous reset that resets the state machine to the state corresponding to the water level being below the lowest sensor.

@@ -1,0 +1,17 @@
+To implement this digital system more efficiently, we'll use a different approach that leverages the observation that the output is 1 only for specific input patterns. Instead of traditional SOP/POS forms, we'll use:
+
+1. Pattern Matching Approach:
+   - For out_sop: Directly match the binary patterns for 2 (0010), 7 (0111), and 15 (1111)
+   - For out_pos: Implement the complement function by matching patterns where output should be 0, then invert the logic
+
+2. Optimized Implementation:
+   - Use bitwise operations to detect specific patterns
+   - For out_sop: Combine the exact pattern matches with OR operations
+   - For out_pos: Combine the pattern matches for 0 outputs with AND operations and invert
+
+3. Key Insight:
+   - The output is 1 only when:
+     * Exactly one bit is set (but not matching the 0 cases)
+     * All bits are set (15)
+     * Specific pattern for 7 (0111)
+   - We can detect these cases more directly

@@ -1,0 +1,14 @@
+The original solution is correct and minimal, but it uses two separate combinational drivers for the same XOR function: an assign statement driving out_assign, and another assign statement driving out_always_comb from out_assign. While synthesis tools optimize this, we can further simplify and unify the combinational logic by implementing out_always_comb inside a single combinational always block. This explicitly demonstrates how to use an always_comb block to implement combinational logic, as required. 
+
+This reduces netlist complexity by having exactly one continuous assign (for out_assign) and exactly one always_comb block (for out_always_comb). The sequential logic remains the same.
+
+Additionally, using an always_comb block for out_always_comb clearly differentiates the three styles of implementation: assign, always_comb, and always_ff. This clarity can help synthesis tools better infer intended structures and possibly improve power or area through better logic grouping.
+
+Hence, the new design is:
+- out_assign driven by assign statement (continuous).
+- out_always_comb driven by an always_comb block with blocking assignment.
+- out_always_ff driven by a clocked always block with non-blocking assignment.
+
+This style should be more explicit and potentially more optimal for some tools without changing functionality or timing.
+
+The timing remains minimal, power slightly improved due to clearer structure, and area is roughly the same.

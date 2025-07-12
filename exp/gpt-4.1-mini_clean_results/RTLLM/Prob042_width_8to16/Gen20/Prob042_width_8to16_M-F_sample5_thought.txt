@@ -1,0 +1,15 @@
+The main issue is mixing next-state signals and registered outputs inside a single clocked always block, causing incorrect timing and functional failure.
+
+To fix this, separate state updates and output updates clearly:
+
+- Use one always block triggered on posedge clk or negedge rst_n for all registered signals (data_lock, flag, valid_out, data_out).
+- Use simple sequential logic inside this always block without separate *_next signals.
+- Keep a flag to indicate if the first byte is stored.
+- When the first valid_in arrives (flag=0), store data_in into data_lock and set flag=1, no output yet.
+- When the second valid_in arrives (flag=1), concatenate {data_lock, data_in}, assign to data_out and assert valid_out=1 in the same clock edge.
+- On the following cycle, valid_out de-asserts to 0, unless another second byte arrives.
+- This ensures valid_out and data_out are valid on the cycle after the second byte arrives.
+- On reset, clear all registers.
+- No separate *_next signals needed; all outputs registered properly inside one always block, ensuring correct timing and simulation.
+
+This fixes the functional simulation issues and meets specification.

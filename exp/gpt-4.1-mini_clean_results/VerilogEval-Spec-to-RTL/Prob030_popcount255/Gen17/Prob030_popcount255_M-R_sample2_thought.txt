@@ -1,0 +1,9 @@
+Refactor the popcount255 module by replacing the recursive summation tree with a simple iterative summation using a `for`-generate loop and continuous assignments only, avoiding parameterized recursive modules. The input is still split into 15 chunks of 17 bits counted by the same `popcount17` module. Then, the partial counts are summed by a single wide adder constructed from a loop that accumulates the sums into an intermediate register wire, producing the final count.
+
+This approach removes recursion and recursion-based module instantiations, simplifying synthesis and improving clarity. The summation is implemented as a combinational reduction using a loop and the '+' operator in an always_comb block or continuous assignments, ensuring all logic is combinational.
+
+Also, simplify the flattening of partial counts by directly accumulating them in a single loop variable rather than flattening/unflattening bits. This makes the code more straightforward and equally efficient.
+
+The output width remains 8 bits, sufficient for counting up to 255 ones.
+
+This refactor trades recursive elegance for straightforward iterative clarity and synthesis friendliness.

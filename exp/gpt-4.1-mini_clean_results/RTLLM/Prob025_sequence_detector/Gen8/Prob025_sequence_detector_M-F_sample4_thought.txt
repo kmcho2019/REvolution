@@ -1,0 +1,7 @@
+The main issue was the mismatch of the reset port name between the module and the testbench: the module uses `reset_n`, but the testbench used `rst_n`. To ensure smooth integration and avoid confusion, I will rename the reset input port in the module to `rst_n` (a common convention). This makes the port name consistent with many testbenches and typical designs. 
+
+Additionally, I'll keep the rest of the FSM logic intact because it correctly detects the sequence "1001" and uses an asynchronous active-low reset as requested. The state encoding, state transitions, and output logic remain the same.
+
+The output `sequence_detected` is a one-clock-cycle pulse when the full sequence is detected, implemented as Mealy output combinationally.
+
+This change addresses the simulation elaboration failure caused by the reset port name mismatch, enabling proper testbench connection and verification.

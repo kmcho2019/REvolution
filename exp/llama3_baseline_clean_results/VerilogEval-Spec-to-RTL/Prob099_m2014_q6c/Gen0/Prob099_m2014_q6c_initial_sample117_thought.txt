@@ -1,0 +1,7 @@
+To implement the next-state logic for Y2 and Y4, we need to consider the transitions from each state to determine when these signals should be asserted. Given the one-hot encoding, we can inspect the state machine diagram to derive the logic equations. 
+
+For Y2 (corresponding to state B), it should be asserted when the current state is A and the input w is 0 (since A transitions to B on w=0), or when the current state is C and the input w is 0 (since C transitions to D on w=0 but D's one-hot encoding does not include y[1], we also consider transitions to B from other states that might assert y[1] in the next state). However, since the encoding is one-hot and specific to each state, we focus on transitions that directly involve state B.
+
+For Y4 (corresponding to state D), it should be asserted when the current state is B and the input w is 1 (since B transitions to D on w=1), or when the current state is C and the input w is 1 (since C transitions to D on w=1), or when the current state is E and the input w is 1 (since E transitions to D on w=1), or when the current state is F and the input w is 1 (since F transitions to D on w=1).
+
+Given the one-hot encoding, we can express these conditions using the bits of y and the input w. The next state Y2 will be 1 when y[0] (state A) and w is 0, or when y[2] (state C) and w is 0. The next state Y4 will be 1 when y[1] (state B) and w is 1, or when y[2] (state C) and w is 1, or when y[4] (state E) and w is 1, or when y[5] (state F) and w is 1.

@@ -1,0 +1,17 @@
+Use a simple Moore FSM with explicit states representing each step in the sequence:
+
+- A: Reset state, outputs f=0, g=0; stay here while resetn=0.
+
+- F_PULSE: On the clock after resetn is 1, assert f=1 for one cycle.
+
+- MONITOR_X_0, MONITOR_X_1, MONITOR_X_2: Track the pattern 1,0,1 on x across three clock cycles step-by-step.
+
+- G_ON_MONITOR_Y: g=1 while monitoring y for up to 2 cycles; if y=1 within these cycles go to G_ON_PERM, else G_OFF_PERM.
+
+- G_ON_PERM: g=1 permanently.
+
+- G_OFF_PERM: g=0 permanently.
+
+This makes pattern detection straightforward as FSM progresses through states for each expected input bit rather than using a pattern_index variable. Timing and outputs align cleanly with state transitions. Reset synchronously moves to A with outputs low.
+
+Outputs depend only on current state. This clear stepwise FSM reduces complexity, minimizes combinational dependencies, and eases verification.

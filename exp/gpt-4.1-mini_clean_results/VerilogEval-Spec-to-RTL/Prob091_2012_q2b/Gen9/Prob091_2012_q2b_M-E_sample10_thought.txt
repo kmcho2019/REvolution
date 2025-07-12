@@ -1,0 +1,16 @@
+I will implement the next-state input logic directly inside the TopModule without using a submodule to reduce module hierarchy and improve readability for this small FSM. The outputs Y1 and Y3 correspond to the inputs of state flip-flops y[1] and y[3].
+
+From the FSM transitions and one-hot state encoding:
+
+- Y1 (input to y[1], state B) is asserted when the current state is A (y[0]) and input w=1.
+- Y3 (input to y[3], state D) is asserted under the following conditions:
+  - From B (y[1]) if w=0
+  - From C (y[2]) if w=0
+  - From E (y[4]) if w=0
+  - From F (y[5]) if w=0
+
+So Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+To make the code more self-contained and clear, I'll define wires for the current states and use descriptive names. This approach avoids extra modules and explicitly shows how the logic relates to the FSM states.
+
+This direct combinational logic matches the transitions perfectly and is optimal for such a small FSM.

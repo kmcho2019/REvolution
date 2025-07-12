@@ -1,0 +1,16 @@
+The superior solution combines the clarity and simplicity of Example 2 with the explicit bitwise shifting of Example 1 to provide clear, synthesis-friendly code that is easy to maintain and optimize.
+
+Example 2's vector concatenation approach is concise and likely synthesizes efficiently, but it obscures the explicit bit-by-bit shift operation, which some synthesis tools may optimize better when expressed clearly. Example 1's for-loop makes the shift explicit, aiding readability on what is happening internally and possibly leading to better optimization if tools can infer the shift register behavior from it.
+
+The fusion approach is to implement the shift operation explicitly with a simple for-loop (like Example 1) for clarity, but use non-blocking assignments consistently (like Example 2) and assign the new MSB as the inverse of Q[0]. We keep the asynchronous active-low reset for immediate initialization.
+
+This approach balances readability, synthesis friendliness, and direct mapping to hardware. It also preserves the straightforward Johnson counter behavior of shifting right and inserting the inverse of the LSB.
+
+Overall, this solution:
+- Uses an explicit for-loop to shift bits right
+- Assigns the new MSB as ~Q[0]
+- Uses non-blocking assignments throughout for sequential logic
+- Has an asynchronous active-low reset
+- Is concise and synthesizable with good performance
+
+This fusion ensures explicit control on shifting for clarity and debuggability while maintaining compactness and synthesis efficiency.

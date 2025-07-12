@@ -1,0 +1,13 @@
+Simplify the FSM by using one 3-bit state register encoding all conditions explicitly: walking left/right, falling left/right, and digging left/right states. This removes the separate digging flag and the split direction/mode registers.
+
+By encoding digging as part of the state, the next state logic and output logic become a single straightforward case statement, reducing combinational complexity.
+
+The FSM states are: WALK_L, WALK_R, FALL_L, FALL_R, DIG_L, DIG_R. Transitions and outputs follow directly from state and inputs with clearly prioritized conditions (fall > dig > bump).
+
+This approach makes next-state logic and output decoding simpler and fully combinational with a single state variable, improving readability and potentially performance, while preserving functionality exactly.
+
+Asynchronous reset sets the FSM to WALK_L.
+
+Outputs are directly derived from the current state, with mutually exclusive outputs based on the one-hot-like encoding.
+
+This avoids separate digging signals and splits, cutting down conditions and logic depth.

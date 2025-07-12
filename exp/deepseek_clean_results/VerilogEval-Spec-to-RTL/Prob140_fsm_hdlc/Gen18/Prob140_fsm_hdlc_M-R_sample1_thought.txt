@@ -1,0 +1,16 @@
+I'll refactor the solution by implementing a Moore FSM with explicit states instead of a counter. This approach:
+1. Uses named states for better readability and potential area optimization
+2. Separates next-state logic and output logic for clarity
+3. Maintains synchronous reset behavior
+4. Uses continuous assignments (assign) for outputs to potentially reduce area
+5. Still ensures outputs are registered for correct timing
+
+The state transitions will be:
+- IDLE: initial state (count=0)
+- S1-S6: tracking 1-6 consecutive 1s
+- ERROR: for 7+ consecutive 1s
+
+Outputs will be:
+- disc: when transitioning from S5 to S0
+- flag: when transitioning from S6 to S0
+- err: when in ERROR state

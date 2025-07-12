@@ -1,0 +1,10 @@
+Instead of using the traditional XOR-based edge detection, we can implement a state machine per bit that tracks transitions. Each bit has 3 states:
+1. STABLE_0 - input was 0 last cycle
+2. STABLE_1 - input was 1 last cycle
+3. EDGE_DETECTED - transition occurred
+
+This approach:
+- Uses more registers (3 states per bit) but provides explicit state tracking
+- Allows for potential future expansion of edge detection types (like rising/falling edge separately)
+- Could be power-optimized by gating clocks for stable bits
+- Makes the design more modular and easier to verify formally

@@ -1,0 +1,8 @@
+To simplify the implementation while maintaining functionality, I'll:
+1. Re-examine the Karnaugh map to find a more optimal grouping of minterms
+2. Exploit don't-care conditions more effectively to minimize the logic expression
+3. Observe that the output is 1 in these cases:
+   - When c=1 and (a=1 or b=0) [covering bottom two rows except ab=01]
+   - When c=0, a=1, and d=0 [top-left corner]
+4. This leads to a simpler expression: out = (c & (a | ~b)) | (~c & a & ~d)
+5. The new expression uses one less operation compared to the previous solution

@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Machine Restructuring: Use a one-hot encoded state machine for potentially better synthesis optimization
+2. Output Logic Separation: Move output assignments to combinational logic for clearer timing paths
+3. Power Optimization: Only update byte registers when in relevant states to reduce unnecessary switching
+4. Reset Handling: Maintain synchronous reset but simplify reset assignments
+5. Done Signal Generation: Generate done purely combinationally based on state
+
+Key Changes:
+- One-hot state encoding (3 bits) instead of binary (2 bits)
+- Separated combinational output logic from sequential state logic
+- Reduced register updates by only storing bytes when needed
+- Simplified state transitions with direct conditions
+- Done signal generated combinationally for immediate response

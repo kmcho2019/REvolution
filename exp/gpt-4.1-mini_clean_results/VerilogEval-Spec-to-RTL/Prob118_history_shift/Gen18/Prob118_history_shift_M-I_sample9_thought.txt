@@ -1,0 +1,7 @@
+To improve PPA, I will simplify the update logic by removing the explicit update_enable signal to minimize combinational logic feeding the register enable path, allowing the synthesis tool to infer better clock gating or clock enable. Instead, I use a direct nested if-else structure that prioritizes misprediction, then prediction, and otherwise holds state. This reduces logic around update_enable and may slightly reduce power and delay.
+
+Also, I will explicitly use a nonblocking update for predict_history and clarify that the output register holds the current history without extra combinational logic.
+
+No changes to functionality are needed, only a cleaner, more synthesizable structure that might help reduce critical path and toggling, improving timing and power marginally.
+
+This approach also makes the code easier to analyze and further optimize by synthesis tools while retaining asynchronous reset functionality and priority handling.

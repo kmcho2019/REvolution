@@ -1,0 +1,12 @@
+To simplify the pulse detection, we can use a minimal state machine approach with just 2 states instead of tracking the full 3-bit history. The key insight is that we only need to remember if we've seen the rising edge (0->1 transition) to detect the complete pulse (0->1->0).
+
+1. State Machine Approach:
+   - IDLE state: Waiting for 0->1 transition
+   - GOT_RISE state: We've seen the rise, now looking for 1->0 fall
+   - Output is high only when we're in GOT_RISE state and see a 1->0 transition
+
+2. Benefits:
+   - Only 1 bit of state storage needed (vs 3 bits in shift register)
+   - Clear state transitions that match the problem description
+   - Output generated combinationally from current state and input
+   - Easier to understand and modify state transitions

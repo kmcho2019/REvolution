@@ -1,0 +1,21 @@
+The refactored implementation maintains the same Radix-4 Booth algorithm functionality but with these structural improvements:
+
+1. **Combinational Logic Separation**:
+   - Move Booth encoding to continuous assignments using ternary operators
+   - Split the state machine into separate always blocks for state transitions and output logic
+
+2. **Simplified State Machine**:
+   - Reduce to 2 states (CALC and DONE) since INIT can be handled by reset
+   - Use explicit state encoding for better synthesis control
+
+3. **Register Optimization**:
+   - Use 9-bit registers for multiplicand/multiplier (8 + sign bit)
+   - Simplify counter logic with direct comparison
+
+4. **Timing Improvements**:
+   - Pre-calculate Booth operations in parallel
+   - Use arithmetic shifts only where absolutely necessary
+
+5. **Clearer Data Path**:
+   - Separate arithmetic operations from control logic
+   - Use named constants for state encoding

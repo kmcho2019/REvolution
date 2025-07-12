@@ -1,0 +1,11 @@
+Refactor the comparator by explicitly performing a 4-bit subtraction with ripple borrow chain using continuous assignments, instead of the borrow-lookahead logic. The borrow chain will propagate from the least significant bit (LSB) to the most significant bit (MSB), computing each borrow bit combinationally. This preserves combinational subtraction behavior and allows to detect borrow (A_less) and zero result (A_equal) straightforwardly.
+
+Specifically:
+
+- Use a ripple borrow chain: starting with borrow_in = 0, compute each bit difference and borrow_out per bit.
+- The borrow at MSB + 1 indicates A < B.
+- The result bits from subtraction determine if difference is zero (A_equal).
+- A_greater is asserted only if no borrow and result non-zero.
+- This refactoring uses only assign statements and arithmetic to derive the outputs, maintaining mutual exclusivity.
+
+This structure clarifies the subtraction process at the bit-level and explicitly shows borrow generation without the borrow-lookahead, simplifying the logic and improving readability at the cost of slightly longer critical path, which is acceptable for 4 bits.

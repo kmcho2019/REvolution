@@ -1,0 +1,10 @@
+To implement the 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3, we need to consider the following steps:
+
+- Initialize the LFSR with a non-zero state, in this case, the output q is set to 1 when the reset is active.
+- Create a 5-bit shift register where each bit position is updated on the positive edge of the clock.
+- The bits at positions without taps (2, 4, and 1) will simply shift right unchanged.
+- The bits at tap positions (5 and 3) will be XORed with the LSB output bit (q[0]) to produce their next values.
+
+We will use a reg array to store the current state of the LFSR and a temporary variable to hold the new state.
+
+Note: In a 5-bit LFSR, bit positions are numbered from 1 to 5. However, in Verilog, we access array elements starting from 0, so our bit positions in the code will be numbered from 0 to 4.

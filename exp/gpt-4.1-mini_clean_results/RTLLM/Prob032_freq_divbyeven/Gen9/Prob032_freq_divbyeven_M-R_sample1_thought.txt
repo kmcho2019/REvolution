@@ -1,0 +1,10 @@
+To refactor the frequency divider with the same core idea but a different structure, I will implement a Moore finite state machine (FSM) with two states representing the output clock level (0 or 1). 
+
+- The FSM will use a 4-bit counter to count up to HALF_DIV - 1 clock cycles.
+- In each state, the counter increments until it reaches the limit.
+- When the counter hits the limit, the FSM transitions to the opposite state, toggling the output clock.
+- This clean separation of counting and state makes the design modular and easier to understand.
+- Use synchronous reset and synchronous clocking.
+- The divided clock output (`clk_div`) directly reflects the current FSM state.
+- Parameter checks and counter width calculation remain intact.
+- This state-based design highlights the clock toggling event as an explicit state transition, contrasting with the original direct counter toggling approach.

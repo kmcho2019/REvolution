@@ -1,0 +1,71 @@
+module TopModule (
+    input  clk,
+    input  areset,
+    input  bump_left,
+    input  bump_right,
+    input  ground,
+    input  dig,
+    output reg walk_left,
+    output reg walk_right,
+    output reg aaah,
+    output reg digging
+);
+
+enum logic [1:0] {FALLING, WALKING, DIGGING} state, next_state;
+reg walk_direction, next_walk_direction;
+
+// Update state
+always_ff @(posedge clk or posedge areset) begin
+    if (areset) begin
+        state <= WALKING;
+    end else begin
+        state <= next_state;
+    end
+end
+
+// Update walking direction
+always_ff @(posedge clk or posedge areset) begin
+    if (areset) begin
+        walk_direction <= 0;
+    end else begin
+        walk_direction <= next_walk_direction;
+    end
+end
+
+// State transition logic
+always_comb begin
+    next_state = state;
+    next_walk_direction = walk_direction;
+
+    case (state)
+        FALLING: begin
+            if (ground) begin
+                next_state = WALKING;
+            end
+        end
+        WALKING: begin
+            if (!ground) begin
+                next_state = FALLING;
+            end else if (dig) begin
+                next_state = DIGGING;
+            end else if (bump_left) begin
+                next_walk_direction = 1;
+            end else if (bump_right) begin
+                next_walk_direction = 0;
+            end
+        end
+        DIGGING: begin
+            if (!ground) begin
+                next_state = FALLING;
+            end
+        end
+    endcase
+end
+
+// Output logic
+assign walk_left = (state == WALKING &&!walk_direction);
+assign walk_right = (state == WALKING && walk_direction);
+assign aaah = (state == FALLING);
+assign digging = (state == DIGGING);
+
+endmodule

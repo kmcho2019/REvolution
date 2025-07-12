@@ -1,0 +1,12 @@
+Implement a pipelined architecture that updates the grid state row-by-row across multiple clock cycles to reduce combinational complexity per cycle. Each clock cycle, the module computes the next state for one row based on the current global grid state stored in a register. The neighbors of each cell in the current row are computed using only the three involved rows (previous, current, next), which are accessed using wrap-around indexing.
+
+Store the entire 16x16 grid in a register q as before. Introduce an internal 4-bit row index counter that increments each clock cycle, cycling from 0 to 15. When load is high, synchronously load the whole grid and reset the row index to zero. On subsequent cycles (load low), compute and update only the row indicated by the row index in the grid q with the next state values. Other rows remain unchanged until their turn comes.
+
+This approach distributes the heavy neighbor counting logic over 16 clock cycles, allowing a much shorter combinational path per cycle, improving timing and power. The design complexity increases slightly due to the state machine managing row updates, but the main state q remains a single 256-bit register.
+
+Key points:
+- On load, synchronously load data into q and reset row index.
+- Else, each cycle compute next state of row pointed by row_idx.
+- Use combinational logic per cycle to compute neighbor counts for 16 cells of the row.
+- Update only the computed row in q.
+- Use wrap-around indexing via 4-bit masking.

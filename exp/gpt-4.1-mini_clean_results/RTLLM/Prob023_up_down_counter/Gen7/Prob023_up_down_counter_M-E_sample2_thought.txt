@@ -1,0 +1,9 @@
+Instead of directly using the single always block to increment or decrement the main count register, I will separate the counter logic into two stages: a combinational next-state logic block and a sequential register update block.
+
+This approach explicitly computes the next counter value based on the current count and up_down signal in a combinational block, then updates the register synchronously on the clock edge or resets it when reset is asserted.
+
+Separating combinational next-state calculation from register update enhances clarity and helps with modular verification and potentially synthesis optimization by clearly delineating combinational and sequential logic. It also facilitates easier extensions like adding saturation or wrapping behavior later.
+
+The counter wraps naturally due to 16-bit width arithmetic in Verilog (automatic wrapping on overflow/underflow). The reset is synchronous and forces the count to zero.
+
+This method results in clean, easy to understand and maintain RTL code that meets the specification.

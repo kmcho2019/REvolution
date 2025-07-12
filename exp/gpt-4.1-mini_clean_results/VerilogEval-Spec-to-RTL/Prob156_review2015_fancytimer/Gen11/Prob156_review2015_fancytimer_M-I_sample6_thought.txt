@@ -1,0 +1,28 @@
+To fix the design, I will address the following key issues:
+
+1. **Pattern Detection**: Update the 4-bit shift register before checking for the pattern so the detection triggers immediately when the last bit arrives. This ensures we don't miss the pattern.
+
+2. **Delay Bit Loading**: Use a 3-bit counter counting from 0 to 3 (4 bits total). Shift the delay register before incrementing the counter, and only transition to COUNTING after the fourth bit is shifted in and load_count == 3. This ensures all 4 delay bits are correctly captured MSB first.
+
+3. **Counting Logic**:
+   - The timer must count exactly `(delay + 1) * 1000` cycles.
+   - Implement two counters: a 10-bit cycle counter from 0 to 999, and a 4-bit block counter counting down from delay to 0.
+   - Increment cycle_count every clock during COUNTING.
+   - When cycle_count reaches 999, reset to zero and decrement block_count.
+   - Output `count` as the current block_count.
+   - When cycle_count reaches 999 and block_count is 0, counting is done, transition to DONE_WAIT.
+   
+4. **Register Widths**: Use 4 bits for block_count (delay down to 0). This fits delay+1 range from 1 to 16.
+
+5. **Outputs**:
+   - During SEARCH and LOAD_DELAY, `count` is don't-care (zero).
+   - During COUNTING, `count` shows current remaining blocks (countdown).
+   - During DONE_WAIT, `done` is high, `counting` is low.
+   
+6. **Reset**:
+   - Synchronous active-high reset initializes state and all registers.
+   - On ack in DONE_WAIT, clear all internal registers and go to SEARCH.
+
+This fix ensures the FSM counts exactly the required cycles, captures the delay bits correctly, and precisely detects the start pattern. It also simplifies the counting logic with clear state transitions and outputs, matching the problem's requirements exactly.
+
+I will implement all logic inside a single always @(posedge clk) block with synchronous reset for clarity.

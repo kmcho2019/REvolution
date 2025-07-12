@@ -1,0 +1,10 @@
+To implement a 100-bit rotator with synchronous load and directional control, we need:
+1. A 100-bit register to store the current value (q)
+2. Synchronous logic that either:
+   - Loads new data when load=1
+   - Rotates right when ena=01 (LSB becomes MSB, others shift right)
+   - Rotates left when ena=10 (MSB becomes LSB, others shift left)
+   - Maintains current value otherwise
+3. The rotation is implemented by concatenating the appropriate bits:
+   - Right rotate: {q[0], q[99:1]}
+   - Left rotate: {q[98:0], q[99]}

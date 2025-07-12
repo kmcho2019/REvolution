@@ -1,0 +1,7 @@
+To improve the given design, I will implement a level-sensitive asynchronous reset (active high) by changing the sensitivity list to `posedge clk or posedge areset` and checking if `areset` is high. This matches typical asynchronous reset behavior and ensures the register is cleared immediately when reset is asserted, regardless of clock. This will improve reliability and synthesis compatibility.
+
+Additionally, I'll remove the redundant self-assignment `q <= q;` as synthesis tools infer register hold without explicit assignment, which reduces power and logic complexity.
+
+The priority order remains load > enable > hold, and the shift remains right shift with zero fill at MSB.
+
+These changes improve the design's robustness, reduce power by eliminating unnecessary logic, and maintain minimal combinational paths for optimal timing and area.

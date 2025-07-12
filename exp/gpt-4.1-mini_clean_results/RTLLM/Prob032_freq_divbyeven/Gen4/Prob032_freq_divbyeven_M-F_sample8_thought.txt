@@ -1,0 +1,11 @@
+To fix the synthesis issues, I will revise the clock division logic so that `clk_div` toggles only once per full cycle of the counter, specifically when the counter reaches NUM_DIV/2 - 1, which corresponds to half of the division period. This single toggle approach generates a 50% duty cycle output clock dividing the input clock frequency by NUM_DIV.
+
+I will:
+- Toggle `clk_div` only at half count (NUM_DIV/2 - 1).
+- Reset the counter to zero at the full count (NUM_DIV - 1).
+- Use a counter width dynamically sized based on NUM_DIV to avoid overflow issues.
+- Add a synthesis-friendly and clean always block with asynchronous reset.
+- Keep the module name consistent as `freq_diveven`.
+- Assume that the input NUM_DIV is even, and note this in comments.
+
+This approach avoids conflicting assignments to `clk_div`, ensures the counter never exceeds its size, and results in synthesis-friendly code with a stable and correct frequency division.

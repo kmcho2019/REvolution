@@ -1,0 +1,18 @@
+The problem can be solved by implementing a Moore state machine with two states: walking left and walking right. We can use a 1-bit signal, state, to represent the current state of the Lemming. The state machine will have two inputs, bump_left and bump_right, and two outputs, walk_left and walk_right. The state machine will transition from walking left to walking right if it receives a bump on the left, and from walking right to walking left if it receives a bump on the right. If it receives bumps on both sides, it will still switch directions.
+
+The state machine can be implemented using a simple if-else statement in the always block, with the current state and the bump inputs determining the next state and the output. The areset signal will be used to asynchronously reset the state machine to walking left.
+
+The state machine will be implemented as follows:
+- If the current state is walking left and a bump is detected on the left, the next state will be walking right.
+- If the current state is walking left and a bump is detected on the right, the next state will be walking left.
+- If the current state is walking right and a bump is detected on the left, the next state will be walking right.
+- If the current state is walking right and a bump is detected on the right, the next state will be walking left.
+- If the current state is walking left and no bumps are detected, the next state will be walking left.
+- If the current state is walking right and no bumps are detected, the next state will be walking right.
+- If areset is high, the state machine will reset to walking left.
+
+This can be simplified into the following rules:
+- If a bump is detected on the left, the next state will be walking right.
+- If a bump is detected on the right, the next state will be walking left.
+- If no bumps are detected, the next state will be the same as the current state.
+- If areset is high, the state machine will reset to walking left.

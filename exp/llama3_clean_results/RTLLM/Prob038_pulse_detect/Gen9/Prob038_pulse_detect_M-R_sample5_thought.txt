@@ -1,0 +1,11 @@
+To refactor the given pulse detection module, we will preserve the core idea of the Finite State Machine (FSM) but implement it using a different structure. The main goal of this refactoring is to simplify the code, improve readability, and potentially optimize it for better Power, Performance, and Area (PPA) metrics.
+
+Instead of using one-hot encoding for the FSM states, we will use a more traditional binary encoding, which can be more area-efficient for smaller state machines. This change will also allow us to simplify the state transition logic.
+
+We will also restructure the FSM to use a single `always` block for sequential logic and utilize combinational logic assignments for output signals. This approach will make the code easier to understand and maintain.
+
+To optimize the design, we will ensure that the state machine transitions are encoded efficiently and that there are no unnecessary logic gates or long critical paths that could impact the performance or area of the design.
+
+Furthermore, instead of using a `case` statement within the `always` block, we will use conditional statements (`if`/`else`) to manage the state transitions. This will make the code more readable and easier to debug.
+
+Finally, we will keep the reset logic consistent, ensuring that the FSM resets to the Idle state upon `rst_n` going low, which is essential for proper initialization and recovery from potential errors.

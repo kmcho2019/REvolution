@@ -1,0 +1,21 @@
+To fuse the best ideas from both examples:
+
+1. Use parameterized WIDTH and DEPTH with correct address widths using $clog2(DEPTH).
+
+2. Use a synchronous reset that clears the entire RAM array on negedge rst_n (as requested in the original problem), done in a clocked always block. This ensures all data is initialized to zero on reset, as required.
+
+3. Implement synchronous writes on posedge clk with write_en.
+
+4. For read, use a registered read_data output clocked on posedge clk with negedge rst_n reset, updated only when read_en is asserted. This satisfies the original requirement of an always block for reading and allows stable outputs with no glitches and controlled toggling (better power).
+
+5. When read_en is low, read_data is cleared to zero, as required.
+
+6. This approach avoids combinational read multiplexing that may cause glitches and power spikes. The registered read output also improves timing and power by limiting toggling to when read_en is active.
+
+7. The only slight compromise is one cycle read latency, but this complies exactly with the problem statement and is acceptable for synchronous designs.
+
+8. Use loops with integer index for reset initialization.
+
+This fusion combines the correctness and reset behavior of the original, the clarity of synchronous reads and writes, and the power/timing benefits of registered outputs.
+
+This design is fully synthesizable, clean, and fits all given specs.

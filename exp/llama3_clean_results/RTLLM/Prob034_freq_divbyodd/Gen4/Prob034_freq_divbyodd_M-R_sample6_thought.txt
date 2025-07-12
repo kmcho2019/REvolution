@@ -1,0 +1,9 @@
+To refactor the given frequency divider code, we will introduce a state machine with a single counter to handle both rising and falling edges. This will simplify the design and improve performance. The counter will count up to `NUM_DIV - 1` and then reset, effectively dividing the input clock frequency by `NUM_DIV`.
+
+Instead of using two separate counters for rising and falling edges, we will use a single counter that increments on every clock cycle and toggles the `clk_div` output when it reaches half of `NUM_DIV`. This ensures accurate division of the clock frequency.
+
+Additionally, we will maintain the check for `NUM_DIV` being an odd number to prevent incorrect behavior with even numbers. This check will be performed at the beginning of the simulation.
+
+To improve performance and area efficiency, we will use `assign` statements for combinational logic where possible, reducing the number of `always` blocks. The final divided clock output `clk_div` will be generated using a single `assign` statement, simplifying the code and reducing area overhead.
+
+The refactored code will have a more efficient structure, improved performance, and better readability.

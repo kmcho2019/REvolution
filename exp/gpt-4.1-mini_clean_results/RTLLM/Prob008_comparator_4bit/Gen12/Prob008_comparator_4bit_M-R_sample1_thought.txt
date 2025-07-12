@@ -1,0 +1,7 @@
+The original design uses borrow generate and propagate signals combined in a balanced lookahead logic, with equality detected via bitwise XNOR and a balanced AND tree. To refactor with the same core idea but different structure, I will:
+
+- Replace the borrow lookahead logic with a ripple borrow chain constructed explicitly using assign statements for each borrow bit, cascading from LSB to MSB, clarifying the borrow propagation step by step.
+- Use a direct equality check with a single equality comparison operator (==) for compactness and clarity, instead of bitwise XNOR and balanced AND tree.
+- Maintain mutual exclusivity by deriving outputs from the borrow chain and equality check.
+
+This approach yields a simple, easy-to-understand ripple borrow comparator using only continuous assignments, showing a different structural style from the lookahead logic but preserving all functionality and output encoding.

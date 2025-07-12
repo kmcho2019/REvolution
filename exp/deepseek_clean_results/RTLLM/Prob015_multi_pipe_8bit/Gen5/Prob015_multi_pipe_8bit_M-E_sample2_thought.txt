@@ -1,0 +1,22 @@
+The Wallace Tree multiplier offers better performance than the traditional shift-and-add approach by reducing the number of addition stages through parallel processing. My design implements a 3-stage pipelined Wallace Tree multiplier:
+
+1. Stage 1 (Input & Partial Product Generation):
+   - Register inputs
+   - Generate all partial products in parallel using AND gates
+   - Organize them into groups for efficient reduction
+
+2. Stage 2 (Wallace Tree Reduction):
+   - Use carry-save adders (3:2 compressors) to reduce partial products
+   - Pipeline the intermediate reduction results
+   - Maintain proper alignment of bit weights
+
+3. Stage 3 (Final Addition):
+   - Use a fast carry-propagate adder (CPA) for final summation
+   - Register the final result
+   - Pipeline the enable signals properly
+
+Key innovations:
+- Parallel partial product generation
+- Efficient 3:2 compression tree
+- Balanced pipeline stages
+- Optimized enable signal propagation

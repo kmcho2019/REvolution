@@ -1,0 +1,7 @@
+To address the sequential circuit problem, I propose a novel architectural idea that focuses on using a single D flip-flop for 'p' and a T flip-flop (toggle flip-flop) for 'q'. This approach is based on the observation that 'p' seems to directly follow 'a' when the clock is high, and 'q' toggles its state when 'p' is high, unless 'a' is high during the low clock phase, in which case 'q' resets.
+
+The key insight here is to recognize that 'q' can be implemented as a toggle flip-flop that changes its state at every positive clock edge when 'p' is high, and 'a' is not high during the low clock phase. This simplifies the logic required for 'q' and allows for a more straightforward implementation.
+
+To implement this idea, we can use a single always block that captures the necessary logic for both 'p' and 'q'. We will use a D flip-flop for 'p' and a T flip-flop for 'q', and we will use conditional statements to control the behavior of 'q' based on 'p' and 'a'.
+
+By using a T flip-flop for 'q', we can eliminate the need for explicit reset logic and simplify the overall design. This approach also allows us to operate within a single clock domain, which can improve the performance and reduce the complexity of the circuit.

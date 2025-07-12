@@ -1,0 +1,15 @@
+To optimize the Moore state machine further while maintaining correctness:
+1. Output Logic Optimization:
+   - Replace the comparator with direct bit check since state D is 2'b11
+   - This reduces logic depth by using the MSB directly as output when possible
+
+2. Next State Logic Optimization:
+   - Factor out common terms (2'b01 appears in A and D cases)
+   - Use bitwise operations where possible to reduce gate count
+   - Leverage the fact that next_state[0] can be expressed more simply
+
+3. State Encoding Consideration:
+   - Maintain the same encoding but observe that output is simply state[1] & state[0]
+   - This allows output to be generated with a single AND gate
+
+The optimized version should reduce area and power while maintaining or improving timing.

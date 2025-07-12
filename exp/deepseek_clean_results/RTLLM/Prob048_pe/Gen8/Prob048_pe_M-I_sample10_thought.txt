@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. Pipeline the multiplier into 2 stages to improve timing (reduce wns)
+   - Stage 1: Partial product generation
+   - Stage 2: Final addition and accumulation
+2. Add operand isolation to reduce power when not computing
+3. Implement clock gating for the accumulator register
+4. Optimize area by using carry-save adder structure
+5. Maintain signed arithmetic correctness while improving PPA
+
+Key Optimizations:
+- Split 32x32 multiplier into two 16x16 multipliers with proper sign extension
+- Add enable signal to disable computation when not needed
+- Clock gating for accumulator register
+- Pipeline registers to break critical path
+- Explicit truncation with overflow protection

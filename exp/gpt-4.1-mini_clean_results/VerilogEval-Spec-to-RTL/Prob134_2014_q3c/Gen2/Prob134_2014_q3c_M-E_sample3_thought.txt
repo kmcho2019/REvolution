@@ -1,0 +1,5 @@
+To achieve the FSM behavior with a different architecture, I will implement a fully registered state machine with a 3-bit state register inside the module (instead of using the input y as current state). The input y will be used as an asynchronous load input to initialize the state register when a control signal is asserted (e.g., at reset). For this problem, since no reset is specified, I will consider y as a synchronous load input to set the state at every clock edge before transitioning with the FSM logic.
+
+Next state logic and output logic will be separated: next state and output z will be combinational functions of the current state and input x, implemented using parallel case statements. The output Y0 will be driven as the LSB of the next state. The registered state will update at the clock's rising edge using the computed next state.
+
+This approach gives a conventional synchronous FSM with internal state and clear separation between current state, next state, and output logic, distinct from the original solution that used y as the present state input without internal registers.

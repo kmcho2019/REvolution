@@ -1,0 +1,15 @@
+To implement the Lemmings behavior, we need a finite state machine (FSM) with multiple states to handle walking left, walking right, falling, and digging. The FSM should prioritize actions in the order: falling > digging > changing direction. 
+
+Key considerations:
+1. The FSM has four states: WALK_LEFT, WALK_RIGHT, FALL, and DIG.
+2. Transitions between states depend on inputs (ground, bump_left, bump_right, dig).
+3. Falling has the highest priority when ground=0.
+4. Digging is only possible when ground=1 and not falling.
+5. Bumping changes direction only when walking and not falling/digging.
+6. Asynchronous reset initializes to WALK_LEFT.
+
+Outputs are determined by the current state:
+- walk_left: in WALK_LEFT state
+- walk_right: in WALK_RIGHT state
+- aaah: in FALL state
+- digging: in DIG state

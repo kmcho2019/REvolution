@@ -1,0 +1,10 @@
+Fuse the clear, explicit 2-bit FSM encoding from Example 2 with the minimal and clean always block style from Example 1 for efficient synthesis and better readability.
+
+- Use a 2-bit state: bit1 = falling, bit0 = direction (0=left,1=right).
+- Implement asynchronous active-high reset initializing to WALK_LEFT.
+- Separate the state update into two steps inside a single always block for simpler logic and improved critical path:
+  - Update falling first based on ground transitions (falling when ground=0, not falling when ground=1).
+  - Update direction only when walking (not falling) and bumped.
+- Combine bump direction updates with minimal logic, flipping direction if both bumps or setting direction accordingly if one bump.
+- Retain Moore outputs directly from state bits.
+- This fusion yields clear, minimal logic with straightforward state updates, easier for synthesis tools to optimize while preserving the required behavior.

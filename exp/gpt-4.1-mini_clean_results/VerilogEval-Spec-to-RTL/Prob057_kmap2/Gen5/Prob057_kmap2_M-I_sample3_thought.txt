@@ -1,0 +1,50 @@
+The original design cleanly partitions the K-map by rows of {c,d}, implementing four partial functions on {a,b} and multiplexing them. This is clear and modular but incurs redundant negations and separate partial expressions.
+
+To improve PPA:
+- Eliminate redundant negations by sharing a single negation per input.
+- Avoid multiple negations of the same signal; compute na, nb, nc, nd once and reuse.
+- Combine the multiplexer logic into a single expression to minimize gate levels.
+- Alternatively, derive a fully minimized sum-of-products (SOP) expression from the K-map for 'out' to reduce gate count and depth.
+
+Let's derive the SOP directly from the K-map:
+
+Truth table entries for out=1 (minterms):
+
+| c | d | a | b | out |
+|---|---|---|---|-----|
+| 0 | 0 | 0 | 0 | 1   | m0
+| 0 | 0 | 0 | 1 | 1   | m1
+| 0 | 0 | 1 | 0 | 1   | m2
+| 0 | 1 | 0 | 0 | 1   | m4
+| 0 | 1 | 1 | 0 | 1   | m6
+| 1 | 0 | 0 | 0 | 1   | m8
+| 1 | 0 | 0 | 1 | 1   | m9
+| 1 | 1 | 0 | 1 | 1   | m13
+| 1 | 1 | 1 | 0 | 1   | m14
+| 1 | 1 | 1 | 1 | 1   | m15
+
+From these minterms, simplify the expression:
+
+Group by common factors:
+
+- When b=0 and c=0,d=0 or c=0,d=1 or c=1,d=1: many 1's appear. Carefully summing to simplify:
+
+A minimal SOP from the K-map (already simplified) is:
+
+out = (~a & ~b) & (~c | ~d)   // covers rows with ab=00 and cd=00 or 01 or 10 (with small adjustments)
+      + (~a & b & c & d)      // m13: 0111
+      + (a & ~b & c)          // m6(0 1 1 0), m14(1 1 1 0) coverage via a & ~b & c
+      + (~b & ~c)             // ~b & ~c covers several minterms with b=0 and c=0
+
+After systematic Karnaugh simplification, a concise expression is:
+
+out = (~b & ~c) | (~a & ~b & ~d) | (~a & b & c & d) | (a & ~b & c)
+
+Implementing this expression uses fewer negations and gates.
+
+Summary of improvements:
+- Use a single negation per input.
+- Implement the minimized expression directly.
+- Reduce logic depth by merging terms.
+
+This approach will reduce area and power by fewer intermediate signals and simpler logic, and improve timing by lowering logic levels.

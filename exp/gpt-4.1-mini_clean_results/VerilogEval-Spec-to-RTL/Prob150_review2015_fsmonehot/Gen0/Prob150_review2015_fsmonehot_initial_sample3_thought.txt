@@ -1,0 +1,42 @@
+We implement combinational next-state and output logic for a one-hot encoded Moore FSM with 10 states represented as a 10-bit vector "state". The inputs are d, done_counting, ack. Next state is decoded based on current state and inputs. Outputs are asserted based on current state per the description.
+
+Mapping states to bits (one-hot):
+S=bit0, S1=bit1, S11=bit2, S110=bit3, B0=bit4, B1=bit5, B2=bit6, B3=bit7, Count=bit8, Wait=bit9
+
+Next state logic:
+- From S(bit0):
+  if d=0 -> S(bit0)
+  if d=1 -> S1(bit1)
+- From S1(bit1):
+  if d=0 -> S(bit0)
+  if d=1 -> S11(bit2)
+- From S11(bit2):
+  if d=0 -> S110(bit3)
+  if d=1 -> S11(bit2)
+- From S110(bit3):
+  if d=0 -> S(bit0)
+  if d=1 -> B0(bit4)
+- From B0(bit4): always B1(bit5)
+- B1(bit5): always B2(bit6)
+- B2(bit6): always B3(bit7)
+- B3(bit7): always Count(bit8)
+- Count(bit8):
+  if done_counting=0 -> Count(bit8)
+  else -> Wait(bit9)
+- Wait(bit9):
+  if ack=0 -> Wait(bit9)
+  else -> S(bit0)
+
+Outputs (Moore) asserted in specific states:
+done = Wait(bit9)
+counting = Count(bit8)
+shift_ena = B0(bit4) | B1(bit5) | B2(bit6) | B3(bit7)
+
+Generate signals indicating next state is S, S1, B3, Count, or Wait:
+B3_next: next state B3 (bit7)
+S_next: next state S (bit0)
+S1_next: next state S1 (bit1)
+Count_next: next state Count (bit8)
+Wait_next: next state Wait (bit9)
+
+All logic is combinational, so output signals are combinational functions of current state and inputs.

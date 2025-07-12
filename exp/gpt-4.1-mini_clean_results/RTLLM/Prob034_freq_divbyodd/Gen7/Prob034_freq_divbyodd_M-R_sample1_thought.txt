@@ -1,0 +1,10 @@
+The original approach with separate counters on posedge and negedge clocks and toggling outputs based on a single equality check on counters can cause timing misalignment and glitching.
+
+To improve this, I will:
+- Use two counters as before, counting modulo NUM_DIV.
+- Instead of toggling clk_div1 and clk_div2 only at HALF_DIV, I will generate pulses when counters reach HALF_DIV and reset points.
+- Create clk_div1 and clk_div2 as registers that are set and reset explicitly based on counter values to avoid glitches.
+- Use synchronous logic only and separate increment and toggle logic clearly.
+- Keep the final output as OR of clk_div1 and clk_div2.
+- This explicit pulse generation approach helps maintain correct timing for odd division with better duty cycle and phase alignment.
+- The code will still reset asynchronously and check NUM_DIV oddness.

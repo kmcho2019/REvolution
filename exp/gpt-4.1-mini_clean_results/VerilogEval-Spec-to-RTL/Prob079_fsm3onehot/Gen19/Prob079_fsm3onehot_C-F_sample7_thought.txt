@@ -1,0 +1,12 @@
+The goal is to produce a clean, efficient combinational logic implementation for the one-hot encoded Moore FSM that balances clarity, minimal logic depth, and reduced switching activity. Both examples utilize factoring and reuse of complemented input `not_in` and share expressions with OR gates on state bits. 
+
+To fuse the best ideas:
+- Maintain the modular one-hot decoding of state bits (A, B, C, D) for readability.
+- Use a single inverted input signal (`not_in`) for consistency and minimal logic.
+- Factor next_state expressions to reduce the number of OR terms and minimize gate count, e.g. share `(A | B | D)` only once.
+- Assign each next_state bit as an AND between an input gating term and combined states, e.g. `next_state[1] = in & (A | B | D)`.
+- The output is simply `out = D`, which directly reflects the Moore output.
+- This approach avoids redundant logic and optimizes both area and switching activity by using minimal terms and factoring common signals.
+- The style is concise and synthesis-friendly, facilitating easy debugging and maintenance.
+
+This fusion yields a solution that is functionally correct, minimal in gate usage, and balanced for power and area efficiency.

@@ -1,0 +1,17 @@
+Fuse the best features of both examples to create a robust, clean, and efficient 4-cycle (3-bit counter) IEEE-754 single-precision floating-point multiplier with careful pipelining and clear separation of stages:
+
+- Use Example 1’s clear special cases handling and output muxing.
+- Use Example 2’s explicit extraction of rounding bits and clear pipeline register stages.
+- Extend exponent registers to 10 bits internally (as in Example 1) to avoid overflow issues.
+- Calculate product in cycle 1, then normalize and extract rounding bits in cycle 2.
+- Perform rounding with round-to-nearest-even logic in cycle 3, including mantissa overflow handling.
+- Final output assignment done in cycle 3 with full consideration of special cases, overflow, underflow, and NaN/inf/zero.
+- Use non-blocking assignments consistently and avoid blocking inside sequential blocks.
+- Optimize registers by reusing variables where possible.
+- Keep all signals and stages registered, for clean and synthesis-friendly code.
+- Sign is computed once and propagated properly.
+- Provide explicit naming and comments for clarity.
+- Carefully handle special cases to avoid propagation of invalid results.
+- The design thus ensures correct IEEE-754 multiply behavior with precise rounding and normalization while staying clearly organized and ready for synthesis.
+
+This fusion brings together Example 1’s comprehensive special case and rounding logic and Example 2’s clear pipeline stages and signals, balancing clarity and implementation quality.

@@ -1,0 +1,6 @@
+The previous solution uses a shift register approach which is efficient but not a true FSM implementation as requested. We can simplify further by implementing a proper 3-state Mealy FSM that directly tracks the sequence detection progress. The states will be:
+1. IDLE - waiting for first '1'
+2. GOT1 - received '1', waiting for '0'
+3. GOT10 - received '10', waiting for '1'
+
+The output z is asserted immediately when we get the final '1' in the sequence while in GOT10 state. This is a true Mealy machine where output depends on current state and input.

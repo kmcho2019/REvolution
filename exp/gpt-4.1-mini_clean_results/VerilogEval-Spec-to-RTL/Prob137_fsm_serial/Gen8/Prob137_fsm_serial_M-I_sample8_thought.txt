@@ -1,0 +1,15 @@
+To improve the existing FSM for better timing (reduce negative slack) and potentially reduce logic duplication:
+
+1. Use one-hot encoding for the FSM states to simplify next state decoding logic, potentially improving timing.
+
+2. Factor out common input checks by capturing input conditions into local signals to reduce redundant logic evaluations.
+
+3. Replace the combinational always block with a more compact combinational block using case statements with explicit one-hot encoded states for clarity and faster synthesis.
+
+4. Add clock enable gating for the shift register and bit counter updates to further reduce toggling and dynamic power by updating these registers only when needed (in RECEIVE state).
+
+5. Keep the done signal a one-cycle pulse synchronous to the clock, assert it immediately on detecting the valid stop bit.
+
+6. Maintain the same synchronous reset.
+
+These changes are expected to reduce critical path by simplifying state decoding and reduce power by gating shifting/counting to only when necessary. Area may slightly increase due to one-hot FSM but timing and power benefits justify it. Overall, this targets improving timing and power metrics from the previous implementation without sacrificing functional correctness.

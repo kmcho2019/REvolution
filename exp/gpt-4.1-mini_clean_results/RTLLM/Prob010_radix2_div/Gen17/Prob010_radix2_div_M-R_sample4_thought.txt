@@ -1,0 +1,16 @@
+To refactor the radix-2 division module while keeping the core algorithm unchanged, I will use an explicit finite state machine (FSM) with distinct states: IDLE, CALC (performing the division steps), and DONE (result ready). This improves clarity on the control flow. 
+
+The subtraction and shift operations will remain sequential within CALC state, but now intermediate values like subtraction results and quotient bits will be handled using registers updated synchronously. The design will include combinational logic for absolute value computation and negation outside the clocked block for tidiness.
+
+Using this state machine approach clearly separates input loading, iterative calculation, and result output phases. Also, it better encapsulates res_valid signaling by setting it only in DONE state and clearing it on new operation start or reset.
+
+This structure also makes it easier to verify control signals and helps synthesis tools infer proper state registers and datapath elements.
+
+In summary, the design changes are:
+- Use explicit states (IDLE, CALC, DONE).
+- Calculate absolute values and negations in combinational always @(*) blocks.
+- Perform division step updates in CALC state inside a clocked always block.
+- Manage res_valid only in DONE state.
+- Outputs are registered and updated when ready.
+
+This keeps the original radix-2 division functionality but improves code clarity and maintainability.

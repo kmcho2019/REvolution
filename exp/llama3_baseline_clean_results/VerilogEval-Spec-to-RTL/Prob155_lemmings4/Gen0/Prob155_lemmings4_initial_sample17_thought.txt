@@ -1,0 +1,16 @@
+To implement the Lemmings' behavior, we will model it as a finite state machine with several states:
+- walking_left: The Lemming is walking to the left.
+- walking_right: The Lemming is walking to the right.
+- falling: The Lemming is falling.
+- digging: The Lemming is digging.
+- splattered: The Lemming has splattered and will not move again.
+
+The state machine will transition between these states based on the inputs:
+- bump_left: If the Lemming is bumped from the left, it will change direction.
+- bump_right: If the Lemming is bumped from the right, it will change direction.
+- ground: If the ground disappears, the Lemming will fall. If the ground reappears, the Lemming will stop falling.
+- dig: If the Lemming is told to dig, it will start digging if it is on the ground.
+
+We will use a counter to count the number of clock cycles the Lemming has been falling. If this counter exceeds 20 and the Lemming hits the ground, it will splatter.
+
+The state machine will be implemented using a Moore state machine, where the outputs are a function of the current state only.

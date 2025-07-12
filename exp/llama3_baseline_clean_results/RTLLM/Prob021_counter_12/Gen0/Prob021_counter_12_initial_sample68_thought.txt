@@ -1,0 +1,8 @@
+To design the counter_12 module, we need to consider the following key aspects:
+1. Resetting the counter: When the reset signal (rst_n) is active low, the counter should reset to 0.
+2. Enabling counting: The valid_count signal controls whether the counter increments or remains paused.
+3. Wrapping around: When the counter reaches the maximum value (4'd11), it should wrap around to 0.
+
+Our approach involves using an if-else statement to handle the reset condition, and then checking the valid_count signal to decide whether to increment the counter or keep it paused. If valid_count is 1, we check if the current count is at the maximum value (4'd11) and either wrap around to 0 or increment the count.
+
+We will use a reg declaration to declare the output register (out) and initialize it to 0. The always block will be used with the posedge of the clock signal (clk) to ensure the counter increments on each rising clock edge.

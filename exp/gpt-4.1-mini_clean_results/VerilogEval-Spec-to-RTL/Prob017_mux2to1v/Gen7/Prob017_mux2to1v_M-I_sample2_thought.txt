@@ -1,0 +1,16 @@
+The existing design is already optimal for area and performance because it uses a single vectorized conditional assignment implementing a 100-bit 2:1 mux without hierarchy or duplication.
+
+To improve power without compromising performance or area significantly, we can implement the output with a bitwise masking approach instead of the ternary operator. This can sometimes help synthesis tools map mux logic to AND-OR structures, potentially reducing glitching and switching power due to selective gating.
+
+Specifically, implement:
+  out = (~{100{sel}} & a) | ({100{sel}} & b);
+
+This replaces the single conditional operator with bitwise ANDs and OR, explicitly controlling signal switching paths.
+
+Although this change is subtle, it can reduce internal signal transitions and dynamic power, especially in large buses, while maintaining the same logic functionality and timing behavior.
+
+This approach preserves the single-level combinational assignment, maintaining minimal area and simple timing paths.
+
+No instantiation of individual bit muxes is done to keep area and routing complexity low.
+
+Thus, the key improvement is replacing the ternary operator with explicit masking logic for better power efficiency.

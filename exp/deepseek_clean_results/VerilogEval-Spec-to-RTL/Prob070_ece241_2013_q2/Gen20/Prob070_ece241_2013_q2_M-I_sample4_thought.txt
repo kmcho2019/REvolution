@@ -1,0 +1,21 @@
+Improved Design Strategy:
+
+1. Truth Table Analysis:
+   - Output=1 cases (minterms): 2(0010), 7(0111), 15(1111)
+   - Output=0 cases (maxterms): 0(0000), 1(0001), 4(0100), 5(0101), 6(0110), 9(1001), 10(1010), 13(1101), 14(1110)
+   - Don't-cares: 3,8,11,12 (can be used for optimization)
+
+2. SOP Implementation:
+   - Original minterms are correct but can be optimized using don't-cares
+   - After K-map optimization, we get: (~a & c & ~d) | (b & c & d) | (a & b & c)
+   - This covers all required cases and is more efficient
+
+3. POS Implementation:
+   - Need to cover all maxterms where output=0
+   - After K-map optimization using don't-cares, we get:
+     (c) & (a | b | d) & (~a | b | ~d) & (a | ~b | d)
+   - This properly handles all 0-output cases and is more efficient than canonical form
+
+4. Implementation:
+   - Both implementations now correctly handle all specified cases
+   - The optimized forms reduce gate count and improve performance

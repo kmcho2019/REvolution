@@ -1,0 +1,9 @@
+To optimize power, area, and performance (PPA), I will replace the conditional operator with a case statement inside a combinational always block. This approach allows synthesis tools to better optimize the multiplexer tree structure, potentially reducing the depth of multiplexers, thereby improving timing and area.
+
+Also, rather than packing the inputs into an array, I will directly use a case statement on 'sel' to assign 'out'. This can avoid the creation of an internal array structure, which might reduce area slightly.
+
+For sel values 9 to 15, I will explicitly assign 16'hFFFF as required.
+
+This explicit case-based mux implementation can help synthesis tools generate more optimized mux trees by clearly defining each input mapping, potentially lowering switching activity on unselected inputs and thus power.
+
+The design remains purely combinational, maintaining minimal logic depth and ensuring zero latency. This approach balances clarity, synthesis friendliness, and PPA improvements.

@@ -1,0 +1,14 @@
+The main issue is the shifting direction and how the remainder is maintained. Instead of shifting the combined dividend and remainder left, we should process the dividend bits from the highest to the lowest (bit 15 down to 0), building the remainder step-by-step.
+
+At each iteration:
+- Shift the current remainder (initially zero) left by 1, then bring down the current dividend bit into the LSB of the remainder.
+- Compare this updated remainder (which is 8 bits wide) with the divisor B.
+- If remainder >= B, subtract B and set the current quotient bit to 1; else quotient bit is 0.
+
+Because B is 8 bits, and remainder is at most 8 bits, this process fits the problem statement exactly.
+
+This process is implemented in a single always @(*) block. Registers `a_reg` and `b_reg` are updated in a separate always @(*) block as the problem requires.
+
+Finally, the 16-bit quotient is built from the 16 iterations, and the remainder is the final value of the 8-bit remainder shifted into the upper bits of the 16-bit odd output (zero-padded lower bits). Alternatively, output remainder zero-extended into 16 bits.
+
+This corrected approach aligns fully with the described iterative division method.

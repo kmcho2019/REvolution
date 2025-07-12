@@ -1,0 +1,11 @@
+Novel Architectural Idea: Carry-Skip Adder with Optimized Grouping
+
+1. **Concept**: Implement a carry-skip adder that combines the simplicity of ripple-carry with optimized carry propagation. This design will skip carry propagation when all bits in a group would propagate the carry, reducing worst-case delay.
+
+2. **Grouping Strategy**: Divide the 4-bit input into two 2-bit groups. The first group uses ripple-carry, while the second group implements skip logic when P0&P1=1 (both bits propagate carry).
+
+3. **Efficiency**: This approach provides better timing than pure ripple-carry (O(n) → O(√n) for optimal grouping) while maintaining reasonable area overhead.
+
+4. **Overflow Handling**: The final carry-out is properly captured as sum[4], maintaining correct overflow behavior.
+
+5. **Implementation**: Use propagate-generate logic for each bit, then implement skip logic between groups. This provides a good balance between performance and complexity for 4-bit addition.

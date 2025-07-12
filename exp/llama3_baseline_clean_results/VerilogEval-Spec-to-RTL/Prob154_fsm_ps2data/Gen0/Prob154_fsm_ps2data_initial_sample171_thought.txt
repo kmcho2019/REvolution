@@ -1,0 +1,11 @@
+To implement the TopModule, we need to create a finite state machine (FSM) that can identify message boundaries in the input byte stream. The FSM will have four states: idle, byte1, byte2, and done. 
+
+- The idle state is the initial state where the FSM waits for a byte with in[3] = 1. 
+- When such a byte is received, the FSM transitions to the byte1 state and stores the byte in the most significant 8 bits of out_bytes. 
+- In the byte1 state, the FSM waits for the next byte, stores it in the middle 8 bits of out_bytes, and transitions to the byte2 state. 
+- In the byte2 state, the FSM waits for the next byte, stores it in the least significant 8 bits of out_bytes, and then transitions to the done state. 
+- In the done state, the FSM asserts the done signal and returns to the idle state.
+
+We will use a 2-bit state variable (current_state) to encode the four states. We will also use a 24-bit register (out_bytes_reg) to store the received message.
+
+The reset signal will be used to reset the FSM to the idle state and clear the out_bytes_reg.

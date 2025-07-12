@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break down the 100-bit rotation into two stages to reduce critical path
+   - Use parallel muxing for left/right selection to minimize propagation delay
+
+2. Power Optimization:
+   - Implement clock gating for the no-rotation case (ena=00/11)
+   - Only compute rotation when needed using enable signals
+
+3. Area Optimization:
+   - Use a more efficient barrel shifter-like structure
+   - Share common logic between left and right rotation cases
+
+4. Maintainability:
+   - Keep clear comments and structure
+   - Use meaningful signal names
+
+Key Changes:
+- Added clock gating for power savings
+- Split rotation logic into two stages for better timing
+- Optimized mux structure for area reduction
+- Maintained all original functionality

@@ -1,0 +1,17 @@
+Fuse the best aspects of both designs for a superior LIFO buffer:
+
+- Use the "SP as count" convention from Example 1 (SP = number of elements, 0 to 4) for straightforward pointer and flag logic.
+- Generate EMPTY and FULL flags combinationally from SP for immediate status indication.
+- Introduce a single combinational valid_op signal gating all state changes, minimizing toggling and improving power.
+- Update SP and stack_mem only on valid operations and only when EN is asserted.
+- On a push (write), store dataIn at stack_mem[SP], then increment SP.
+- On a pop (read), decrement SP, then output stack_mem[SP-1].
+- Hold dataOut steady except on valid pop operations to reduce switching.
+- On reset, clear SP to 0 and dataOut to 0, and initialize stack_mem to 0.
+- Avoid clearing stack_mem entries on pop to reduce dynamic power.
+- Use non-blocking assignments consistently to ensure synchronous semantics.
+- Use a clocked loop to clear stack_mem on reset.
+- Use a small combinational block to determine valid_op and operation type for concise logic.
+- Keep the interface and behavior identical to specifications.
+
+This fusion optimizes performance by minimizing critical path and logic depth, reduces power via gating and selective updates, and maintains minimal area by avoiding redundant registers or logic.

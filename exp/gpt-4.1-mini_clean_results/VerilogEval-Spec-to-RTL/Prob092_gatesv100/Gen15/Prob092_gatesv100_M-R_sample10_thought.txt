@@ -1,0 +1,6 @@
+Refactor the design to use continuous assign statements and vector slicing instead of an always block with loops.  
+By leveraging vector operations, we eliminate explicit loops and use direct bitwise operations with shifted vectors to compute outputs efficiently.  
+This approach reduces logic complexity, improves synthesis results (PPA), and produces cleaner, more concise code.  
+Outputs can be declared as wires (instead of reg) since the logic is purely combinational and directly assigned.  
+Special cases at vector boundaries are handled explicitly by concatenating zeros or wrapping with modular indexing.  
+The wrap-around difference output is implemented by XORing the entire input vector with itself rotated left by 1 bit, creating a neat and efficient solution.

@@ -1,0 +1,7 @@
+Simplify the solution by using uniform vector operations with padding to handle boundary bits without separate assignments:
+
+- For out_both, shift 'in' left by one bit padding with zero at MSB, then AND with original 'in'.
+- For out_any, shift 'in' right by one bit padding with zero at LSB, then OR with original 'in'.
+- For out_different, use XOR between 'in' and a left-rotated version of 'in' using concatenation, which naturally wraps around.
+
+This approach avoids explicit indexing or partial assignments, producing concise, fully vectorized code that is easy to read and maintain.

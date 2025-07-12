@@ -1,0 +1,26 @@
+Fix Strategy:
+
+1. Parameter Handling:
+- Remove the initial block parameter validation (not synthesis-friendly)
+- Replace with generate-based parameter checking that fails during elaboration
+- Make parameters clearly visible to testbench by ensuring proper module declaration
+
+2. Synthesis Improvements:
+- Simplify the generate block structure to a single implementation path
+- Remove the pipelined version for >32 bits since it's causing synthesis issues
+- Keep the core subtraction logic simple and direct
+
+3. Testbench Compatibility:
+- Ensure parameters are properly exposed through module interface
+- Maintain clean port declarations without hidden dependencies
+
+4. Functionality Preservation:
+- Keep the efficient two's complement arithmetic
+- Maintain overflow detection but simplify its implementation
+- Preserve the power optimization but implement it more cleanly
+
+Key Changes:
+- Removed non-synthesis-friendly initial block
+- Simplified generate structure to single implementation
+- Cleaned up parameter handling
+- Maintained core functionality while improving synthesis

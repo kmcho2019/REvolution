@@ -1,0 +1,19 @@
+Refactored approach with corrected timing and structural changes:
+
+1. **Separate Edge Detection Logic**: Move the falling edge detection to a combinational block using `assign` to clearly separate the timing-critical path from the storage elements.
+
+2. **Proper Timing Alignment**: The edge detection now correctly compares the current input with the properly registered previous value (from exactly one cycle ago).
+
+3. **Sticky Capture Logic**: Maintain the sticky behavior by OR-ing new edge detections with the existing captured state, but now with correct timing.
+
+4. **Structural Clarity**: The design is now split into:
+   - Sequential part (registering previous input and captured state)
+   - Combinational part (edge detection)
+   - Output assignment
+
+Key improvements:
+- Correct timing for edge detection (compares current input with properly delayed previous value)
+- Clear separation of combinational and sequential logic
+- Maintains all original functionality but with proper cycle alignment
+- Still processes all 32 bits in parallel
+- Sticky capture behavior remains unchanged

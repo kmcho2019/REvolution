@@ -1,0 +1,23 @@
+Based on the feedback, here's the corrected design approach:
+
+1. **Output f Timing Fix**:
+   - Ensure f=1 only in the cycle immediately following reset deassertion (STATE_B)
+   - Clear f in all other states
+
+2. **Sequence Detection Correction**:
+   - STATE_C: Wait for first x=1
+   - STATE_D: Must see x=0 next (if x=1, stay in STATE_D as it breaks the sequence)
+   - STATE_E: Must see x=1 to complete sequence (if x=0, go back to STATE_C)
+
+3. **Permanent State Simplification**:
+   - STATE_G should simply maintain g's last value (1 if y was detected, 0 if timeout)
+   - Remove complex condition in STATE_G output logic
+
+4. **Timeout Counter Fix**:
+   - Reset counter when entering STATE_F
+   - Transition to STATE_G after exactly 2 cycles (count to 1, not 2)
+   - Immediate transition if y=1 is detected
+
+5. **Output Logic Cleanup**:
+   - Make f and g assignments clearer and more direct
+   - Ensure outputs are properly synchronized with state transitions

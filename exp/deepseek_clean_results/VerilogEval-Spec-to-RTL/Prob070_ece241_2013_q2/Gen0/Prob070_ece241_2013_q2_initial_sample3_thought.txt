@@ -1,0 +1,26 @@
+To solve this problem, we need to implement a combinational logic circuit with four inputs (a,b,c,d) that outputs 1 when the input represents the numbers 2, 7, or 15 in binary, and 0 for other specified numbers. The numbers 3, 8, 11, and 12 will never occur as inputs.
+
+First, we'll create a truth table based on the given specifications. Then, we'll derive the Sum-of-Products (SOP) and Product-of-Sums (POS) forms from the truth table.
+
+For SOP (out_sop):
+- We look for all input combinations where output is 1 (2,7,15)
+- 2: 0010 → a'b'cd'
+- 7: 0111 → a'bcd
+- 15: 1111 → abcd
+- SOP: a'b'cd' + a'bcd + abcd
+
+For POS (out_pos):
+- We look for all input combinations where output is 0 (0,1,4,5,6,9,10,13,14)
+- Create maxterms for each:
+  0:0000 → (a+b+c+d)
+  1:0001 → (a+b+c+d')
+  4:0100 → (a+b'+c+d)
+  5:0101 → (a+b'+c+d')
+  6:0110 → (a+b'+c'+d)
+  9:1001 → (a'+b+c+d')
+  10:1010 → (a'+b+c'+d)
+  13:1101 → (a'+b'+c+d')
+  14:1110 → (a'+b'+c'+d)
+- POS: (a+b+c+d)(a+b+c+d')(a+b'+c+d)(a+b'+c+d')(a+b'+c'+d)(a'+b+c+d')(a'+b+c'+d)(a'+b'+c+d')(a'+b'+c'+d)
+
+Now we'll implement these expressions in Verilog.

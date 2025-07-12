@@ -1,0 +1,14 @@
+Novel Architectural Idea: State Transition Lookup Table (LUT) Approach
+
+Instead of using cascaded conditional statements, we can implement the FSM using a compact lookup table approach that:
+1. Encodes the entire state transition table in a memory-like structure
+2. Uses the current state (y) and input (x) as an address to lookup next state and output
+3. Provides better scalability for larger state machines
+4. Enables easier modification of state transitions
+5. Potentially reduces combinational path length by using direct array indexing
+
+Key features:
+- Pre-computes all possible transitions in a packed array
+- Uses concatenation of x and y as lookup address
+- Outputs are derived directly from the lookup result
+- More maintainable and verifiable as the state table is explicitly encoded

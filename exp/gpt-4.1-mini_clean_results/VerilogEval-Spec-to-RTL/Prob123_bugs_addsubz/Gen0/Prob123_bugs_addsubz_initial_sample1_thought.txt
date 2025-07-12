@@ -1,0 +1,1 @@
+The bug is that the zero flag (result_is_zero) is only set to 1 when the output is zero, but is never set to 0 when the output is non-zero. This leads to result_is_zero retaining old values. To fix this, we need to explicitly set result_is_zero to 0 when out is not zero. Also, the if (~out) is somewhat cryptic; better to use "if (out == 0)" for clarity.

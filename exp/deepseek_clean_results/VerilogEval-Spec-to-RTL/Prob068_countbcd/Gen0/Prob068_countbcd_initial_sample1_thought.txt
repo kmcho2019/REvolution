@@ -1,0 +1,10 @@
+To implement a 4-digit BCD counter:
+1. Use a 16-bit register (q) to store the 4 BCD digits (4 bits each)
+2. Implement synchronous reset that clears all digits to 0 when reset is high
+3. For each digit, increment when:
+   - For ones digit: every clock cycle (ena[0] always 1)
+   - For tens digit: when ones digit rolls over from 9 to 0
+   - For hundreds digit: when tens digit rolls over from 9 to 0
+   - For thousands digit: when hundreds digit rolls over from 9 to 0
+4. Generate enable signals (ena) for digits 3-1 based on rollover conditions
+5. Each digit rolls over independently when reaching 9

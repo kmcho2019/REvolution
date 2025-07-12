@@ -1,0 +1,7 @@
+The new approach involves utilizing a First-In-First-Out (FIFO) buffer to store the incoming 8-bit data values. This allows for a more efficient and scalable way to accumulate the data. The FIFO is designed to hold four 8-bit values, and when it's full, the accumulated sum is calculated and outputted. This method eliminates the need for a state machine to keep track of the number of valid inputs received, making the design more straightforward and easier to implement.
+
+The FIFO can be implemented using a small array of registers, and the write and read pointers can be managed using a simple counter. When the FIFO is full, the sum of the four values is calculated using a combinational adder tree, which reduces the critical path delay compared to sequential additions.
+
+This design also includes a `valid_out` signal that is set to 1 when the accumulated sum is outputted, indicating that the data is valid. The `data_out` signal carries the accumulated sum, which is a 10-bit value.
+
+The advantages of this approach include improved scalability, reduced complexity, and increased performance. The use of a FIFO buffer and a combinational adder tree makes the design more efficient and easier to implement.

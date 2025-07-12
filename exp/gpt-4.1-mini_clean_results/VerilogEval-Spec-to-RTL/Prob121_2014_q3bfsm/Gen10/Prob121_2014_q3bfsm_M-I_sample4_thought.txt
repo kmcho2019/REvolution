@@ -1,0 +1,47 @@
+To optimize the FSM for better performance, power, and area (PPA), we focus on simplifying the next state logic and output decoding. Given the FSM has 5 states (000 to 100), using a one-hot encoding would increase area but could reduce critical path delay by simplifying combinational logic. However, the existing binary encoding is compact and suitable for this size.
+
+Instead, we optimize by:
+
+1. Minimizing combinational logic depth for next state and output signals by explicitly deriving equations for next state bits, reducing the use of case statements.
+
+2. Implement synchronous reset and state update as before for clarity.
+
+3. Implement the output z using a simple logic expression based on the state bits rather than equality comparisons, reducing combinational comparison overhead.
+
+This approach leads to reduced gate count and possibly faster synthesis results due to simpler logic expressions, potentially improving timing and power slightly without area penalty.
+
+The FSM logic derived from the table:
+
+From present state y[2:0] and input x, next state bits can be expressed logically:
+
+- y_next[0]:
+  - From table transitions:
+    - State 000: y_next=000 if x=0, 001 if x=1 => y_next[0] = x & ~y[2] & ~y[1] & ~y[0]
+    - State 001: y_next=001 if x=0, 100 if x=1 => 
+      y_next[0]=0 for 100, 1 for 001, so y_next[0]= ~x & y==001
+    - State 010: y_next=010 if x=0, 001 if x=1 =>
+      y_next[0] = x & (y==010)
+    - State 011: y_next=001 if x=0, 010 if x=1 =>
+      y_next[0] = ~x & (y==011)
+    - State 100: y_next=011 if x=0, 100 if x=1 =>
+      y_next[0] = ~x & (y==100)
+  Combining, or to avoid complexity, keep the case statement (or a multiplexer), but reduce output logic to combinational expressions.
+
+Because the logic gets complicated and the FSM is small, keeping a case statement for next state is efficient and clearer.
+
+Therefore, the main gain is simplifying the output z logic:
+
+- z=1 when present state is 011 or 100
+- So, z = (y == 3'b011) || (y == 3'b100)
+- Alternatively, derive minimal logic for z:
+  Observing bits: 011 (3'b011) = y[2]=0, y[1]=1, y[0]=1
+                    100 (3'b100) = y[2]=1, y[1]=0, y[0]=0
+  So z = (y[2]&~y[1]&~y[0]) | (~y[2]&y[1]&y[0])
+  
+This uses fewer comparators and is faster to synthesize.
+
+Hence, the improved design keeps the case statement for clarity and minimal changes to the FSM, but simplifies output logic to a combinational expression, enhancing performance and reducing area slightly.
+
+The synchronous reset and state update remain unchanged for reliable operation.
+
+This balanced optimization improves PPA metrics without sacrificing code clarity or correctness.

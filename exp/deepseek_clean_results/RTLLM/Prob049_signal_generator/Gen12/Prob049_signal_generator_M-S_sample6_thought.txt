@@ -1,0 +1,12 @@
+The design can be further simplified by:
+1. Eliminating the explicit direction register entirely
+2. Using the MSB of an extended counter to naturally handle overflow/underflow
+3. Implementing a single arithmetic operation (addition) with a sign-controlled delta
+4. Letting the counter naturally wrap around at boundaries
+5. Clamping the output to maintain the 0-31 range
+
+This achieves:
+- Removal of all control logic (no state/direction registers)
+- Single arithmetic operation per cycle
+- Automatic direction change at boundaries
+- Same functional behavior with fewer resources

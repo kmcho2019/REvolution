@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. **Timing Optimization**: The current design shows minor timing violations (-0.18ns WNS/TNS). To improve timing:
+   - Simplify the next-state logic by using a single case statement instead of parallel predictions
+   - Remove intermediate wires to reduce combinatorial path depth
+   - Use direct state transitions in the case statement
+
+2. **Power Optimization**:
+   - Maintain the same state encoding (2-bit binary) as it's already area-efficient
+   - Keep output logic simple (just state comparison) as it's already minimal
+
+3. **Area Optimization**:
+   - The current area is already small (17 um²), but we can make the logic more compact
+   - Combine next-state logic and state register updates into a single always block
+   - Remove unnecessary intermediate signals
+
+Key Changes:
+- Simplified next-state logic with direct case statement
+- Combined state transition and register update logic
+- Maintained same state encoding and output behavior
+- Kept asynchronous reset functionality

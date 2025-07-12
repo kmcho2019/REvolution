@@ -1,0 +1,16 @@
+Both examples correctly implement the even parity function for inputs a, b, c, and d, producing q = ~(a ^ b ^ c ^ d). Example 1 uses the concise XOR reduction operator combined with negation, which is minimal in code size and very scalable, while Example 2 implements a balanced XNOR tree that potentially optimizes gate delay and power by reducing logic depth and balancing the signal paths.
+
+To fuse their strengths:
+- Use the reduction XOR operator on a vector {a,b,c,d} for code brevity, clarity, and scalability.
+- Implement the negation via bitwise negation of the reduction XOR, retaining the even parity semantics.
+- However, to gain the timing and power benefits of a balanced tree, instantiate the balanced XNOR tree explicitly but generate it hierarchically with reduction operators.
+
+Since direct synthesis tools can map reduction operators efficiently, but balanced trees can sometimes produce better physical designs, the fusion strategy is:
+- Use the balanced XNOR tree structure (2-input XNOR gates) to reduce logic depth and improve timing/power.
+- Express the balanced tree succinctly by defining intermediate wires and showing the balanced structure, but keep the code compact and easy to maintain.
+- This approach combines the scalability and clarity of Example 1's vectorized reduction with the balanced logic depth and explicit clarity of Example 2's approach.
+- Also, the balanced tree approach can be easily expanded for more inputs without increasing gate depth linearly.
+
+Hence, the fused implementation uses a balanced XNOR tree (3 two-input XNOR gates) explicitly but keeps naming and structure clear to support readability and maintainability.
+
+This gives the minimal logic depth and gate count for four inputs, minimal power by balanced switching activity, and a very clean RTL structure that synthesizers can optimize further or map to dedicated parity primitives.

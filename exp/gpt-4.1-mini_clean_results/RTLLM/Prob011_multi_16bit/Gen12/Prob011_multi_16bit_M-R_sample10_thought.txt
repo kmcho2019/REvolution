@@ -1,0 +1,19 @@
+I will refactor the design by introducing a simple finite state machine (FSM) with IDLE, LOAD, and MULT states to control the multiplication process. This approach clarifies control flow compared to direct combinational control signals, improving code readability and maintainability.
+
+- IDLE: Wait for start signal.
+- LOAD: Load inputs into registers at the start of multiplication.
+- MULT: Perform shift and accumulate operations over 16 cycles.
+
+The counter (i) increments only in MULT state. The done flag is asserted upon completion of MULT state.
+
+Register updates are grouped by FSM states to make the operation sequences explicit.
+
+This structure also separates control logic from data path, making it easier to extend or modify later.
+
+The multiplicand register (areg) and multiplier register (breg_ext) shift every cycle during MULT, yout_r accumulates conditionally.
+
+Reset logic is simplified by synchronous reset asserted asynchronously outside FSM.
+
+Output done is directly from FSM state.
+
+This refactoring changes control structure but retains all original functionality and timing.

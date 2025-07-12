@@ -1,0 +1,20 @@
+Refactor the gshare predictor by explicitly pipelining the prediction interface through two stages to model synchronous RAM latency, and by keeping the GHR updates fully sequential and deterministic:
+
+- Use a 2-stage prediction pipeline: stage 0 captures `predict_pc` and `ghr_spec` to compute the index for PHT synchronous RAM read, stage 1 captures the read data and inputs to produce the prediction outputs aligned with the request.
+
+- The PHT read uses the stage 0 index registered at clock edge; PHT output is combinational from the synchronous RAM after registering the address.
+
+- Prediction outputs (taken and history) come from stage 1 registers, representing the prediction for the current `predict_valid` request.
+
+- The GHR update on each clock edge uses either:
+  1. If `train_valid && train_mispredicted`, restore GHR from `train_history` (training priority).
+  2. Else if `predict_valid`, update GHR by shifting in the predicted bit *from the previous PHT read*, i.e., from the stage 1 prediction, matching that the prediction is made from the previous cycle's read.
+  3. Else hold GHR.
+
+- PHT update on training occurs synchronously at clock edge according to the training input.
+
+- Initialization sets PHT entries to weakly not taken (01) and GHR to 0.
+
+- This approach strictly separates combinational and sequential logic, honors synchronous RAM read latency, and correctly sequences updates to maintain stable outputs and correct GHR state transitions aligned with the problem timing.
+
+This pipeline and update structure aligns with realistic hardware design and satisfies the problem constraints.

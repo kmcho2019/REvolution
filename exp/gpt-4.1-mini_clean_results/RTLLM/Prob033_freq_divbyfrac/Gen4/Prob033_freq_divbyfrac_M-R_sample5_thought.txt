@@ -1,0 +1,11 @@
+Refactor the fractional frequency divider by explicitly generating the two intermediate clocks (clk_int_a and clk_int_b) using synchronous logic only, avoiding sampling counters on negedge clocks directly to prevent metastability and timing issues.
+
+Instead of sampling the counter on negedge clk, implement a double-edge clocking technique by generating clk_int_b as the delayed version of clk_int_a shifted by half clock period using a flip-flop clocked on negedge clk.
+
+This can be done by generating clk_int_a from the 7-count synchronous counter on posedge clk (high for counts 0..3), and then registering clk_int_a on negedge clk to produce clk_int_b, effectively phase-shifting it by half a clock cycle.
+
+Finally, OR clk_int_a and clk_int_b to produce clk_div.
+
+This approach ensures all registers are clocked synchronously, eliminates asynchronous sampling of counters on negedge, and properly phase-shifts clk_int_a to produce clk_int_b by using a negedge clocked flip-flop, resulting in a glitch-free, stable fractional clock output.
+
+Synchronous reset is used throughout for predictable initialization.

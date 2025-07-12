@@ -1,0 +1,19 @@
+Optimization strategy based on PPA metrics:
+1. Timing Improvement:
+   - Eliminate state machine by using counter's MSB as implicit state indicator
+   - Pipeline the buffer shift operation by splitting into two 4-bit shifts
+2. Power Reduction:
+   - Use clock gating for the buffer register when not collecting data
+   - Extend dout_valid for two cycles to reduce downstream switching
+3. Area Optimization:
+   - Remove explicit state machine logic
+   - Share buffer and output registers during final cycle
+4. Additional improvements:
+   - Use gray coding for counter to reduce switching power
+   - Add early termination detection for invalid inputs
+
+Key benefits:
+- Reduced critical path by eliminating state machine
+- Lower power through clock gating and gray coding
+- Smaller area by removing redundant logic
+- Maintained functionality while improving timing

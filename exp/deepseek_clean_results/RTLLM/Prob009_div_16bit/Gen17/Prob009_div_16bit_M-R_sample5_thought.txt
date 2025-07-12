@@ -1,0 +1,15 @@
+Refactoring approach:
+
+1. **Flatten the structure**: Instead of using a generate loop with intermediate temp wires, we'll implement the division as a direct combinational calculation using concatenation and conditional operators. This eliminates the array of temporary wires while maintaining the same functionality.
+
+2. **Optimize remainder handling**: We'll track the remainder through each step using a single variable that gets updated sequentially through concatenation and conditional operations.
+
+3. **Simplify comparison logic**: Each quotient bit will be determined by comparing the current remainder (plus next dividend bit) with the divisor, then updating the remainder accordingly.
+
+4. **Reduce resource usage**: By using a single remainder register that gets updated at each step, we minimize the storage requirements compared to the original array-based approach.
+
+The key improvements are:
+- More straightforward implementation without generate blocks
+- Reduced wire count and storage requirements
+- Same combinational behavior with identical results
+- More readable and maintainable code structure

@@ -1,0 +1,7 @@
+Implement the FSM as a one-hot encoded state machine with clearly separated steps and minimal state dependencies. Use a separate 3-bit shift register for x inputs to detect the "101" pattern, continuously updated once the pattern detection phase starts. After reset de-assertion, immediately assert f=1 for one clock cycle, then move to pattern detection.
+
+When "101" is detected on x (in three consecutive clocks), assert g=1 and enter a monitoring phase of y input with a 2-cycle timer. Use a dedicated 2-bit counter to track these cycles, and if y=1 is detected anytime in this window, latch g=1 permanently. If time expires without y=1, clear g=0 permanently.
+
+Keep outputs combinationally driven from the current state for clean Moore outputs. Use synchronous active-low reset to initialize states and registers.
+
+This structure avoids race conditions by always shifting x inputs every clock in pattern detection, separating output assertions clearly, and employing explicit counters for timing, ensuring outputs f and g transition exactly as specified and remain stable afterward.

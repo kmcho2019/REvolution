@@ -1,0 +1,11 @@
+This implementation leverages Verilog's bit selection capabilities with a parallel comparison approach:
+1. Generate 256 parallel comparators that check if each sel value matches their index
+2. Use these comparison results to mask the input bits (AND gates)
+3. OR-reduce all masked bits to get the final output
+4. Benefits:
+   - Fully parallel implementation (single level of logic)
+   - No recursive hierarchy or intermediate signals
+   - Simple and straightforward to understand
+   - Potentially better for synthesis tools to optimize
+   - Scales well with wider buses in modern FPGAs/ASICs
+5. The implementation uses a generate block to create all comparison logic

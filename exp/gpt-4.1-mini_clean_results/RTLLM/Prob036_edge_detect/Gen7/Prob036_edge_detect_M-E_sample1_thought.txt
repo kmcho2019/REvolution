@@ -1,0 +1,12 @@
+Implement edge detection by storing the previous value of input 'a' in a register and comparing it with the current value each clock cycle. The edge signals 'rise' and 'down' will be generated as registered outputs that latch to '1' upon the corresponding edge detection and hold their states until the next occurrence of the same edge.
+
+Specifically, on each clock:
+- If a rising edge (prev_a = 0 and a = 1) occurs, set rise to 1.
+- If a falling edge (prev_a = 1 and a = 0) occurs, set down to 1.
+- If no new rising edge, keep rise at its current value.
+- If no new falling edge, keep down at its current value.
+- On reset, clear prev_a, rise, and down.
+
+This way, rise and down act as level indicators that remain asserted after their first detection until the same edge repeats again, meeting the requirement of "remain set to 1 until the corresponding edge appears again". This approach differs from typical pulse generation by using a state-holding output rather than a pulse output.
+
+The design uses one synchronization flip-flop stage for 'a' input, and registers for prev_a, rise, and down to implement the latch behavior of outputs.

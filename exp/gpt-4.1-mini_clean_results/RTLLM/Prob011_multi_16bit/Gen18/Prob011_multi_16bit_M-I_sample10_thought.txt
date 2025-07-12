@@ -1,0 +1,9 @@
+To improve PPA based on the given metrics and feedback, I will optimize power and timing by avoiding shifting the entire 32-bit product register every cycle. Instead, I will keep separate registers for multiplicand, multiplier, and an accumulator. Each cycle, if the current multiplier bit is 1, add the multiplicand shifted by the bit position to the accumulator. This reduces wide shifting and unnecessary toggling.
+
+I will also implement an enable signal that gates the update of the accumulator and registers only during active multiplication (i from 0 to 16), minimizing register toggling when idle or done.
+
+Using a simple shift counter and a done flag following the given specification, I keep the design straightforward and synchronous reset friendly.
+
+This approach limits the width of shifting to 16-bit multiplicand shifted by at most 15 positions for addition to a 32-bit accumulator, which is a lighter operation than shifting the whole product register each cycle. It also improves clarity and power consumption by updating registers only when necessary.
+
+Overall, this keeps the shift-and-accumulate behavior, uses minimum shifting, and provides clear control signals for done and start.

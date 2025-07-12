@@ -1,0 +1,40 @@
+Analyzing the waveform carefully, the state transitions follow a specific pattern:
+
+- The 'state' flip-flop is updated on the positive clock edge.
+- At each posedge clk, the next state is determined by inputs 'a', 'b' and the current 'state'.
+- From the waveform, when (a=0,b=0) state remains the same.
+- When (a=0,b=1) state sets to 1.
+- When (a=1,b=1) state resets to 0.
+- When (a=1,b=0), state toggles (inverts) its current value.
+
+This behavior can be summarized as a state machine with:
+
+- If (a=0,b=0): next_state = state
+- If (a=0,b=1): next_state = 1
+- If (a=1,b=1): next_state = 0
+- If (a=1,b=0): next_state = ~state
+
+Output 'q' is just the current state (before the update), i.e., q = state.
+
+This matches the waveform perfectly.
+
+Therefore:
+
+- next_state = (~a & b) | (a & ~b & ~state) | (a & b & 1'b0) | (~a & ~b & state)
+  Simplifying: next_state = (~a & b) | (a & ~b & ~state) | (~a & ~b & state)
+- But since (a & b) case leads to next_state = 0, we include a & b = 0.
+
+Simplifying next_state logic:
+
+- If a=1 and b=0, next_state = ~state (toggle)
+- If a=0 and b=1, next_state = 1 (set)
+- If a=1 and b=1, next_state = 0 (reset)
+- If a=0 and b=0, next_state = state (hold)
+
+Implementing this logic in code matches all waveform outputs exactly.
+
+Initialize state to 0 as per initial conditions.
+
+Output q = state is directly the stored flip-flop value.
+
+This approach reproduces the waveform with perfect fidelity and is straightforward to implement and understand.

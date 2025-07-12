@@ -1,0 +1,8 @@
+To improve the original design for better performance and area, I will:  
+1) Implement explicit subtraction using combinational full subtractors to generate the difference bits and borrow signals at each bit position.  
+2) Use the final borrow out to determine if A < B (borrow out = 1) or else A ≥ B (borrow out = 0).  
+3) Use the difference bits all zero check to determine equality (all difference bits zero means A = B).  
+4) Then, A > B = not borrow and not equal; A = B = equal; A < B = borrow out.  
+This reduces redundant equality checks and avoids repeated bitwise comparisons.  
+Also, it strictly follows the problem statement hint of using subtraction and borrow generation.  
+Outputs are mutually exclusive and the logic depth can be minimized by parallel subtractors with simple borrow chain.

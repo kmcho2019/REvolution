@@ -1,0 +1,13 @@
+To fix the observed mismatches, we will keep the fundamental approach—tracking the previous input and detecting falling edges using `delayed_in & ~in`. However, we will separate the combinational detection of falling edges into a registered signal so that the detection is stable and fully synchronous.
+
+The problem likely stems from using the combinational wire `falling_edge = delayed_in & ~in` directly in the always block, causing subtle race conditions or mismatches in simulation timing.
+
+By registering the falling edge vector in a dedicated register on the clock edge, we ensure a stable, one-cycle delayed falling edge signal. Then the `out` register can be updated synchronously based on this stable falling_edge register.
+
+This approach aligns with synchronous design best practices, eliminating combinational dependencies inside the sequential block and reducing timing ambiguities.
+
+The reset will clear `delayed_in`, `falling_edge_reg`, and `out`, ensuring a clean startup state.
+
+In summary, the fixed design adds a `falling_edge_reg` register updated every cycle, which captures the detected falling edges for the previous cycle, then uses this registered signal to latch bits into `out`.
+
+This modification should fix simulation mismatches by removing combinational path dependencies within sequential logic and ensuring stable, synchronous updates that match testbench expectations.

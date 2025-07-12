@@ -1,0 +1,21 @@
+Instead of using explicit NOT and AND gates or a NAND gate, we can implement the logic out = in1 & ~in2 by using a single 2-to-1 multiplexer (MUX) configured as follows:
+
+- The select line is in2.
+- When in2=0, output is in1 (because ~in2 = 1, so out = in1).
+- When in2=1, output is 0 (since out = in1 & 0 = 0).
+
+Thus, the MUX selects between in1 (when in2=0) and 0 (when in2=1), implementing out = in1 & ~in2.
+
+This approach reduces gate count and can be optimized by synthesis tools into a single complex gate, improving area and power.
+
+We can implement the MUX using Verilog's conditional operator or with primitive gates.
+
+Here, I'll implement the MUX explicitly using basic gates:
+
+out = (~in2 & in1) | (in2 & 0) = ~in2 & in1.
+
+Since (in2 & 0) is always 0, it's omitted.
+
+This is functionally equivalent to the original, but expressed as a MUX.
+
+This design offers a different architectural style from direct NOT-AND gates.

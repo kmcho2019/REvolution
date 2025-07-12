@@ -1,0 +1,17 @@
+To optimize the existing 64-bit subtractor for better performance, power, and area while maintaining correctness, we will adopt a hierarchical carry-lookahead approach instead of a simple ripple carry chain.
+
+The current design uses a linear carry propagation through 64 bits, which creates a long critical path, impacting maximum clock frequency. A hierarchical approach groups bits into blocks (e.g., 4-bit blocks), computing group propagate and generate signals, which are then combined to quickly resolve carries across the entire 64-bit operand.
+
+Specifically:
+
+- Implement a 4-bit carry-lookahead logic that computes carries within 4-bit groups quickly.
+- Implement a higher-level carry-lookahead for groups of these 4-bit blocks.
+- This reduces carry propagation delay from O(n) to O(log n), improving max frequency.
+- The hierarchical CLAs also tend to reduce glitching (power) due to shorter propagation chains and localized logic.
+- The logic can be kept fully combinational but more structured for synthesis optimization.
+- Reuse signal names (P,G) at bit-level and add group-level signals (PG, GG).
+- Overflow detection remains the same.
+
+This approach balances PPA by trading a modest increase in logic complexity for significantly reduced critical path delay and potential power savings due to reduced glitches and better logic structure.
+
+The implementation will be fully self-contained without external modules and will maintain the interface and functionality of the original module.

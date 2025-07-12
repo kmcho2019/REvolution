@@ -1,0 +1,13 @@
+Refactor the implementation by directly coding each mux_in bit as a pure combinational expression using conditional (?:) operators, representing the 2-to-1 mux functionality. This approach avoids intermediate wires and separate mux2to1 module instantiations, reducing complexity and potential mistakes.
+
+The core idea remains:
+
+- Each mux_in bit corresponds to one column of the K-map (fixed ab).
+- For each mux_in bit, build the function based on inputs c and d, using conditional operators to model 2-to-1 muxes.
+- For example, implement mux_in[0] as `mux_in[0] = c ? 1 : d;` if that matches the truth table, or adjust accordingly.
+- This reduces code clutter, eases reasoning, and is functionally equivalent to using mux2to1 modules.
+- Keep the TopModule interface the same.
+
+This refactoring simplifies verification and likely removes the previous logic mismatch, especially for mux_in[0].
+
+Additionally, the `mux2to1` module is removed to streamline the design, as the conditional operator inherently models a 2-to-1 mux.

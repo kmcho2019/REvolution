@@ -1,0 +1,22 @@
+Refactoring Strategy:
+1. State Machine Restructuring:
+   - Convert the hour counter to an explicit state machine with AM/PM states
+   - Use one-hot encoding for hour states to simplify transitions
+   - Combine hour and PM logic into a single state machine
+
+2. Output Generation:
+   - Replace packed BCD registers with separate tens/ones counters
+   - Use continuous assignments for all outputs (including BCD conversion)
+   - Move hour-to-BCD conversion to combinational logic
+
+3. Timing Optimization:
+   - Break dependency chains by registering rollover signals
+   - Pipeline critical path (hour state transitions)
+   - Simplify comparison logic by using one-hot encoding
+
+Key Changes:
+- Explicit state machine for hours (12 states + AM/PM)
+- Separate tens/ones counters for seconds and minutes
+- Registered rollover signals
+- All outputs generated through continuous assignments
+- Simplified comparison logic

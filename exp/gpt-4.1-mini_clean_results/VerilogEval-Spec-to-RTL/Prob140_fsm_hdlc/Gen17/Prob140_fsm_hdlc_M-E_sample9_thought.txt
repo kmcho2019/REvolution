@@ -1,0 +1,21 @@
+Use an explicit Moore FSM with states representing how many consecutive '1's have been seen since the last '0'. Encode states as IDLE (no consecutive ones), S1 (1 one), S2 (2 ones), ..., S6 (6 ones), and ERROR (7 or more ones).
+
+On each clock cycle, transition states based on the input bit:
+- On input=1, advance to next consecutive one count state up to ERROR if 7 or more ones appear.
+- On input=0, based on the current count of consecutive ones, emit outputs: 
+  disc = 1 if previous ones count was 5 (zero after five ones),
+  flag = 1 if previous ones count was 6 (zero after six ones),
+  err = 0 in both cases,
+  then reset to IDLE.
+
+All outputs are registered and asserted for one cycle after the condition is detected, as a Moore FSM requires.
+
+This design:
+- Uses explicit, human-readable states rather than a saturating counter.
+- Encapsulates behavior and outputs fully within states.
+- Has clean, simple state transitions and output logic.
+- Makes it easy to extend or modify FSM behavior in future.
+
+A synchronous active-high reset initializes the FSM to IDLE.
+
+This approach leverages a minimal 8-state Moore FSM where outputs depend solely on the current state, simplifying timing and ensuring glitch-free output signals.

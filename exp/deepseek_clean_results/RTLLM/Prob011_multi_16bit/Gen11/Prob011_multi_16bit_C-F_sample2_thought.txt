@@ -1,0 +1,14 @@
+The fusion strategy combines the best aspects of both examples while addressing their weaknesses:
+
+1. State Machine: Adopt Example 2's explicit state encoding for clarity but optimize it for performance (one-hot encoding)
+2. Shift Logic: Use Example 1's pre-computed shifts but only generate needed shifts to save power
+3. Counter: Use Example 2's approach but correctly sized (5 bits) and with efficient completion detection
+4. Power Optimization: Gate shift computations based on state and multiplicand bits
+5. Timing: Pipeline the critical path (accumulator addition) while maintaining single-cycle state transitions
+
+Key improvements:
+- One-hot state machine for faster decoding
+- Conditional shift computation to reduce power
+- Optimized counter and done signal generation
+- Pipelined accumulator for better timing
+- Clean separation of control and datapath

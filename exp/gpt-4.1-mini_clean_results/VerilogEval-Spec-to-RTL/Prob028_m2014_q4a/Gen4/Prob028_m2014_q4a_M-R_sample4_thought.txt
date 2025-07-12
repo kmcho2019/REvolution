@@ -1,0 +1,10 @@
+To improve synthesis compatibility and avoid issues with nonblocking assignments inside a latch inference, I will implement the D latch using a combinational always block with blocking assignments (`=`) and an explicit sensitivity list on `ena` and `d`. This is the idiomatic style for latches in Verilog.
+
+- When enable is high, output `q` follows input `d`.
+- When enable is low, output `q` holds its previous value by omitting the `else` branch (no assignment).
+
+Blocking assignments in a combinational always block signal that the output is updated immediately when enabled, which synthesis tools recognize as a level-sensitive latch.
+
+This style avoids synthesis tools trying to infer flip-flops or unsupported cell types and improves compatibility with tools like Yosys. It keeps the same functionality while improving synthesis friendliness.
+
+Also, output `q` remains a reg type because it holds state.

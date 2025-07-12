@@ -1,0 +1,19 @@
+To improve PPA metrics while maintaining correct functionality, we'll implement these optimizations:
+
+1. **Timing Improvement**:
+   - Break the large combinational path by adding pipeline registers every 128 bits
+   - This reduces the critical path length from 512 XORs to 128 XORs per stage
+
+2. **Power Optimization**:
+   - Add clock gating when the state isn't changing (when neither load nor update is needed)
+   - Use enable signals to reduce unnecessary toggling
+
+3. **Area Reduction**:
+   - Share common boundary logic between adjacent cells
+   - Use more efficient XOR implementations where possible
+
+The improved design will:
+- Maintain the same interface and functionality
+- Process in 4 pipeline stages (128 bits each)
+- Use clock gating for power savings
+- Reduce area through shared boundary logic

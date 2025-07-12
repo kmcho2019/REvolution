@@ -1,0 +1,15 @@
+To fix the implementation, we need to address the key issues identified in the feedback:
+
+1. **Prediction Timing**: The prediction should use the GHR state at prediction time, not necessarily the current state. We need to capture the GHR value used for prediction.
+
+2. **Training Priority**: Ensure training operations properly override prediction updates when they occur simultaneously.
+
+3. **History Output**: predict_history should output the GHR state used for the current prediction, not the current GHR value.
+
+4. **Initialization**: Maintain the weakly-taken initialization but ensure it matches expected behavior.
+
+Improvements:
+1. Add a registered version of GHR specifically for prediction outputs
+2. Separate the prediction index calculation from the training index
+3. Ensure proper priority in the update logic
+4. Maintain correct timing for all outputs

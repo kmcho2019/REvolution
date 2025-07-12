@@ -1,0 +1,21 @@
+The new approach for the radix-2 divider utilizes a hybrid architecture that combines the benefits of a carry-save adder and a shift-register-based divider. The main idea is to use a series of subtract-and-shift operations to iteratively reduce the dividend until the remainder is less than the divisor. This approach involves the following steps:
+
+1. **Initialization**: Save the inputs and initialize the necessary registers.
+2. **Subtract-and-Shift**: Subtract the divisor from the dividend and shift the result one bit to the left. If the result is negative, set the corresponding bit in the quotient to 0. Otherwise, set the corresponding bit in the quotient to 1.
+3. **Repeat**: Repeat the subtract-and-shift operation until the desired number of bits has been processed.
+4. **Result**: The final result is the quotient and the remainder.
+
+To improve the performance of the design, a pipelined architecture can be used, where each stage of the pipeline performs one subtract-and-shift operation. This allows for a higher throughput and reduces the latency of the design.
+
+Additionally, to handle signed division, the design will use two's complement representation for negative numbers. The dividend and divisor will be converted to their absolute values, and the sign of the result will be determined based on the signs of the original inputs.
+
+The new architecture will also include a control unit that manages the flow of data through the pipeline and generates the necessary control signals for the subtract-and-shift operations.
+
+In this design, we will use a Finite State Machine (FSM) to manage the division process. The FSM will have the following states:
+
+1. **IDLE**: The initial state where the module waits for a valid operation request.
+2. **INIT**: The state where the inputs are saved and the necessary registers are initialized.
+3. **DIVIDE**: The state where the subtract-and-shift operation is performed.
+4. **RESULT**: The state where the final result is generated.
+
+The FSM will transition between these states based on the current state and the inputs.

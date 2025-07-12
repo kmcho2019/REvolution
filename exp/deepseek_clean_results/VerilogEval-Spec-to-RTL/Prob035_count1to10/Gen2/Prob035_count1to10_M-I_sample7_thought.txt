@@ -1,0 +1,19 @@
+To optimize the decade counter for better PPA metrics, I'll implement the following improvements:
+
+1. Timing Optimization:
+   - Pre-compute the next state logic to reduce critical path
+   - Use a dedicated wrap signal to simplify the comparison logic
+   - This eliminates the need for a full 4-bit comparator in the critical path
+
+2. Power Optimization:
+   - Maintain the binary counting sequence (rather than Gray code) to keep comparison logic simple
+   - The power savings from Gray coding would be offset by more complex wrap detection
+
+3. Area Optimization:
+   - Keep the minimal 4-bit register since it's already compact
+   - Simplify control logic by combining conditions
+
+The improved design will:
+- Use a single always block for clean synchronous logic
+- Generate a wrap signal when count reaches 10
+- Select between reset, wrap, or increment conditions

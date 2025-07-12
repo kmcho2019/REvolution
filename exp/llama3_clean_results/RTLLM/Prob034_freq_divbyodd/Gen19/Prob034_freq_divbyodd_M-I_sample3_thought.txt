@@ -1,0 +1,7 @@
+To improve the frequency divider module `freq_divbyodd`, we will address the issues mentioned in the feedback. Firstly, we need to correct the counter logic so that `cnt1` and `cnt2` count up to `NUM_DIV - 1`, not just increment on every edge. The toggle condition for `clk_div1` and `clk_div2` should also be corrected to toggle after counting up to `NUM_DIV - 1`. 
+
+To optimize the design for better area efficiency, we will use counters that are just wide enough to hold the maximum count value. Since `NUM_DIV` is an odd number, the maximum count value will be `NUM_DIV - 1`, which can be represented by a counter of width `ceil(log2(NUM_DIV))`.
+
+Another optimization is to derive `clk_div` directly from `cnt1` and `cnt2` without needing separate `clk_div1` and `clk_div2` signals. This can be achieved by using a single counter that counts both rising and falling edges and toggles the output at the correct count value.
+
+Finally, we will add comprehensive comments to explain the design intent and logic behind the implementation.

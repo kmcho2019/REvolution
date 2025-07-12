@@ -1,0 +1,12 @@
+Implement the flip-flops with an asynchronous active-high reset input to guarantee zero initialization before operation begins, aligning with the requirement that flip-flops start at zero "before the machine begins." Since the problem does not provide an explicit reset input, internally instantiate asynchronous reset logic using a power-on-reset (POR) circuit simulated with an internal register that asserts reset for a few clock cycles after simulation start, ensuring proper initialization in both simulation and synthesis.
+
+Use three D flip-flops with asynchronous reset, each driven by its respective logic:
+- XOR flip-flop: d_xor = x ^ q_xor
+- AND flip-flop: d_and = x & ~q_and
+- OR flip-flop: d_or = x | ~q_or
+
+The asynchronous reset sets all flip-flops to zero immediately upon power-up.
+
+Finally, the outputs of the flip-flops feed into a 3-input NOR gate to produce z.
+
+This approach guarantees correct initialization without relying on `initial` blocks for flip-flop state, providing robust and synthesis-friendly design while fulfilling the problem requirements.

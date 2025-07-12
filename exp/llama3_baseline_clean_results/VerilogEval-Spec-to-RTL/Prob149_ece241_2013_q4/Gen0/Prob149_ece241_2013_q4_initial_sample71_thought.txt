@@ -1,0 +1,9 @@
+To implement the TopModule, we can use a simple state machine that checks the water level sensors and determines the flow rate accordingly. We'll use a combinational logic approach to determine the flow rate based on the current sensor values and the previous state. The state machine will have two states: one for when the water level is rising and one for when it's falling or steady. When the reset signal is asserted, the state machine will be reset to a state equivalent to the water level being low for a long time.
+
+We'll use the following logic:
+- When all sensors are asserted (s[2:0] = 3'b111), the flow rate should be zero.
+- When only the lower sensors are asserted (s[2:0] = 3'b011 or 3'b001), the flow rate should be increased based on the number of sensors asserted.
+- When no sensors are asserted (s[2:0] = 3'b000), the flow rate should be maximum.
+- The Supplemental flow valve (dfr) should be opened when the sensor change indicates that the previous level was lower than the current level.
+
+We'll use a variable to keep track of the previous sensor values to determine the direction of the water level change.

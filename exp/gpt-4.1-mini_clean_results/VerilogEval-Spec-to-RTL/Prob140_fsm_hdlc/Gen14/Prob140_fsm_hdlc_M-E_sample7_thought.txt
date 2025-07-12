@@ -1,0 +1,11 @@
+Implement a Moore FSM using explicit states to track the count of consecutive ones from 0 up to 7 (error). Each state represents how many consecutive ones have been seen so far. On input bit '1', the FSM transitions to the next higher consecutive-one count state, saturating at the error state for 7 or more ones. On input bit '0', the FSM resets to zero consecutive ones.
+
+Outputs are determined solely by the current state (Moore outputs). The outputs disc, flag, and err are asserted only in the cycle after the specific pattern is recognized (i.e., outputs depend on the current state which was transitioned from previous input).
+
+- disc is asserted when the FSM just transitioned from 5 consecutive ones state and received zero.
+- flag is asserted when the FSM just transitioned from 6 consecutive ones state and received zero.
+- err is asserted whenever the FSM is in or beyond the error state (7 or more consecutive ones).
+
+Using explicit states rather than counters improves clarity and makes the FSM's behavior easy to follow and verify. The state transitions and output logic are purely synchronous, outputting one-cycle pulses as required. This approach avoids any arithmetic saturating counters and purely uses state encoding.
+
+On synchronous reset, FSM starts at state S0 (0 ones), behaving as if previous input was zero.

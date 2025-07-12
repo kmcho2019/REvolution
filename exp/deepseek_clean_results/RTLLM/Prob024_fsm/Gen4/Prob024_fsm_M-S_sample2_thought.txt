@@ -1,0 +1,12 @@
+To simplify the Mealy FSM while maintaining functionality:
+1. Reduce the number of states by combining similar states where possible
+2. Use binary state encoding for minimal area
+3. Combine state transition and output logic into a single always block for clarity
+4. Remove redundant default case since all states are explicitly covered
+5. Maintain the same detection behavior: MATCH=1 only when sequence "10011" completes
+
+Key simplifications:
+- Use 3 states instead of 6 (S0, S1, S2) to track progress
+- Output MATCH is purely combinational based on current state and input
+- Reset puts FSM back to initial state (S0)
+- State transitions handle both correct sequence progression and error cases

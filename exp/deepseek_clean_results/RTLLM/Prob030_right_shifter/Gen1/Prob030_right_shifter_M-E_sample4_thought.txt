@@ -1,0 +1,7 @@
+This design implements the right shifter using a circular buffer concept with explicit bit positions. Instead of using the shift operator, we:
+1. Maintain an 8-bit register where each bit is individually addressable
+2. On each clock edge, we move each bit to its right neighbor (q[i] <= q[i+1])
+3. The LSB (q[0]) is discarded and the new input is placed in the MSB (q[7])
+4. Initialization is done via a synchronous reset for better synthesis portability
+
+This approach provides more explicit control over each bit position and might be more readable for some applications. It also demonstrates an alternative to using the shift operator.

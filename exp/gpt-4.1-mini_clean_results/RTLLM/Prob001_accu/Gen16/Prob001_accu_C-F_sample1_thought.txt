@@ -1,0 +1,11 @@
+Fuse the minimal combinational logic with direct accumulator update inside the sequential block, while carefully controlling when addition occurs to reduce toggling and improve timing.
+
+Key points in the fusion:
+- Compute accumulator + data_in combinationally only when valid_in is high, avoiding unnecessary toggling.
+- Update accumulator and count registers only on valid_in to reduce switching power.
+- On the 4th valid input (count == 3), output accumulator + data_in as the final sum and pulse valid_out for one cycle.
+- Immediately reset accumulator and count after output, preparing for the next group without delay.
+- Use non-blocking assignments for proper sequential behavior.
+- Keep valid_out asserted only for one cycle, cleared every clock.
+- This approach takes advantage of the clean control logic and minimal counting from both examples, while reducing unnecessary combinational activity.
+- The code is compact and efficient, fitting well with PPA optimization goals.

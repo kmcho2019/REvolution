@@ -1,0 +1,14 @@
+To fuse the best ideas from both examples, I will use a packed 16-bit register to hold the entire 4-digit BCD counter (like Example 1), which offers area efficiency and cleaner output wiring. To reduce the critical path and improve timing, I will avoid deeply nested sequential carry logic by implementing the increment operation combinationally with a small sequential pipeline: first compute all carry/enable signals and next update the counter digits accordingly.
+
+Specifically, the enables (ena) will be generated from the current digits combinationally as in Example 1, indicating when each upper digit should increment. Then, in a single clocked always block, I will update all digits in one step based on the carry propagate signals, but using non-nested, flat logic to reduce critical path length.
+
+This approach merges Example 1's packed BCD and enable signal derivation with Example 2's clearer carry handling (flat, no deep nesting) inside sequential logic. I will use a function to increment a digit with carry to keep increment logic concise. To limit the sequential carry chain inside one clock edge (which hurts timing), the carry for each digit is computed combinationally before the register update, enabling a single register update with no long nested conditionals.
+
+This fusion should improve timing (by reducing deep nested carry logic), reduce power (by gating increments with enable signals), and keep area moderate by reusing increment logic via functions. The synchronous reset remains active high and triggers zero initialization. The code is clean, readable, and synthesizable.
+
+Summary of fusion:
+- Use packed 16-bit BCD register.
+- Compute carry/enable signals combinationally (for ena outputs and for digit increment control).
+- Use flat sequential logic to update digits simultaneously, avoiding nested ifs.
+- Use increment function for digit increment with carry support.
+- Enable signals generated from current digit values.

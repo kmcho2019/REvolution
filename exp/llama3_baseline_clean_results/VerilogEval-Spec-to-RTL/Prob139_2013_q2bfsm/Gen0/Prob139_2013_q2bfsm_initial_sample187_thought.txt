@@ -1,0 +1,10 @@
+To implement the described finite state machine (FSM), we can define several states that correspond to the different conditions and transitions described in the problem. 
+
+1. **State A (Reset State):** When `resetn` is asserted (low), the FSM stays in this state, and all outputs are reset.
+2. **State B (Initial Pulse):** After `resetn` is de-asserted, the FSM transitions to this state, where it sets `f` to 1 for one clock cycle.
+3. **State C (Monitoring X):** The FSM waits for the sequence `x = 1, 0, 1` over three successive clock cycles. It can use two counters or flags to keep track of the sequence.
+4. **State D (Setting G and Monitoring Y):** Once the sequence is detected, `g` is set to 1, and the FSM starts monitoring `y`. It needs to check if `y` becomes 1 within two clock cycles.
+5. **State E (Permanently High G):** If `y` becomes 1 within two clock cycles, the FSM transitions to this state, where `g` remains 1 until `resetn` is asserted.
+6. **State F (Permanently Low G):** If `y` does not become 1 within two clock cycles, the FSM transitions to this state, where `g` remains 0 until `resetn` is asserted.
+
+The transitions between these states are controlled by the inputs `x`, `y`, and the synchronous reset `resetn`.

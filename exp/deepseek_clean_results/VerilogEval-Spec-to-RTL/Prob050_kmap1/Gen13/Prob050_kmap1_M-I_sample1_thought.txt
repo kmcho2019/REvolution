@@ -1,0 +1,8 @@
+The current implementation uses a NOR gate followed by an inverter, which is functionally correct but not optimal for PPA metrics. Looking at the Karnaugh map, we can see the output is 1 in all cases except when all inputs are 0. This can be implemented more efficiently with a single OR operation:
+
+1. The output is 0 only when a=0 AND b=0 AND c=0
+2. This is equivalent to out = a OR b OR c
+3. Using a single OR gate reduces both area and power compared to the NOR+inverter implementation
+4. The timing remains excellent as it's just a single gate delay
+
+This optimization reduces the gate count from 2 to 1 while maintaining the same functionality, leading to better power and area metrics.

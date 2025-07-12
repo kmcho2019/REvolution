@@ -1,0 +1,18 @@
+To improve PPA, reduce the number of intermediate wires and multi-input OR gates by directly encoding the next_state logic from the one-hot current state and input, exploiting the fact that only one state bit is high at a time. Each next_state bit can be expressed as a direct conjunction of input condition and single state bit(s), avoiding wide ORs.
+
+Since one-hot encoding means only one state bit is high, combining terms with ORs is unnecessary overhead. Instead, define next_state bits as sums of non-overlapping product terms directly from transitions. For example:
+
+- next_state[0] (state A): active if (in=0 and in A) or (in=0 and in C) => (~in & state[0]) | (~in & state[2])
+- next_state[1] (state B): active if (in=1 and in A) or (in=1 and in B) or (in=1 and in D) => (in & state[0]) | (in & state[1]) | (in & state[3])
+- next_state[2] (state C): active if (in=0 and in B) or (in=0 and in D) => (~in & state[1]) | (~in & state[3])
+- next_state[3] (state D): active if (in=1 and in C) => in & state[2]
+
+This direct expression removes the three ORs of multiple state bits, replacing them with just sums of two or three product terms. Since these product terms are mutually exclusive (one-hot states), synthesis will map these to simple gates without extra OR inputs.
+
+Also, remove the intermediate wire "in_not" as it saves one wire and reduces fanout. Use ~in inline to minimize signals.
+
+Output remains state[3].
+
+This reduces gate fan-in, removes extra OR gates, and may reduce switching power and area slightly, while keeping logic minimal and timing low.
+
+Overall, a cleaner direct-terms approach without intermediate OR signals improves PPA.

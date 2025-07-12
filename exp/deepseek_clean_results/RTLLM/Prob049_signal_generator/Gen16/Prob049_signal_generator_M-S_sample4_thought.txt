@@ -1,0 +1,14 @@
+Simplified approach:
+1. Use a single 5-bit counter (wave) to store the current value
+2. Use a 1-bit direction flag to track increment/decrement state
+3. On each clock edge:
+   - If reset, initialize wave to 0 and direction to increment (0)
+   - Else:
+     * If incrementing (direction=0) and wave=31, switch to decrement (direction=1)
+     * If decrementing (direction=1) and wave=0, switch to increment (direction=0)
+     * Update wave based on current direction
+4. This reduces area by:
+   - Using only necessary 5-bit counter
+   - Eliminating complex arithmetic and bit manipulation
+   - Simplifying control logic
+5. Maintains same functionality with clearer state transitions

@@ -1,0 +1,19 @@
+To optimize the existing FSM for better power, performance, and area (PPA), I will apply the following improvements:
+
+1. Combine the direction and state_type registers into a single encoded FSM state variable that fully represents both direction and mode. This reduces register count and simplifies next-state logic, potentially improving timing and area.
+
+2. Use one-hot encoding for the FSM states, which can improve performance (timing) in FPGAs by enabling simpler combinational decoding, at minimal area cost given only six states (walking left/right, falling left/right, digging left/right).
+
+3. Eliminate the separate prev_ground register by detecting ground edges combinationally using registered current ground and previous ground state stored in the FSM states (since falling and non-falling states are explicit). But since detecting a falling edge on ground is needed, we still need to store previous ground state in a lightweight register. Instead of a separate register, integrate prev_ground update logic inside the FSM register update block, reducing toggling and clock gating opportunities.
+
+4. Simplify bump input handling by only evaluating bumps in walking states, skipping bump logic in falling or digging states to reduce unnecessary switching.
+
+5. Use clear localparams with one-hot encoding and directional info encoded in states to simplify next-state logic.
+
+6. Keep asynchronous reset asserting initial walking left state.
+
+7. The output logic becomes simple decoding of one-hot states.
+
+These changes reduce combinational logic complexity, number of registers, and logic toggling, improving timing and power, while maintaining original behavior and clarity.
+
+This approach keeps the Moore FSM style with asynchronous reset and explicit state transitions.

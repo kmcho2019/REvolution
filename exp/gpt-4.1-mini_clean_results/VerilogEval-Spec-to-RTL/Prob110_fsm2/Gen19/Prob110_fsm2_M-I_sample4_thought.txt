@@ -1,0 +1,9 @@
+To optimize the FSM for better power and possibly area, we can introduce a state register separate from the output. This allows us to implement clock gating or at least update the state only when transitions occur, reducing unnecessary toggles. Since the output is a function of the state (Moore machine), we can assign it combinationally, avoiding registering the output unnecessarily. Also, using an enumerated type for states improves code readability and clarity for synthesis tools, potentially enabling better optimization.
+
+Specifically:
+- Use a registered state variable with two states: OFF (0), ON (1).
+- Implement asynchronous reset for state register.
+- Assign `out` combinationally from current state to reduce a flip-flop and toggling.
+- Update the state only when input dictates a change.
+- This reduces switching activity on the registered output and allows better control over toggling.
+- Overall, this will reduce power (due to less toggling) and slightly improve area/readability, while maintaining or improving timing due to simpler logic on the output path.

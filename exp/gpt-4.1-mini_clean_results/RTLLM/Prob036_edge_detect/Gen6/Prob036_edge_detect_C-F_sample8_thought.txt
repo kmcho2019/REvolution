@@ -1,0 +1,13 @@
+The fusion strategy leverages the minimalistic and glitch-free approach of Example 1, which directly assigns the edge detection outputs combinationally from the registered previous state, ensuring single-cycle pulses synchronized to clk with minimal logic and area. However, Example 1's outputs are `wire`, which may be less explicit for downstream synchronous logic that expects registered signals.
+
+From Example 2, we take the clarity and formal synchronization benefit of registering the edge outputs themselves, providing clean one-cycle pulses explicitly registered on clk, which can improve integration with other synchronous modules and aid timing closure.
+
+Therefore, the superior solution will:
+- Register the previous input 'a' signal (from both examples).
+- Detect edges combinationally using this registered previous signal.
+- Register the 'rise' and 'down' outputs on clk to produce a one-cycle pulse.
+- Use asynchronous active-low reset for predictable initialization.
+
+This combines minimal registers (just two: one for input, one pair for outputs), avoids combinational glitch issues on outputs, and aligns with synchronous design best practices. It maintains a small footprint and delivers clean, stable, registered outputs synchronized to clk as required by the spec.
+
+Overall, this fusion yields a robust, clean, and easily synthesizable edge detector with well-defined output pulses.

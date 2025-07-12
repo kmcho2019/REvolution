@@ -1,0 +1,7 @@
+The Karnaugh map function corresponds to the OR of inputs a, b, and c (out = a | b | c). This is the minimal and most direct logic implementation, yielding the simplest and most efficient circuit in terms of power, area, and timing. 
+
+From Example 1, the structural design with separate NOT and NAND gates is correct but less efficient due to multiple inverters and an extra gate. From Example 2, the hierarchical mux and OR gate approach is modular but adds unnecessary overhead.
+
+Fusing the best ideas: use a single, direct combinational assignment with a 3-input OR gate. This ensures minimal gate count and best PPA metrics while maintaining clarity. To retain some structural clarity without overhead, instantiate a primitive 3-input OR gate module internally, avoiding additional modules or muxes. This balances structural style with optimal efficiency.
+
+Hence, implement TopModule with a single internal OR3 gate that directly drives the output, combining modular clarity and minimalism.

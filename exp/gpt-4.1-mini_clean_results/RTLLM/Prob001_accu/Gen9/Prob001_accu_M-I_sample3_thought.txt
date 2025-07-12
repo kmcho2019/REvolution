@@ -1,0 +1,9 @@
+To optimize PPA, focus on reducing switching activity by gating updates to accumulator and counter only when valid_in=1, preventing unnecessary toggles on cycles without valid input. Also, clear valid_out only when it was set previously rather than every cycle, minimizing switching on valid_out.
+
+The logic will:
+- Update accumulator and counter only on valid_in.
+- Output sum and pulse valid_out for one cycle after 4 inputs.
+- Reset accumulator and counter immediately after output.
+- Hold valid_out low except when pulsing.
+
+This reduces toggling, improving power without impacting timing or area significantly. The accumulator width remains 10 bits for safe summation. The code uses synchronous reset and non-blocking assignments for safe, clear sequential logic.

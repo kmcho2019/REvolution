@@ -1,0 +1,20 @@
+Here's a refactored version that maintains the same core functionality but with improved structure:
+
+1. **State Machine Restructuring**: Use explicit state transitions with clear conditions for each state change. The states are now:
+   - RESET: Initial state (waiting for reset deassertion)
+   - PULSE_F: Output f=1 for one cycle
+   - MONITOR_X: Watch for '101' sequence on x
+   - CHECK_Y: Monitor y for 1 within 2 cycles after sequence detection
+   - LOCKED: Final state maintaining g output
+
+2. **Simplified Sequence Detection**: Use a 3-bit shift register for x pattern matching.
+
+3. **Clear Timing Logic**: Implement a 2-cycle timer for y monitoring using a simple counter.
+
+4. **Direct Output Assignment**: Use continuous assignments for outputs f and g based on state and conditions.
+
+Key improvements:
+- More explicit state transitions
+- Clear separation of sequence detection and timing logic
+- Direct output assignments
+- Better handling of the 2-cycle y monitoring window

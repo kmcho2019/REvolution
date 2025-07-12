@@ -1,0 +1,7 @@
+The original design is already very compact and minimal. However, the next-state logic can be slightly simplified by encoding the FSM explicitly with two one-hot bits (state_A and state_B), which may help clarify the design for synthesis tools and may improve timing and power by straightforward combinational logic. This explicit one-hot encoding with two state bits avoids implicit inversion and gives clear state transitions, possibly reducing glitches on outputs and next-state signals.
+
+Also, making the output `z` a registered output (Mealy outputs are often combinational, but registering outputs can improve timing and reduce glitches) can reduce switching power and output glitches at the cost of one-cycle latency, which often is acceptable and improves overall power-performance tradeoff.
+
+The asynchronous reset remains active-high and asynchronous as required. The design uses non-blocking assignments in sequential blocks, and combinational logic uses continuous assignments for clarity.
+
+Overall, explicitly encoding both states A and B with separate one-hot bits and registering output `z` can lead to better PPA while maintaining FSM correctness and reset behavior.

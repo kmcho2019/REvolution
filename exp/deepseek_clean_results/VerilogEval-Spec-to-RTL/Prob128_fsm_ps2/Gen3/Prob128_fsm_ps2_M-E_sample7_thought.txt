@@ -1,0 +1,12 @@
+Instead of using a counter-based FSM, we can implement a shift register that stores the last 3 bytes received. The solution works by:
+1. Maintaining a 24-bit shift register (3 bytes) that shifts in new bytes each cycle
+2. Continuously checking if the oldest byte in the window (bits [23:16]) has in[3]=1
+3. When this condition is met, we know we have a complete 3-byte message in the register
+4. We then assert 'done' and clear the register to start fresh
+5. This approach eliminates explicit state tracking and instead relies on pattern matching
+
+Advantages:
+- No explicit state machine or counter needed
+- Parallel checking of all possible message boundaries
+- Naturally handles back-to-back messages
+- Easily extendable to longer message formats

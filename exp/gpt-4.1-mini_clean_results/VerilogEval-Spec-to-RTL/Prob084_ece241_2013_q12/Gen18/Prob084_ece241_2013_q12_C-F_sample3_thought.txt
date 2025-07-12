@@ -1,0 +1,11 @@
+Combine the clarity and simplicity of the vector-based shift register update (Example 1) with the explicit, clean interface of the module, while keeping the output Z as a combinational continuous assignment for synthesis-friendly, minimal mux logic. 
+
+Specifically:
+- Use a single reg [7:0] Q to implement the shift register, updated synchronously on the clock with enable gating directly inside the always block to minimize combinational logic and glitching.
+- Shift in the input S at Q[0] (LSB) on each clock when enable is high, shifting the existing bits rightwards.
+- Drive output Z using a simple continuous assignment indexed by the concatenated inputs {A, B, C}, creating an 8-to-1 mux with minimal logic and no inferred registers.
+- Keep comments accurate and consistent (e.g., shifting S into the LSB).
+- Avoid intermediate next-state signals or always blocks for Z, reducing complexity and improving PPA.
+- This fusion yields the simplest, clearest, and most efficient RTL design suitable for synthesis and verification.
+
+This approach preserves all correctness and PPA advantages of both prior examples and further simplifies the design.

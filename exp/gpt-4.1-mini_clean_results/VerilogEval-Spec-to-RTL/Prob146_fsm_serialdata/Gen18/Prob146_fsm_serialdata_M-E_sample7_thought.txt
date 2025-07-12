@@ -1,0 +1,9 @@
+I will implement a Moore FSM with three states: IDLE, RECEIVING, and ERROR_WAIT. 
+The design monitors the serial line for a start bit (0) while idle. Once a start bit is detected, it collects 8 data bits LSB-first in a shift register by shifting right and inserting the new bit into the MSB, to keep the LSB of the received byte aligned with the least significant bit of the shift register after 8 bits. 
+After 8 bits, the FSM checks the stop bit (1). If the stop bit is correct, the received byte is output and a done pulse is generated. If incorrect, the FSM enters an ERROR_WAIT state, where it waits for the line to return to idle (logic 1) to resynchronize.
+This design:
+- Uses binary state encoding (2 bits) to save area.
+- Uses a separate enable signal to gate shift register updates, reducing toggling.
+- Shifts data bits right inserting the new bit at MSB, matching serial LSB-first input order.
+- Asserts done only for one clock cycle when a valid stop bit is detected.
+- Implements synchronous reset.

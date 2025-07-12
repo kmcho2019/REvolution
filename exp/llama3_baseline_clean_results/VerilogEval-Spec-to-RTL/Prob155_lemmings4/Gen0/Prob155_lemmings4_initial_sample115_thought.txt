@@ -1,0 +1,18 @@
+To solve this problem, we will implement a Moore state machine with the following states:
+- Walking Left
+- Walking Right
+- Falling
+- Digging
+- Splattered
+
+The machine will transition between these states based on the input signals. The state transitions are as follows:
+- From Walking Left or Walking Right, transition to Falling when ground=0.
+- From Falling, transition to Walking Left or Walking Right when ground=1, depending on the previous walking direction.
+- From Walking Left or Walking Right, transition to Digging when dig=1 and ground=1.
+- From Digging, transition to Falling when ground=0.
+- From any state, transition to Splattered when areset=1 or when falling for more than 20 clock cycles and then hitting the ground.
+
+The outputs will be generated based on the current state:
+- walk_left and walk_right will be set based on the walking direction.
+- aaah will be set when in the Falling state.
+- digging will be set when in the Digging state.

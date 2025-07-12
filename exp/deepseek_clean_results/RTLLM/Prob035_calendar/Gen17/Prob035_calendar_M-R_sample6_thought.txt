@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. Replace sequential always blocks with combinational assign statements for continuous time tracking
+2. Use a single counter that increments every second, then decode it into hours, minutes, seconds
+3. Calculate total elapsed seconds since reset, then derive time components via division/modulo
+4. Maintain same functionality but with purely combinational output generation
+5. Keep reset behavior identical to original design
+
+Key Advantages:
+- Eliminates sequential logic for time components (only one counter register)
+- Outputs are purely combinational functions of the counter
+- More efficient for simulation as it avoids multiple always blocks
+- Mathematically equivalent to original behavior
+- Easier to extend for additional time units (days, months)

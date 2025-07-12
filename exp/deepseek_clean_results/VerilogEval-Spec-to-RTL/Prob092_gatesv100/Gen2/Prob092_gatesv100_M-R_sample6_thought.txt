@@ -1,0 +1,21 @@
+Refactored design approach:
+
+1. Instead of using separate generate blocks for each output, we'll use a single always block with for-loops to compute all outputs simultaneously. This reduces redundant logic and improves readability.
+
+2. For out_both:
+   - Keep bit 99 as 0
+   - Compute remaining bits using bitwise AND with left neighbor
+
+3. For out_any:
+   - Keep bit 0 as 0
+   - Compute remaining bits using bitwise OR with right neighbor
+
+4. For out_different:
+   - Use XOR with left neighbor for all bits
+   - Handle the wrap-around case for bit 99 explicitly
+
+The key improvements are:
+- Single always block instead of multiple generate blocks
+- Explicit handling of special cases
+- More compact and readable code
+- Potential for better optimization during synthesis

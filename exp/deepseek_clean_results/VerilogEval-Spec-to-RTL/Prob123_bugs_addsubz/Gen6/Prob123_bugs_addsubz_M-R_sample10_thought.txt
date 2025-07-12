@@ -1,0 +1,8 @@
+The original implementation has a bug where the zero flag is only set when the output is exactly zero, but it's implemented with a blocking assignment in an always block. To fix this and improve clarity, we'll:
+
+1. Use continuous assignments for both the adder/subtractor and zero flag logic
+2. Implement the adder/subtractor using a single expression with conditional operator
+3. Calculate the zero flag by checking if all bits of the output are zero using reduction OR
+4. Remove the always block entirely since all logic can be expressed with assign statements
+
+This approach maintains the same functionality but makes the code more concise and potentially more efficient for synthesis.

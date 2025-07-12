@@ -1,0 +1,9 @@
+The original solution lacks a synchronous reset, which is important for predictable initialization of the shift register and avoiding unknown simulation states. Although an initial block sets `q` to zero, this is not guaranteed to synthesize and may cause simulation mismatches.
+
+To improve robustness and synthesis compatibility, add an active-high synchronous reset input (`reset`). On reset, `q` initializes to zero. This ensures a known start state for both simulation and hardware.
+
+The logic of shifting in `data` at the MSB on `shift_ena` and decrementing on `count_ena` remains the same, with mutual exclusion of control signals as the problem allows any priority when both are high (we keep shift_ena prioritized).
+
+This change removes initial blocks (which are sometimes ignored in synthesis) and replaces them with an explicit reset mechanism, making the design more robust and predictable.
+
+No other optimizations are necessary since the design is straightforward, and the main issue was initialization.

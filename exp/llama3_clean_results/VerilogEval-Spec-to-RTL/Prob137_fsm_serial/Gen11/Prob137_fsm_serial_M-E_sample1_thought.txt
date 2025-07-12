@@ -1,0 +1,13 @@
+To address the PPA metrics, we need to rethink the architectural approach of the serial communication protocol receiver. 
+
+The novel idea here is to use a circular buffer to store the incoming bits and implement a two-stage FSM: one for detecting the start bit and another for processing the data bits and stop bit. 
+
+The circular buffer will simplify the logic for shifting and storing the incoming bits, reducing the number of gates required. The two-stage FSM will enable us to minimize the combinational logic depth and reduce the switching activity by processing the start bit detection and data bits separately.
+
+The start bit detection stage will simply look for a transition from high to low on the input signal, indicating the start of a new byte. 
+
+The data processing stage will then collect the 8 data bits and verify the stop bit. If the stop bit is correct, it will set the done signal high. If the stop bit is incorrect, it will wait for a stop bit before attempting to receive the next byte.
+
+To further optimize the design for better PPA, we will use a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.
+
+We will also optimize the logic for resetting the done signal to avoid any potential synchronization issues and reduce unnecessary switching activity.

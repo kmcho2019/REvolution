@@ -1,0 +1,19 @@
+Here's a novel approach using a ROM-based FSM implementation:
+
+1. Key Idea:
+   - Store all state transitions and outputs in a small ROM (implemented as a lookup table)
+   - Use current state and input as the ROM address
+   - ROM outputs contain both next state and output value
+   - This approach is particularly efficient for FSMs with many states or complex transitions
+
+2. Advantages:
+   - Clean separation of control and data paths
+   - Easy to modify state transitions by just changing the ROM contents
+   - Potentially better timing as ROM access is a single lookup operation
+   - Scales well for larger state machines
+
+3. Implementation Details:
+   - 5 states × 2 inputs = 10 possible transitions
+   - ROM width = 4 bits (3 for next state + 1 for output)
+   - Synchronous reset initializes to state 000
+   - Output is registered for better timing if needed

@@ -1,0 +1,7 @@
+To solve this problem, we can use a simpler and more systematic approach. We will design a finite state machine that keeps track of the number of consecutive ones and zeros. The machine will have six states: IDLE, ONE, TWO, THREE, FOUR, and FIVE. 
+
+When the input is 1, the machine will move to the next state (from IDLE to ONE, from ONE to TWO, and so on). When the input is 0, the machine will move back to IDLE. If the machine reaches the FIVE state and the input is 1, it will move to a special state (SIX) to indicate the start or end of a frame. If the machine reaches the FIVE state and the input is 0, it will move back to IDLE and set the disc signal. 
+
+If the machine is in the SIX state and the input is 1, it will move to an error state (SEVEN) and set the error signal. If the machine is in the SIX state and the input is 0, it will move back to IDLE and set the flag signal.
+
+We will use a separate register to keep track of the output signals (disc, flag, and err). We will update these signals based on the current state and the next state.

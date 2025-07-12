@@ -1,0 +1,16 @@
+Instead of the traditional approach of comparing current and previous values, this solution implements a Moore state machine with 3 states:
+1. IDLE: No edge detected
+2. RISING: Rising edge detected
+3. FALLING: Falling edge detected
+
+The state transitions are:
+- IDLE -> RISING when a changes 0->1
+- IDLE -> FALLING when a changes 1->0
+- RISING/FALLING -> IDLE on next clock
+
+Advantages:
+1. Explicit state representation makes the design more readable and maintainable
+2. Easier to extend with additional functionality (like edge filtering)
+3. More robust against glitches (can add hysteresis easily)
+4. Clear separation of edge detection and output generation
+5. Better for formal verification due to explicit state representation

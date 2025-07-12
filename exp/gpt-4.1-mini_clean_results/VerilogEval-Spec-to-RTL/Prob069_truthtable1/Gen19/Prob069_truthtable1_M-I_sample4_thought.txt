@@ -1,0 +1,10 @@
+The original solution is modular with AND2 and OR2 gates instantiated explicitly, and uses an explicit wire for the inverted signal nx3. This modularity is good for clarity but introduces additional nets and gate instances, potentially increasing area and power.
+
+To optimize for better PPA:
+
+- I will remove the AND2 and OR2 module instantiations and implement the logic directly as a single continuous assignment expression. This reduces the number of nets and gates, minimizing area and power.
+- I will also inline the inversion of x3 directly in the expression to avoid the nx3 wire.
+- This approach keeps the combinational nature intact with minimal gate delay and improves synthesis optimization opportunities.
+- Overall, this will reduce area and power, maintain zero delay overhead for this small logic, and simplify the netlist for easier downstream optimization.
+
+Hence, the implementation will be a single continuous assignment implementing f = (~x3 & x2) | (x3 & x1);

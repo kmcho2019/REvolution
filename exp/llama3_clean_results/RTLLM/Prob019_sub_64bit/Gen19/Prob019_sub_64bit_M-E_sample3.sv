@@ -1,0 +1,89 @@
+module sub_16bit(
+    input  logic [15:0] A,
+    input  logic [15:0] B,
+    input  logic         borrow_in,
+    output logic [15:0] result,
+    output logic         borrow_out
+);
+
+    logic [15:0] temp_result;
+    assign temp_result = A - B - borrow_in;
+    assign result = temp_result;
+    assign borrow_out = (A < B) || (A == B && borrow_in);
+
+endmodule
+
+module cla_16bit(
+    input  logic [15:0] A,
+    input  logic [15:0] B,
+    input  logic         cin,
+    output logic [15:0] result,
+    output logic         cout
+);
+
+    logic [15:0] temp_result;
+    assign temp_result = A + B + cin;
+    assign result = temp_result;
+    assign cout = (A[15] && B[15]) || (A[15] && cin) || (B[15] && cin);
+
+endmodule
+
+module sub_64bit(
+    input  logic [63:0] A,
+    input  logic [63:0] B,
+    output logic [63:0] result,
+    output logic         overflow
+);
+
+    logic [15:0] segA1, segA2, segA3, segA4;
+    logic [15:0] segB1, segB2, segB3, segB4;
+    logic [15:0] res1, res2, res3, res4;
+    logic borrow1, borrow2, borrow3;
+    logic cout1, cout2, cout3, cout4;
+
+    assign segA1 = A[15:0];
+    assign segA2 = A[31:16];
+    assign segA3 = A[47:32];
+    assign segA4 = A[63:48];
+
+    assign segB1 = B[15:0];
+    assign segB2 = B[31:16];
+    assign segB3 = B[47:32];
+    assign segB4 = B[63:48];
+
+    sub_16bit u1(
+      .A(segA1),
+      .B(segB1),
+      .borrow_in(1'b0),
+      .result(res1),
+      .borrow_out(borrow1)
+    );
+
+    cla_16bit u2(
+      .A(segA2),
+      .B(segB2),
+      .cin(borrow1),
+      .result(res2),
+      .cout(cout2)
+    );
+
+    cla_16bit u3(
+      .A(segA3),
+      .B(segB3),
+      .cin(cout2),
+      .result(res3),
+      .cout(cout3)
+    );
+
+    cla_16bit u4(
+      .A(segA4),
+      .B(segB4),
+      .cin(cout3),
+      .result(res4),
+      .cout(cout4)
+    );
+
+    assign result = {res4, res3, res2, res1};
+    assign overflow = (A[63] == B[63] && A[63]!= result[63])? 1'b1 : 1'b0;
+
+endmodule

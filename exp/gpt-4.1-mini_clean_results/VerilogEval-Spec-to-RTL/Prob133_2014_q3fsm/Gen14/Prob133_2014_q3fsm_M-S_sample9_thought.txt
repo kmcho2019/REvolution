@@ -1,0 +1,17 @@
+Use just two states: A and B.
+
+In state A:
+- Keep output z=0.
+- Wait for s=1 to move to B.
+
+In state B:
+- Use a 2-bit cycle counter (0 to 2) to track three cycles.
+- Use a 2-bit counter to accumulate the number of w=1 samples in those three cycles.
+- At cycle 2 (end of window), set z=1 if exactly two out of three w's were 1; else z=0.
+- Then reset counters for next window.
+
+All logic is synchronous on posedge clk with synchronous active high reset.
+
+Implement counters and output update directly inside the sequential block to reduce combinational next-state logic.
+
+This reduces complexity by removing combinational logic block and separate next-state signals, making code simpler and easier to read.

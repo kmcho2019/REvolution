@@ -1,0 +1,11 @@
+The current solution is functionally correct but can be optimized for better PPA metrics. Here's the improvement strategy:
+
+1. **Simplify Fan Logic**: Since fan_on directly enables the fan, we can make it the first condition in the OR gate to potentially reduce switching activity when fan_on is active.
+
+2. **Remove Unnecessary Parameters**: The localparam definitions for HEATING/COOLING add minor overhead without providing significant readability benefits in this simple case.
+
+3. **Direct Mode Comparison**: Instead of creating intermediate wires for mode comparison, directly use the mode input in the output assignments.
+
+4. **Balanced Logic Structure**: Maintain a consistent structure for heater and aircon assignments to ensure balanced propagation delays.
+
+These changes should slightly reduce area and power while maintaining the same functionality and timing characteristics.

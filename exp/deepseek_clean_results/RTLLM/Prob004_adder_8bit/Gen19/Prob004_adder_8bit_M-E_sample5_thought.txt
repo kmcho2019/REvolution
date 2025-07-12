@@ -1,0 +1,14 @@
+Novel Hybrid Adder Architecture:
+1. Divide the 8-bit adder into two 4-bit conditional-sum blocks
+2. Each 4-bit block computes both possible sums (assuming carry-in=0 and carry-in=1)
+3. Use carry-select logic to choose the correct sum based on actual carry propagation
+4. First stage (bits 0-3) uses ripple-carry for initial carry generation
+5. Second stage (bits 4-7) uses the carry-select approach for parallel computation
+6. This reduces critical path from 8 full-adder delays to ~5 delays (4 for first stage + mux delay)
+
+Key Advantages:
+- Faster than pure ripple-carry (critical path reduced by ~37.5%)
+- More area-efficient than full carry-lookahead
+- Maintains combinational logic nature
+- Scales better for wider adders than pure ripple-carry
+- Balanced trade-off between speed and area

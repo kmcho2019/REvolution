@@ -1,0 +1,21 @@
+To optimize the original LIFObuffer implementation for better PPA without changing the architecture:
+
+1. Reset Logic Optimization:
+   - Instead of initializing all memory entries to zero on synchronous reset inside the clocked block (which causes toggling and longer reset path), initialize only the stack pointer and dataOut on reset.
+   - Leave stack_mem contents undefined on reset, as the empty/full flags and SP control logic prevent invalid data reads.
+   - This reduces switching during reset and improves reset timing.
+
+2. Stack Pointer and Pointer Logic:
+   - Maintain the convention that SP points to the next free slot (0 = empty, 4 = full).
+   - In the pop operation, decrement SP first, then read data from stack_mem[SP].
+   - To avoid reading memory using SP - 1 in the same clock cycle, read dataOut from stack_mem[SP] after decrementing SP.
+
+3. Use of non-blocking assignments consistently.
+
+4. Compute EMPTY and FULL flags combinationally from SP.
+
+These changes simplify reset logic, reduce toggling power on reset, and marginally improve timing by eliminating indexing arithmetic in the pop operation.
+
+This should improve power and reset path timing (tns and wns) while keeping area minimal.
+
+Note: This assumes it's acceptable for stack_mem contents to be undefined at reset since EMPTY=1 prevents reading.

@@ -1,0 +1,17 @@
+Fuse the two examples to implement a three-stage pipelined unsigned 8-bit multiplier that balances timing and complexity. 
+Stage 1: Register the inputs and input enable when mul_en_in is active.
+Stage 2: Generate partial products combinationally using the registered inputs and compute a balanced adder tree to reduce combinational delay, then register the intermediate sums.
+Stage 3: Accumulate final sums in a register and propagate the enable signal through a three-stage shift register to track valid data through the pipeline.
+Output the product only when the output enable signal (MSB of enable pipeline) is high.
+
+This fusion incorporates:
+- The multi-cycle enable pipeline shift register from Example 2 for clean enable propagation.
+- Input sampling gated by mul_en_in to avoid unnecessary toggling.
+- Partial product generation as a vector of shifted multiplicand conditions from multiplier bits.
+- Breaking the summation into a two-level adder tree (e.g., sum pairs first, then final sum) to reduce critical path, instead of a single large combinational adder.
+- Registering intermediate sums to pipeline the addition and improve timing.
+- The output product is gated by the output enable and reset properly.
+
+This approach leverages the minimal pipeline stages and clean enable tracking of Example 2 but improves timing by pipelining the addition of partial products in two stages like a tree adder, avoiding the long critical path of summing eight terms at once.
+
+The design is scalable, synthesizable, and power-aware since registers enable clock gating opportunities. It also improves maximum clock frequency while maintaining low latency (3 cycles) and straightforward control.

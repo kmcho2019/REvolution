@@ -1,0 +1,15 @@
+To properly implement the triangle wave generator as specified:
+
+1. Reintroduce the explicit state register to clearly track increment/decrement states
+2. Use simple boundary checks (0 and 31) for state transitions
+3. Separate the state transition logic from wave generation for clarity
+4. Maintain synchronous reset behavior with proper initialization
+5. Implement clean state transitions at waveform boundaries:
+   - State 0: increment until 31, then switch to state 1
+   - State 1: decrement until 0, then switch back to state 0
+
+This approach:
+- Matches the specification exactly
+- Provides clear state machine behavior
+- Ensures correct boundary transitions
+- Is easier to verify and maintain

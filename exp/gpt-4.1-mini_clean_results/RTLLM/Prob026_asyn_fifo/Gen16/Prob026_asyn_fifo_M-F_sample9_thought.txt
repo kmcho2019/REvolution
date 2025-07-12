@@ -1,0 +1,10 @@
+The core FIFO design and logic are correct, but the simulation issues stem from multiple definitions of the `dual_port_RAM` module causing conflicts. To fix this:
+
+- Rename the dual-port RAM submodule to a unique name (e.g., `dp_ram`) to avoid naming conflicts with any external RAM implementations.
+- Provide a minimal working implementation of the dual-port RAM inside this module to make the entire FIFO self-contained and simulatable.
+- This implementation will include synchronous write and read operations using separate clocks and two separate ports.
+- The RAM depth and width are parameterized as before.
+- With the dual-port RAM uniquely named and implemented here, the module can be compiled and simulated without multiple module definition errors.
+- The rest of the FIFO code remains unchanged except for the instance name update to the new RAM module name.
+
+This resolves the module name collision issue and keeps the FIFO fully functional as requested.

@@ -1,0 +1,7 @@
+Refactor the radix-2 divider into a more explicit FSM structure with separate states: IDLE, CALC, DONE.
+At IDLE, latch inputs and prepare absolute values, negated divisor and initialize shift register and counter.
+In CALC state, perform division iterations each clock cycle, update shift register and counter.
+When count reaches 8, move to DONE state where results are sign-corrected and output.
+Use synchronous sequential logic with clear state transitions, removing some combinational mix.
+Keep res_valid asserted only in DONE state until new operation requested.
+This structure improves readability, debugging, and separates control flow cleanly from datapath.

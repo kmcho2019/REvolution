@@ -1,0 +1,9 @@
+To address the problem, we can design a finite-state machine (FSM) that controls the timer using a different approach. Instead of using a single state variable, we can use multiple flags to track the different states of the FSM. 
+
+We can use a 'detect_pattern' flag to track whether the pattern 1101 has been detected, a 'shift_enable' flag to track whether the shift operation is enabled, a 'counting_enable' flag to track whether the counting operation is enabled, and a 'wait_ack' flag to track whether the FSM is waiting for acknowledgment.
+
+We can also use a counter to count the number of shifts and a separate counter to count the duration of the timer.
+
+The FSM will start by checking for the pattern 1101. Once the pattern is detected, it will enable the shift operation and start counting the shifts. After the shift operation is complete, it will enable the counting operation and start the timer. Once the timer is complete, it will assert the done signal and wait for acknowledgment.
+
+This approach allows for a more modular and flexible design, making it easier to modify and extend the FSM if needed.

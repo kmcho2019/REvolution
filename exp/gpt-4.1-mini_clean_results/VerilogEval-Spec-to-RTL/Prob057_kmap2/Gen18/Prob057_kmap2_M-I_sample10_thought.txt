@@ -1,0 +1,20 @@
+The original solution uses a ProductTerm module to generalize partial matching for complex product terms, which aids modularity but introduces additional logic depth and overhead. To improve PPA (performance, power, area), the design can be optimized by directly encoding the K-map expression using minimized sum-of-products without the extra module. 
+
+Analysis of the K-map groups leads to a minimized boolean expression for 'out' by grouping 1s in the K-map:
+
+- Group 1: (~c & ~d & (~a | ~b)) covers four minterms
+- Group 2: (~c & d & ~b)
+- Group 3: (c & ~d & ~a)
+- Group 4: (c & d & (a | b))
+
+These four terms already represent an optimized form.
+
+Instead of instantiating ProductTerm, we directly write these product terms with shared inverted signals for reusability and reduced logic. This reduces gate levels, power due to fewer signals and switching, and area from no submodule overhead.
+
+This straightforward implementation matches the K-map solution while improving PPA by:
+
+- Removing the ProductTerm module and associated logic
+- Reusing inverted signals efficiently
+- Using direct boolean expressions for all product terms and OR-ing them
+
+The resulting code is cleaner, simpler, and optimized for synthesis with minimal logic depth and no redundant comparisons.

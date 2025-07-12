@@ -1,0 +1,10 @@
+To correct the existing code, we need to explicitly maintain the state of `out_reg` bits that have already been set to 1. This involves modifying the logic inside the always block to not only set `out_reg` bits to 1 when a transition is detected but also to keep these bits set until a reset is applied.
+
+The key idea is to maintain the current state of `out_reg` unless a reset is asserted or a new transition is detected. We achieve this by explicitly keeping the bits of `out_reg` that have been set to 1 unchanged unless a reset occurs.
+
+We will modify the code by:
+- Handling the reset condition first to reset both `prev_in` and `out_reg`.
+- Updating `prev_in` with the current value of `in` to ensure it holds the previous value of `in` during the next clock cycle.
+- Then, updating `out_reg` based on two conditions: if a transition from 1 to 0 is detected in `in`, set the corresponding bit in `out_reg` to 1. If no transition is detected for a particular bit, keep the current state of `out_reg` for that bit unless a reset has been asserted.
+
+This way, once a bit in `out_reg` is set due to a detected transition, it will remain set until a reset is applied, fulfilling the module's requirements.

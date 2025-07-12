@@ -1,0 +1,9 @@
+To implement the Lemmings behavior as a Moore state machine, we first need to identify the states and transitions of the machine. Based on the problem description, the Lemmings can be in one of four states: walking left, walking right, falling, or digging. We also need to consider the initial state of the machine and how it transitions between states based on the input signals.
+
+We will use a state register to store the current state of the machine. The state register will be updated at the positive edge of the clock signal. We will use a case statement to determine the next state based on the current state and the input signals.
+
+When the ground signal is 0, the Lemmings will fall, and when it reappears, they will resume walking in the same direction as before the fall. When the dig signal is 1, the Lemmings will start digging if they are currently walking on the ground. If the ground disappears while they are digging, they will fall.
+
+We will use a separate signal to keep track of the original walking direction before the Lemmings start digging. This signal will be used to determine the walking direction after the Lemmings finish digging.
+
+The output signals (walk_left, walk_right, aaah, and digging) will be determined by the current state of the machine.

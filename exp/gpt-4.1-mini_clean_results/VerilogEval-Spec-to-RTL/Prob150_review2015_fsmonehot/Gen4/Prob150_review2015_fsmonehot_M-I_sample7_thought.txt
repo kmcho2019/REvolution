@@ -1,0 +1,10 @@
+To optimize the given next-state and output logic for better PPA, I will perform the following improvements:
+
+1. Simplify the redundant logic in next_state assignments, e.g., next_state[2] currently `(S11 & d) | (S11 & ~d)` is always `S11`.
+2. Remove the assignments for states (S11, S110, B0, B1, B2) not used as next-state output signals to reduce unnecessary logic.
+3. Implement next_state bits only for states whose next-state signals are requested (S, S1, B3, Count, Wait). This reduces area and switching by not computing unused signals.
+4. Use one-hot signals directly without intermediate full 10-bit next_state bus for unused states.
+5. Output signals remain the same: shift_ena, counting, done are driven from current state.
+6. Simplify the shift_ena logic to just `(B0 | B1 | B2 | B3)`.
+
+This reduces combinational logic complexity, lowers switching (hence power), and improves area by computing only the essential signals and simplifying logic expressions.

@@ -1,0 +1,14 @@
+To optimize for better PPA, we can reduce the state encoding bits from 3 to 2 bits because there are 6 states, but 3 bits are not fully used—some states can be encoded efficiently with 3 bits, but a 2-bit Gray or one-hot encoding is impossible. However, since we need six states, 3 bits are minimal. 
+
+Instead, we can optimize the next-state logic by using a one-hot encoding to simplify the next-state combinational logic, potentially reducing LUT levels and increasing speed at the cost of area and power. However, since area and power are already low, and timing slack is negative but small, one-hot encoding can improve timing (WNS improves) by reducing combinational complexity. 
+
+Also, implementing output z as a direct register output derived from state bits can reduce glitching and improve timing and power. 
+
+Therefore, the strategy is:
+- Use one-hot encoding (6 bits) for each state to simplify next state and output logic.
+- Use a registered output z signal instead of combinational assignment to reduce glitches and improve power.
+- Maintain synchronous reset and unconditional state register updates.
+- Use separate always blocks for state register and next state logic as required.
+- This should reduce critical path length and improve WNS and TNS at a slight area and power cost, a good trade-off when timing is tight.
+
+This approach should improve timing (negative slack reduction) and possibly power due to simplified logic, accepting a moderate increase in area due to one-hot state encoding.

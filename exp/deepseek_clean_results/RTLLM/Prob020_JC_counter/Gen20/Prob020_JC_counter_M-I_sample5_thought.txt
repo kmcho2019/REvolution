@@ -1,0 +1,17 @@
+Optimization Strategy:
+1. Timing Improvement: The negative WNS indicates a timing violation. We'll optimize the critical path by:
+   - Removing the inversion operation from the datapath
+   - Using a registered version of Q[0] to break the long combinational path
+
+2. Power Optimization: Reduce unnecessary toggles by:
+   - Adding an enable signal to freeze the counter when not needed
+   - Using a registered feedback path to minimize glitching
+
+3. Area Preservation: Maintain the current area efficiency while improving timing:
+   - Keep the single-register structure
+   - Avoid adding complex control logic
+
+Key Changes:
+- Split the shift operation into two stages with registered feedback
+- Add optional enable signal (commented out by default)
+- Maintain same functionality with better timing characteristics

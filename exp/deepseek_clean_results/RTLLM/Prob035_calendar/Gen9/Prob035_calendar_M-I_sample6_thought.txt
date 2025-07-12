@@ -1,0 +1,20 @@
+To optimize this design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Performance Optimization:
+   - Pipeline the rollover conditions by registering intermediate signals to break the critical path
+   - Use separate always blocks for each counter to allow parallel evaluation
+
+2. Power Optimization:
+   - Add enable signals to only update minutes when seconds roll over, and hours when minutes roll over
+   - Use clock gating techniques for the higher-order counters
+
+3. Area Optimization:
+   - Maintain the current bit-widths as they're already optimal
+   - Simplify the rollover logic by using modular arithmetic
+   - Remove redundant intermediate signals
+
+The improved design will:
+- Reduce timing violations by shortening critical paths
+- Lower power consumption by minimizing unnecessary switching
+- Maintain or reduce area through more efficient logic
+- Keep the same functionality while being more synthesis-friendly

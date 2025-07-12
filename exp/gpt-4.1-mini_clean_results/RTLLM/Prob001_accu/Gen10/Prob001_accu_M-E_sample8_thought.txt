@@ -1,0 +1,7 @@
+Use a shift register approach to store incoming valid data_in values serially, accumulating them in a dedicated 10-bit register each cycle on valid_in. A 2-bit counter tracks the number of accumulated values. When the counter reaches 4, output the sum and pulse valid_out for one cycle, then reset the accumulator and counter. 
+
+This design explicitly stores the 4 inputs in a small FIFO-like register to enable future extensibility, even though only the sum is required now, providing clear logic separation between data storage and accumulation.
+
+Also, use synchronous reset and default valid_out low each cycle to ensure a clean one-cycle pulse. Non-blocking assignments for safe synchronous logic.
+
+This architecture separates the input storage from the accumulation logic, making the design modular and easier to modify for different accumulation window sizes without changing accumulation logic.

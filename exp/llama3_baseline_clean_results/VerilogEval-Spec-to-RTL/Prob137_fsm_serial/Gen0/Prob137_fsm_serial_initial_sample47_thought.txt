@@ -1,0 +1,9 @@
+To implement the finite state machine (FSM) for the serial communication protocol, we will define states to recognize the start bit, accumulate the 8 data bits, verify the stop bit, and handle errors or idle conditions. The states will be:
+1. IDLE: Initial state, waiting for the start bit.
+2. START: Received start bit, preparing to collect data bits.
+3. DATA: Collecting data bits (from 0 to 7).
+4. STOP: Received 8 data bits, checking for the stop bit.
+
+Transitions between these states will be triggered by the input 'in' and the internal logic. The FSM will also have a mechanism to handle the case where a stop bit is not received as expected.
+
+Upon receiving a complete and correct byte, the FSM will signal 'done' high for one clock cycle, indicating a successful byte reception.

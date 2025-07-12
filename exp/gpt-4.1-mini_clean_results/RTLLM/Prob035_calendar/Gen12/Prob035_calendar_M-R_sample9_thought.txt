@@ -1,0 +1,5 @@
+Refactor the calendar module to use a single always block for all counters (Secs, Mins, Hours) to streamline the update logic and reduce combinational dependencies between multiple always blocks. This change allows sequential increments in one place, potentially improving timing by limiting inter-block signal dependencies.
+
+Use synchronous reset inside the always block and non-blocking assignments for all three counters. The logic checks the seconds rollover first, then increments minutes when seconds wrap, and finally increments hours when both seconds and minutes wrap.
+
+This structure is simpler, easier to maintain, and may reduce area and power by minimizing redundant condition checks and improving logic synthesis opportunities. The output widths remain the same with Hours as 5 bits, Mins and Secs as 6 bits. Comments clarify the update order.

@@ -1,0 +1,7 @@
+To implement the TopModule, we need to design a Moore-type finite state machine (FSM) that recognizes the specified sequences. The FSM will have states to track the number of consecutive 1s and detect the flag, discard, and error conditions. We'll use a 4-state FSM: 
+- S0: Initial state, no consecutive 1s
+- S1: 1 consecutive 1
+- S2: 2-5 consecutive 1s
+- S3: 6 consecutive 1s, checking for flag or error
+
+The FSM will transition between these states based on the current state and the input bit. When the FSM is in state S3 and receives a 0, it signals a discard. When the FSM is in state S3 and receives a 1, it signals an error. When the FSM is in state S3 and the next two bits are 10, it signals a flag.

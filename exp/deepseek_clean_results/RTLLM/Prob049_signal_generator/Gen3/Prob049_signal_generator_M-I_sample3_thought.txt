@@ -1,0 +1,13 @@
+The original solution had incorrect boundary conditions that prevented the waveform from reaching its full range (0-31). Here's the improved strategy:
+
+1. Maintain the efficient direction-flag approach but correct the boundary conditions
+2. Check for wave == 31 when incrementing (direction=0) to trigger decrement
+3. Check for wave == 0 when decrementing (direction=1) to trigger increment
+4. Use non-blocking assignments for proper synchronous behavior
+5. Keep the compact single always-block structure for efficiency
+
+Key improvements:
+- Correct boundary detection (now 0 and 31)
+- Maintains all original benefits (no explicit state machine)
+- More efficient than case-statement approaches
+- Properly implements full 0-31 range as specified

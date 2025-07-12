@@ -1,6 +1,0 @@
-The code has several issues that are causing the simulation to fail:
-1. In state `4'b11`, when the sequence `1101` is detected, the `start_shifting` signal is set to 1. However, the state is not transitioned to `4'b0` in the same clock cycle. This leads to incorrect behavior.
-2. The logic for transitioning between states is not handling all cases properly. For instance, in state `4'b10`, if the `data` input is high, the next state should be `4'b11` if the next input is also high. Still, in some cases, the state transitions directly back to `4'b0` instead of going to `4'b11`.
-3. The initial state assignment in the reset condition is setting `start_shifting` to 0, which may not align with the requirement to set `start_shifting` to 1 when the sequence is found.
-
-These issues collectively lead to incorrect state transitions and output behavior, resulting in mismatches during simulation.

@@ -1,0 +1,14 @@
+Fuse the best aspects of both examples by implementing a true hierarchical bit-reversal: 
+- Use a small reusable module BitRev10 that correctly reverses 10-bit vectors internally using a generate loop.
+- In the top module, split the 100-bit input into 10 segments of 10 bits each.
+- Reverse each 10-bit segment with BitRev10.
+- Finally, concatenate the reversed segments in reverse order to complete the full 100-bit bit reversal.
+
+This approach:
+- Ensures true bit reversal within each segment, fixing Example 1’s internal reversal bug.
+- Correctly reverses the chunk order, unlike Example 2’s flawed concatenation order.
+- Keeps modularity and clarity, aiding maintainability and synthesis optimization.
+- Uses generate loops to reduce repetitive code.
+- Avoids unnecessary intermediate wires by using arrays for clarity and organization.
+
+This design combines correctness, modularity, and efficient hierarchical structure, resulting in clean and synthesizable RTL that directly implements the full 100-bit bit reversal.

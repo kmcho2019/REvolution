@@ -1,0 +1,35 @@
+The main issue was the incorrect indexing of the input bits. The problem defines inputs as x[1] through x[4], but the Verilog vector x[3:0] indexes bits from 0 to 3, so we must map correctly:
+
+- x[0] corresponds to x[1]
+- x[1] corresponds to x[2]
+- x[2] corresponds to x[3]
+- x[3] corresponds to x[4]
+
+The Karnaugh map uses rows indexed by x[3]x[4] and columns by x[1]x[2], so rows correspond to x[3] and x[4], and columns correspond to x[1] and x[2]. Thus:
+
+- Row bits: x[3] = x4, x[2] = x3 (because in x[3:0], bit 3 is x4, bit 2 is x3)
+- Column bits: x[0] = x1, x[1] = x2
+
+Using these mappings, the K-map is interpreted as:
+
+Rows: x4 x3 = x[3] x[2]  
+Cols: x1 x2 = x[0] x[1]
+
+Next, analyze the K-map minterms marked '1' and choose don't cares (d) to simplify.
+
+The minterms where f=1 are:
+
+- Row=11 (x4=1, x3=1), Col=00 (x1=0, x2=0) => x[3]=1, x[2]=1, x[0]=0, x[1]=0  
+- Row=11, Col=01 (x1=0, x2=1) => x[3]=1, x[2]=1, x[0]=0, x[1]=1  
+- Row=01 (x4=0, x3=1), Col=11 (x1=1, x2=1) => x[3]=0, x[2]=1, x[0]=1, x[1]=1  
+- Row=10 (x4=1, x3=0), Col=00 and 01 (x1=0, x2=0 or 1) => x[3]=1, x[2]=0, x[0]=0, x[1]= x2 varies (don't care here)
+
+From these, the expression can be minimized to:
+
+f = (x4 & ~x3 & ~x1) | (x4 & x3 & ~x1) | (~x4 & x3 & x2 & x1);
+
+Note that the last term corresponds to the minterm at row=01, col=11.
+
+Implement this exact expression with correct bit mappings.
+
+This approach fixes the input bit indexing and the Boolean expression, ensuring the output matches the Karnaugh map exactly.

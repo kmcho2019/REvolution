@@ -1,0 +1,21 @@
+Novel Architectural Idea: "Parallel Condition Evaluation"
+
+1. Key Concept:
+- Instead of evaluating state transitions sequentially, implement parallel condition evaluation for all next states simultaneously
+- Use a truth-table inspired approach where each next state is determined by its own dedicated condition logic
+
+2. Implementation Approach:
+- Create independent logic blocks for each next state signal
+- Each block evaluates all possible transitions to its corresponding state
+- Outputs are simple direct assignments from current state bits (Moore machine property preserved)
+
+3. Advantages:
+- More modular and scalable design (easy to add/remove states)
+- Clear separation of transition conditions for each state
+- Potentially better for synthesis tools to optimize individual paths
+- More readable as each next-state condition is self-contained
+
+4. Optimizations:
+- Eliminate redundant terms by carefully analyzing transition conditions
+- Use bitmask-style state comparisons for compact representation
+- Leverage one-hot encoding properties to simplify conditions

@@ -1,0 +1,21 @@
+Here's a novel approach using a different multiplexer configuration:
+
+1. Key Insight: Instead of implementing each mux input separately, we can observe that:
+   - The outputs are primarily dependent on c and d combinations
+   - We can use the c and d inputs to control the multiplexer inputs in a more optimized way
+
+2. New Strategy:
+   - For mux_in[0] (ab=00): Output is 1 when (c OR d) is true → implement with a single OR gate equivalent using mux
+   - For mux_in[1] (ab=01): Always 0 → hardwired
+   - For mux_in[2] (ab=10): Output is 1 when (NOT d) OR c → implement with mux that selects between ~d and 1 based on c
+   - For mux_in[3] (ab=11): Output is 1 when (c AND d) → implement with mux that selects between 0 and d based on c
+
+3. Optimization:
+   - Use c as the primary selector for most muxes
+   - Reuse intermediate signals where possible
+   - Total mux count remains 3 (same as before) but with different configuration
+
+4. Implementation:
+   - mux_in[0]: OR function implemented by selecting between d and 1 based on c
+   - mux_in[2]: OR function with inverted d implemented similarly
+   - mux_in[3]: AND function implemented by selecting between 0 and d based on c

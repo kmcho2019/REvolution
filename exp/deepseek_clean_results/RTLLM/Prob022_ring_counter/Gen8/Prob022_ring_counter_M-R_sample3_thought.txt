@@ -1,0 +1,14 @@
+Refactoring strategy:
+1. Maintain the same one-hot cyclic shifting behavior
+2. Replace individual bit assignments with a single register and concatenation operation
+3. Use a shift-left with wrap-around approach using concatenation
+4. Keep the reset functionality identical (LSB set)
+5. Use always block for sequential logic but with cleaner bit manipulation
+6. The concatenation {out[6:0], out[7]} achieves the same wrap-around effect more elegantly
+
+Advantages:
+- More compact and readable implementation
+- Avoids individual bit assignments that caused tool issues
+- Uses standard Verilog operations with better tool compatibility
+- Maintains identical functionality to original design
+- Easier to modify for different counter widths

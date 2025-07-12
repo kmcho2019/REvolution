@@ -1,0 +1,10 @@
+Implement the 4-bit comparator by explicitly performing a full 4-bit subtraction (A - B) using combinational full subtractors for each bit. The subtraction yields a 4-bit difference and a borrow-out signal. The borrow-out indicates if A < B, while checking if the difference is zero determines if A == B. If borrow-out is zero and difference is non-zero, then A > B.
+
+To do this:
+- Implement combinational full subtractors for each bit, cascading the borrow.
+- The inputs A[i], B[i] and the borrow-in produce difference[i] and borrow-out.
+- The final borrow-out from MSB subtractor indicates A < B.
+- Reduction OR of difference bits checks non-zero difference.
+- Outputs are mutually exclusive and combinational.
+
+This approach makes the comparator's logic explicit via arithmetic subtraction hardware rather than borrow generate/propagate abstraction, providing a clear arithmetic interpretation and easy extensibility to larger bit-widths.

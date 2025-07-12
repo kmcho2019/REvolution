@@ -1,0 +1,10 @@
+To improve PPA, we can eliminate the explicit clock enable signal and incorporate the "freeze" condition directly into the synchronous state update, reducing combinational logic and the critical path. Also, using a registered output aligned with the state can simplify timing and reduce glitches, by making start_shifting a registered signal that stays asserted once the pattern is detected. This avoids combinational logic in output and may improve timing.
+
+Additionally, next-state logic can be simplified by using a small function rather than a case statement, but given clarity and minimal logic, a case is fine.
+
+Overall, we:
+- Remove the separate clock enable signal.
+- Use a synchronous reset with direct state update that holds at final state.
+- Register the output signal to reduce glitches and improve timing.
+- Keep 3-bit binary state encoding for compactness.
+This should yield lower power and slightly improved timing and area by simplifying the logic path.

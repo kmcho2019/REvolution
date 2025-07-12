@@ -1,0 +1,11 @@
+The TopModule can be designed as a finite state machine (FSM) with four states: 
+1. IDLE: The initial state, where the FSM discards input bytes until it finds one with in[3]=1.
+2. BYTE1: After finding a byte with in[3]=1, the FSM captures this byte and waits for the next two bytes.
+3. BYTE2: The FSM captures the second byte.
+4. BYTE3: The FSM captures the third byte and signals done.
+
+The FSM will have a 24-bit register to store the three bytes of the message and an 8-bit register to store the current input byte. The FSM will also have a counter to keep track of the number of bytes captured.
+
+When the FSM is in the IDLE state and in[3]=1, it transitions to the BYTE1 state and captures the input byte. When the FSM is in the BYTE1 or BYTE2 state, it captures the input byte and transitions to the next state. When the FSM is in the BYTE3 state, it captures the input byte, signals done, and transitions back to the IDLE state.
+
+The out_bytes register is updated with the captured bytes when the FSM is in the BYTE3 state.

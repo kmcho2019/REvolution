@@ -1,0 +1,16 @@
+Optimize the original radix-2 style design toward a proper radix-4 Booth multiplier that processes 2 bits of the multiplier per cycle, halving the iteration count from 16 to 8. This reduces clock cycles and switching activity, improving performance and power.
+
+Key improvements:
+- Implement radix-4 Booth recoding by examining 3 bits of the multiplier (including an appended zero bit) each cycle to determine the multiplicand multiple to add.
+- Precompute partial products as multiples of the multiplicand: -2M, -M, 0, +M, +2M.
+- Use a signed partial product adder to accumulate results, shifted by 2 bits each cycle.
+- Use a 4-bit counter to count up to 8 iterations (processing 2 multiplier bits each).
+- On reset, sign-extend inputs and initialize registers.
+- On each cycle, based on Booth encoding, update the product accumulator accordingly.
+- At the end of 8 cycles, assert ready and present final product.
+- Separate FSM states: IDLE (waiting), LOAD (load inputs), RUN (processing), DONE.
+- This reduces cycle count and switching, improving timing and power.
+- Use registered outputs and clear ready on new operation.
+- Maintain signed arithmetic correctness.
+
+This approach fully leverages radix-4 Booth efficiency while keeping code clarity and modularity, improving PPA from the original radix-2 design.

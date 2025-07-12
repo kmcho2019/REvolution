@@ -1,0 +1,10 @@
+The original design is minimal and functionally correct, using a 1-bit state encoding and clean synchronous reset. To optimize PPA further, we can:
+
+- Combine next-state and output logic into a single combinational always block to reduce logic duplication and potentially allow synthesis tools to optimize better.
+- Use explicit nonblocking assignments only in sequential always blocks, keeping combinational always blocks with blocking assignments, as before.
+- Avoid case statements to minimize logic overhead, replacing with simple conditional expressions since there are only two states.
+- The output depends solely on state, so it can be assigned directly from the state register (or its inverse) rather than a separate combinational block.
+- Keep state encoding as one bit to minimize flip-flops and combinational logic.
+- This streamlined code should slightly reduce area and power by eliminating redundant logic and simplify the FSM logic.
+
+No change in functionality, reset remains synchronous and active-high.

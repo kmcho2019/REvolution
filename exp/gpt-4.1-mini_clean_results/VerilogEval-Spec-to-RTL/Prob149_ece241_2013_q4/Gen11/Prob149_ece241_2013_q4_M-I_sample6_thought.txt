@@ -1,0 +1,11 @@
+Improve the logic for detecting water level changes to assert 'dfr' only when the water level actually changes from a lower to a higher state. To do this, update the stored previous level only when the sensor state changes (i.e., when the new level differs from the current level). This captures the "previous level before the last sensor change" as required.
+
+Maintain the same level mapping logic (priority based on sensors s[2], s[1], s[0]) to classify water levels. On each clock edge, if reset is asserted, initialize to BELOW level with all valves open. Otherwise, if the water level changes, update prev_level to the old curr_level and curr_level to the new level; if it does not change, retain prev_level as is and update curr_level to the new level to reflect current water level.
+
+Detect rising water level by checking if the new current level is higher than prev_level and that a level change occurred. Assert 'dfr' only under this condition.
+
+This logic accurately implements the specification of using the previous level before the last sensor change, avoids spurious dfr assertions, and maintains correct nominal flow outputs, improving correctness and minimizing functional mismatches.
+
+Optionally, outputs are driven combinationally from registers to ensure synchronous timing.
+
+This approach corrects the main functional failure related to 'dfr' and prevents unnecessary flow valve changes, ensuring full compliance with the problem statement.

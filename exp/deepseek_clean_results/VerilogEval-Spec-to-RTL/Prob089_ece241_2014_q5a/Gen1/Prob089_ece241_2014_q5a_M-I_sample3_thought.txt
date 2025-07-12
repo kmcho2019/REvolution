@@ -1,0 +1,18 @@
+The original solution had logical flaws in implementing the 2's complement conversion. Here's the improved strategy:
+
+1. Correct State Behavior: The state machine should:
+   - In STATE_SEARCH: Pass through bits unchanged until first '1' is found
+   - In STATE_COMPLEMENT: Complement all subsequent bits (including the first '1')
+   
+2. Output Logic: 
+   - STATE_SEARCH: z = x (pass through)
+   - STATE_COMPLEMENT: z = ~x (complement)
+   
+3. Reset Handling:
+   - Asynchronous reset returns to STATE_SEARCH
+   - Conversion begins when reset is released
+
+4. Optimization:
+   - Use single always block for state and output (Moore machine)
+   - Remove redundant next_state logic
+   - Simplify state encoding to minimal bits

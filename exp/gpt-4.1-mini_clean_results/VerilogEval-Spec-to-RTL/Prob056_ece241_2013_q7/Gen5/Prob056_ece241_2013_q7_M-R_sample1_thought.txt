@@ -1,0 +1,9 @@
+Refactor the JK flip-flop to use an always block with explicit if-else conditional statements inside the posedge clock block instead of computing nextQ combinationally outside. This shifts the next-state logic directly into the sequential block, avoiding a separate wire and expression.
+
+This approach:
+- Implements the JK truth table directly inside the sequential block, improving clarity for some readers.
+- Uses non-blocking assignments (`<=`) in each condition branch.
+- Maintains register behavior and same functionality.
+- Avoids combinational logic outside the clocked block.
+
+By embedding the state transition logic inside the clocked process, the design becomes a classic procedural style JK flip-flop implementation, which is common and easily understood. It also allows easy expansion if reset or enable signals were needed later.

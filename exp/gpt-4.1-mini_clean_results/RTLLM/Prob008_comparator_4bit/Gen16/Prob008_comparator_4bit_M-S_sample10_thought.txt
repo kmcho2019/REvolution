@@ -1,0 +1,9 @@
+Simplify the 4-bit comparator by directly using bitwise comparisons without explicit borrow propagate/generate logic. Use simple combinational expressions:
+
+- A_equal is 1 if A and B match exactly (bitwise equality).
+- A_less is set if A is less than B. Detect this by scanning bits from MSB to LSB and checking for the first bit where A[i] < B[i] and all higher bits are equal.
+- A_greater is set if A is greater than B, similarly by scanning bits from MSB to LSB and detecting the first bit where A[i] > B[i] and all higher bits are equal.
+- Implement these using straightforward combinational conditions without borrow lookahead to reduce complexity and improve clarity.
+- Ensure outputs are mutually exclusive by construction.
+
+This approach trades minimal delay for simpler, easier-to-understand combinational logic.

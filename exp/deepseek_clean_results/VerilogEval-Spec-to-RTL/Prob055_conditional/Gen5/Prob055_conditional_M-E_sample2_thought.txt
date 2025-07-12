@@ -1,0 +1,22 @@
+**Tournament-style Parallel Comparator Architecture**
+
+1. **Key Idea**: Implement a tournament-style comparison where inputs compete in parallel rounds to find the minimum, similar to a sports tournament bracket. This approach maximizes parallelism and minimizes critical path delay.
+
+2. **Implementation Strategy**:
+   - First Round: Compare all pairs of inputs in parallel (a vs b, c vs d)
+   - Second Round: Compare the winners from first round
+   - The final winner is the global minimum
+   - Each comparison is done in parallel, reducing critical path to just two comparison stages
+
+3. **Advantages**:
+   - Fixed latency of just two comparison stages regardless of input count
+   - Fully parallel implementation with no sequential dependencies
+   - Excellent timing characteristics with balanced comparison paths
+   - Scales efficiently to larger input counts (powers of 2)
+   - Clear and modular structure that's easy to understand and verify
+
+4. **Innovation Points**:
+   - Uses a true parallel comparison structure rather than sequential or tree-based
+   - Tournament metaphor makes the design intuitive
+   - Each comparison is independent, enabling potential pipelining
+   - Naturally balanced comparison paths for better timing closure

@@ -1,0 +1,15 @@
+To correctly implement the K-map using the specified multiplexer structure:
+
+1. For each mux_in bit (selected by ab), we need to implement the function of cd shown in that column of the K-map:
+   - mux_in[0] (ab=00): Output is 0,1,1,1 for cd=00,01,11,10 → This is ~(c & ~d)
+   - mux_in[1] (ab=01): Always 0 → Direct assignment
+   - mux_in[2] (ab=11): Output is 0,0,1,0 → This is c & d & ~(c ^ d) which simplifies to c & d
+   - mux_in[3] (ab=10): Output is 1,0,1,1 → This is ~d | (c & d) which simplifies to ~d | c
+
+Implementation strategy:
+1. mux_in[0] can be implemented as ~(c & ~d) using one 2-to-1 mux
+2. mux_in[1] is constant 0
+3. mux_in[2] is c & d (no mux needed)
+4. mux_in[3] can be implemented as ~d | c using one 2-to-1 mux
+
+Total: 2 2-to-1 multiplexers used (for mux_in[0] and mux_in[3])

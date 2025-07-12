@@ -1,0 +1,13 @@
+The original design is robust and power-aware by gating counting when freq=0, and includes a synchronous reset. To optimize PPA further:
+
+1. Timing: Replace (count == freq) comparison with (count == freq_minus_one) where freq_minus_one is freq-1. This reduces combinational delay as the count increments from 0 to freq_minus_one before toggling. Comparing with freq_minus_one is simpler since count only needs to reach freq-1, avoiding the off-by-one comparator complexity.
+
+2. Power: Keep gating logic by only counting and toggling when freq is non-zero. Further power saving via clock gating is usually tool-dependent; the enable signal suffices here.
+
+3. Area: Introducing freq_minus_one register adds a small combinational subtraction, but synthesis can optimize this easily. It likely improves critical path delay due to simpler equality check.
+
+4. Clarity: Rename signals for better readability.
+
+5. Reset: Maintain synchronous active-low reset for stable initialization.
+
+Overall, the main optimization is to precompute freq_minus_one, and use (count == freq_minus_one) as the toggle condition, reducing critical path delay and improving max frequency achievable without impacting area or power notably.

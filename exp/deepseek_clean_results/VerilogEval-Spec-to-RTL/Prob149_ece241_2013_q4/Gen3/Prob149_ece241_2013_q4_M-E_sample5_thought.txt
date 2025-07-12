@@ -1,0 +1,19 @@
+Novel state machine approach with level history tracking:
+
+1. Implement a 4-state FSM representing the water level positions:
+   - STATE_BELOW: Below s[0] (all sensors off)
+   - STATE_LOW: Between s[0] and s[1] (only s[0] on)
+   - STATE_MID: Between s[1] and s[2] (s[0] and s[1] on)
+   - STATE_HIGH: Above s[2] (all sensors on)
+
+2. Track both current and previous states to detect rising/falling levels
+3. Use combinatorial logic to generate flow rates based on:
+   - Current state (for nominal flow)
+   - State transition direction (for supplemental flow)
+4. Implement synchronous reset that forces STATE_BELOW with all outputs high
+
+Key innovations:
+- Explicit state machine makes behavior very clear
+- Separate state transition detection for precise supplemental flow control
+- Direct mapping from states to output patterns
+- Clear separation between state tracking and output generation

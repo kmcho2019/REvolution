@@ -1,0 +1,11 @@
+To refactor the Mealy FSM while maintaining the same functionality, I'll make these changes:
+1. Use binary encoding for states instead of enum for potential area optimization
+2. Separate the state transition and output logic into two always blocks for better readability
+3. Use non-blocking assignments for state transitions to follow better coding practices
+4. Make the output z purely combinational using assign statement
+
+The state machine logic remains identical:
+- IDLE (00): waits for first '1'
+- GOT1 (01): received '1', waits for '0'
+- GOT10 (10): received '10', waits for '1' to complete sequence
+The output z is asserted when in GOT10 state and x=1.

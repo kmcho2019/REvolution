@@ -1,0 +1,23 @@
+The fusion strategy combines the clarity and explicitness of the first example's modular fixed 8-bit CLA adder with the performance insight from the second example, but further improves timing by implementing true parallel carry lookahead logic.
+
+Specifically, instead of a simple ripple carry chain through c[1] to c[8], I will compute group propagate (PG) and group generate (GG) signals for the entire 8-bit block, which enables parallel calculation of all carry bits with minimal delay.
+
+This uses the recursive carry lookahead formula:
+
+c[i+1] = g[i] | (p[i] & c[i])
+
+but instead of cascading sequentially, I will expand carries in terms of the initial carry-in and the propagate/generate signals to produce all carries in a few logic levels.
+
+This parallel carry computation reduces the critical path compared to sequential assigns, improving performance.
+
+The sum bits remain the XOR of propagate and carry-in bits.
+
+Overflow detection remains the XOR of the carry into and carry out of the MSB (bit 7).
+
+The modular structure is retained: a dedicated EightBitCLAAdder module feeding the TopModule.
+
+This fusion thus optimizes for performance (parallel carry generation), clarity (explicit propagate/generate signals), and correctness (accurate overflow detection).
+
+Area impact is modest since only 8 bits and the carry logic is explicit; power benefits from reduced switching in carry chain logic.
+
+Overall, this approach yields an efficient and clean fixed 8-bit CLA with optimized parallel carry computation for superior PPA.

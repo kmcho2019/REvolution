@@ -1,0 +1,13 @@
+To optimize the PPA metrics further, I'll implement a direct 4-input minimum comparator in a single module. This approach:
+
+1. Eliminates the hierarchical structure to reduce area and critical path
+2. Uses parallel comparisons but with a single level of multiplexing
+3. Maintains combinational logic for lowest latency
+4. Optimizes power by reducing redundant comparisons
+5. Uses a single always block with conditional statements for cleaner synthesis
+
+The strategy is:
+- First compare a vs b and c vs d in parallel (like original)
+- Then compare these intermediate results in parallel with all inputs
+- This creates a balanced comparison tree that minimizes critical path
+- The implementation will use continuous assignments for efficient synthesis

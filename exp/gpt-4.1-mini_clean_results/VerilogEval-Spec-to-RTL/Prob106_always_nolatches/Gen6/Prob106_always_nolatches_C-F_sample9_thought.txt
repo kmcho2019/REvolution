@@ -1,0 +1,7 @@
+The best approach fuses the clarity and maintainability of using a single always_comb block with explicit output registers (as in Example 2) and the efficiency of a compact case statement decoding a single intermediate code (like Example 1), but without the intermediate register overhead.
+
+I will implement a single always_comb block where the outputs are declared as reg and all set by default to zero. Then, the scancode is decoded once using a case statement on the full 16-bit input, directly assigning the four outputs in a mutually exclusive manner. This avoids redundant checks and switching and eliminates an extra variable.
+
+This approach yields a clean and readable procedural block, centralizes all decoding logic in one place, uses a case statement for clarity and synthesis friendliness, and directly drives output regs to remove extra logic toggling from an intermediate code signal.
+
+Hence, the design is both straightforward to maintain and optimized for area and power by minimizing logic duplication and unnecessary intermediate registers.

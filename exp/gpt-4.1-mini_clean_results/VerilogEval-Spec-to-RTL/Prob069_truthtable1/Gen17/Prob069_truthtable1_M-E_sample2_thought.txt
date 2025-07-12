@@ -1,0 +1,34 @@
+I will implement the function using a direct Boolean equation derived from the truth table, then implement it with basic logic gates.
+
+Analyzing the truth table for output f:
+
+| x3 | x2 | x1 | f |
+|----|----|----|---|
+| 0  | 0  | 0  | 0 |
+| 0  | 0  | 1  | 0 |
+| 0  | 1  | 0  | 1 |
+| 0  | 1  | 1  | 1 |
+| 1  | 0  | 0  | 0 |
+| 1  | 0  | 1  | 1 |
+| 1  | 1  | 0  | 0 |
+| 1  | 1  | 1  | 1 |
+
+From this, we observe:
+
+- When x2=1 and x3=0 => f=1 (irrespective of x1)
+- When x3=1 and x2=0 and x1=1 => f=1
+- When x3=1 and x2=1 and x1=1 => f=1
+
+Putting this together:
+
+f = (~x3 & x2) | (x3 & ~x2 & x1) | (x3 & x2 & x1)
+
+The last two terms can be combined as x3 & x1 & (~x2 | x2) = x3 & x1
+
+So simplified Boolean expression:
+
+f = (~x3 & x2) | (x3 & x1)
+
+I will implement this minimal logic with two AND gates, one NOT gate, and one OR gate.
+
+This approach uses minimal logic, has low area and power, and is fast due to simple gate depth.

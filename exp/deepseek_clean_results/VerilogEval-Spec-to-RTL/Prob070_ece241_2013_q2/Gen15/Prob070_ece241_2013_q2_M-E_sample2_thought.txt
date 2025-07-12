@@ -1,0 +1,24 @@
+Novel Architectural Idea: "Pattern Matching with Shared Sub-expressions"
+
+1. Key Insight:
+   - Instead of traditional SOP/POS implementations, recognize that all output=1 cases (2,7,15) share common patterns:
+     * 2 (0010) and 7 (0111) share ~a
+     * 7 (0111) and 15 (1111) share b & c & d
+   - This suggests we can build the logic by combining these shared patterns
+
+2. Implementation Strategy:
+   - Create intermediate signals for shared sub-expressions
+   - For SOP: Combine patterns using OR of the following:
+     * Pattern for 2 (unique to this case)
+     * Shared pattern between 7 and 15
+   - For POS: Derive by inverting the complement function built from:
+     * Common characteristics of output=0 cases
+     * Specifically target cases where either:
+       - a & ~b (covers 8,9,10,11,12,13,14)
+       - ~a & ~c (covers 0,1,4,5)
+
+3. Benefits:
+   - Reduced gate count by sharing sub-expressions
+   - Natural handling of don't-cares through pattern overlaps
+   - More efficient than traditional minterm/maxterm approaches
+   - Clear logical structure that's easy to verify

@@ -1,0 +1,12 @@
+To simplify the Lemming state machine, we can:
+1. Use only 2 state bits: one for direction (left/right) and one for action (walking/falling/digging)
+2. Encode actions as: 00=walking, 01=falling, 10=digging
+3. Prioritize state transitions: falling > digging > bump handling
+4. Make outputs directly dependent on state bits for minimal logic
+5. Handle all transitions in a single always block with clear priority
+
+Key simplifications:
+- Reduced state representation to 2 bits
+- Combined walking direction and action into unified state
+- Simplified output logic by direct state decoding
+- Maintained clear priority order in transitions

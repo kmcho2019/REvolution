@@ -1,0 +1,7 @@
+The existing code is functionally correct and detects any edge in the 8-bit input vector `in` by comparing it with its previous state `prev_in`. To refactor this code, we can consider an alternative approach that uses combinational logic to detect the edge and sequential logic to store the previous state. Instead of using the `always` block to both update the previous state and detect the edge, we can separate these functions into a combinational logic part (using `assign`) for edge detection and a sequential part (using `always`) for updating the previous state. This separation might simplify the design and potentially improve readability and maintainability.
+
+For the combinational logic part, we will use the XOR operator (`^`) to detect any edge in the input vector `in` by comparing it with the previous state `prev_in`. The result of this XOR operation will be assigned to `anyedge`.
+
+For the sequential logic part, we will use an `always` block to update the previous state `prev_in` at every positive edge of the clock `clk`. This ensures that `prev_in` always holds the value of `in` from the previous clock cycle.
+
+By separating the edge detection into a combinational logic part and the state update into a sequential logic part, we aim to maintain the same functionality as the original code but with a potentially clearer and more maintainable structure.

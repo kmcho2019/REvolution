@@ -1,0 +1,29 @@
+Fusion Strategy for Optimal Solution:
+
+1. Single Register Efficiency (from Example 2):
+   - Use a single register to minimize area while maintaining functionality
+   - Eliminate redundant updates by only modifying state when necessary
+
+2. Clear Priority Handling (from both examples):
+   - Maintain strict priority: reset > misprediction > prediction
+   - Ensure misprediction correctly overrides prediction when both occur
+
+3. Power Optimization (from Example 1):
+   - Only update register when there's actual work to do (predict or train)
+   - Avoid unnecessary shifts by using explicit enable conditions
+
+4. Timing Optimization:
+   - Simplify the shift operation to a direct bit concatenation
+   - Minimize logic depth in the update path
+   - Keep output assignment outside always block for clean timing
+
+5. Functional Completeness:
+   - Properly handle all edge cases (simultaneous events)
+   - Correct rollback behavior using train_history + train_taken
+   - Clean reset implementation
+
+Key Innovations:
+- Combines area efficiency of single register with power awareness
+- Maintains clear priority structure for correct operation
+- Optimized update logic reduces unnecessary switching
+- Simple yet complete implementation of spec requirements

@@ -1,0 +1,16 @@
+The original design is functionally correct because two's complement fixed-point addition can be done via direct signed addition. The synthesis elaboration errors come from incorrect or missing parameter passing during module instantiation, likely in the testbench.
+
+To fix this, ensure that:
+
+1. Parameters Q and N have default values in the module declaration.
+2. The port declarations use `input wire` (not signed) but since we perform signed arithmetic, the inputs and output should be declared as `signed`.
+3. The module name `fixed_point_adder` must match that used in the testbench.
+4. The parameters `Q` and `N` are declared as `parameter integer`, which is correct.
+5. The testbench must instantiate the module with parameter overrides if needed, e.g., `fixed_point_adder #(.Q(8), .N(16)) fp_adder (...);`
+6. Ensure the module uses `input wire signed` and `output wire signed` to reflect fixed-point signed numbers.
+
+Thus, to fix the elaboration errors, provide default parameter values and ensure the parameters are accessible and used consistently, while keeping the simple signed addition implementation.
+
+No complex absolute-value based logic is needed for correct fixed-point addition since two's complement arithmetic inherently handles sign and overflow correctly.
+
+Below is the fixed module code with appropriate parameter declarations, signed inputs/outputs, and default values for parameters, which will allow testbench instantiation with or without parameter overrides without elaboration errors.

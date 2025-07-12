@@ -1,0 +1,12 @@
+The design is an asynchronous FIFO with configurable data width and depth using a dual-port RAM. The dual-port RAM is a separate submodule that supports simultaneous independent read and write operations with separate clocks and enables. The main FIFO module manages read and write pointers in binary and Gray code formats to minimize metastability issues. Read and write pointers are synchronized into the opposite clock domains using two-stage synchronizers. The FIFO empty and full conditions are detected by comparing Gray-coded pointers, following the given logic. The RAM is accessed using lower bits of the binary pointers converted from Gray pointers. The write controller increments the write pointer on writes if FIFO is not full, and the read controller increments the read pointer on reads if FIFO is not empty.
+
+The key implementation points:
+- Dual-port RAM implemented as a submodule with separate clocks, enables, and addresses.
+- FIFO pointers are binary counters converted to Gray code.
+- Two-stage synchronizers for pointer crossing.
+- Empty and full logic based on Gray pointer comparisons.
+- Lower bits of the binary pointer used as RAM address.
+- Write enable (winc) and read enable (rinc) inputs control pointer increments.
+- Write pointer reset by wrstn, read pointer reset by rrstn.
+
+This approach ensures an asynchronous FIFO with robust pointer crossing and data integrity.

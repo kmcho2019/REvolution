@@ -1,0 +1,14 @@
+Here's a novel approach that leverages the observation that each mux_in[i] corresponds to a specific column in the K-map, and we can implement each column's function using a 2-to-1 mux controlled by one of the inputs:
+
+1. For mux_in[0] (ab=00): The output is 1 when cd=01,11,10 → This is equivalent to ~(c & ~d) (NOT of c AND NOT d)
+   - Implement with a 2-to-1 mux: select ~d when c=0, else 1
+
+2. For mux_in[1] (ab=01): Always 0 → Hardwire to 0 (no mux needed)
+
+3. For mux_in[2] (ab=10): The output is 1 when cd=00,11,10 → This is equivalent to ~(~c & d) (NOT of NOT c AND d)
+   - Implement with a 2-to-1 mux: select 1 when c=1, else ~d
+
+4. For mux_in[3] (ab=11): The output is 1 when cd=11 → This is exactly c & d
+   - Implement with a 2-to-1 mux: select d when c=1, else 0
+
+This approach uses three 2-to-1 muxes (same as before) but implements different logic functions that more accurately match the K-map requirements. The key insight is that each column's function can be expressed in terms of conditional selections based on one input variable.

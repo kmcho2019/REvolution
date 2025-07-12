@@ -1,0 +1,15 @@
+Refactor the multiplier as a simple finite state machine (FSM) with explicit states: IDLE, LOAD, MULTIPLY, DONE.
+
+- Use a 2-bit state register to track operation phase, improving code clarity.
+- Use synchronous reset and clear registers only on reset or new start.
+- At LOAD state, load multiplicand and multiplier registers.
+- At MULTIPLY state, perform 16 cycles of conditional accumulation using shift and add.
+- Shift registers only during MULTIPLY state cycles.
+- Increment cycle counter in MULTIPLY state; when done, move to DONE state.
+- DONE state asserts done flag; waiting for start to go low to return to IDLE.
+- Use combinational logic for next-state and outputs.
+- Use non-blocking assignments in sequential always blocks.
+- This structure cleanly separates control logic from datapath.
+- Avoid resetting registers unnecessarily; hold values stable between operations.
+- Provide registered done signal.
+This approach improves readability and facilitates FSM-based verification and synthesis.

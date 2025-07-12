@@ -1,0 +1,17 @@
+Here's a novel approach using a shift register with parallel load and a bit counter with early termination detection:
+
+1. Instead of a traditional FSM, we'll use a counter-driven approach with two main states: IDLE and ACTIVE
+2. In ACTIVE state, we'll:
+   - Use a 4-bit counter to track both the bit position and state (0-9: start bit + 8 data + stop bit)
+   - The shift register loads parallel data when counter=9 (stop bit position)
+   - Early termination if stop bit is missing (counter freezes until line returns high)
+3. Key innovations:
+   - Combined counter for both timing and state tracking
+   - Parallel load of shift register when complete
+   - Immediate error recovery without separate ERROR state
+   - Done signal generated combinatorially from counter value
+4. Benefits:
+   - Reduced state machine complexity
+   - Faster error recovery
+   - More efficient counter usage
+   - Lower power due to fewer state transitions

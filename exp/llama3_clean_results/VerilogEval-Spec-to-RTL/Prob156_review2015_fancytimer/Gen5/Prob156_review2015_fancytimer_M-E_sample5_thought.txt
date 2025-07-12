@@ -1,0 +1,11 @@
+To solve this problem, I will implement a finite state machine (FSM) with five states: IDLE, SHIFT, COUNT, DONE, and ACK. The FSM will be controlled by a single always block, and the outputs will be updated using assign statements for combinational logic.
+
+In the IDLE state, the FSM will search for the input sequence 1101. Once the sequence is detected, the FSM will transition to the SHIFT state, where it will shift in the next 4 bits to determine the delay duration.
+
+In the COUNT state, the FSM will use a counter to count up to the desired number of clock cycles, which is calculated based on the delay value. The 'count' output signal will be updated to display the remaining time by using a separate counter that decrements every 1000 clock cycles.
+
+In the DONE state, the FSM will assert the done output signal and wait for the ack signal to reset the state machine. Once the ack signal is received, the FSM will transition to the ACK state, where it will reset the state machine and prepare for the next sequence detection.
+
+To improve the design, I will use a single always block to control the FSM, reducing the complexity of the code and improving readability. I will also use assign statements for combinational logic, making it easier to update the outputs in each state.
+
+Additionally, I will use a parameterized approach to define the number of bits in the sequence register, shift counter, and delay register, making the code more scalable and flexible.

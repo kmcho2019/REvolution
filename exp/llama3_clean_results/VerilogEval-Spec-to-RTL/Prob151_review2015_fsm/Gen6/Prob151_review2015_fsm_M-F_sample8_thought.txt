@@ -1,0 +1,10 @@
+To fix the provided Verilog code, we will revisit the state machine's control logic, particularly focusing on the 'shift_ena' signal assertion, counter control, and acknowledgement handling. A more systematic approach to the state machine will be employed, utilizing a single 'always' block with a 'case' statement to manage all states. This will help simplify the logic, improve code readability, and ensure proper synchronization of the 'shift_ena', 'counting', and 'done' signals with their respective inputs and conditions.
+
+The state machine will be divided into distinct states, each with a clear function: 
+1. **IDLE**: The initial state where the FSM waits for the '1101' pattern.
+2. **SHIFT**: Once the pattern is detected, the FSM asserts 'shift_ena' for 4 clock cycles to shift in the duration bits.
+3. **COUNT**: After shifting in the duration, the FSM waits for the 'done_counting' signal.
+4. **DONE**: Upon receiving 'done_counting', the FSM asserts 'done' and waits for the 'ack' signal.
+5. **ACK**: The FSM resets to the IDLE state upon receiving 'ack'.
+
+By streamlining the state machine and ensuring each state's conditions are properly met before transitioning, we can correct the functional mismatches and errors observed in the original code.

@@ -1,0 +1,14 @@
+To implement the Lemming machine as a Moore state machine, we need to identify the states and transitions based on the given conditions. The states can be defined as follows: 
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALL: The Lemming is falling.
+- DIG: The Lemming is digging.
+
+The transitions between these states can be determined based on the input conditions. 
+- If the ground disappears (ground = 0), the Lemming enters the FALL state.
+- If the Lemming is told to dig (dig = 1) while it is walking on the ground, it enters the DIG state.
+- If the Lemming is bumped on the left or right, it changes direction.
+- When the ground reappears (ground = 1) while the Lemming is falling, it resumes walking in the same direction as before the fall.
+- When the ground disappears (ground = 0) while the Lemming is digging, it enters the FALL state and then continues walking in its original direction once it hits the ground again.
+
+We will use a 2-bit state variable (2^2 = 4 states) to represent these states. The output signals walk_left, walk_right, aaah, and digging can be determined based on the current state.

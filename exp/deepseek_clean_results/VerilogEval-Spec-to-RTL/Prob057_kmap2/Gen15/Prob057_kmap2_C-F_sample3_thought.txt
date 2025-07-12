@@ -1,0 +1,27 @@
+Fusion Strategy:
+1. K-map Analysis:
+   - Identify all prime implicants from the K-map
+   - Note that output is 0 in only 6 cases (as shown in Example 1)
+   - Observe that some terms can be combined more efficiently (as shown in Example 2)
+
+2. Optimization Approach:
+   - Combine the most efficient terms from both examples:
+     - Keep (!a & !b & c & d) from Example 1 for cd=11,ab=00
+     - Adopt (!c & d & b) from Example 2 to cover cd=01,ab=01 and cd=01,ab=11
+     - Use (c & !d & a) from Example 2 to cover cd=10,ab=11 and cd=10,ab=10
+     - Keep (a & b & !c & !d) from Example 1 for cd=00,ab=11
+   - This reduces the number of terms from 6 to 4 while maintaining full coverage
+
+3. Implementation Benefits:
+   - Fewer logic operations than either example (4 terms vs 6 in original solutions)
+   - Clear mapping to original K-map for verification
+   - Single-level logic depth maintained for good timing
+   - Expected better PPA (Power, Performance, Area) metrics
+
+4. Verification:
+   - All K-map 1s are covered by:
+     - (!a & !b & c & d) covers cd=11,ab=00
+     - (!c & d & b) covers cd=01,ab=01 and cd=01,ab=11
+     - (c & !d & a) covers cd=10,ab=11 and cd=10,ab=10
+     - (a & b & !c & !d) covers cd=00,ab=11
+   - No overlapping or redundant coverage

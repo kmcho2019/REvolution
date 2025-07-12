@@ -1,0 +1,14 @@
+To optimize the sequence detector for better PPA metrics, I propose a novel shift-register based approach with parallel comparison. This eliminates the need for explicit state machine logic while maintaining the same functionality:
+
+1. Use a 4-bit shift register to track the last 4 input bits
+2. Implement a parallel comparator to check for '1001' pattern
+3. The shift register naturally handles sequence tracking without complex state transitions
+4. Output is generated combinatorially when the stored pattern matches
+5. Reset clears the shift register
+
+Advantages:
+- Eliminates state machine logic, reducing area and power
+- Parallel comparison is faster than sequential state transitions
+- Simpler design with fewer registers (4-bit shift vs 3-bit state)
+- Maintains same functionality with single-cycle detection
+- Naturally handles overlapping sequences

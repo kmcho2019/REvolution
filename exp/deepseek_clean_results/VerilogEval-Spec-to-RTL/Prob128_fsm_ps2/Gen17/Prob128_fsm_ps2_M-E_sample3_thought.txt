@@ -1,0 +1,12 @@
+Novel Architectural Idea: Shift Register with Pattern Detection
+1. Instead of using a counter, implement a 24-bit shift register to store the last 3 bytes
+2. Continuously shift in new bytes while maintaining the last 3 received bytes
+3. Pattern detection logic checks if the oldest byte in the window (24th bit) has in[3]=1
+4. When detected, assert done signal immediately since we have all 3 bytes in the register
+5. Reset clears the shift register and done signal
+
+Advantages:
+- Eliminates counter logic and state transitions
+- Parallel pattern detection enables immediate done assertion
+- Simpler control flow with continuous shifting
+- Potential for pipelining if needed

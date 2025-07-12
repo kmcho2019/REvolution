@@ -1,0 +1,17 @@
+The feedback indicates two main issues to address:
+1. Edge detection timing: Need to ensure the previous value is properly registered before comparison
+2. Capture persistence: Need to guarantee the output stays high once a falling edge is detected until reset
+
+Key fixes:
+1. Separate the edge detection into two stages:
+   - First register stores the input from previous cycle
+   - Second register detects falling edges using the registered value
+2. Simplify the capture logic to use a single register per bit that:
+   - Sets on falling edge detection
+   - Clears only on reset
+   - Maintains its value otherwise
+
+This ensures:
+- Correct timing by using properly registered values for edge detection
+- Stable capture behavior that persists until reset
+- No race conditions between edge detection and value storage

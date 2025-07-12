@@ -1,0 +1,5 @@
+I will implement the pairwise equality outputs by first packing the five 1-bit inputs into a vector. Then, I will use nested generate-for loops with two loop variables to systematically create each bit of the 25-bit output. Each output bit corresponds to the XNOR of two inputs indexed by the loop variables. 
+
+The output indexing will follow the pattern: for i=0 to 4 (outer loop over first input), and j=0 to 4 (inner loop over second input), out[24 - (5*i + j)] = XNOR(in_vec[i], in_vec[j]). This matches the required ordering where out[24] corresponds to a==a (i=0,j=0), out[23] to a==b (i=0,j=1), and so forth down to out[0] = e==e (i=4,j=4).
+
+This approach leverages generate loops to reduce code repetition and clearly maps the output bit positions to input pairs using arithmetic. It also improves scalability and maintainability compared to manually assigning each output bit.

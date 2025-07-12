@@ -1,0 +1,17 @@
+Implement the gshare predictor using a pipelined approach with registered prediction outputs to precisely control timing and priority of updates.
+
+Key ideas:
+- Maintain a 7-bit GHR register.
+- On predict_valid:
+  - Compute index as predict_pc XOR current GHR.
+  - Read PHT entry combinationally to generate prediction.
+  - Register prediction output and prediction GHR (as predict_history) into pipeline registers.
+- On the next clock edge, update GHR by shifting in the predicted bit *only if* no training misprediction occurs that cycle.
+- On train_valid:
+  - Update PHT entry indexed by train_pc XOR train_history on the clock edge.
+  - If train_mispredicted is set, restore GHR to train_history.
+- Priority on GHR update: if train_mispredicted, restore GHR, else if predict_valid, shift in prediction.
+- Prediction outputs (predict_taken, predict_history) come from pipeline registers to guarantee they reflect stable values aligned to cycle timing.
+- PHT initialized to weakly not taken (01), GHR initialized to zero on async reset.
+
+This pipeline staging cleanly separates combinational reads (prediction) from sequential updates, avoiding timing hazards and ensuring the exact snapshot of GHR and PHT is used for prediction before any update. The separate registers guarantee outputs are consistent and stable throughout the cycle, matching specification and preventing mismatch errors.

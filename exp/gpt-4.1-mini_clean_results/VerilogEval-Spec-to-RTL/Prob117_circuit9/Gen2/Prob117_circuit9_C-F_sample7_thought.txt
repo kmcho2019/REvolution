@@ -1,0 +1,7 @@
+The design sets q to 4 when a=1 and counts up mod 7 from 4 to 6 then wraps to 0, incrementing by 1 on each clk rising edge when a=0.
+
+To improve power and reduce unnecessary toggling, q should be updated only when its next value differs from the current value. This prevents redundant state changes when a=1 keeps q at 4 and when counting continues without changing q unnecessarily.
+
+Performance-wise, using a small conditional is optimal. Area remains minimal due to 3-bit width.
+
+Hence, fuse the straightforward conditional from examples but add a check to assign q only if the new value differs from current q, reducing switching activity and power without adding complexity or performance penalty.

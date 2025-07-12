@@ -1,0 +1,9 @@
+After analyzing the waveform and the feedback, here's the simplified understanding:
+1. p should be a registered output that holds the value of (clock & a) at each positive clock edge (sequential)
+2. q should be set to the previous value of p (1-cycle delayed version of p)
+3. q should be asynchronously cleared when a is high while clock is low
+
+Key simplifications:
+1. Make p sequential by registering the (clock & a) value
+2. q simply follows p with 1-cycle delay
+3. Keep the async clear condition for q when (a & ~clock)

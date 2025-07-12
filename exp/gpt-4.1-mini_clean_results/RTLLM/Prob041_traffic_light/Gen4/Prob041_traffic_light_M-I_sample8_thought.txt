@@ -1,0 +1,7 @@
+The original design is functional and clean but uses a flag register (shortened_flag) that toggles every cycle in green, which can add switching power. To optimize power, remove the shortened_flag by controlling the green timer purely with combinational logic that clamps the timer value once when pass_request is asserted and timer > 10, ensuring no multiple shortenings without extra state.
+
+Also, separate state transition logic and timer update logic into two always blocks for clarity and better synthesis optimization.
+
+Further, assign outputs from registered state for reduced glitches, and add clock enable for timer decrement to minimize toggling when timer=0.
+
+These refinements reduce power through gating and remove an extra flip-flop, maintain area by avoiding extra logic, and improve timing by simplified logic paths.

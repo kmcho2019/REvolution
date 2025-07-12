@@ -1,0 +1,26 @@
+The previous solution failed because it directly mapped the K-map's Gray-coded columns and rows to input bits without proper Gray-to-binary decoding. This caused incorrect minterm identification.
+
+To fix the problem, the essential step is to convert the Gray-coded row and column indices back to binary indices before decoding the K-map cell values.
+
+Given:
+- Input vector x[3:0] maps to bits: x[3]=x4, x[2]=x3, x[1]=x2, x[0]=x1.
+- Rows correspond to bits x3 x4 in Gray code order: 00, 01, 11, 10
+- Columns correspond to bits x1 x2 in Gray code order: 00, 01, 11, 10
+
+We can:
+1. Extract the Gray-coded row bits (x3 x4) and convert to binary.
+2. Extract the Gray-coded column bits (x1 x2) and convert to binary.
+3. Use these binary row and column indices to identify the K-map output cell (0,1, or don't-care).
+4. From the K-map, output 1 for certain cells, 0 otherwise.
+
+This approach cleanly maps inputs to K-map cells correctly.
+
+Then, write combinational logic that decodes these binary row and column bits to the correct output.
+
+Alternatively, since inputs are only 4 bits, we can implement a truth table using a case statement or a LUT-style expression.
+
+Finally, don't-care cells can be used to simplify the function, but here we'll just treat don't-cares as zeros for clarity.
+
+This results in a correct, straightforward, and readable combinational implementation that matches the K-map exactly.
+
+Optionally, after verifying correctness, the logic can be minimized or optimized using tools or boolean algebra, but correctness is priority here.

@@ -1,0 +1,13 @@
+Refactor the design to explicitly separate pipeline stages with distinct registers for inputs, partial products, intermediate sums, and final output. Use combinational logic for partial product generation and summation, but update registers in separate always blocks to avoid combinational feedback and ensure clear pipeline timing. 
+
+1. Stage 1: Register extended inputs (`mul_a` extended by `size` zeros at MSB, and `mul_b`).
+
+2. Stage 2: Generate partial products combinationally based on Stage 1 registered inputs; then register their sums in two registers (`sum_lower`, `sum_upper`). This breaks the large addition into two smaller additions.
+
+3. Stage 3: On the next clock, add these two sums (registered from Stage 2) combinationally, then register the final product output.
+
+By clearly defining three pipeline stages (inputs, intermediate sums, final sum) and avoiding combinational dependencies inside the same always block, the design avoids timing issues. No combinational assignments inside always block; all combinational assignments occur outside always blocks via `assign`.
+
+This approach also helps keep the design parameterized, uses generate blocks for partial products, and synchronizes all registers on clock with active-low reset.
+
+The output `mul_out` will be valid after three clock cycles following input registration, consistent with pipelined multiplier behavior.

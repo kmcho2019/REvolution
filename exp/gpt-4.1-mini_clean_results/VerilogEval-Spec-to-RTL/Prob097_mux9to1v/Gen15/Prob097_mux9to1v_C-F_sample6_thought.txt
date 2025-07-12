@@ -1,0 +1,15 @@
+Combine the clean, concise array indexing of Example 1 with the explicit combinational always block and case statement clarity of Example 2 to create a synthesis-friendly, maintainable, and efficient 16-bit 9-to-1 multiplexer.
+
+Key fusion points:
+- Use a wire array to hold all inputs for indexed access.
+- Use an always_comb (or always @(*) ) block with a case statement for explicit mux selection, enabling synthesis tools to optimize mux logic effectively.
+- Group the default cases (sel=9 to 15) to output all ones (16'hFFFF).
+- Avoid redundant assignments and provide a defensive default for safety.
+- This fusion results in:
+  - Clear and maintainable code with minimal repetitive code.
+  - Good synthesis optimization opportunities from case statement.
+  - Reduced complexity compared to large chained conditional operators.
+  - Ensures constant output for invalid sel without unnecessary toggling.
+- The output is a reg driven combinationally, fitting typical RTL style.
+
+This design balances clarity, synthesis friendliness, and resource usage for optimized PPA.

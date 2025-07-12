@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. State Management: Keep binary encoding (2 bits) for the FSM states (IDLE, BYTE1, BYTE2)
+2. Data Collection: Store bytes directly into their respective positions in out_bytes when received
+3. Output Control: Only update out_bytes when necessary (in BYTE1/BYTE2 states) to reduce power
+4. Reset Handling: Clear state and outputs synchronously on reset
+5. Done Signal: Assert only when all 3 bytes are received (in BYTE2 state)
+
+Key Simplifications:
+- Removed unnecessary don't-care assignments (out_bytes will naturally hold last value)
+- Simplified state transitions with direct assignments
+- Reduced power by only updating registers in relevant states
+- Maintained minimal area with binary state encoding
+- Kept straightforward synchronous reset

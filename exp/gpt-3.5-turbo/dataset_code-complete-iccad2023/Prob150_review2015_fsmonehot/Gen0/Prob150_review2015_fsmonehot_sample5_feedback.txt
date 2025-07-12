@@ -1,5 +1,0 @@
-The simulation log indicates that there are multiple errors in the Verilog code related to the assignment of the `state` variable. The errors are due to the fact that the `state` variable is declared as an input wire to the module, and it cannot be assigned values within an `always` block as if it were a register. Verilog does not allow inputs to be driven in this manner; they are intended to be read-only.
-
-The errors are specifically occurring in lines where the `state` variable is being assigned a new value based on the state transitions within the state machine. The code incorrectly attempts to assign new values to `state` within the `always` block, which violates the read-only nature of input ports in Verilog.
-
-To resolve these issues, the code should be modified to properly handle the state transitions without attempting to assign values to the `state` input directly. The design should be revised to use a separate register for storing the current state and updating it based on the state transitions.

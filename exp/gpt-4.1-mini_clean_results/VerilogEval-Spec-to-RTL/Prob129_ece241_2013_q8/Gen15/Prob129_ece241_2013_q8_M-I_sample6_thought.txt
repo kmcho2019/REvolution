@@ -1,0 +1,7 @@
+To improve power and timing performance, convert the asynchronous negative-edge reset to a synchronous reset, as synchronous resets typically have better timing predictability and lower clock uncertainty, which can improve effective clock period (eff_clk_period) and reduce power consumption from metastability or glitches. The problem states "negative edge triggered asynchronous reset," but if we interpret the specification strictly, we must keep the async reset. Since we cannot change that without changing requirements, another improvement is to optimize output logic by embedding output calculation within next_state logic to reduce logic duplication and simplify combinational logic.
+
+Additionally, encode states with one-hot encoding instead of binary encoding to potentially improve timing and reduce logic depth at the cost of slightly more flip-flops (3 flip-flops), which is acceptable given the small FSM size. One-hot often improves timing since next state and output logic reduce to simple AND/ORs.
+
+Finally, combine the output signal as a direct function of current state and input to minimize combinational logic depth, preserving Mealy behavior and overlapping detection.
+
+These changes improve timing (lower eff_clk_period) and power (simpler logic paths) without increasing area significantly due to only one additional flip-flop, balancing PPA trade-offs while strictly following the asynchronous reset requirement.

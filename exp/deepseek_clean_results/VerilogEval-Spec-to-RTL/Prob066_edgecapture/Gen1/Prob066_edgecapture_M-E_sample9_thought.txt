@@ -1,0 +1,8 @@
+Here's a novel approach using a two-stage pipeline with edge detection and latching:
+
+1. Use two registers to store the past two values of input (prev_in and prev_prev_in) to create a proper timing window for edge detection
+2. Detect falling edges by comparing prev_prev_in (two cycles ago) with prev_in (one cycle ago)
+3. Use a separate 32-bit latch register to capture and hold detected edges
+4. Combine the current edge detections with the latched values using OR operation
+5. Reset clears both the pipeline registers and the output latch
+6. This ensures proper edge detection timing and maintains output until reset

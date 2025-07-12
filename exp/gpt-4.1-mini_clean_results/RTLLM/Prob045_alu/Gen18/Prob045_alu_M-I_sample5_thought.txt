@@ -1,0 +1,19 @@
+To optimize the ALU design for better power, performance, and area (PPA), the main strategy is to reduce unnecessary computations and toggling on signals that do not affect the current operation. Specifically:
+
+1. **Flag Signal Gating:** Instead of driving `flag` to 0 or 'z' (high impedance) when unused, drive it only on SLT and SLTU operations; otherwise, hold its previous value or drive to 0 to avoid glitches.
+
+2. **Separate Arithmetic and Logical Operations:** Partition addition/subtraction and logic operations distinctly to avoid unneeded carry/overflow computations when they are not relevant, thus reducing critical path and switching.
+
+3. **Optimize Shift Amount Usage:** For shift instructions, always use `shamt = a[4:0]` as the shift amount, but limit recomputations by creating intermediate signals, avoiding multiple reads of `a[4:0]`.
+
+4. **Avoid Signed Casts Repeatedly:** Precast signed operands once when needed, avoiding repeated `$signed()` calls inside the case branches, improving synthesis efficiency.
+
+5. **Use Default Assignments to Reduce Latches and Glitches:** Assign default values to outputs at the beginning of the combinational block to ensure proper synthesis and reduce glitches.
+
+6. **Implement Carry and Overflow only for relevant instructions:** Perform carry and overflow calculations only for ADD, ADDU, SUB, SUBU, reducing unnecessary hardware for other instructions.
+
+7. **Set `r` to zeros by default instead of 'z':** Avoid high-impedance outputs which can cause synthesis issues, set `r` to 0 when no matching opcode.
+
+8. **Combine zero and negative flag assignments in one step:** to reduce logic.
+
+This approach reduces switching activity and logic complexity, optimizes critical paths for arithmetic operations, and reduces area by avoiding unnecessary hardware for operations that don't require carry or overflow computation.

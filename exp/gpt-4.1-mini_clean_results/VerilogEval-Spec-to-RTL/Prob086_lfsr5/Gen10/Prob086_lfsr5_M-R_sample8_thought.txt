@@ -1,0 +1,7 @@
+Refactor the 5-bit maximal-length Galois LFSR by separating the combinational feedback calculation into a continuous assignment and using a synchronous always block only for state update. 
+
+This structure clarifies the feedback logic as pure combinational logic (using assign), enabling potentially better synthesis optimizations, and cleanly separates combinational and sequential logic. It preserves the synchronous reset to 1 and the right-shift with taps at bits 5 and 3.
+
+The output register q updates on the clock edge, while feedback is continuously driven from q[0]. This approach is common in LFSR designs and makes the code easier to read, debug, and synthesize. It also consistently uses non-blocking assignments in the sequential block.
+
+This refactoring does not change the LFSR function but provides a clearer, modular logic separation.

@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break the 16-bit adder/subtractor into 4-bit slices with registered carry-out to reduce critical path
+   - Use carry-select adder structure for better timing at minimal area overhead
+   - Separate reset logic from count direction logic to reduce combinational path
+
+2. Power Optimization:
+   - Add clock gating when counter is not changing (requires enable signal)
+   - Implement Gray code encoding to minimize bit toggling
+   - Only compute next_count when needed (using enable signal)
+
+3. Area Optimization:
+   - Share adder resources between increment and decrement operations
+   - Use conditional inversion for subtraction instead of separate add/sub logic
+   - Optimize reset implementation to reduce logic
+
+The improved design will:
+- Use pipelined 4-bit counter slices
+- Implement Gray code encoding
+- Add clock gating control
+- Share arithmetic resources
+- Maintain full functionality

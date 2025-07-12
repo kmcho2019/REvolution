@@ -1,0 +1,21 @@
+To fix the Moore FSM output problem while maintaining the serial 2's complement logic, we must ensure the output depends only on the current state and not directly on the input combinationally.
+
+We can implement the state machine with two states:
+- COPY: copy input bits as-is until the first '1' is detected.
+- INVERT: output the inverted bits after the first '1'.
+
+The output is registered and updated synchronously with the clock to ensure it's strictly a Moore machine output (depends only on current state).
+
+We will separate the input detection (for next state) and output update into two sequential blocks:
+- One block for state register with async reset.
+- Another block for output register update, dependent only on the state and stored input from the previous cycle.
+
+To avoid combinational dependency of output on current input, we store input `x` in a register `x_reg` at the clock edge. The output `z` depends only on the current state and `x_reg` (input sampled from the previous clock), maintaining Moore FSM behavior.
+
+The next state logic uses `x_reg` as well.
+
+This method guarantees the output is synchronous and depends only on the current state and registered inputs, satisfying the Moore machine requirement.
+
+We implement asynchronous reset on state and output registers as required.
+
+This approach uses registered input to break combinational cycles and strictly implement a Moore FSM for the serial 2's complement.

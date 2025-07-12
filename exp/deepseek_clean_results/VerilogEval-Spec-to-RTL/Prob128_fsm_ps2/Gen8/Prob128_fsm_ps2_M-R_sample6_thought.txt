@@ -1,0 +1,12 @@
+Refactoring Approach:
+1. State Machine Representation: Replace counter-based approach with explicit state encoding for better readability
+2. Output Generation: Use continuous assignment for 'done' signal instead of registered output
+3. State Transitions: Implement combinational next-state logic separately from sequential state update
+4. Reset Handling: Maintain synchronous reset but simplify the initialization
+5. Power Optimization: Keep the gating of in[3] check for state transitions
+
+Key Changes:
+- Uses explicit START, BYTE2, BYTE3 states instead of counter
+- Makes 'done' purely combinational (asserts during BYTE3 state)
+- Separates next-state logic from state register updates
+- Maintains same functionality but with clearer state machine representation

@@ -1,0 +1,10 @@
+To improve the existing dual-edge triggered flip-flop emulation for better power and area efficiency while maintaining functional correctness:
+
+- Replace the transparent latch controlled by clk level with a clocked multiplexer approach implemented via an always block triggered on posedge clk only.
+- Use a clock divider or a simple circuit to generate a one-half-clock delayed version of the data sample, combining the posedge and negedge samples with a mux on posedge clock.
+- This removes the transparent latch, which can introduce glitches and increased dynamic power.
+- The main idea is to register the negedge sample using a posedge clocked FF, effectively synchronizing both data samples to posedge clock domain and reducing complexity.
+- This also potentially improves timing (no latch transparency window) and synthesis friendliness.
+- The design now includes two FFs (posedge and negedge triggered), and a mux selecting between the two samples every posedge clk, storing the selected output in q.
+- The output q updates only at posedge clk, which is acceptable in many dual-edge emulation scenarios, trading a half-cycle latency for improved power and area.
+- This approach is well-supported by FPGA tools, avoids latches, and reduces switching activity.

@@ -1,0 +1,7 @@
+To optimize the design for better power, performance, and area (PPA), I will apply clock gating on the shift register. By generating an internal gated clock that only toggles when 'enable' is high, unnecessary clocking of flip-flops when shifting is not needed will be prevented. This reduces dynamic power and switching activity. The gating logic will be simple and synthesized by modern tools as a clock enable or clock gating cell.
+
+The shift register logic remains the same except it now triggers on the gated clock instead of the main clock, eliminating the need for a conditional enable inside the always block. This simplification can improve timing by reducing multiplexer delay on flip-flop clock inputs.
+
+The 8-to-1 multiplexer remains unchanged as it is already efficient.
+
+Overall, this will reduce switching, lower dynamic power, and potentially improve timing by reducing clock tree load and gating the flip-flops’ clock inputs properly, without adding combinational logic inside the shifting logic.

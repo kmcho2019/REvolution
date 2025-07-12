@@ -1,0 +1,11 @@
+After carefully analyzing the Karnaugh map, I can see a simpler implementation by identifying the essential prime implicants:
+
+1. The four corners (cd=00,ab=00; cd=00,ab=10; cd=11,ab=10; cd=10,ab=00) form a group that can be covered by (~b & ~d)
+2. The top-right (cd=00,ab=01) and bottom-right (cd=11,ab=01) can be covered by (~a & b & ~c)
+3. The center (cd=11,ab=11) is covered by (a & b & c & d)
+4. The left edge (cd=10,ab=01) is covered by (a & ~b & c & ~d)
+
+This gives us the minimal expression:
+out = (~b & ~d) | (~a & b & ~c) | (a & b & c & d) | (a & ~b & c & ~d)
+
+This covers all 1s in the map without any overlaps with 0s, and is simpler than the previous solution.

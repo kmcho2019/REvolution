@@ -1,0 +1,11 @@
+To improve the Mealy FSM implementation, I'll restructure it using a more concise approach with separate combinational logic for next state and output generation. Key improvements:
+
+1. Use a single always block for sequential logic (state register)
+2. Move next-state and output logic to combinational blocks using assign statements
+3. Simplify state encoding to binary for efficiency
+4. Explicitly handle overlapping sequences by proper state transitions after match
+
+The state transitions will now properly handle continuous detection:
+- After S10011 (match), transition to S10 if next input is 0 (to detect "0011" in "100110011")
+- After S10011, transition to S1 if next input is 1 (to detect "1" in "100111")
+- All other transitions follow the original sequence detection pattern

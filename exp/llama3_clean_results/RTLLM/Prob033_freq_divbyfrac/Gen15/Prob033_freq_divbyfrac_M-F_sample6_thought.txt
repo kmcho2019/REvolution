@@ -1,0 +1,9 @@
+To fix the issues in the provided code, we need to address the problems mentioned in the feedback. The first issue is the mixed use of procedural and continuous assignment for the `clk_div` signal. Since `clk_div` is declared as a `reg`, we should remove the `assign` statement and instead assign the value of `clk_int1` or `clk_int2` to `clk_div` within an `always` block. This ensures that the assignment is procedural and consistent with the declaration of `clk_div`.
+
+The second issue is related to the use of the enum type `state_var`. Instead of using `state_var` as if it were a signal, we should declare the `state` signal with the type `state_var`. This allows us to correctly use the enum values `STATE_IDLE`, `STATE_LONG_PULSE`, and `STATE_SHORT_PULSE` in the `case` statement.
+
+Furthermore, we should also ensure that the counter `cnt` is properly reset and incremented according to the state machine's requirements. This involves adjusting the conditions under which `cnt` is reset or incremented to match the desired behavior of the frequency divider.
+
+Additionally, to achieve the fractional frequency division of 3.5x, we should generate two uneven clock periods: one with 4 source clock cycles and another with 3 source clock cycles. Then, we phase-shift these clock periods by half a clock cycle to produce a smooth, fractionally divided clock output. This involves modifying the logic for generating `clk_int1` and `clk_int2` to reflect the desired phase shifting.
+
+By addressing these issues, we can correct the code and ensure that the frequency divider module functions as intended, producing a clean and stable fractionally divided clock output.

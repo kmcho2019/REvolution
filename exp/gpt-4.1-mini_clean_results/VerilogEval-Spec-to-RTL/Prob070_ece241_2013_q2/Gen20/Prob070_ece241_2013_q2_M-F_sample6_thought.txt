@@ -1,0 +1,25 @@
+The SOP expression for out_sop correctly matches the specified minterms (2,7,15) and should work as intended.
+
+The issue lies in the out_pos expression: the given minimal POS is likely incorrect or incomplete for the zeros set, causing many mismatches.
+
+To fix this, explicitly derive the POS expression from the zeros' maxterms without trying to minimize by intuition:
+
+- List all zeros (0,1,4,5,6,9,10,13,14) maxterms, each is a sum of literals with '1's inverted.
+- Form out_pos as the product of these maxterms (AND of ORs).
+- Since don't cares (3,8,11,12) never occur, they don't need to be included.
+
+This fully specifies out_pos as the complement of out_sop, ensuring correctness.
+
+Though longer and less minimal, this guarantees no mismatches and correctness for all relevant inputs.
+
+Also, to avoid confusion and ensure correct interpretation, explicitly label bits and negations, and parenthesize expressions carefully.
+
+Thus, implement:
+
+out_pos = M0 & M1 & M4 & M5 & M6 & M9 & M10 & M13 & M14
+
+Where each maxterm Mi corresponds to the zero input i with bits inverted appropriately.
+
+This approach resolves the mismatch issue by removing ambiguity and incomplete coverage in the previous POS.
+
+The out_sop remains as in the previous correct implementation.

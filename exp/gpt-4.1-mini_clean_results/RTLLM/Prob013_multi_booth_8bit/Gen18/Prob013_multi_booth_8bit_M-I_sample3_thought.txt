@@ -1,0 +1,37 @@
+To better implement the 8-bit Radix-4 Booth multiplier per the problem statement, the given solution must be corrected and optimized:
+
+1. The original example solution implements a radix-2 multiplier, iterating 16 times, but the problem requests a Radix-4 Booth multiplier. Radix-4 processes 2 multiplier bits per cycle, effectively requiring only 4 cycles for an 8-bit multiplier. The counter and iteration count must reflect this.
+
+2. The inputs: 'a' is multiplier and 'b' is multiplicand as per problem description, but example swaps them; correct accordingly.
+
+3. The algorithm must consider the 3-bit group of multiplier bits (overlapping) for radix-4 Booth encoding to determine the partial product to add/subtract multiples of the multiplicand.
+
+4. The result (product) is 16-bit, sign-extended as necessary.
+
+5. Use a clean FSM with states: IDLE (waiting for reset low), LOAD (load sign-extended inputs and initialize registers), RUN (run booth cycles), DONE (assert ready).
+
+6. Implement Booth encoding to decide partial product multiples: 0, ±1, ±2 multiples of multiplicand.
+
+7. Shift the product accumulator right logically by 2 bits each cycle after addition/subtraction.
+
+8. Use synchronous logic on posedge clk or posedge reset.
+
+9. Generate ready signal only when multiplication completes.
+
+This approach aligns with radix-4 Booth multiplication, processing 2 bits per cycle, requires 4 cycles for 8-bit multiplier, improves performance (latency down to 4 cycles + overhead), and respects the problem's input/output signals and sign extensions.
+
+I will implement radix-4 Booth encoding by:
+
+- Extending the multiplier by one bit LSB zero for overlapping bit triples.
+
+- For each iteration, read 3 bits (current bit, next bit, and one previous bit) and decode Booth multiple.
+
+- Adjust product accordingly and arithmetic shift right by 2 bits.
+
+- After 4 iterations (8 bits processed), multiplication is complete.
+
+This will reduce counter to 3 bits (0 to 3), and the FSM becomes simpler and faster.
+
+I will keep the product register 17 bits wide internally for arithmetic shifts (since product grows to 17 bits when signed shifted), output 16 bits truncated or aligned as the final product.
+
+This correction and optimization will fix the previous code correctness and improve performance while strictly following the problem requirements.

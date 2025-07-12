@@ -1,0 +1,9 @@
+To design the finite state machine (FSM) for receiving bytes in the specified serial communication protocol, we need to identify the different states the FSM will go through. These states include:
+1. Idle: The initial state where the FSM waits for the start bit (0) to begin receiving a byte.
+2. Receiving: Once the start bit is detected, the FSM enters this state and shifts in the next 8 bits (least significant bit first) to form the byte.
+3. Stop Bit Check: After receiving the 8 data bits, the FSM waits for a stop bit (1) to confirm the byte was correctly received.
+4. Done: If the stop bit is correct, the FSM asserts `done` and outputs the received byte on `out_byte`. If the stop bit is incorrect, the FSM remains in this state, waiting for a stop bit (1) before resetting to the idle state.
+
+The FSM will also have a synchronous reset input (`reset`) to reset it to the idle state when asserted high.
+
+Given that all sequential logic is triggered on the positive edge of the clock (`clk`), we'll use a clocked always block to implement the FSM's state transitions and the shift register for the incoming data bits.

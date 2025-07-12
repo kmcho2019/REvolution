@@ -1,0 +1,9 @@
+Fuse the best ideas from both examples for a cleaner, more efficient design:
+- Use bitwise masking (`& 4'hF`) for modulo 16 wrap-around indexing instead of modulo (%) to eliminate slow dividers and improve synthesis.
+- Replace multiplication by 16 with left-shifts (`<< 4`) to reduce arithmetic complexity and critical path delay.
+- Use clear nested loops with integer indices for easy readability and maintainability.
+- Keep combinational neighbor counting in a single always block with blocking assignments to preserve combinational semantics.
+- Maintain synchronous load to initialize the game state.
+- Initialize `next_q` at the start of combinational block to avoid inferred latches.
+- Avoid function calls inside loops by directly applying `& 4'hF`.
+- This fusion keeps code clarity, efficient indexing, and correct behavior, potentially reducing area and improving timing compared to both examples.

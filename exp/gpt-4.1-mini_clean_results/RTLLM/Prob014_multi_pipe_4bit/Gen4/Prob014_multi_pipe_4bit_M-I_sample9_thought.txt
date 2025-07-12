@@ -1,0 +1,37 @@
+To correctly implement the 4-bit pipeline multiplier with two register stages and asynchronous active-low reset as per the problem statement, I will proceed as follows:
+
+1. Extend both inputs mul_a and mul_b by adding "size" zeros at MSB to form 8-bit extended inputs. This ensures correct alignment when shifting.
+
+2. Generate partial products combinationally, each partial product is either the extended multiplicand shifted by i if multiplier bit i is 1, or zero otherwise.
+
+3. Use two pipeline register stages to store intermediate values:
+
+   - Stage 1 registers: Store all partial products to stabilize them.
+
+   - Stage 2 registers: Sum partial products into intermediate sums using a balanced adder tree with registers separating each stage.
+
+4. On every positive clock edge or falling edge of asynchronous reset (rst_n), update registers:
+
+   - If rst_n is low, reset all registers and output to zero.
+
+   - If rst_n is high, registers capture their respective values from combinational logic or previous stage.
+
+5. The output register mul_out holds the final product, updated on the clock edge after the summation stage register.
+
+6. Properly pipeline partial products summation in two stages to satisfy the requirement of two levels of registers.
+
+7. Ensure all register assignments are in synchronous always blocks with asynchronous active-low reset sensitivity as required.
+
+8. Use generate block for partial product creation and sum pairs of partial products in stage 2 registers, finally sum stage 2 registers to output with an output register.
+
+This approach satisfies the problem constraints of extension, partial product generation, two-level pipelining, and asynchronous reset, ensuring the multiplier produces valid outputs after two clock cycles of latency.
+
+The latency will be two cycles:  
+- Cycle 1: Load partial products into stage 1 registers.  
+- Cycle 2: Sum partial products in stage 2 registers and update output register.
+
+This matches the expected pipelined design with two levels of intermediate registers.
+
+I will use non-synthesizable arrays only for partial product wires; registers will be individual named signals or arrays where allowed.
+
+Finally, I will test that the output changes only after two cycles after inputs are stable and that reset clears all registers immediately.

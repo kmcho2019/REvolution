@@ -1,0 +1,10 @@
+To implement this finite state machine (FSM) in Verilog, we first need to identify the different states and their transitions based on the input signals. The FSM has to start in state A when the reset is asserted. After the reset is de-asserted, it moves to a state where it sets output f to 1 for one clock cycle. Then, it monitors the x input for the sequence 1, 0, 1 over three successive clock cycles to set output g to 1. Once g is set to 1, the FSM checks the y input over two clock cycles. If y becomes 1 within this period, g remains 1; otherwise, g is set to 0.
+
+We can break this down into several states:
+- State A (reset state)
+- State B (f = 1 for one clock cycle after reset)
+- State C (monitoring x for the sequence 1, 0, 1)
+- State D (g = 1, monitoring y for 1 within two cycles)
+- States E and F can be considered for handling the two cycles of monitoring y.
+
+We will use an enumeration to represent these states and implement the logic for state transitions and output settings based on the current state and inputs.

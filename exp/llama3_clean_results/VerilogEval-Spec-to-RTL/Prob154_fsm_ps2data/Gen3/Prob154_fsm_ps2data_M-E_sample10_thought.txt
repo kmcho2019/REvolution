@@ -1,0 +1,11 @@
+A novel approach to implement the required functionality is to utilize a pipeline architecture. Instead of using a traditional finite state machine (FSM) that processes the input byte stream in a single stage, we can break down the processing into multiple stages, each handling a specific task in the sequence. This can improve the throughput and potentially reduce the critical path delay, as each stage can operate independently.
+
+Our pipeline will consist of four stages: 
+1. **Byte Detection Stage**: This stage checks if the current input byte has its third bit set (in[3] == 1). If so, it passes the byte to the next stage; otherwise, it discards it.
+2. **Byte Buffering Stage**: This stage buffers the detected byte and waits for the next two bytes to form a complete message.
+3. **Message Formation Stage**: This stage combines the buffered bytes to form the 24-bit message (out_bytes).
+4. **Output Stage**: This stage outputs the formed message and signals that a message is ready (done).
+
+Each stage will operate on the positive edge of the clock, and the pipeline will be reset synchronously. This architecture takes advantage of the fact that each byte of the input stream can be processed independently once the message boundary is detected, allowing for a more efficient and scalable design.
+
+The key to this approach is managing the flow of data through the pipeline correctly, ensuring that each stage receives the appropriate data at the right time, and that the output is correctly synchronized with the clock and reset signals.

@@ -1,0 +1,9 @@
+The original design is already a clean and functionally correct fully combinational restoring divider for 16-bit dividend by 8-bit divisor. The critical path is inherently long due to 16 sequential subtract-compare steps. Since the problem explicitly requires combinational logic with two always blocks (one for input latching and one for division), I will keep this structure but slightly optimize:
+
+1. Use two always blocks as requested: the first one to latch inputs into registers a_reg and b_reg, triggered by any input change; the second one to perform division on latched inputs.
+2. This breaks the combinational path into two smaller combinational blocks, slightly helping synthesis tools with optimization and debugging.
+3. Use blocking assignments consistently for combinational logic inside always blocks.
+4. Keep the 9-bit remainder and divisor extension for safe subtraction.
+5. Minor style improvements, like explicitly initializing outputs and intermediate regs to zero to avoid inferred latches.
+6. The second always block still performs the main division loop combinationally, iterating from MSB to LSB as before.
+7. This two-block approach slightly improves timing and enables tools to better pipeline or optimize internally, improving PPA.

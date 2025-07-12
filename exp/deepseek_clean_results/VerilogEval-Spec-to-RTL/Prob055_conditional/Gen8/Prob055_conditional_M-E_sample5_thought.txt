@@ -1,0 +1,20 @@
+Novel Priority Encoder Minimum Finder:
+
+1. Core Idea:
+   - Instead of direct comparisons, use bitwise operations to find the minimum
+   - Works by scanning bits from MSB to LSB (priority encoder style)
+   - At each bit position, determines if any input is definitively the minimum
+
+2. Key Features:
+   - No traditional comparators used
+   - Bit-serial operation reduces hardware complexity
+   - Naturally handles multiple minimum values (selects first encountered)
+   - Lower power consumption as it stops early when minimum is found
+   - Scales efficiently to wider bit widths
+
+3. Operation:
+   - For each bit position (starting from MSB):
+     a) Find inputs with 0 in current bit position
+     b) If any found, they are potential minimums (narrow candidates)
+     c) Repeat with narrowed candidates until LSB
+   - Final candidate is the minimum value

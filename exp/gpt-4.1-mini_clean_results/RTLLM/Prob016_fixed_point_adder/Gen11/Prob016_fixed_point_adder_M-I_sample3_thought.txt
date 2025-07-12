@@ -1,0 +1,31 @@
+The original design accurately implements a fixed-point adder using explicit sign-magnitude arithmetic internally to meet the problem requirements. However, it introduces extra complexity, area, and delay by converting inputs to magnitudes, performing conditional magnitude addition or subtraction, and then converting back to two's complement.
+
+Since fixed-point numbers in two's complement representation inherently support signed addition directly (adding two two's complement fixed-point numbers gives correct fixed-point sum), the entire sign-magnitude manipulation can be avoided for both simplicity and efficiency.
+
+Improvement strategy:
+
+1. Perform the addition directly using two's complement arithmetic:
+   - Sum = a + b.
+
+2. Since sum may overflow outside the fixed-point range representable in N bits, detect overflow from sign bits:
+   - Overflow occurs if the sign of inputs are the same but different from the result sign.
+   - On overflow, saturate the result to max positive or max negative fixed-point value.
+
+3. By directly adding two's complement numbers:
+   - No need to extract magnitudes or explicitly handle signs.
+   - Fixed-point precision Q is respected implicitly since the same Q is used for inputs and output.
+   - Saturation ensures overflow handling.
+
+4. Use combinational logic only, with minimal registers:
+   - Use wires for internal signals.
+   - Use one register 'res' for output as per requirement.
+
+This approach reduces area and delay, improves power efficiency, simplifies code, and maintains correctness and problem requirements (overflow handling, precision consistency).
+
+Thus, the improved code performs addition of `a` and `b` as signed N-bit numbers, detects overflow, saturates accordingly, and outputs the final fixed-point result.
+
+This is synthesizable and easy to verify.
+
+Note: Saturation limits:
+- Max positive = 0x7FFF... (MSB=0, rest 1)
+- Max negative = 0x8000... (MSB=1, rest 0)

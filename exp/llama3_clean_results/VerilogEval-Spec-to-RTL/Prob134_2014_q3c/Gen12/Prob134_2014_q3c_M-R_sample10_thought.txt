@@ -1,0 +1,7 @@
+The existing code implements a finite state machine (FSM) with a clear separation of combinational logic for the next state and output from the sequential logic that updates the current state. To refactor this code, we can explore an alternative structure that utilizes `assign` statements for the combinational logic and incorporates a more direct approach to state machine implementation. 
+
+One potential refactoring involves directly encoding the next state logic and output logic using `assign` statements, eliminating the need for the `always` blocks used for combinational logic. This approach allows for a more concise representation of the FSM's behavior, leveraging the strengths of Verilog's continuous assignment feature to describe the combinational logic.
+
+Additionally, the sequential logic that updates the current state can remain similar, utilizing an `always` block at the positive edge of the clock to ensure proper state transitions. By maintaining a clear and direct implementation of the state machine's logic, we aim to preserve the functionality of the original code while potentially improving readability and simplifying the overall structure.
+
+This refactoring also considers the feedback and PPA metrics provided, aiming to minimize unnecessary logic and reduce switching activity. By directly encoding the next state and output logic, we aim to provide a more straightforward implementation that is easier to optimize for better performance, power consumption, and area efficiency.

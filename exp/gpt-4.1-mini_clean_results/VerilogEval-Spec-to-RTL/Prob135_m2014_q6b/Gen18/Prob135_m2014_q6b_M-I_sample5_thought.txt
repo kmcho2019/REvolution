@@ -1,0 +1,17 @@
+The original expression is already minimal and correct. However, we can rewrite the expression using Boolean algebra to reduce the number of logic gates slightly by factoring common terms. Specifically, factor out y0 and ~y0 terms:
+
+y[1]_next = (~y1 & y0) | (w & (y1 | y2) & ~y0)
+
+Can be rewritten as:
+
+y[1]_next = y0 & ~y1 | (~y0 & w & (y1 | y2))
+
+This is the same as before but reordered. To optimize gate usage, implement (y1 | y2) once and reuse it, minimizing OR gate instances. Similarly, use assign wires to factor repeated terms. This will reduce the number of gates and potentially improve timing and power marginally. We keep the output Y1 as the next-state y[1]_next (assuming the output Y1 reflects next state y[1], as it is the intent of the problem statement).
+
+Thus, the improvement is modularizing the logic into intermediate wires to reduce duplicated gates and making the logic clearer and potentially faster.
+
+If the output Y1 must always equal y[1], then simply assign Y1 = y[1]. But if Y1 should be the next state bit y[1]_next, we must assign accordingly.
+
+The problem states: "Implement just the next-state logic for y[1]. The output Y1 is y[1]." The original code assigned Y1 = y[1]_next logic, which is next state bit y[1], so it's consistent.
+
+Hence, the minor optimization is in logic factoring and reusing intermediate terms.

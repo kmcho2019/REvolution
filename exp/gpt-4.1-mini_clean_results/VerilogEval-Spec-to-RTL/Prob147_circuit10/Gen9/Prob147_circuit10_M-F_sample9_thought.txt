@@ -1,0 +1,7 @@
+Analyze the waveform data carefully to derive exact next_state and output logic from the inputs a, b and the current state.  
+From the waveform, when b=0, next_state holds state (no change). When b=1, next_state changes depending on a and the current state, often toggling or setting/resetting state.  
+Derive Boolean expressions for next_state and q by examining transitions in the table:  
+- next_state = (b & (a ^ state)) | (~b & state); // state toggles if b=1 and a differs from state, else holds state  
+- q = (b & a) | (state & ~b); // q is set when both inputs are high, or when state is high and b=0  
+Implement these in a combinational always block to compute next_state and q, then update state on clock edge.  
+This explicit derivation ensures matching exactly the waveform's behavior without ambiguity.

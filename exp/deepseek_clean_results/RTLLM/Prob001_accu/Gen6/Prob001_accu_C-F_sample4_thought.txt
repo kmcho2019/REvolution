@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. Performance Optimization:
+   - Replace the count comparison (count == 2'b11) with terminal count detection (count[1] & count[0]) to reduce comparator logic
+   - Keep the 10-bit accumulator but add pipeline registers to break the critical path
+
+2. Power Optimization:
+   - Implement clock gating for the accumulator using valid_in as enable
+   - Only update valid_out when needed (during output cycle) to reduce switching
+
+3. Area Optimization:
+   - Share the accumulator register with the output register since they're mutually exclusive
+   - Use Gray coding for the counter to minimize switching bits
+
+Key Improvements:
+- Better timing through pipelining and simplified terminal count detection
+- Lower power through clock gating and reduced switching
+- Smaller area through resource sharing and efficient encoding

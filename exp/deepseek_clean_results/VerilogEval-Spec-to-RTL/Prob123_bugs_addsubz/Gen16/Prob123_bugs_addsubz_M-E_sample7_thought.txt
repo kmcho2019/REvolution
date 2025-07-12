@@ -1,0 +1,22 @@
+Here's a novel approach using carry-save arithmetic with early zero detection:
+
+1. **Parallel Computation**:
+   - Compute both addition and subtraction simultaneously in parallel paths
+   - Use a mux to select the correct result based on do_sub
+
+2. **Early Zero Detection**:
+   - Implement zero detection in parallel with arithmetic operations
+   - Compare operands directly for addition case (a == -b)
+   - Compare operands directly for subtraction case (a == b)
+   - Combine these with the actual result to determine final zero flag
+
+3. **Optimizations**:
+   - Parallel paths enable better timing (critical path is just the mux)
+   - Early comparison reduces zero detection latency
+   - No conditional inversion reduces power consumption
+
+Key advantages:
+- True parallel computation (better timing)
+- Early zero prediction (reduces critical path)
+- No arithmetic operation in zero detection path
+- Clean separation of add/sub paths reduces glitching

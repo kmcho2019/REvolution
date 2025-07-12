@@ -1,0 +1,11 @@
+Fuse both designs by capturing the input parallel data into an internal 4-bit register only when starting a new serialization cycle (i.e., when cnt == 3). Use a 2-bit counter 'cnt' that increments every clock cycle to index and output bits from the registered data from MSB to LSB, avoiding continuous shifting and thus minimizing bit toggling and dynamic power. This approach keeps a stable internal data register (reducing glitches), avoids rotating shifts (which cause toggling on all bits), and uses the counter to select the output bit, preserving low complexity and area.
+
+Set 'valid_out' to 1 only when outputting the MSB bit (cnt == 0), as it marks the start of valid serial data emission, complying with the spec for 'valid_out'. The counter resets and parallel data is loaded on the cycle after the last bit is output (cnt == 3). This provides stable data during the entire serialization and ensures proper timing of valid_out.
+
+This design combines:
+- The power and glitch reduction from registering input data only once per 4-bit group,
+- The minimal switching by indexing the stable register rather than shifting it,
+- A simple and clear valid signal aligned to the first bit of serialized output,
+- Maintaining synchronous reset and a small 2-bit counter for efficient hardware mapping.
+
+This fusion improves timing, reduces power by avoiding continuous shifting, and still meets the functional spec perfectly.

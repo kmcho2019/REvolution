@@ -1,0 +1,17 @@
+A novel approach to implementing a 16-bit dividend and 8-bit divisor combinational divider is to use a "successive subtraction with bit-shift" method but in a parallel fashion by processing the dividend in chunks of 8 bits.
+
+Since the divisor is 8-bit, we can split the dividend into two 8-bit parts: high and low. First, divide the high 8 bits by the divisor to get the high quotient and remainder. Then concatenate this remainder with the low 8 bits and divide this 16-bit value again by the divisor to get the low quotient and remainder.
+
+The final 16-bit quotient is the concatenation of high quotient and low quotient. The remainder is the remainder from the second division.
+
+This approach decomposes the division into two 8-bit divisions, which can be done combinationally using a small combinational 8-bit divider module implemented with the similar "shift-subtract" iterative logic but only 8 bits. This reduces the critical path and complexity compared to a full 16-bit iterative chain.
+
+The division is done in two stages:
+1. Divide upper 8 bits of dividend by divisor -> get q_high, r_high
+2. Divide {r_high, low 8 bits} by divisor -> get q_low, r_low
+
+Final quotient = {q_high, q_low}, remainder = r_low.
+
+Both 8-bit divisions are implemented in combinational logic using generate loops. We keep the two always blocks for registering inputs as requested.
+
+This approach provides a clear hierarchical structure, uses smaller combinational dividers as building blocks, and follows the request for two always blocks registering inputs and combinational processing. It also maintains all operations combinational within these constraints.

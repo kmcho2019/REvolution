@@ -1,0 +1,14 @@
+To implement a novel architectural idea for the serial 2's complementer, we can utilize a shift register to store the input bits as they arrive, and then perform the 2's complement conversion on the stored bits. The key insight here is to leverage the shift register's ability to delay the input bits, allowing us to accumulate the bits and then apply the conversion.
+
+The new approach involves the following steps:
+
+1.  Store the input bits in a shift register, shifting the bits one position to the right on each clock cycle.
+2.  Monitor the input bits to detect the first '1' encountered, which marks the beginning of the conversion.
+3.  Once the first '1' is detected, invert the subsequent bits as they are shifted into the register.
+4.  After the conversion is complete (i.e., when the reset signal is asserted), shift the converted bits out of the register, starting from the most significant bit.
+
+This approach ensures that the 2's complement conversion is accurately performed on the input sequence, regardless of its length or the position of the first '1'.
+
+The shift register-based architecture offers several advantages, including simplicity, low power consumption, and efficient area usage. By leveraging the shift register's inherent delay, we can avoid the need for explicit carry propagation and bit inversion logic, resulting in a more streamlined design.
+
+In terms of PPA optimization, this approach is expected to provide a good balance between performance, power consumption, and area usage. The shift register's sequential nature allows for a relatively simple and power-efficient implementation, while the lack of complex combinational logic reduces area usage.

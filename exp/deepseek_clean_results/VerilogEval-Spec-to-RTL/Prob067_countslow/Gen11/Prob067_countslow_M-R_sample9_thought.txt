@@ -1,0 +1,12 @@
+Refactoring approach:
+1. Separate the combinational next-state logic from sequential state storage
+2. Use continuous assignments for the next-state logic to potentially improve synthesis
+3. Keep the same decade counter functionality but express it differently
+4. Maintain synchronous reset and slowena enable
+5. The key insight is that the counter wraps to 0 after 9, so we can use a simple expression for the next state
+
+Key changes:
+- Move the counter logic to a continuous assignment
+- Use a wire for the next state calculation
+- Keep the sequential element for state storage
+- This structure might allow better optimization during synthesis

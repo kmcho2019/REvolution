@@ -1,0 +1,32 @@
+To fix the walking direction mismatch, we must handle bumps precisely as per specification:
+
+- If the Lemming is walking left and bump_left=1 (regardless of bump_right), it switches to walk right.
+- If walking right and bump_right=1 (regardless of bump_left), it switches to walk left.
+- If bumped on both sides simultaneously, the Lemming switches direction as well (bump_left and bump_right both 1).
+  This effectively means if any bump on the side the Lemming is facing occurs, it switches direction.
+
+Since "bumped on both sides" still causes direction switch, the logic becomes:
+
+- Walking Left: if bump_left==1 (no matter bump_right) → switch to walk right
+- Walking Right: if bump_right==1 (no matter bump_left) → switch to walk left
+
+We will implement that logic explicitly.
+
+For ground edge detection, sampling ground synchronously on clk to get ground_d and comparing current ground with ground_d in sequential logic allows us to detect falling and rising edges reliably.
+
+We define ground_falling_edge and ground_rising_edge synchronously (one clock cycle delayed) in sequential logic.
+
+We modify FSM next state logic to:
+
+- On falling edge of ground or ground=0 → go to FALLING
+- When falling and rising edge of ground or ground=1 → resume stored walking_dir
+- During walking and stable ground, apply bump logic strictly as above.
+- Ignore bumps during falling or ground edges.
+  
+We also update walking_dir only when entering a walking state, based on the direction actually selected from bump inputs.
+
+Finally, initializing ground_d on reset to ground avoids initial edge detection glitches.
+
+This corrected approach ensures direction switches exactly as the problem demands, with no spurious direction changes or mismatches between walking_dir and outputs.
+
+Outputs remain Moore: determined solely by current state.

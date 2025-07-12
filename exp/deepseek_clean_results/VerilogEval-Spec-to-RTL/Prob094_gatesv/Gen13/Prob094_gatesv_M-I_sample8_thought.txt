@@ -1,0 +1,21 @@
+To further optimize the PPA metrics while maintaining correct functionality, I'll implement these improvements:
+
+1. Performance:
+   - Maintain parallel bitwise operations to keep critical paths minimal
+   - Simplify the wrap-around logic for out_different by using direct XOR operations
+
+2. Power:
+   - Remove explicit assignments to unused bits (out_both[3] and out_any[0])
+   - Let synthesis tool optimize these bits to constant 0 if needed
+   - Use minimal operations to reduce switching activity
+
+3. Area:
+   - Remove redundant constant assignments
+   - Keep only essential logic operations
+   - Maintain clean, direct bitwise operations for efficient synthesis
+
+Key changes:
+- Remove explicit assignments to unused output bits
+- Keep the efficient XOR wrap-around logic
+- Maintain all operations as simple bitwise operations
+- All logic remains purely combinational

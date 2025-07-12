@@ -1,0 +1,17 @@
+I'll implement the shift register stage as a finite state machine with three distinct states:
+1. HOLD state - maintains current value
+2. SHIFT state - loads value from previous stage (w)
+3. LOAD state - loads external value (R)
+
+This approach:
+1. Explicitly models the three operational modes as states
+2. Uses a dedicated state register for clarity
+3. Makes the priority between operations more visible in the state transition logic
+4. Could be extended with more states for additional functionality
+5. Provides better debug visibility of the current mode
+6. Uses one-hot encoding for simpler decoding
+
+The tradeoffs are:
+- Slightly more complex than the original
+- Uses more registers (for state)
+- But provides better documentation of intended behavior

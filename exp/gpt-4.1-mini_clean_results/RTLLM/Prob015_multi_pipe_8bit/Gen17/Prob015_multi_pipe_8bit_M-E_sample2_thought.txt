@@ -1,0 +1,19 @@
+Implement the unsigned 8-bit multiplier using a multi-stage pipeline that progressively accumulates partial products through sequential additions to reduce critical path delay. The pipeline will have three stages:
+
+1. Stage 1 (input stage): On `mul_en_in`, latch inputs and generate all 8 partial products (multiplicand shifted by multiplier bits) as 16-bit values.
+
+2. Stage 2 (partial sums stage): Add the partial products in pairs (four 16-bit adders) to generate 4 sums.
+
+3. Stage 3 (final sums stage): Add those 4 sums pairwise (two 16-bit adders) to generate 2 sums.
+
+4. Stage 4 (final addition stage): Add the last two sums to get the final 16-bit product.
+
+Each stage registers enable signals to indicate valid data.
+
+This 4-stage pipeline breaks the wide addition into smaller steps, shortening combinational logic per clock cycle for higher frequency. Output enable (`mul_en_out`) tracks through the pipeline's last stage.
+
+If `mul_en_in` is low, the pipeline stages hold zeros and disables output.
+
+On reset (`rst_n` low), all registers clear.
+
+This approach balances pipelining depth and latency (4 cycles) with throughput (one product per cycle if inputs are continuous), improving max clock frequency and distributing addition logic across multiple clock cycles.

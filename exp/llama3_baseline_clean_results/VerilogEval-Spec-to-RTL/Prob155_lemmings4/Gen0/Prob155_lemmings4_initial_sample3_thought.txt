@@ -1,0 +1,10 @@
+To implement the Lemming's behavior as a Moore state machine, we need to define states that capture its various activities such as walking, falling, digging, and splattering. The state machine will transition between these states based on the input signals and the current state. We will use an enumeration to define the states and a large case statement to describe the next state logic and output logic. The states are:
+- S_WALK_LEFT: The Lemming is walking left.
+- S_WALK_RIGHT: The Lemming is walking right.
+- S_FALL: The Lemming is falling.
+- S_DIG: The Lemming is digging.
+- S_SPLATTER: The Lemming has splattered.
+
+We also need to keep track of the direction the Lemming was moving before it started falling or digging, so it can resume that direction when it hits the ground again. We will use a separate variable to keep track of this direction.
+
+To implement the splattering condition, we will use a counter that increments every clock cycle the Lemming is falling. When the counter exceeds 20 and the Lemming hits the ground, it will transition to the S_SPLATTER state.

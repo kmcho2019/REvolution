@@ -1,0 +1,21 @@
+To optimize the sequence detector for better PPA (Power, Performance, Area) metrics while maintaining functionality, I propose these improvements:
+
+1. Timing Optimization:
+   - The current WNS is -0.13ns, indicating a small timing violation
+   - Break the critical path by registering the output signal
+   - This adds one cycle latency but improves timing closure
+
+2. Power Optimization:
+   - Add clock gating to the shift register when no new data is expected
+   - Reduce unnecessary toggles in the pattern matching logic
+
+3. Area Optimization:
+   - The current area is already good (25um²) but we can explore:
+   - Using a state machine instead of shift register (might not be better)
+   - Keeping shift register but optimizing the pattern matching logic
+
+Key changes:
+- Registered output to break timing path
+- Added simple clock gating when possible
+- Maintained same detection functionality
+- Slightly modified architecture for better PPA

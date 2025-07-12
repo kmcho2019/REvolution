@@ -1,0 +1,28 @@
+Key observations from the waveform:
+1. Output p:
+   - Pulses high only when 'a' is high during the clock's rising edge
+   - Stays high for one full clock cycle when this condition occurs
+   - Otherwise stays low
+
+2. Output q:
+   - Latches the value of p when the clock falls (negative edge)
+   - Clears when 'a' is high during clock low phase
+   - Otherwise holds its value
+
+Implementation strategy:
+1. For p:
+   - Sample 'a' at positive clock edge
+   - If 'a' is high, set p high for one full cycle
+   - Use a simple D flip-flop for this behavior
+
+2. For q:
+   - Sample p at negative clock edge
+   - Clear asynchronously when (a & ~clock) is true
+   - Otherwise maintain state
+   - This requires an asynchronous clear flip-flop
+
+Improvements over previous solution:
+1. Correct timing for p generation
+2. Proper negative edge sampling for q
+3. Clearer state machine behavior
+4. More accurate asynchronous clear condition

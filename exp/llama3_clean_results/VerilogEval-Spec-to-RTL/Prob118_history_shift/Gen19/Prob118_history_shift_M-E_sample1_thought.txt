@@ -1,0 +1,5 @@
+A novel approach to implementing the 32-bit global history shift register is to utilize a circular buffer or a ring buffer architecture. Instead of shifting the entire 32-bit history register on every prediction or misprediction, we can use a pointer to keep track of the current position in the buffer. This can potentially reduce the number of bits that need to be shifted, leading to improved performance and power efficiency.
+
+When a prediction is made, we simply update the value at the current position in the buffer with the predict_taken bit. When a misprediction occurs, we load the buffer with the train_history and the actual result of the branch (train_taken), starting from the current position.
+
+This approach eliminates the need for shifting the entire history register on every prediction or misprediction, which can lead to significant power savings and improved performance. Additionally, the use of a pointer to keep track of the current position in the buffer simplifies the logic and reduces the number of operations required to update the history register.

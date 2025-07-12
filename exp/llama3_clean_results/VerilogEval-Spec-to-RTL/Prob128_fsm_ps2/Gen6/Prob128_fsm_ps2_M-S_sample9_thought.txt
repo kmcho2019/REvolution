@@ -1,0 +1,7 @@
+To simplify the existing solution, we can eliminate the need for a shift register and focus solely on the state machine's functionality. This can be achieved by introducing a finite state machine (FSM) with three states: IDLE, BYTE1, and BYTE2. The IDLE state represents the initial condition where the FSM is waiting for a byte with in[3] = 1. Once such a byte is detected, the FSM transitions to the BYTE1 state. Then, it waits for two more bytes to arrive, transitioning to the BYTE2 state after the second byte, and finally asserting the 'done' signal after the third byte.
+
+The simplified approach involves:
+- Removing the shift register, as it's not necessary for the functionality.
+- Implementing a 2-bit state variable to represent the three states (IDLE, BYTE1, and BYTE2).
+- Using a simple state machine to transition between these states based on the incoming bytes and the condition in[3] = 1.
+- Asserting the 'done' signal when the FSM is in the BYTE2 state and a new byte is received.

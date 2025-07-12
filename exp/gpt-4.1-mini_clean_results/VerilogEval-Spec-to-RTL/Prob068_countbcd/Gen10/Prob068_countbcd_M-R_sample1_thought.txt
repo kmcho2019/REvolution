@@ -1,0 +1,7 @@
+I will refactor the design to separate the combinational next-state calculation of the BCD counter from the clocked register update. This way, the increment logic is purely combinational and easier to analyze and optimize by synthesis tools. The carries and digit increments will be computed in a combinational block using intermediate wires for clarity.
+
+The enable signals will be combinationally derived from the current digit values, as before.
+
+Using separate combinational and sequential blocks will improve readability and may improve timing by enabling better optimization. The logic for incrementing digits and carry propagation remains the same in essence but is now factored into distinct stages.
+
+This approach also uses non-blocking assignments in the sequential block and purely combinational logic for next state, improving coding style and clarity.

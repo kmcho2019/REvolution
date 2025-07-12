@@ -1,0 +1,5 @@
+I will refactor the code by combining the synchronous reset and write operation into a single always block as before but replace the for-loop reset with an initial block for synthesis-friendly initialization. I will also convert the read operation into a synchronous process that updates read_data on the clock edge, using a registered output to reduce glitches and provide stable read output, while still gating read_data by read_en to output zero when disabled. The address widths remain minimal using $clog2(DEPTH).
+
+This approach uses a registered read output, introducing one clock cycle of read latency but providing glitch-free, stable read data, which is often preferred in synchronous designs. The initial block will be used to initialize RAM content at elaboration time (synthesis tools supporting this). The write is synchronous and enabled by write_en, while the read is synchronous and enabled by read_en. Reset clears both RAM and output data.
+
+This refactoring changes read from asynchronous combinational to synchronous registered output, improving output stability and reducing power from glitching, at the cost of read latency.

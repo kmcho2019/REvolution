@@ -1,0 +1,11 @@
+To fix the code, we need to address the issues mentioned in the feedback. Firstly, we need to ensure that the global history register is correctly updated when a training request for a misprediction is received. This involves recovering the global history register to the state immediately after the mispredicting branch completes execution.
+
+Secondly, we need to correct the training logic to handle the case where a training request and a prediction request occur at the same time. According to the problem description, when this happens, training should take precedence. To achieve this, we can modify the logic to update the global history register and the pattern history table (PHT) only when a training request is received.
+
+We also need to ensure that the prediction logic is correct. The prediction logic should use the current state of the PHT to make predictions, and it should not modify the PHT. To achieve this, we can modify the prediction logic to use the current state of the PHT without modifying it.
+
+Additionally, we can optimize the code to reduce the number of memory accesses to the PHT, which can help reduce power consumption. We can also explore alternative designs that use fewer resources to reduce area consumption.
+
+To implement these fixes, we can modify the always block that updates the global history register and the PHT to prioritize training requests over prediction requests. We can also modify the prediction logic to use the current state of the PHT without modifying it.
+
+We should also add more test cases to the simulation to cover different scenarios and ensure that the branch predictor is functioning correctly in all cases.

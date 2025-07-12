@@ -1,0 +1,21 @@
+Improvement Strategy:
+
+The original 4-stage pipeline design is functionally complete and performs accurate IEEE-754 single-precision multiplication with correct handling of special cases and rounding. To improve PPA based on the given metrics and feedback, I will:
+
+1. Increase the pipeline depth to 5 stages to further reduce critical path delay, especially isolating the 24x24 multiplier in a dedicated stage with registered inputs and outputs. This reduces the combinational delay per cycle, allowing higher clock frequency.
+
+2. Add clock enable gating via a valid signal propagated through the pipeline to avoid unnecessary toggling in pipeline registers when inputs are stable or not valid, reducing dynamic power.
+
+3. Optimize sticky bit calculation by hierarchically OR reducing the bits in multiple steps instead of a single two-level OR.
+
+4. Split the rounding and normalization logic into separate stages to balance combinational load.
+
+5. Reduce bit-width where possible: exponent registers are 10 bits (to detect overflow/underflow) which is necessary; mantissas are kept at 24 bits with hidden bit.
+
+6. Use consistent non-blocking assignments.
+
+7. Keep special case handling robust and consistent with IEEE 754.
+
+These changes will increase latency to 5 cycles but improve maximum clock frequency and power efficiency while maintaining IEEE 754 compliance.
+
+Interface remains unchanged.

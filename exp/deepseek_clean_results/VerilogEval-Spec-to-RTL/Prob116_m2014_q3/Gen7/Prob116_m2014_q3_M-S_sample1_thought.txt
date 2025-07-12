@@ -1,0 +1,15 @@
+1. First, clarify the bit mapping between K-map and Verilog:
+   - K-map rows: x[3]x[4] (x[3] is MSB, x[4] is LSB)
+   - K-map columns: x[1]x[2]
+   - Verilog input: x[3:0] (x[3],x[2],x[1],x[0])
+   - Therefore: x[4] in K-map = x[0] in Verilog
+
+2. Analyze the K-map to find essential prime implicants:
+   - x[3]=1 covers most 1's (except where x[1]x[2]=10)
+   - Need additional term to cover x[3]x[0]=01, x[1]x[2]=11 case
+   - Can ignore don't-cares to simplify
+
+3. Simplified logic:
+   - f = x[3] when x[1]x[2]≠10
+   - OR with x[1]&x[2] to cover the remaining 1
+   - Final expression: f = x[3] | (x[1] & x[2])

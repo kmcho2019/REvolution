@@ -1,0 +1,10 @@
+To implement the TopModule, we need to design a finite-state machine (FSM) that recognizes the sequence 1101 in the input bit stream. The FSM will have multiple states, each corresponding to a partial match of the target sequence. When the sequence is fully matched, the FSM will transition to a final state where it sets start_shifting to 1. The FSM will remain in this state until a reset is applied.
+
+The states can be defined as follows:
+- IDLE: Initial state, waiting for the first '1' of the sequence.
+- ONE: First '1' of the sequence received.
+- TWO: First two '1's of the sequence received (but no '0' yet).
+- THREE: Sequence '110' received, waiting for the final '1'.
+- FINAL: Sequence '1101' fully matched, start_shifting set to 1.
+
+On each clock cycle, the FSM will check the current input data and transition to the next state accordingly. If the reset is applied, the FSM will return to the IDLE state.

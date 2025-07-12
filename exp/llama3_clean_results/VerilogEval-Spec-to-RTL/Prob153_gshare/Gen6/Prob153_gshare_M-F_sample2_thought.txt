@@ -1,0 +1,17 @@
+To address the issues in the current implementation, we need to revise the next state logic to correctly prioritize the training update over the prediction update. This can be achieved by reordering the conditions in the next state logic to check for training before prediction.
+
+Additionally, we need to update the 'predict_history' output to reflect the correct state of 'gbhr' after prediction. This can be done by updating 'predict_history' to the next state of 'gbhr' when a prediction is made.
+
+We also need to account for the scenario where training and prediction of the same PHT entry happen at the same time. To do this, we can use a temporary variable to store the current state of 'gbhr' before any updates, and use this variable to make predictions.
+
+The key insights here are:
+
+* Prioritizing training updates over prediction updates ensures that the branch predictor is updated correctly when a misprediction occurs.
+* Updating 'predict_history' to the next state of 'gbhr' after prediction ensures that the output reflects the correct state of the branch predictor.
+* Using a temporary variable to store the current state of 'gbhr' before any updates allows us to account for the scenario where training and prediction of the same PHT entry happen at the same time.
+
+The main advantages of this approach are:
+
+* Improved accuracy of the branch predictor due to correct prioritization of updates.
+* Correct output of 'predict_history' after prediction.
+* Ability to handle the scenario where training and prediction of the same PHT entry happen at the same time.

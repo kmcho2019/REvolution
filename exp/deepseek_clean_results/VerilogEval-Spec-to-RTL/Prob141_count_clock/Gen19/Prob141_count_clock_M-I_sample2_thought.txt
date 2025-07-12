@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the critical path by registering rollover signals
+   - Break dependency chain between counters by adding intermediate registers
+   - Simplify hour counter logic by using direct BCD encoding
+
+2. Power Optimization:
+   - Register the hour increment signal to reduce unnecessary switching
+   - Move hr_tens/hr_ones calculation to clocked logic
+   - Add enable gating for PM register updates
+
+3. Area Optimization:
+   - Share comparator logic between hour counter and PM toggle
+   - Use consistent BCD encoding for all counters
+   - Optimize reset logic to reduce redundant assignments
+
+Key Changes:
+- Registered rollover signals to break critical path
+- Combined hour counter and PM logic into single state machine
+- Moved BCD conversion to synchronous logic
+- Added enable gating for all sequential elements
+- Simplified reset conditions

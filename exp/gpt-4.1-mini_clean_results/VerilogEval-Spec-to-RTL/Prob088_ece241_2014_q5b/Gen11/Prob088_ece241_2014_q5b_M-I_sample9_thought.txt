@@ -1,0 +1,9 @@
+To optimize the existing one-hot FSM for better power and area while maintaining correctness and clarity, I will combine the one-hot states into a single 2-bit vector for cleaner code and easier synthesis optimization without deviating from the one-hot constraint (only one bit set at a time). This reduces the number of regs explicitly declared and may help synthesis tools optimize routing.
+
+Additionally, I will use non-blocking assignments consistently in sequential logic and blocking assignments in combinational blocks for clarity and synthesis friendliness.
+
+To reduce power, I will introduce a clock enable signal that is active only when state changes occur, disabling register toggling when stable in state B since transitions only happen from A to B and then remain in B indefinitely.
+
+Since asynchronous reset is active-high and must reset to A, the code will keep asynchronous reset, and all outputs are Mealy type.
+
+Overall, this approach preserves one-hot encoding, clarity, and adds clock gating to reduce unnecessary toggling for power optimization.

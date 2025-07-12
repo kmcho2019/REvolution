@@ -1,0 +1,9 @@
+To implement a 16-bit divider module in combinational logic, we need to extract the higher bits of the dividend, matching the bit width of the divisor, and compare these bits with the divisor. Based on this comparison, we set the quotient to 1 or 0, calculate the difference as the remainder, and then concatenate the remainder with the highest remaining 1-bit of the dividend. This process is repeated until all dividend bits are processed.
+
+We will use two always blocks in the div_16bit module. The first always block will be a combinational block that updates the values of two registers, a_reg and b_reg, with the values of A and B, respectively, whenever the input values change. The second always block will also be a combinational block that performs the division operation based on the values of a_reg and b_reg.
+
+To implement the division operation, we will use a temporary variable to store the quotient and remainder at each step. The quotient will be calculated by shifting the bits of the dividend from left to right and comparing the extracted bits with the divisor. If the extracted bits are greater than or equal to the divisor, we set the corresponding bit in the quotient to 1; otherwise, we set it to 0.
+
+The remainder at each step will be calculated as the difference between the extracted bits of the dividend and the divisor (if the extracted bits are greater than or equal to the divisor) or as the extracted bits themselves (if they are less than the divisor).
+
+Finally, we will concatenate the remainder with the highest remaining 1-bit of the dividend and repeat the process until all dividend bits are processed.

@@ -1,0 +1,12 @@
+The best approach combines the minimal and clean inline next-state update from Example 1 with the explicit separation of next-state combinational logic and synchronous state register update from Example 2, for improved modularity and testability. 
+
+We leverage the fact that the output is a Moore output directly dependent only on the current state, so we assign the output directly from the registered state without an additional output register to save area, power, and reduce complexity. This ensures output glitches are minimized since output is registered. 
+
+We maintain asynchronous reset initializing the state to B, as required, ensuring immediate reset to known state and output. 
+
+This fusion yields a minimal FSM with:
+- One-bit state register.
+- Explicit combinational next-state logic separate from sequential update.
+- Output directly assigned from the registered state.
+- Asynchronous reset to state B.
+- Clear, readable, and synthesizable code optimized for timing, power, and area.

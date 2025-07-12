@@ -1,0 +1,14 @@
+Refactor the FSM to a cleaner structure using one always block for sequential state update and outputs, with clear state encoding, and separate combinational always block for next-state logic and internal signals. Use a shift register for x pattern detection updated each cycle. 
+
+- Maintain synchronous active low reset as specified.
+- Introduce explicit states with meaningful names encoded as parameters.
+- Outputs f and g as registered signals updated synchronously (Moore FSM).
+- On reset, go to state A (IDLE).
+- After reset deasserted, go to state that asserts f=1 for one cycle.
+- Then monitor x samples using a shift register; once pattern 101 detected, move to Y_MONITOR.
+- While in Y_MONITOR, assert g=1, count clock cycles (max 2). If y=1 detected within 2 cycles, go to G_ON_PERM; else G_OFF_PERM.
+- In G_ON_PERM and G_OFF_PERM states, output g fixed as 1 or 0 respectively until reset.
+- Outputs f and g are updated synchronously, avoiding glitches.
+- The pattern detection uses a shift register always updated in PATTERN_WAIT state.
+- The y counter counts from 0 to 1 (exactly 2 cycles), transitions accordingly.
+- Structure the code to clearly separate sequential and combinational parts, improving readability and correctness.

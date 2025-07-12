@@ -1,0 +1,10 @@
+Refactor the comparator by explicitly performing a 4-bit subtraction with a ripple borrow chain using assign statements to derive difference bits and borrows. Then infer the outputs from the borrow out and zero-check of the subtraction result. This approach aligns closely with the initial problem statement but uses the ripple borrow subtractor concept instead of borrow lookahead.
+
+- Implement borrow generation for each bit as borrow[i+1] = (~A[i] & B[i]) | ((~(A[i] ^ B[i])) & borrow[i])
+- Subtraction difference bit: diff[i] = A[i] ^ B[i] ^ borrow[i]
+- The borrow[0] input is zero (no initial borrow in).
+- A_less is set when borrow_out (borrow[4]) = 1 indicating a borrow at MSB.
+- A_equal is set when difference is all zero.
+- A_greater is when no borrow and difference non-zero.
+
+This refactoring illustrates a direct subtraction-based method without borrow lookahead, emphasizing conceptual clarity and structural difference while maintaining mutual exclusiveness of outputs.

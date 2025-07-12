@@ -1,0 +1,13 @@
+Implement the 16-bit unsigned multiplier using a shift-and-accumulate approach controlled by a simple counter without explicit FSM states. Use a single 5-bit shift count register (i) to track progress:
+
+- On reset, clear all registers and flags.
+- When start is asserted, load inputs into registers and begin counting.
+- For i=1 to 16, on each clock cycle, check the bit (i-1) of multiplicand:
+  - If it's '1', add multiplier shifted left by (i-1) to the product register.
+- Increment i each cycle while start is active.
+- When i reaches 16, assert done flag.
+- When start de-asserts, reset counter and done flag.
+- Keep logic synchronous and use non-blocking assignments.
+- Output product register as yout.
+
+This approach simplifies control logic by relying solely on the counter and start signal to manage operation phases, removing the FSM. The design remains fully synchronous, easy to understand, and functional with minimal control logic.

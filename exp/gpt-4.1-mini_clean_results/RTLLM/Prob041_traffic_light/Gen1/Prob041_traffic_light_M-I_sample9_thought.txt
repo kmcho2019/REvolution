@@ -1,0 +1,19 @@
+The original design mostly works but has timing and control issues around state transitions, counter reloads, and pass_request handling. To fix this and ensure correct timing:
+
+1. Use a Moore FSM style where outputs depend only on the state, updating at the clock edge to avoid glitches.
+
+2. Load the counter exactly when entering a new state (detecting state change by comparing current and previous state) and decrement every clock cycle otherwise.
+
+3. For the green state, handle the pass_request by checking remaining time each clock cycle and if pass_request is active and remaining time > 10, reduce counter to 10 (shorten green time). But do this only once per green phase (avoid repeated lowering of counter).
+
+4. Keep previous green flag (`was_green`) to detect rising/falling edge of green light to reload counter correctly.
+
+5. On reset, go to idle state and initialize outputs off, then immediately proceed to s1_red with counter=10.
+
+6. Follow timing exactly: green=60, yellow=5, red=10 cycles.
+
+7. Outputs are updated synchronously with the state.
+
+This approach simplifies reasoning about timing and meets spec closely.
+
+This improved design provides clean separation between state transitions, counter loading/decrementing, and output updates, handling pedestrian request correctly and cleanly.

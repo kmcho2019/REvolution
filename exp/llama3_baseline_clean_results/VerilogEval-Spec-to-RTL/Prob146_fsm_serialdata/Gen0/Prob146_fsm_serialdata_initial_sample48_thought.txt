@@ -1,0 +1,11 @@
+To design the finite state machine (FSM) for this serial communication protocol, we can break down the process into several key states:
+1. Idle: The initial state, waiting for the start bit (0) to begin a new byte reception.
+2. Start Bit: The state where we've identified a potential start bit. This state is necessary to confirm that the start bit is indeed a start bit and not a data bit or noise.
+3. Data Bits: A series of states where we collect the 8 data bits. Since we are working with a serial protocol, we'll need a counter to keep track of which bit we're on.
+4. Stop Bit: The final state in the reception process, where we verify that a stop bit (1) follows the data bits.
+
+The FSM transitions between these states based on the input 'in' and the current state of the FSM. 
+
+Upon successfully receiving a byte (start bit, 8 data bits, and a stop bit), the FSM should output the received byte on 'out_byte' and assert 'done' for one clock cycle to signal that a complete byte has been received.
+
+Given the requirements, we can implement this FSM using a combination of counters and state variables to keep track of the current state and the bits received.

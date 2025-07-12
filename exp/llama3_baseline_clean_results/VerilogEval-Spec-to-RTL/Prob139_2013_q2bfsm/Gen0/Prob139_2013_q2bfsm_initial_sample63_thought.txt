@@ -1,0 +1,9 @@
+The problem can be solved by implementing a finite state machine (FSM) with the following states:
+- State A (initial state): The FSM stays in this state as long as the reset signal is asserted. When the reset signal is de-asserted, the FSM moves to state B.
+- State B: The FSM sets output f to 1 for one clock cycle and then moves to state C.
+- State C: The FSM monitors the x input. When x produces the values 1, 0, 1 in three successive clock cycles, the FSM moves to state D.
+- State D: The FSM sets output g to 1 and monitors the y input. If y has the value 1 within at most two clock cycles, the FSM moves to state E. Otherwise, it moves to state F.
+- State E: The FSM maintains g = 1 permanently until reset.
+- State F: The FSM sets g = 0 permanently until reset.
+
+The FSM can be implemented using a state register, a next state logic, and an output logic.

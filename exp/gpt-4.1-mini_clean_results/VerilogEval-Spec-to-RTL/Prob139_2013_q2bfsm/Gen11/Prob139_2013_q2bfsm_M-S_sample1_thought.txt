@@ -1,0 +1,21 @@
+Implement a simple Moore FSM with clear synchronous active-low reset. Use a minimal set of states that directly correspond to each phase:
+
+- A: reset state, outputs f=0,g=0
+- B: one-cycle pulse f=1 immediately after reset deassertion
+- C0/C1/C2: track the pattern 1,0,1 on input x stepwise
+- D: one-cycle pulse g=1 after pattern detection
+- E0, E1: monitor y for up to two cycles with g=1
+- F: permanent g=1 if y=1 seen in monitoring window
+- G: permanent g=0 if y=1 not seen within monitoring window
+
+Outputs f and g depend only on the current state (Moore machine), ensuring stable and glitch-free output timing.
+
+No counters needed since y monitoring is exactly two cycles (tracked by states E0 and E1).
+
+Transitions occur strictly on clock's positive edge and outputs update synchronously.
+
+All reset handling and state changes are synchronous, avoiding asynchronous or mixed reset styles.
+
+Input x and y are single-bit so no redundant cases needed.
+
+This minimal FSM is easier to verify and precisely matches timing requirements.

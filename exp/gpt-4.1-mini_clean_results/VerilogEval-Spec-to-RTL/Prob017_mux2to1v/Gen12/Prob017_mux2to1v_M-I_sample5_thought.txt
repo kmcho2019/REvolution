@@ -1,0 +1,14 @@
+To improve PPA (performance, power, and area) over the given 4-instance 25-bit chunked mux design, the simplest and most effective step is to remove the modular chunking altogether and implement the mux as a single flat 100-bit vector mux.
+
+This approach benefits from:
+
+- Eliminating module instantiation and generate block overhead.
+- Allowing synthesis tools to better optimize mux logic for the full vector width.
+- Simplifying wiring and potentially reducing net capacitance and power.
+- Minimizing redundant sel signal buffering since only one mux instance uses it.
+
+Although modularity is reduced, the simplicity and direct vector assignment maintain excellent clarity and synthesis efficiency.
+
+Thus, the improved design implements the entire 100-bit 2-to-1 mux in a single module with a simple vectorized assign statement.
+
+This should yield improvements in power (due to fewer transitions and simpler wiring), area (less module overhead), and maintain zero timing slack as the logic remains combinational and flat.

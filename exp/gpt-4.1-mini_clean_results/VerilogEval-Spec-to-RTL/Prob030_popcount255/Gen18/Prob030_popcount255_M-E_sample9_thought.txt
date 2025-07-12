@@ -1,0 +1,14 @@
+Implement a wide popcount for 255 bits by dividing the input into 32 chunks of 8 bits each (except the last which is 255 - 31*8 = 7 bits). Use a small, efficient popcount8 module for 8-bit chunks and a similar popcount7 module for the 7-bit chunk, both implemented with balanced adder trees.
+
+Then sum all partial counts in a pipelined adder tree structure with multiple stages. Each stage reduces the number of sums by half, summing pairs of counts in parallel. This balanced adder tree minimizes logic depth and enables high-frequency operation.
+
+Finally, the output is 8 bits wide to hold the maximum count of 255.
+
+Advantages:
+- Fixed, flat two-stage design: first stage produces 32 partial sums, second stage reduces them to final count via a balanced adder tree.
+- Using specialized modules for 8-bit and 7-bit popcounts improves synthesis and timing for small blocks.
+- The explicit two-stage structure enables better control over timing and power.
+- Fully structural with no recursion or functions; predictable area and synthesis results.
+- Pipelining can be added easily in future without changing architecture.
+
+This method differs from the recursive approach by using fixed-size blocks and a balanced summation tree to aggregate results efficiently.

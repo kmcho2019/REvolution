@@ -1,0 +1,7 @@
+To optimize the original FSM for better performance and power without increasing area, implement these changes:  
+1. Replace the concatenation shift with an explicit right-shift operation to reduce combinational delay in data_reg updates.  
+2. Add an enable signal for the data_reg shift to minimize unnecessary toggling outside RECEIVE state, reducing power.  
+3. Use a registered done signal that only pulses high for one clock cycle when a valid stop bit is detected, avoiding constant toggling.  
+4. Keep binary encoding for states as it is already area-efficient and simple.  
+5. Ensure bit_count increments only in RECEIVE state with enable, avoiding glitches.  
+These minor refinements aim to reduce switching activity and improve timing slightly, maintaining the original FSM functionality and correctness.

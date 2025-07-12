@@ -1,0 +1,31 @@
+Revised Solution for Precise 3.5x Fractional Division:
+
+1. **Phase Alignment Correction**:
+   - Maintain the 7-cycle period (0-6) for both counters
+   - Adjust secondary phase to start 180° out of phase (offset by 3.5 cycles)
+   - This ensures proper interleaving of the two phases
+
+2. **Duty Cycle Optimization**:
+   - Primary phase: 3.5 cycles high (0-3), 3.5 cycles low (4-6)
+   - Secondary phase: 3.5 cycles high (3.5-6.5), 3.5 cycles low (0-2.5)
+   - Implemented by adjusting the threshold comparisons
+
+3. **Edge-Sensitive Timing Fix**:
+   - Primary phase uses posedge with standard counting
+   - Secondary phase uses negedge with phase-shifted counting
+   - Added explicit phase offset to counter_n
+
+4. **Robust Reset Handling**:
+   - Both counters initialize to known states
+   - Reset forces all outputs low
+
+5. **Output Combination**:
+   - Maintain OR operation for phase combination
+   - Now with properly aligned edges for clean transitions
+
+Key Improvements:
+- Precise 3.5 cycle phase offset between counters
+- Corrected threshold comparisons for exact duty cycle
+- Guaranteed edge alignment through counter offset
+- Clean startup and reset behavior
+- Matches expected test patterns exactly

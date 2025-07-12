@@ -1,0 +1,23 @@
+Novel Architectural Idea: Hybrid Carry-Select with Early Overflow Detection
+
+1. Core Concept:
+   - Split the 8-bit addition into two 4-bit segments
+   - Use carry-select approach for the upper 4 bits (computing both possible carry-in scenarios)
+   - Implement early overflow detection by examining sign bits and carry propagation
+
+2. Key Innovations:
+   - Parallel computation of both possible carry scenarios (0 and 1) for upper bits
+   - Early overflow prediction by comparing sign bits before full addition completes
+   - Reduced critical path by eliminating carry propagation between segments
+   - Optimized multiplexer selection based on lower segment's carry-out
+
+3. Advantages:
+   - Faster than ripple-carry due to parallel computation
+   - More area-efficient than full carry-lookahead
+   - Early overflow detection reduces timing pressure on critical path
+   - Balanced logic distribution between segments
+
+4. Overflow Detection:
+   - Check if the sum of two positive numbers yields negative result
+   - Check if the sum of two negative numbers yields positive result
+   - Special case handling for mixed-sign operands (never overflows)

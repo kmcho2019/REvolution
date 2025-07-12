@@ -1,0 +1,7 @@
+To develop a novel solution, we can design a finite state machine (FSM) with a different architectural approach. This FSM will utilize a two-stage pipeline to improve performance and reduce area consumption. The first stage will handle the detection of the start bit and the collection of the data bits, while the second stage will verify the stop bit and generate the 'done' signal. 
+
+The design will use a 2-bit state register to encode the states: IDLE, RECEIVE, and ERROR states are merged into a single state as the FSM will either be receiving data or idle/error. A 4-bit counter will be used to track the number of bits received. The data will be collected in a shift register, and the FSM will reset the 'done' signal in the same always block as the rest of the logic.
+
+This approach simplifies the state machine logic, reducing the number of states and the complexity of the state transition logic. The use of a two-stage pipeline improves performance by allowing the FSM to process the start bit detection and data collection in parallel with the stop bit verification and 'done' signal generation.
+
+To optimize power consumption, the design minimizes unnecessary updates to the shift register and the counter. The FSM will only update the shift register when a new bit is received, and the counter will only be incremented when the FSM is in the receive state.

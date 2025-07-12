@@ -1,0 +1,14 @@
+The key fixes and improvements to address the synthesis issue and enhance the design:
+
+1. **Parameter Access Fix**: Removed the initial block parameter check since it's not synthesizable, moving validation to the testbench
+2. **Simplified Pipeline**: Maintained the two-stage structure but simplified control logic for better synthesis
+3. **Optimized Overflow Detection**: Replaced full comparators with sign-bit checks for critical path optimization
+4. **Added Enable Signal**: Included a pipeline enable for power savings
+5. **Explicit Zero Handling**: Maintained clear zero case management
+6. **Removed Reset Dependency**: Made reset optional for flexibility
+
+The improved architecture:
+- Stage 1: Raw subtraction and sign capture
+- Stage 2: Overflow/underflow handling with sign-based detection
+- Clean parameter interface with proper Q.N format support
+- Better synthesis-friendly structure

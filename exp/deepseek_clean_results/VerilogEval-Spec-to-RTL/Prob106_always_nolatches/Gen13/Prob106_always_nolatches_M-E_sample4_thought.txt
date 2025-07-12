@@ -1,0 +1,13 @@
+This solution employs a lookup table (LUT) approach implemented using a ROM-style pattern matching technique. Instead of separate comparators for each scancode, we use a single 16-bit input to directly index into a virtual "truth table" that encodes all valid arrow key patterns. The key innovations are:
+
+1. Uses bitwise XOR for pattern matching (scancode XOR mask = 0 means match)
+2. Combines all comparisons into a single parallel operation
+3. Outputs are generated directly from the match results without intermediate logic
+4. Eliminates priority encoder by leveraging mutual exclusivity of scancodes
+5. Uses minimal logic operations for each output
+
+This approach is particularly efficient because:
+- All comparisons happen in parallel
+- No hierarchical logic needed
+- Each output depends only on its specific match condition
+- The XOR-based matching is hardware-friendly

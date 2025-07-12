@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. State Encoding:
+   - Use binary encoding instead of one-hot since we only have 3 states
+   - Reduces flip-flop count from 3 to 2
+
+2. Output Handling:
+   - Remove unnecessary reset of out_bytes (don't-care when not done)
+   - Assign bytes directly in each state without extra logic
+
+3. Done Signal:
+   - Make it combinational for simpler timing
+   - Assert only when in BYTE3 state
+
+Key Changes:
+- Binary state encoding (00=IDLE, 01=BYTE2, 10=BYTE3)
+- Simplified state transitions
+- Direct byte assignments in each state
+- Combinational done signal

@@ -1,0 +1,20 @@
+To model the behavior of a Lemming using a finite state machine, we need to identify the different states it can be in and the transitions between these states. The states can be: walking left, walking right, falling, and digging. We'll use a Moore state machine, where the outputs are a function of the current state only. The transitions will be based on the inputs (bump_left, bump_right, ground, dig) and the current state. 
+
+We'll start by defining the states and their corresponding outputs. Then, we'll determine the transitions between these states based on the inputs and the current state. The machine will be reset to the walking left state when areset is asserted.
+
+The states and their corresponding outputs are:
+- Walking left: walk_left = 1, walk_right = 0, aaah = 0, digging = 0
+- Walking right: walk_left = 0, walk_right = 1, aaah = 0, digging = 0
+- Falling: walk_left = 0, walk_right = 0, aaah = 1, digging = 0
+- Digging: walk_left = current direction, walk_right = opposite of current direction, aaah = 0, digging = 1
+
+The transitions between these states are as follows:
+- If the machine is in the walking left or walking right state and ground = 0, it will transition to the falling state.
+- If the machine is in the falling state and ground = 1, it will transition back to the walking left or walking right state, depending on the previous direction.
+- If the machine is in the walking left or walking right state and dig = 1, it will transition to the digging state.
+- If the machine is in the digging state and ground = 0, it will transition to the falling state.
+- If the machine is in the walking left or walking right state and bump_left = 1, it will transition to the walking right state.
+- If the machine is in the walking left or walking right state and bump_right = 1, it will transition to the walking left state.
+- If the machine is in the walking left or walking right state and both bump_left = 1 and bump_right = 1, it will still switch directions.
+
+We'll implement the state machine using an enum for the states and a switch statement to determine the next state and the outputs.

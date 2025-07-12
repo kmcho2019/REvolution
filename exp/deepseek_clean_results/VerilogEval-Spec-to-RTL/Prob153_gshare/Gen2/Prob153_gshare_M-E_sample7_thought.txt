@@ -1,0 +1,18 @@
+Here's a novel architectural approach for the gshare predictor:
+
+1. **Dual-Ported PHT**: Implement the PHT with separate read/write ports to avoid timing conflicts between prediction and training. Predictions always see the current state while training updates occur on the next cycle.
+
+2. **Shadow GHR for Mispredictions**: Maintain a shadow copy of the GHR that's only updated during mispredictions. This allows instant recovery without disrupting the main GHR update pipeline.
+
+3. **Priority Encoder for Updates**: Use a clear priority scheme where:
+   - Misprediction recovery has highest priority (uses shadow GHR)
+   - Training updates come next
+   - Prediction updates have lowest priority
+
+4. **Early Prediction Output**: Calculate predict_taken immediately using current GHR and PHT state, while predict_history reflects the GHR state used for the prediction.
+
+Key innovations:
+- Physical separation of prediction and training paths
+- Shadow GHR enables single-cycle misprediction recovery
+- Clear priority handling through dedicated logic
+- Maintains correct timing relationships between operations

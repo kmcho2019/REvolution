@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. **Logic Simplification**: The current implementation is already optimal for Y1 (y[0] & w). For Y3, we can observe that it's active when w=0 and the current state is B, C, E, or F (all states except A and D). This can be expressed more directly as ~w & (y[1] | y[2] | y[4] | y[5]).
+
+2. **Gate-Level Optimization**: The new Y3 expression uses one OR and one AND gate instead of three AND gates with inverted inputs. This reduces gate count and potentially improves timing.
+
+3. **Maintain One-Hot Property**: The implementation preserves the one-hot encoding property where only one state bit is active at any time.
+
+4. **Documentation Clarity**: Keep the comprehensive state transition documentation for maintainability.
+
+5. **PPA Benefits**: 
+   - Reduced gate count (2 gates vs 3 for Y3)
+   - Potentially better timing due to simpler logic path
+   - Maintained low power and area characteristics
+   - Still robust against invalid states

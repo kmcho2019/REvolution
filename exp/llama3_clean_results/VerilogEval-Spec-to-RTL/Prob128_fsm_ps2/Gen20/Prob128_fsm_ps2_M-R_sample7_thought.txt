@@ -1,0 +1,9 @@
+The goal of the refactoring is to maintain the core functionality of the original code while potentially improving its Power, Performance, and Area (PPA) metrics. 
+
+To achieve this, we can simplify the state machine by removing the `enum` and using a binary encoding for the states instead. We can also eliminate the `msg_received` signal and directly assert the `done` signal based on the current state. Additionally, we can minimize the number of transitions on the `done` signal by only updating it when necessary.
+
+By using a binary encoding for the states, we can reduce the area overhead associated with decoding the state values. We can also simplify the combinational logic by using `assign` statements instead of `always_comb` blocks, which can help reduce the number of operations and minimize glitches.
+
+Furthermore, we can ensure that the state machine only changes state when necessary to reduce unnecessary transitions. This can be achieved by using a more straightforward state machine implementation that directly updates the current state based on the input conditions.
+
+Overall, the refactored code aims to balance functional correctness with optimized PPA metrics by simplifying the state machine, minimizing transitions, and reducing area overhead.

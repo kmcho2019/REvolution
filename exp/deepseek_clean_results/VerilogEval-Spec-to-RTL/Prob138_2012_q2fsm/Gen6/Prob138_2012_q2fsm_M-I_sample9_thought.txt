@@ -1,0 +1,20 @@
+To optimize this FSM implementation, I'll focus on improving timing while maintaining good power and area characteristics:
+
+1. Timing Optimization:
+- Replace ternary operators with a case statement for better synthesis optimization
+- Use one-hot encoding (6 bits) to reduce decoder logic and improve timing
+- Keep output z as a simple bit select from state encoding
+
+2. Power Optimization:
+- Maintain one-hot encoding to minimize switching activity (only one bit changes per transition)
+- Keep output logic minimal (no additional comparators)
+
+3. Area Optimization:
+- One-hot encoding will slightly increase flip-flop count but reduce combinational logic
+- Simplified state transition logic through case statement
+
+Key improvements:
+- One-hot encoding reduces critical path by eliminating binary-to-one-hot conversion
+- Case statement enables better synthesis optimization of state transitions
+- Maintains direct output generation from state bits
+- Reduced logic levels in state transition path

@@ -1,0 +1,17 @@
+To optimize the given minimal 3-state Mealy FSM for better PPA without changing functionality:
+
+- Use one-hot encoding for states instead of binary encoding. With only 3 states, one-hot typically reduces combinational logic complexity for next-state and output logic, improving performance and possibly reducing power by less logic switching.
+
+- Use an enumerated type for states to enhance code readability and synthesis friendliness.
+
+- Combine the next-state and output (z) logic into a single always_comb block to minimize duplicated combinational paths.
+
+- Keep asynchronous negative-edge reset on state registers as is.
+
+- Use non-blocking assignments for sequential logic and blocking assignments for combinational logic.
+
+- Explicitly define default cases to avoid inferred latches and reduce glitches.
+
+This approach can potentially reduce critical path delay by simplifying next-state decoding, potentially reduce power by fewer logic transitions, and keep area small given the simplicity of one-hot with 3 states.
+
+Overall, the one-hot FSM design will likely provide better timing closure (improved WNS) with minimal area and power impact, improving on the original binary-encoded FSM.

@@ -1,0 +1,11 @@
+To improve the solution, we need to revisit the logic for both 'p' and 'q'. The 'p' signal seems straightforward, but the logic for 'q' is more complex. 
+
+For 'p', it simply follows 'a' during the positive clock phase, which is already correctly implemented. 
+
+For 'q', we notice that it goes high when 'p' is high during the positive clock phase and stays high until 'a' is high during the negative clock phase. This implies a dependency on both the positive and negative edges of the clock, but we can simplify this by considering the state of 'p' and 'a' at different clock phases.
+
+The key insight here is to recognize that 'q' is essentially a flip-flop that captures the value of 'p' when 'p' is high during the positive clock phase and holds it until 'a' is high during the negative clock phase. 
+
+Thus, instead of using a complex always block with multiple conditions, we can simplify the logic for 'q' by using a separate always block that updates 'q' based solely on the positive edge of the clock, setting 'q' high when 'p' is high, and another condition for the negative clock phase to reset 'q' when 'a' is high.
+
+By breaking down the logic into more straightforward always blocks, we can avoid potential race conditions and simplify the implementation for better PPA (Power, Performance, and Area) metrics.

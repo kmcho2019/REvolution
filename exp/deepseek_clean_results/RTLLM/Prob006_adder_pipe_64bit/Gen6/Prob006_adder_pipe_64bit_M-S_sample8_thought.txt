@@ -1,0 +1,22 @@
+To simplify the 64-bit pipelined adder while maintaining functionality:
+
+1. Reduce pipeline stages from 4 to 3 for simpler implementation:
+   - Stage 1: Input registration
+   - Stage 2: Lower 32-bit addition
+   - Stage 3: Upper 32-bit addition with carry
+
+2. Remove carry-lookahead logic to reduce complexity:
+   - Use simple ripple carry between stages
+   - Still meets timing requirements with 3 stages
+
+3. Simplify enable signal propagation:
+   - Single pipeline for enable signals
+   - Fewer intermediate registers
+
+4. Cleaner result assembly:
+   - Combine results in final stage
+   - Clear output on reset
+
+5. Maintain same interface and functionality:
+   - 65-bit result with proper carry out
+   - Synchronized o_en signal

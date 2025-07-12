@@ -1,0 +1,15 @@
+To simplify the pulse detection while maintaining functionality, I'll implement these optimizations:
+
+1. Instead of a 3-bit shift register, use a 2-bit state register to track just the necessary previous values (current and previous states)
+2. Implement a simple state machine that only needs to remember:
+   - Previous value (to detect 0->1 transition)
+   - Current value (to detect subsequent 1->0 transition)
+3. Output is generated combinationally when we detect the complete sequence
+4. Reset clears the state machine
+5. This reduces register usage from 3 bits to 2 bits while maintaining the same detection capability
+
+The state machine approach is more efficient because:
+- It only stores necessary information (previous and current states)
+- Still detects the complete 0->1->0 sequence
+- Uses less hardware resources
+- Maintains the same timing behavior where output is high only on the final 0

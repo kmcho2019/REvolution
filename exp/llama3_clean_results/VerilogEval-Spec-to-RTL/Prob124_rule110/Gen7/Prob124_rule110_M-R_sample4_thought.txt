@@ -1,0 +1,9 @@
+To refactor the existing code, we can leverage the fact that the next state of each cell in the Rule 110 cellular automaton can be directly calculated based on its current state and the states of its neighbors. Instead of using `always @(*)` block for combinational logic and a separate `always @(posedge clk)` block for sequential logic, we can merge these two into a single `always @(posedge clk)` block. This approach simplifies the code structure and eliminates the need for the `next_state` register.
+
+Additionally, to improve readability and maintainability, we can introduce a separate function that calculates the next state of a cell based on its current state and the states of its neighbors. This function encapsulates the logic for Rule 110 and makes the code more modular and easier to understand.
+
+The strategy is to:
+1. Merge the combinational and sequential logic into a single `always @(posedge clk)` block.
+2. Introduce a function to calculate the next state of a cell.
+3. Simplify the boundary condition handling using conditional statements within the function.
+4. Maintain the correct functionality of the Rule 110 cellular automaton.

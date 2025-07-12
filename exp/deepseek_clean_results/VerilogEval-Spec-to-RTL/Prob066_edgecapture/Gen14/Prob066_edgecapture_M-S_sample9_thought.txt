@@ -1,0 +1,11 @@
+Here's a simplified approach that maintains the correct functionality while reducing complexity:
+
+1. **Single Register Storage**: Instead of using two pipeline stages, we'll only store the previous input value (prev_in) to detect transitions between consecutive cycles.
+
+2. **Direct Edge Detection**: We'll detect falling edges by comparing the current input with the previous cycle's input (in vs prev_in), which directly captures 1→0 transitions between consecutive cycles.
+
+3. **Sticky Capture**: The output register will use a simple OR operation to maintain the captured state until reset, exactly as required.
+
+4. **Simplified Reset Logic**: Reset will clear both the previous input register and the output capture register.
+
+This approach eliminates the unnecessary pipeline stage while maintaining all required functionality, making the design simpler and more efficient.

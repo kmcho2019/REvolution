@@ -1,0 +1,14 @@
+Instead of directly assigning the next-state outputs from a combinational expression, implement a one-hot decoder for the current state to a set of intermediate signals representing states A through F. Then, explicitly define the next-state signals Y1 (y[0]) and Y3 (y[2]) as outputs corresponding to states A and C, respectively, combined with the input w as needed.  
+This approach uses intermediate wires for clarity and better readability and explicitly computes next states for y[1] and y[3] using the state machine transitions.  
+Note: The problem statement wants outputs Y1 and Y3, so these outputs should correspond to next-state signals for y[0] and y[2] (states A and C), or we can interpret Y1 and Y3 as next state signals for y[1] and y[3] (states B and D) since indexing in the example uses y[1] and y[3]. The state machine and one-hot vector is:  
+y[0] = A, y[1] = B, y[2] = C, y[3] = D, y[4] = E, y[5] = F.  
+
+From the transitions:  
+- next y[1] (B) = from A (y[0]) when input w=0; and from none else.  
+- next y[3] (D) = from B(y[1]), C(y[2]), E(y[4]), F(y[5]) when w=1.  
+
+So outputs Y1 and Y3 should represent these next-state signals:  
+Y1 = next-state for y[1] (B) = y[0]&~w  
+Y3 = next-state for y[3] (D) = (y[1] | y[2] | y[4] | y[5]) & w  
+
+Use explicit intermediate wires for states and then assign Y1 and Y3 accordingly. This method shows clearly how the state decoding is done and the next states are generated.

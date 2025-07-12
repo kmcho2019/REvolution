@@ -1,0 +1,15 @@
+From the waveform, p only goes high on rising clock edges when both the input a and the previous q are 0, and then q becomes the previous p. This behavior suggests a simple two-bit shift register with p capturing the condition a & ~q and q following p delayed by one clock cycle.
+
+A simplified approach is:
+
+- On each rising clock edge:
+  - p <= a & ~q;
+  - q <= previous p;
+
+This way, p depends on a and q from the previous cycle, and q is just a one-cycle delayed version of p.
+
+This matches the observed behavior where p triggers when a=1 and q=0, and q follows p on the next clock.
+
+No resets or complicated logic needed; outputs start undefined and then settle after first clock edges as seen in the waveform.
+
+This simplification captures the sequential relationship and the propagation of states reflected in the waveform.

@@ -1,0 +1,10 @@
+To simplify the Rule 110 implementation while maintaining correctness:
+1. Use a single always block for both load and state update
+2. Implement Rule 110 as a concise case statement for each cell
+3. Handle boundary conditions by treating non-existent neighbors as 0
+4. Use bitwise operations to simplify the logic expressions
+5. The next state for each cell can be expressed as:
+   - For left boundary: next = (center & right) | (~left & right) | (~left & center)
+   - For middle cells: next = (center & right) | (~left & right) | (~left & center)
+   - For right boundary: next = (center & ~left) | (right & ~left) | (center & right)
+   (Note: left=0 for left boundary, right=0 for right boundary)

@@ -1,0 +1,7 @@
+To fix the mismatch issue, the output `z` should be registered synchronously with the clock, just like the state transitions, to avoid asynchronous glitches and ensure timing consistency. The problem states sequential logic is triggered on the positive edge of `clk`, implying `z` should be a registered output. 
+
+Hence, instead of combinationally driving `z` based on the current input `w` and state, we should compute `z` on the positive clock edge along with the state update, using the current state and input `w`. This aligns with expected synchronous behavior, ensures stable output timing, and should match simulation expectations.
+
+We'll keep the next state combinational logic as is, update the state register and output `z` synchronously on the clock edge, and reset `z` to 0 on reset.
+
+Note: The output is 1 only when in states E or F *and* input `w` is 1 at the clock edge.

@@ -1,0 +1,13 @@
+Fuse the best ideas by keeping the simple 3-bit consecutive ones counter from Example 1 with saturation at 7 to avoid complex states, and the clear output conditions and signaling style from Example 2 that assert outputs for one cycle synchronously after detection.
+
+The fused design uses a Moore FSM that counts consecutive ones (0-7), resets on zero input, and asserts:
+
+- disc when previous state was 5 and current input is zero,
+- flag when previous state was 6 and current input is zero,
+- err when next state saturates at 7 (7 or more consecutive ones).
+
+Outputs are registered synchronously to guarantee stable one-cycle pulses on the cycle after detection.
+
+To improve power and performance, the next state logic saturates cleanly at 7, avoiding complex conditions; outputs are generated from the previous cycle state and current input for simpler combinational logic, minimizing critical path delays.
+
+This fusion maintains functional correctness and simplicity, improves code clarity, and aims at better PPA by combining the arithmetic simplicity of Example 1 with the output signaling clarity of Example 2.

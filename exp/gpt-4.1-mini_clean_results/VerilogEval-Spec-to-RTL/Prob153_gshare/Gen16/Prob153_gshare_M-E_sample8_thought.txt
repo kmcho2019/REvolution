@@ -1,0 +1,15 @@
+Implement the gshare predictor with two distinct global history registers: one "committed" GHR reflecting the architecturally correct branch outcomes after training recovery, and one "speculative" GHR used for prediction updates during fetch.
+
+On reset, both GHRs are cleared. On a prediction request (predict_valid), use the speculative GHR to index the PHT and produce the prediction. Then, update the speculative GHR by shifting in the predicted outcome immediately (within the clocked process), allowing prediction interface to reflect history after the predicted branch.
+
+On a training request (train_valid), update the PHT entry indexed by train_pc XOR train_history with the saturating counter updated towards train_taken.
+
+If training indicates a misprediction (train_mispredicted), commit the speculative GHR by restoring the committed GHR to train_history (the correct history after the mispredicted branch). Also, reset the speculative GHR to this committed GHR, effectively rolling back speculation.
+
+If training is valid but no misprediction, update the committed GHR by shifting in the actual train_taken.
+
+Priority is enforced by having separate speculative and committed GHRs, avoiding conflicts between training recovery and prediction speculation in a single register.
+
+Outputs predict_taken and predict_history are generated combinationally based on the speculative GHR at the current cycle (reflecting the predicted direction and speculative history).
+
+This dual-GHR architecture cleanly separates speculative prediction updates and recovery updates, preventing update conflicts when training and prediction happen in the same cycle, and matching the required timing and semantics for outputs and internal state updates.

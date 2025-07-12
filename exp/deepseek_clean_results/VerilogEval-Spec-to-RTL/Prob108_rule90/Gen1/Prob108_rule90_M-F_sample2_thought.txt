@@ -1,0 +1,11 @@
+To address the synthesis issues while maintaining functionality:
+1. Replace the for-loop with a generate block for better synthesis optimization
+2. Keep the same Rule 90 logic but implement it in a more synthesis-friendly way
+3. Maintain the boundary conditions (q[-1] and q[512] as 0)
+4. Use non-blocking assignments for all register updates
+5. The generate block will create parallel XOR logic rather than a procedural loop
+6. This approach should:
+   - Reduce critical path by avoiding chained operations
+   - Be more synthesis-friendly
+   - Maintain the same functionality
+   - Potentially improve timing closure

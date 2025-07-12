@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Timing Optimization: Pipeline the output assignments to break the critical path by registering the done signal one cycle later
+2. Power Optimization: Only update out_bytes when actually storing a new byte to reduce unnecessary switching activity
+3. Area Optimization: Maintain binary state encoding but optimize register usage by only updating relevant portions of out_bytes
+4. Reset Handling: Keep synchronous reset for consistency with requirements
+5. Output Stability: Ensure out_bytes remains stable when done is asserted
+
+Key Changes:
+- Separate done signal generation from state transitions
+- Only update out_bytes in relevant states
+- Maintain binary state encoding for area efficiency
+- Keep output don't-care when not done
+- Optimize state transitions for better timing

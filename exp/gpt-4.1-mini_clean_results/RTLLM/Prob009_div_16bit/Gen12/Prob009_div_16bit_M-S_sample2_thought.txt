@@ -1,0 +1,13 @@
+Since the problem requires two always blocks and combinational logic, but the first always block only latches inputs combinationally (effectively direct assignment), it can be simplified by directly using inputs in the division block and removing the unnecessary registers a_reg and b_reg.
+
+We can keep two always blocks: the first one directly assigns the inputs to internal wires or regs (though they act as combinational pass-through), the second one performs the division combinationally.
+
+This reduces internal registers and complexity without changing functionality or timing significantly.
+
+We use blocking assignments consistently for combinational logic, keep the division logic straightforward, and initialize outputs to zero at the start to avoid inferred latches.
+
+The quotient is computed bit-by-bit from MSB to LSB by comparing partial remainders with divisor, updating remainder accordingly.
+
+Finally, the remainder output packs only the lower 8 bits of the final remainder (as divisor is 8-bit).
+
+This design is simpler, maintains full functionality, and uses minimal registers consistent with the requirement for two always blocks.

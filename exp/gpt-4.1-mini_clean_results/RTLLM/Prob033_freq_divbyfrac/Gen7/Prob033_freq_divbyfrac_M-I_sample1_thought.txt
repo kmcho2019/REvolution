@@ -1,0 +1,14 @@
+To achieve a reliable fractional divide-by-3.5 clock with balanced duty cycle and minimal glitches, the design must address timing alignment and synchronization issues.
+
+Improvement strategy:
+1. Generate clk_intA and clk_intB as combinational signals directly from a synchronous counter incremented at posedge clk. This ensures signals change synchronously with clk.
+2. Produce clk_intB_phase_shift by registering clk_intB on the negedge clk. This provides a clean half-clock delayed version without glitches.
+3. Since clk_intA and clk_intB_phase_shift are stable and derived from a single counter, their OR forms a smooth fractional clock with half-integer division.
+4. Ensure the counter resets asynchronously and cleanly.
+5. This method avoids complicated multi-flop synchronization or clock domain crossing issues by utilizing both edges of the same clock for phase shifting.
+6. Because the combinational signals are derived from the counter value, no additional delay or pulse width mismatch occurs.
+7. This approach produces a 50% duty cycle output at the fractional divide-by-3.5 rate.
+
+This is a clean, minimal, and robust approach suitable for FPGA or ASIC implementations that require fractional clock division using double-edge clocking and phase shifting.
+
+The code below is a refined version of the example solution implementing these ideas.

@@ -1,0 +1,12 @@
+To improve the given FSM design for better performance and power, I will change the state encoding from binary to one-hot. One-hot encoding reduces the complexity of next-state logic because each state corresponds to a single flip-flop being set, simplifying decoding and potentially improving timing. This can reduce the critical path length.
+
+Also, I will register the grant outputs to eliminate glitches and reduce switching power by generating grants synchronously from the state register rather than purely combinationally. The synchronous reset remains active low and synchronous.
+
+Separating next-state logic and output logic clearly helps optimization by synthesis tools. The number of always blocks stays minimal but with clear roles:
+- One always block for synchronous state register with reset
+- One combinational block for next state logic
+- One combinational block for outputs based on state
+
+The priority-based state transitions remain the same. The one-hot encoding uses 4 bits, each representing one state (A, B, C, D). The overall FSM functionality is unchanged but the encoding should improve timing and reduce glitches.
+
+This approach trades a slightly larger flip-flop count for better timing and power characteristics, which is often beneficial in FPGA and ASIC flows.

@@ -1,0 +1,14 @@
+To improve the PPA (Power, Performance, Area) of the ALU, the main bottleneck is that all operations are computed in parallel and results are multiplexed afterward, causing unnecessary switching and area overhead for unused logic each cycle.
+
+Improvement strategy:
+1. Use a case statement in a combinational always block rather than computing all results in parallel to avoid instantiating all arithmetic units simultaneously, significantly reducing switching power and area.
+2. Share the adder/subtractor logic since ADD/SUB and ADDU/SUBU differ only in overflow detection; reuse the same adder and subtractor hardware but compute flags differently.
+3. Compute carry and overflow only for arithmetic operations, zero and negative flags from the result. For other operations, these flags are cleared.
+4. Calculate the flag output only for SLT/SLTU instructions, otherwise drive zero.
+5. Shift amounts are taken from b (the typical shift instruction uses shamt from instruction, but per problem, "a" is operand containing shift amount), so preserve original shift amount extraction from a[4:0].
+6. Implement the logic in a combinational always @(*) block for clarity and synthesis friendliness.
+7. Default output to zero for undefined opcodes.
+   
+This approach reduces parallel hardware instantiation, lowers switching, and reduces combinational path length by only evaluating the needed operation each cycle, improving power and area. Performance may improve by reducing mux complexity.
+
+The functionality remains the same, preserving all flags and operations.

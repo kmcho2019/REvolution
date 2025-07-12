@@ -1,0 +1,16 @@
+Improvement Strategy:
+1. Pipeline the multiplier into 2 stages to improve timing (wns/tns)
+   - Stage 1: Partial product generation
+   - Stage 2: Final addition and accumulation
+2. Add operand isolation to reduce power consumption
+   - Only compute when inputs are valid
+3. Implement clock gating for the accumulator register
+4. Keep 32-bit truncation but add overflow detection
+5. Use Booth encoding for more efficient multiplication
+6. Maintain signed operation correctness
+
+Key PPA Optimizations:
+1. Expected timing improvement from 1.57ns to ~1.0ns by pipelining
+2. Power reduction through operand isolation and clock gating
+3. Area increase from pipelining (~15%) offset by Booth encoding savings (~20%)
+4. Clear overflow handling for robustness

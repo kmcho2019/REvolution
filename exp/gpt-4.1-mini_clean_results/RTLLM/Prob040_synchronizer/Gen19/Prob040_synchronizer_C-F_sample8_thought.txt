@@ -1,0 +1,11 @@
+Fuse the two examples to create an optimized multi-bit MUX-based synchronizer with robust and power-aware clock domain crossing. 
+
+From Example 1, adopt conditional update of data_reg only when data_en is high in clk_a domain to reduce toggling and save power. Also keep the two-stage enable synchronizer in clk_b domain, which provides reliable metastability protection.
+
+From Example 2, combine the two clk_b domain always blocks into a single always block to reduce clock-to-Q latency and improve timing.
+
+Maintain asynchronous reset in clk_a domain and synchronous reset in clk_b domain as recommended, aligning with typical best practices for domain crossing.
+
+Add an intermediate data_sync register in clk_b domain to stage stable data before output, holding previous values when enable is low to prevent glitches and unnecessary toggling.
+
+This fusion enhances timing closure, reduces power via conditional data register update, and simplifies control logic with a single always block in clk_b domain while preserving robust multi-bit synchronization. It balances power, performance, and area effectively.

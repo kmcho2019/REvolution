@@ -1,0 +1,10 @@
+To improve synthesis compatibility and code clarity, especially avoiding mixed reg assignments and typedef enums, I will:
+
+1. Replace the `typedef enum` with localparam-based state encoding.
+2. Separate combinational next-state and output logic into one always_comb block.
+3. Use a separate wire signal `match_comb` for the Mealy output, then register it on the clock edge, avoiding combinational and sequential assignments to the same reg.
+4. Keep the FSM fully synchronous with registered states and outputs for glitch-free and stable outputs.
+5. The MATCH output registers the combinational match signal at the clock edge, ensuring stable output and better synthesis compatibility.
+6. The code will still support overlapping sequence detection and produce MATCH=1 on the final matched input cycle.
+
+This approach balances good synthesis compatibility, timing, and clear Mealy FSM structure.

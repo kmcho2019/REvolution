@@ -1,0 +1,26 @@
+Refactored Lemming State Machine Design:
+
+1. State Encoding:
+   - Use one-hot encoding for states for clearer state transitions
+   - Separate direction (left/right) from activity (walk/dig/fall/splat)
+
+2. Priority Handling:
+   - Implement explicit priority logic using nested conditionals
+   - Falling (ground=0) has highest priority
+   - Digging (dig=1 & ground=1) has middle priority
+   - Bumping has lowest priority (only in walking states)
+
+3. Fall Counter:
+   - Separate counter logic that only increments during falling
+   - Clear counter when not falling
+   - Check splat condition only when landing (ground returns)
+
+4. Output Logic:
+   - Direct combinatorial assignments based on current state
+   - Clear separation between state transitions and output generation
+
+Key Improvements:
+- More explicit priority handling with nested conditionals
+- Cleaner state transitions with one-hot encoding
+- Better separation of concerns between state logic and outputs
+- More maintainable structure with clear state definitions

@@ -1,0 +1,7 @@
+To improve PPA (Performance, Power, Area) based on the given metrics, a minor optimization is to use a 4-bit binary-coded decimal (BCD) style counting with a combinational next_state calculation to minimize sequential logic complexity and enable better optimization by synthesis tools. Using a ternary operator or concise conditional assignment inside the always block can slightly reduce gate count and delay by giving synthesis tools clearer intent. Additionally, replacing the explicit compare with a wrap-around condition on the count value can enable simpler carry logic, which might reduce area and increase max frequency. Power remains roughly the same, but logic simplification can reduce toggling. Since the design is small, improvements are marginal but worthwhile.
+
+In summary:
+- Compute next count in a combinational style with minimal logic.
+- Use ternary operator for cleaner logic synthesis.
+- Keep synchronous reset.
+- Maintain positive edge triggered sequential logic.

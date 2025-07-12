@@ -1,0 +1,9 @@
+To implement the FSM without an explicit reset port while ensuring flip-flops start at zero, I will rely on Verilog's initial blocks for simulation initialization (not synthesizable but acceptable here given the problem statement). Instead of separate flip-flops, I will encapsulate the logic in a single always block updating three internal state bits representing each flip-flop output. Each next state bit is computed from the current state and input x, following the logic gates and their input conditions as described:
+
+- q_xor_next = x XOR q_xor
+- q_and_next = x AND (NOT q_and)
+- q_or_next  = x OR (NOT q_or)
+
+The output z is the NOR of these three state bits.
+
+This approach avoids any added reset port, matches the problem requirements, and directly models the state update per clock cycle with known initial zero states for simulation clarity.

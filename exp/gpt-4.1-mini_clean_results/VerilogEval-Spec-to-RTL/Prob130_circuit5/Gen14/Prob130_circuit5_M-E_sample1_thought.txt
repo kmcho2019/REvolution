@@ -1,0 +1,11 @@
+A different approach is to treat the problem as a piecewise function over the input c. Since c is 4-bit, and outputs are given explicitly for c=0 to c=3, outputting specific inputs (b, e, a, d) respectively, and outputting 0xF for c >= 4.
+
+Instead of using vector concatenation and shift operations, I will implement a simple combinational logic that uses a case statement on the full c input.
+
+Because c=0..3 correspond to a direct mapping to one of the inputs, and for c>=4 output is always 4'hF, I will directly use a case statement to cover all possibilities.
+
+This is straightforward, explicitly maps c to output q, and synthesis tools optimize case statements into efficient multiplexers.
+
+This approach is more readable and simpler in hardware structure and removes any shift or complex indexing. It is also easily expandable and clear in intent.
+
+This module is purely combinational with output depending solely on the inputs.

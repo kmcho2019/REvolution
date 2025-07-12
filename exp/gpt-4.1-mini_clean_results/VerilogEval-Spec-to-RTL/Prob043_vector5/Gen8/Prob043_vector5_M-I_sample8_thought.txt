@@ -1,0 +1,7 @@
+The original solution explicitly instantiates 25 XNOR gates to compare all pairs, which is logically correct but verbose. To optimize for better PPA, I will leverage generate loops and arrays to reduce code size and help synthesis tools identify shared structures or possible optimizations.
+
+By representing inputs as a 5-bit vector and using two nested generate loops iterating from 4 down to 0 (matching the original output bit order), I can assign each bit of the output vector succinctly with a single expression: out[idx] = ~(in_vec[i] ^ in_vec[j]). This structured approach can also enable better synthesis optimization opportunities by allowing the tool to recognize common sub-expressions and sharing.
+
+This change doesn't alter the logic but significantly reduces code length and complexity. It also ensures consistency and easier maintenance, especially if the input size were to change later.
+
+Hence, the improvement strategy is to replace manual bit assignments with a clean generate-for loop construct producing the same output pattern, improving readability, maintainability, and potentially synthesis optimization.

@@ -1,0 +1,17 @@
+Implement a simple FSM with these states:
+
+- A: reset asserted, outputs f=0, g=0.
+- B: one cycle after reset release, output f=1.
+- C0, C1, C2: sequentially track x pattern 1,0,1 respectively.
+- D: g=1 pulse one cycle after detecting pattern.
+- E0, E1: two cycles monitoring y while g=1.
+- F: hold g=1 permanently after detecting y=1 in time.
+- G: hold g=0 permanently if y=1 not detected in time.
+
+Use clear states to track pattern detection step-by-step rather than shifting bits. This removes the shift register and simplifies transitions.
+
+Synchronously reset with active low resetn.
+
+Outputs f and g are Moore outputs, depend only on current state.
+
+This approach reduces complexity and state bits while preserving the required behavior and timing.

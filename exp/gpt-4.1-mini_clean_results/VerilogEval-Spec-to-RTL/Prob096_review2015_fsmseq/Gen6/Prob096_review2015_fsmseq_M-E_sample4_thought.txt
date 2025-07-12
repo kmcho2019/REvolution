@@ -1,0 +1,5 @@
+Implement a Mealy FSM with five states representing the progressive matching of the sequence "1101": S0 (no match), S1 ('1'), S11 ('11'), S110 ('110'), and a detected state. On each clock cycle, the FSM transitions based on the input data bit. When the sequence "1101" is detected, start_shifting is asserted immediately (Mealy output) and latched until reset. Use synchronous active-high reset. 
+
+To handle overlapping sequences, transitions after detecting "1101" continue matching new inputs. This approach provides immediate assertion of start_shifting upon detection, minimizing latency and ensuring correct sequence recognition.
+
+The FSM state encoding uses 3 bits to clearly separate states, and start_shifting is set asynchronously (as a Mealy output) in combinational logic but latched synchronously. This provides a distinct architectural style from the previous Moore design.

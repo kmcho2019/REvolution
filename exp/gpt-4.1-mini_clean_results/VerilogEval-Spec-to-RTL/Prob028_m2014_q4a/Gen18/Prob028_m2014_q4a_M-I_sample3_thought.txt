@@ -1,0 +1,5 @@
+To synthesize a proper D latch, the always block must be sensitive to the signals that control transparency (d and ena). The latch behavior can be described by assigning q = d only when ena is high, and leaving q unassigned otherwise. This incomplete assignment when ena is low allows synthesis tools to infer a latch, because the output holds its previous state by design.
+
+Therefore, we write an always block sensitive to changes in d or ena, and assign q = d only if ena is asserted. We omit any else assignment, which lets the latch memory behavior be inferred properly. This is the standard coding style for a level-sensitive D latch, ensuring synthesizability on tools like Yosys.
+
+This approach also improves PPA since latch inference is clear and direct. It avoids unnecessary feedback assignments that cause synthesis issues.

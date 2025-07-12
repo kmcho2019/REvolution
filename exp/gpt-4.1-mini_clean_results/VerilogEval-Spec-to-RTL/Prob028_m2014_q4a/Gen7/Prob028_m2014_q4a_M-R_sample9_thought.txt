@@ -1,0 +1,13 @@
+To ensure correct latch inference and better synthesis compatibility, I will implement the D latch using a continuous assignment combined with a tri-state driver style. Specifically, when `ena` is high, output `q` transparently follows input `d`; when `ena` is low, `q` holds its previous value using a register updated in an always block triggered only on `ena` falling edge or other appropriate event. 
+
+However, since the problem states to use an always block, I will use an always block sensitive to `ena` and `d`, but use blocking assignment (`=`) to model a level-sensitive latch. This style is the most standard and synthesis-friendly approach for D latch inference.
+
+Therefore, I will:
+- Define `q` as reg.
+- Use an always block sensitive to `ena` and `d`.
+- Inside the always block, use blocking assignment `=` to assign `q`.
+- When `ena` is high, `q = d` (transparent).
+- When `ena` is low, keep `q` unchanged (implied by no assignment, effectively latching).
+This approach infers a latch directly and is supported by Yosys and other tools.
+
+This differs from the initial solution by removing nonblocking assignments and default assignments, making the latch behavior explicit and synthesis-friendly.

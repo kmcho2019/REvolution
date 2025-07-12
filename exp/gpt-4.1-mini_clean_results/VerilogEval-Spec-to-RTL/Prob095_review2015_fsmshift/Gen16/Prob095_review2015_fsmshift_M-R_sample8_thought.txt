@@ -1,0 +1,9 @@
+Refactor the FSM by separating the counter and state logic more cleanly and removing the typedef enum for clarity and better compatibility. Use parameterized states as localparams. Implement shift_ena directly based on the counter being nonzero, instead of setting it inside the FSM state machine. This makes the output combinational from the counter value, simplifying timing.
+
+Use a clear synchronous process for state and counter updates: on reset, load counter=4 and state=SHIFT; else in SHIFT state, decrement counter until zero, then go IDLE. In IDLE, wait for pattern detection (which is not specified, so we omit it or treat as always no) to trigger a new SHIFT cycle.
+
+Since pattern detection input is not defined, remove it and implement behavior strictly as per problem: on synchronous reset, enable shift_ena for 4 cycles, then disable forever until next reset.
+
+This implementation ensures shift_ena is asserted for exactly 4 cycles after reset, then 0 thereafter, with clear FSM states, counters, and output logic separated.
+
+This structure uses a synchronous reset and positive-edge clock triggering as required and produces exactly 4 cycles of shift_ena asserted after reset.

@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Split BCD counters into separate tens/units registers to reduce critical path
+   - Pre-compute PM state in combinational logic to simplify hour counter
+   - Register rollover flags to break timing paths
+
+2. Power Optimization:
+   - Only update BCD conversion when hour changes
+   - Register rollover flags to reduce switching activity
+   - Move BCD conversion into counter always blocks
+
+3. Area Optimization:
+   - Use separate 4-bit registers for BCD digits
+   - Simplify hour counter with direct BCD encoding
+   - Share rollover detection logic between seconds/minutes
+
+Key Changes:
+- Split BCD counters into tens/units digits
+- Direct BCD implementation for hours
+- Registered rollover flags
+- Optimized PM toggle logic
+- Combined BCD conversion with counting

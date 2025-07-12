@@ -1,0 +1,9 @@
+Refactor the FSM by separating the state register update and combinational next-state logic clearly, removing unnecessary counters where possible, and using a simple shift register for pattern detection. Replace the x_count with a small valid flag to ensure at least three samples have been collected before pattern checking, avoiding counting logic.
+
+Implement y monitoring with a 2-bit counter that counts clock cycles since entering MONITOR_Y, starting from zero, and explicitly checking the condition after two cycles (i.e., at count == 2), matching timing exactly.
+
+Use a single always block for state updates on the clock and reset, and a combinational block for next_state and outputs.
+
+Drive outputs f and g as Moore outputs from the current state for clarity.
+
+This refactoring should simplify timing, clarify transitions, and fix off-by-one counting errors causing output mismatches.

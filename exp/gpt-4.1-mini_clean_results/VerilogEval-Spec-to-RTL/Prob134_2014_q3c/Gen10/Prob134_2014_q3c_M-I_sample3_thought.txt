@@ -1,0 +1,7 @@
+To optimize the FSM logic for better power and area while maintaining correctness, I will merge the two separate case statements (next state and output z) into a single case statement for the present state. This reduces redundant decoding of the present state signal and can improve logic sharing during synthesis. Also, since the clock input is unused, I will declare it but not use it, as per spec.
+
+I will represent output z and next_state together in one block, assigning z explicitly with the state transitions, ensuring no latches. This avoids separate logic for z and next_state, reducing area and potential glitching.
+
+Finally, I will use blocking assignments in a combinational always block, keeping logic simple and clear for synthesis.
+
+This approach reduces total combinational logic and switching, potentially lowering power and area while keeping zero delay (zero clock usage).

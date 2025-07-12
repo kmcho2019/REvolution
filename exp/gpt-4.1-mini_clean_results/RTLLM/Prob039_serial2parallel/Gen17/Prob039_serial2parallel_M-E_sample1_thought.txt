@@ -1,0 +1,11 @@
+Implement a serial-to-parallel converter using a 4-bit counter (cnt) to count from 0 to 7 the number of valid serial bits received. Instead of shifting the register each clock cycle, use a parallel load approach: on each din_valid pulse, store din_serial into the corresponding bit position of an 8-bit register.
+
+Since the first received bit should be MSB of dout_parallel, map cnt=0 → bit 7, cnt=1 → bit 6, ..., cnt=7 → bit 0. So the register bit to update is (7 - cnt).
+
+When cnt reaches 7 and a new valid bit is received, the 8-bit register is fully loaded, assert dout_valid for one clock cycle, and output the data.
+
+On reset, clear the register and counter.
+
+This approach eliminates shifting logic, reduces switching activity, and makes the bit placement explicit, which improves clarity and potentially synthesis results. It also guarantees the order of bits as required by directly writing to the target bit location instead of shifting.
+
+dout_valid is asserted for one cycle only after the 8th bit is received. Otherwise it remains low.

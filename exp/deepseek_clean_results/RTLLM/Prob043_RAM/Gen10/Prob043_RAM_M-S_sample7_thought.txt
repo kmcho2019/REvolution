@@ -1,0 +1,12 @@
+Simplified design approach:
+1. Use single always block for both synchronous operations (reset and write)
+2. Make read operation purely combinational for immediate data availability
+3. Remove unnecessary zero-clearing of read_data when read_en is low - just output the memory content
+4. Simplified initialization using default value in declaration
+5. Benefits:
+   - Reduced logic complexity
+   - Fewer always blocks (1 for writes, combinational for reads)
+   - More natural read behavior (outputs memory content regardless of read_en)
+   - Lower power by avoiding unnecessary clears
+   - Maintains all required functionality
+   - Easier to understand and maintain

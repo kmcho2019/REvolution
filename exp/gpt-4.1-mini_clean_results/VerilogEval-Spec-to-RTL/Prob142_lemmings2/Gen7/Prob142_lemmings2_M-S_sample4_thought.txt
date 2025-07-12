@@ -1,0 +1,9 @@
+Simplify the FSM by combining walking/falling state and direction into one 2-bit state register: 0 = walk left, 1 = walk right, 2 = fall left, 3 = fall right.
+
+On reset, start at walk left (0). When ground disappears, transition to fall while preserving direction (add 2 to state). When ground returns, revert to walking state (subtract 2 from state).
+
+When walking, bumps update direction: bump_left sets walk right, bump_right sets walk left, both bumps flip direction.
+
+Outputs derive directly from state bits: walk_left if walking left state, walk_right if walking right state, aaah if falling state.
+
+This reduces logic and registers, no separate direction or falling signals needed.

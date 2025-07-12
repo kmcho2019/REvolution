@@ -1,0 +1,37 @@
+Given the original simplified expression: out = a | (c & ~a & ~b) | (~c & ~d & ~a & b);
+
+Note that 'a' alone sets out=1 regardless of other inputs. So when a=1, out=1.
+
+When a=0, out = (c & ~b) | (~c & ~d & b)
+
+Because a=0, ~a=1, so the expression reduces to:
+
+out = a | ((c & ~b) | (~c & ~d & b)) for a=0.
+
+No further obvious simplifications are possible for that part since c and d appear in a non-overlapping way.
+
+However, d is a don't-care input, so we can choose its output values to simplify logic further.
+
+Check the Karnaugh map again focusing on the minterms with d.
+
+If we assign d to 0 in all don't care positions, then the term (~c & ~d & ~a & b) reduces to (~c & ~a & b) since ~d=1.
+
+Thus, simplify the expression to:
+
+out = a | (c & ~a & ~b) | (~c & ~a & b);
+
+Factoring ~a common:
+
+out = a | ~a & ((c & ~b) | (~c & b));
+
+Note that (c & ~b) | (~c & b) = c ^ b (XOR).
+
+Therefore:
+
+out = a | (~a & (c ^ b));
+
+This expression is logically equivalent but simpler, using XOR and fewer terms.
+
+We implement this in Verilog using bitwise operators.
+
+This reduces gate count and improves readability without changing functionality.

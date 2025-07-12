@@ -1,0 +1,5 @@
+Implement the counter as a binary up-counter with a synchronous active-high reset, but instead of checking for equality to 999, use a comparator that detects when the count reaches 1000 by comparing the 10-bit counter to 10'd1000 and resetting at that point. This approach makes the reset condition an overflow detection rather than equality to 999. The counter increments every clock cycle and wraps to zero when it reaches 1000, ensuring the count ranges from 0 to 999 inclusive.
+
+This approach simplifies the condition to a simple greater-than-or-equal check against 1000, which may help synthesis tools optimize the logic differently than an equality comparator, potentially improving timing or area by using a magnitude comparator instead of equality.
+
+The synchronous reset remains active-high, resetting q to 0.

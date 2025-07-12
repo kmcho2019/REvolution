@@ -1,0 +1,14 @@
+The provided fixed-width 64-bit pipelined ripple carry adder is functionally correct and matches the problem specification. However, the simulation errors arise due to the mismatch between the module interface and the testbench: the testbench expects a parameterized module with parameters `DATA_WIDTH` and `STG_WIDTH`, but the current module is non-parameterized and fixed-width.
+
+To fix this mismatch and make the module compatible with the testbench, I will modify the `adder_pipe_64bit` module to be parameterized by `DATA_WIDTH` (default 64) and `STG_WIDTH` (default 16), enabling flexible operand widths and pipeline stage widths. This will also keep the module scalable and match the testbench expectations.
+
+The new design will:
+- Add parameters DATA_WIDTH=64 and STG_WIDTH=16.
+- Calculate the number of pipeline stages as NUM_STAGES = DATA_WIDTH / STG_WIDTH.
+- Create pipeline registers for inputs and intermediate sums and carries accordingly.
+- Implement ripple carry adders of width STG_WIDTH in each pipeline stage.
+- Use a shift register for the enable signal to track pipeline progress.
+- The output sum is DATA_WIDTH+1 bits wide (for the carry out).
+- This parameterized approach will fix the integration issue with the testbench while maintaining the pipeline architecture.
+
+This ensures the design is clean, scalable, and compatible with testbench expectations.

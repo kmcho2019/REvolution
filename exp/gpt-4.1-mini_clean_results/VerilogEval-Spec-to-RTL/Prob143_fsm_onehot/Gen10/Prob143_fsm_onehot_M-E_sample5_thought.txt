@@ -1,0 +1,12 @@
+This alternative solution employs a compact, parallel approach by decoding the current states to an encoded state index set and then using a combinational case-like structure implemented via ternary operators to compute next states and outputs. 
+
+The main idea is to treat each active one-hot state separately and accumulate next state bits via OR reductions of partial next-state vectors. The next state transitions are computed in parallel for all states active in the input state vector, and outputs are derived from the union of their output contributions. This approach:
+
+- Uses local wires to hold each state's next state vector individually.
+- Aggregates all such vectors with bitwise OR to produce the final next_state vector, naturally supporting multiple simultaneous active states.
+- Outputs are assigned similarly by ORing contributions of the currently active states that produce non-zero outputs.
+- Does not rely on loops or generate statements, which can be cumbersome in some synthesis tools.
+- Is fully combinational and easy to verify against the state transition table.
+- Makes explicit the per-state next state logic, improving readability and modularity.
+
+This approach offers a fresh architectural style while maintaining clarity and synthesis friendliness.

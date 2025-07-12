@@ -1,0 +1,8 @@
+To optimize for power and area, eliminate the generate loops and use direct vectorized bitwise operations instead. This removes the overhead of generate blocks and allows synthesis tools to better optimize hardware sharing.
+
+Specifically:
+- For out_both[0:2], compute with a vector AND between in[0:2] and in[1:3], then concatenate a zero for bit 3.
+- For out_any[1:3], compute with a vector OR between in[1:3] and in[0:2], then concatenate zero for bit 0.
+- For out_different, compute all four bits simultaneously using XOR with a rotated version of in for wrap-around.
+
+This vectorized approach reduces the number of assign statements, simplifies logic, and may reduce switching activity and gate count, yielding marginal PPA improvements without changing functionality.

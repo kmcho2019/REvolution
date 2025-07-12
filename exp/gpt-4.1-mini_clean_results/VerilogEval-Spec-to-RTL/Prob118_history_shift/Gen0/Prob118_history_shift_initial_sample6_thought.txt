@@ -1,0 +1,7 @@
+Implement a 32-bit shift register (global history register) that updates on the positive clock edge.
+- On asynchronous positive edge of areset, reset the history to zero.
+- On a clock edge:
+  - If train_mispredicted is asserted, load the register with {train_history[30:0], train_taken}.
+  - Else if predict_valid is asserted, shift the current history left by 1 and input predict_taken at LSB.
+  - Otherwise, hold the current value.
+Output predict_history is the current register value.

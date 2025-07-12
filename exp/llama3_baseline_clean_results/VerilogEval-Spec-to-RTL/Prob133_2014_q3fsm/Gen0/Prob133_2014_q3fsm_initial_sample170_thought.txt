@@ -1,0 +1,10 @@
+To implement the desired finite state machine (FSM) with the given inputs and output, we need to identify the minimum number of states required. Given the conditions:
+1. The FSM starts in state A and remains there as long as s = 0.
+2. It transitions to state B when s = 1.
+3. In state B, it checks w for three consecutive clock cycles and sets z = 1 if w = 1 in exactly two of these cycles.
+
+The key is recognizing that we don't need separate states for each of the three clock cycles in state B because we can use counters and logic to manage the counting of w = 1 within those cycles without needing additional states for each cycle.
+
+Thus, conceptually, we can achieve this with two main states (A and B) plus some additional logic for counting and decision-making within state B. We will use a counter to track the number of clock cycles since entering state B and a separate counter to count how many times w = 1 during those cycles.
+
+When in state B, the FSM will examine w over three clock cycles, count the occurrences of w = 1, and then based on this count, set z accordingly in the following cycle. This approach minimizes the number of states while still fulfilling all requirements.

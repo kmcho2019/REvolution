@@ -1,0 +1,14 @@
+To simplify the Lemming's state machine, we can:
+1. Reduce the number of states from 4 to 3 by combining the falling states into one FALL state and tracking the previous walking direction separately.
+2. Use a separate register to store the walking direction during falls.
+3. Make the output logic simpler by directly using the state and direction register.
+4. Maintain the same functionality while reducing state transitions and logic complexity.
+
+The simplified states are:
+1. WALKING: Active when on ground (output depends on direction)
+2. FALLING: Active when not on ground (output aaah=1)
+
+The direction register:
+- Stores the walking direction (left or right)
+- Updated only when walking and bumped
+- Preserved during falls

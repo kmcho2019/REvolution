@@ -1,0 +1,9 @@
+Use a simpler next_state logic: if either bump_left or bump_right is asserted, toggle the current state; otherwise, hold the state. This covers all bump cases including simultaneous bumps by toggling direction whenever any bump occurs. This avoids complicated conditional expressions and makes the FSM logic minimal and clear.
+
+State encoding:
+- 0 = walk_left
+- 1 = walk_right
+
+On positive edge of asynchronous reset, go to walk_left.
+
+Outputs follow the state directly (Moore machine).

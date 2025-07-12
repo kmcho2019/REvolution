@@ -1,0 +1,7 @@
+Implement a 64-bit ripple carry adder pipelined in four stages of 16 bits each. Each stage adds its 16-bit portion with the carry from the previous stage. Pipeline registers hold the operands and the intermediate sums and carries. The input enable signal is pipelined along with the data to indicate valid output.
+
+At each clock cycle with i_en, input operands are latched into the first stage registers with carry_in=0. Each stage computes sum and carry_out, passing carry_out to the next stage’s carry_in in the next cycle. The output sum is assembled from all stage sums plus the last carry out, forming a 65-bit result. The output enable (o_en) is delayed through the pipeline registers matching the stages to indicate when the result is valid.
+
+The design uses fixed parameters for 64-bit width and 16-bit pipeline stages for simplicity, avoiding complex array-of-register concatenations by assembling the final result explicitly.
+
+Reset clears all pipeline registers and outputs.

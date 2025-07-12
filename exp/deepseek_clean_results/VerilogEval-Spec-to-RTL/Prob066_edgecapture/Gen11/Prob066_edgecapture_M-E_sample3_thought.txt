@@ -1,0 +1,7 @@
+Here's a novel approach using a two-stage pipeline for reliable edge detection:
+1. Use two registers (stage1 and stage2) to create a proper pipeline of input samples
+2. stage1 captures the input at clock cycle N, stage2 captures stage1 at cycle N+1
+3. Falling edge is detected when stage2 is 1 and stage1 is 0 (two cycles ago vs one cycle ago)
+4. This eliminates the race condition by ensuring proper timing between samples
+5. Output bits are set when falling edges are detected and remain set until reset
+6. Reset clears all registers synchronously

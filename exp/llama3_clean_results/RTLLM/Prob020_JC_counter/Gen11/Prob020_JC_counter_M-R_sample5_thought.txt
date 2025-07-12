@@ -1,0 +1,11 @@
+The provided code for the 64-bit Johnson counter is functionally correct and well-structured. However, to refactor this code and potentially improve its performance, power consumption, and area utilization, we can consider alternative implementations.
+
+One possible refactoring involves using a combination of combinational logic and sequential elements to update the counter value. Instead of using a single always block to handle both the reset condition and the normal operation, we can use separate blocks for reset and normal operation.
+
+We can utilize the `always` block for sequential logic (i.e., for updating the register `Q` based on the clock signal and the reset condition) and use combinational logic (i.e., `assign` statements or continuous assignments) to compute the next state of the counter.
+
+The key insight here is that the next state of the counter can be computed using a simple expression that depends on the current state of the counter (`Q`) and its least significant bit (`Q[0]`). Specifically, if `Q[0]` is 0, the next state is obtained by shifting the current state to the right and appending a 1 at the most significant bit position. If `Q[0]` is 1, the next state is obtained by shifting the current state to the right and appending a 0 at the most significant bit position.
+
+By separating the sequential logic from the combinational logic, we can potentially improve the readability and maintainability of the code, as well as its performance and power consumption.
+
+Moreover, we can use the `always_ff` block instead of `always` to specify that the block contains only non-blocking assignments to FFs or latches, which can help improve the timing performance of the design.

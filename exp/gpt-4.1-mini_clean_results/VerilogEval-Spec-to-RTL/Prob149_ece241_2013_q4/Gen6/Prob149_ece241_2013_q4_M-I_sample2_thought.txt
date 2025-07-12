@@ -1,0 +1,40 @@
+The primary issue is that the original `decode_level` function only recognizes four exact sensor patterns (all zeros, 001, 011, 111) and treats all others as BELOW_S0, which can cause incorrect level decoding if sensor inputs glitch or differ slightly. Moreover, the original code relies on a numeric comparison (current_state > previous_state) to detect level increases, but the level encoding may not strictly increase monotonically for water level rises because some sensor patterns could be ambiguous.
+
+To improve this, I will change the decode logic to interpret the sensors as a level range rather than fixed exact patterns: 
+
+- Sensors are asserted from bottom to top. So the number of asserted sensors corresponds to the level.
+
+- For example:
+  - s = 3'b111: level = 3 (above s2)
+  - s = 3'b110 or 3'b111: level = 3 (both top two sensors)
+  - s = 3'b011 or 3'b010: level = 2
+  - s = 3'b001: level = 1
+  - s = 3'b000: level = 0
+
+I'll implement a function that counts the number of asserted sensors (bits set), or more precisely interprets the sensors to produce a well-defined level from 0 to 3, mapping:
+
+- 3 sensors asserted => ABOVE_S2 (level 3)
+
+- 2 sensors asserted (the top two) => BETWEEN_S2_S1 (level 2)
+
+- 1 sensor asserted => BETWEEN_S1_S0 (level 1)
+
+- 0 sensors asserted => BELOW_S0 (level 0)
+
+This approach is more robust to sensor glitches and generalizes to all input patterns.
+
+Then the comparison of current_state and previous_state becomes a simple numeric comparison of the water level (0 to 3), and `level_increased = (current_level > previous_level)` will be correct and unambiguous.
+
+On reset, the state should be set to BELOW_S0 (0), with all valves asserted (including dfr=1).
+
+Output logic is updated per the table:
+
+- ABOVE_S2 (3): fr0=fr1=fr2=dfr=0
+
+- BETWEEN_S2_S1 (2): fr0=1, fr1=fr2=0, dfr=1 if level increased
+
+- BETWEEN_S1_S0 (1): fr0=fr1=1, fr2=0, dfr=1 if level increased
+
+- BELOW_S0 (0): fr0=fr1=fr2=1, dfr=1 if level increased (but since lowest level, consider "long time low" on reset)
+
+This solution improves correctness and robustness while maintaining clarity and easy verification.

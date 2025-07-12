@@ -1,0 +1,13 @@
+To simplify the given solution, observe that many next_state assignments have a simple pattern: most next states occur only from a single current state with a specific input condition. We can exploit this by using fewer OR terms and combining the common conditions where possible.
+
+For next_state[0], since many states transition to S0 on input=0, instead of explicitly ORing all these terms, we can OR all relevant state bits first, then AND with ~in. This reduces repeated ~in conditions and shortens the expression.
+
+For next_state[7], similarly combine conditions on in=1 for states 6 and 7.
+
+For next_state[1], combine the three states which transition to S1 on in=1.
+
+Other next_state bits come from a single state and input condition, so keep them as simple AND terms.
+
+Outputs remain bitwise ORs of relevant state bits.
+
+This approach reduces the logic expression size and complexity while preserving behavior, producing a clearer and easier-to-maintain implementation.

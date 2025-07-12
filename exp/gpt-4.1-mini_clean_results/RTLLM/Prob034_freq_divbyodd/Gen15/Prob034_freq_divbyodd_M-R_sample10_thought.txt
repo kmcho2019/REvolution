@@ -1,0 +1,13 @@
+To refactor the existing dual-edge frequency divider design while preserving its core functionality, I will adopt the following approach:
+
+- Use a single always block triggered on the positive edge of the clock and synchronous active-low reset.
+- Implement a single main counter incrementing on every positive edge.
+- Generate two phase signals, `phase1` and `phase2`, within this single clock domain by comparing the counter to `0` and `HALF_DIV`, respectively.
+- Use these phase signals to drive two flip-flops (`clk_div1` and `clk_div2`) that toggle at appropriate counts to mimic the positive and negative edge clocks from the original design.
+- Derive the output clock by OR-ing `clk_div1` and `clk_div2`.
+- This avoids using negative edge triggered logic, which can improve timing by simplifying clock domain and timing paths.
+- The counter runs modulo `NUM_DIV`, and all comparisons and toggles happen synchronously.
+- The asynchronous reset remains to initialize registers.
+- This refactor maintains the odd divisor division, good duty cycle properties, and ensures glitch-free toggling through synchronous design.
+
+This approach should simplify timing closure (no negative edge), reduce glitch risk, and improve PPA, while preserving functionality and parameterization.

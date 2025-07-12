@@ -1,0 +1,11 @@
+Implement a three-state FSM: A (wait for s=1), B0, B1, B2 representing each of the three sampling cycles for input w.
+
+- Use a 2-bit state encoding for clarity: A=0, B0=1, B1=2, B2=3.
+- In states B0-B2, on each clock cycle, sample w and accumulate the count of w=1 in a 2-bit register.
+- After the third sample (in B2), assert output z = 1 if exactly two w=1's were observed; else 0.
+- Return to B0 to sample the next group of three cycles, staying in B states once entered.
+- The FSM only moves from A to B0 upon s=1.
+- Output z is registered and updated synchronously on each clock cycle.
+- Reset synchronously to state A with zeroed counters and z=0.
+- This approach explicitly sequences the three sampling cycles, simplifying control and making outputs purely registered and synchronous.
+- Although states are more than two, the design is structurally simple, easy to verify, and produces outputs strictly synchronized to clock edges.

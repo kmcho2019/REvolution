@@ -1,0 +1,13 @@
+Key observations from the waveform:
+1. The state toggles when (a XOR b) is true, regardless of previous state
+2. The state resets to 0 when both a and b are 0 for exactly 4 consecutive cycles
+3. Output q is high when:
+   - Current state is 1 and b is 0, OR
+   - Current state is 0 and b is 1
+4. Initial state is 0
+
+Improvements over original solution:
+1. Simplify state transition logic to always toggle on a≠b
+2. Make reset counter more precise - reset after exactly 4 cycles of a=b=0
+3. Keep output logic as XOR of state and b since it matches the waveform
+4. Remove redundant conditions in state update logic

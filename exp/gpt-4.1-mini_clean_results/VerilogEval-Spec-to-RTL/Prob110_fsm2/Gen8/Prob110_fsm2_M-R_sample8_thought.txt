@@ -1,0 +1,7 @@
+To refactor the FSM implementation, I will move the output logic to a purely combinational assign statement based on the current state, instead of registering the output. This matches the classical Moore FSM style where output depends only on the present state and simplifies the sequential block to only update the state.
+
+Also, I will merge the next_state logic into the sequential block by defining next_state combinationally in a separate always block, preserving separation of combinational and sequential logic. The state register updates synchronously with async reset.
+
+This refactor keeps the FSM functionality identical, but registers only the state while making the output combinational based on state. This often yields better timing and less power due to fewer registered signals toggling on every clock edge.
+
+The state encoding remains one bit with two states OFF and ON. The code will use blocking assignments in combinational blocks and non-blocking in sequential always blocks, following best practices.

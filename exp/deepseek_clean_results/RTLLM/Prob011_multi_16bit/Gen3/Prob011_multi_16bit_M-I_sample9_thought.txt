@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace variable shifter with fixed shifts by pre-calculating all possible shifted versions of breg
+   - Use multiplexer to select appropriate shifted value based on counter
+   - This reduces critical path by eliminating dynamic shifter
+
+2. Power Optimization:
+   - Gate the shift register updates when not needed
+   - Remove redundant combinational output assignment
+   - Simplify done flag logic
+
+3. Area Optimization:
+   - Reduce counter width to 4 bits (0-15)
+   - Combine control logic where possible
+   - Directly register output instead of separate assignment
+
+Key Changes:
+- Pre-calculate all 16 shifted versions of breg in parallel
+- Use counter to select which shifted value to add
+- Simplify state machine and control signals
+- Optimize register usage and bit widths

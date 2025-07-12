@@ -1,0 +1,12 @@
+To simplify the serial receiver FSM while maintaining functionality:
+1. Reduce states from 4 to 3 by merging ERROR into IDLE (since both wait for start bit)
+2. Remove separate bit counter by using shift register's position as counter
+3. Simplify done signal to be a single-cycle pulse
+4. Combine state transition and data logic into single always block
+5. Use left-shifting for data collection (more intuitive for LSB-first)
+
+Key changes:
+- Only 3 states: IDLE, RECEIVE, STOP
+- Shift register tracks both data and bit position
+- Done pulses high for one cycle when stop bit is valid
+- Error handling by returning to IDLE if stop bit is invalid

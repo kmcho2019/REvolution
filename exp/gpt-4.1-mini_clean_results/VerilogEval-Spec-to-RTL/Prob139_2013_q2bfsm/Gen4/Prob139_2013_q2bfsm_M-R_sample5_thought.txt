@@ -1,0 +1,17 @@
+Refactor the FSM by splitting output logic from state registers and making outputs combinational signals derived from the current state rather than registered outputs updated in the clocked block. Use a Moore FSM style where outputs depend only on the present state to avoid timing mismatches.
+
+Keep synchronous active-low reset and state transitions on posedge clk.
+
+Use a single always block for state updates and a separate combinational always block for next_state logic.
+
+Use a separate register for the 2-bit y-monitoring counter that increments on clock edges only in the monitoring state.
+
+Drive outputs f and g combinationally based on the current state, so outputs reflect the state immediately and avoid off-by-one-cycle errors.
+
+This structure improves timing clarity, making output pulses and signals aligned properly with state transitions and reduces off-by-one cycle errors, while maintaining the same state encoding and logic as before.
+
+Key points in refactoring:
+- State transitions and mon_cnt update in sequential always block.
+- Next state combinational logic separated.
+- Outputs f and g assigned combinationally (continuous assignment or always_comb).
+- Reset clears state and mon_cnt synchronously.

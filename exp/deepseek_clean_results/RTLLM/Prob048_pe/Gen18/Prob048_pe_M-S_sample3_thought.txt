@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove signed declaration since it adds complexity without changing functionality for unsigned numbers
+2. Eliminate intermediate 64-bit product wire since we're truncating to 32 bits anyway
+3. Directly compute the 32-bit truncated product in the accumulation
+4. Maintain synchronous reset functionality
+5. Keep clean separation of combinational and sequential logic
+
+Key Changes:
+- Removed signed declarations
+- Eliminated intermediate 64-bit product
+- Simplified arithmetic to only work with 32 bits
+- Maintained same core functionality with fewer operations

@@ -1,0 +1,9 @@
+To simplify the dual-edge triggered flip-flop without using illegal sensitivity lists, use two single-edge triggered flip-flops (one on posedge, one on negedge) to capture the input data, then select the output based on the clock level using a simple combinational multiplexer instead of a latch.
+
+This removes the transparent latch and replaces it with a straightforward mux, reducing complexity while maintaining correct functionality.
+
+The output q is assigned combinationally based on the clock level:
+- When clk is high, output q_pos (posedge flip-flop)
+- When clk is low, output q_neg (negedge flip-flop)
+
+This approach keeps the design simple, legal, and functionally equivalent.

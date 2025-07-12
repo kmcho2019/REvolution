@@ -1,0 +1,12 @@
+Instead of using explicit state variables, I'll implement the FSM using a shift register that inherently encodes the state transitions. The key ideas are:
+1. Use a single flip-flop as a "state token" that shifts through positions
+2. The presence of the token in a particular position implicitly represents the current state
+3. Output logic directly derives from the token position and input
+4. Reset initializes the token to position A
+
+Advantages:
+- Eliminates explicit state decoding logic
+- Naturally implements one-hot encoding
+- Minimal logic between flip-flops for better timing
+- Output logic becomes trivial XOR operation
+- Asynchronous reset maintains same behavior

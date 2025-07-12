@@ -1,0 +1,17 @@
+To optimize the given 8-bit pipelined multiplier for better power, performance, and area (PPA), I will:
+
+1. **Reduce the number of partial product registers:** Instead of storing each partial product separately in 8 registers, directly generate and sum partial products combinationally into a smaller set of intermediate sums at the input stage, then register those sums. This reduces register count and switching.
+
+2. **Use a balanced addition tree with fewer pipeline stages:** Combine partial products in three pipeline stages instead of four by grouping and adding more partial products per stage, reducing latency and pipeline registers.
+
+3. **Employ gating of register enables:** Registers update only when `mul_en_in` or the corresponding stage enable is active to reduce unnecessary switching.
+
+4. **Eliminate partial products zeros by using mux-like logic:** Instead of shifting zeroes for multiplier bits that are zero, conditionally generate partial products only when corresponding multiplier bits are high.
+
+5. **Register inputs and output enable signal via a shift register as before for tracking data validity.**
+
+6. **Keep synchronous active-low reset for all registers for consistent reset behavior.**
+
+These steps aim to reduce dynamic power by minimizing register toggling, decrease area by fewer pipeline registers, and improve timing by limiting addition fan-in per stage and reducing combinational complexity per stage.
+
+The final design will have 3 pipeline stages (input register + 2 addition stages + final output register) with well-controlled enable gating, balancing latency and throughput with resource efficiency.

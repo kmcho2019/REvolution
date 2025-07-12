@@ -1,0 +1,5 @@
+To implement the finite state machine (FSM) described, we can use a minimal number of states by leveraging the fact that once the FSM transitions from state A to state B, it only considers the input w. The FSM's behavior in state B can be managed by using counters and flags to track the number of cycles w has been high within a window of three cycles. The key states we need are:
+- State A: The initial reset state where the FSM waits for s = 1 to move to state B.
+- State B: Where the FSM checks w over three clock cycles to determine if it should set z = 1 in the next cycle.
+
+We'll also need internal counters and flags to keep track of the cycles and the state of w within those cycles. The FSM should reset all internal counters and flags upon receiving a reset signal.

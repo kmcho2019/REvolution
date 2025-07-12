@@ -1,0 +1,22 @@
+Refactored Implementation with Improved Cycle Control:
+
+1. **Cycle Counting Approach**:
+   - Use a 3-bit counter to track 7 cycles (0-6) for 3.5x division
+   - Alternate between 4-cycle high and 3-cycle low periods
+   - Clear counter after reaching 6 to maintain 7-cycle pattern
+
+2. **Dual-Edge Generation**:
+   - Generate base clock using positive edge (main_clk)
+   - Generate phase-shifted clock using negative edge (shift_clk)
+   - Combine both clocks with OR to create final output
+
+3. **Simplified Logic**:
+   - Replace phase accumulator with direct cycle counting
+   - Use continuous assignments for cleaner combinational logic
+   - Maintain same functionality with more straightforward implementation
+
+4. **Key Improvements**:
+   - Explicit cycle counting ensures correct 4:3 ratio
+   - Dual-edge generation properly handles half-cycle shifts
+   - Clear reset behavior with defined initial state
+   - More predictable timing with simple counter

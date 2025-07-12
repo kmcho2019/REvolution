@@ -1,0 +1,5 @@
+Implement a decade counter using a one-hot encoded state machine for the counts 1 through 10. Instead of counting binary numbers directly, maintain a 10-bit one-hot register where only one bit is high corresponding to the current count. On each clock cycle, rotate the 'hot' bit to the next position. For output q, convert the one-hot state to a binary count by a simple priority encoder.
+
+This approach simplifies the next-state logic to a single cyclic rotate of the one-hot vector, potentially reducing combinational delay. The synchronous reset sets the one-hot register to the first count (count=1). This counter design can also minimize glitches in the output because only one bit changes at a time in the one-hot register, potentially improving power. The output encoding is a simple combinational priority encoder mapping one-hot to binary values 1 to 10.
+
+By separating state encoding (one-hot) from output encoding (binary), the design offers a novel trade-off: easier and faster next-state logic at the cost of a simple combinational encoder. This approach is functionally equivalent but architecturally distinct from a binary counter with arithmetic increment.

@@ -1,0 +1,15 @@
+Here's a novel architectural approach using a shift register with parallel load and a downcounter with prescaler:
+
+1. **Dual-Purpose Shift Register**: Use a single 8-bit shift register that first captures the 1101 pattern, then immediately shifts in the next 4 bits for delay without needing separate registers.
+
+2. **Prescaled Downcounter**: Implement a downcounter with a built-in prescaler that counts in 1000-cycle chunks. This eliminates the need for a separate cycle counter and division logic.
+
+3. **Pattern Matching with Window Comparator**: Detect the 1101 pattern by comparing the upper 4 bits of the shift register to the target pattern.
+
+4. **Smart State Encoding**: Use minimal states focusing on the essential operations: IDLE, CAPTURE, COUNT, and DONE.
+
+Key innovations:
+- Single register handles both pattern detection and delay capture
+- Integrated prescaler simplifies timing logic
+- Window comparison for efficient pattern detection
+- Reduced state complexity with clear transitions

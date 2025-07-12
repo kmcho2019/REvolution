@@ -1,0 +1,17 @@
+Here's a novel approach using a hybrid Mealy-Moore FSM with pattern matching:
+
+1. **Pattern Matching Shift Register**: Instead of tracking states for the x sequence, use a 3-bit shift register to directly detect the 1-0-1 pattern. This eliminates multiple sequence-tracking states.
+
+2. **Timeout Counter**: Implement a simple 2-bit counter for the y timeout condition, making the logic more explicit and easier to verify.
+
+3. **Output Control Logic**: Use combinatorial logic for outputs with clear conditions:
+   - f is simply a one-cycle pulse after reset
+   - g is controlled by the pattern match and y conditions
+
+4. **State Reduction**: The FSM only needs 4 states:
+   - IDLE: Wait for reset release
+   - PULSE_F: Generate the f pulse
+   - WAIT_PATTERN: Monitor x for 1-0-1
+   - CHECK_Y: Monitor y with timeout
+
+This approach is more direct and reduces state transitions while maintaining all functionality.

@@ -1,0 +1,20 @@
+To correctly implement the 16-bit dividend by 8-bit divisor combinational divider as described:
+
+- Initialize a remainder register with the top 8 bits of the dividend.
+- Process all 9 steps (16 - 8 + 1 = 9 iterations) corresponding to quotient bits [8:0].
+- At each iteration, compare remainder with divisor:
+  - If remainder >= divisor, subtract divisor and set quotient bit to 1.
+  - Else quotient bit is 0.
+- Then shift in the next lower dividend bit into the remainder.
+- After processing these 9 bits, the remaining 7 lower bits of the dividend correspond to the lowest quotient bits [7:1], which are zero, but the problem states the quotient is 16 bits.
+- Actually, the iterative division only produces 9 quotient bits; the remaining quotient bits [15:9] should be zero.
+- Thus, place the computed quotient bits at [8:0] of the 16-bit result; set higher bits to zero.
+- Zero-extend the 8-bit remainder to 16 bits for output.
+- Handle division by zero by setting quotient and remainder to zero.
+- Use two combinational always blocks as required:
+  - First always block to latch inputs into registers a_reg and b_reg.
+  - Second always block to perform the division logic combinationally using these registers.
+- Careful indexing is required to avoid negative indices and to correctly shift in bits from dividend to remainder.
+- This approach directly models the specified algorithm and fixes all indexing and bit-width mismatches from the previous code.
+
+This design guarantees full coverage of dividend bits during division and correct bit assignments for quotient and remainder outputs.

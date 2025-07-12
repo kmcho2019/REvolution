@@ -1,0 +1,6 @@
+I'll refactor the solution to use explicit state transitions instead of a shift register, while maintaining the Mealy FSM behavior. The state machine will have 3 states:
+1. IDLE: Waiting for first '1'
+2. GOT1: Received first '1', waiting for '0'
+3. GOT10: Received '1' followed by '0', waiting for final '1'
+
+The output z will be asserted when we're in GOT10 state and receive a '1' (x=1). This makes the state transitions more explicit while keeping the same functionality. The asynchronous reset will initialize the FSM to IDLE state.

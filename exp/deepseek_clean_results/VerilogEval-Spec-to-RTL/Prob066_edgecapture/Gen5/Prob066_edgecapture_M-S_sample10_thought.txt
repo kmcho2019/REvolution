@@ -1,0 +1,10 @@
+The simplified solution will focus on directly capturing the first 1->0 transition for each bit until reset. Key simplifications:
+
+1. Remove the separate transition detection wire - perform detection directly in the sequential block
+2. Use a single always block for both state update and transition detection
+3. Maintain the same core functionality: capture any 1->0 transition and hold until reset
+
+The structure will be:
+1. On each clock edge, check for 1->0 transitions by comparing current input with previous input
+2. For any detected transition, set the corresponding output bit (which stays set until reset)
+3. Reset clears all outputs and the input history register

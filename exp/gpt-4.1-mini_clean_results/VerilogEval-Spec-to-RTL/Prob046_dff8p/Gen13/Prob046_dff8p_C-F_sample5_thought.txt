@@ -1,0 +1,10 @@
+Fusion strategy:
+- Use a single always block triggered on the negative edge of clk for the entire 8-bit vector register to improve area and reduce clock gating complexity compared to per-bit always blocks.
+- Keep the synchronous active-high reset setting q to 8'h34.
+- Implement an internal clock enable (ce) that enables updating q only when input d differs from q, reducing unnecessary toggling and saving dynamic power.
+- Use non-blocking assignments for predictable RTL behavior.
+- Encapsulate all logic in a single parameterized vector DFF module to preserve modularity and clean TopModule interface.
+- This fusion combines the clarity and timing advantages of a vector always block with the power optimization from the clock enable in example 1, and the clean synchronous reset semantics from both examples.
+- The approach balances power, area, and timing optimally without per-bit overhead or excessive clock gating logic, making it easily synthesizable and maintainable.
+
+TopModule simply instantiates this enhanced vector module with the reset value 0x34 as required.

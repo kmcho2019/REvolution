@@ -1,0 +1,30 @@
+To correctly implement the next-state logic for y[1], we need to consider all transitions where y[1] changes value in the next state. Looking at the state machine:
+
+1. y[1] becomes 1 when:
+   - From A (000) to B (001) on w=0 (y[1] stays 0, but we need to consider all transitions)
+   - From B (001) to C (010) on w=0 (y[1] becomes 1)
+   - From B (001) to D (011) on w=1 (y[1] becomes 1)
+   - From C (010) to D (011) on w=1 (y[1] stays 1)
+   - From D (011) to F (101) on w=0 (y[1] becomes 0)
+   - From D (011) to A (000) on w=1 (y[1] becomes 0)
+   - From E (100) to D (011) on w=1 (y[1] becomes 1)
+   - From F (101) to C (010) on w=0 (y[1] becomes 1)
+
+2. We only need to implement cases where y[1] becomes 1 in the next state:
+   - B->C (w=0)
+   - B->D (w=1)
+   - C->D (w=1)
+   - E->D (w=1)
+   - F->C (w=0)
+
+3. Using state encodings:
+   - B: 001 → ~y[2] & ~y[1] & y[0]
+   - C: 010 → ~y[2] & y[1] & ~y[0]
+   - E: 100 → y[2] & ~y[1] & ~y[0]
+   - F: 101 → y[2] & ~y[1] & y[0]
+
+4. Final logic for y1_next:
+   - From B (001) to C/D when w=0/1
+   - From C (010) to D when w=1
+   - From E (100) to D when w=1
+   - From F (101) to C when w=0

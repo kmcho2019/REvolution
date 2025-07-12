@@ -1,0 +1,16 @@
+A different approach is to implement a 32-bit shift register that stores the previous input value delayed by one clock cycle. By comparing this delayed input with the current input, we can detect falling edges (1-to-0 transitions) on each bit.
+
+Instead of directly ORing the falling edge with the output, we maintain a separate latch register that records whether a falling edge has occurred on each bit. Once a bit in the latch is set (indicating a falling edge was detected on that bit), it remains set until reset.
+
+Implementation details:
+- Create a register `prev_in` to hold the previous input value (sampled at each clock).
+- Create a register `capture` to hold the output flags.
+- On each clock:
+  - If reset, clear `capture` and `prev_in`.
+  - Else:
+    - Detect falling edges by `falling_edge = prev_in & ~in`.
+    - Update `capture` by ORing it with `falling_edge` (latches the event).
+    - Update `prev_in` with the current input.
+- Assign the output `out` as the `capture` register.
+
+This modular design makes it explicit that `capture` is a latched register, updated only when a falling edge is detected. It separates the concerns of edge detection and storage. This architecture can make timing clearer and easier to verify.

@@ -1,0 +1,14 @@
+This design implements a request-acknowledge handshake protocol for safer cross-clock domain transfer:
+1. Instead of direct enable signal synchronization, we use a request-acknowledge mechanism
+2. When data_en goes high in clk_a domain, a request is generated
+3. The request is synchronized to clk_b domain (2 FF stages)
+4. When acknowledged in clk_b domain, the data is captured
+5. The acknowledge signal is synchronized back to clk_a domain (2 FF stages)
+6. Data stability is guaranteed by the handshake protocol
+7. The design includes early request termination to prevent unnecessary synchronization
+
+Key advantages:
+- More robust synchronization with explicit handshaking
+- Clear data validity signaling
+- Lower power due to reduced switching activity
+- Better timing closure with clear request/ack paths

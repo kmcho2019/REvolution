@@ -1,0 +1,47 @@
+module TopModule (
+    input clk,
+    input load,
+    input [511:0] data,
+    output [511:0] q
+);
+
+reg [511:0] q_reg;
+
+// Divide the array into 64 segments of 8 cells each
+wire [7:0] segment_next_state [63:0];
+
+genvar i, j;
+generate
+    for (i = 0; i < 64; i++) begin
+        // Calculate the next state for each segment
+        wire [7:0] segment;
+        assign segment = q_reg[i*8 +: 8];
+        
+        // Apply Rule 90 logic directly to each cell within the segment
+        for (j = 0; j < 8; j++) begin
+            wire cell_left, cell_center, cell_right;
+            assign cell_left = (j == 0) ? (i == 0) ? 1'b0 : q_reg[i*8 - 1] : segment[j - 1];
+            assign cell_center = segment[j];
+            assign cell_right = (j == 7) ? (i == 63) ? 1'b0 : q_reg[i*8 + 8] : segment[j + 1];
+            
+            // Apply Rule 90 logic directly
+            assign segment_next_state[i][j] = cell_left ^ cell_right;
+        end
+    end
+endgenerate
+
+// Sequential logic to update q_reg on the positive edge of the clock
+always @(posedge clk) begin
+    if (load) begin
+        q_reg <= data;
+    end else begin
+        // Update q_reg with the next state of each segment
+        for (int i = 0; i < 64; i++) begin
+            q_reg[i*8 +: 8] <= segment_next_state[i];
+        end
+    end
+end
+
+assign q = q_reg;
+
+endmodule

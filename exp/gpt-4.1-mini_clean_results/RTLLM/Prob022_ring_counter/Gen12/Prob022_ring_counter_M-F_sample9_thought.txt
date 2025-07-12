@@ -1,0 +1,5 @@
+To avoid the unsupported variable shift operation inside a procedural block, separate the state tracking (`position`) from the combinational generation of the output `out`. Keep `position` as a registered variable updated on the clock edge, but assign `out` in a separate combinational always block or as a continuous assignment that uses a case statement or a for loop to generate the one-hot output based on `position`.
+
+This removes the variable shift from the procedural assignment and makes the code synthesizable and simulatable in tools with limited support for variable shifts. A combinational always block with a case statement for `out` based on `position` avoids shift operators entirely.
+
+Reset still sets `position` to 0, and `out` follows accordingly. This clean separation ensures compatibility and clear logic.

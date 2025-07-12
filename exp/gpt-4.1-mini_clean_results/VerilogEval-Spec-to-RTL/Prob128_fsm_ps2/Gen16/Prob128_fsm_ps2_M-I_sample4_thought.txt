@@ -1,0 +1,7 @@
+To optimize the original design for better performance, power, and area (PPA), I'll streamline the FSM logic and done signal generation by implementing a 3-state one-hot FSM, avoiding a counter. This reduces combinational logic depth since each state is represented by a flip-flop, making transitions simpler and faster. The done signal is asserted only in the third state and cleared in others, minimizing toggling.
+
+Additionally, done will be registered once per done event without redundant resets every cycle, potentially lowering dynamic power by reducing unnecessary toggling.
+
+The synchronous reset remains intact. This one-hot approach can improve timing by reducing logic levels and can reduce toggling on done and state bits, optimizing power. Area impact is minimal, possibly improved due to simpler state decoding.
+
+Overall, this approach aims to improve the critical path delay, reduce done toggling, and keep the design compact.

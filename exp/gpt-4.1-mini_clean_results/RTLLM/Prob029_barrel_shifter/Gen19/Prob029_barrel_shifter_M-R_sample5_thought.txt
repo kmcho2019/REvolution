@@ -1,0 +1,5 @@
+Refactor the barrel shifter by explicitly defining and instantiating the mux2X1 submodule as required, creating a more modular design that clearly reflects the problem statement. Instead of using generate loops with conditional operators, use an array of mux2X1 modules for each stage and bit. Each mux selects between the unshifted bit and the bit shifted by the stage amount, controlled by the corresponding ctrl bit.
+
+This approach directly implements the described hardware structure, making it easier to verify and trace signals through each stage and mux instance. The design still preserves the staged rotate-left behavior by passing the output of one stage as input to the next, with wrap-around indexing.
+
+This also clarifies the function of each mux2X1 instance, enhancing readability and modularity, and better aligns with the problem requirements. Though it increases the number of module instances, it provides explicit control signals and wiring, which aids debugging and synthesis consistency.

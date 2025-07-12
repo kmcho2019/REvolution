@@ -1,0 +1,17 @@
+A different architectural idea is to implement the shift register as a 64-bit register with combinational multiplexers that directly generate the next state based on the direction and amount signals, but instead of separate wires for each shifted version, use a case statement to encode the different shift operations compactly. For the arithmetic right shift, replicate the MSB on the left.
+
+This avoids multiple parallel shift computations and large mux trees. Only one combinational logic block computes the next q value based on a single selection, simplifying the mux structure.
+
+The next state logic is thus:
+
+- If load is asserted, load data.
+- Else if ena is asserted, shift according to amount:
+   - 2'b00: shift left by 1 bit (q << 1).
+   - 2'b01: shift left by 8 bits (q << 8).
+   - 2'b10: arithmetic shift right by 1 bit (MSB replicated + q[63:1]).
+   - 2'b11: arithmetic shift right by 8 bits (8 times MSB replicated + q[63:8]).
+- Else retain current q.
+
+This sequential approach with a case statement is intuitive, potentially synthesizes to fewer multiplexers, and can reduce critical path delay and area by not computing all shifts in parallel.
+
+Additionally, this design enhances readability by centralizing shift logic and making it explicit rather than split into multiple wires.

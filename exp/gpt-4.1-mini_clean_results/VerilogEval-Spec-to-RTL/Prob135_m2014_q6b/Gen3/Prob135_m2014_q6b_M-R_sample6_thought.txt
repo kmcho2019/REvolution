@@ -1,0 +1,7 @@
+Refactor the next-state logic for y[1] as a purely combinational expression using continuous assignments (`assign` statements) instead of an `always` block. This makes the logic more concise and directly reflects the next state bit y[1] as a function of current y and input w. Also, clarify that the module's output Y1 is the current state's y[1], as specified, and next_y1 is computed internally but not output. This approach aligns exactly with the specification and cleanly separates combinational next-state logic for y[1] from the current output Y1.
+
+The combinational logic for next_y1 can be expressed as a `case` inside a function or as nested ternary operators. Here, we use a `case` statement inside a function for clarity, and then assign next_y1 by calling that function. The function takes current y and w as inputs and returns the next y[1] bit according to the FSM transition table.
+
+No clock or state registers are implemented, consistent with the problem statement.
+
+This structure improves readability and avoids the unused reg warning by making next_y1 a wire and computing it directly.

@@ -1,0 +1,25 @@
+Fusion Strategy:
+1. State Representation:
+   - Keep one-hot encoding with explicit state bits (state_A, state_B)
+   - Maintain minimal state encoding (2 bits) while preserving one-hot properties
+
+2. State Transition Logic:
+   - Combine the efficient sticky state_B implementation from Example 1
+   - Use direct assignments in the always block for clear state transitions
+   - Simplify state_A transition to depend only on current state and input x
+
+3. Output Logic:
+   - Keep combinational output (z = state_A ? x : ~x) for true Mealy behavior
+   - Make output purely combinational to avoid unnecessary toggling
+
+4. Reset and Clocking:
+   - Use standard always block for sequential logic with clear reset condition
+   - Maintain clean asynchronous reset functionality
+   - Avoid custom DFF module for better tool compatibility
+
+Key Improvements:
+- Combines clarity of Example 1 with efficient state transitions
+- Uses minimal combinational logic for both state transitions and output
+- Maintains clean separation between combinational and sequential logic
+- Optimized for PPA by reducing logic levels and power consumption
+- Better tool compatibility by avoiding custom DFF module

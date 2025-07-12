@@ -1,0 +1,20 @@
+Novel Architecture Idea: Double-Buffered Synchronizer with Edge Detection
+
+Key Concepts:
+1. Instead of traditional two-stage synchronizer, implement a double-buffered approach where data is captured in two stages with independent enables
+2. Add edge detection on the enable signal to precisely capture data changes
+3. Use a handshake-like mechanism to ensure data stability during transfer
+4. Implement a state machine to manage the synchronization process more robustly
+
+Advantages:
+- More reliable data capture during domain crossing
+- Explicit handling of enable signal edges
+- Clear separation of clock domains
+- Better timing closure due to staged approach
+- Reduced metastability risk through double buffering
+
+Implementation Details:
+- First stage captures data on rising edge of data_en in clk_a domain
+- Second stage transfers data to clk_b domain when stable
+- Edge detector ensures we only capture new data
+- Output register only updates when both domains agree data is stable

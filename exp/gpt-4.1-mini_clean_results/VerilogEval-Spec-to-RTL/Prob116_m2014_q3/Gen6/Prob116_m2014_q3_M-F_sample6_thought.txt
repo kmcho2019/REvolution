@@ -1,0 +1,17 @@
+The key issue is the misunderstanding of input bit indexing relative to the Karnaugh map. The problem states inputs x[1], x[2] for columns and x[3], x[4] for rows, but we have only a 4-bit input vector x[3:0]. Since x[4] doesn't exist, the natural interpretation is that:
+
+- x[3], x[2] form the row bits (two most significant bits)
+- x[1], x[0] form the column bits (two least significant bits)
+
+This matches the standard 0-based indexing for a 4-bit input: x[3] is the most significant bit, and x[0] is the least significant.
+
+With this corrected mapping:
+
+- Row = x[3:2]
+- Column = x[1:0]
+
+We map the Karnaugh map accordingly and mark the '1's. Then, derive minimal boolean expressions for f using these bits.
+
+By identifying the '1's on the Karnaugh map per this corrected indexing, we can extract the function and implement it correctly in Verilog.
+
+This correction fixes the functional mismatch by aligning input bit positions with the Karnaugh map axes as per standard 0-based indexing.

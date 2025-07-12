@@ -1,0 +1,19 @@
+Simplified Design Approach:
+1. State Management:
+   - Keep minimal 2-state FSM (A/B) with simple transition logic
+   - Remove separate phase counter by tracking cycles through w_history shift register
+
+2. w History:
+   - Use 3-bit shift register to track last 3 w values
+   - Shift only in state B to save power
+   - Use shift register as implicit cycle counter (when full, we have 3 samples)
+
+3. Output Logic:
+   - Check for exactly two 1's in w_history when shifting in 3rd value
+   - Output z only when we have a complete set of 3 samples (shift register full)
+
+Key Simplifications:
+- Eliminated phase counter by using shift register fullness as cycle indicator
+- Simplified popcount to direct pattern matching (only 3 possible cases for exactly two 1's)
+- Reduced control logic by combining cycle counting and sample storage
+- Maintained same functionality with fewer state elements

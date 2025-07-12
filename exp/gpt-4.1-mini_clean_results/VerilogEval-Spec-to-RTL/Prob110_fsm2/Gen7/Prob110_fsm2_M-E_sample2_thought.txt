@@ -1,0 +1,9 @@
+I will implement the Moore FSM using a single always block with a synchronous reset instead of an asynchronous reset, by synchronizing the asynchronous reset externally. This allows for simpler synthesis and better control over reset timing. The asynchronous reset input will be synchronized internally using a two-stage synchronizer to avoid metastability.
+
+The state and output will be encoded together as a two-bit register, where the least significant bit represents the output (0 for OFF, 1 for ON), and the most significant bit stores the state for next-state calculation. This encoding allows computing next state and output in a compact form.
+
+Using this combined state+output register reduces logic and creates a more compact FSM design.
+
+The output is directly taken from the registered state bit (LSB), making the FSM fully synchronous with a synchronous reset.
+
+This design improves robustness by handling asynchronous reset safely and reduces state encoding overhead by combining output and state bits.

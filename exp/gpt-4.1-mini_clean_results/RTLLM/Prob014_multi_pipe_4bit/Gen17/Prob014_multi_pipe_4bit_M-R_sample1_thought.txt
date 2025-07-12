@@ -1,0 +1,8 @@
+Refactor the pipeline multiplier to reduce explicit registers and always blocks by:
+- Using combinational logic with generate loops and assign statements for partial product generation.
+- Implementing pipeline registers only to store intermediate sums, but updating them in a single always block each.
+- Avoid duplicating sum computations outside registers; instead, compute partial sums combinationally with generate loops.
+- Use arrays of wires to hold partial products, then sum them in two pipeline stages using registers.
+- Maintain active-low asynchronous reset with always blocks only for the pipeline registers and output.
+- Keep input extension explicit but succinct.
+This approach improves code compactness and clarity by leveraging generate loops and continuous assignments for partial products, while preserving the two-register pipeline structure and synchronous operation.

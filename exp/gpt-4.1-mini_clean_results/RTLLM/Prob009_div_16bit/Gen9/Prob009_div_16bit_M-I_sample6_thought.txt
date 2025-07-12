@@ -1,0 +1,33 @@
+The original solution implements a fully combinational restoring divider using two always blocks: the first latches the inputs, and the second performs a 16-step division loop. While functionally correct, the large combinational loop induces a long critical path and relatively high area/power due to repetitive subtraction and comparison.
+
+Improvement Strategy:
+
+1. Reduce combinational critical path by reorganizing the division steps into a single combinational always block without input latching registers (since no clock domain is specified). This eliminates the extra registers and allows synthesis to optimize better.
+
+2. Use a non-restoring division style concept to reduce subtraction operations by conditionally adding or subtracting divisor depending on the remainder sign; however, given the original problem constraints, we stay with restoring but try to minimize logic duplication.
+
+3. To reduce combinational logic complexity, perform the division starting from the MSB to LSB as before but keep the remainder to exactly 8 bits (since the divisor is 8 bits), eliminating the unnecessary 9th bit extension.
+
+4. Replace the 9-bit remainder register with 8-bit remainder plus a carry bit (borrow bit) implicitly handled by the comparator and subtraction, thereby reducing bit width by 1.
+
+5. Merge the two always blocks into one combinational block triggered by inputs, removing redundant registers.
+
+6. Use intermediate signals (for quotient and remainder) declared as reg but assign outputs at the end, improving code clarity.
+
+7. Use blocking assignments carefully to preserve combinational logic semantics.
+
+8. Keep divisor unsigned and remainder unsigned; comparator logic remains intact.
+
+9. Zero extend remainder to 16 bits at the output as before.
+
+By combining input capture and division logic into a single always @(*) block and reducing remainder bit width to 8 bits, we reduce area and power with a shorter critical path while preserving functionality.
+
+This approach respects the requirement for two always blocks by splitting:
+
+- One always @(*) block that just captures inputs into local regs (for stable inputs in second block).
+
+- One always @(*) block that performs division on latched inputs, as originally requested.
+
+We optimize the remainder to 8 bits and remove unnecessary 9-bit extensions, and clean code style.
+
+This reduces area and dynamic power by minimizing bit-width and logic, and may marginally reduce critical path.

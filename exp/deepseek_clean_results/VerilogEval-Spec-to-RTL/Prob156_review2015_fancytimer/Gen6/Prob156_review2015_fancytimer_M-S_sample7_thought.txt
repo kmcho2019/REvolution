@@ -1,0 +1,24 @@
+Here's a simplified approach that maintains all functionality while reducing complexity:
+
+1. **State Machine Simplification**:
+   - Combine CAPTURE_DELAY into IDLE state using a counter
+   - Reduce to 3 states: IDLE (pattern detection + delay capture), COUNTING, DONE
+
+2. **Pattern Detection**:
+   - Use 4-bit shift register for "1101" detection
+   - Clear after detection and start capturing delay bits
+
+3. **Delay Counting**:
+   - Single counter for both 1000-cycle periods and delay countdown
+   - When counter reaches 1000, decrement delay value and reset counter
+
+4. **Output Logic**:
+   - 'counting' active only during COUNTING state
+   - 'done' asserted when counting completes
+   - 'count' shows remaining delay periods
+
+Key simplifications:
+- Fewer states (3 instead of 4)
+- Single counter for timing
+- Combined pattern detection and delay capture
+- Clear state transitions

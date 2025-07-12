@@ -1,0 +1,17 @@
+Simplified approach for falling edge detection and capture:
+
+1. Core functionality remains the same: detect 1->0 transitions and maintain state until reset
+2. Key simplifications:
+   - Remove redundant prev_in register by using non-blocking assignment timing
+   - Combine edge detection and state maintenance in one expression
+   - Use bitwise OR to accumulate detected edges
+3. Operation:
+   - On each clock edge, detect falling edges by comparing current input with delayed version
+   - The delayed version is simply the input from before the non-blocking assignment
+   - OR any new falling edges with existing captured states
+4. Reset clears all state as before
+5. Benefits:
+   - Fewer registers (only out_reg needed)
+   - Clearer implementation showing direct edge detection
+   - Same functionality with less code
+   - Maintains synchronous design principles

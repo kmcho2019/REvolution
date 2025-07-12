@@ -1,0 +1,22 @@
+I will implement the design by separating the combinational logic (three gates) and the sequential storage (three flip-flops) clearly. Each flip-flop input will be driven by a dedicated wire representing the gate output computed from the previous state.
+
+To ensure proper initialization and avoid relying on an `initial` block, I will add an asynchronous active-high reset input `rst` to the module. This reset will synchronously clear all three flip-flops to zero at startup.
+
+The module interface will thus be:
+
+- input clk
+- input rst (active-high asynchronous reset)
+- input x
+- output z
+
+Each flip-flop's D input will be computed as follows based on the current outputs of the flip-flops:
+
+- d_xor = x ^ xor_ff
+- d_and = x & ~and_ff
+- d_or  = x | ~or_ff
+
+At each positive clock edge, if reset is asserted, all flip-flops are cleared. Otherwise, flip-flops update with their respective d inputs.
+
+Finally, output z is generated as a NOR of the three flip-flop outputs.
+
+This approach cleanly separates combinational and sequential parts, introduces a reset for proper initialization, and closely follows the problem description.

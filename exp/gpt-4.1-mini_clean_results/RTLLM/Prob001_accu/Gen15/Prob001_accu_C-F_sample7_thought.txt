@@ -1,0 +1,11 @@
+Fuse the clear accumulator update with enable-driven logic from Example 1 and the concise always block structure from Example 2, while adding these improvements:
+
+- Compute the next accumulator value combinationally only when valid_in is high to reduce unnecessary toggling.
+- Use a single always block with synchronous active-low reset, non-blocking assignments for clean sequential logic.
+- Increment count only when valid_in is asserted, and on the 4th valid input (count==3) output the sum and assert valid_out for one cycle.
+- Reset accumulator and count immediately after output to prepare for the next accumulation.
+- Register data_out only on valid output cycles to avoid glitches.
+- Keep valid_out asserted for only one cycle coinciding exactly with the output data.
+- Avoid double counting data_in by accumulating it once per valid input.
+- The accumulator and counter update only when valid_in=1, minimizing switching and power.
+- This fusion results in a clean, efficient, minimal, and timing-friendly design exactly matching requirements with improved power efficiency and clarity.

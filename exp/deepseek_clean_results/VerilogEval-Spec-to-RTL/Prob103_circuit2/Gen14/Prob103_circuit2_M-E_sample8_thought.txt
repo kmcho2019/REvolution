@@ -1,0 +1,17 @@
+Instead of using traditional XOR-based parity checking, let's implement a lookup table approach using a 4-to-1 multiplexer. This method:
+1. Directly encodes all possible input combinations (16 cases) into a multiplexer
+2. Uses the inputs as selection lines to choose the correct output
+3. Provides flexibility to implement any arbitrary truth table
+4. Could potentially be more area-efficient in some technologies where muxes are optimized
+
+The truth table shows the output is 1 when:
+- All inputs are 0 (0000)
+- c and d are both 1 (0011)
+- b and d are 1 (0101)
+- b and c are 1 (0110)
+- a and d are 1 (1001)
+- a and c are 1 (1010)
+- All inputs are 1 (1111)
+- a and b are 1 (1100)
+
+We'll implement this as a 4-bit case statement for clarity.

@@ -1,0 +1,7 @@
+To improve the design for better synthesis compatibility and eliminate any simulation-synthesis mismatch due to initialization, I will remove the initialization of 'out' in the declaration. Instead, I will retain the same logic: the D flip-flop's input is the XOR of 'in' and 'out'. Since no reset is allowed, 'out' will start from an unknown state in simulation but be clean in synthesized hardware. This avoids synthesis tools ignoring or mishandling initial values.
+
+In terms of PPA, this minimal design is already optimal: a single XOR gate feeding a flip-flop. No unnecessary registers or logic are added. Hence, I focus on synthesis portability and simulation-synthesis equivalence rather than modifying logic.
+
+Also, I will explicitly define the XOR operation as a wire to highlight combinational logic separately from the sequential part, aiding readability and possibly synthesis clarity.
+
+This approach maintains the exact functional behavior, avoids synthesis pitfalls, and produces clean RTL that synthesizers handle well.

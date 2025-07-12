@@ -1,0 +1,5 @@
+Instead of using a traditional state machine with explicit state encoding, this design uses a shift register to hold the last 4 bits of input data and compares it directly against the target sequence "1001" on each clock cycle. This approach leverages a simple 4-bit shift register to track incoming bits, enabling sequence detection without explicit states.
+
+This method naturally supports overlapping sequences by continuously shifting in new bits and comparing. The reset_n signal asynchronously clears the shift register, ensuring the detector starts from a known state. The output sequence_detected is asserted combinationally whenever the 4-bit shift register matches the sequence pattern.
+
+This architecture is hardware-friendly, compact, and easy to verify, providing a clean alternative to traditional FSM-based sequence detectors.

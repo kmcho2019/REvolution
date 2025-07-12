@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Restructure the priority encoder to use parallel case statements instead of cascaded if-else to reduce critical path
+   - Add output registers to break timing paths from state logic to outputs
+
+2. Power Optimization:
+   - Keep binary state encoding (better than one-hot for this small FSM)
+   - Add output gating when in STATE_A to prevent unnecessary toggling
+
+3. Area Optimization:
+   - Simplify output logic using continuous assignments
+   - Share common reset conditions
+
+Key Changes:
+- Parallel case structure for faster priority resolution
+- Registered outputs for better timing closure
+- Output gating for power reduction
+- Cleaner code organization

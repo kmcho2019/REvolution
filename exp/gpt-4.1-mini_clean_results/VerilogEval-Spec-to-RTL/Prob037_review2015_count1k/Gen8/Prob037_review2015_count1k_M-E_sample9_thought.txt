@@ -1,0 +1,14 @@
+Instead of a straightforward binary counter with a comparator, implement the counter as a two-stage counter: one stage counts from 0 to 99 (2 digits in base 10) and the other counts from 0 to 9, effectively counting from 0 to 999 in decimal using two separate counters. This removes the need for a comparator against 999 and instead uses simpler wrap-around conditions on each digit counter.
+
+Implementation:
+- Use two registers: low_digit (7 bits, since max 99 fits in 7 bits) and high_digit (4 bits, max 9).
+- On each clock cycle, increment low_digit.
+- When low_digit reaches 99, reset it to 0 and increment high_digit.
+- When high_digit reaches 9 and low_digit is 99, reset both to 0.
+- Combine high_digit and low_digit into the 10-bit output q as: q = high_digit * 100 + low_digit.
+  
+This approach reduces comparator complexity (only need to check 99 and 9) and may improve power by limiting toggling in individual smaller counters. Arithmetic is simpler since wrapping is done on smaller ranges. Also, the concatenation for output is calculated combinationally, no complex comparison to 999 is needed. The counting is effectively a decimal counter implemented in binary, but using two digit counters simplifies logic.
+
+Reset is synchronous and clears both digits to zero.
+
+This design is novel compared to a flat binary counter with a comparator and can provide better timing and power characteristics due to simpler and localized comparisons and smaller increments.

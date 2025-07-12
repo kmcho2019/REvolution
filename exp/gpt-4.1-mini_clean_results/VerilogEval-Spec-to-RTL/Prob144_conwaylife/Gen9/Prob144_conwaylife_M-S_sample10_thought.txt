@@ -1,0 +1,10 @@
+To simplify the design while maintaining full functionality, we can replace the nested loops and integer indexing with generate-for constructs and local parameters for coordinate wrapping, leveraging Verilog's array and bit slicing features.
+
+Specifically:
+- Instead of using loops inside an always_comb block with integer indices and signed offsets (-1,0,1), we'll use generate loops with fixed neighbor offset arrays.
+- We'll compute neighbor indices using bitwise modulo 16 wrap-around by masking with 4'hF for row and column separately.
+- We'll sum the neighbors by directly accessing q with computed indices.
+- This modular approach is more readable and can synthesize efficiently while reducing the complexity of mixed signed and unsigned arithmetic inside always_comb.
+- The top-level always_ff block will still update q synchronously with load and next_q.
+
+This change removes the nested signed loops inside combinational logic and integer indexing, improving clarity and potentially synthesis results, while preserving exact functionality.

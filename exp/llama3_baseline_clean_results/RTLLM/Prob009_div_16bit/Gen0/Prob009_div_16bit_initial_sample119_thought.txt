@@ -1,0 +1,8 @@
+To implement the 16-bit divider module in combinational logic, we need to follow a series of steps:
+- First, we extract the higher bits of the dividend, matching the bit width of the divisor (8 bits in this case).
+- Then, we compare these bits with the divisor to determine the most significant bit of the quotient.
+- Next, we use the difference as the remainder and concatenate it with the next bit of the dividend to repeat the process until all bits are processed.
+- However, implementing such a sequential process directly in combinational logic requires breaking down the division process into smaller, manageable parts that can be computed in parallel, which fits well with the description of using two always blocks to manage the inputs and the division process itself.
+- The division process will essentially be a series of shifts and comparisons, utilizing the properties of binary numbers to simplify the division operation into a series of subtractions and bit manipulations.
+- Given the constraints of the problem, we can simulate the division process by iteratively comparing and subtracting the divisor from parts of the dividend, similar to a long division algorithm but implemented in a combinational manner.
+- Since the divisor is 8 bits and the dividend is 16 bits, the quotient will be at most 8 bits (since 2^8 > 16/8), but we need to provide the full 16 bits of quotient and remainder as specified, thus the quotient will be padded with zeros if necessary.

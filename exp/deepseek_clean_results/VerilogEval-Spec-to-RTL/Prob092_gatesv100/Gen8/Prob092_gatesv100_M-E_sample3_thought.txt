@@ -1,0 +1,22 @@
+Novel architectural approach:
+
+1. Circular Shift Register Concept:
+   - Instead of direct bitwise operations, implement a circular shift register that rotates the input left by 1 bit
+   - This creates the "left neighbor" relationship for all bits simultaneously
+   - Eliminates the need for special case handling of edge bits
+
+2. Parallel Processing:
+   - Use the original and shifted versions to compute all three outputs in parallel
+   - For out_both: AND between original and shifted
+   - For out_any: OR between original and shifted
+   - For out_different: XOR between original and shifted
+
+3. Edge Bit Handling:
+   - The circular shift naturally handles wrap-around for out_different
+   - Explicit masking handles the edge conditions for out_both and out_any
+
+Key Advantages:
+- Unified processing for all bits (no special cases in computation)
+- Symmetrical implementation that may lead to better routing
+- Potential for better timing due to uniform operations
+- Conceptually cleaner implementation

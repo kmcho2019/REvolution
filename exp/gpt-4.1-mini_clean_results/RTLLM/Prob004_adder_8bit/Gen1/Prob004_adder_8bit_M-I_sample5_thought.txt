@@ -1,0 +1,10 @@
+The original design is a straightforward ripple-carry adder made of 8 full adders chained together. While functionally correct, its critical path delay is linear with the bit width due to ripple carry. To improve performance (reduce delay), implement a carry-lookahead mechanism for carry generation, enabling faster carry computation and reduced propagation delay. However, since the request is for multiple bit-level adders, a small optimization is to use generate blocks for cleaner code and possibly use assign statements for sum and carry generation inside the full adder to reduce gate delays. This optimizes clarity and potentially allows synthesis tools to optimize better.
+
+Alternatively, keep the ripple carry structure but implement the full_adder with explicit gate-level logic to enable better synthesis and PPA improvements (e.g., carry and sum computed by XOR and AND gates instead of addition). Also, use generate loops for concise code.
+
+Summary of improvements:
+- Implement full_adder with gate-level primitives (XOR, AND, OR).
+- Use generate loop to instantiate full adders concisely.
+- Keep ripple carry structure (since no carry-lookahead requested explicitly) for functional correctness and simpler logic.
+
+This yields cleaner, synthesizable, and potentially better PPA code.

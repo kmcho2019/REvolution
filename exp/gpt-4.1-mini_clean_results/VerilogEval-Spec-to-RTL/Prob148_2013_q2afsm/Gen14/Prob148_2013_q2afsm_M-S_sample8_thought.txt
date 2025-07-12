@@ -1,0 +1,17 @@
+We can simplify the FSM by encoding states with a 2-bit binary code since there are only 4 states (A, B, C, D). The encoding can be:
+- A = 2'b00 (idle)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+This binary encoding reduces flip-flops to 2 instead of 3, making the design simpler and more area-efficient.
+
+For next state logic:
+- In state A, check requests in priority order: r[0], r[1], r[2]; pick the first active.
+- In grant states, stay in the same state if the corresponding request is still asserted; otherwise, return to A.
+
+Output g is combinational from the current state: only one grant bit is set corresponding to the state (g0=1 for B, g1=1 for C, g2=1 for D).
+
+Reset is synchronous and active low, going to state A.
+
+This approach simplifies logic and reduces resource usage while maintaining the FSM's behavior.

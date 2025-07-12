@@ -1,0 +1,5 @@
+The original solution uses a combinational clock enable derived from (d ^ q) to reduce unnecessary register updates, which reduces dynamic power but adds combinational delay and logic on the critical path. To improve timing and simplify logic, remove the clock enable altogether and update q on every negative clock edge synchronously with reset. This eliminates the XOR and OR reduction logic, reducing combinational delay and potentially improving maximum clock frequency.
+
+Though this may slightly increase switching activity, the logic simplification and better timing outweigh power savings from the clock enable. Since the synchronous reset value is fixed, implement it directly in the sequential always block for clarity and synthesis friendliness.
+
+This tradeoff improves performance and area slightly, while maintaining correctness and clarity.

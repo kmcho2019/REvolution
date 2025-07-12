@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Machine Restructuring: Use separate always blocks for state transitions and output logic to improve readability and potential timing
+2. Output Logic: Make out_bytes a combinational assignment based on stored bytes to reduce register updates
+3. Done Signal: Generate done combinationally from state to eliminate its register
+4. Byte Storage: Keep byte storage registers but only update them when needed
+5. Reset Handling: Maintain synchronous reset behavior but simplify default assignments
+
+Key Changes:
+- Split state machine into sequential state transitions and combinational output logic
+- out_bytes is now a combinational concatenation of stored bytes
+- done is generated directly from state without a register
+- Reduced number of always blocks while maintaining same functionality
+- More explicit state transition conditions

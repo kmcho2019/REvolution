@@ -1,0 +1,9 @@
+Refactor the pipeline adder by separating the pipeline registers and combinational logic more clearly. Instead of maintaining all partial sums in registers and manually concatenating them (which risks incorrect indexing), store the operands and carry-ins in pipeline registers, perform combinational additions per stage, and pipeline the carry-out and the partial sums accordingly.
+
+To correctly produce the final 65-bit sum, we will assemble it by concatenating all pipeline stage sums in the correct order at the last pipeline stage. To avoid invalid indexing, use a generate loop to concatenate partial sums into a wide wire and then register it in the pipeline output register.
+
+Also, we will pipeline the enable signal through the stages synchronously and assert o_en accordingly.
+
+This approach improves clarity by separating combinational addition (using assign statements) and pipeline registers. It also eliminates hard-coded indexing and avoids the negative-index bug. The pipeline latency remains the same.
+
+The code below implements 8 pipeline stages each adding 8-bit slices plus carry-in, pipelining operands, carry, and enable signals. The final sum is registered and output at the end of the pipeline.

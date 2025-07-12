@@ -1,0 +1,14 @@
+To simplify the solution while maintaining functionality, I'll focus on:
+1. Leveraging the one-hot encoding property where only one bit of y is active at a time
+2. Directly mapping the state transitions from the specification
+3. Using minimal logic for each output
+
+For Y1 (next state for B):
+- Only transitions from A (y[0]) when w=1
+- Simple AND gate is optimal
+
+For Y3 (next state for D):
+- Transitions from B, C, E, or F when w=0
+- Can be expressed as: not w AND not in A or D
+- Since it's one-hot, we can simply check if any of B,C,E,F bits are set (y[1]|y[2]|y[4]|y[5])
+- But ~(y[0]|y[3]) is equivalent and simpler

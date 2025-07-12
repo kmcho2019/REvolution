@@ -1,0 +1,12 @@
+Instead of using binary encoding, I'll implement a one-hot encoded FSM which offers:
+1. Faster state transitions since only one bit changes at a time
+2. Simpler output logic that can directly tap state bits
+3. Parallel next-state computation using bitwise operations
+4. Elimination of case statements by using arithmetic expressions
+
+Key innovations:
+- Each state is represented by a single bit (5 states = 5 bits)
+- Next state logic uses bitmask operations based on current state and input
+- Output z is simply the OR of the relevant state bits
+- Reset initializes to first state (00001)
+- More efficient for synthesis as it reduces decoder logic

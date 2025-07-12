@@ -1,0 +1,7 @@
+To simplify the existing solution, we can eliminate the need for the initial block by initializing the output `q` directly within the module declaration. This approach ensures that `q` starts with the value `4` at the beginning of the simulation, aligning with the initial condition specified in the problem statement.
+
+Furthermore, the conditional logic within the always block can be simplified. Instead of using an if-else statement to check if `q` is less than `6` before deciding whether to increment or reset it, we can directly increment `q` and use a modulus operation to ensure it wraps around to `0` after reaching `6`. However, given that we are dealing with a 3-bit output, the modulus operation can be implicitly handled by the bit width of `q`.
+
+Thus, when `a` is low, we simply increment `q`, and it will naturally wrap around due to its bit width. When `a` is high, we reset `q` to `4`.
+
+This simplification reduces the code's complexity while maintaining the desired functionality.

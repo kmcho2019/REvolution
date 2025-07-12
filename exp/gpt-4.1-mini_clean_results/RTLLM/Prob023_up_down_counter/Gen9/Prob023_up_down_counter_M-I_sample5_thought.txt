@@ -1,0 +1,5 @@
+To optimize the up_down_counter for better Power, Performance, and Area (PPA), I will share the adder/subtractor logic instead of calculating both increment and decrement every clock cycle. By computing a single intermediate value that either adds or subtracts 1 based on the up_down signal, the combinational logic is reduced, lowering toggling activity and the number of arithmetic units inferred by synthesis tools. This will reduce switching power and area, and can improve timing by minimizing logic depth and multiplexing.
+
+The code uses one adder-subtractor operation with the operand modified by up_down, replacing two separate adders with a single expression. The synchronous reset and non-blocking assignment remain as before. This approach preserves the functionality exactly, maintaining a 16-bit wrap-around counter.
+
+Overall, this solution is cleaner and synthesizes into a single arithmetic unit controlled by the direction signal, improving PPA without sacrificing readability or correctness.

@@ -1,0 +1,7 @@
+Refactor the design using a two-process structure: one synchronous always block to shift in serial data and count bits, and a separate combinational assignment for dout_parallel based on an internal shift register. Instead of updating dout_parallel only when 8 bits have been received, keep the internal shift register updated on every valid input, and use a registered signal dout_valid that asserts for one cycle after 8 bits are accumulated.
+
+This approach separates data accumulation from output assignment, improving code clarity. The internal shift register still shifts right on each din_valid pulse, inserting the new serial bit at MSB, to preserve MSB-first bit ordering.
+
+Also, use a synchronous reset for all registers for consistency.
+
+This refactor uses a counter and shift register updated in one always block, and uses output registers driven by these internal registers. This clearer structure can improve readability and maintain the same functionality.

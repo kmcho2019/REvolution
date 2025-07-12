@@ -1,0 +1,23 @@
+// Simplified TopModule implementing all logic gates directly
+module TopModule(
+    input  logic a,
+    input  logic b,
+    output logic out_and,
+    output logic out_or,
+    output logic out_xor,
+    output logic out_nand,
+    output logic out_nor,
+    output logic out_xnor,
+    output logic out_anotb
+);
+
+    // Direct implementation of logic gates using Verilog operators
+    assign out_and  = a && b;       // AND gate
+    assign out_or   = a || b;       // OR gate
+    assign out_xor  = a ^ b;        // XOR gate
+    assign out_nand = ~(a && b);    // NAND gate
+    assign out_nor  = ~(a || b);    // NOR gate
+    assign out_xnor = ~(a ^ b);     // XNOR gate
+    assign out_anotb = a && ~b;     // ANDNOT gate
+
+endmodule

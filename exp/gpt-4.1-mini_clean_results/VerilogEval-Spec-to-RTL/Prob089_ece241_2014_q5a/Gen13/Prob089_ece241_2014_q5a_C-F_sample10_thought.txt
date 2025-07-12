@@ -1,0 +1,12 @@
+Fuse the strengths of both examples to build a robust, minimal, and clear Moore FSM with:
+
+- A single-bit state encoding (0 = COPY bits until first '1', 1 = INVERT bits after first '1').
+- Sampling the input `x` synchronously with the clock in the same always block as state update, ensuring tight timing and reducing latency.
+- Asynchronous reset properly applied to both state and input sample registers, ensuring immediate reset and known startup conditions.
+- Combinational next state logic computed from registered state and registered input `x_reg` for glitch-free transitions.
+- Output `z` as a pure combinational function of `state` and `x_reg` implementing `z = x_reg XOR state`, a minimal and elegant Moore output.
+- Avoiding extra output registers to maintain minimal latency while preserving Moore output style.
+- Clean and simple code that clearly separates combinational and sequential logic for readability and timing.
+- This fusion minimizes registers (2 flip-flops), removes unnecessary always blocks, and achieves stable, glitch-free outputs with the desired asynchronous reset behavior.
+
+This solution synthesizes to a small, fast, and power-efficient design that strictly meets the specification for a serial 2's complement Moore FSM with asynchronous reset and positive-edge clocking.

@@ -1,0 +1,25 @@
+To improve the original 32-bit CLA design, the main bottleneck is the linear carry and block generate computation inside each 16-bit CLA block. A true carry-lookahead adder uses hierarchical (tree-based) parallel prefix logic to compute carries in O(log n) delay, which enhances timing significantly.
+
+Improvement strategy:
+1. Replace the linear carry chain within the 16-bit CLA block by a 4-level hierarchical carry-lookahead tree based on the Kogge-Stone or Brent-Kung style prefix structure. This reduces carry propagation delay from linear to logarithmic.
+2. Compute block propagate (P) as the AND of all propagate bits remains the same, but block generate (G) will come naturally from the prefix tree result at the top level.
+3. Avoid re-computing block generate separately by using the prefix tree output directly.
+4. Maintain the same 32-bit top-level structure with two 16-bit CLA blocks, but now the 16-bit blocks are faster.
+5. Maintain 1-based interface externally and use 0-based internally for clarity.
+6. Use wires and assign statements for purely combinational logic, and use generate blocks to implement the prefix logic.
+7. Preserve modularity for easy scaling and clean code.
+
+This redesign significantly improves timing by reducing the carry propagation stages, with minimal impact on area and power. It retains the clear hierarchical structure and clean interface. The carry-out and sum outputs remain correct by construction.
+
+The prefix tree logic:
+- Level 0: per-bit generate/propagate signals.
+- Level 1 to 4: combine adjacent groups of signals to create higher-level group generate/propagate signals using black cells.
+- The carry signals C[i] come from the prefix tree outputs.
+
+This approach matches classical CLA design for modern high-speed adders.
+
+I will implement a 16-bit CLA with such a prefix structure inside, then the 32-bit adder top-level module.
+
+Note: Since the user interface is fixed as [32:1], the internal mapping remains. The prefix tree signals use 0-based indexing internally.
+
+This optimized design will reduce critical path delay, especially beneficial in ASIC or FPGA implementations demanding high frequency.

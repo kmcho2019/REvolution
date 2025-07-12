@@ -1,0 +1,18 @@
+Fusion Strategy:
+
+Combine the chunk-based modularity and hierarchical clarity from Example 1 with the single-level generate flat wiring from Example 2 to achieve an optimal balance of modularity, scalability, and hardware efficiency.
+
+Key points:
+- Use a single parameterized BitRevN module for any bit width, ensuring modularity and reusability.
+- Divide the 100-bit input into fixed-size chunks (e.g., 10 bits).
+- Reverse each chunk internally using BitRevN to maintain modularity.
+- Place these reversed chunks into the output in reversed chunk order to achieve complete 100-bit reversal.
+- Instead of instantiating multiple BitRevN modules, instantiate only one BitRevN parameterized module as a generate block with indexed inputs and outputs inside TopModule, thereby flattening hierarchy and minimizing module overhead.
+- This approach removes intermediate wiring and multiple module instantiations while preserving clear and modular code structure.
+- The design remains purely combinational, synthesizable, and easy to verify.
+- This fusion combines Example 1’s chunking and reversal logic with Example 2’s flat wiring and minimal instance overhead, optimizing power, area, and performance.
+
+Summary:
+- Parameterized BitRevN module reverses a chunk of bits.
+- TopModule uses a generate loop to connect input chunks directly to output reversed chunks in reverse order via BitRevN's logic without multiple instantiated modules.
+- Flatten the generate inside TopModule rather than multiple BitRevN instances, effectively inlining the chunk reversal logic while maintaining clean modularity.

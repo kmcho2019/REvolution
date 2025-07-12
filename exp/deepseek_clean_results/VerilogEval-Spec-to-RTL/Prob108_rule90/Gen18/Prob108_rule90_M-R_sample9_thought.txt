@@ -1,0 +1,18 @@
+Refactoring Approach:
+1. Replace the generate block with direct assignment statements for each bit position
+2. Use continuous assignments (assign) instead of procedural blocks for combinational logic
+3. Maintain the same boundary conditions (left/right neighbors as 0 for edge bits)
+4. Keep the synchronous update for the state register
+5. Simplify the structure by eliminating the intermediate next_q wire array
+
+Key Changes:
+- Remove generate block in favor of direct assignments
+- Combine boundary handling and XOR logic in single expressions
+- Keep the always block only for sequential logic
+- Maintain same functionality while reducing hierarchical complexity
+
+Benefits:
+- More straightforward implementation without generate blocks
+- Easier to read and modify individual cell rules
+- Same performance characteristics (still fully parallel)
+- Reduced hierarchical complexity in synthesis

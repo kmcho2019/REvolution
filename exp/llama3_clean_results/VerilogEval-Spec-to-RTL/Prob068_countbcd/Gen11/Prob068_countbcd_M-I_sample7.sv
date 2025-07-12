@@ -1,0 +1,119 @@
+// Improved BCD Counter module
+module BCD_Counter(
+    input  clk,
+    input  reset,
+    input  ena,
+    output [3:0] q,
+    output carry
+);
+
+reg [3:0] count;
+
+always @(posedge clk) begin
+    if (reset) begin
+        count <= 4'd0;
+    end else if (ena) begin
+        if (count == 4'd9) begin
+            count <= 4'd0;
+        end else begin
+            count <= count + 1;
+        end
+    end
+end
+
+assign q = count;
+assign carry = (count == 4'd9) && ena;
+
+endmodule
+
+// Improved TopModule with clock gating
+module TopModule(
+    input  clk,
+    input  reset,
+    output [2:0] ena,
+    output [15:0] q
+);
+
+// internal signals for each digit
+wire [3:0] ones_q;
+wire [3:0] tens_q;
+wire [3:0] hundreds_q;
+wire [3:0] thousands_q;
+
+// internal carry signals
+wire ones_carry;
+wire tens_carry;
+wire hundreds_carry;
+
+// assign outputs
+assign q = {thousands_q, hundreds_q, tens_q, ones_q};
+assign ena = {hundreds_carry, tens_carry, ones_carry};
+
+// instantiate BCD counters with optimized enable logic and clock gating
+BCD_Counter ones_counter(
+ .clk(clk),
+ .reset(reset),
+ .ena(1'b1),
+ .q(ones_q),
+ .carry(ones_carry)
+);
+
+BCD_Counter tens_counter(
+ .clk(clk),
+ .reset(reset),
+ .ena(ones_carry),
+ .q(tens_q),
+ .carry(tens_carry)
+);
+
+BCD_Counter hundreds_counter(
+ .clk(clk),
+ .reset(reset),
+ .ena(tens_carry),
+ .q(hundreds_q),
+ .carry(hundreds_carry)
+);
+
+BCD_Counter thousands_counter(
+ .clk(clk),
+ .reset(reset),
+ .ena(hundreds_carry),
+ .q(thousands_q),
+ .carry()
+);
+
+// clock gating for power reduction
+reg clk_ones, clk_tens, clk_hundreds, clk_thousands;
+
+always @(posedge clk) begin
+    if (reset) begin
+        clk_ones <= 1'b0;
+        clk_tens <= 1'b0;
+        clk_hundreds <= 1'b0;
+        clk_thousands <= 1'b0;
+    end else begin
+        if (ones_carry) begin
+            clk_tens <= 1'b1;
+        end else begin
+            clk_tens <= 1'b0;
+        end
+        if (tens_carry) begin
+            clk_hundreds <= 1'b1;
+        end else begin
+            clk_hundreds <= 1'b0;
+        end
+        if (hundreds_carry) begin
+            clk_thousands <= 1'b1;
+        end else begin
+            clk_thousands <= 1'b0;
+        end
+    end
+end
+
+// assign clock enables
+assign ones_counter.clk = clk;
+assign tens_counter.clk = clk_tens ? clk : 1'b0;
+assign hundreds_counter.clk = clk_hundreds ? clk : 1'b0;
+assign thousands_counter.clk = clk_thousands ? clk : 1'b0;
+
+endmodule

@@ -1,0 +1,26 @@
+The original design is a fully combinational floating-point multiplier producing results in one clock cycle. While functionally correct, it suffers from a long combinational path mainly due to the large 24x24 multiplier, normalization, rounding, and special case logic all happening in one cycle. This limits max frequency and increases power due to all logic toggling every cycle.
+
+Improvement strategy:
+- Pipeline the design into multiple stages to reduce critical path and improve max clock frequency.
+- Use a 3-stage pipeline:
+  1. Stage 1: Extract fields, handle special cases, prepare mantissas and exponents, and compute sign.
+  2. Stage 2: Perform 24x24 mantissa multiplication and add exponents.
+  3. Stage 3: Normalize, round, adjust exponent, handle overflow/underflow, and format final result.
+
+This splits long combinational logic into shorter segments, improving timing and enabling higher clock frequency.
+
+Additional benefits:
+- Registers inserted between stages reduce glitching and power by limiting switching per cycle.
+- Enables better resource sharing and potentially easier timing closure.
+
+The pipeline handles one multiplication every clock cycle after pipeline fill latency. The reset clears pipeline registers.
+
+This approach balances latency and throughput, making the design more suitable for higher-frequency operation with modest increase in latency.
+
+The counter and multi-cycle control requested are replaced by pipelining for efficiency.
+
+The pipeline registers hold intermediate signals (mantissa, exponent, sign, special flags) to progress through the stages. The rounding uses round-to-nearest-even.
+
+The final output is registered, stable, and synchronous with clk and rst.
+
+This is a common, practical, and scalable approach for IEEE-754 floating point multiplication.

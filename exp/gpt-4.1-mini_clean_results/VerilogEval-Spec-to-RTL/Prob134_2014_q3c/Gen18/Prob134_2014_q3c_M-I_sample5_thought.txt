@@ -1,0 +1,44 @@
+The original solution already uses minimal boolean logic and bitwise expressions to decode states, which reduces comparators and improves PPA compared to naive equality checks. To further improve PPA without changing the FSM behavior, we can:
+
+1. Combine the decoded state signals into fewer terms by leveraging don’t-care conditions where possible.
+2. Simplify the next_state[1] logic by expressing it directly in terms of present state bits and input x, minimizing the number of separate decoded signals.
+3. Reduce redundant signals by reusing intermediate terms and minimizing logical operations.
+4. Use continuous assignments as in the original since synchronous logic isn’t specified.
+
+For next_state[2], the original uses (x & (is_001 | is_100)). We cannot simplify much further.
+
+For next_state[1], rewrite the condition logically:
+
+    ns1 = (is_010 & ~x) | (is_011 & x) | (is_100 & ~x)
+
+Check the pattern:
+
+- is_010 and is_011 differ only in y[0], so combined:
+
+  For ~x, ns1 = 1 if y=010 or 100.
+
+- For x, ns1=1 only if y=011.
+
+Rewrite:
+
+- ns1 = (~x & (is_010 | is_100)) | (x & is_011)
+
+- Also, is_010 | is_100 = (~y[2] & y[1] & ~y[0]) | (y[2] & ~y[1] & ~y[0])
+
+No simpler common factor; keep as is but merge as above.
+
+For next_state[0], the condition is:
+
+- ns0 = x if y in {000,010}, else ~x
+
+- Since y in {000,010} means y[2]=0 and y[0]=0, we can keep that check.
+
+For output z, same minimal expression as before.
+
+This slightly reduces separate signals and removes one decoded signal (is_001) reused only once.
+
+This yields a marginally simpler circuit, potentially reducing gate count and switching.
+
+No behavioral change; same PPA improvements as before.
+
+Hence, the main enhancement is logical consolidation and minimal signals with clean comments.

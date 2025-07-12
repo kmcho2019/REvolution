@@ -1,0 +1,13 @@
+A different structural approach to implement the same logic is to realize q as a 4-input multiplexer output controlled by the inputs. Since q is 1 only when (a or b) and (c or d) are both true, I can use a hierarchy:
+
+- Compute ab_or = a | b
+- Compute cd_or = c | d
+- Use a 2-to-1 multiplexer controlled by ab_or:
+  - When ab_or = 0, output 0
+  - When ab_or = 1, output cd_or
+
+This effectively models q = ab_or ? cd_or : 0, which equals (a|b) & (c|d).
+
+This approach uses a multiplexer as the main element, which is conceptually different from direct gate assignments and can help visualize the dependency as a conditional selection.
+
+Also, I'll implement this with an always_comb block and conditional statements to demonstrate a different coding style and architectural structure.

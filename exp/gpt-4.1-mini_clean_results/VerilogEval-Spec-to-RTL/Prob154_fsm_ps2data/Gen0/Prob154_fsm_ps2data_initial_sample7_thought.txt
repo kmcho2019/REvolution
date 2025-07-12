@@ -1,0 +1,8 @@
+Implement an FSM with three states: IDLE, BYTE2, BYTE3.
+- In IDLE, wait for a byte with in[3]==1 to mark start of message (byte1).
+- Then store that byte in the MSB byte field of out_bytes and move to BYTE2.
+- In BYTE2, store the next byte in out_bytes[15:8] and move to BYTE3.
+- In BYTE3, store the next byte in out_bytes[7:0], assert done for one cycle and then return to IDLE.
+Reset synchronously clears state and output.
+done is asserted for exactly one clk cycle immediately after the third byte is stored.
+out_bytes is valid on done cycle, concatenating bytes in received order.

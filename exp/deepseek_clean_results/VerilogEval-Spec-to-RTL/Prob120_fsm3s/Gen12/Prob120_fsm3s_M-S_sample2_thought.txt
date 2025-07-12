@@ -1,0 +1,9 @@
+To simplify the Moore FSM implementation while maintaining functionality:
+
+1. Remove the separate next_state register since we can directly update the state register based on current state and input
+2. Combine the state transition logic and state update into a single always block
+3. Keep the same state encoding (A=00, B=01, C=10, D=11) for consistency
+4. Maintain synchronous reset functionality
+5. Simplify output logic to directly check for state D (11) using a continuous assignment
+
+This reduces the design to just one always block and one output assignment, eliminating the intermediate next_state logic while preserving the exact same behavior. The simplification reduces register usage and combinational logic complexity.

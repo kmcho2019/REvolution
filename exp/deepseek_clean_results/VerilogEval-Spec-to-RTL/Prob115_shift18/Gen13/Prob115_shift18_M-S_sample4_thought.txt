@@ -1,0 +1,22 @@
+Simplification Strategy:
+1. **Reduce Control Logic**:
+   - Use a single case statement for all shift operations instead of nested if-else
+   - Combine direction and amount selection into one operation
+
+2. **Minimize Signal Transitions**:
+   - Remove intermediate next_q signal and compute directly in clocked block
+   - Only perform shift operations when ena is active
+
+3. **Simplify Arithmetic Shift**:
+   - Use concatenation with sign bit directly in right shift cases
+   - Keep left shift operations simple with zero padding
+
+4. **Streamline Register Update**:
+   - Handle load and shift operations in a single always block
+   - Eliminate unnecessary signal assignments
+
+Key Simplifications:
+- Removed next_q intermediate register
+- Consolidated shift logic into a single case statement
+- Reduced number of conditional checks
+- Maintained all original functionality

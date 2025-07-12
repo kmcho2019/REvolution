@@ -1,0 +1,11 @@
+To fix the timing mismatch, I will combine the counter and shift_ena logic into a single always block, ensuring that shift_ena immediately reflects the updated counter state on the same clock edge as the counter update. This removes the 1-cycle latency caused by separate always blocks.
+
+Since the problem only provides clk, reset, and shift_ena signals, and the feedback notes that pattern detection logic is missing but no input port exists for it, I will focus on meeting the specification for synchronous reset behavior: asserting shift_ena for exactly 4 clock cycles immediately starting with the clock where reset is asserted, then keeping it low indefinitely.
+
+Implementation details:
+- On synchronous reset, counter is loaded with 4.
+- shift_ena is asserted while counter is nonzero.
+- At each clock edge, if counter > 0 and not resetting, counter decrements by 1.
+- shift_ena is assigned based on whether counter is nonzero within the same always block, removing output latency.
+
+This approach ensures shift_ena asserts immediately on the reset clock, holds for exactly 4 cycles, then stays low forever, aligning with the specification and fixing the prior timing mismatch.

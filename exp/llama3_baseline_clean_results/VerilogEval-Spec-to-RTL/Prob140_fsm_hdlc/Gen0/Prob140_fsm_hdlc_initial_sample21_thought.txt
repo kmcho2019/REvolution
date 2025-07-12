@@ -1,0 +1,14 @@
+To implement the Moore-type finite state machine as described, we first need to identify the states and transitions based on the input sequences. The states can be defined as follows:
+- S0: Initial state or previous input was 0
+- S1: Previous input was 1
+- S2: Previous two inputs were 1
+- S3: Previous three inputs were 1
+- S4: Previous four inputs were 1
+- S5: Previous five inputs were 1
+- S6: Previous six inputs were 1
+- S7: Previous seven or more inputs were 1 (error state)
+
+The transitions are based on the current state and the current input. The outputs (disc, flag, err) are determined by the current state. 
+The disc signal should be asserted when the FSM moves from S5 to S6 (since a zero is inserted after five consecutive ones), 
+the flag signal should be asserted when the FSM moves from S6 to S0 (since the sequence 01111110 indicates the start/end of a frame), 
+and the err signal should be asserted when the FSM is in S7.

@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. Remove redundant data_reg since data_in is stable during data_en (3 clk_b cycles)
+2. Directly synchronize data_en to clk_b domain using two flip-flops
+3. Use synchronized enable to gate the data_in capture
+4. Maintain minimal registers for metastability protection
+5. Keep reset functionality for both domains
+
+Key Changes:
+- Eliminated data_reg since data_in is stable during valid window
+- Simplified to just enable synchronization path
+- Data is captured directly when synchronized enable is active
+- Reduced register count while maintaining functionality
+- Preserved metastability protection with two-stage sync

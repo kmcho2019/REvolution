@@ -1,0 +1,7 @@
+Refactor the timer by using an explicit next-state combinational logic variable for the counter, and then update the register on the clock edge with this next state. This splits the counter logic into two parts: a combinational block computing the next counter value based on the load and decrement conditions, and a sequential block updating the counter register accordingly.
+
+This approach highlights the separation between combinational next-state logic and sequential register updates, which can improve code readability and is a common style in FSM and counter designs.
+
+The terminal count output `tc` remains a simple combinational assignment indicating when the counter reaches zero.
+
+This refactoring preserves the single register requirement and the behavior but emphasizes the use of an intermediate signal for the next counter state instead of directly embedding logic in the always block.

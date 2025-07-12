@@ -1,0 +1,6 @@
+Use a simple two-state FSM implemented with localparams instead of enums for better compatibility.
+- In IDLE state, when valid_in arrives, latch first 8-bit data into data_lock and move to WAIT_FOR_SECOND.
+- In WAIT_FOR_SECOND state, when valid_in arrives, concatenate stored data_lock (high 8 bits) and current data_in (low 8 bits), output data_out and assert valid_out in next cycle, then return to IDLE.
+- valid_out and data_out are registered and updated synchronously with a 1-cycle latency after the second data input.
+- On reset, clear all registers.
+- Keep combinational and sequential logic strictly separated without mixing assignments.

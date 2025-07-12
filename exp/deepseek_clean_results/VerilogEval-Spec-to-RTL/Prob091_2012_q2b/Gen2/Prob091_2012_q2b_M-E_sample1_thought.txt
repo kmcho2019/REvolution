@@ -1,0 +1,15 @@
+Here's a novel approach using a priority encoder concept for the state transitions:
+
+1. **Priority-Based State Transition:** Instead of treating each state transition independently, we can implement a priority encoder that selects the next state based on the current state and input. This reduces the number of comparisons needed.
+
+2. **Output Generation:** 
+   - Y1 (next state B) only occurs when in state A (y[0]) and w=1
+   - Y3 (next state D) occurs when:
+     * In state B, C, or F with w=0
+     * In state E with w=0 (which also goes to D)
+   - We can optimize this by recognizing that Y3 is active for any non-A state when w=0, except when in state F with w=1 (goes to C)
+
+3. **Optimization Insight:** 
+   - Y1 remains simple (only one condition)
+   - Y3 can be expressed as: NOT(w) AND NOT(in state A)
+   - This reduces the logic significantly while maintaining correctness

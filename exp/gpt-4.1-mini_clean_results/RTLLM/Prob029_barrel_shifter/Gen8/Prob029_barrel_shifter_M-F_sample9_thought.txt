@@ -1,0 +1,19 @@
+The original code incorrectly implemented rotate-left as rotate-right for each shift stage by directly using concatenations that rotate right. We must fix this by correctly implementing rotate-left operations using the appropriate bit slices.
+
+Additionally, the problem description emphasizes using `mux2X1` modules to select between shifted and original bits based on the control signals at each stage. So instead of using ternary operators and concatenations directly, we will build the barrel shifter using explicit `mux2X1` submodules instantiated per output bit at each stage, reflecting the multiplexing logic.
+
+For an 8-bit rotate-left by N bits, bit i of the output comes from bit (i+N) mod 8 of the input.
+
+The barrel shifter stages are:
+
+- Stage 1: rotate left by 4 bits if ctrl[2]
+- Stage 2: rotate left by 2 bits if ctrl[1]
+- Stage 3: rotate left by 1 bit if ctrl[0]
+
+Each stage takes the previous stage's output and conditionally rotates by the stage's amount, controlled by the stage's ctrl bit.
+
+We will implement a generic `mux2X1` module that selects between two inputs based on `sel`. For each stage and each bit, the mux selects between the bit from the previous stage and the bit shifted by the stage's amount.
+
+The final output after stage 3 is assigned to `out`.
+
+This design fully complies with the problem requirements and fixes the rotation direction errors from the original code.

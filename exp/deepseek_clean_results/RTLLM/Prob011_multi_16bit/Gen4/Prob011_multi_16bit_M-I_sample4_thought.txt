@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace variable shifter with fixed shifts by pre-calculating all possible shifted versions of breg
+   - Use multiplexer to select the appropriate shift based on counter value
+   - This reduces critical path by eliminating the variable shifter from the adder path
+
+2. Power Optimization:
+   - Register the output to prevent combinational glitching
+   - Only perform accumulation when needed (areg[i-1] is set)
+   - Simplify done flag logic
+
+3. Area Optimization:
+   - Reduce counter width to 4 bits (0-15)
+   - Remove redundant output assignment block
+   - Consolidate control logic
+
+Key Changes:
+- Pre-calculate all 16 shifted versions of breg
+- Use registered output
+- Simplified counter and control logic
+- More efficient done flag generation

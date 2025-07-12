@@ -1,0 +1,7 @@
+To fix the frequency divider, we need to correct the counter update logic and the conditions for toggling the clock dividers `clk_div1` and `clk_div2`. We will use two separate counters, `cnt1` and `cnt2`, to track the rising and falling edges of the clock, as originally intended in the problem description. 
+
+Each counter will count up to `NUM_DIV - 1`, and the clock dividers will be toggled when the counters reach half of `NUM_DIV`. We will use the `always` block to update the counters on every clock edge (both rising and falling) and reset the counters and clock dividers when the reset signal `rst_n` is asserted.
+
+The update conditions for `cnt1` and `cnt2` will be separate to correctly track the rising and falling edges. We will also ensure that the reset condition correctly resets the counters and clock dividers on the falling edge of the reset signal.
+
+To improve Power, Performance, and Area (PPA) metrics, we will optimize the counter update logic and ensure that the clock dividers are toggled correctly to minimize power consumption and improve performance.

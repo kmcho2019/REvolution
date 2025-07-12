@@ -1,0 +1,12 @@
+Implement a true 8-bit Radix-4 Booth multiplier that processes two bits of the multiplier per clock cycle, reducing iteration count to 4 cycles plus one cycle for sign correction and output stabilization. The design uses:
+
+- An extended multiplier register (with an appended zero bit) for radix-4 encoding in overlapping groups of 3 bits (booth recoding).
+- A multiplicand register sign-extended to 17 bits to accommodate shifts.
+- A partial product register (32 bits) accumulated over cycles.
+- A 3-bit counter controlling the iteration over 4 steps.
+- In each cycle, examine three bits from multiplier to determine the partial product add/subtract multiple (−2, −1, 0, +1, +2) times multiplicand shifted accordingly.
+- Use a combinational booth recoder function to produce the multiplicand multiple for addition or subtraction.
+- After 4 cycles, shift the partial product appropriately and set the ready signal.
+- Handle sign extension and final output extraction at the end.
+
+This approach balances resource usage and clock cycles, fully utilizing radix-4 Booth encoding to halve the iteration count compared to radix-2 implementation, improving throughput and power consumption while maintaining correctness.

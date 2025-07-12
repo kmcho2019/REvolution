@@ -1,0 +1,16 @@
+This design implements a novel request-acknowledge handshake mechanism between clock domains:
+
+1. Instead of directly synchronizing the enable signal, we detect the rising edge of data_en in clk_a domain
+2. Generate a pulse (req) that gets synchronized to clk_b domain
+3. When the synchronized pulse is detected in clk_b domain, we capture the data and generate an acknowledge signal
+4. The acknowledge signal gets synchronized back to clk_a domain to complete the handshake
+5. This ensures safe data transfer while minimizing metastability risks
+6. Edge detection prevents unnecessary synchronization when data_en stays high
+7. The design naturally handles the 3-cycle minimum requirement through the handshake protocol
+
+Key advantages:
+- More robust synchronization through explicit handshaking
+- Only synchronizes when needed (on data_en edges)
+- Clear separation of concerns between clock domains
+- Built-in flow control through acknowledge
+- Better power efficiency due to reduced toggling

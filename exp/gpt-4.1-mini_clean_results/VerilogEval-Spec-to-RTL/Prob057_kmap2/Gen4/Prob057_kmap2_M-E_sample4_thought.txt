@@ -1,0 +1,37 @@
+A new approach is to implement the output as a pure sum-of-minterms expression directly derived from the K-map without intermediate grouping or muxing. We enumerate all input combinations where output=1 and write a sum of minterms accordingly.
+
+From the K-map, the minterms with output=1 are:
+(c d a b) = 
+0000(0 0 0 0) => c=0,d=0,a=0,b=0
+0001(0 0 0 1)
+0010(0 0 1 0)
+0100(0 1 0 0)
+0110(0 1 1 0)
+1000(1 0 0 0)
+1001(1 0 0 1)
+1011(1 0 1 1)
+1101(1 1 0 1)
+1110(1 1 1 0)
+1111(1 1 1 1)
+
+Let's write out the minterms in terms of literals:
+Minterms (cdab):
+- 0000: ~c & ~d & ~a & ~b
+- 0001: ~c & ~d & ~a & b
+- 0010: ~c & ~d & a & ~b
+- 0100: ~c & d & ~a & ~b
+- 0110: ~c & d & a & ~b
+- 1000: c & ~d & ~a & ~b
+- 1001: c & ~d & ~a & b
+- 1011: c & ~d & a & b
+- 1101: c & d & ~a & b
+- 1110: c & d & a & ~b
+- 1111: c & d & a & b
+
+We implement these minterms as AND gates and OR them all together for output.
+
+This explicit minterm enumeration, although larger gate count, is a direct structural implementation of the given truth table, with no partial functions or muxing.
+
+This is structurally distinct from the previous solutions, which used partial functions and muxes, and different from a minimized boolean equation.
+
+It gives a straightforward mapping of the truth table to hardware, useful for explicit testing or simple synthesis scenarios.

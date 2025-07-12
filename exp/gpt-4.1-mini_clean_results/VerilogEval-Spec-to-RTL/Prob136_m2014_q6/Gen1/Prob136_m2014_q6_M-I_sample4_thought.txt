@@ -1,0 +1,3 @@
+The likely cause of mismatch is that the output `z` depends combinationally on the current input `w`, causing asynchronous glitches relative to the state transitions. To fix this, make `z` a registered output updated synchronously on the clock edge along with the state. `z` should reflect the value based on the current state and `w` at the clock edge, ensuring stable timing and avoiding combinational sensitivity to asynchronous input changes.
+
+Thus, at every positive clock edge, update both the state and `z` based on current inputs. This synchronous design avoids mismatches due to timing assumptions and matches typical FSM output conventions.

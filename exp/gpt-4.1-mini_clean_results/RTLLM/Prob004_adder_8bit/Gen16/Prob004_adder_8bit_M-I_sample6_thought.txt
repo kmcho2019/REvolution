@@ -1,0 +1,9 @@
+The existing design is functionally correct and clean, using a ripple carry structure with a generate loop. To improve the PPA, specifically targeting better performance and potentially lower power and area, I will:
+
+- Replace the ripple carry chain with a simple 4-bit carry lookahead adder (CLA) structure, splitting the 8 bits into two 4-bit blocks.
+- Implement bit-level full adders as before but use a carry lookahead logic to quickly compute carries for the second 4-bit block, reducing carry propagation delay.
+- This will significantly reduce the critical path delay (better timing), with minor area overhead due to CLA logic.
+- Power may also be improved due to fewer toggles on the carry chain.
+- Keep the code modular and combinational.
+
+This maintains the same interface but enhances performance by reducing carry chain length from 8 to 4 stages of ripple plus simple carry lookahead logic.

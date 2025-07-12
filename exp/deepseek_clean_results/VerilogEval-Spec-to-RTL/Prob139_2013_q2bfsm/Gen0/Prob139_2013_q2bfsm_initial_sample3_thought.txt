@@ -1,0 +1,12 @@
+To implement this FSM, we'll need to:
+1. Define states (A, F_PULSE, MONITOR_X, G_SET, CHECK_Y, G_HIGH, G_LOW)
+2. Implement state transitions based on the requirements:
+   - Start in state A when resetn is low
+   - Transition to F_PULSE on resetn high, output f=1 for one cycle
+   - Then monitor x for 1-0-1 pattern (MONITOR_X state)
+   - When pattern detected, go to G_SET to output g=1
+   - Then check y within 2 cycles (CHECK_Y state)
+   - Based on y, transition to either G_HIGH (permanent g=1) or G_LOW (permanent g=0)
+3. Use sequential logic for state transitions and combinational logic for outputs
+4. Implement pattern detection for x using shift registers
+5. Implement cycle counting for y monitoring

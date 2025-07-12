@@ -1,0 +1,10 @@
+Improvement Strategy:
+1. Timing Optimization: The negative WNS indicates timing violations. We'll pipeline the shift operation by splitting the 64-bit shift into two 32-bit stages, reducing the critical path length while maintaining functionality.
+
+2. Power Optimization: Implement clock gating to reduce dynamic power when the counter isn't changing (when in steady state). We'll add a clock enable signal that only toggles when the counter needs to update.
+
+3. Area Optimization: While the current area is reasonable, we can optimize the bit inversion logic by making it conditional, only performing the operation when needed.
+
+4. Reset Optimization: Change to synchronous-only reset for better timing characteristics in modern FPGA/ASIC designs.
+
+The improved version will maintain the same Johnson counter behavior while addressing the PPA concerns from the metrics.

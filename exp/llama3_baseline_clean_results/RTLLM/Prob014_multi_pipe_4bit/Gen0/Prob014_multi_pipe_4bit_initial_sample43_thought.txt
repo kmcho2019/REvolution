@@ -1,0 +1,9 @@
+To design a 4-bit unsigned number pipeline multiplier, we can utilize a combination of generate blocks for bit-level multiplication and registers to store intermediate results. The multiplication process will involve shifting the multiplicand based on the bits of the multiplier and then summing these partial products. Two levels of registers will be used to pipeline the operation, ensuring that each stage of the multiplication and addition is separated by a clock cycle, allowing for a more efficient and synchronous design.
+
+The module `multi_pipe_4bit` will take in the clock signal `clk`, an active-low reset signal `rst_n`, the multiplicand `mul_a`, and the multiplier `mul_b`, and output the product `mul_out`. The input signals will be extended by adding zeros at the most significant bit positions to ensure proper alignment for the multiplication process.
+
+The design will use a generate block to iterate over each bit position of the multiplier. For each bit position `i`, if the bit is 1, the multiplicand will be left-shifted by `i` positions to generate a partial product. If the bit is 0, the partial product will be 0.
+
+The partial products will then be summed using registers. On the positive edge of the clock or the falling edge of the reset signal, the registers will update with the sum of the corresponding partial products, unless the reset signal is low, in which case the registers will be reset to 0.
+
+Finally, the product output will be calculated based on the sum of the registers. If the reset signal is low, the product output will be set to 0; otherwise, it will be updated with the sum of the registers, providing the final product of the multiplication.

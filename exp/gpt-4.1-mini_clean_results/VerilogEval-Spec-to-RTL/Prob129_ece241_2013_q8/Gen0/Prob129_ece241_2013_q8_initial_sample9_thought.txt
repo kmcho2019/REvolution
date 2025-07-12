@@ -1,0 +1,18 @@
+Implement a 3-state Mealy FSM to detect the sequence "101" on input x. The states represent how much of the pattern has been matched so far:
+
+- State S0: no match yet or just reset.
+- State S1: matched '1'
+- State S2: matched '10'
+
+Transitions:
+- From S0:
+  - if x=1, go to S1
+  - else stay in S0
+- From S1:
+  - if x=0, go to S2
+  - if x=1, stay in S1 (since input '1' could be start of sequence)
+- From S2:
+  - if x=1, output z=1 (sequence "101" detected), go to S1 (because '1' could start a new sequence)
+  - if x=0, go to S0
+
+Use asynchronous negative edge reset (aresetn) to reset state to S0. The output z is combinational (Mealy output) based on current state and input.

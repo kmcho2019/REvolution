@@ -1,0 +1,9 @@
+I'll refactor the code to use a case statement instead of one-hot encoding and parallel bit muxes. This approach:
+
+1. Uses a single 16-bit wide case statement instead of 16 parallel 1-bit muxes
+2. Eliminates the one-hot encoding step, reducing logic levels
+3. Maintains the same functionality but with potentially better synthesis results
+4. Still handles the default case (sel > 8) by outputting all 1's
+5. Uses continuous assignment (assign) instead of always block for combinational logic
+
+The case statement approach is more readable and may synthesize more efficiently in some tools, as it directly expresses the multiplexer behavior without intermediate decoding steps. The tool can optimize the mux implementation based on the target technology.

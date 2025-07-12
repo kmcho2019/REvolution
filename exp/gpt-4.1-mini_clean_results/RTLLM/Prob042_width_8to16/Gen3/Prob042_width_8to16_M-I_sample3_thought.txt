@@ -1,0 +1,15 @@
+To fully comply with the requirement that `valid_out` and `data_out` are generated in the *next clock cycle* after two valid inputs have arrived, we must separate the data concatenation and output signaling steps into two pipeline stages.
+
+The original code incorrectly asserts `valid_out` and updates `data_out` in the same cycle as the second input. This risks glitches or premature data validity.
+
+Improvement strategy:
+- Use a register (`data_lock`) to hold the first input data.
+- Use a `data_lock_en` flag to indicate the first data is stored.
+- Upon receiving the second valid input, latch the concatenated data into a new register (`data_out_next`), but **do not assert** `valid_out` yet.
+- On the **next clock cycle**, move `data_out_next` to `data_out` and assert `valid_out` for exactly one cycle.
+- Clear `data_lock_en` after outputting to prepare for the next pair.
+- Hold `valid_out` asserted for exactly one cycle.
+- All updates happen synchronously at posedge `clk` or on reset.
+- This ensures stable and glitch-free output data and valid signals, satisfying synthesis and functional verification.
+
+This pipeline approach cleanly separates data collection and output signaling timing, fully meeting the problem specification.

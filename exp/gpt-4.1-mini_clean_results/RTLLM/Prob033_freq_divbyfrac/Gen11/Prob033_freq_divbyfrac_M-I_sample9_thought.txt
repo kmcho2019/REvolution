@@ -1,0 +1,12 @@
+To accurately implement the 3.5x fractional frequency divider with improved duty cycle and uniform output period, the design must leverage double-edge clocking to create a half-cycle phase shift.
+
+Improvement strategy:
+- Use both posedge and negedge of the input clock to generate two versions of the divided clock (`clk_raw_pos` and `clk_raw_neg`).
+- Maintain a 3-bit counter counting from 0 to 6 on the posedge clk for main timing.
+- Toggle `clk_raw_pos` at counter values 3 and 6 on posedge clk to produce 4 and 3 cycle intervals.
+- Toggle `clk_raw_neg` at the same counts but synchronized on negedge clk, introducing a half-cycle phase shift.
+- OR the two signals (`clk_raw_pos | clk_raw_neg`) to form `clk_div`, resulting in a clock that toggles every 3 or 4 half cycles, effectively giving 7 half cycles per period, i.e., division by 3.5.
+- Initialize counters and flip-flops properly on reset to ensure correct startup phase.
+- Use asynchronous active-low reset to initialize synchronously on both posedge and negedge processes for clean startup.
+  
+This approach uses the inherent half-cycle phase difference between posedge and negedge clocks to create the required fractional division without relying on delayed versions or XOR tricks. It ensures balanced duty cycle and a clean fractional output clock suitable for FPGA/ASIC implementation.

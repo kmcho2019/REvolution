@@ -1,0 +1,14 @@
+Analyzing the waveform, the output q corresponds to the even parity of the inputs a, b, c, d: q=1 when there are an even number of '1's among inputs, else q=0.
+
+A novel architectural approach is to implement even parity using a tree of 2-input XNOR gates, exploiting the associative property of XNOR for parity detection. Instead of a single XOR with inversion, the parity can be computed by progressively combining pairs of inputs with XNOR gates, producing partial parity results, then combining them further until the final parity is obtained.
+
+This method inherently produces the even parity, since the XNOR outputs 1 when inputs are equal, and chaining them over all inputs results in a final output of 1 for an even number of ones.
+
+This architecture can be seen as a balanced binary tree of XNOR gates:
+
+- Level 1: XNOR pairs (a,b) and (c,d)
+- Level 2: XNOR the two results from Level 1 to get final parity q
+
+This structurally differs from the flat XOR chain with inversion, and it may be beneficial for certain logic mapping or delay balancing in hardware synthesis.
+
+Thus, the design uses a 2-stage XNOR tree to compute q.

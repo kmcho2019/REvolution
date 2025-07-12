@@ -1,0 +1,21 @@
+To improve PPA further, we can adopt a few strategies:
+
+1. **Clock gating the done signal register**: The done register toggles only one cycle per byte received, but resetting it every cycle can cause unnecessary switching. We can implement a done pulse combinationally based on FSM state transitions instead of a register that toggles every clock cycle, reducing power by removing the done flip-flop.
+
+2. **Use Gray encoding for FSM states**: With 4 FSM states, a 2-bit Gray encoding minimizes bit transitions during state changes compared to binary encoding, lowering dynamic power and potentially improving timing.
+
+3. **Use non-blocking assignments carefully and simplify logic**: The original logic is clean, but we can further simplify the done signal generation by producing a combinational pulse when the stop bit is correctly detected (on the rising edge of clk and entering the STOP state with correct stop bit).
+
+4. **Minimize combinational logic in next state block**: Already simple; keep it as is.
+
+5. **Remove data register shifting with concatenation**: The shift operation is minimal and efficient; no change needed.
+
+Summary:
+- Switch to Gray encoding states to reduce bit toggling.
+- Make done a combinational pulse generated only when transitioning from RECEIVE to STOP with correct stop bit.
+- This removes done register toggling and reduces power.
+- Keep the synchronous reset and positive edge clocking unchanged.
+
+This approach reduces toggling in done register, lowers flip-flop count by 1, and decreases switching activity during steady states, improving power and possibly timing.
+
+Note: done is active-high pulse for 1 cycle at stop bit detection, still synchronous and aligned to clock.

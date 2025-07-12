@@ -1,0 +1,46 @@
+The original solution attempted to implement the mux inputs (mux_in[3:0]) solely from inputs c and d using ternary operators, but did not explicitly instantiate the required 2-to-1 multiplexers as hardware blocks, and the logic didn't perfectly match the Karnaugh map.
+
+**Improvement strategy:**
+
+1. Explicitly instantiate 2-to-1 multiplexer modules to meet the problem's requirement of using only multiplexers (one 4-to-1 mux outside this module, and internally only 2-to-1 muxes).
+
+2. Re-express each mux_in[i] as a minimal 2-to-1 mux tree with c or d as selectors and only constants or signals as data inputs, matching the Karnaugh map truth table.
+
+3. Double-check each mux_in[i]:
+
+   - For mux_in[0] (ab=00): K-map values are [cd=00:0, 01:1, 11:1, 10:1]
+
+     Observing this, mux_in[0] = c OR d (since for c=0 d=0 => 0, else 1). But we cannot use OR gate. Instead:
+
+     mux_in[0] = c ? 1 : d
+     
+     We'll implement this as a 2-to-1 mux with select = c, inputs d and 1.
+
+   - For mux_in[1] (ab=01): all zero => constant 0
+
+   - For mux_in[2] (ab=11): values [0,0,1,0] for cd in order 00,01,11,10
+     
+     mux_in[2] = c & d, implement as mux with select c: if c=0 =>0, else d.
+
+   - For mux_in[3] (ab=10): values [1,0,1,1]
+
+     Let's write values indexed by cd: 00=1,01=0,11=1,10=1
+
+     Try selecting by d:
+
+     - d=0 => mux_in[3] = 1 (cd=00,10), d=0 rows both output 1
+     - d=1 => mux_in[3] = c
+
+     So mux_in[3] = d ? c : 1
+
+4. Instantiate 2-to-1 mux modules explicitly for each mux_in bit (except mux_in[1] which is constant zero).
+
+5. Keep the implementation fully combinational.
+
+This satisfies the problem requirements: only multiplexers, minimal usage, and aligns with the original logic that matches the K-map, but now uses explicit 2-to-1 muxes.
+
+We'll also define a parameterized 2-to-1 mux module to improve clarity and reuse.
+
+The TopModule only implements the mux_in outputs (inputs to the external 4-to-1 mux selected by a,b). a,b are not inputs here, matching the problem statement.
+
+This explicit mux-based design improves clarity, correctness, and meets all requirements.

@@ -1,0 +1,11 @@
+To improve timing and simplify the design for better PPA (power, performance, area), I will remove the clock enable signal because it adds extra combinational logic that can increase the critical path and possibly offset power savings.
+
+Instead, I will update the state register unconditionally on every clock cycle (or on reset), which simplifies the clock path and usually improves timing.
+
+I will combine the next-state and output logic into a single always block with a non-blocking assignment to the state, using a two-process FSM style (one always for state update, one combinational for next state and output). This is a conventional and clean approach.
+
+The state will be encoded as a 1-bit register with parameters B=0 and A=1.
+
+The output will remain a pure Moore output assigned directly from the current state for glitch-free operation.
+
+Overall, this approach reduces logic around the clock, simplifies the FSM logic, and likely improves timing and area while keeping power low, as unnecessary toggling due to the clock enable might be minimal for this tiny FSM.

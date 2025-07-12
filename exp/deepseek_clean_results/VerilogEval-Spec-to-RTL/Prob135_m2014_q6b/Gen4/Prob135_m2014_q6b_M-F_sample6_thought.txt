@@ -1,0 +1,26 @@
+To fix the next-state logic for y[1], we need to comprehensively cover all state transitions where y[1] changes value. The key insights are:
+
+1. y[1] becomes 1 when:
+   - From A (000) to B (001) on w=0 (but this doesn't affect y[1])
+   - From B (001) to C (010) on w=0 (sets y[1])
+   - From C (010) to D (011) on w=1 (maintains y[1])
+   - From E (100) to D (011) on w=1 (sets y[1])
+   - From F (101) to C (010) on w=0 (sets y[1])
+
+2. y[1] becomes 0 when:
+   - From D (011) to A (000) on w=1 (clears y[1])
+   - From B (001) to D (011) on w=1 (sets y[1])
+   - From D (011) to F (101) on w=0 (maintains y[1])
+   - From F (101) to D (011) on w=1 (sets y[1])
+
+3. The complete logic for y1_next should be:
+   - Set to 1 when:
+     (B & ~w) | (C & w) | (E & w) | (F & ~w) | (B & w) | (F & w)
+   - Set to 0 when:
+     (D & w) (D->A transition)
+   - Otherwise maintain current value
+
+4. After simplification, we can express y1_next as:
+   - 1 when: (~y[2]&((~y[1]&y[0]&~w)|(y[1]&~y[0]&w)|(~y[1]&y[0]&w))) | (y[2]&((~y[1]&~y[0]&w)|(~y[1]&y[0]&~w)|(~y[1]&y[0]&w)))
+   - 0 when: (~y[2]&y[1]&y[0]&w) (D->A)
+   - Else: maintain (but since this is combinational next-state, we just need to specify 1/0 cases)

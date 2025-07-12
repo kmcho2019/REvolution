@@ -1,0 +1,18 @@
+The original design directly indexes the input 'd' with a counter counting down from 3 to 0, outputting bits MSB to LSB, and asserts valid_out for one cycle when cnt is 0. While this is clean and minimal, the output dout is combinationally driven by 'd' indexed by cnt, which may cause glitches and increase dynamic power if 'd' changes asynchronously with respect to clk.
+
+To improve power and timing (PPA), I will register the input 'd' into an internal register 'data' on the valid_out cycle when the last bit is being output (cnt=0). This will synchronize the data with clk, reduce glitches on dout, and avoid output glitches caused by asynchronous input changes.
+
+Additionally, instead of counting down from 3 to 0, I will count up from 0 to 3 to align with intuitive indexing from MSB (3) to LSB (0), with the output bit selected as data[3 - cnt]. This simplifies the logic and keeps the counter incrementing, which is often more efficient in FPGA or ASIC synthesis.
+
+The valid_out will be asserted only when cnt == 0, i.e., when the MSB is output, to indicate the new data has been loaded and valid output is present.
+
+This approach:
+- Reduces glitches on output,
+- Keeps counter simple (incrementing),
+- Synchronizes data input,
+- Maintains low area and simple logic,
+- Minimizes dynamic power by stable data registers.
+
+The timing should improve due to registered input data, and power is reduced due to less switching caused by glitches.
+
+The key difference is registering the input data internally when the last bit is output and counting up from 0 to 3 with output bit selection as data[3 - cnt].

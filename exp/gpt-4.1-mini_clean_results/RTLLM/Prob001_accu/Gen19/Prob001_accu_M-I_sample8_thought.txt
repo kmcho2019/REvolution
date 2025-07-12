@@ -1,0 +1,19 @@
+To improve the original design's PPA (power, performance, area), the focus is on simplifying the addition on the 4th input to reduce critical path and power consumption.
+
+Currently, on the 4th input, the code sums a 10-bit accumulator and an 8-bit input directly in one cycle, which may lengthen the critical path.
+
+Improvement strategy:
+
+1. Accumulate all four inputs in the accumulator over four cycles by always adding data_in to the accumulator when valid_in is high. 
+2. Keep a 2-bit counter to count up to 4.
+3. When the count reaches 4, output the accumulator and assert valid_out.
+4. Immediately reset the accumulator and counter after outputting.
+5. This avoids the larger adder on the 4th input (only 8-bit + 10-bit additions each cycle), balancing addition complexity and timing.
+6. valid_out pulse remains 1 cycle as before.
+7. This simplifies timing by uniform addition every cycle and does not require a separate addition stage on the output cycle.
+
+This approach trades a slightly larger accumulator value during accumulation (max 4*255=1020 fits 10 bits) but uniformly spreads addition load, reducing critical path delay on output cycle. It also may slightly improve power by steady switching pattern and simpler addition logic.
+
+The module remains minimal in area with only one 10-bit accumulator and 2-bit counter.
+
+The valid_out is asserted exactly when 4 data are accumulated, and data_out outputs the sum of these 4 inputs.

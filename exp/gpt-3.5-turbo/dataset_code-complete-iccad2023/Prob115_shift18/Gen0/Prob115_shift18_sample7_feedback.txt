@@ -1,9 +1,0 @@
-The code has several issues in the shifting logic that are causing the simulation failures:
-
-1. For the shift left by 8 bits operation (2'b01), the assignment `{q[55:0], q[63:8]}` is incorrect. This assignment shifts the data incorrectly within the 64-bit vector, causing the failed simulation results.
-
-2. For the arithmetic right shift by 1 bit operation (2'b10), the assignment `{q[63], q[63:1]}` is incorrect. This operation does not perform an arithmetic right shift as intended. The shifting logic is incorrect in this case.
-
-3. Similar to the shift left by 8 bits operation, the arithmetic right shift by 8 bits operation (2'b11) also has an issue with the assignment `{q[7:0], q[63:8]}`. This assignment does not correctly implement an arithmetic right shift by 8 bits.
-
-Overall, the shifting operations are incorrect for left and right shifts, causing the mismatches observed in the simulation log.

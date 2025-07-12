@@ -1,0 +1,3 @@
+To avoid potential tool issues with dynamic shifting assigned to a vector register, implement the ring counter output using a shift register style. Use a single 8-bit register 'out' that holds the one-hot pattern. On reset, set 'out' to 8'b00000001. On each clock rising edge, shift left by one bit; if the MSB is shifted out, wrap it around to the LSB. This method is fully synthesizable, straightforward, and avoids dynamic shift operations on the 'out' reg itself.
+
+This approach uses a single register without a separate index, reducing complexity and improving synthesis and simulation compatibility.

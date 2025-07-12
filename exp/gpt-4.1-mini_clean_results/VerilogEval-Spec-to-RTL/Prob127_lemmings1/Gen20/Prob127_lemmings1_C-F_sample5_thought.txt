@@ -1,0 +1,12 @@
+Fuse the clear state register and explicit asynchronous reset handling from Example 2 with the minimal and clean single-expression next state logic from Example 1 that properly covers all cases, including bump_left only, bump_right only, both bumps toggling state, and no bumps holding state. This fusion ensures clarity, correctness, and minimal logic depth in combinational next state generation, improving synthesis outcomes.
+
+Specifically:
+- Use a single-bit state register updated on posedge clk and areset (asynchronous positive edge reset to walk_left).
+- Derive next_state using a concise boolean expression that:
+  - Toggles state if both bump_left and bump_right are high,
+  - Sets state to 1 (walk_right) if only bump_left,
+  - Sets state to 0 (walk_left) if only bump_right,
+  - Holds state if no bumps.
+- Outputs are Moore-type, directly from the state for minimal output logic.
+  
+This approach blends the succinct combinational logic (less gate depth) with the clean, well-structured FSM from Example 2, resulting in a superior, optimal implementation.

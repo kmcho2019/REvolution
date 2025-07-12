@@ -1,0 +1,6 @@
+Refactor the FSM to use an explicit state machine with three defined states: IDLE (waiting for in[3]=1), BYTE2 (capture second byte), BYTE3 (capture third byte).  
+Use separate state encoding instead of a counter.  
+Store bytes in a shift register style: shift bytes in on each state transition.  
+Generate 'done' as a registered pulse asserted when the third byte is captured, together with outputting the concatenated bytes.  
+Use a single always block for sequential logic and combinational logic derived from state and inputs.  
+This structure is functionally equivalent but clearer for FSM-based design and easy to extend or modify.

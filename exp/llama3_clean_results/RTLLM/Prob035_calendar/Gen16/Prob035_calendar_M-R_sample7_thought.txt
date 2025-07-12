@@ -1,0 +1,9 @@
+To refactor the given perpetual calendar module in Verilog, we can utilize a different structure while maintaining the core functionality. One approach is to implement the counter logic using a combination of combinational logic and a single always block for sequential updates. This can be achieved by using assign statements to define the next state of the counters based on the current state and the clock signal. The always block can then be used to update the current state on the positive edge of the clock signal, considering the reset signal.
+
+We can define the next state of the seconds counter (next_Secs) based on the current seconds value and the reset signal. If the reset signal is active or the current seconds value is 59, the next state of the seconds counter should be 0; otherwise, it should be incremented by 1.
+
+Similarly, we can define the next state of the minutes counter (next_Mins) based on the current minutes value, the current seconds value, and the reset signal. If the reset signal is active or both the current minutes and seconds values are 59, the next state of the minutes counter should be 0; otherwise, if the current seconds value is 59, the minutes counter should be incremented by 1.
+
+Lastly, we can define the next state of the hours counter (next_Hours) based on the current hours value, the current minutes value, the current seconds value, and the reset signal. If the reset signal is active or all three counters (hours, minutes, and seconds) are at their maximum values, the next state of the hours counter should be 0; otherwise, if both the current minutes and seconds values are 59, the hours counter should be incremented by 1.
+
+By structuring the code in this manner, we can achieve the same functionality as the original code but with a different implementation approach.

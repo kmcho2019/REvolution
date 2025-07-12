@@ -1,0 +1,5 @@
+Refactor the original design by removing the dedicated nand4 module and implementing the dual 4-input NAND gate functionality directly inside the TopModule using continuous assign statements. This reduces module hierarchy depth and can slightly simplify netlist structure while maintaining the same logical behavior.
+
+Using assign statements directly to combine the inputs with bitwise AND followed by inversion improves code compactness and makes the implementation explicit in the top module itself. This approach also avoids intermediate module instantiations, which some synthesis tools might prefer for simplicity, although it trades off a bit on modularity.
+
+Comments are maintained for clarity, and all signals remain one bit wide. This structure is straightforward, easy to read, and synthesizes to two independent 4-input NAND gates as required by the 7420 chip specification.

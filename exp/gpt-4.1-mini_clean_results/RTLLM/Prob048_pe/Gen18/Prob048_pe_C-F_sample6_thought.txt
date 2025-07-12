@@ -1,0 +1,19 @@
+Fuse the best ideas from both examples into a high-quality MAC PE with the following improvements:
+
+1. Use a 64-bit accumulator register internally to avoid losing precision and handle full product accumulation without overflow within the register width.
+
+2. Perform full 32x32 multiplication to get 64-bit product, avoiding truncation.
+
+3. Implement synchronous active-high reset for reliable initialization.
+
+4. Separate next-state logic combinationally: calculate the next accumulator value by adding the full 64-bit product to the current accumulator.
+
+5. Add saturation logic: if the next value exceeds 32'hFFFFFFFF (32-bit max unsigned), saturate the output to this max value and hold the accumulator at that saturated value to avoid wrap-around.
+
+6. Output only the lower 32 bits of the accumulator as the accumulated result, saturating output if overflow occurred.
+
+7. Use non-blocking assignments in sequential logic for best synthesis and timing practices.
+
+This approach blends Example 1's saturation and overflow handling with Example 2's clean two-process style and full 64-bit accumulation, creating a precise, robust, and synthesizable MAC PE that outputs a saturating 32-bit result without losing product information internally.
+
+By keeping the accumulator 64-bit and saturating output and state when overflow occurs, the design avoids erroneous wrap-around. This fusion is ideal for unsigned accumulation with overflow protection and maintains correctness and efficiency.

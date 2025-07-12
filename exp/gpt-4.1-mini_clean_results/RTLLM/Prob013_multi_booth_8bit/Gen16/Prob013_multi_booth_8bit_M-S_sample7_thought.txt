@@ -1,0 +1,12 @@
+Implement a simplified 8-bit Radix-4 Booth multiplier that uses a single 16-bit product register combining multiplier and accumulator to reduce register width and complexity. Extend inputs to 9 bits with sign extension for Booth recoding. Perform multiplication over 8 cycles, each processing 2 bits of the multiplier (since 8 bits / 2 = 4 cycles), plus one initial cycle to load inputs and reset internal states.
+
+For each cycle:
+- Extract the current 3-bit Booth recoding window from the product (which holds multiplier bits plus one extra LSB bit).
+- Determine the partial product using a simple combinational case statement for Booth encoding.
+- Add or subtract the appropriately shifted multiplicand (sign extended to 16 bits) to the upper half of the product register.
+- Arithmetic right shift the entire product register by 2 bits to process next bits.
+- Increment a 4-bit counter tracking cycles.
+
+After 8 cycles (or counter reaching 8), set ready (rdy) high and output the lower 16 bits of the product register as the final product.
+
+This approach reduces register width from 18 to 16 bits, removes a separate accumulator, and eliminates complex signed 18-bit operations by carefully using 16-bit arithmetic and sign extension. The combinational Booth decode logic is simplified to minimal case statements without separate functions. The design uses synchronous reset and a simple counter. Ready signal is asserted when multiplication finishes. This simplification maintains correctness while lowering complexity and resource usage.

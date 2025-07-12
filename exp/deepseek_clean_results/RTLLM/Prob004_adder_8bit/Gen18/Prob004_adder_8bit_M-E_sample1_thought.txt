@@ -1,0 +1,15 @@
+Novel Hybrid Carry-Select Adder Architecture:
+1. Split the 8-bit addition into two 4-bit chunks (lower and upper nibbles)
+2. For the lower nibble (bits 0-3), use ripple-carry for area efficiency
+3. For the upper nibble (bits 4-7), implement carry-select logic:
+   - Compute both possible sums (with carry-in 0 and 1)
+   - Use the actual carry-out from lower nibble to select correct result
+4. This reduces critical path compared to pure ripple-carry while maintaining better area efficiency than full carry-select
+5. Optimized majority function for carry computation
+6. Explicit bit-level operations with clear comments
+
+Advantages:
+- Reduced critical path (4-bit ripple + 1 mux delay vs 8-bit ripple)
+- Better area than full carry-select (only duplicate upper nibble)
+- Maintains combinational logic simplicity
+- Clear hierarchical structure for readability

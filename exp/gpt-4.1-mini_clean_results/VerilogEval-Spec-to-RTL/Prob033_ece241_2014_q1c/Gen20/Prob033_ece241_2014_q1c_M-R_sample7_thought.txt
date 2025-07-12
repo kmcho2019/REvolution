@@ -1,0 +1,12 @@
+The original design uses an explicit carry chain with a generate loop in NBitCLAAdder to compute carries and sums. To refactor while keeping the core idea, I will implement the carry lookahead adder logic using intermediate group generate and propagate signals and explicitly compute carry signals in a more compact manner without a generate loop.
+
+Specifically, I will:
+- Compute propagate (p) and generate (g) signals per bit.
+- Calculate the carries using recursive equations unrolled in code using assign statements rather than a generate loop.
+- This avoids the generate construct and makes carry assignments explicit for clarity.
+- Maintain a clean interface with outputs sum, cout, and carry_into_msb.
+- Then, instantiate this new NBitCLAAdder in TopModule and calculate overflow as before.
+
+This structure shows a different stylistic approach by fully unrolling the carry computation with assign statements rather than a generate loop, making the combinational logic explicit and readable. It also retains modularity and clarity without introducing unnecessary complexity. The overflow detection remains the XOR of carry_into_msb and cout.
+
+This refactoring can help users who prefer fully explicit combinational logic or tools with limited generate support.

@@ -1,0 +1,24 @@
+Improvement Strategy:
+1. Optimize the comparison logic by using a hierarchical approach:
+   - First check MSB (most significant bit) for early decision
+   - Only proceed to lower bits if higher bits are equal
+   - This reduces logic depth and switching activity
+
+2. Simplify output encoding:
+   - Generate A_equal directly from equality comparison
+   - Use A_equal to gate the greater/less outputs (already implemented well)
+   - Remove redundant logic by combining comparisons
+
+3. Power optimization:
+   - Minimize unnecessary bit comparisons when higher bits already determine result
+   - Reduce switching activity in intermediate signals
+
+4. Area optimization:
+   - Share common sub-expressions between greater/less comparisons
+   - Use simpler bitwise operations where possible
+
+The improved design will:
+- Maintain the same functionality but with better PPA
+- Have a more balanced critical path
+- Reduce power consumption through early termination
+- Potentially save area through logic sharing

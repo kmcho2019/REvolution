@@ -1,0 +1,8 @@
+The original implementation has a bug where the zero flag is not properly updated because the 'result_is_zero' assignment is not part of the always block's sensitivity list. Here's the fix:
+
+1. Move the zero flag assignment inside the always block to ensure it updates whenever 'out' changes
+2. Keep the same adder-subtractor logic but ensure all outputs are properly synchronized
+3. Use a complete case statement for clarity
+4. Explicitly handle all possible cases of 'do_sub' (though it's just 1-bit)
+
+The fixed version maintains the same functionality but ensures correct zero flag generation by properly including it in the combinational logic block.

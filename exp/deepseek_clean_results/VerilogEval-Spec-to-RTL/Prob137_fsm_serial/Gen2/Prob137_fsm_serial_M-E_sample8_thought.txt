@@ -1,0 +1,8 @@
+Instead of using a traditional FSM with explicit states, we can implement the byte receiver using a counter that tracks the current bit position in the frame. The key insights are:
+1. Use a 4-bit counter to track position (0=start, 1-8=data, 9=stop)
+2. The counter resets to 0 when idle (line=1) or on reset
+3. When start bit detected (line=0), begin counting
+4. At each clock edge, shift in the bit if within data range
+5. When counter reaches 9, check stop bit and assert done if valid
+6. If stop bit invalid, freeze counter until line returns to 1
+This approach reduces state transition logic and combines bit counting with position tracking.

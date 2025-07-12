@@ -1,0 +1,14 @@
+The goal is to fuse the best aspects of the two given solutions:
+
+- From Example 1: Clear and explicit state encoding with combinational next-state logic as continuous assignment and asynchronous reset handled properly in the always block. The clear localparam definitions improve readability and maintainability.
+
+- From Example 2: Simplification of the next-state logic using XOR and inversion for minimal gate count and logic depth, improving timing and power efficiency.
+
+Fusion strategy:
+- Keep the clear state encoding from Example 1.
+- Use the minimal next-state expression `next_state = state ^ (~in)` from Example 2 for performance and power.
+- Maintain asynchronous reset to B, as required.
+- Output directly from the current state (Moore output).
+- Use combinational continuous assignment for next_state, sequential logic for state update and async reset.
+
+This combines clarity, minimal logic, and efficient implementation while retaining all problem requirements.

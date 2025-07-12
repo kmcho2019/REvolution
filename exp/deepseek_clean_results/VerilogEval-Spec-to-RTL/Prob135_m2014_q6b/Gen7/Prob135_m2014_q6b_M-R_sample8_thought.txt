@@ -1,0 +1,24 @@
+The original approach tried to minimize logic expressions but missed some state transitions. Let's refine the combinational logic approach while maintaining the same concept. Here's the improved thought:
+
+1. Analyze all state transitions where y[1] changes:
+   - From B (001) to C (010): y[1] becomes 1 (when w=0)
+   - From C (010) to E (100): y[1] becomes 0 (when w=0)
+   - From C (010) to D (011): y[1] becomes 1 (when w=1)
+   - From D (011) to F (101): y[1] becomes 0 (when w=0)
+   - From E (100) to D (011): y[1] becomes 1 (when w=1)
+   - From F (101) to C (010): y[1] becomes 1 (when w=0)
+   - From F (101) to D (011): y[1] becomes 1 (when w=1)
+
+2. For all other cases, y[1] remains the same:
+   - State A (000) always maintains y[1]=0
+   - State B (001) maintains y[1]=0 when w=1
+   - State D (011) maintains y[1]=1 when w=1 (transition to A)
+   - State E (100) maintains y[1]=0 when w=0
+   - State F (101) maintains y[1]=0 (but transitions always change it)
+
+3. The refined logic expression:
+   y1_next = (~y[2] & ~y[1] & y[0] & ~w) |  // B->C
+             (y[1] & ~y[0] & w) |           // C->D
+             (~y[2] & y[1] & y[0] & ~w) |   // D->F
+             (y[2] & ~y[1] & ~y[0] & w) |  // E->D
+             (y[2] & ~y[1] & y[0])          // F->C/D

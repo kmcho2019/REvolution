@@ -1,0 +1,21 @@
+Fuse the hierarchical clarity and minimal mux levels of Example 2 with the low fan-in internal mux decomposition of Example 1. 
+
+Fusion Strategy:
+- Use a 3-level hierarchy similar to Example 2 (8-to-1 mux stages, which gives fewer levels and lower critical path than 16-to-1 muxes).
+- Implement the 8-to-1 mux module as a tree of 4-to-1 muxes internally to reduce fan-in, power, and improve timing.
+- Level 0: 32 instances of Mux8to1 (each selecting 8 bits using sel[2:0]) from the 256-bit input.
+- Level 1: 4 instances of Mux8to1 selecting among 32 outputs from Level 0 using sel[5:3].
+- Level 2: 1 Mux4to1 selecting among the 4 outputs of Level 1 using sel[7:6].
+
+This gives a total mux depth of 3 (levels), each internal mux8to1 has 2 layers of 4-to-1 muxes (as in Example 1), so total mux depth is 3×2=6 layers, balancing the fan-in and delay better than a flat large mux or a big tree of 4-to-1 muxes.
+
+This fusion combines:
+- Minimal mux stages (3) from Example 2 for better timing.
+- Low fan-in internal mux implementation from Example 1 for power and delay.
+- A balanced and modular design that synthesizes well and is easy to maintain.
+
+Parameterize and modularize the muxes for reuse and clarity. Use explicit internal decomposition of 8-to-1 mux using 4-to-1 mux trees, similar to the Example 1’s approach for 16-to-1 mux.
+
+Final note:
+- The final level is a 4-to-1 mux (implemented explicitly) since the last stage is 4 outputs.
+- This fusion yields better power and area compared to a full 256-input mux or deep mux trees, with a good timing profile.

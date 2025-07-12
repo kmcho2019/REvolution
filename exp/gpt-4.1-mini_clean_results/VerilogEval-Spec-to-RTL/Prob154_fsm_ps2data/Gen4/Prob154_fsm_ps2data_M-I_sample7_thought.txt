@@ -1,0 +1,9 @@
+To optimize for power, performance, and area, we replace the FSM state encoding from binary to one-hot encoding, reducing decoding logic and potentially improving timing (WNS). Also, consolidate all register updates into a single sequential always block to reduce glitches and simplify clock gating, which can reduce power.
+
+We introduce a single byte counter from 0 to 2 instead of separate states, which reduces state register bits and related logic, improving area. The FSM behavior is retained by using this counter and a sync flag.
+
+Register done and out_bytes only assert done for one cycle after collecting the 3rd byte, updating out_bytes only then to reduce switching power.
+
+Lastly, only 'in[3]' is used for synchronization detection, so logic is simplified to only check that bit for the sync condition.
+
+This yields a cleaner, smaller FSM with simpler control logic, improved timing by one-hot encoding, and reduced power by minimizing toggling on done and out_bytes.

@@ -1,0 +1,10 @@
+To simplify the FSM design while maintaining correct functionality and overlap detection, I will implement a binary-encoded Mealy FSM with 6 states representing the progression through the sequence "10011". This reduces the number of flip-flops from 5 (one-hot) to 3 (binary), simplifies next-state logic using a case statement, and makes the code more compact and readable.
+
+The FSM transitions on every clock edge or reset:
+- On reset, the FSM returns to state 0 (no match progress).
+- On each clock with input IN, the FSM transitions based on current state and input.
+- MATCH is a combinational output asserted when the input completes the sequence "10011".
+
+Using binary encoding with a simple state machine will naturally support overlapping detection as states allow for fallback to appropriate partial matches. The Mealy output MATCH is asserted combinationally when the last input bit of the sequence is received in the appropriate state.
+
+This approach balances code simplicity and clear FSM logic while supporting continuous and overlapping detection.

@@ -1,0 +1,5 @@
+The original solution is already minimal with a single-bit state register and direct combinational update of state. For further PPA optimization, specifically power and performance, I will separate next state logic into a combinational block and register the state in a synchronous always block. This helps the synthesis tool recognize a standard FSM pattern, improving timing and enabling better power optimizations such as clock gating or multi-cycle path insertion if supported by tools.
+
+I will also explicitly encode states as localparams for clarity and maintainability. The output remains a simple Moore output based solely on state. This structure helps tools analyze the FSM more effectively, potentially improving timing and area slightly, while maintaining the same functionality.
+
+The synchronous reset remains active high and resets to OFF state. By splitting next state logic out combinationally, the critical path can be better controlled, which can slightly improve WNS and TNS metrics. Since the FSM is very small, area improvements are marginal but the code is more conventional and clear.

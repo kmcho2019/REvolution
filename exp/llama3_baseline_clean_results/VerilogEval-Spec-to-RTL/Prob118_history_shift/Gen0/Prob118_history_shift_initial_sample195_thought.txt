@@ -1,0 +1,9 @@
+To solve this problem, I will design a module named TopModule that includes a 32-bit global history shift register. The module will have two main operations: updating the branch history when a branch prediction is made and rolling back the state when a pipeline flush is caused by a branch misprediction. The module will use areset as a positive edge triggered asynchronous reset to reset the history counter to zero. I will use the clock (clk) to trigger all sequential logic on its positive edge.
+
+The branch history register will be updated when a branch prediction is made (predict_valid = 1), by shifting in predict_taken from the LSB side. 
+
+When a branch misprediction occurs (train_mispredicted = 1), the branch history register will be loaded with the history after the completion of the mispredicted branch. This will be done by concatenating the history before the mispredicted branch (train_history) with the actual result of the branch (train_taken).
+
+If both a prediction and misprediction occur at the same time, the misprediction will take precedence, because the pipeline flush will also flush out the branch that is currently making a prediction.
+
+I will use a variable to store the current branch history and then assign it to the output predict_history.

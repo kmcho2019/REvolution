@@ -1,0 +1,19 @@
+The current solution is functionally correct but can be optimized for better PPA (Power, Performance, Area) by:
+
+1. **Area Optimization**:
+   - Remove the submodule hierarchy since this is a simple design, reducing overhead
+   - Combine the selection logic directly in the top module
+
+2. **Power Optimization**:
+   - Keep only one mux implementation if both outputs aren't strictly required
+   - Since both outputs must be maintained, share the selection logic between them
+
+3. **Performance Optimization**:
+   - Use simple continuous assignments for both outputs since they perform the same function
+   - This eliminates the procedural block overhead while maintaining functionality
+
+4. **Implementation Choice**:
+   - Use ternary operators for both outputs since they are more concise than if-else in this case
+   - The synthesis tool will optimize both implementations similarly
+
+The improved version will be flatter, more direct, and equally readable while being more efficient.

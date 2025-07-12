@@ -1,0 +1,32 @@
+To fix the FSM according to the feedback:
+
+1. **Reset and f=1 pulse timing:**  
+   Ensure that f=1 is generated for exactly one cycle immediately *after* resetn transitions from 0 to 1 (synchronously). The FSM should remain in S_A while resetn is low. On the first clock with resetn=1, move to S_B where f=1, then next cycle proceed to sequence detection. Outputs should be driven solely based on the current state, not next_state, to avoid off-by-one errors.
+
+2. **Sequence detection for x=1,0,1:**  
+   Refine states:
+   - S_C0: wait for x=1. On x=1, go to S_C1.
+   - S_C1: wait for x=0. If x=1 again, stay in S_C1 (still waiting for 0).
+   - S_C2: wait for x=1. If x=0, restart at S_C0.
+   
+   This guarantees detection of *consecutive* 1,0,1 sequence on x without false transitions.
+
+3. **y monitoring in S_D with counter:**  
+   When entering S_D, reset y_counter to zero. Increment y_counter every cycle in S_D (values 0 and 1) tracking two cycles.  
+   - If y=1 detected anytime during these two cycles, transition to S_E (g=1 permanently).  
+   - If after two cycles (y_counter == 1) y=1 not detected, go to S_F (g=0 permanently).  
+   
+   The y_counter must increment *only* in S_D and be reset on state transitions to avoid stale counts.
+
+4. **Output and counter assignment:**  
+   Outputs f and g, and y_counter updates are synchronous and fully controlled inside the clocked block. At reset, all signals including y_counter must be cleared.
+
+5. **Remove unnecessary conditions:**  
+   The checks like `else if (x==1)` in S_C1 state are redundant because x is binary. Clean them for clarity.
+
+6. **Avoid holding counters in states E and F:**  
+   y_counter is irrelevant in final states and should be held constant or reset.
+
+Implementing these fixes ensures correct and reliable timing for f and g signals and proper detection of the x and y sequences per the specification.
+
+Below is the corrected code with these improvements.

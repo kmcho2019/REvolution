@@ -1,0 +1,14 @@
+The original solution attempted a parallel Booth encoding approach but had several implementation issues. Here's a corrected sequential Radix-4 Booth multiplier implementation that strictly follows the problem requirements:
+
+1. **Proper Initialization**: On reset, initialize the 16-bit multiplier and multiplicand registers with sign-extended inputs as specified.
+
+2. **Sequential Processing**: Use a 5-bit counter (0-16) to control the multiplication steps. Each clock cycle processes one Radix-4 Booth encoding.
+
+3. **Booth Algorithm**: 
+   - Examine 3 bits of the multiplier (current bit, previous bit, and next bit) for Radix-4 encoding
+   - Perform appropriate arithmetic operations (add/subtract multiplicand or shifted versions)
+   - Right-shift the product register (arithmetic shift for signed operations)
+
+4. **Completion Detection**: When counter reaches 16, assert the ready signal and hold the final product.
+
+This implementation properly follows the problem specification while maintaining the Radix-4 Booth algorithm's efficiency.

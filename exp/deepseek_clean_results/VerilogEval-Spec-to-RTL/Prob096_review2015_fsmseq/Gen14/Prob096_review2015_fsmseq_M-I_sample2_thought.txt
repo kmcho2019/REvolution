@@ -1,0 +1,21 @@
+Optimization Strategy:
+1. Timing Improvement:
+   - Replace two-stage comparison with direct 4-bit comparison (shift_reg == 4'b1101)
+   - Remove clock gating to eliminate potential timing overhead
+   - Maintain synchronous reset for clean timing
+
+2. Power Optimization:
+   - Reduce shift register size from 4 to 3 bits since we only need to store last 3 bits
+   - Combine current input bit with stored bits for final comparison
+   - Eliminate separate pattern_match wire to reduce switching activity
+
+3. Area Reduction:
+   - Use 3-bit shift register instead of 4-bit
+   - Simplify comparison logic by directly checking {shift_reg, data}
+   - Remove redundant pattern_match wire
+
+Key Benefits:
+- Reduced critical path by eliminating two-stage comparison
+- Lower power consumption through smaller shift register
+- Smaller area with 3-bit register instead of 4-bit
+- Maintained correct functionality with simpler logic

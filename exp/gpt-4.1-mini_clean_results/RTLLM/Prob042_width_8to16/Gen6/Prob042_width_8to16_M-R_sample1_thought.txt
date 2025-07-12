@@ -1,0 +1,9 @@
+Refactor the design by:
+1. Removing the SystemVerilog enum and using localparam for state encoding to ensure wider synthesis compatibility.
+2. Separating combinational next-state logic and sequential state updates cleanly.
+3. Removing any assignment to sequential registers inside combinational blocks.
+4. Storing the first input byte only in the sequential block.
+5. Holding the output and valid signals in registers updated on the clock's positive edge.
+6. Producing the 16-bit output and valid signal exactly one clock cycle after receiving the second valid input, by buffering the second input in sequential logic.
+7. Eliminating redundant or self-assignments that cause latches or simulation issues.
+8. The design waits until two valid inputs have arrived; it then asserts valid_out and presents concatenated data_out in the next clock cycle, fulfilling the timing requirement.

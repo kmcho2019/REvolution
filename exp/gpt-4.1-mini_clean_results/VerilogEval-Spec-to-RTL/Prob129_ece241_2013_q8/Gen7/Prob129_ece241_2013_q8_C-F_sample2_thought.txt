@@ -1,0 +1,8 @@
+Fuse the two given implementations by adopting their best aspects:
+- Use explicit localparam for states (for clear, tool-friendly encoding) like Example 1, avoiding typedef enum to maximize synthesis tool compatibility and timing predictability.
+- Implement a single always block for next_state and output z with blocking assignments, as in Example 1, which simplifies combinational logic and keeps output logic tightly coupled to state transitions.
+- Retain asynchronous negative edge reset for immediate reset response, as required.
+- Maintain minimal 3-state FSM with overlapping sequence detection logic as in both examples.
+- Use nonblocking assignments only in the sequential always block triggered on posedge clk or negedge aresetn.
+- Keep output z as combinational signal driven alongside next_state for Mealy behavior to detect the pattern on current input.
+This approach merges clarity, simplicity, synthesis friendliness, and efficiency.

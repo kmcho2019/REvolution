@@ -1,0 +1,5 @@
+To fuse the strengths of both designs, I will implement the 4-bit binary counter as a single synchronous always block with a synchronous reset, incrementing the 4-bit counter by 1 each clock cycle (i.e., q <= q + 1). This approach directly uses the binary addition operator, allowing synthesis tools to infer optimized carry chains and minimize critical path delay compared to explicit bitwise toggling or ripple enable logic.
+
+At the same time, I will ensure the reset is synchronous and active-high, and use non-blocking assignments. This method reduces combinational enable logic and multiple always blocks from the first example, simplifies timing and area, and improves performance by enabling native adder optimization (better than the XOR/AND chain of example two).
+
+This approach retains the clarity and modularity of a single always block while benefiting from optimized increment logic for performance, lower area, and clean power characteristics, effectively combining the modularity and minimal toggling of Example 1 and the direct increment logic clarity of Example 2.

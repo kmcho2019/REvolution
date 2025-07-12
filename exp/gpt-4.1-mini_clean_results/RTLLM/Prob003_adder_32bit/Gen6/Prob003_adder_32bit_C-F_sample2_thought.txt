@@ -1,0 +1,11 @@
+Fuse the clean modular structure and clear 1-based to zero-based indexing mapping from Example 1 with the hierarchical group generate/propagate carry-lookahead logic conceptually alluded to in Example 2, but now implement a true hierarchical carry-lookahead within the 16-bit CLA module to significantly reduce carry computation delay.
+
+Specifically, divide the 16 bits into four 4-bit groups. For each group, compute group propagate (PG) and generate (GG) signals. Then use these group signals to compute carries between groups in a higher-level CLA. Within each 4-bit group, compute carries based on the group's PG, GG, and input carry. This structure reduces carry computation from linear to logarithmic depth, improving performance.
+
+Maintain the top-level 32-bit adder instantiating two of these enhanced 16-bit CLA modules, with clean indexing conversion for 1-based inputs and outputs. This fusion improves timing and clarity while preserving modularity and clean code style.
+
+The sum calculation will use vector XOR of propagate and carry signals.
+
+This design balances improved performance with manageable code complexity and clear interface definitions.
+
+No clocked logic is introduced to keep purely combinational design per spec.

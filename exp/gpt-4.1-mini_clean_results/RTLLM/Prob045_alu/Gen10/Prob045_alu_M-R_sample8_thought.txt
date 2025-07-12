@@ -1,0 +1,12 @@
+Refactor the ALU to a fully combinational design using continuous assignments and a combinational function that returns the result based on the opcode, instead of a large always block with a case statement. This approach improves clarity, reduces inferred latches and registers, and allows synthesis tools to better optimize the logic. We will:
+
+- Implement a combinational function `alu_compute` that takes inputs `a`, `b`, and `aluc` and returns the ALU result.
+- Compute `carry`, `overflow`, `flag` signals in separate combinational always blocks or continuous assignments.
+- Compute `zero` and `negative` as wires directly from the result.
+- Avoid tri-state outputs; flag is always 0 or 1.
+- Use explicit signed casts for signed operations.
+- Optimize shift operations by defining a shared shift amount signal.
+- Implement all operations in the function via a `case` statement keyed on the opcode.
+- This refactoring eliminates the always @(*) block controlling multiple outputs and replaces it with combinational logic and functions, improving readability and synthesis quality.
+
+This approach leads to cleaner, more modular code that can be more easily optimized by synthesis tools without changing the core ALU functionality.

@@ -1,0 +1,15 @@
+To divide the input clock frequency by an odd number NUM_DIV, a novel approach is to use a single counter that counts from 0 to NUM_DIV-1 synchronously on the rising edge of the input clock.
+
+We generate the output clock by toggling its state twice per full cycle: once when the counter reaches the midpoint count (half_count), and once when it reaches the maximum count (NUM_DIV-1). Since NUM_DIV is odd, half_count = (NUM_DIV-1)/2 is an integer.
+
+This way, the output clock toggles on two specific counts per input clock cycles, producing a frequency of clk_in / NUM_DIV.
+
+Because toggling occurs on the rising edge based on counter value, the output clk_div will have a nearly 50% duty cycle (the two half-periods differ by one clk period).
+
+Resetting sets counter and clk_div to 0.
+
+This approach is simpler, needs only one counter and one clock domain, ensuring glitch-free and clean output without using negative edge clocks or dual counters.
+
+The output clk_div is a registered signal toggled exactly twice per NUM_DIV input clock cycles.
+
+This design is easy to implement, synthesizable, and stable.

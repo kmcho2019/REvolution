@@ -1,0 +1,15 @@
+Revised approach to achieve precise 3.5x frequency division:
+1. Maintain the 7-cycle period (3.5x2) but implement proper phase control
+2. Generate two complementary clocks with 50% duty cycle:
+   - clk_phase0: Toggles every 3.5 cycles (alternating 3/4)
+   - clk_phase180: Same pattern but offset by 1.75 cycles
+3. Use precise edge detection for phase generation:
+   - clk_phase0 toggles on counter values 3 and 6 (for 4/3 pattern)
+   - clk_phase180 toggles on counter values 1 and 5 (offset pattern)
+4. Combine phases with XOR instead of OR for better duty cycle
+5. Ensure clean initialization with synchronous reset
+Key improvements:
+- Precise counter-based edge detection
+- Correct phase offset calculation
+- XOR combination for uniform output
+- Clean state initialization

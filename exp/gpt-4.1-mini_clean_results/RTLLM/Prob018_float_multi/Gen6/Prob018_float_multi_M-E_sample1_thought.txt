@@ -1,0 +1,19 @@
+Design a fully combinational IEEE-754 single-precision floating-point multiplier with synchronous output register controlled by clk and rst. Instead of multi-cycle pipelining, all extraction, multiplication, normalization, rounding, special case handling, and final assembly are done combinationally within a single clock cycle, with the latency of one clock cycle.
+
+Key steps:
+
+- Extract sign, exponent, and mantissa from inputs, detecting special cases (zero, inf, NaN).
+- Compute output sign as XOR of input signs.
+- Handle special cases according to IEEE rules (NaN propagation, zero*inf = NaN, etc.).
+- For normal/denormal inputs, prepare mantissas (implicit leading 1 for normal, 0 for denormals).
+- Multiply mantissas (24x24 bits).
+- Add exponents and subtract bias (127).
+- Normalize the product: if MSB of product is 1, shift right by 1 and increment exponent.
+- Extract guard, round, and sticky bits for rounding.
+- Round to nearest even.
+- Handle overflow/underflow: set output to inf or zero accordingly.
+- Register the final output on clk rising edge, reset sets output to zero.
+
+This approach simplifies control and timing since all logic is combinational feeding one output register, avoiding complex multi-cycle control and pipeline registers. While possibly having longer combinational delay, this design is clear, simpler, and suitable for systems with low frequency requirements or can be pipelined externally if needed.
+
+The code follows this fully combinational approach with clear special case prioritization and includes detailed comments.

@@ -1,0 +1,11 @@
+To create a novel approach for the decade counter, I'll implement it using a simple one-hot encoding internally combined with a binary output. Instead of counting in binary directly from 0 to 9, I will use a 10-bit one-hot register that rotates a single '1' bit through the positions 0 to 9 each clock cycle, effectively representing the count in one-hot form. Then I'll decode this one-hot position into a 4-bit binary output `q`.
+
+This approach distributes the counting logic over multiple bits (one-hot) potentially enabling simpler combinational logic and possibly faster clock frequency on some technologies because only one bit toggles per cycle, minimizing switching activity inside the one-hot register. The binary output is generated combinationally via a priority encoder (or a simple combinational mapping) from the one-hot state.
+
+Synchronous reset will clear the one-hot register to the first position (count = 0). On each clock cycle, the one-hot register will shift to the next bit position, wrapping back to position 0 after position 9, producing a decade cycle.
+
+This architecture reduces toggling inside the counter flip-flops (only one bit toggles per clock), potentially lowering power, and is a structurally different way of implementing the decade counter from a simple binary up-counter.
+
+The output `q` is the decoded position of the one-hot bit, which can be done via a priority encoder or via a combinational for loop or equivalent logic.
+
+This approach uses 10 flip-flops internally but outputs a 4-bit binary count externally, meeting the interface specification.

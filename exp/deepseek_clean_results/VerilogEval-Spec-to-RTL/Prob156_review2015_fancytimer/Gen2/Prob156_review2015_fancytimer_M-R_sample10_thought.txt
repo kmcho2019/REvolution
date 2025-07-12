@@ -1,0 +1,25 @@
+Here's a refactored version with key improvements:
+
+1. **Separate Pattern Detection**: Use a dedicated shift register for pattern matching to ensure clean timing.
+
+2. **Simplified State Machine**: Reduce to 3 clear states (IDLE, LOAD, COUNT) with explicit transitions.
+
+3. **Counter Restructuring**:
+   - Use a single 16-bit counter for precise cycle counting
+   - Calculate target cycles as (delay + 1) << 10 (equivalent to *1000)
+   - Compare against target rather than counting down blocks
+
+4. **Output Logic**:
+   - Generate count output via continuous assignment
+   - Use registered outputs for clean timing
+
+5. **Timing Fixes**:
+   - Properly handle the "+1" in cycle calculation
+   - Ensure done asserts exactly at end of counting
+   - Synchronize all outputs to clock edges
+
+The new structure provides:
+- More accurate cycle counting
+- Cleaner state transitions
+- Better output stability
+- Easier debugging with separate components

@@ -1,0 +1,15 @@
+To create a novel solution, we can utilize a different architectural approach, such as a phase-locked loop (PLL) or a direct digital frequency synthesizer (DDFS). However, these methods may be overcomplicated and area-intensive for this specific application.
+
+Instead, we can explore a simple, yet efficient, method using a single counter and some combinational logic. The idea is to use a counter that increments on every clock cycle and then use the counter value to determine when to toggle each of the output clocks.
+
+We will use a 7-bit counter, which can count up to 127. This allows us to divide the input clock frequency by 2, 10, and 100 using simple combinational logic.
+
+For the 50MHz clock, we can simply toggle the output on every other clock cycle, which is equivalent to dividing the input clock frequency by 2.
+
+For the 10MHz clock, we can toggle the output when the counter value is equal to 9 or 99 (i.e., 10-1 or 100-1), which effectively divides the input clock frequency by 10.
+
+For the 1MHz clock, we can toggle the output when the counter value is equal to 99, which divides the input clock frequency by 100.
+
+This approach reduces the number of counters and combinational logic required, making it a more area-efficient solution.
+
+Additionally, we can use a synchronous reset to reduce the power consumption and improve the overall design.

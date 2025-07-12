@@ -1,0 +1,25 @@
+Refactor the design by clearly separating combinational next-state logic and synchronous state updates into distinct always blocks for clarity and correctness.
+
+1. **Pattern and delay bit shifting:**  
+   Since the start pattern and delay bits arrive MSB-first, shift pattern and delay registers left and shift in new bits at LSB. This matches the serial MSB-first input order correctly.
+
+2. **FSM states and transitions:**  
+   Use a four-state FSM: SEARCH, DELAY_LOAD, COUNT, WAIT_ACK.
+
+3. **Separate next-state and output logic:**  
+   Use one combinational always block to determine next state and outputs; use one synchronous always block to update state and registers.
+
+4. **Counters and outputs:**  
+   - Use a 10-bit cycle counter counting 0..999 to represent 1000 clock cycles per tick.  
+   - Use a tick counter initialized to delay + 1.  
+   - Output `count` as the current tick number counting down from delay to 0, stable for 1000 cycles each.
+
+5. **Initialization on transitions:**  
+   Detect state transitions to initialize counters properly, particularly from DELAY_LOAD to COUNT.
+
+6. **Simplify logic:**  
+   Avoid overly complex decrement logic; on cycle_counter wrap, decrement tick_counter and update count accordingly.
+
+This refactor clarifies data flow and control, aligns shift directions with MSB-first input, and fixes off-by-one errors. It uses nonblocking assignments properly, and the outputs are stable and precise as per the specification.
+
+The synchronous reset initializes everything properly, starting in SEARCH state to detect the pattern anew.

@@ -1,0 +1,17 @@
+Novel Architectural Idea:
+1. **State Transition Matrix**:
+   - Instead of deriving outputs directly from current state and input, implement a state transition matrix that encodes all possible next-state conditions
+   - This approach better leverages the one-hot encoding and provides a more systematic way to handle state transitions
+
+2. **Output Generation**:
+   - Y1 (next state B) should be active when either:
+     - Current state is A and input is 1
+   - Y3 (next state D) should be active when either:
+     - Current state is B and input is 0, OR
+     - Current state is C and input is 0, OR
+     - Current state is F and input is 0
+
+3. **Optimization**:
+   - Use the one-hot property to simplify the logic - only one y bit will be active at any time
+   - Implement the logic using OR gates to combine all valid transition conditions for each output
+   - This makes the design more scalable and easier to modify if state transitions change

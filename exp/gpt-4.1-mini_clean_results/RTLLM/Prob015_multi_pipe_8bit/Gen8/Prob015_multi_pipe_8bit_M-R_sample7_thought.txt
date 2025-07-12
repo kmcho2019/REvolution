@@ -1,0 +1,7 @@
+Refactor the original design by explicitly implementing a multi-stage pipeline with registers at each pipeline stage to clearly separate partial product generation, accumulation of partial sums, and output registering. Use an 8-stage pipeline where each stage processes one partial product addition with a register in between, effectively implementing an adder tree spread over multiple clock cycles. This reduces the long combinational path of summing all partial products in one cycle, enabling higher clock frequency.
+
+Track the enable signal through an 8-bit shift register so that the output enable corresponds to the output being valid. Use nonblocking assignments inside sequential always blocks for all registers. Use combinational assignments for partial product generation.
+
+This approach increases pipeline depth (latency) but balances logic and makes timing easier. The input registers sample inputs on mul_en_in assertion, and the pipeline stages register partial sums one-by-one, culminating in the final product in mul_out_reg. The output is gated with mul_en_out.
+
+Overall, the refactoring structurally pipelines partial sum accumulation, keeping the core multiplication and enable propagation logic intact but improving timing by shortening combinational paths.

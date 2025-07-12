@@ -1,0 +1,9 @@
+Instead of encoding combined states for direction and activity, separate the walking direction and activity (walking, falling, digging) into two independent state variables: one indicating direction (left or right) and another indicating mode (walk, fall, dig). This allows clear separation of concerns and simplifies logic. The direction changes only when in walking mode and on bumps, fall overrides everything, and digging only starts when walking on ground and dig=1.
+
+Store the direction in a register updated only in walking mode when bump detected, and saved persistently. When falling or digging, the direction is held constant and restored after falling.
+
+Implement the FSM with two registers: dir_reg (0=left,1=right) and mode_reg (0=walk,1=fall,2=dig). On asynchronous reset, start walking left. Use an always block for next state and outputs based on current mode and direction, and an always block for state updates.
+
+Moore outputs depend on both mode and direction. Priority is fall > dig > bump direction change. Bumps ignored during fall/digging.
+
+This modular approach reduces complexity, makes direction/state handling clearer, and ensures correct prioritization and restoration of direction after fall or dig.

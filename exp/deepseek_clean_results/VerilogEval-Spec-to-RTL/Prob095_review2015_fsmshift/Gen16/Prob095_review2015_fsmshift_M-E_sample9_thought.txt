@@ -1,0 +1,14 @@
+Novel approach using a shift register pattern:
+1. Instead of a counter, use a 4-bit shift register initialized to '1111' on reset
+2. Each clock cycle, shift right with '0' input (becomes '0111', '0011', '0001', '0000')
+3. The leftmost bit directly serves as shift_ena
+4. Benefits:
+   - Naturally counts exactly 4 cycles (4 bits)
+   - No comparison logic needed (shift_ena is direct output)
+   - Simple implementation with minimal logic
+   - Clear visual representation of the enable pattern
+   - Automatically holds at '0000' after 4 cycles
+5. Reset behavior:
+   - Initialize shift register to '1111'
+   - Each cycle shifts in a '0' from left
+   - After 4 cycles, stays at '0000' forever

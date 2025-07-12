@@ -1,0 +1,13 @@
+Implement the dual-port RAM using separate always blocks for read and write operations to maintain independent control and timing, but with an asynchronous read for lower read latency. Use an asynchronous reset (active low) only for the read_data register to immediately clear outputs on reset, while initializing the RAM memory using an initial block to reduce reset logic complexity and area consumption. This initial block is synthesizable for FPGA and many ASIC flows if supported; otherwise, tools can map it to memory initialization. 
+
+Write operations occur synchronously on the rising edge of clk when write_en is high. The asynchronous read data output is driven by a combinational read logic that reads from the memory array directly when read_en is asserted; otherwise, outputs zero.
+
+This approach balances:
+- Immediate read availability by asynchronous read,
+- Reduced clock domain toggling on read port,
+- Simple write logic with synchronous control,
+- Simplified reset with minimal sequential logic,
+- Synthesizable initialization without a reset loop for RAM array,
+- Supports simultaneous read/write at different addresses.
+
+This design is ideal for FPGA and many ASIC flows that support memory initialization in synthesis or loading from files.

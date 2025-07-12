@@ -1,0 +1,10 @@
+To avoid SystemVerilog enum types and possible tool compatibility issues, I will replace the FSM with simple registers and counters using only standard Verilog constructs. The design keeps the same functionality:
+
+- On synchronous reset, the module asserts shift_ena for exactly 4 clock cycles
+- Afterwards, shift_ena remains low indefinitely until next reset
+
+I will implement a 3-bit counter that loads 4 on reset and counts down each clock cycle until zero. While the counter is not zero, shift_ena is asserted. When the counter reaches zero, shift_ena is deasserted and held low.
+
+This approach eliminates the FSM typedef, uses only standard registers and combinational logic, making it more compatible with pure Verilog tools.
+
+The counter and shift_ena logic are straightforward and synchronous with the clock and reset.

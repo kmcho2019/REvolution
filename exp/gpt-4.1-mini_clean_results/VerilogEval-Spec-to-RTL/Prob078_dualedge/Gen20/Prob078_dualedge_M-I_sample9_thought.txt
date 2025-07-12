@@ -1,0 +1,15 @@
+To improve the existing dual-edge flip-flop implementation, I will reduce the combinational mux delay and dynamic power consumption by replacing the 2-to-1 mux with a clock-level-controlled latch that samples data from one flip-flop output. Specifically:
+
+- Use a positive-edge flip-flop (PF) to sample input 'd' on the rising edge.
+- Use a negative-edge flip-flop (NF) to sample input 'd' on the falling edge.
+- Combine outputs using a level-sensitive latch controlled by the clock signal:
+  - When clk=1, latch transparent and captures PF output.
+  - When clk=0, latch transparent and captures NF output.
+- This reduces mux delay and glitches by using a latch instead of a purely combinational mux.
+- Since the latch output 'q' is held stable during the non-transparent clock level, glitches on 'q' are minimized.
+- This approach halves the switching activity on the output stage compared to a continuous mux operation.
+- The design remains fully synthesizable and FPGA-friendly.
+
+This strategy improves timing by reducing the mux delay and glitches, cuts power by limiting output switching to clock level transitions, and maintains a minimal area increase.
+
+Note: The latch is implemented by enabling transparency via the clock signal itself; synthesis tools support gated latches controlled by clock signals with proper constraints.

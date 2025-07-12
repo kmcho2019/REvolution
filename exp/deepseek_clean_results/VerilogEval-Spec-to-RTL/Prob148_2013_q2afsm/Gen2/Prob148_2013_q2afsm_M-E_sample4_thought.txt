@@ -1,0 +1,11 @@
+I'll implement a novel "delayed priority" architecture where the FSM remembers the last granted request and gives it priority in the next cycle if multiple requests arrive simultaneously. This creates a more fair arbitration when requests come in bursts. The key differences from the standard solution are:
+1. Added a 'last_grant' register to track the last granted device
+2. Modified priority scheme to rotate based on last_grant
+3. Added hysteresis by maintaining grant for one extra cycle after request drops
+4. Used one-hot encoding for states to simplify output logic
+
+The FSM will:
+- Default to state A (idle)
+- When requests arrive, use rotating priority based on last_grant
+- Stay in granted state while request is active + one extra cycle
+- Output g[i] is combinatorial based on current state

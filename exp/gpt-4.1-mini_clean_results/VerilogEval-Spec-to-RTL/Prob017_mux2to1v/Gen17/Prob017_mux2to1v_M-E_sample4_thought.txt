@@ -1,0 +1,5 @@
+Instead of using a generate loop or a simple vector conditional assignment, implement the 2-to-1 multiplexer using a binary tree structure of 2-bit muxes that progressively combine outputs into the final 100-bit output. This hierarchical muxing approach organizes the selection logic in stages, potentially balancing the logic depth and improving timing by reducing fanout and wire loads compared to a flat mux. Although the number of mux stages is approximately log2(100) (~7), the structured approach helps synthesis tools map the design onto balanced combinational logic.
+
+Specifically, start by grouping input bits into pairs and using 2-bit mux blocks that select between pairs of bits from `a` and `b` based on `sel`. Then iteratively combine pairs of these 2-bit mux outputs into larger blocks until the full 100-bit output is formed. For the last level, partial groups can be padded or handled separately to fit the 100-bit width.
+
+This architectural approach differs from flat bitwise muxing and vector muxing and introduces a modular and hierarchical design style that could help timing closure in large buses by limiting mux fanout and balancing propagation delay.

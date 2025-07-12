@@ -1,0 +1,39 @@
+We need a simplified and correct implementation of the specified function:
+
+- Inputs (a,b,c,d) form a 4-bit number with a as MSB and d as LSB.
+- Output 'out_sop' is logic 1 for decimal inputs 2, 7, 15; 0 for certain others; 3,8,11,12 never occur.
+- Output 'out_pos' is the minimal product-of-sums for the same function.
+
+To simplify:
+
+1. Directly implement out_sop as OR of minterms for 2,7,15, since there are only three, making it simple and minimal enough.
+
+2. For out_pos, take the complement of the SOP expression and express it as a product of sums by applying DeMorgan’s theorem on the SOP.
+
+   Given:
+
+   out_sop = m2 + m7 + m15
+   where:
+   m2 = ~a & ~b & c & ~d
+   m7 = ~a & b & c & d
+   m15 = a & b & c & d
+
+   Therefore:
+
+   out_sop = (c & ~a & ... ) combined ORs.
+
+   out_pos = ~out_sop
+           = (~m2) & (~m7) & (~m15)
+           = product of three maxterms, each negated minterm.
+
+3. Express ~m2, ~m7, and ~m15 as maxterms:
+
+   - ~m2 = (a + b + ~c + d)
+   - ~m7 = (a + ~b + ~c + ~d)
+   - ~m15 = (~a + ~b + ~c + ~d)
+
+4. out_pos = (a + b + ~c + d) & (a + ~b + ~c + ~d) & (~a + ~b + ~c + ~d)
+
+This approach yields minimal expressions, easy to implement, and guaranteed correct.
+
+Additionally, avoid redundant wires by using direct assignments.

@@ -1,0 +1,14 @@
+Revised odd frequency divider solution:
+1. Correct phase calculation: For odd division, we need (NUM_DIV-1)/2 high and (NUM_DIV+1)/2 low (or vice versa) to achieve 50% duty cycle
+2. Dual-edge synchronization: Use both edges of the input clock but with proper phase offset
+3. Counter adjustment: Count to (NUM_DIV-1) for full period, toggle at midpoint
+4. Phase alignment: Start clk_div2 half a cycle offset from clk_div1
+5. Combined output: Use XOR instead of OR to properly combine the two phases
+6. Reset handling: Ensure clean initialization of all signals
+7. Parameter validation: Strict check for odd NUM_DIV >= 3
+
+Key changes from previous version:
+- Corrected phase calculation for odd division
+- Changed output combination to XOR for proper edge alignment
+- Adjusted counter thresholds for proper toggle points
+- Maintained dual-edge counting but with corrected timing

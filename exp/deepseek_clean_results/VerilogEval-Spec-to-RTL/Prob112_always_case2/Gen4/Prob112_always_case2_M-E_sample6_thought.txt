@@ -1,0 +1,8 @@
+This design implements a parallel priority encoder using a thermometer-like approach:
+1. Creates a mask that propagates the first '1' found to all higher bits
+2. Uses XOR operations to isolate the exact position of the first '1'
+3. The mask generation is done in parallel rather than sequentially
+4. Converts the one-hot position directly to binary
+5. Handles the all-zero case by simply ANDing with the input's OR reduction
+6. This approach minimizes logic depth while maintaining clear priority
+7. The parallel nature may offer better timing characteristics in some technologies

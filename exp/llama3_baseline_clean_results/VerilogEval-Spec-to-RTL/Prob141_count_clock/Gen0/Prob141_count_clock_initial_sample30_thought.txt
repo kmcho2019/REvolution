@@ -1,0 +1,13 @@
+To create a 12-hour clock module, we need to design a set of counters that can keep track of hours, minutes, and seconds. We'll use three separate counters for hours, minutes, and seconds, each with its own logic to handle incrementing and resetting. 
+
+We'll use a BCD (Binary-Coded Decimal) counter for each, with two digits (0-9) for hours (01-12), minutes (00-59), and seconds (00-59). 
+
+For the seconds counter, we'll increment it whenever ena is high. When it reaches 59, we'll reset it to 0 and increment the minutes counter. 
+
+For the minutes counter, we'll increment it whenever the seconds counter resets. When it reaches 59, we'll reset it to 0 and increment the hours counter. 
+
+For the hours counter, we'll increment it whenever the minutes counter resets. We'll handle the 12-hour clock by checking if the hours counter is greater than or equal to 12, and if so, we'll reset it to 1 and toggle the pm signal.
+
+The reset signal will have higher priority than the enable signal, so we'll check for reset first in our always block. If reset is high, we'll reset all counters to their initial state (12:00 AM).
+
+We'll use a separate variable to keep track of the pm signal, and update it whenever the hours counter wraps around 12.

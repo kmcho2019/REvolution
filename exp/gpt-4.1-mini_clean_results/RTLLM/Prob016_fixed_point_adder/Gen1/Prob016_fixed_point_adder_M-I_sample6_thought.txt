@@ -1,0 +1,26 @@
+To improve the original design, I will maintain the correct functional behavior but enhance synthesis friendliness and clarity:
+
+1. Use blocking assignments in the combinational always block to better indicate combinational logic.
+
+2. Avoid repeated assignments to the same variable inside conditions by first computing the result sign and magnitude separately, then combine.
+
+3. Explicitly handle the sign and magnitude separately: 
+   - Extract sign bits.
+   - Compute absolute values via a dedicated function.
+   - Compute sum or difference of absolute values accordingly.
+   - Determine the sign of the result.
+   - Recombine sign and magnitude into two's complement representation.
+
+4. Return the result in two's complement signed format rather than manually forcing the MSB, to avoid incorrect sign bit manipulation that may lead to incorrect results.
+
+5. This also better handles overflow because arithmetic in two's complement naturally wraps.
+
+6. Use a helper function to convert magnitude and sign back into two's complement format.
+
+7. Keep parameterized sizes and avoid redundant truncations.
+
+This approach reduces subtle errors related to manual sign bit assignment and improves readability and maintainability without changing the intended functionality.
+
+The fixed-point precision Q remains a parameter defining the fractional bits, which don't require special arithmetic treatment during addition or subtraction.
+
+Overall, this redesign enhances the correctness and synthesizability of the fixed-point adder.

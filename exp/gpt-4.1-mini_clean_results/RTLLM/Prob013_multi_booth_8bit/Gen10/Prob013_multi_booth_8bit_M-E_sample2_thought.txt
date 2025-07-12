@@ -1,0 +1,25 @@
+Implement an 8-bit Radix-4 Booth multiplier as a sequential FSM with a counter controlling 4 cycles (since Radix-4 processes 2 bits per cycle on 8 bits, 4 iterations are enough).
+
+The inputs a (multiplicand) and b (multiplier) are sign-extended to 16 bits. We create a 17-bit multiplier register by appending an extra zero bit at LSB for the Booth encoding.
+
+At each cycle:
+- Extract the 3-bit Booth pattern from the current multiplier bits (multiplier_reg[1: -1]), but since Verilog doesn’t allow negative indices, we keep a 17-bit shifted multiplier and extract multiplier_reg[2:0].
+- Decode the Booth factor for these 3 bits.
+- Depending on Booth factor (-2, -1, 0, 1, 2), add or subtract (multiplicand shifted accordingly) to a signed 34-bit accumulator (to cover full intermediate range).
+- Shift multiplier_reg right arithmetically by 2 bits for next cycle.
+
+After 4 cycles, output the lower 16 bits of accumulator as product and assert ready.
+
+To avoid variable-length shifts, multiplicand multiplication by 2 is achieved by 1-bit left shift; no variable shifts beyond that are used.
+
+This design uses:
+- A simple 2-bit counter for 4 iterations.
+- Signed extended registers.
+- Simple combinational logic for Booth factor decoding.
+- FSM with IDLE, RUN, DONE states triggered by reset and start signal (using reset to initiate multiplication as per user description).
+
+It differs from the example by using a cleaner FSM and smaller counter and accumulator width balancing resource and correctness. Also, the accumulator is 34 bits wide: enough for sign and overflow during additions.
+
+On reset, registers latch inputs and reset state; during RUN, sequentially process 4 cycles of Booth multiplication; at DONE state, output result and assert ready.
+
+This approach simplifies and clarifies the flow while meeting the original specs.

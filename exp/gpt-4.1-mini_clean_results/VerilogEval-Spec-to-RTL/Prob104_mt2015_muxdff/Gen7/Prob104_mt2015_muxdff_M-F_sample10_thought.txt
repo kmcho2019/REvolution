@@ -1,0 +1,10 @@
+The problem with the initial implementation was the use of initialization on the output reg port (`output reg Q = 1'b0`), which is not synthesizable across all tools and caused mismatches in post-synthesis verification.
+
+Since the problem statement does not provide or allow a reset input, and we must keep the interface unchanged, the safest fix is to remove any direct initialization in the code.
+
+This means:
+- Remove the default initialization from the `output reg Q`.
+- Retain the synchronous logic that updates Q on the rising edge of clk, selecting between `r_in` and `q_in` based on `L`.
+- Accept that Q's initial value is undefined at power-up, which is typical for such a register without reset.
+
+This ensures the design is fully synthesizable and matches the intended functionality, enabling clean hierarchical instantiation inside `full_module` without synthesis or simulation mismatches.

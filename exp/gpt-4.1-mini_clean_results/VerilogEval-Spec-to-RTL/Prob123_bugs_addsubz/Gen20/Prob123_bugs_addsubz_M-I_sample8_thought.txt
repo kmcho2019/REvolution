@@ -1,0 +1,9 @@
+The original solution fixes the bug correctly by implementing a full 8-bit ripple carry adder/subtractor with a zero flag. To optimize for better PPA:
+
+1. **Correctness:** Keep the conditional inversion and carry-in to implement subtraction using two's complement.
+2. **Performance:** Replace the explicit ripple carry chain with the built-in Verilog `+` operator plus XOR for b inversion. Modern synthesis tools map these well to fast carry-lookahead or carry-select adders internally, greatly improving timing over manual ripple carry.
+3. **Power & Area:** Using the built-in `+` operator lets the synthesis tool optimize the adder for area and power, likely more efficient than manual bit-level carry chain.
+4. **Code Simplicity:** The improved code is simpler and clearer, reducing chances for errors and making it easier to maintain.
+5. **Zero flag:** Use the reduction NOR (~|) operator to detect zero output in a single expression.
+
+Overall, this solution replaces the manual full adder chain with a simple addition of `a` and `b_invert + do_sub` using standard arithmetic, which yields better PPA while maintaining the same functional behavior.

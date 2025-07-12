@@ -1,0 +1,9 @@
+Refactor the original hierarchical popcount design by flattening the module hierarchy for the smaller popcount units and combining all stages explicitly within TopModule. Instead of instantiating multiple submodules (popcount16, popcount15, etc.), implement all partial popcounts and summations directly using generate loops and inline balanced adder trees. This will reduce module instantiation overhead and improve clarity by having all logic in one place.
+
+Specifically:
+- Implement a generic popcountN function as a localparam or function inside TopModule to count bits in small fixed-size slices using balanced adder trees.
+- Split the 255-bit input into fifteen 16-bit slices and one 15-bit slice.
+- For each slice, compute the population count via inline balanced adders without module instantiations.
+- Sum all 16 partial counts in a flat balanced adder tree using explicitly sized wires.
+- Use only assign statements for combinational logic with generate loops.
+- This approach improves synthesis optimization by allowing the tool to better analyze the flat logic and can reduce area slightly by removing overhead of multiple modules.

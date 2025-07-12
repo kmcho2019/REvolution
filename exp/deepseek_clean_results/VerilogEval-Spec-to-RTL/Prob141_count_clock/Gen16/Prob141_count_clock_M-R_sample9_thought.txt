@@ -1,0 +1,21 @@
+Refactoring Strategy:
+1. State Machine Restructuring:
+   - Replace parallel counters with a unified state machine approach
+   - Use explicit state encoding for better readability and control
+   - Combine all counter logic into a single always block for better optimization
+
+2. Output Generation:
+   - Move BCD conversion to continuous assignments
+   - Simplify PM logic by making it purely combinational
+   - Use packed BCD format for all outputs
+
+3. Timing Optimization:
+   - Register intermediate rollover signals to break critical paths
+   - Simplify hour counter logic by treating it as a 4-bit counter with special cases
+
+Key Changes:
+- Single always block for all sequential logic
+- Explicit state encoding for clearer rollover conditions
+- Combinational output generation
+- Registered rollover signals
+- Simplified hour counter with special 12->1 transition

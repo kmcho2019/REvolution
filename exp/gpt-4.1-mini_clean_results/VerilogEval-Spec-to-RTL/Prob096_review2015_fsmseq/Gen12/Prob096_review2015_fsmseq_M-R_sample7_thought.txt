@@ -1,0 +1,7 @@
+Refactor the FSM by encoding the states in binary (3-bit) instead of one-hot to reduce the number of flip-flops and simplify state representation. Implement next state logic using continuous assignment (`assign`) instead of always blocks to separate combinational logic from sequential logic clearly.
+
+Use a synchronous reset and update the state registers on the clock's positive edge using non-blocking assignments inside an always block. The output signal `start_shifting` is driven by a simple comparison with the final state. This reduces area by using fewer flip-flops and improves readability by clearly separating combinational and sequential logic while maintaining the sticky final output behavior.
+
+No clock gating is used here; this simplification improves design clarity and avoids potential gating glitches. The synchronous reset remains active high.
+
+Overall, the design maintains the same FSM behavior (detecting "1101" and latching the output) but with a compact binary-encoded FSM and continuous assignments for next state, which can also improve synthesis optimization opportunities.

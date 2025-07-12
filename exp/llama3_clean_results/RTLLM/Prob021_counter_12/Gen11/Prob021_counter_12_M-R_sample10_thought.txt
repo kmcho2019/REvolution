@@ -1,0 +1,9 @@
+To refactor the provided Verilog code for the counter_12 module, we will focus on simplifying the design while maintaining its functionality. The core idea involves counting from 4'b0000 to 4'd11, pausing when the valid_count signal is inactive, and resetting to 0 when the rst_n signal is active. 
+
+The refactoring approach involves directly using a 4-bit counter and leveraging its natural wrap-around behavior when it exceeds 11. This eliminates the need for explicit conditional logic to handle the wrap-around, simplifying the design and potentially improving timing performance.
+
+Instead of using an always_comb block to calculate the next state and an always_ff block to update the sequential logic, we can use a single always_ff block with a conditional statement to determine the next state of the counter. This approach simplifies the code and reduces the number of logic gates required.
+
+Additionally, we will maintain the gated clock approach to reduce power consumption when the counter is not active. This involves creating a gated clock signal that is only active when the valid_count signal is high.
+
+The refactored code will prioritize simplicity, readability, and efficiency while ensuring that the functionality of the counter_12 module remains unchanged.

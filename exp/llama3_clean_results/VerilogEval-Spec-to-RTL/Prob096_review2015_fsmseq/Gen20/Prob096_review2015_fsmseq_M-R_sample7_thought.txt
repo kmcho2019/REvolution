@@ -1,0 +1,7 @@
+The given code implements a finite-state machine (FSM) to detect the sequence 1101 in an input bit stream and sets `start_shifting` to 1 when this sequence is found, keeping it high until a reset is asserted. To refactor this code with a different structure, we can consider using a more straightforward state encoding and simplify the combinational logic that drives the state transitions. 
+
+One approach is to use a binary or gray code encoding for the states instead of an enumeration, which might allow for more efficient synthesis and reduce area usage. Additionally, we can aim to reduce the complexity of the state transition logic by directly assigning next states based on the current state and input conditions without using a case statement.
+
+Another optimization is to avoid unnecessary state transitions and minimize switching activity by ensuring that once `start_shifting` is set to 1, it remains set until a reset is detected, reducing the need for complex logic to maintain this state.
+
+Lastly, instead of using two separate always blocks for combinational logic and sequential logic, we can simplify the design by directly calculating the next state and the `start_shifting` signal within a single always block, which handles both the combinational and sequential aspects of the FSM.

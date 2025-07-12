@@ -1,0 +1,24 @@
+The original code implements the required next-state logic for y[1] directly as a combinational expression and outputs it as Y1. This is already minimal and uses few logic gates, yielding excellent PPA metrics.
+
+To further improve power and area, I will factor the Boolean expression to minimize switching and gate count slightly by extracting common terms:
+
+Original:
+Y1 = (~y1 & y0) | (w & (y1 | y2) & ~y0)
+
+Factored:
+Y1 = (~y1 & y0) | (w & ~y0 & (y1 | y2))
+   = ~y0 & ((~y1 & y0 / ~y0) + w * (y1 | y2))  // can't combine because y0 contradicts ~y0
+
+So factoring doesn't merge terms easily, but rearranging for structural clarity:
+
+Assign intermediate signals:
+t1 = ~y[1] & y[0]
+t2 = (y[1] | y[2]) & ~y[0]
+
+Y1 = t1 | (w & t2)
+
+By naming these signals, logic synthesis tools can better share sub-expressions and optimize logic depth, possibly improving dynamic power and area slightly.
+
+Thus, adding intermediate wires can help synthesis and readability without adding overhead.
+
+Hence, the improved implementation is to introduce intermediate wires for clear structure, aiding synthesis and potentially improving PPA slightly while preserving correctness.

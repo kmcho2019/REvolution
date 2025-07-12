@@ -1,0 +1,17 @@
+Fuse the minimal, clear factorization of Example 2 with the direct simplicity of Example 1 by factoring common terms to reduce total gate count and overlapping terms, thus reducing area and dynamic power. 
+
+From Example 2:
+out = (c & (a | ~b)) | (a & ~c)
+
+We notice that (a & ~c) is a separate term, and (c & (a | ~b)) can be implemented using fewer gates by sharing subexpressions.
+
+Fusion strategy:
+- Factor out c in the first term to reduce duplications.
+- Use intermediate wires for clarity and to enable gate sharing.
+- Implement the minimal expression: out = (a & ~c) | (c & (a | ~b))
+
+This reduces repeated usage of the same signals and logic, potentially lowering switching power and area since (a | ~b) is computed once.
+
+Implementing with wires for intermediate terms (not_b, not_c, a_or_not_b) ensures readability and synthesis tools can optimize further. This fused approach maintains minimal product terms while improving logic sharing to optimize area and power.
+
+Ignore input d as it is don't-care.

@@ -1,0 +1,19 @@
+After analyzing the waveform and the issues in the previous solution, here's a simplified approach:
+
+1. Key Observations:
+   - p simply follows input 'a' when q is 0 (latched at rising clock edge)
+   - q becomes 1 when p was high for a full clock cycle (seen at both edges)
+   - q resets to 0 when 'a' is high during a falling edge
+   - p is forced to 0 when q is 1
+
+2. Simplified Implementation:
+   - Use two always blocks: one for rising edge and one for falling edge
+   - Rising edge block handles p and q setting
+   - Falling edge block handles q reset
+   - Track p's state across both edges to detect full-cycle high
+   - Remove unnecessary intermediate registers
+
+3. Benefits:
+   - Clear separation of edge-triggered behaviors
+   - No complex state machine
+   - Minimal registers needed

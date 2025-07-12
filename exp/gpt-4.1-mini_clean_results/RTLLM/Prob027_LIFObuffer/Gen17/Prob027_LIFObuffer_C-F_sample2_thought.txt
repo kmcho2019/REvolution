@@ -1,0 +1,13 @@
+Fuse the clean, separated next-state logic style from Example 2 with the power and timing optimizations from Example 1 by combining:  
+- a single synchronous always block for sequential updates (SP, dataOut, stack_mem), for synthesis friendliness and timing;  
+- pre-computing push and pop enable signals with clear gating on EN and buffer full/empty status;  
+- computing next_SP combinationally, reducing logic on clock edge;  
+- updating dataOut only on pop, and only from stack_mem[SP], avoiding unnecessary toggling;  
+- avoiding clearing stack_mem on pop for power saving;  
+- synchronous reset clears SP, dataOut and stack_mem array using a for loop for clean initialization;  
+- generating EMPTY and FULL flags combinationally from SP;  
+- using a 3-bit SP counting from 4 (empty) down to 0 (full), so push decrements SP, pop increments SP, matching pointer arithmetic from both examples;  
+- ensuring minimal toggling with valid_op signal gating updates;  
+- adding comments for clarity and future maintainability.
+
+This fusion gains the clean clarity and next-state logic of Example 2, with the gated, synchronous, low-switching design of Example 1, producing a synthesis- and power-efficient design with straightforward RTL semantics.

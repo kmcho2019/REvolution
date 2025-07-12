@@ -1,0 +1,7 @@
+From the waveform, q is high whenever b or c is high, regardless of a or d. Both examples show this. To fuse the best ideas, I'll implement the function q = b | c directly with a concise assign statement inside TopModule, avoiding extra module instantiations to minimize area and power.
+
+To keep modularity and aid testability while retaining simplicity, I'll define a parameterized 2-input OR gate module using a continuous assignment, but instantiate it conditionally inside TopModule via a generate block controlled by a parameter. The default will be to use inline assign for the OR logic to maximize performance and minimize overhead.
+
+This flexible design allows easy toggling between modular and direct logic implementations without changing the interface, benefiting both clarity and synthesis efficiency.
+
+Thus, this fusion keeps the code clean and modular yet optimized by default for PPA metrics.

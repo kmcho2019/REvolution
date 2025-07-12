@@ -1,0 +1,14 @@
+I will implement the barrel shifter as a 3-stage cascade, each stage performing a conditional rotate-right shift by 4, 2, and 1 bits respectively, controlled by the corresponding bits of the control signal `ctrl`.
+
+Each stage will use an array of mux2X1 submodules that select between the unshifted input of that stage and the rotated input by that stage's shift amount. This closely follows the original requirement of using mux2X1 blocks for each stage.
+
+The mux2X1 submodule takes two inputs (`d0` and `d1`) and a selector `sel`. For each bit position, the mux chooses either the bit from the original position or the bit from the rotated position.
+
+The data flows through the three stages in series: 
+- Stage 1: shift by 4 if `ctrl[2]` is set
+- Stage 2: shift by 2 if `ctrl[1]` is set
+- Stage 3: shift by 1 if `ctrl[0]` is set
+
+This staged architecture replicates how hardware barrel shifters are efficiently constructed using muxes, and is fully combinational.
+
+The design allows easy verification, clear mapping to hardware, and modular reuse of the mux2X1 submodule.

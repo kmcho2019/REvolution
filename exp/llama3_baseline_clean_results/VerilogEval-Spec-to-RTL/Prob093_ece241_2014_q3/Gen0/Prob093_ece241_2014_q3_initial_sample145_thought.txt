@@ -1,0 +1,14 @@
+To implement the given Karnaugh map using a 4-to-1 multiplexer and 2-to-1 multiplexers, we need to analyze the map and identify the required inputs for each multiplexer. 
+The 4-to-1 multiplexer has four inputs corresponding to each row in the K-map, labeled by the values of 'ab' (00, 01, 11, 10).
+Looking at the K-map, we can see that:
+- When 'cd' is 00, we need to select the value 0 for 'ab' equal to 00, 01, and 11, and the value 1 for 'ab' equal to 10.
+- When 'cd' is 01, we need to select the value 1 for 'ab' equal to 00, and the value 0 for 'ab' equal to 01, 11, and 10.
+- When 'cd' is 11, we need to select the value 1 for 'ab' equal to 00 and 10, the value 0 for 'ab' equal to 01, and the value 1 for 'ab' equal to 11.
+- When 'cd' is 10, we need to select the value 1 for 'ab' equal to 00 and 10, and the value 0 for 'ab' equal to 01 and 11.
+
+This means we can implement the logic for each 'ab' value using 2-to-1 multiplexers controlled by 'c' and 'd', with 'c' as the select input.
+For 'ab' equal to 00, we select 0 when 'cd' is 00, and 1 when 'cd' is 01, 11, or 10. This can be achieved with a 2-to-1 multiplexer, selecting 'd' when 'c' is 0, and '1' when 'c' is 1.
+For 'ab' equal to 01, we select 0 for all 'cd' values, so we just assign 0 to this input.
+For 'ab' equal to 11, we select 0 when 'cd' is 00 or 01, and 1 when 'cd' is 11 or 10. This can be achieved with a 2-to-1 multiplexer, selecting 'd' when 'c' is 1, and '1' when 'c' is 0, but since 'd' is the same as 'c' in the required cases, we just use 'c' and 'd'.
+For 'ab' equal to 10, we select 1 when 'cd' is 00 or 10, and 0 when 'cd' is 01 or 11. This can be achieved with a 2-to-1 multiplexer, selecting '1' when 'c' is 0 and 'd' is 1, or 'c' is 1 and 'd' is 0, which simplifies to the XOR of 'c' and 'd'.
+Now we can implement the TopModule with these 2-to-1 multiplexers.

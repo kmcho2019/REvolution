@@ -1,0 +1,15 @@
+To correctly implement a 3.5x fractional frequency divider using double-edge clocking, the key is to create two non-overlapping clock pulses that are phase-shifted by half a clock period and combined via OR to generate the final output. 
+
+For a 7-cycle period (MUL2_DIV_CLK=7), we can:
+- Use a 3-bit counter counting 0 to 6 on the positive clock edge.
+- Generate `clk_div_pos` high for counts 0-3 (4 cycles) and low for 4-6 (3 cycles).
+- Generate `clk_div_neg` high for counts 3-6 (4 cycles) and low for 0-2 (3 cycles), sampled on the negative clock edge.
+This way, `clk_div_pos` and `clk_div_neg` have complementary high phases shifted by half a clock cycle, providing the fractional division with a 3.5x period.
+
+Implementing this requires:
+- A synchronous counter reset on `rst_n`.
+- Two separate clock domain operations: posedge counter and clk_div_pos; negedge clk for clk_div_neg sampling.
+- Careful handling of negedge sampling to avoid metastability: sample the posedge counter value into a register on posedge clk, then use it at negedge clk to generate `clk_div_neg` asynchronously.
+- The final output `clk_div` = `clk_div_pos | clk_div_neg` produces a 3.5x divided clock with nearly 50% duty cycle, leveraging the double-edge clocking technique.
+
+This approach respects timing and synchronization, generating properly phase-shifted pulses that combine to produce the fractional frequency division as required.

@@ -1,0 +1,32 @@
+The original design meets the problem requirements but can be improved for better performance, power, and area (PPA):
+
+1. **Balanced Pipeline Stages:**  
+   Instead of summing partial products in pairs (0+1 and 2+3) and then summing these sums, use a balanced adder tree with two pipeline stages that divide the work more evenly to reduce the critical path.
+
+2. **Minimize Combinational Logic per Stage:**  
+   Generate all partial products combinationally, but sum only two partial products per pipeline stage register, then combine their sums in the next stage. This reduces the amount of combinational addition within one clock cycle and can help improve frequency.
+
+3. **Efficient Zero-Extension:**  
+   Extend `mul_a` to 2*size bits by appending zeros on the MSB side only once rather than repeating inside the loop.
+
+4. **Avoid Unnecessary Wire Arrays:**  
+   Since size=4 is fixed, explicit code is clearer; but to keep generic parameter, use generate loops properly.
+
+5. **Use Non-blocking Assignments and Proper Reset:**  
+   Maintain synchronous reset on all registers.
+
+6. **Register Partial Products at First Stage to Avoid Large Combinational Fanout:**  
+   Register partial products once to help timing and power.
+
+7. **Outputs Registered After Final Addition:**  
+   Output registered to meet timing and pipeline structure.
+
+The improved pipeline:
+
+- Stage 0 registers the partial products.
+- Stage 1 sums partial products 0&1 and 2&3 separately.
+- Stage 2 sums the two partial sums to produce the final product.
+
+This creates a 3-stage pipeline but only two levels of pipeline registers for sums, adhering to the requirement (two levels of registers for intermediate values and control). Stage 0 registers partial products (intermediate values), stage 1 sums partial products in pairs and registers the sums, and stage 2 sums these registered sums to final product.
+
+This pipeline reduces critical path length, better balances workload, and improves clock frequency, power, and area due to fewer wide adders in a single cycle and better timing distribution.

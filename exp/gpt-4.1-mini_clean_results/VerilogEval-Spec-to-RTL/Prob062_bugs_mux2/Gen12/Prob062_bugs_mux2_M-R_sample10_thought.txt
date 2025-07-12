@@ -1,0 +1,7 @@
+The original bug arises because the output `out` is a single bit, but the module tries to select between two 8-bit inputs with bitwise operations, which is incompatible. To fix the bug while keeping `out` as a single bit, we need to define which bit of `a` or `b` `out` corresponds to. 
+
+One simple interpretation is that `out` selects the least significant bit (bit 0) of either `a` or `b` depending on `sel`. We can implement this by assigning `out` to `a[0]` when `sel` is 0, or `b[0]` when `sel` is 1.
+
+To refactor, instead of using an assign statement with bitwise AND/OR, we can use a continuous assignment with a conditional operator (`?:`) to directly select the desired bit. This keeps the logic concise and clear, and ensures `out` remains a scalar as intended.
+
+Thus, the code will use a single-line continuous assign statement selecting one bit based on `sel`.

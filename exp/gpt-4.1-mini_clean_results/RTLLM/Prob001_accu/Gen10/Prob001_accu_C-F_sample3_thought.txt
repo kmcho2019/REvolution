@@ -1,0 +1,13 @@
+Fuse the strengths of both examples by using synchronous reset and updating the accumulator and counter only on valid_in to reduce toggling, as in Example 2, while using the clear and immediate valid_out pulse and explicit accumulator reset logic from Example 1 to ensure clean one-cycle valid_out assertion.
+
+Optimize power by updating accumulator and counter registers only on valid_in pulses (using if(valid_in)) so no unnecessary toggling when inputs are invalid.
+
+For performance, avoid adding `accumulator + data_in` twice in the same cycle by precomputing the next accumulator sum before the always block, and using a single addition for data_out on the 4th valid input cycle.
+
+Maintain minimal area by using a simple 2-bit counter and 10-bit accumulator only, without extra registers.
+
+Valid_out pulses exactly one cycle when four valid inputs have been accumulated, then accumulator and counter reset immediately after output, ensuring clean cycles and preventing glitches.
+
+Use non-blocking assignments for safe synchronous logic.
+
+This fusion yields a clean, efficient, low-power design with well-controlled timing and simple logic, meeting all functional requirements.

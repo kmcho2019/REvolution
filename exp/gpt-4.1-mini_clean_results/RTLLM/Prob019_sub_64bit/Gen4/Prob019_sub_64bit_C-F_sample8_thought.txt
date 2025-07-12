@@ -1,0 +1,12 @@
+Fuse the best ideas by combining the clarity and modularity of a structural subtractor from Example 2 with the efficient and minimal overflow detection logic from Example 1.
+
+Instead of a ripple borrow chain which has long delay and high power, use a carry-lookahead adder-based approach for subtraction by leveraging the fact that A - B = A + (~B + 1). Implement a 64-bit adder with carry-lookahead logic internally for better performance while maintaining structural clarity.
+
+This approach avoids the long ripple borrow chain and leverages fast carry propagation for subtraction. The overflow detection logic remains the same simple sign-bit check from Example 1 for correctness and minimal logic.
+
+The module will:
+- Complement B and add 1 internally (two's complement) using a 64-bit carry-lookahead adder (CLA) to perform subtraction.
+- Output the 64-bit result.
+- Detect overflow using sign bits of A, B, and result.
+
+This fusion yields better timing and power characteristics than a ripple subtractor and cleaner implementation than a bare operator, while keeping the overflow logic minimal and clear.

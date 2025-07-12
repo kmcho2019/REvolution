@@ -1,0 +1,9 @@
+To implement a pulse detection module, we can use a Finite State Machine (FSM) based approach with a counter. The idea is to design a FSM that transitions between states based on the input signal data_in and uses a counter to keep track of the number of cycles since the last state transition. The FSM will have four states: IDLE, RISING, FALLING, and PULSE_DETECTED. 
+
+In the IDLE state, the FSM waits for data_in to rise (i.e., become 1). When data_in rises, the FSM transitions to the RISING state and starts a counter. In the RISING state, the FSM waits for data_in to fall (i.e., become 0). If the counter reaches a value of 1 (indicating one cycle has passed since the rising edge), the FSM transitions to the FALLING state. 
+
+In the FALLING state, the FSM waits for data_in to fall again (i.e., become 0) and checks the counter value. If the counter reaches a value of 2 (indicating two cycles have passed since the rising edge), the FSM transitions to the PULSE_DETECTED state and sets the output data_out to 1. 
+
+In the PULSE_DETECTED state, the FSM resets the counter and transitions back to the IDLE state after one cycle, resetting data_out to 0. This approach allows for the detection of pulses with a duration of exactly three cycles (one rising edge, one high cycle, and one falling edge).
+
+This approach is more robust than the previous one as it can handle longer pulses and variable widths, making it suitable for applications where pulse duration is critical.

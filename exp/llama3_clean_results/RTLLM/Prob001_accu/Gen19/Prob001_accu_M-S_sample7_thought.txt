@@ -1,0 +1,9 @@
+To simplify the solution, we need to focus on reducing the complexity of the logic while maintaining the functionality. 
+
+One approach is to use a counter to track the number of accumulated values and a register to store the accumulated sum. When the counter reaches 4, we output the accumulated sum and reset the counter and sum.
+
+We can use a single always block to handle the accumulation and output logic. The `valid_out` signal can be asserted when the counter reaches 4, and the `data_out` can be assigned the accumulated sum at that time.
+
+To reduce the complexity, we can remove the conditional statements inside the always block and use a single if statement to check if `valid_in` is high. We can also remove the `cnt` reset when `valid_in` is low, as it is not necessary.
+
+Additionally, we can simplify the `assign` statement for `valid_out` by removing the condition `sum != 0`, as it is not necessary. The `valid_out` signal should be asserted only when the counter reaches 4, regardless of the value of `sum`.

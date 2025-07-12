@@ -1,0 +1,17 @@
+To optimize the existing LIFObuffer design for better PPA, I will:
+
+1. Replace the simple binary stack pointer (SP) with a one-hot encoded pointer. This reduces glitching and switching activity during pointer updates, improving timing and power.
+
+2. Use a one-hot pointer of 5 bits (for positions 0 to 4), where exactly one bit is set. The empty condition is when the bit representing index 4 (empty) is set.
+
+3. Perform push/pop operations by shifting the one-hot pointer up/down accordingly, simplifying boundary checks and minimizing arithmetic logic.
+
+4. Remove the loop clearing of stack_mem on reset; instead, rely on the SP one-hot pointer to indicate empty state and zero the dataOut register. This reduces reset overhead and area.
+
+5. Make EMPTY and FULL combinational based on the one-hot pointer state.
+
+6. Only update the stack memory and dataOut when valid push/pop occurs (gated by EN and RW and not full/empty).
+
+7. Keep dataOut stable when not popping.
+
+This encoding reduces switching noise on SP transitions, potentially improves timing on large fanout SP logic, and reduces power by minimizing toggling. The removal of the reset loop also improves reset speed and area. Using one-hot SP leverages efficient pointer logic, trading off a few flip-flops for better timing and power. The overall behavior remains the same with improved PPA.

@@ -1,5 +1,0 @@
-The issue lies in the sensitivity list and how the flip-flop behavior is handled. In this code, the sensitivity list includes both the positive and negative edges of the clock, which is not synthesizable and does not reflect the dual-edge triggered behavior in a proper way.
-
-The conditional statements inside the `always` block attempting to imitate the dual-edge behavior are flawed. The condition `if (clk != 1'b0)` is meant to capture the rising edge, but it is comparing the clock directly to `1'b0`, which is incorrect. Similarly, the condition `else if (clk != 1'b1)` for capturing the falling edge is also incorrect.
-
-Additionally, the handling of the previous state using `q_prev` to try to store the previous output value causes issues. This method is not sufficient to replicate the dual-edge triggered flip-flop behavior accurately. The incorrect handling of clock edges and past state leads to the flip-flop not functioning as intended, resulting in mismatches during simulation.

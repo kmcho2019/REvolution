@@ -1,0 +1,9 @@
+To simplify the Rule 90 implementation while maintaining correct functionality:
+1. Remove the temporary extended register to eliminate timing issues
+2. Handle boundary conditions directly in the XOR logic
+3. For each cell, calculate next state as XOR of left and right neighbors
+4. Treat out-of-bound neighbors as 0 (as specified)
+5. Use a single always block for synchronous behavior
+6. Load new data when load is high, otherwise update state
+
+The key simplification is calculating each cell's next state directly from the current state, with explicit handling of boundary conditions (left of q[0] and right of q[511] are 0).

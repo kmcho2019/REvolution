@@ -1,0 +1,5 @@
+Refactor the design by separating the next state logic from the register update for better clarity and synthesis optimization. Compute the next value of q in a combinational always block based on current 'a' and 'q', then update 'q' on the rising edge of 'clk' synchronously.
+
+This structure uses a two-process style: one for next state combinational logic and one for synchronous state update. It enables easier optimization for synthesis tools and allows use of non-blocking assignments cleanly.
+
+The counting sequence and behavior remain unchanged: when 'a' is 1, q is 4; when 'a' is 0, q cycles through 4->5->6->0->1->2->3->4. Initial state is left undefined to match waveform.

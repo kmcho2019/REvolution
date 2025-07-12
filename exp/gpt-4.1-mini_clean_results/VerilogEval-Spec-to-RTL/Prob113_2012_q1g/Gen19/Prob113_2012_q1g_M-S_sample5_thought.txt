@@ -1,0 +1,55 @@
+Analyze the Karnaugh map to find a simpler minimal sum-of-products expression. The map shows 1s at these minterms (x[3]x[2]x[1]x[0]):
+
+0000, 0010, 1100, 1101, 1110, 1111, 1000, 1001, 1011, 1010
+
+From the map:
+
+- Group 1 (covering 1000, 1001, 1010, 1011): x3=1, x2=0 (but not true for all), better to see if grouping by x3=0,x2=0, etc.
+
+Alternatively, consider the Karnaugh map rows:
+
+Row x3x2=00: col x1x0=00(1), 01(0), 11(0), 10(1) -> cells 0,3
+
+Row 01: all 0
+
+Row 11: all 1 except last col
+
+Row 10: 1,1,0,1
+
+From observation:
+
+- x2' x3' x1' x0' = 1 (minterm 0)
+
+- x2' x3' x1' x0 = 0
+
+- x2' x3' x1 x0' = 1 (minterm 2)
+
+- x2' x3' x1 x0 = 0
+
+Others are grouped similarly.
+
+Noticing some groups:
+
+- Group of four 1s at x3=1, x2=1, x1=1 (minterms 1100, 1101, 1110, 1111 minus one)
+
+- Another group of four with x3=1, x2=0, x0=0
+
+Also, from the map, the function can be simplified to:
+
+f = x3 x2 + x3 x1 + ~x3 ~x1 ~x0 + ~x3 x2 x1 ~x0
+
+But this is slightly complex.
+
+Alternatively, express the function as:
+
+f = x3 & (x2 | x1) | (~x3 & ~x1 & ~x0) | (~x3 & x2 & x1 & ~x0)
+
+Then factor:
+
+f = x3 & (x2 | x1) | (~x3 & ~x0 & (~x1 | (x2 & x1)))
+
+This is simpler and covers the original.
+
+Implementing this expression reduces the complexity by directly using basic AND, OR, and NOT gates with fewer intermediate signals.
+
+This reduces the number of wires and logic depth while preserving the original function.

@@ -1,0 +1,9 @@
+To implement the TopModule, we'll create three separate logic blocks for each output: out_both, out_any, and out_different. 
+
+For out_both, we'll iterate over the input bits from right to left (i.e., from index 99 down to 0) and check if the current bit and its left neighbor are both '1'. If so, the corresponding out_both bit will be set to '1'. Since in[99] has no left neighbor, out_both[99] will always be 0.
+
+For out_any, we'll iterate over the input bits from left to right (i.e., from index 0 up to 99) and check if the current bit or its right neighbor is '1'. If so, the corresponding out_any bit will be set to '1'. Since in[0] has no right neighbor in the classical sense, but for the purpose of out_any we should consider it to always be 0 as per the problem description.
+
+For out_different, we'll iterate over the input bits, considering the left neighbor of in[0] to be in[99] (i.e., wrap around). We'll set out_different[i] to '1' if in[i] is different from its left neighbor.
+
+This approach allows us to efficiently compute all three output vectors using simple bitwise operations.

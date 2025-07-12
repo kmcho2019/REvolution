@@ -1,0 +1,7 @@
+To implement the 12-hour clock module named TopModule, we can use a set of counters for hours, minutes, and seconds. Since the counters are clocked by a fast-running clk, we need to use the ena signal to increment the counters once per second. We will use Binary-Coded Decimal (BCD) to represent the hours, minutes, and seconds. 
+
+The design will consist of three counters: one for seconds, one for minutes, and one for hours. The seconds counter will increment from 00 to 59. When it reaches 60 (which in BCD is represented as 1000000), it will reset to 00 and the minutes counter will increment. The minutes counter will also increment from 00 to 59. When it reaches 60, it will reset to 00 and the hours counter will increment. 
+
+The hours counter will have a range of 01 to 12. When it reaches 13, it will reset to 01. We will also use the pm signal to indicate whether the clock is in PM or AM. The pm signal will toggle when the hours counter reaches 12. 
+
+We will use the reset signal to reset the clock to "12:00 AM" whenever it is asserted. This reset will have higher priority than the enable signal and can occur even when the enable signal is not asserted.

@@ -1,0 +1,15 @@
+Novel architectural idea: Double-buffered parallel output with early valid indication
+
+Key features:
+1. Uses two 8-bit registers (buffer and output) to allow continuous serial input while maintaining stable parallel output
+2. Implements a "next_valid" signal that goes high one cycle before the actual valid to allow downstream modules to prepare
+3. Incorporates a pre-shift operation to optimize timing by shifting data before it's needed
+4. Uses a 4-bit counter instead of 3-bit to allow for future expansion to larger word sizes
+5. Implements a "ready" signal that could be used for flow control in more complex systems
+
+Advantages:
+- Smoother data flow with double buffering
+- Early valid indication improves timing for downstream modules
+- More scalable design with 4-bit counter
+- Potential for flow control with ready signal
+- Pre-shifting reduces critical path during valid cycles

@@ -1,0 +1,12 @@
+The original solution is functionally correct with a simple 2-state FSM and an edge detection method. To optimize for better power, the main lever is to avoid unnecessary toggling of the delayed data_in register. We can do this by sampling data_in only when state is HIGH or when a transition is possible, otherwise hold the previous value. This conditional sampling reduces switching in data_in_d.
+
+Additionally, we can merge the state register and delayed input storage into a single always block to simplify logic and potentially reduce area. Using non-blocking assignments and synchronous reset ensures clean design.
+
+The output logic remains combinational and minimal. The FSM states remain unchanged, keeping the design efficient and timing-friendly.
+
+These improvements can marginally reduce dynamic power consumption without affecting timing or area significantly, since the register toggle rate decreases.
+
+Summary of improvements:
+- Conditional sampling of data_in_d to reduce toggling.
+- Merge related sequential logic into a single always block for compactness.
+- Maintain clear, minimal FSM and combinational output logic.

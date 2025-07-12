@@ -1,0 +1,11 @@
+To optimize the existing solution for better performance, power, and area (PPA), the key is to minimize the combinational logic complexity and switching activity. The original design uses a combinational always block generating a next state that depends on the current state `q` and inputs `load` and `ena`. Although this is clean and synthesizable, we can slightly improve by directly updating `q` inside the sequential block, removing the intermediate `next_q` signal and associated combinational logic block. 
+
+This reduces combinational logic by merging it into the sequential block, which can reduce setup time and power due to fewer transitions in the combinational path.
+
+Additionally, replacing explicit bit slicing with the right shift operator (`>>`) for shifting can help synthesis tools optimize area and performance better.
+
+Clock gating is generally not handled here as it is typically done at a higher level or by synthesis tools; the enable signal effectively controls register updates, reducing switching when idle.
+
+Thus, the improved design merges the combinational next-state logic into the sequential block, prioritizes load over enable, and uses the shift operator to simplify shifting logic.
+
+This should slightly reduce logic levels, power, and area, and marginally improve timing while maintaining functionality and asynchronous reset behavior.

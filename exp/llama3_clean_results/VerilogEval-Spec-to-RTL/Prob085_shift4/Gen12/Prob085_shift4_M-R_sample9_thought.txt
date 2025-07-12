@@ -1,0 +1,7 @@
+To refactor the existing code, we will focus on optimizing the structure while maintaining the core functionality of a 4-bit shift register with asynchronous reset, synchronous load, and shift operations. One key area for refactoring is in how the synchronous operations (load and shift) are handled. Currently, an `always` block is used with conditional statements to implement these operations. We can simplify the code by separating the asynchronous reset logic from the synchronous operations and utilize combinational logic for the latter.
+
+The refactored design will use two separate `always` blocks: one for the asynchronous reset and another for the synchronous load and shift operations. This separation can improve readability and potentially offer better synthesis results by allowing the synthesis tool to optimize each block independently. Additionally, we will maintain the use of non-blocking assignments (`<=`) to update the register's value on the positive edge of the clock, ensuring that the design behaves as expected in sequential logic.
+
+For the synchronous operations, instead of nesting `if` statements, we can use a more linear approach with prioritized conditional statements to handle the load and shift operations. If `load` is asserted, we directly assign the input `data` to the register; otherwise, if `ena` is asserted, we perform the shift operation.
+
+By refactoring the code in this manner, we aim to achieve a design that is not only functionally correct but also optimized for area, power, and performance (PPA) metrics.

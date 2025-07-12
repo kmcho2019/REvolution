@@ -1,0 +1,13 @@
+To refactor while preserving the core functionality, we keep the sequential update of 'p' at the rising clock edge and 'q' at the falling clock edge but organize the code in a single always block that triggers on both edges of the clock. Within this block, we distinguish actions based on clock level or edge detection using a simple edge-detection mechanism.
+
+However, Verilog does not support edge detection inside always @(*) blocks, so an alternative is to use a clocked process sensitive to both edges (`always @(posedge clock or negedge clock)`) and inside use the condition to separate posedge and negedge.
+
+This approach centralizes the sequential logic and ensures both p and q updates occur in one block, reducing possible race conditions. Initial values are set in an initial block. 
+
+This structure is functionally equivalent to two always blocks but uses one for clarity and maintains the two-edge update behavior.
+
+Hence, implement:
+- One always block sensitive to posedge and negedge of clock
+- Update p <= a on posedge clock
+- Update q <= p on negedge clock
+- Initialize p and q to 'x'

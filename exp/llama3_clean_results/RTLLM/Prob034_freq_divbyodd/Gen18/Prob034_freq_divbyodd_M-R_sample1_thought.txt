@@ -1,0 +1,11 @@
+To refactor the given frequency divider code, we can maintain the core functionality but restructure the implementation for clarity and potential optimization. 
+
+The original code uses an `always_ff` block to update the counter `cnt` and the clock dividers `clk_div1` and `clk_div2`. It also uses continuous assignments for the final output `clk_div`. We can simplify the logic by using separate counters for the rising and falling edges and then use these counters to directly determine the output of `clk_div1` and `clk_div2`.
+
+Another approach is to use a state machine to manage the counter and the output of the clock dividers. This could involve encoding the states (e.g., counting up to half of `NUM_DIV`, toggling `clk_div1`, counting down to zero, toggling `clk_div2`) and using a next state logic to transition between these states based on the current count and the input clock.
+
+However, to maintain simplicity and adhere to the problem's requirements, we can stick with a counter-based approach and focus on restructuring the logic for better readability and maintainability. 
+
+We will use two counters, `cnt1` and `cnt2`, as originally intended in the problem statement. `cnt1` will count up to half of `NUM_DIV`, at which point `clk_div1` will be toggled. `cnt2` will count from half of `NUM_DIV` to `NUM_DIV`, at which point `clk_div2` will be toggled. This ensures that both rising and falling edges are correctly accounted for in the division process.
+
+The refactored code will aim to clarify the logic and potentially reduce the complexity of the original implementation by directly mapping the counter values to the output states without unnecessary conditional statements.

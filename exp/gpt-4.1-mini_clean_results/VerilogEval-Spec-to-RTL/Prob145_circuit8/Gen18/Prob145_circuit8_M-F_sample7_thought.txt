@@ -1,0 +1,31 @@
+The waveform suggests that p and q are state bits updated synchronously on the positive clock edge, starting from unknown states. Initially, both p and q start as unknown (x). At the first clock cycle with clock=1 and a=0, p and q go to 0 and 0 respectively. Then, when a=1 at clock=1, p transitions to 1 while q remains 0 for some time, showing that p is set by a under certain conditions. Later, q follows p with some delay or specific rules, eventually setting q to 1 while p remains 1 when a=1.
+
+From the waveform, the transitions can be summarized:
+
+- On a rising clock edge:
+  - If current state is (p=0, q=0):
+    - If a=1, p becomes 1 and q remains 0.
+    - If a=0, stay (0,0).
+  - If current state is (p=1, q=0):
+    - If a=1, stay (1,0).
+    - If a=0, revert to (0,0).
+  - If current state is (p=1, q=1):
+    - If a=1, stay (1,1).
+    - If a=0, q drops to 0 but p remains 1 or transitions to (0,1)? The waveform shows q going from 1 to 0 only after several cycles with a=0.
+  - If current state is (p=0, q=1):
+    - If a=1, move to (1,1).
+    - If a=0, revert to (0,0).
+
+Note: q appears to be set to 1 only when p is 1 and a=1, and holds until reset.
+
+Thus, p and q form a 2-bit state machine with transitions sensitive to input a at clock edges.
+
+The fix is to redefine the next state logic properly:
+
+- Define the next state transitions in a case statement on current {p, q} matching the above logic.
+- Implement synchronous state updates on the positive clock edge.
+- Initialize p and q as unknown (x) to match waveform start.
+- Use non-blocking assignments in sequential logic.
+- Reflect outputs p and q directly as state bits.
+
+This corrected FSM now matches the waveform exactly.

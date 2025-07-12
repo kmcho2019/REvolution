@@ -1,0 +1,13 @@
+Simplify the 4-bit pipelined multiplier by storing only two pipeline register levels:
+
+1. Level 1 registers: register extended inputs (extended multiplicand and multiplier).
+
+2. Level 2 registers: register the final product output.
+
+Generate partial products combinationally from the registered inputs on each clock cycle, sum them immediately, and register the sum as the final output.
+
+This removes the need to register each partial product separately, reducing complexity and resource usage while maintaining two levels of registers: input registration and output registration.
+
+Reset asynchronously clears registers.
+
+This solution still pipelines the multiplication (partial products are computed from registered inputs, then output is registered in next clock cycle), fulfilling the two-level register requirement, simplifying the design, improving synthesis friendliness, and maintaining correct operation.

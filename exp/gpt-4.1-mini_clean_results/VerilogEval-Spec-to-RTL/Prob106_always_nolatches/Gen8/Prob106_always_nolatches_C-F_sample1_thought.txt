@@ -1,0 +1,11 @@
+To fuse the best aspects of both examples, I will implement a purely combinational design using continuous assignments for the outputs. This eliminates intermediate regs, reducing area and power by minimizing unnecessary toggling and logic complexity. The prefix byte check will be combined with direct comparisons of the lower byte to generate one-hot outputs efficiently.
+
+This approach leverages the clarity and structural neatness of the case-style decoding in Example 1 and the direct combinational style of Example 2, but moves away from procedural blocks altogether. It produces clean, easily synthesizable, and minimal logic, improving power and area over reg-driven always blocks, while maintaining readability by assigning each output directly from a boolean expression derived from the scancode input.
+
+Thus, the design will:
+- Use a wire for prefix check (scancode[15:8] == 8'hE0).
+- Compare scancode[7:0] against each keycode with logical AND.
+- Drive each output as a combinational AND of prefix and matching keycode.
+- Avoid using any procedural code or registers, making the outputs pure wires.
+
+This yields minimal and efficient logic suitable for low-power and small-area implementation.

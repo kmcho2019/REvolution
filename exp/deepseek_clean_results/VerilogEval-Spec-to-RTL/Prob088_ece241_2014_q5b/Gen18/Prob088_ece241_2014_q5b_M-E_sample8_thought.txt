@@ -1,0 +1,27 @@
+Novel Architectural Idea:
+1. Shift Register State Machine:
+   - Instead of traditional one-hot encoding, use a 2-bit shift register where:
+     * '10' represents state A
+     * '01' represents state B
+   - This maintains one-hot properties while enabling simpler transition logic
+
+2. Transition Logic:
+   - Implement state transitions using shift operations:
+     * From A (10): shift right on x=1, maintain on x=0
+     * From B (01): always maintain (sticky state)
+   - This reduces logic complexity compared to standard one-hot
+
+3. Output Optimization:
+   - Compute output as XOR of current state and input:
+     * z = (state[1] & x) | (state[0] & ~x)
+   - This matches the Mealy requirements with minimal gates
+
+4. Reset Handling:
+   - Initialize shift register to '10' (state A) on reset
+   - Asynchronous reset clears all state bits
+
+Key Advantages:
+- Shift-based transitions reduce combinational logic depth
+- XOR-based output minimizes glitching power
+- Maintains one-hot properties without explicit state variables
+- Naturally implements the sticky B state behavior

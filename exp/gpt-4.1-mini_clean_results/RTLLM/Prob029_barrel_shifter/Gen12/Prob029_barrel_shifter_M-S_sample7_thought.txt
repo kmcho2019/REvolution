@@ -1,0 +1,5 @@
+To simplify the design while preserving functionality, we can eliminate the separate mux2X1 module and instead implement each 2-to-1 multiplexer using the conditional operator directly in the barrel shifter module. This reduces code complexity and the number of module instantiations, while synthesis tools will infer multiplexers efficiently.
+
+The shifting logic remains the same: three stages corresponding to shifts by 4, 2, and 1 bits, enabled by the bits in `ctrl`. Each stage conditionally selects between the current data or the data rotated by the respective shift amount.
+
+This approach maintains modularity and clarity but avoids the overhead of explicit mux module declarations.

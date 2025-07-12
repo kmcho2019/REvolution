@@ -1,0 +1,18 @@
+Instead of deriving the outputs through minimal logic expressions, we can implement a more explicit state transition decoder that:
+1. Directly maps each current state to its possible next states based on input w
+2. Uses the one-hot property to simplify the logic by considering each state's transitions individually
+3. For Y1 (next state B), it only occurs when in state A and w=1
+4. For Y3 (next state D), it occurs in multiple cases:
+   - From B when w=0
+   - From C when w=0
+   - From E when w=0
+   - From F when w=0
+   - From F when w=1 (though this actually goes to C, not D - correction needed)
+
+After careful inspection, the correct conditions for Y3 are:
+- From B when w=0
+- From C when w=0
+- From F when w=0
+- From E when w=0
+
+This leads to a more explicit but equally valid implementation using the one-hot states directly.

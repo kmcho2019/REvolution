@@ -1,0 +1,21 @@
+Simplify the FSM by using a single 3-bit state register encoding all states and directions explicitly, thus removing separate mode and direction registers. This reduces logic by having fewer conditional assignments and a straightforward next state logic with priority encoded in a single case statement.
+
+Use one-hot-like encoding:
+- 000: walking left
+- 001: walking right
+- 010: falling left
+- 011: falling right
+- 100: digging left
+- 101: digging right
+
+This directly encodes both direction and mode, allowing simple state transitions with no separate direction and mode variables.
+
+Outputs are decoded directly from state bits:
+- walk_left: walking left state only
+- walk_right: walking right state only
+- aaah: any falling state (states with bit 1 in position 1)
+- digging: any digging state (states with bit 1 in position 2)
+
+The asynchronous reset sets state to walking left.
+
+This approach reduces assignments and avoids redundant direction updates, making the design more compact and easier to follow.

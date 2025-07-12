@@ -1,0 +1,17 @@
+To correctly implement the FSM for start bit, 8 data bits (LSB first), and stop bit detection, we need to:
+
+- Use clearly defined FSM states: IDLE (wait for start bit=0), RECEIVE (collect 8 data bits), STOP (wait for stop bit=1).
+- On detecting start bit (in==0), move to RECEIVE and start bit_count at 0.
+- At each clock in RECEIVE, sample one bit and store it into the corresponding data_reg bit indexed by bit_count (to ensure correct LSB-first order).
+- Increment bit_count after each bit captured.
+- When bit_count reaches 7 (8th bit captured), move to STOP state.
+- In STOP, check if in==1 (valid stop bit). If yes, assert done for one clock cycle and move back to IDLE.
+- If stop bit invalid (in!=1), stay in STOP until a valid stop bit is seen (per problem).
+- done is asserted synchronously for exactly one cycle immediately after validating the stop bit.
+- Reset synchronously resets all state, counters, and done.
+- Data shifting is done by directly assigning each sampled bit to data_reg[bit_count].
+- This avoids any bit reversal caused by shifting registers left or right.
+- The FSM transitions and output done are only updated in the clocked process (no combinational assignment to done).
+- The code is fully synchronous with posedge clk and synchronous active-high reset.
+
+This approach corrects the previous mistakes in bit shifting, counting, and done assertion timing.

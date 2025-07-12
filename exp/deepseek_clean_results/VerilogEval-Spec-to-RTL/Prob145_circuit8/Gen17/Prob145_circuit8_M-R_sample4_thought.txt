@@ -1,0 +1,13 @@
+Key insights from the waveform:
+1. p is synchronous and equals 'a' when q is 0, otherwise 0
+2. q is set when p was 1 in the previous cycle
+3. q is asynchronously cleared when 'a' is high during clock low
+
+Refactoring approach:
+1. Use combinational logic for p output based on current q and a
+2. Implement q as a flip-flop with:
+   - Synchronous set when previous p was 1
+   - Asynchronous clear when a=1 during clock low
+3. Separate the state tracking (p_prev) from output generation
+4. Use non-blocking assignments for all sequential elements
+5. Make the asynchronous clear more explicit

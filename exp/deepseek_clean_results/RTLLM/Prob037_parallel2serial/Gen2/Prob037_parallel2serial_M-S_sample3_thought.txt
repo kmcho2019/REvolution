@@ -1,0 +1,12 @@
+Simplified design approach:
+1. Use a 2-bit counter to track current bit position (0-3)
+2. Store input data in a register when counter wraps around
+3. Output MSB first by selecting bits using counter (no shifting needed)
+4. Keep valid_out high during all 4 cycles of conversion
+5. Reset counter and data register on active low reset
+
+Key simplifications:
+- Eliminate state machine in favor of simple counter
+- Remove load_new signal - load directly when counter wraps
+- Continuous assignment for dout using counter as index
+- valid_out is always 1 (since we're always outputting valid data when not in reset)

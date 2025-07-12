@@ -1,0 +1,12 @@
+Use a compact binary-encoded FSM with four states: IDLE, START, DATA, and STOP_CHECK.  
+In IDLE, wait for the start bit (0). Once detected, move to START to prepare for data reception.  
+In START, immediately transition to DATA to receive exactly 8 data bits, shifting them into a shift register LSB first.  
+Track bits received with a 3-bit counter. After 8 bits, transition to STOP_CHECK state.  
+In STOP_CHECK, verify if the stop bit is high (1). If yes, assert a done pulse for one cycle and go back to IDLE.  
+If the stop bit is low, enter an ERROR_RECOVERY state where the FSM stays until a stop bit is detected on the line to resynchronize.  
+Use a separate ERROR_RECOVERY state to handle waiting for a valid stop bit before returning to IDLE.  
+Implement synchronous reset.  
+Use non-blocking assignments consistently.  
+This design maintains simplicity but clearly separates the start bit detection and data reception. The ERROR_RECOVERY state ensures proper recovery on stop bit errors.  
+This approach avoids unnecessary states and uses binary encoding for minimal area.  
+Done is asserted as a one-clock-cycle pulse after successful stop bit detection.

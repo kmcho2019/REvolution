@@ -1,0 +1,12 @@
+Instead of a traditional FSM with separate states, we'll use a counter to track the entire reception process (11 bits: start + 8 data + stop). The key innovations are:
+1. A single counter tracks both state and bit position (0-10)
+2. A shift register captures data only during data bits (positions 1-8)
+3. Parallel load of the shift register when counter=0 (start bit detected)
+4. Validation happens when counter=10 (stop bit position)
+5. Error recovery is implicit - counter only advances when expected pattern matches
+
+This reduces state transitions and combines control logic with the counter, improving PPA by:
+- Fewer state transitions (only counter increments)
+- Parallel validation logic
+- Reduced control complexity
+- Implicit error handling (counter stalls until proper stop bit)

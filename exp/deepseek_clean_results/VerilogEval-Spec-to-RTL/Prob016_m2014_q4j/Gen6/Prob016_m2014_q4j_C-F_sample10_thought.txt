@@ -1,0 +1,11 @@
+Fusion Strategy:
+1. **Performance vs Simplicity**: While the carry-select adder (Example 2) offers better theoretical performance, for 4-bit addition the ripple-carry adder (Example 1) is simpler and nearly as fast, with better PPA metrics.
+2. **Power Optimization**: The ripple-carry approach avoids redundant computations seen in carry-select, reducing switching activity.
+3. **Area Efficiency**: The ripple-carry implementation uses less area (22.0 vs 26.0) by eliminating duplicate logic.
+4. **Hierarchy**: Maintain the clean FullAdder module for reusability, but implement the 4-bit adder directly in TopModule for optimal synthesis.
+5. **Final Design**: Use ripple-carry structure with:
+   - Chained full adders for natural carry propagation
+   - Direct connection of final carry-out to sum[4]
+   - Minimal intermediate wiring
+
+This combines the simplicity and efficiency of Example 1 with the modularity of Example 2's FullAdder component.

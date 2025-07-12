@@ -1,0 +1,12 @@
+Fuse the hierarchical, modular design and balanced addition tree from both examples, but improve the popcount17 module by explicitly implementing a balanced adder tree summation of the 17 bits rather than a for-loop or implicit parallel sums. This fusion achieves explicit parallelism for popcount17 (like Example 2) to improve timing and area, while retaining the clean hierarchical summation of 15 partial counts in a balanced tree (like both examples). 
+
+Additionally, carefully size intermediate sums and explicitly zero-extend partial counts to 8 bits before the upper-level adder tree to prevent unintended width mismatches and help synthesis tools optimize. Use generate loops cleanly for all stages to keep the code modular and scalable.
+
+This fusion leverages:
+- The modular structure and hierarchical summation tree from Example 1
+- The explicit balanced adder tree in popcount17 from Example 2 for better timing/area
+- Consistent and explicit bit-width management throughout the code to ease synthesis
+
+No pipelining is added to keep the design combinational and simple as requested. The final output is 8 bits wide to cover max 255 ones.
+
+This approach aims to provide better timing and area than Example 1 by explicit parallelism in popcount17, and better structure and modularity than Example 2 by a fully hierarchical and clean summation tree.

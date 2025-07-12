@@ -1,0 +1,19 @@
+Here's a refactored implementation with these key improvements:
+
+1. **Proper f pulse generation**: Now correctly pulses high for exactly one cycle after reset deassertion using a registered flag.
+
+2. **Accurate sequence detection**: Uses a 3-bit shift register to detect the "101" pattern on x.
+
+3. **Precise 2-cycle timeout**: Implements a proper counter for monitoring y within 2 cycles.
+
+4. **Clear state machine structure**: Separates states for each phase of operation with explicit transitions.
+
+5. **Correct permanent output handling**: Properly maintains g=1 or g=0 permanently based on y detection within the timeout period.
+
+The state machine now has:
+- IDLE: Wait for reset deassertion
+- F_STATE: Generate f pulse
+- MONITOR_X: Watch for "101" sequence
+- MONITOR_Y: Watch for y=1 with timeout
+- G_HIGH: Permanent g=1 state
+- G_LOW: Permanent g=0 state

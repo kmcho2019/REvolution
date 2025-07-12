@@ -1,0 +1,15 @@
+Looking at the Karnaugh map, we can identify four distinct groupings of 1's that cover all cases:
+
+1. Group 1: Top-left corner (c=0, d=0) covering ab=00,01,10
+   - ~c & ~d & (~a | ~b)
+
+2. Group 2: Bottom-right corner (c=1, d=1) covering ab=01,11,10
+   - c & d & (a | b)
+
+3. Group 3: Middle-left (c=1, d=0) covering ab=01,11
+   - c & ~d & (a ^ b)
+
+4. Group 4: Top-right (c=0, d=1) covering ab=00,10
+   - ~c & d & ~(a ^ b)
+
+The final output is the OR of all these groups. This approach clearly separates each grouping from the K-map into distinct logical expressions, making the implementation straightforward and verifiable against the original map.

@@ -1,0 +1,9 @@
+The given code implements a finite state machine (FSM) to detect pulses in the input signal `data_in`. However, the current implementation does not accurately detect the required pulse sequence of 0 to 1 to 0 within a 3-cycle window. To fix this, we can modify the FSM to include additional states that track the sequence and duration of the pulse. 
+
+The new approach will include four main states: IDLE, PULSE_START, PULSE_HIGH, and PULSE_END. The IDLE state represents the initial state where no pulse has been detected. The PULSE_START state is entered when `data_in` transitions from 0 to 1, indicating the potential start of a pulse. The PULSE_HIGH state is used to ensure that the high state (1) of the pulse is sustained for at least one clock cycle. Finally, the PULSE_END state is reached when `data_in` transitions from 1 to 0 after a high state, indicating the end of a valid pulse sequence.
+
+The corrected code will use a combination of combinational logic and sequential logic to implement the FSM. We will define the next state and output logic using `assign` statements, which will improve the code's readability and simplify the implementation of the FSM's logic.
+
+The new code will use two signals, `state_next` and `data_out_next`, to represent the next state and output value. These signals will be defined using `assign` statements, which will improve the code's readability and simplify the implementation of the FSM's logic.
+
+By adding more states to the FSM, we can accurately track the sequence and duration of the pulse, ensuring that the PULSE_END state (and thus the data_out signal) is only triggered at the end of a valid pulse sequence.

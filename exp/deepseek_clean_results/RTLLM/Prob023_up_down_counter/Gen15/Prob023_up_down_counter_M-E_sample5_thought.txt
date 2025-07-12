@@ -1,0 +1,20 @@
+Novel Architecture: Parallel Prefix Counter with Early Termination
+1. Parallel Prefix Adder Structure:
+   - Uses Brent-Kung parallel prefix network for fast carry propagation
+   - Combines increment and decrement operations using shared logic
+   - Generates both carry and borrow signals simultaneously
+
+2. Early Termination Logic:
+   - Detects when lower bits won't affect upper bits (e.g., 0000 +1 = 0001)
+   - Disables unnecessary carry propagation to save power
+   - Uses bitmask to identify active computation regions
+
+3. Unified Operation:
+   - Single arithmetic unit handles both increment and decrement
+   - Control signals select between operations without duplicating logic
+   - Optimized for both timing and power efficiency
+
+Key Benefits:
+- Faster carry propagation than ripple-carry designs
+- Reduced switching activity through early termination
+- Compact implementation with shared resources

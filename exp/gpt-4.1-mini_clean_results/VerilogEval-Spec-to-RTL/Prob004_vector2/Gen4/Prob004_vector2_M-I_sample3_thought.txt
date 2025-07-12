@@ -1,0 +1,5 @@
+The existing implementation is already optimal in terms of performance and area since it is a simple wire reordering with no logic gates or flip-flops involved. To achieve a better power figure, an alternate approach is to use a generate block to create explicit byte-level assignments. This can sometimes help synthesis tools better optimize for power by having more granular control of wiring, potentially enabling better gate-level optimization or clock gating if integrated into a larger design.
+
+Additionally, making the output a reg and using an always_comb block might help certain synthesis tools infer better implementation or optimize timing by explicitly defining combinational logic. While these changes are minor and may not significantly alter PPA, they can guide synthesis tools differently.
+
+Hence, the improvement strategy is to implement the byte reversal using an always_comb block and explicit byte assignments. This doesn't change functionality but might help achieve minor power and timing optimizations in certain synthesis environments.

@@ -1,0 +1,16 @@
+Novel Architecture Idea: "Parallel Prefix Adder with Early Carry Resolution"
+
+Key Innovations:
+1. **Parallel Processing**: Instead of sequential partial product accumulation, use parallel prefix adder structure (Kogge-Stone) for faster carry propagation
+2. **Early Carry Resolution**: Compute carries in first pipeline stage to reduce critical path
+3. **Compressed Partial Products**: Use Booth encoding to reduce number of partial products from 4 to 3
+4. **Two-Cycle Pipeline**:
+   - Stage 1: Booth encoding + partial product generation + carry pre-computation
+   - Stage 2: Final summation using parallel prefix adder
+5. **Power Optimization**: Dynamic operand isolation to prevent unnecessary toggling
+
+Advantages:
+- Faster critical path due to parallel prefix adder
+- Reduced switching activity from Booth encoding
+- Maintains same latency (2 cycles) with better timing
+- Scales better for larger multipliers

@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Encoding: Switch to one-hot encoding for better timing characteristics (3 states = 3 flip-flops)
+2. Output Logic: Move output assignments to combinational logic to reduce register usage
+3. State Transitions: Simplify state transition logic by separating next-state logic from output logic
+4. Power Optimization: Use explicit clock gating for the output register when not needed
+5. Reset Handling: Maintain synchronous reset but optimize register initialization
+
+Key Improvements:
+- One-hot encoding improves timing by reducing combinational logic in state transitions
+- Combinational output logic reduces register usage and power consumption
+- Explicit state transition logic makes the FSM more readable and maintainable
+- Output register is only updated when needed (during BYTE2 state)
+- Clean separation between state transition and output generation logic

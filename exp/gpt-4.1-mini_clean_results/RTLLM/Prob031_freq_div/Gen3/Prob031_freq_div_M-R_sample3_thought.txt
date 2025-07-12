@@ -1,0 +1,8 @@
+Refactor the frequency divider by using a single always block that increments a main counter, counting from 0 to 99 (since 100 cycles correspond to the lowest frequency). Use combinational logic or simple assignments inside the block to generate all three divided clocks by checking the counter value. This eliminates separate counters and multiple always blocks, reducing logic duplication and improving clarity.
+
+- Use a 7-bit counter (cnt) counting from 0 to 99.
+- Generate CLK_50 by toggling every 1 input clock cycle (divide by 2), implemented as the LSB of the counter (or a derived signal).
+- Generate CLK_10 by toggling every 5 input clock cycles (divide by 10), implemented as the (counter / 5) LSB toggled at appropriate count.
+- Generate CLK_1 by toggling every 50 input clock cycles (divide by 100), i.e., toggle when counter reaches 49.
+- Reset all outputs and counter on RST.
+This method makes the design more concise and uses a single process for all frequency dividers.

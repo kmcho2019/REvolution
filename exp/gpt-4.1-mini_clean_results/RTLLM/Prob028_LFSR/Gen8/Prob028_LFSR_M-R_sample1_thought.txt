@@ -1,0 +1,11 @@
+Refactor the 4-bit LFSR by implementing the shift register and feedback computation entirely with continuous assignments and a single sequential register for the state. 
+
+Key changes:
+- Use a single 4-bit register to hold the state.
+- Compute the feedback using a continuous assign (inverted XOR of bits 3 and 2).
+- On each rising clock edge, update the state with shifted bits and the feedback at LSB.
+- Use an asynchronous active-high reset to initialize state to a non-zero seed, improving reset responsiveness.
+- Declare output directly as the current state for simpler logic.
+- Avoid explicit next_state signal and use compact sequential logic.
+
+This style reduces combinational always blocks, simplifies the design, and illustrates a clear combinational feedback path with a single sequential state register.

@@ -1,0 +1,14 @@
+To optimize the PPA metrics while maintaining correct functionality:
+1. Keep the basic 8-bit addition since it's already efficient
+2. Optimize the overflow detection by:
+   - Using XOR for sign comparison which is more area-efficient
+   - Combining the sign checks into a single expression
+3. Potential power savings by:
+   - Using the same sign comparison result for both sum and overflow
+   - Minimizing signal transitions in the overflow logic
+4. Area optimization by:
+   - Using simpler gates in the overflow detection
+   - Leveraging shared logic between addition and overflow detection
+5. Maintain the same timing performance by:
+   - Keeping the critical path through the adder unchanged
+   - Ensuring overflow detection doesn't add significant delay

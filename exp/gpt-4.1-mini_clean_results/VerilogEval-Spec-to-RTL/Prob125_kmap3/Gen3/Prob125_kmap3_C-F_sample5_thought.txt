@@ -1,0 +1,23 @@
+Both previous examples converge on the minimal and optimal logic expression for the given Karnaugh map: 
+
+    out = a | (c & ~b)
+
+This expression exploits the don't-care conditions to simplify the logic, avoiding any dependence on input d. The advantages are:
+
+- Minimal literal count: only a, b, and c inputs involved.
+- Minimal gate count: just one OR and one AND gate (with an inverter on b).
+- Optimal performance, power, and area given the simplicity of the expression.
+- No use of the don't-care input d, which reduces unnecessary toggling and routing.
+
+To fuse the best ideas, we accept that ignoring d is beneficial. Both examples nicely confirm this. Additionally, factorization in example 2 confirms that the expression cannot be simplified further.
+
+Thus, the fusion strategy is:
+
+- Use the minimal expression out = a | (c & ~b).
+- Explicitly declare d as don't-care but unused in the logic.
+- Keep the design clean and clearly commented.
+- Ensure synthesis-friendly code with clear, straightforward Boolean assignments.
+
+This approach yields the most compact, efficient, and robust solution.
+
+Hence, the final implementation is the same as before, with clean comments emphasizing the don't-care input treatment and the logic rationale.

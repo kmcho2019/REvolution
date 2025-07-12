@@ -1,0 +1,7 @@
+The main cause of the mismatch is the initialization of `prev_in` to all ones at reset, which causes any zero bit in `in` on the first cycle after reset to be interpreted as a falling edge. To align with typical testbench expectations and avoid false edge captures immediately after reset, we should initialize `prev_in` to the current input value `in` at reset. This ensures that no false falling edges are detected on the cycle immediately after reset, because `prev_in` and `in` match. Afterwards, normal detection of falling edges `(prev_in & ~in)` works correctly.
+
+This approach preserves synchronous reset, prevents immediate false captures after reset, and simplifies initialization without extra states.
+
+Optionally, since `out` only accumulates and never clears except on reset, the design is already optimal for power and area.
+
+Hence, the only needed fix is to load `prev_in` with `in` at reset rather than setting it to all ones.

@@ -1,0 +1,7 @@
+The radix2_div module can be designed as a state machine with two main states: idle and division. In the idle state, the module waits for a valid operation request. When a valid request is received, the module transitions to the division state and starts the division process. The division process involves shifting the dividend, subtracting the divisor, and updating the remainder and quotient. The process repeats until the counter reaches 8, indicating the completion of the division. The result is then made valid, and the module waits for the result to be consumed before transitioning back to the idle state.
+
+The division process is performed using a shift register SR that stores the remainder and quotient. The shift register is updated based on the subtraction result, and the carry-out is used to select the appropriate result.
+
+The module also handles signed and unsigned division operations by using the sign input to determine whether to use the absolute value of the dividend and divisor.
+
+The res_valid output is managed based on the reset signal, the counter, and whether the result has been consumed. When the result is valid, res_valid is set high, and it remains high until the result is consumed.

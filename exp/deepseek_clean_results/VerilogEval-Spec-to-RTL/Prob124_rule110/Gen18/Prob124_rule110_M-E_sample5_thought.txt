@@ -1,0 +1,17 @@
+Novel Architectural Idea: Shift Register with Lookahead Computation
+
+Instead of computing all 512 bits in parallel each cycle, we can leverage the fact that Rule 110's state transitions are local (each cell only depends on its immediate neighbors). We can implement this as:
+
+1. **Shift Register Approach**: Use a 3-bit shift register to track the current window (left, center, right) as we scan through the state vector.
+
+2. **Pipelined Computation**: Compute the next state for each cell one at a time in a sequential manner, but pipeline the computation to maintain throughput.
+
+3. **Circular Buffer**: Implement a circular buffer to handle the boundary conditions naturally without special cases.
+
+4. **State Machine Control**: Use a state machine to manage the computation sequence and handle the load operation.
+
+Advantages:
+- Reduced area since we're not instantiating 512 parallel computation units
+- Natural handling of boundary conditions through circular addressing
+- Potential for better power efficiency as only one computation unit is active at a time
+- Easier to scale to larger state vectors if needed

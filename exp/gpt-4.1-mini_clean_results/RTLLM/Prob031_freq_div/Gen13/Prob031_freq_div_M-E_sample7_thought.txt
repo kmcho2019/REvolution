@@ -1,0 +1,13 @@
+Implement the frequency divider by using a single counter that runs at the input clock frequency (100 MHz) and outputs three clock enables at different count thresholds. Instead of toggling the output clocks inside separate counters, use one 7-bit counter that counts from 0 to 99, and derive the three outputs by toggling the output clocks when the counter reaches half the desired division period.
+
+Specifically:
+- Use a 1 to 100 counting cycle.
+- Toggle CLK_1 at count 49 (half of 100), generating 1 MHz.
+- Generate CLK_10 by toggling at counts 4 and 9 (half period 5 cycles), dividing by 10.
+- Generate CLK_50 by toggling every cycle (divide by 2) by inverting every clock edge.
+
+This single-counter approach simplifies the design, minimizes counters, and centralizes the timing reference, making the design easy to scale and verify. It also provides precise and synchronized outputs with minimal flip-flops. 
+
+Use synchronous reset to initialize all outputs and counter. Implement combinational logic to detect toggling events based on the counter value.
+
+This design uses non-blocking assignments in one always block, has clear parameters for counts, and ensures all output clocks are synchronous to the input clock.

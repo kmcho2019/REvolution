@@ -1,0 +1,7 @@
+I will refactor the implementation by separating the combinational next-state logic from the sequential state update using a combination of a separate combinational always block and a sequential always block. This clean separation improves readability and modularity. 
+
+The feedback bit and next state will be computed in a combinational always @(*) block, while the state update and reset handling remain in the sequential always @(posedge clk) block. This approach follows the classical style of designing synchronous state machines and registers, which can help tools optimize combinational and sequential paths separately.
+
+The logic for updating tapped bits with XORed feedback remains the same. Using a next_q register computed combinationally also allows easier debugging and potential further modifications.
+
+This refactor preserves the Galois LFSR behavior and synchronous reset, but with a clearer distinction between next-state combinational logic and state update sequential logic.

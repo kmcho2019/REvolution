@@ -1,0 +1,13 @@
+Implement a novel combinational 16-bit by 8-bit divider using a sequential-style iterative method fully unrolled in combinational logic without intermediate arrays. 
+
+Instead of storing multiple remainder stages, keep a single remainder register updated at each iteration. At each step, shift the remainder left by 1 and bring in the next dividend bit. Then, compare this updated remainder with the divisor and conditionally subtract it if possible, setting the corresponding quotient bit.
+
+To achieve this without multiple intermediate arrays, implement the division iteration explicitly in a for-loop where each iteration updates local variables representing the remainder and quotient bits. This reduces complexity by avoiding large arrays and makes logic clearer.
+
+Two combinational always blocks are maintained as requested:
+- The first block latches inputs.
+- The second block implements the combinational division logic with a single remainder register updated iteratively inside the loop and constructing the quotient bits accordingly.
+
+This approach reduces logic complexity, avoids large remainder arrays, and keeps the design easy to understand and synthesize, while meeting all requirements.
+
+The remainder output extends the final remainder to 16 bits by zero padding the upper bits.

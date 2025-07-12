@@ -1,0 +1,24 @@
+The key fixes needed are:
+
+1. Pattern detection:
+   - Track input data continuously in all states to properly detect 1101 sequence
+   - Reset pattern register when leaving IDLE state to prevent false detections
+
+2. Shift counter:
+   - Reset counter when entering SHIFT state
+   - Count exactly 4 cycles (0 to 3) with shift_ena asserted throughout
+
+3. Output timing:
+   - Remove default output assignments that were overriding state outputs
+   - Ensure outputs are asserted for their full required duration
+
+4. State transitions:
+   - Make transitions occur at correct clock edges relative to outputs
+   - Properly sequence state changes with output assertions
+
+The improved FSM will:
+- Continuously shift data into pattern register
+- Only check for 1101 in IDLE state
+- Clear pattern after detection to prevent retriggering
+- Precisely control shift_ena for 4 cycles
+- Maintain proper output assertions through state transitions

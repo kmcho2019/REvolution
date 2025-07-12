@@ -1,0 +1,7 @@
+To address the problem, a novel approach can be employed by utilizing a combination of a finite state machine (FSM) and a counter. The FSM will have four primary states: IDLE, SHIFT, COUNT, and WAIT_ACK. The counter will be used to count the number of clock cycles spent in the SHIFT and COUNT states.
+
+In the IDLE state, the FSM will check for the pattern '1101' on the data input. Once the pattern is detected, the FSM will transition to the SHIFT state, where it will assert shift_ena for exactly 4 clock cycles. After shifting, the FSM will transition to the COUNT state, where it will assert counting and wait for done_counting to go high. When done_counting is high, the FSM will transition to the WAIT_ACK state, where it will assert done and wait for ack to go high. Finally, when ack is high, the FSM will return to the IDLE state.
+
+To improve the design's Power, Performance, and Area (PPA) metrics, a more efficient encoding scheme can be used for the states, and the number of logic gates can be minimized. Additionally, the code can be optimized to reduce switching activity and improve timing.
+
+The key insight in this approach is to use a more efficient encoding scheme for the states and to minimize the number of logic gates. This can be achieved by using a binary encoding for the states and by combining the logic for the different states into a single module.

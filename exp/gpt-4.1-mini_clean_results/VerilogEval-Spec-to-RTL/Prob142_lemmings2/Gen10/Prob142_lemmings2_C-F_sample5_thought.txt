@@ -1,0 +1,15 @@
+Fuse the clarity and modular next-state logic with an optimized and clean code structure by:
+
+- Using a single 2-bit state register: bit1 for falling state, bit0 for direction.
+- Defining localparams for the four states for readability and maintainability.
+- Introducing an explicit combined bump signal (`bump_any`) for clarity and logic simplification, and a `bump_both` signal for simultaneous bump detection to handle direction flip.
+- Structuring next-state logic to:
+  - Prioritize falling and ground conditions cleanly.
+  - Ignore bump inputs while falling.
+  - Change walking direction only when on the ground and bumped.
+- Maintaining direction across falling episodes.
+- Using asynchronous reset to initialize to walking left.
+- Producing Moore outputs derived directly from state bits, ensuring glitch-free outputs.
+- Writing the combinational next-state logic with minimal redundant assignments, improving readability and synthesizability.
+- Using non-blocking assignments in sequential logic.
+- This fusion results in a succinct, efficient FSM with clear and maintainable code that is easy to verify and optimal in PPA.

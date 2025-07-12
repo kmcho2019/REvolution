@@ -1,0 +1,39 @@
+Fix the bump logic in the walking states to correctly handle the direction switching according to bump side:
+
+- When walking left and bumped on left (bump_left=1), switch to walking right.
+- When walking left and bumped on right only (bump_right=1 and bump_left=0), switch to walking right as well (since bumped on either side means switch direction).
+- When walking right and bumped on right, switch to walking left.
+- When walking right and bumped on left only, switch to walking left as well.
+
+Effectively, if any bump is detected (left or right or both) while walking, switch to the opposite walking direction.
+
+This matches the original spec's statement:
+
+> If it's bumped on both sides at the same time, it will still switch directions.
+
+To implement this, for walking states:
+
+- If bump_left or bump_right is 1, switch to opposite walking state.
+
+This was actually in the previous code but the feedback indicated it always switched to a fixed direction ignoring which bump side was active.
+
+The key fix is to use:
+
+- For WALK_LEFT: if bump_left or bump_right → WALK_RIGHT
+- For WALK_RIGHT: if bump_left or bump_right → WALK_LEFT
+
+The feedback implies the original code switched to WALK_RIGHT unconditionally in WALK_LEFT state upon bump, but this is actually correct per spec: bump means switch direction.
+
+Thus, the main change is to fix the conditional logic so the direction flips on any bump during walking, but only if walking (not falling or digging).
+
+Additionally, make the code more explicit in handling each bump input, confirming the logic.
+
+Preserve all other logic as is: fall has highest priority, dig next, bump last.
+
+No change needed for falling and digging states.
+
+Keep asynchronous reset to WALK_LEFT.
+
+Finally, double check outputs are from state.
+
+This fixes the mismatches due to walking direction errors caused by bump misinterpretation.

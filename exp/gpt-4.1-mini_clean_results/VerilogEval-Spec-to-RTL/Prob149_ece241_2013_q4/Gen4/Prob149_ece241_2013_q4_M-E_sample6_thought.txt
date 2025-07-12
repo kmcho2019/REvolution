@@ -1,0 +1,7 @@
+Implement a small state machine that tracks discrete water level states explicitly (ABOVE_S2, BETWEEN_S2_S1, BETWEEN_S1_S0, BELOW_S0) based on sensor input. Store the previous water level state and compare it with the current decoded water level at each clock cycle. The flow rate outputs (fr0, fr1, fr2) are assigned combinationally according to the current water level state. 
+
+For the supplemental flow valve (dfr), assert it whenever the water level rises compared to the previous level, i.e., when current state is higher than previous state. dfr is asserted for one clock cycle upon this transition.
+
+On reset, initialize the state machine to BELOW_S0 (lowest water level) and assert all flow valves.
+
+This design cleanly separates state tracking and output generation, and ensures dfr indicates rising water level by comparing stored previous and current water level states.

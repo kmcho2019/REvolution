@@ -1,0 +1,7 @@
+A novel approach to this problem would be to implement a shift register-based solution. Instead of using separate edge detection modules for each bit, we can store the previous input values in a shift register. This allows us to compare the current input with the previous input values in a single clock cycle. We can then use a combinational logic block to detect the positive edges and generate the output.
+
+The shift register will store the previous 8-bit input values. On each clock cycle, we shift the current input into the register and compare it with the previous input values. We can use a bitwise XOR operation to detect the differences between the current and previous inputs. The output of the XOR operation will be 1 for the bits that have changed from 0 to 1, and 0 for the bits that have not changed or have changed from 1 to 0.
+
+To detect only the positive edges, we can use a bitwise AND operation between the current input and the bitwise negation of the previous input. This will give us a signal that is 1 only when a bit has changed from 0 to 1.
+
+We can then use this signal to generate the output. Since we want to set the output bit the cycle after a 0 to 1 transition occurs, we can simply use a clocked register to delay the signal by one cycle.

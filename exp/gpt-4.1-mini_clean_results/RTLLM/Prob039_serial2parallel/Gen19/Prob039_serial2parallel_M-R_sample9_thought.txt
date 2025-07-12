@@ -1,0 +1,9 @@
+Refactor the design to use a shift register that inserts the incoming serial bit at the MSB position and shifts right by one on each valid input clock. This matches the requirement that the first received bit is the most significant bit.
+
+Implement a 4-bit counter counting from 0 to 7 to track how many bits have been received. When the count reaches 7 (meaning 8 bits received), latch the current shift register contents to the parallel output and assert dout_valid for one cycle.
+
+Use a synchronous process triggered by the clock and reset signals. The counter increments only when din_valid is high.
+
+The output dout_parallel and dout_valid are registered and updated only when 8 bits have been received.
+
+This refactoring changes the shift direction to shift-right and inserts the new bit at MSB, ensuring correct bit order according to the specification. Using a 4-bit counter aligns with the problem statement and also prepares for possible future extension. The logic remains simple and synchronous, ensuring good timing and clarity.

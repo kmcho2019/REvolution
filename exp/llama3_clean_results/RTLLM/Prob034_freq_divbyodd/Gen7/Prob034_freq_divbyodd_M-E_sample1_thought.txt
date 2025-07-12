@@ -1,0 +1,9 @@
+To implement a frequency divider that divides the input clock frequency by odd numbers, we can utilize a phase-locked loop (PLL)-like approach with a simple counter and a variable delay element. We can eliminate the need for two separate counters and clock dividers for rising and falling edges, and instead use a single counter and a novel phase alignment mechanism.
+
+We will use a parameterizable module with a default value of 5 for the divisor. The module will have input ports for the clock signal and the active low reset signal, and an output port for the divided clock signal.
+
+The counter will be reset to 0 when the reset signal is low. When the counter reaches the desired value (NUM_DIV - 1), the clock divider will be toggled, and the phase alignment mechanism will ensure that the divided clock is synchronized with the input clock.
+
+The novel architectural idea is to use a "phase alignment buffer" that stores the input clock signal and uses it to align the phase of the divided clock. This buffer will be updated on every clock cycle, and the divided clock will be generated based on the phase alignment of the buffer.
+
+This approach will provide a more robust and efficient frequency divider that can handle a wide range of input frequencies and divisors.

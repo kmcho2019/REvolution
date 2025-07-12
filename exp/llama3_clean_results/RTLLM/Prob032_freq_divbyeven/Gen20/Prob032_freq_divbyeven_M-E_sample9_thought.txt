@@ -1,0 +1,9 @@
+To implement a frequency divider that divides the input clock frequency by an even number, we can utilize a novel approach based on a shift register and a counter. This method involves using a shift register to track the number of clock cycles and a counter to determine when to toggle the divided clock output. The main idea is to shift a '1' bit through the shift register on each clock cycle and use the counter to track when the '1' bit reaches the middle of the shift register, indicating it's time to toggle the divided clock output.
+
+The frequency divider module, `freq_diveven`, will have input ports `clk` and `rst_n`, and an output port `clk_div`. The `NUM_DIV` parameter will specify the even number division factor.
+
+The architecture consists of two main components: a shift register (`shift_reg`) and a counter (`cnt`). The shift register is used to track the clock cycles, and the counter is used to determine when to toggle the divided clock output.
+
+On each positive edge of the input clock, the shift register shifts its contents one bit to the left, and a '1' is inserted at the rightmost bit position if the counter indicates it's time to do so. The counter increments on each clock cycle until it reaches half of `NUM_DIV`, at which point it resets to zero, and the divided clock output is toggled.
+
+This approach ensures that the divided clock output toggles at the correct frequency relative to the input clock, effectively dividing the input clock frequency by the even number specified by `NUM_DIV`.

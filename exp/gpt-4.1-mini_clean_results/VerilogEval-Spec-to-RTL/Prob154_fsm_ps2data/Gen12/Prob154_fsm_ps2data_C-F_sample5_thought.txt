@@ -1,0 +1,9 @@
+Fuse the direct byte-positioned loading of Example 1 (assigning each byte to fixed byte lanes in out_bytes) with the minimal, binary-encoded FSM and load gating of Example 2. This combines these advantages:
+
+- Minimal 2-bit binary FSM state counter tracking which byte is expected.
+- Use explicit byte-wise loading (out_bytes[23:16], [15:8], [7:0]) instead of shifting to reduce combinational path complexity and critical path delay in the sequential logic.
+- Load bytes only when in the message states, avoiding unnecessary toggling of out_bytes bytes and reducing switching power.
+- Assert done only on the cycle immediately after receiving the third byte, matching the specification.
+- Use synchronous active-high reset and non-blocking assignments.
+- Keep next-state logic combinational, sequential logic clean, and outputs stable outside message receipt cycles.
+- This design avoids 24-bit shifting in the datapath, reducing critical timing and power costs, while maintaining the simplicity of a 3-state FSM and properly staged outputs.

@@ -1,0 +1,9 @@
+Refactor the design to a single monolithic synchronous module that stores the entire 512-bit state in one register vector. The next state is computed purely combinationally with vectorized XOR operations leveraging bit-shifts and concatenations, avoiding explicit bitwise loops or multiple smaller blocks.
+
+- Use zero padding on both ends to model the boundary conditions cleanly.
+- Compute the next state by XORing left and right shifted versions of the current state with zero padding on boundaries.
+- Implement synchronous state update on the positive clock edge.
+- On load, directly load the input data vector.
+- No clock enable or partial compare logic is used; the state updates every clock cycle, simplifying logic and minimizing combinational overhead.
+- Output q is directly assigned from the state register.
+- This approach reduces module hierarchy, simplifies logic, and may improve timing and area by using wide vector operations and simpler sequential logic.

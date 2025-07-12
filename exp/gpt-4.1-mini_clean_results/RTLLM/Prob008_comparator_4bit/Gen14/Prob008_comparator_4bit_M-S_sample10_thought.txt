@@ -1,0 +1,10 @@
+To simplify the 4-bit comparator design, I will directly compare A and B without using borrow lookahead logic or subtraction.
+
+- For equality, I use bitwise XOR and NOR reduction to check if all bits are equal.
+- For greater or less comparisons, I compare bits from the most significant bit (MSB) down to the least significant bit (LSB) using simple combinational logic: 
+  - A_greater is asserted if the first differing bit from MSB downward has A[i] = 1 and B[i] = 0.
+  - A_less is asserted if the first differing bit has A[i] = 0 and B[i] = 1.
+- This approach uses straightforward logic and maintains mutually exclusive outputs.
+- The design is fully combinational and simpler to read and maintain while functionally equivalent.
+
+This removes the need for borrow signals and lookahead chains, significantly reducing complexity.

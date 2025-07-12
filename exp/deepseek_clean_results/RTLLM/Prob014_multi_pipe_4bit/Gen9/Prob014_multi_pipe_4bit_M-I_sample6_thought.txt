@@ -1,0 +1,24 @@
+Improvement Strategy for 4-bit Pipelined Multiplier:
+
+1. **Proper Signal Extension**: Ensure input signals are correctly extended to 8 bits (2*size) by adding size zero bits at MSB, making the extension parameterized.
+
+2. **Simplified Pipeline Stages**:
+   - Stage 1: Generate and register all partial products
+   - Stage 2: Accumulate partial products using adder tree
+   - Output Stage: Register final result
+
+3. **Optimized Reset Logic**: Clear all pipeline registers synchronously on reset
+
+4. **Removed Unused Register**: Eliminate b_reg which served no purpose
+
+5. **Better Timing**: Ensure proper pipeline timing with exactly 2 clock cycles latency from input to output
+
+6. **Resource Optimization**: Use efficient adder tree structure to minimize critical path
+
+Key Improvements:
+- Clear 2-stage pipeline with predictable latency
+- Parameterized design that works for any size
+- Proper signal extension as specified
+- Clean reset behavior
+- No unused logic
+- Optimal adder tree structure

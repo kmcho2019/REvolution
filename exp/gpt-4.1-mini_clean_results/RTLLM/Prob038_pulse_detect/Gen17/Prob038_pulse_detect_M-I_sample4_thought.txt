@@ -1,0 +1,8 @@
+The original design correctly detects the pulse using a simple three-state FSM and combinational Mealy output logic. To optimize for better PPA (timing, power, and area), I will simplify the FSM to just two states: IDLE and WAIT_FALL. The FSM only needs to detect the rising edge (0→1) and then wait for the falling edge (1→0) of data_in to declare a pulse. This reduces state logic, simplifies transitions, and potentially reduces switching activity. The output is asserted synchronously only at the clock cycle when the pulse ends to avoid glitches and improve timing. Also, I'll register the output to avoid any combinational glitches, which may help timing closure and reduce power from glitching.
+
+Summary of improvements:
+- Reduce FSM states from 3 to 2.
+- Register output (data_out) instead of combinational assignment.
+- Simplify next-state logic.
+- Maintain asynchronous reset for proper initialization.
+This should yield a smaller area, lower power (due to less switching), and potentially better timing margins.

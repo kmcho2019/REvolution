@@ -1,0 +1,11 @@
+To create a superior 3-bit comparator, I will fuse the best aspects of both examples by:
+
+- Utilizing the bitwise XNOR reduction operator (~^) for a concise and clean equality check, which synthesis tools typically optimize well.
+- Retaining explicitly named intermediate equality signals for bits 2 and 1 to improve readability and allow reuse in the greater-than logic, reducing redundant comparisons and gate count.
+- Avoiding an intermediate eq_2_1 wire since it is only used once; instead, inline the combined equality for bits 2 and 1 directly in the greater-than expression to reduce wiring and area.
+- Implementing the greater-than logic hierarchically from MSB to LSB, leveraging intermediate equalities for efficient condition checking.
+- Defining the less-than output as the mutual exclusivity condition (~A_greater & ~A_equal) to avoid redundant logic and ensure only one output is high.
+- Ensuring minimal combinational depth and clear structure for good timing and area.
+- This fusion yields clean, readable code with minimized logic duplication and excellent synthesis results for PPA.
+
+This approach balances readability, minimal logic, and synthesis friendliness to produce a robust and efficient 3-bit comparator.

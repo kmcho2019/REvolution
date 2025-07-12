@@ -1,0 +1,13 @@
+To implement this FSM, we need:
+1. Two main states: A (reset state) and B (counting state)
+2. In state A, we wait for s=1 to transition to state B
+3. In state B, we need to track w over 3 cycles and count how many times it was 1
+4. After 3 cycles, we set z=1 if exactly two w's were 1, else z=0
+5. We'll use a 2-bit counter to track cycles in state B and another 2-bit counter to count w=1 occurrences
+6. Reset synchronously initializes everything
+
+The FSM will have:
+- State register (1 bit for A/B)
+- Cycle counter (2 bits for 0-2)
+- W counter (2 bits for 0-3)
+- Output register for z

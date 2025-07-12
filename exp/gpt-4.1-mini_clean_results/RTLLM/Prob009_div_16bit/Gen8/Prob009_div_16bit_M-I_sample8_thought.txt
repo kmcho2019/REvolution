@@ -1,0 +1,23 @@
+To improve the original fully combinational divider for better power, area, and timing, we can apply a few optimizations while preserving the division functionality:
+
+1. Use a narrower remainder register (9 bits) as before, but ensure that the remainder is only updated when necessary, to reduce switching.
+2. Instead of concatenating the entire remainder and new bit each cycle, use bitwise operations to reduce logic complexity.
+3. Replace the subtraction and comparison by using a subtractor and a comparator only once per iteration; minimize redundant logic.
+4. The original code performs the division bit-by-bit in a straightforward restoring division manner. This is already optimal in simplicity for combinational logic.
+5. We can remove the zero-extension of the remainder's MSB by directly using the remainder's size to compare with divisor.
+6. To reduce toggling in remainder, track remainder only when needed.
+7. Since this is purely combinational, the main power and area cost is from the loop unrolled in hardware. To reduce area, consider folding the loops or breaking into stages (which would require clocked logic, not allowed).
+8. Overall, maintaining the same logic but restructuring code slightly to improve clarity and let synthesis tools optimize might reduce area/power.
+9. Use 'signed' or 'unsigned' to clarify comparison operators, but as B and remainder are unsigned, no need here.
+10. Add localparams to clarify bit-width constants.
+
+Thus, the improvement focuses on code clarity and minimal logic restructuring, hoping to guide synthesis tools better. We keep two always blocks as requested, using the first to latch inputs and the second to do the division on latched inputs, slightly improving signal stability and potentially lowering switching.
+
+This input register staging approach introduces minimal latency but is acceptable here as purely combinational (no clocks), as the problem states always blocks triggered by A or B changes.
+
+By separating input registers and division logic, the divisor and dividend are stable during the computation, reducing glitches and potentially power. This also aligns with the problem requirements.
+
+The implementation follows:
+
+- always @(*) block 1: latch A and B into a_reg, b_reg
+- always @(*) block 2: perform division logic on a_reg, b_reg

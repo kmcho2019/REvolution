@@ -1,0 +1,7 @@
+To optimize for performance, power, and area (PPA), I will replace the 16-bit shift-based selection with a direct 4-to-1 multiplexer. This avoids the variable bit-shift operation which tends to synthesize into a barrel shifter, increasing area, delay, and switching activity.
+
+The logic remains identical: q depends on c:
+- If c < 4, q selects from inputs b, e, a, or d based on c[1:0]
+- Otherwise q = 4'hF
+
+This approach reduces logic depth and switching, improving timing and power while reducing area.

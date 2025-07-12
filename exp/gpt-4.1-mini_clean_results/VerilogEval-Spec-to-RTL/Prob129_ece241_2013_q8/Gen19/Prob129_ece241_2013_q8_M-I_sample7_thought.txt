@@ -1,0 +1,12 @@
+To improve PPA while maintaining correctness, I will keep the same 3-state Mealy FSM and asynchronous negative-edge reset as required. However, to optimize timing and power, I will:
+
+1. Simplify the next-state logic by combining it with output logic to reduce combinational depth and switching.
+2. Use minimal logic expressions for next state and output to potentially reduce area.
+3. Retain the case statement style for clarity.
+4. Avoid unnecessary default assignments that may cause inferred latches by initializing all outputs explicitly.
+5. Reduce logic toggling by encoding the states as localparams but not worrying about one-hot encoding, as it would increase area.
+6. Maintain asynchronous negative-edge reset on state registers.
+
+Overall, this should marginally reduce power and area while slightly improving timing by simplifying the combinational logic and removing redundant assignments.
+
+The main difference is combining the next-state and output combinational logic into a single always block and using minimal logic expressions, which synthesis tools can optimize better.

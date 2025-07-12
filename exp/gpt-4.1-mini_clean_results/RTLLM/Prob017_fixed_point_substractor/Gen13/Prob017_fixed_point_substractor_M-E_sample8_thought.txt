@@ -1,0 +1,18 @@
+Implement the fixed-point subtractor by explicitly separating the sign, integer, and fractional parts of the inputs, performing subtraction or addition on their absolute values depending on sign combinations, and then restoring the sign of the result accordingly.
+
+This approach uses unsigned arithmetic on magnitudes to handle different sign cases explicitly:
+
+1. Extract sign bits of inputs and store their absolute values.
+2. If signs are the same, subtract magnitudes (a_mag - b_mag).
+3. If signs differ, add magnitudes (a_mag + b_mag).
+4. Determine result sign:
+   - Same sign: result sign = a's sign.
+   - Different sign: result sign = sign of operand with larger magnitude.
+5. If result is zero, explicitly set sign bit to 0.
+6. Concatenate sign bit with magnitude to form final fixed-point result.
+
+This method avoids direct signed arithmetic on the entire number, thus helping synthesis tools by clearly handling sign logic separately. Also, an internal register stores the result before assigning to output.
+
+The parameters Q and N guide fixed-point scaling and total bitwidth, but the arithmetic operates on absolute unsigned magnitudes, ensuring precise fixed-point operation with clear sign management.
+
+The module is fully combinational, but uses a register for internal result storage (res) to comply with requirements.

@@ -1,0 +1,8 @@
+The original design computes all pairwise bit equalities using generate loops and XOR/XNOR logic, which is already simple and efficient. To optimize for better PPA:
+
+- Area: Instead of indexing the inputs vector with [4 - i], reverse the inputs ordering once into a local wire to avoid repeated indexing with variable indices, simplifying mapping and potentially improving synthesis.
+- Power: Share the inversion (~) by using XNOR operator directly, which is synthesizer-friendly and avoids unnecessary gates.
+- Performance: Avoid nested generate loops by flattening the logic into a single loop for better clarity and possibly improved synthesis results.
+- Also, directly list inputs in an array for clarity and explicitness.
+
+Overall, these changes marginally improve readability and may slightly help the synthesis tool optimize gate count and delay due to simpler indexing and less complex generated loops.

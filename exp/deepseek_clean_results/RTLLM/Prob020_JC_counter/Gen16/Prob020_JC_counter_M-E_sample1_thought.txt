@@ -1,0 +1,13 @@
+Novel Architecture Idea: Pipelined Johnson Counter with Parallel State Generation
+1. Core Concept: Instead of a single 64-bit shift operation, implement a 4-stage pipeline where each stage handles 16 bits
+2. Benefits: 
+   - Reduces critical path by breaking the 64-bit shift into smaller chunks
+   - Enables higher clock frequencies while maintaining the same Johnson counter behavior
+   - Each pipeline stage can be independently optimized
+3. Implementation:
+   - Stage 1: Processes bits [63:48], generates new MSB
+   - Stage 2: Processes bits [47:32]
+   - Stage 3: Processes bits [31:16]
+   - Stage 4: Processes bits [15:0], provides feedback to Stage 1
+4. Reset Handling: Synchronous reset propagates through all pipeline stages
+5. Optimization: Each stage can be clock-gated when not in transition state

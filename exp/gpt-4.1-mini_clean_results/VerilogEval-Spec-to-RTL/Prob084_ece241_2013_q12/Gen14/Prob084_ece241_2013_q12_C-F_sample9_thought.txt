@@ -1,0 +1,5 @@
+Fuse the two examples by explicitly naming the shift register outputs as Q[0] to Q[7] for clarity, mapping the inputs so that ABC directly indexes these outputs without inversion or subtraction. Use a single 8-bit shift register where MSB Q[7] is the oldest bit and LSB Q[0] is the newest (shifted in) bit, shifting left on enable with S input fed to Q[0]. Implement the output Z as a direct indexed mux from Q with {A,B,C} to minimize combinational logic complexity and maximize readability.
+
+This combines Example 1's succinct vector indexing and Example 2's intuitive left-shifting with the LSB as input, ensuring that when ABC=000 output is Q[0], ABC=001 output is Q[1], ..., ABC=111 output is Q[7], exactly as specified. Explicitly declaring Q as the register and using the vector for indexing provides clarity and maintainability, while the indexing logic remains optimal for synthesis and timing.
+
+This also facilitates easy clock gating or further pipelining if needed later without changing core structure.

@@ -1,0 +1,12 @@
+The original solution had a fundamental issue with the counter comparison logic that caused shift_ena to be asserted for only 3 cycles instead of 4. Here's the improved approach:
+
+1. Still use a 2-bit counter (range 0-3) to count 4 cycles
+2. Make shift_ena high when counter is less than 4 (0-3 inclusive)
+3. Reset should immediately set counter to 0 and keep shift_ena high
+4. After counting to 3, the counter should freeze (prevent wrap-around) until next reset
+5. shift_ena should go low only after the 4th cycle completes
+
+This ensures:
+- Exactly 4 cycles of shift_ena after reset
+- No unnecessary toggling after the initial 4 cycles
+- Proper synchronous reset behavior

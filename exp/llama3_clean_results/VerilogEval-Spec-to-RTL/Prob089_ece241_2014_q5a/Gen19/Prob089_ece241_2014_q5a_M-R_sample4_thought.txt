@@ -1,0 +1,7 @@
+To refactor the given code, we can consider an alternative approach that still maintains the core functionality of a one-input one-output serial 2's complementer Moore state machine but with a different structure. Instead of using a single `always` block for both the reset and clock edge sensitivity, we can separate the reset logic and the sequential logic into different blocks. 
+
+Another approach could be to use a combinational logic block to determine the output `z` based on the current state (`detector`) and input `x`, and then use a sequential block (`always`) to update the state (`detector`). This can simplify the design by separating the combinational and sequential logic.
+
+Moreover, since the output `z` is directly dependent on the current state and input, we can use a continuous assignment (`assign`) for `z` instead of including it within the `always` block. This approach can make the code more readable and maintainable.
+
+The key idea is to keep the same state machine behavior but with a clearer separation of concerns between the combinational logic (for `z`) and the sequential logic (for the `detector` state).

@@ -1,0 +1,14 @@
+Novel Architecture: Circular Buffer with Direct Bit Selection
+1. Instead of shifting bits, maintain data in a circular buffer and use a rotating pointer to select the current output bit
+2. Implement a 2-bit counter to track the current bit position (0-3)
+3. Use direct bit selection from the parallel input register based on the counter value
+4. Load new data when counter wraps around (value 3)
+5. Generate valid_out signal combinatorially based on counter state
+6. Reset initializes counter to 0 and clears the data register
+
+Advantages:
+- Eliminates shift operations, reducing dynamic power
+- Direct bit selection improves timing compared to shift registers
+- Simple counter implementation minimizes area
+- Clear state transitions for easy verification
+- Efficient use of resources with no unnecessary operations

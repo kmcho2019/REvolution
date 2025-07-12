@@ -1,0 +1,5 @@
+Instead of three separate D flip-flops each fed by combinational logic that uses their own outputs as feedback, I will implement a single always block with three registers updated in parallel. For each flip-flop, the D input is computed from the current state registers and input x as specified, but explicitly computing complemented signals in separate wires for clarity. The final output z will be the NOR of the three stored states.
+
+To guarantee proper initialization and synthesis friendliness, I will add an explicit synchronous reset input to the module (named rst). This reset will synchronously clear all three registers to zero on the rising clock edge, ensuring deterministic startup state. The reset input can be tied low if not needed, or driven externally if desired.
+
+This approach uses explicit registers and synchronous reset for reliable, synthesizable FSM behavior matching the problem requirements but avoids relying on initial blocks or inferred resets that synthesis tools might not support.

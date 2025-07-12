@@ -1,0 +1,20 @@
+The original code asserts shift_ena immediately on the clock cycle when reset is high by loading the counter with 4, causing shift_ena = 1 on that same cycle. The testbench likely expects shift_ena to start asserting after reset is released, lasting 4 full clock cycles, not overlapping with the reset cycle.
+
+To fix this, we can modify the counter so that on the reset cycle, it is loaded with 0, and on the next cycle (the first cycle after reset is deasserted), the counter is loaded with 4. Then the counter counts down each clock cycle, asserting shift_ena while the counter is non-zero.
+
+Alternatively, a simpler and clearer fix is to load the counter with 3 on reset and assert shift_ena when the counter >= 0 for 4 cycles after reset is released, or use a state to track whether we are in the enabled period.
+
+A better approach is to load the counter on reset (while reset is high) with 4 but defer shifting enabling to the next cycle. This can be done by detecting the release of reset (falling edge of reset) synchronously and then loading the counter, starting counting down with shift_ena asserted for exactly 4 cycles after reset.
+
+However, since reset is synchronous and only asserted for 1 cycle, detecting its falling edge is straightforward:
+
+- Use a reset_d register to hold previous reset state.
+- When reset transitions from 1 to 0, load the counter to 4.
+- While counter > 0, assert shift_ena and decrement counter on each cycle.
+- When counter reaches 0, shift_ena is deasserted indefinitely.
+
+This approach cleanly separates the reset assertion and the 4-cycle enable window after reset is released, matching testbench expectations.
+
+Also, ensure reset_d is initialized properly to avoid glitches at simulation start.
+
+This design aligns shift_ena timing exactly to 4 cycles after synchronous reset is deasserted, fixing the timing mismatch.

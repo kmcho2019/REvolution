@@ -1,0 +1,13 @@
+Implement a non-recursive, fully parallel tree-based population count specifically optimized for a 255-bit input. Divide the input into 32 groups of 8 bits each (total 256 bits), but only use the first 255 bits, padding the last bit with zero to complete 256 bits. Use the same popcount8 module (balanced adder tree) as a building block to count bits in each byte, producing 4-bit outputs per group.
+
+Then, sum these 32 partial counts using a balanced binary adder tree built from simple adders (addu modules) combining pairs of 4 to 9-bit numbers, going up through successive levels until a final 8-bit output count is produced. The adder tree is fully unrolled (no recursion or generate-if), maximizing parallelism and reducing logic depth compared to deep recursion.
+
+Advantages:
+- Fully parallel, no recursion, predictable and fixed latency.
+- Uses small, efficient popcount8 blocks plus simple adders for summation.
+- Balanced adder tree minimizes critical path by summing in log2(32)=5 stages.
+- Uses zero-padding only once for last group, avoiding complex variable-width handling.
+- Modular and clear architecture, easy to analyze timing.
+- Out width fixed at 8 bits since max popcount(255)=255 < 2^8.
+
+This approach trades some area for a short, fixed, and fully parallel path, improving timing and making the architecture straightforward for FPGA or ASIC implementation.

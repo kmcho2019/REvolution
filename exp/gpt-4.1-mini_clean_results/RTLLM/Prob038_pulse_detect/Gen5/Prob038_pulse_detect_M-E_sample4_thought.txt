@@ -1,0 +1,13 @@
+Implement a simple 3-state finite state machine (FSM) to detect the 0->1->0 pulse pattern explicitly. The FSM states are:
+- IDLE: Waiting for data_in to become 1.
+- HIGH_DETECTED: data_in was 1 in the previous cycle; waiting for data_in to return to 0.
+- PULSE_DETECTED: pulse detected when data_in transitions from 1 back to 0.
+
+At every clock, the FSM transitions according to data_in:
+- From IDLE, if data_in == 1, move to HIGH_DETECTED.
+- From HIGH_DETECTED, if data_in == 0, move to PULSE_DETECTED and assert data_out = 1 for one cycle.
+- Otherwise, reset back to IDLE.
+
+data_out is asserted only for one cycle in PULSE_DETECTED state, then the FSM returns to IDLE and data_out is cleared.
+
+This approach uses a minimal FSM that clearly models the pulse pattern detection in a straightforward way, making it easy to understand and verify.

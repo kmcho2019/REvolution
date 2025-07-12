@@ -1,0 +1,13 @@
+Simplify the fixed-point adder by focusing on clear, straightforward sign and magnitude operations:
+
+1. Extract sign bits of inputs `a` and `b`.
+2. Compute absolute values using conditional negation.
+3. When signs are equal, add absolute values and assign the common sign; if overflow occurs, saturate to max/min.
+4. When signs differ, subtract the smaller absolute from the larger; sign of the larger magnitude operand dominates; zero result is positive zero.
+5. Compose the final two's complement output from the sign and magnitude.
+6. Avoid complex width mismatches by using consistent vector sizes.
+7. Implement all logic combinationally with blocking assignments for clarity.
+8. Use parameters for `N` and `Q` but `Q` is not directly used in arithmetic here since addition works on full fixed-point word.
+9. No internal registers are needed except for intermediate combinational variables.
+
+This simplification maintains correctness while improving readability and synthesis friendliness.

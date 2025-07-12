@@ -1,0 +1,8 @@
+Refactored approach with improved PPA:
+1. Maintain the same core logic (c as mux selector between two cases)
+2. Eliminate intermediate wires by combining expressions directly in the output assignment
+3. Exploit don't-care conditions more aggressively:
+   - For case_c0 (c=0), when a=0, output is always 0 regardless of d (from K-map)
+   - For case_c1 (c=1), when b=0, output is always 1 (from K-map)
+4. This reduces logic operations and potential switching activity
+5. Use direct assign statement without temporary wires for area savings

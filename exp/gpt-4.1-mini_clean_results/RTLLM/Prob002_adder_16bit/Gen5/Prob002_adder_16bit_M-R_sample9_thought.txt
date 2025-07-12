@@ -1,0 +1,7 @@
+Refactor the 16-bit adder design to maintain the hierarchical structure but change the style of the 8-bit adder implementation. Instead of using a generate block with for-loop to define bit-wise operations, I will explicitly define each bit's sum and carry equations using continuous assignment in a single expression per bit. This unrolls the generate loop manually for clarity and slightly different structural style.
+
+Also, I will implement the carry chain using a wire array but assign each carry bit individually to remove generate entirely, making the design more explicit and thus easier to trace for debugging or synthesis tools that struggle with generate loops.
+
+The 16-bit top module instantiation remains the same, chaining two 8-bit adders.
+
+This refactoring keeps the modular approach, ensures clarity, and presents a different coding style while preserving combinational logic for a ripple carry adder.

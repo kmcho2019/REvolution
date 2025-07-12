@@ -1,0 +1,9 @@
+Implement the frequency divider using three separate always blocks, each dedicated to one output clock. This modular approach isolates logic for each divided clock, improving readability and potentially easing timing closure since each block handles a simpler task. 
+
+CLK_50 simply toggles on every rising edge of CLK_in or resets asynchronously.
+
+For CLK_10 and CLK_1, each block maintains its own counter that counts up to half the division factor minus one (since toggling happens at half the period), then toggles the output and resets the counter. This approach matches the frequency division logic but explicitly calculates the half-period counts for clarity.
+
+Use asynchronous active-high reset for all outputs and counters. All counters are sized exactly to the required bit widths to minimize area.
+
+This architecture improves separation of concerns, potentially reducing logic fanout and easing timing optimization. It also provides straightforward scalability for adding more frequency outputs.

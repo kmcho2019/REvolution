@@ -1,0 +1,22 @@
+After carefully analyzing the waveform and feedback, here's the corrected approach:
+
+1. Key Observations:
+   - p follows 'a' only on rising clock edges when q is 0
+   - q becomes 1 one cycle after p was 1 (delayed version)
+   - Both outputs reset to 0 when 'a' is high during the clock's low phase
+   - Outputs only change on clock edges
+
+2. Corrected Implementation:
+   - Use single always block for synchronous behavior
+   - Implement q as a one-cycle delayed version of p
+   - Reset condition occurs when 'a' is high during clock low phase
+   - Clear state transitions:
+     * p = a when q=0
+     * q follows p with one cycle delay
+     * Reset when a=1 during clock low
+
+3. Fixes from Feedback:
+   - Proper reset condition timing
+   - Correct p behavior when q=0
+   - Accurate q delay implementation
+   - Removed timing violations

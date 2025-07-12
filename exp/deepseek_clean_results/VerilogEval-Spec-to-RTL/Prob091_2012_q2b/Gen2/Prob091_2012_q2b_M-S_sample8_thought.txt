@@ -1,0 +1,12 @@
+To simplify the implementation while maintaining functionality, we can leverage the properties of one-hot encoding where only one state bit is active at a time. This allows us to optimize the logic:
+
+1. For Y1 (next state of y[1] - state B):
+   - Only depends on being in state A (y[0]) and w=1
+   - No simplification possible beyond the original
+
+2. For Y3 (next state of y[3] - state D):
+   - Since only one y bit is active at a time, we can factor out ~w
+   - The OR of multiple y bits can be simplified to just checking if any of the relevant states are active
+   - This reduces the logic to a single AND gate with a simplified condition
+
+The simplified Y3 expression becomes: ~w & (y[1] | y[2] | y[4] | y[5])

@@ -1,0 +1,12 @@
+The key simplifications are:
+1. Separate the pattern detection and shift operations into distinct states
+2. Use a 2-bit shift counter (since we only need to count 4 cycles: 0-3)
+3. Clear pattern register immediately after detection to avoid interference
+4. Simplify state encoding to just 4 states with clear transitions
+5. Make outputs directly dependent on current state
+
+The state machine now:
+- IDLE: Waits for "1101" pattern
+- SHIFT: Shifts in 4 bits (asserts shift_ena)
+- COUNT: Waits for done_counting
+- DONE: Asserts done until ack received

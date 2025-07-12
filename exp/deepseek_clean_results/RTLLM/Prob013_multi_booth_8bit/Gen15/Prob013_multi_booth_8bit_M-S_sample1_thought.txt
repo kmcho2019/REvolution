@@ -1,0 +1,15 @@
+To simplify the Radix-4 Booth multiplier while maintaining functionality:
+
+1. Reduce the state machine to just tracking the computation phase (no need for explicit IDLE/DONE states)
+2. Use a single always block for all sequential logic
+3. Simplify Booth encoding to direct case statement
+4. Reduce register usage by combining product accumulation
+5. Use counter directly to control completion (no separate state)
+6. Make ready signal purely combinational based on counter value
+
+Key simplifications:
+- Eliminate separate state machine - counter tracks progress
+- Combine all sequential logic into one always block
+- Direct Booth encoding without intermediate wires
+- Simplified product accumulation
+- Ready signal becomes combinational output

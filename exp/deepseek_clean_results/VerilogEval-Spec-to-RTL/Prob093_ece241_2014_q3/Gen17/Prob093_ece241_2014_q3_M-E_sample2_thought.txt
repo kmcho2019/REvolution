@@ -1,0 +1,26 @@
+Novel approach using multiplexer trees:
+
+1. For mux_in[0] (ab=00):
+   - K-map shows: 0 (cd=00), 1 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This can be viewed as "if c=0 then output d, else output 1"
+   - Implement using a 2-to-1 mux with c as select: when c=0 choose d, when c=1 choose 1
+
+2. For mux_in[1] (ab=01):
+   - K-map shows all 0s
+   - Directly assign 0
+
+3. For mux_in[2] (ab=11):
+   - K-map shows: 0 (cd=00), 0 (cd=01), 1 (cd=11), 0 (cd=10)
+   - This is c AND d
+   - Implement using a 2-to-1 mux with d as select: when d=0 choose 0, when d=1 choose c
+
+4. For mux_in[3] (ab=10):
+   - K-map shows: 1 (cd=00), 0 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This can be viewed as "if d=0 then 1, else c"
+   - Implement using a 2-to-1 mux with d as select: when d=0 choose 1, when d=1 choose c
+
+This approach:
+- Uses exactly three 2-to-1 multiplexers (one each for mux_in[0], mux_in[2], mux_in[3])
+- Matches all K-map requirements precisely
+- Provides a clear hierarchical selection structure
+- Avoids any logic gates as required

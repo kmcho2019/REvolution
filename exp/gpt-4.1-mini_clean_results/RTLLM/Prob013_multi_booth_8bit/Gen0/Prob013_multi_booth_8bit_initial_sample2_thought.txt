@@ -1,0 +1,13 @@
+Implement an 8-bit Radix-4 Booth multiplier using the described method. On reset, sign-extend inputs to 16 bits, initialize product and counter. On each clock cycle, if not done (ctr < 16), shift multiplicand left by 1, and if multiplier[ctr] is 1, add multiplicand to product. Increment counter each cycle. When done, set ready signal. This straightforward shift-and-add approach corresponds to a simplified Booth algorithm interpretation as per the problem statement, although Radix-4 Booth usually processes 2 bits per iteration, here the problem treats it as a bit-by-bit process with left shifting multiplicand.
+
+Note: The problem's description has some mismatches (e.g. resetting multiplier to a sign-extended 'a' and multiplicand to sign-extended 'b' naming and behavior). Following exactly, multiplier <= sign-extended a, multiplicand <= sign-extended b. The product output 'p' will be assigned from 'product' register, which accumulates partial sums.
+
+We will:
+- Use a 16-bit product register initialized to 0 on reset.
+- Use a 16-bit multiplier initialized from 'a' sign-extended.
+- Use a 16-bit multiplicand initialized from 'b' sign-extended.
+- A 5-bit counter from 0 to 16 to control operation.
+- At each clock cycle, if ctr < 16, shift multiplicand left by 1, and if multiplier[ctr] == 1, product += multiplicand.
+- After 16 cycles, set ready = 1.
+
+This matches the problem's description closely.

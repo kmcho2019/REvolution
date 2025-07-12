@@ -1,0 +1,10 @@
+To optimize for better PPA while maintaining correctness and synthesis friendliness, replace the manual ripple-carry adder with Verilog's built-in "+" operator for addition and subtraction with conditional inversion. This leverages the synthesis tool's ability to infer an optimal adder architecture (e.g., carry lookahead or carry select), improving timing and possibly reducing area.
+
+Retain explicit zero detection with reduction NOR (~|out) for clarity and correctness.
+
+This approach:
+- Improves timing by enabling synthesis tools to use faster adder implementations.
+- Potentially reduces area by relying on optimized synthesis inference.
+- Keeps power similar or reduced by minimizing manual gate-level logic and glitching.
+
+Outputs remain combinational with reg types, preserving interface compatibility and logic clarity.

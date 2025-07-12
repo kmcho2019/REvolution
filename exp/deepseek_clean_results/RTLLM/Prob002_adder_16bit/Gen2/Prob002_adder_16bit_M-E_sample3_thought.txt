@@ -1,0 +1,21 @@
+My novel approach combines carry-select and carry-skip techniques to optimize both critical path delay and area:
+
+1. Hierarchical Structure:
+   - Divide the 16-bit adder into four 4-bit blocks
+   - Each 4-bit block uses ripple-carry internally for simplicity
+   - Implement carry-select between blocks to parallelize carry propagation
+
+2. Carry-Skip Optimization:
+   - Add skip logic when all bits in a block are propagating (P=1)
+   - This allows the carry to bypass the block entirely when possible
+
+3. Hybrid Benefits:
+   - Carry-select reduces critical path by computing both possible sums in parallel
+   - Carry-skip further optimizes the common case where bits are propagating
+   - 4-bit blocks balance between parallel computation and area overhead
+
+4. Implementation:
+   - Base 4-bit ripple-carry adder with propagate/generate logic
+   - Carry-select multiplexers between blocks
+   - Skip logic for each block
+   - Final output selection based on actual carry-in

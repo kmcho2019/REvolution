@@ -1,0 +1,13 @@
+The best approach combines the minimal state storage of Example 1 (one register holding previous input vector) with the output clarity of Example 2 (direct XOR-based edge detection), and also adds clock enable gating from Example 1 to reduce unnecessary toggling in the output register.
+
+Specifically, we keep a single 8-bit register for the previous input (`in_dly`), detect edges by XORing `in` with `in_dly`, and register the edge detection result in `anyedge` on the next clock. To reduce power, we use a clock enable-like gating by only updating `anyedge` when edges are detected, otherwise holding its previous value to prevent unnecessary toggling.
+
+This fusion yields:
+- Minimal storage (one 8-bit register).
+- Clean edge detection via XOR.
+- Registered output delayed by one cycle as required.
+- Reduced switching activity by conditional update of `anyedge`.
+- Straightforward combinational logic, aiding performance.
+- Area savings by avoiding 2-bit shift registers per bit.
+  
+Overall, this solution balances simplicity, power efficiency, and clarity.

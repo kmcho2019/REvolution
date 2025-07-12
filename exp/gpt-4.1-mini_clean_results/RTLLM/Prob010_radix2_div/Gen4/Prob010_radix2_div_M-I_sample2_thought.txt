@@ -1,0 +1,15 @@
+To correct and improve the given radix-2 divider:
+
+- Remove illegal `reg` declarations inside always @(*) blocks by declaring all necessary intermediate variables at module scope.
+- Consolidate the division FSM into a single synchronous always block for clarity and correctness.
+- Use proper non-blocking assignments and ensure the subtraction is performed combinationally from the current remainder before updating the shift register.
+- Properly handle sign corrections after division is complete.
+- Add a `res_ready` input to meet the described interface so that `res_valid` can be cleared when the result is consumed.
+- Ensure only one always block drives the main sequential state.
+- Simplify and clarify the bit-widths and shifting operations.
+- Make the shift register 17-bit as described: top 9 bits remainder, lower 8 bits quotient.
+- Implement division steps synchronized to clk, process 8 iterations, and then assert `res_valid`.
+- The `result` output concatenates remainder and quotient as per spec.
+- The design will be free of syntax errors and adhere strictly to the described behavior.
+
+This approach ensures a clean, synthesizable, and testbench-compatible radix-2 divider supporting both signed and unsigned 8-bit division with quotient and remainder output.

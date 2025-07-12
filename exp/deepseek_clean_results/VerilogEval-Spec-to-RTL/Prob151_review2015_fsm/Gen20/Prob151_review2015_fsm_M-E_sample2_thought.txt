@@ -1,0 +1,31 @@
+Novel architectural idea: Shift Register with Parallel Pattern Matching
+
+1. **Parallel Pattern Detection**:
+   - Use a 4-bit shift register to continuously track incoming data
+   - Compare the entire register content in parallel to detect "1101"
+   - More efficient than serial comparison and avoids partial pattern issues
+
+2. **Cycle-Counted Shift Control**:
+   - Implement a dedicated 2-bit counter for precise 4-cycle shift control
+   - Counter starts at 0 when entering SHIFT state
+   - Exit SHIFT state when counter reaches 3 (4 cycles total)
+
+3. **State Machine Optimization**:
+   - Simplified state machine with clear transitions
+   - IDLE: Pattern detection
+   - SHIFT: Active shifting for 4 cycles
+   - COUNT: Waiting for timer
+   - DONE: Notification state
+   - Explicit state transitions with all conditions
+
+4. **Output Generation**:
+   - Direct mapping from states to outputs
+   - shift_ena active only in SHIFT state
+   - counting active only in COUNT state
+   - done active only in DONE state
+
+Key advantages:
+- More reliable pattern detection
+- Precise cycle counting
+- Clear state transitions
+- Minimal and efficient logic

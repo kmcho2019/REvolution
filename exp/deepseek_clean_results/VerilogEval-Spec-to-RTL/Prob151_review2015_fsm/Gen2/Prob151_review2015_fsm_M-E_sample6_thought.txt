@@ -1,0 +1,20 @@
+Here's a novel approach using a two-phase FSM with parallel pattern matching:
+
+1. Parallel Pattern Detection:
+   - Instead of a shift register, use combinatorial logic to detect the 1101 pattern in any 4-cycle window
+   - This allows immediate detection without waiting for full shift cycles
+
+2. Two-Phase State Machine:
+   - PHASE1: Pattern detection and shift enable
+   - PHASE2: Counting and completion handling
+   - Each phase has its own sub-states for precise control
+
+3. Smart Shift Control:
+   - Use a down counter for shift cycles (more intuitive countdown)
+   - Generate shift_ena only when needed
+
+4. State Encoding:
+   - Use one-hot encoding for better timing and clarity
+   - Explicit state definitions for all possible states
+
+The key innovation is the parallel pattern matching combined with a two-phase approach that cleanly separates the detection/configuration phase from the counting/completion phase.

@@ -1,0 +1,19 @@
+To fix the parameter passing and enhance clarity and scalability, the parameter `size` must be declared with a default value in the module header, which was done correctly previously.
+
+However, to simplify the design and avoid complex concatenations for shifting the multiplicand, a generate loop will be used to create each partial product by left-shifting the multiplicand by the bit index when the multiplier bit is high. This approach uses the built-in shift operator but in a controlled generate loop context, which is synthesizable for fixed-size shifts.
+
+This method simplifies the code, making it more readable, scalable, and less error-prone.
+
+For the pipeline registers, two stages are maintained:
+- Stage 1 sums partial products in pairs (0+1 and 2+3).
+- Stage 2 sums the two sums from stage 1 to produce the final product.
+
+The reset is asynchronous active low as requested.
+
+This implementation directly supports the parameter `size` with a default of 4, so it will work seamlessly if the module is instantiated without overriding parameters.
+
+Additionally, input extensions are done by prepending `size` zeros to `mul_a`, making the multiplicand `2*size` bits wide for proper shifting.
+
+The outputs and pipeline registers are all sized according to `2*size`.
+
+Overall, this fixes the previous complexity and maintains the required pipelined multiplication with two register stages, properly sized signals, and synchronous operation with asynchronous reset.

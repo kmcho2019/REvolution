@@ -1,0 +1,16 @@
+To refactor the BCD counter while keeping the same core functionality, I will move the increment and carry propagation logic from the sequential always block into a purely combinational function that calculates the next BCD count based on the current count. This next count will then be registered on the clock edge, simplifying the always block to a straightforward state update.
+
+This approach separates combinational next-state logic from the sequential register update, improving readability and potentially synthesis results by isolating carry handling combinationally without nested if-else statements in sequential code.
+
+Additionally, I will compute the enable signals purely combinationally from the current count digits, as before.
+
+The synchronous reset remains the same.
+
+This structure:
+
+- Defines a function to increment the entire 16-bit BCD count with correct carry propagation combinationally.
+- Uses a single always @(posedge clk) block for register update and reset.
+- Keeps enable signals combinational and directly tied to the digits.
+- Enhances modularity and clarity by separating next-state logic from registers.
+
+This refactoring aligns with standard FSM style design and may offer easier timing closure and better synthesis opportunities while maintaining the exact behavior of the original design.

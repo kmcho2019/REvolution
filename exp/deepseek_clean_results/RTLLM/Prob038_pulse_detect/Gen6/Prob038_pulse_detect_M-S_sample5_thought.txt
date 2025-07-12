@@ -1,0 +1,18 @@
+Simplified approach using edge detection:
+
+1. Single Bit Storage:
+- Instead of a 3-bit shift register, track just the previous value of data_in
+- This reduces storage requirements by 2/3
+
+2. Edge Detection Logic:
+- Detect rising edge (0->1 transition) and store it
+- On next cycle, if we see a falling edge (1->0) after a rising edge, pulse detected
+
+3. Output Generation:
+- Output is high only when we detect the falling edge after a rising edge
+- No need to store full history, just track if we're "expecting" a falling edge
+
+4. Advantages:
+- Uses only 1 register instead of 3
+- Simpler combinational logic
+- Same functionality with fewer resources

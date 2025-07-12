@@ -1,5 +1,0 @@
-The issue in the code lies in the line where the next state of the LFSR is calculated inside the `always` block. The assignment `{q[4] ^ q[2], q[4:1]}` is incorrect for implementing a 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3. 
-
-In a Galois LFSR, the XOR operation should happen between the feedback bits at the tap positions and the output bit, but the code incorrectly XORs the bits at positions 4 and 2. This incorrect feedback mechanism leads to the LFSR not working as expected and causing mismatches during simulation, as evidenced by the large number of mismatches reported in the log.
-
-This mismatch results in the LFSR failing to generate the correct sequence and deviating from the expected behavior of a maximal-length Galois LFSR. Therefore, the design needs correction to properly implement the feedback mechanism according to the problem description.

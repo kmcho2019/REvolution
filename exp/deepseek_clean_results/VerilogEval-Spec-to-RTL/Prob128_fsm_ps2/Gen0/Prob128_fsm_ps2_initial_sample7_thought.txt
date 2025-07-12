@@ -1,0 +1,7 @@
+To implement the TopModule, we need a finite state machine (FSM) that tracks the receipt of bytes in a PS/2 mouse message. The FSM will have four states:
+1. IDLE: Waiting for the first byte (with in[3]=1) to start a new message.
+2. BYTE2: Received the first byte, waiting for the second byte.
+3. BYTE3: Received the second byte, waiting for the third byte.
+4. DONE: All three bytes received, assert 'done' for one cycle.
+
+The FSM transitions between these states based on the input bytes. On reset, it returns to IDLE. The 'done' signal is asserted only in the DONE state and then the FSM returns to IDLE to look for the next message.

@@ -1,0 +1,18 @@
+Here's a novel approach using a shift register implementation for the state machine:
+
+1. **Shift Register Concept**: Instead of traditional state encoding, use a 2-bit shift register where the current state is represented by the LSB and the next state is shifted in.
+
+2. **Transition Logic**: 
+   - For state B (01), next state is A (10) when in=0, else stays B (01)
+   - For state A (10), next state is B (01) when in=0, else stays A (10)
+   - This creates a pattern where the state transitions can be implemented with simple bit operations
+
+3. **Output Logic**: The output is simply the inverse of the LSB of the shift register
+
+4. **Reset Handling**: Initialize shift register to 01 (state B) on reset
+
+Advantages:
+- Novel implementation using shift operations
+- Eliminates explicit state comparisons
+- Potential for better pipelining in some architectures
+- Uses bit manipulation for state transitions

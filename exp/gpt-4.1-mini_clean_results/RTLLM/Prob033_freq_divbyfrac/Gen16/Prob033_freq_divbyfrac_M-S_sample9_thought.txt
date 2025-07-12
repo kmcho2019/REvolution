@@ -1,0 +1,11 @@
+To simplify the fractional divider by 3.5 using double-edge clocking, I will implement a single 3-bit counter that counts from 0 to 6, incrementing on every rising edge of clk. 
+
+Two clock signals (clk_pos and clk_neg) are toggled based on the counter values:
+- clk_pos toggles at count 0 and 4 on the rising edge of clk.
+- clk_neg toggles at count 1 and 5 on the falling edge of clk.
+
+To ensure clk_neg sees the correct counter value on the falling edge, I will use a small register to hold the counter value synchronized to the falling edge clock domain.
+
+The final output clock is the OR of clk_pos and clk_neg, producing a 3.5x frequency division with a balanced duty cycle and smooth fractional division.
+
+This approach maintains synchronization, avoids counter value mismatch on negedge, and keeps the design simple and robust.

@@ -1,0 +1,34 @@
+module instr_reg (
+    input clk,
+    input rst,
+    input [1:0] fetch,
+    input [7:0] data,
+    output [2:0] ins,
+    output [4:0] ad1,
+    output [7:0] ad2
+);
+
+    // Internal registers
+    reg [7:0] ins_p1;
+    reg [7:0] ins_p2;
+
+    // Capture logic - single edge triggered
+    always @(posedge clk or negedge rst) begin
+        if (!rst) begin
+            ins_p1 <= 8'b0;
+            ins_p2 <= 8'b0;
+        end else begin
+            case (fetch)
+                2'b01: ins_p1 <= data;
+                2'b10: ins_p2 <= data;
+                default: ; // retain previous values
+            endcase
+        end
+    end
+
+    // Continuous assignments for outputs
+    assign ins = ins_p1[7:5];  // opcode from first source
+    assign ad1 = ins_p1[4:0];  // register address from first source
+    assign ad2 = ins_p2;       // full data from second source
+
+endmodule

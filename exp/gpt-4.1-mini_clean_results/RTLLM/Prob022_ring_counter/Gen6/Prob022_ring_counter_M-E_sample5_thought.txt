@@ -1,0 +1,5 @@
+To implement the 8-bit ring counter differently, I'll use a one-hot encoded state machine approach with an internal state register explicitly cycling through states 0 to 7. Instead of shifting bits, the current state index increments modulo 8 on each clock edge, and the output is assigned by decoding this state index into a one-hot vector. This approach separates the state management (an integer from 0 to 7) from the output encoding (a one-hot 8-bit vector), providing clear and tool-friendly logic.
+
+On reset, the state is set to zero, representing the LSB output high. On every rising clock edge (if not reset), the state increments by 1 modulo 8. The output port is combinationally driven by a decoder that sets only the bit corresponding to the current state index to 1, ensuring only one bit is high at any time, cycling from bit 0 to bit 7 and wrapping around.
+
+This architectural change avoids shifting and concatenation and uses straightforward integer counting and decoding, which many synthesis tools handle efficiently.

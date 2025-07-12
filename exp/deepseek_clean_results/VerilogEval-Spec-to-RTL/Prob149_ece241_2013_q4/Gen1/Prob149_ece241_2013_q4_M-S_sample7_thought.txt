@@ -1,0 +1,11 @@
+The key simplifications are:
+1. Remove explicit state encoding since we can directly derive outputs from sensor values
+2. Track only the previous sensor values to determine if level was rising (for dfr)
+3. Output logic becomes purely combinational based on current sensors
+4. Reset simply clears the previous sensor register and sets all outputs high
+
+The simplified approach:
+- fr2, fr1, fr0 directly follow from current sensor values (truth table)
+- dfr is 1 when current level is higher than previous level
+- Previous level is stored in a register
+- Reset initializes previous level to all zeros (below lowest sensor)

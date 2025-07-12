@@ -1,0 +1,14 @@
+To simplify the implementation while maintaining correctness:
+
+1. Analyze the Karnaugh map to identify all minterms where f=1:
+   - x[3:2]=00: f=1 when x[1:0]=00 or 10
+   - x[3:2]=11: f=1 when x[1:0]=00, 01, or 10
+   - x[3:2]=10: f=1 when x[1:0]=00, 01, or 10
+
+2. Notice that x[3:2]=01 always gives f=0, so we can ignore this case
+
+3. Combine conditions where possible:
+   - For x[3:2]=00 and x[3:2]=10, f=1 when x[1:0]=00 or 10
+   - For x[3:2]=11, f=1 when x[1:0]≠10
+
+4. Implement using concise Boolean expressions that directly match these observations

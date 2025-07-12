@@ -1,0 +1,13 @@
+The refactored design maintains the same functionality but uses a more compact implementation style:
+
+1. Instead of using separate DFF modules and generate blocks, we'll implement all 8 flip-flops directly in the TopModule using a single always block
+2. This reduces hierarchy and should improve area/power by eliminating module instantiation overhead
+3. We'll use vector operations for the 8-bit data to keep the code concise
+4. The asynchronous reset behavior remains identical (active high, reset to 0)
+5. All flip-flops still trigger on positive clock edge
+
+Benefits:
+- Reduced hierarchy for potentially better PPA
+- More compact code while maintaining readability
+- Same functionality guaranteed
+- Easier to modify all flip-flops uniformly if needed

@@ -1,0 +1,21 @@
+Here's a novel approach using a shift register and control logic instead of a traditional state machine:
+
+Key features:
+1. Uses a 16-bit shift register to accumulate data
+2. Implements a 'ready' flag to track when we have enough data
+3. Eliminates explicit state machine by tracking data position
+4. More efficient for continuous data streams
+5. Simpler timing with single-cycle output generation
+
+Operation:
+- On each valid input, shift the 8-bit data into the accumulator
+- When accumulator has 16 bits (2 bytes), output them
+- The 'ready' flag indicates when we have a complete 16-bit word
+- Reset clears all registers and flags
+- Output is registered for clean timing
+
+Advantages:
+- No complex state transitions
+- Naturally handles back-to-back data
+- Minimal control logic
+- Easier to synthesize and verify

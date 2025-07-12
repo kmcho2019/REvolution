@@ -1,0 +1,18 @@
+The previous implementation captures the 1-to-0 transitions correctly by comparing `prev_in` with the current input `in`. However, the key issue is the timing of input sampling relative to the reset release and how the testbench applies stimuli.
+
+To fix this:
+
+1. Initialize `prev_in` to all ones on reset, as before, to avoid false detections right after reset.
+2. However, update `prev_in` at the end of the clock cycle, **after** capturing transitions, ensuring that the detection happens between stable samples.
+3. Most importantly, clear the output on reset and ensure that no spurious transitions are detected during reset and in the first cycle after reset.
+4. The output bits should latch when the transition is detected and hold until reset.
+5. To further ensure correct synchronization with the testbench, treat reset as synchronous and update all registers only on the clock edge.
+6. Avoid combinational feedback loops by updating `prev_in` after computing the output.
+7. The logic to detect the falling edges is `(prev_in & ~in)`.
+8. The output accumulates detected transitions using OR.
+
+This approach aligns the sampling, transition detection, and reset behavior cleanly and avoids mismatch caused by asynchronous inputs or improper initialization.
+
+This guarantees that the detection of falling edges occurs correctly at the clock where inputs have stabilized post-reset, and the output holds until reset clears it.
+
+No extra complexity or resources are introduced.

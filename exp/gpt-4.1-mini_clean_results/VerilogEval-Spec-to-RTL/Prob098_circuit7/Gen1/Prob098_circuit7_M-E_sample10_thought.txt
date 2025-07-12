@@ -1,0 +1,8 @@
+From the waveform, q is set to 1 when input a is 0 at the rising clock edge and remains 1 until a becomes 1 at a subsequent rising edge, when q resets to 0. This behavior can be implemented as a set-reset flip-flop where q is set when a=0 and reset when a=1 at the clock edge.
+
+A novel approach is to interpret q as a latch that sets on a==0 and resets on a==1. Instead of directly assigning q to ~a, use a state-holding approach with explicit set and reset conditions. For example, on the clock rising edge:
+
+- If a == 0, set q to 1
+- Else if a == 1, reset q to 0
+
+This explicitly models q as a state bit that is set and reset by a, allowing future expansion to multi-bit or conditional logic if needed.

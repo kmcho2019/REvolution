@@ -1,0 +1,12 @@
+Novel Architecture: Hybrid Carry-Select Adder with Early Overflow Prediction
+1. Split the 8-bit addition into two 4-bit carry-select blocks to parallelize computation
+2. Compute both possible sums (with carry=0 and carry=1) for the upper 4 bits in parallel
+3. Use the lower 4-bit sum to select the correct upper sum, reducing critical path
+4. Implement early overflow prediction by:
+   - Checking MSB sign consistency during parallel sum computation
+   - Using intermediate carry signals to predict overflow before final sum is ready
+5. Benefits:
+   - Reduced critical path compared to ripple-carry
+   - Early overflow detection (parallel with sum computation)
+   - Balanced timing between sum and overflow outputs
+   - Scalable to wider datapaths by adding more select stages

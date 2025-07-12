@@ -1,0 +1,7 @@
+Refactor to separate the combinational read of the PHT from the sequential update clearly, ensuring the prediction always reads the PHT and GHR before any updates in the clock cycle. To achieve this:
+
+- Use a separate combinational read port for the PHT based on the current GHR and predict_pc, captured before the clock edge.
+- Store the prediction result and history outputs in registers that latch the combinational read values at the clock edge.
+- Perform the PHT update and GHR update only on the clock edge, prioritizing training (including recovery) over prediction.
+- This explicit separation guarantees prediction outputs reflect the pre-update state of PHT and GHR even when training and prediction happen simultaneously.
+- Implement the saturating counters and GHR update logic exactly as before but move PHT reading into a combinational block and pipeline prediction outputs.

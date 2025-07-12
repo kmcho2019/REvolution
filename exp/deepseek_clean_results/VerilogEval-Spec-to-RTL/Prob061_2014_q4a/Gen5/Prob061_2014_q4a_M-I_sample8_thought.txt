@@ -1,0 +1,11 @@
+To optimize the PPA metrics, I'll focus on the timing violation (negative WNS) while maintaining the correct functionality. The improvement strategy includes:
+
+1. Simplify the combinational logic path by removing the explicit priority encoder structure, which adds unnecessary logic levels
+2. Use a more direct always block implementation that combines the control logic and state update
+3. Maintain the same functionality where:
+   - L=1 loads R (highest priority)
+   - E=1 shifts in w (when L=0)
+   - Otherwise maintains state
+4. This should reduce the critical path delay by eliminating intermediate combinational logic
+
+The power and area are already good, but this change may slightly improve them further by reducing gate count.

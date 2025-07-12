@@ -1,0 +1,10 @@
+After carefully analyzing the waveform, I realize the behavior can be described as:
+
+1. Output p is the value of input 'a' sampled at positive clock edges, but only when 'a' is 1 (p stays 0 otherwise)
+2. Output q is the value of p from the previous full clock cycle (not just the previous edge)
+3. Both outputs maintain their values until the next relevant clock event
+
+This matches the observed behavior:
+- p only becomes 1 when 'a' is 1 at a clock edge (90ns, 100ns, 110ns)
+- q follows p with one full cycle delay (p=1 at 110ns → q=1 at 115ns)
+- Values persist through low clock phases

@@ -1,0 +1,15 @@
+Fuse the best ideas from both examples by implementing a synchronous write and synchronous reset initialization to zero all memory locations (for reliable synthesis and predictable behavior), while keeping the read path combinational with read enable gating for zero-latency read access. 
+
+Use a minimal 3-bit address width derived from DEPTH via $clog2 to optimize area and timing. 
+
+Initialize RAM synchronously on reset with a for-loop to ensure proper reset behavior, although it might cause reset latency, it ensures correctness across ASIC and FPGA flows.
+
+The read_data output will be registered for stability and glitch avoidance, updated synchronously on clk with read_en gating, ensuring that read_data is valid and glitch-free on clock edges, improving timing and reducing power toggling on outputs.
+
+This fusion combines:
+- Synchronous reset initialization of RAM (from Example 2) for predictable initialization,
+- Registered synchronous read output (improvement over purely combinational read in Example 1 and 2) for better timing closure and glitch avoidance,
+- Separate always blocks for read and write for clarity and easy synthesis,
+- Using parameter-based addressing for scalability.
+
+This results in a dual-port RAM with zero-latency writes (on clock edge) and stable registered read output on clock edge, supporting simultaneous read/write at independent addresses, and all memory initializes to zero on reset.

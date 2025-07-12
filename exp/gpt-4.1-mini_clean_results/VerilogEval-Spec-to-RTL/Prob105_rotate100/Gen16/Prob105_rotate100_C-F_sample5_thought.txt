@@ -1,0 +1,7 @@
+Fuse the clarity and power-saving benefits of separating combinational next-state logic from sequential updates (Example 2) with the single always block simplicity and explicit hold case of Example 1. Use a combinational always block to compute next_q with explicit load and rotation cases prioritized, avoiding unnecessary assignments for no-rotation to reduce toggling. Then in the clocked always block, update q from next_q.
+
+Add comments for clarity. Retain the concise, clean concatenation rotation logic for both left and right rotations. This approach combines functional clarity, reduced switching activity, and clean synchronous design, improving power by not toggling q unnecessarily and improving readability and maintainability.
+
+No extra pipeline stages or complicated barrel shifters are added, as rotation is only by one bit per cycle and the simple concatenation is synthesis-friendly. The design ensures only one assignment per clock cycle, minimizing glitching and helping power.
+
+Overall, this fusion yields a clean, maintainable, and power-aware 100-bit rotator with synchronous load, left/right rotate, and hold functionality that balances the benefits from both examples.

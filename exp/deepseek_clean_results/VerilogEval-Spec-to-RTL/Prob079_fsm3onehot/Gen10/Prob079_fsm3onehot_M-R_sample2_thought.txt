@@ -1,0 +1,15 @@
+Refactoring Approach:
+1. State Transition Logic:
+   - Instead of separate assign statements for each next_state bit, use a single always_comb block with casez for one-hot state decoding
+   - This makes the state transitions more explicit and readable while maintaining the same logic
+   - Casez allows don't-care bits in matching (useful for one-hot)
+
+2. Output Logic:
+   - Keep the simple assign statement for output since it's already minimal
+   - The output depends only on the current state (Moore machine)
+
+3. Benefits:
+   - More maintainable structure with explicit state transitions
+   - Easier to modify state encoding if needed
+   - Clear mapping between state table and implementation
+   - Same PPA metrics as original since synthesis will produce identical logic

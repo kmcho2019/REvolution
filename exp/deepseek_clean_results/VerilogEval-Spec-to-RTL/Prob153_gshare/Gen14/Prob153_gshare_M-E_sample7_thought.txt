@@ -1,0 +1,13 @@
+Novel Architecture: Segmented Dynamic-Hash GShare (SDGShare)
+1. Segmented History Register: Split the 7-bit GHR into 3 segments (2-2-3 bits) for better pattern capture
+2. Dynamic Hash Selection: Use PC bits to dynamically select which segments to XOR for index generation
+3. Dual-Phase Update: Separate PHT updates into speculative (prediction) and confirmed (training) phases
+4. History Recovery Cache: Small buffer to store intermediate GHR states for misprediction recovery
+5. Power-Optimized Access: Banked PHT structure with gated access based on prediction/training activity
+
+Key Advantages:
+- Better pattern capture through segmented history
+- Dynamic hash adapts to PC patterns
+- Reduced aliasing from selective segment XORing
+- Faster misprediction recovery with history cache
+- Lower power from banked PHT access

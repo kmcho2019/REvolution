@@ -1,0 +1,9 @@
+To optimize the FSM for better performance and clarity, restructure the next-state logic into a priority-encoded if-else combinational block inside an always_comb block. This can reduce critical path delay by simplifying the logic expression and enabling synthesis tools to optimize better. Use a separate combinational always block for next_state instead of nested ternaries. Maintain the synchronous active-low reset in the state flip-flop block with non-blocking assignments.
+
+Keep output logic as continuous assignments for simplicity and low area.
+
+Also, explicitly handle state D transitions based on r[2] per the description (the original solution did not describe state D transitions). From the problem, the FSM description of transitions to and from state D is incomplete—likely D is a grant for device 2, analogous to states B and C, so similarly, when r[2]=1 stay in D, else go back to A.
+
+This adjustment ensures consistent FSM behavior and eliminates ambiguity.
+
+Overall, this structure enhances timing, clarity, and correctness with minimal area and power impact.

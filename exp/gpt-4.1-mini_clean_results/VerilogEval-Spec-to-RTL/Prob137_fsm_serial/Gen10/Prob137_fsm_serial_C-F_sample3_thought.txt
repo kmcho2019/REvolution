@@ -1,0 +1,11 @@
+Fuse the best ideas by keeping a clean, single always block for sequential logic, combining state transitions and output logic to reduce complexity and improve timing. Use binary-encoded states with clearly separated next-state combinational logic for clarity and ease of timing analysis.
+
+Shift in data bits LSB first by shifting left and inserting the new bit at LSB (shift_reg <= {shift_reg[6:0], in}) for intuitive bit ordering consistent with LSB-first protocol. This matches common practice and improves readability.
+
+Generate 'done' as a one-clock-cycle pulse synchronously asserted when a valid stop bit is detected, and ensure 'done' is only asserted in that cycle.
+
+Optimize by resetting bit counters and shift registers only when necessary, avoiding unnecessary toggling. Maintain synchronous active-high reset.
+
+When a framing error (stop bit wrong) occurs, transition to WAIT_STOP state to wait for line to return idle (stop bit = 1) before restarting, ensuring correct framing detection.
+
+This fusion preserves correctness, improves clarity, and slightly improves power by avoiding redundant resets and using an intuitive shift direction, while maintaining minimal area and good performance.

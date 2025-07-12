@@ -1,0 +1,14 @@
+Here's a novel approach using a multiplexer-based implementation for the full adder. The key ideas are:
+
+1. For the sum output: 
+   - When a and b are equal (00 or 11), sum equals cin
+   - When a and b differ (01 or 10), sum equals ~cin
+   - This can be implemented with a 2:1 mux controlled by (a ^ b)
+
+2. For the carry output:
+   - When a and b are both 1, carry is always 1
+   - When a and b are both 0, carry is always 0
+   - When a and b differ, carry equals cin
+   - This can be implemented with a 3:1 mux prioritized by (a & b), (~a & ~b), then (a ^ b)
+
+This approach uses different logic structures than traditional implementations while maintaining correct functionality.

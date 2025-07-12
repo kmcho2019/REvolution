@@ -1,0 +1,7 @@
+Implement the Mealy FSM by explicitly tracking the number of matched bits in the sequence "10011" using a one-hot style approach on progress states. Instead of defining states corresponding to each prefix explicitly, use a register to count how many bits in the sequence matched consecutively, and update this count on each clock based on the current input and previous matched length.
+
+At each clock cycle, we evaluate if the input bit matches the expected bit at the current progress index. If it matches, increment the progress count. If not, we check if the input bit can start a new match (i.e., is '1'), otherwise reset to zero. The output MATCH is asserted when the matched length reaches the full length of 5 on the current input.
+
+This approach reduces the state machine to a simple matched-index counter with combinational logic for the next match index, making the FSM simpler and easy to scale. It also naturally supports overlap detection by reusing partial matches.
+
+This technique combines sequence matching with shift-register-like indexing rather than enumerated state transitions.

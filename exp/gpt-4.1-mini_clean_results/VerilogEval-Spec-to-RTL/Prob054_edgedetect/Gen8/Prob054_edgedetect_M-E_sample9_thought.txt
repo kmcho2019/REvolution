@@ -1,0 +1,5 @@
+Instead of registering the entire previous input vector, we can implement edge detection using a shift register approach: for each bit, maintain a two-stage pipeline of input samples. On each clock cycle, shift in the new input; by comparing the two latest samples per bit, we detect a 0→1 transition when the previous sampled bit was 0 and the current sampled bit is 1. This approach uses a 2-cycle history per bit but allows us to produce the pedge output directly from these two samples. The pedge output can be registered and delayed by one cycle relative to the transition, as required.
+
+Architecturally, this means using two registers to store consecutive input samples, comparing them in a combinational way to produce pedge, and registering pedge to meet output timing. This pipeline might slightly increase latency but is fully synchronous and clear. This also enables pipelining and could be extended for wider inputs efficiently.
+
+This is a novel approach contrasting the classical prev_in storage method by explicitly pipelining the input with a shift register of depth 2 and detecting edges between the last two samples.

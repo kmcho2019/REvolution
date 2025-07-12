@@ -1,0 +1,11 @@
+Improved solution addressing the issues in the original implementation:
+1. Maintain the 2-bit counter approach but adjust the logic for exact 4-cycle assertion
+2. Initialize counter to 4 (binary 100) using a 3-bit register
+3. Count down from 4 to 1 (inclusive) while asserting shift_ena
+4. When counter reaches 0, permanently disable shift_ena until next reset
+5. Key improvements:
+   - Guarantees exactly 4 cycles of shift_ena assertion
+   - Prevents any possibility of re-enabling after the initial countdown
+   - Uses minimal additional hardware (only 1 extra bit for counter)
+   - Clear state transition logic
+   - Maintains synchronous reset behavior

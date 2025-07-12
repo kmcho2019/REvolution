@@ -1,0 +1,14 @@
+To optimize the PPA metrics further, I'll implement these improvements:
+
+1. Remove the default case since we have full coverage of all states, saving a small amount of area
+2. Replace the case statement with arithmetic operations and saturation checks, which should:
+   - Reduce logic depth for better timing (address negative WNS)
+   - Potentially reduce area by using simpler arithmetic operations
+3. Keep the FSM structure but make transitions more direct
+4. Maintain the same reset behavior and train_valid handling
+
+The arithmetic approach will:
+- Use +1/-1 operations with explicit saturation checks
+- Be more compact in implementation
+- Potentially reduce critical path by using simpler comparators
+- Still maintain all the required functionality

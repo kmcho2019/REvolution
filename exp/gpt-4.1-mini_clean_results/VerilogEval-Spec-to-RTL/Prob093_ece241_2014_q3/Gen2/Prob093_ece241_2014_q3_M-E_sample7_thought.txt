@@ -1,0 +1,15 @@
+The problem requires implementing a 4-to-1 multiplexer with selector inputs `a` and `b` (external to `TopModule`), and the inputs to this mux (mux_in[3:0]) are functions of `c` and `d`. The output of the entire setup (mux with `a,b` selects and `mux_in[]` inputs) matches the given K-map.
+
+Our `TopModule` generates `mux_in[3:0]` solely based on `c` and `d`, using only 2-to-1 multiplexers and no other logic gates. The 4-to-1 mux with `a,b` is outside our module.
+
+Approach:
+1. Recognize that each `mux_in[i]` corresponds to one column of the K-map for fixed `a,b`.
+2. For each `mux_in[i]`, implement the function of `c` and `d` using cascaded 2-to-1 muxes.
+3. Each 2-to-1 mux can be written as `mux(sel, in0, in1)` = `sel ? in1 : in0`.
+4. We will use `c` and `d` as selector or data inputs of the 2-to-1 muxes only; no other gates allowed.
+5. For signals like `not d`, implement them by a 2-to-1 mux: select `d`, inputs are 1 and 0 (this inverts d).
+6. Structure the code with helper functions or inline mux expressions.
+
+This approach ensures all logic is mux-based and uses only the inputs `c` and `d`. No other gates are used.
+
+Below is the implementation, where `mux` is realized by conditional operator (ternary) representing a 2-to-1 mux.

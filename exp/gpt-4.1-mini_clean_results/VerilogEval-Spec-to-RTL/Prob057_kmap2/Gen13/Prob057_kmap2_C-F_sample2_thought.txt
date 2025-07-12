@@ -1,0 +1,11 @@
+Fuse the modular clarity of the first solution and the directness and compactness of the second by manually deriving a minimal sum-of-products (SOP) expression from the K-map, then implementing it with straightforward AND/OR/NOT gates without extra modules or complex conditional logic.
+
+From the K-map, the simplified SOP expression is:
+  out = (~c & ~d & (~a | ~b))   // group of zeros in c,d=00 cells with a,b=00,01,10
+      | (~c & d & ~b)           // c=0,d=1,b=0 group
+      | (c & ~d & ~a)           // c=1,d=0,a=0 group
+      | (c & d & (a | b))       // c=1,d=1,a or b=1 group
+
+This expression combines the modularity of identifying groups and the compact, flattened combinational logic style, avoiding extra module overhead, nested ternary operators, or equality checks. The explicit use of complemented inputs and OR/AND operators preserves readability and synthesis friendliness. This approach balances performance (low logic depth), power (minimized switching via common terms), and area (fewer gates and no module overhead).
+
+Hence, I will implement the TopModule as a pure combinational logic block using bitwise operators and complemented signals directly. This solution exploits the best of both examples: clarity, minimal logic levels, and straightforward verification.

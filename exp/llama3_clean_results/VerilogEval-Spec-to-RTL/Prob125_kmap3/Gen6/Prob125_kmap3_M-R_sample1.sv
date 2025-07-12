@@ -1,0 +1,11 @@
+module TopModule(
+    input  a,
+    input  b,
+    input  c,
+    input  d, // Not used, as per the Karnaugh map
+    output out
+);
+
+assign out = a ? 1'b1 : (b ? 1'b0 : c);
+
+endmodule

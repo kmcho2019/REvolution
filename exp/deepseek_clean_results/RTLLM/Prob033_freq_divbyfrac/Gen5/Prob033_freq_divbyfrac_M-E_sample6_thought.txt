@@ -1,0 +1,9 @@
+To achieve precise 3.5x fractional division with balanced duty cycle:
+1. Use a 4-bit counter to track both rising and falling edges of the input clock
+2. Generate two intermediate clocks with complementary patterns:
+   - clk_phase1: High for 4 cycles, low for 3 cycles
+   - clk_phase2: Same pattern but shifted by 180° (half period)
+3. Combine these phases using OR logic to create the final output
+4. Implement edge detection to handle the half-cycle phase shifts
+5. Use the falling edge of the clock to create precise phase alignment
+This approach leverages both clock edges for accurate phase shifting while maintaining simple counter logic for pattern generation.

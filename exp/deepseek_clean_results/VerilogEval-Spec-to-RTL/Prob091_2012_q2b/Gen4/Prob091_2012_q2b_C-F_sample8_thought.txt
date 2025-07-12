@@ -1,0 +1,16 @@
+Fusion Strategy:
+1. **Y1 Optimization**: Both examples correctly implement Y1 as y[0] & w, which is already optimal. We'll keep this unchanged.
+
+2. **Y3 Optimization**: 
+   - From Example 1: Leverage the one-hot property to express Y3 as ~(y[0] | y[3]) when w=0, which reduces the OR gate inputs from 4 to 2.
+   - From Example 2: Maintain the explicit ~w condition for clarity and to ensure correct timing behavior.
+   - Combine these to get the most efficient implementation: ~w & ~(y[0] | y[3])
+
+3. **Power and Area Benefits**:
+   - The fused solution uses fewer transistors than either example (2-input OR + inverter vs 4-input OR).
+   - Maintains the same timing characteristics as both examples.
+   - Reduces switching power by minimizing logic complexity.
+
+4. **Correctness**:
+   - Mathematically equivalent to both examples under one-hot encoding constraints.
+   - More robust against invalid states due to simpler logic structure.

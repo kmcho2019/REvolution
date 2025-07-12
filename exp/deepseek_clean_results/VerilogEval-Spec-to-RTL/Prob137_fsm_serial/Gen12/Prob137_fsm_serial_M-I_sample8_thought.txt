@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break the critical path by registering the bit_count comparison
+   - Simplify state transition logic by removing redundant conditions
+   - Use early state transition decisions to reduce combinatorial logic depth
+
+2. Power Optimization:
+   - Implement clock gating for data_reg to reduce switching activity
+   - Make done_reg updates conditional to only when needed
+   - Optimize state encoding to minimize transitions
+
+3. Area Optimization:
+   - Reduce bit_count to 2 bits (since we count 0-7)
+   - Use gray coding for state transitions to reduce glitching
+   - Share comparison logic between state transitions
+
+Key Changes:
+- Modified state encoding to gray code for smoother transitions
+- Added registered comparison for bit_count
+- Implemented clock gating for data_reg
+- Simplified done signal generation
+- Reduced bit_count width

@@ -1,0 +1,7 @@
+An alternative architecture for an even-number frequency divider is to use a counter that counts from 0 up to NUM_DIV-1, toggling the output clock only once per full count cycle. This approach counts the full divide number before toggling, effectively dividing the input clock frequency by NUM_DIV but producing a clock with a duty cycle of 1/NUM_DIV (not 50%). 
+
+This method simplifies logic by toggling `clk_div` only at the counter wrap-around, reducing toggle events and potentially power consumption. It suits use cases where duty cycle precision is not critical.
+
+The counter width is determined by $clog2(NUM_DIV). The output clock `clk_div` is reset to 0 on reset and toggled every full count cycle.
+
+This solution complements the original approach and may be simpler for some systems.

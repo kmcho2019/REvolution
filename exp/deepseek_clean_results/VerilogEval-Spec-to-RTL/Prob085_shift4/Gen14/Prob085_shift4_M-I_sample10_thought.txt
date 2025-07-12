@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. Timing Optimization: Remove the intermediate next_state register to reduce critical path delay by combining combinational and sequential logic into a single always block.
+2. Power Optimization: Add clock gating for the ena signal to prevent unnecessary register updates when not shifting.
+3. Area Optimization: Simplify the priority logic by using nested if-else statements directly in the sequential block.
+4. Maintain same functionality while improving PPA metrics by:
+   - Keeping asynchronous reset as highest priority
+   - Preserving load priority over shift
+   - Ensuring correct shift behavior
+
+Expected Benefits:
+- Reduced timing violations by eliminating combinational path between registers
+- Lower power consumption through conditional clocking
+- Slightly reduced area by removing redundant logic
+- Maintained functionality with cleaner implementation

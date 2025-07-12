@@ -1,0 +1,8 @@
+I will refactor the 8-bit adder to keep the carry-lookahead concept but organize the code differently:
+
+1. Instead of instantiating full adders as submodules, I will implement the bit-level full adder logic directly using `assign` statements inside the top-level module.
+2. Compute the propagate (p) and generate (g) signals explicitly first, then compute carry signals with the same look-ahead logic.
+3. Calculate the sum bits using the propagate signals XORed with corresponding carry-in signals.
+4. This approach removes the separate full adder module, reducing module overhead and simplifying the hierarchy.
+5. The carry generation equations remain the same, but the code is flatter and uses only continuous assignments.
+6. This refactoring improves readability and can be slightly more area efficient while preserving timing behavior.

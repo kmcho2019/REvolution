@@ -1,0 +1,22 @@
+Corrected Design Approach:
+
+1. **Proper Input Extension**:
+   - Only extend multiplicand (mul_a) by adding 'size' zeros at MSB
+   - Keep multiplier (mul_b) at original width since we're using its bits individually
+
+2. **Two-Stage Pipeline Implementation**:
+   - First stage registers partial products sums (0+1 and 2+3)
+   - Second stage registers the final sum of stage1 results
+   - Properly synchronize all registers with clock and reset
+
+3. **Reset Handling**:
+   - Reset all pipeline registers to zero
+   - Maintain synchronous reset behavior for all stages
+
+4. **Timing Correction**:
+   - Break the combinational path into two clocked stages
+   - Ensure each stage's computation fits within one clock cycle
+
+5. **Signal Naming**:
+   - Use clear naming for pipeline registers
+   - Distinguish between combinational and registered signals

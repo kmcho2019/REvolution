@@ -1,0 +1,13 @@
+The original design outputs bits directly from input 'd' indexed by the counter and sets valid_out only at the start of a new 4-bit frame (when counter resets to 0). However, the problem statement requires valid_out = 1 whenever the serial output bit is valid (i.e., every output bit cycle), with the MSB output first (valid_out = 1 for all 4 bits). Also, it states that when the counter is 3 (last bit), load the new parallel input into a data register and reset the counter, then output the MSB first. 
+
+To optimize PPA while meeting the spec precisely, I will:
+- Add a data register to latch 'd' when counter is 3.
+- On each clock, output the bit of the data register indexed by counter (MSB first).
+- Set valid_out = 1 on all four output cycles (cnt from 0 to 3).
+- Increment counter from 0 to 3, then reload data and reset counter.
+- This matches the spec: load on cnt=3 (last bit), valid_out asserted for all bits.
+- Using a small 2-bit counter and registered data reduces glitches and hold time violations.
+- The added data register ensures stable output even if input 'd' changes mid-serialization.
+This balances correctness and moderate power increase due to added register, but improves reliability.
+
+Note: The original solution sets valid_out only on the first bit of next data, but spec wants valid_out = 1 every output bit indicating validity, so fix that.

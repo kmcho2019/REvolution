@@ -1,0 +1,19 @@
+Here's a novel approach using a unified state machine with hierarchical states and a fall counter:
+
+1. Main states (3 bits):
+   - WALKING: Normal movement state
+   - FALLING: When ground is lost
+   - DIGGING: When dig command is active
+   - SPLATTERED: Final state after long fall
+
+2. Direction tracking (1 bit):
+   - Embedded within each state to track current direction
+
+3. Key innovations:
+   - Uses a single unified state machine for simpler control flow
+   - Implements fall timer as a separate counter
+   - Uses priority-encoded transitions (fall > dig > bump)
+   - Maintains direction during falling/digging using a saved direction bit
+   - Outputs are purely combinatorial based on current state
+
+This approach reduces complexity by combining direction and action states while maintaining clear priority rules.

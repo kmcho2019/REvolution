@@ -1,0 +1,16 @@
+To improve the PPA of the existing calendar module, the main idea is to reduce combinational logic depth and unnecessary signal toggling by separating the second increment logic from minute and hour increments. This can be done by using two always blocks:
+
+1. One always block for incrementing seconds on every clock cycle or reset.
+2. Another always block for incrementing minutes and hours only when seconds roll over.
+
+This separation shortens the critical path in the second increment logic, potentially improving timing (higher max frequency), and reduces toggling in minute and hour counters to once per minute rollover. Power can be saved because minutes and hours do not toggle every second.
+
+Additionally, output Hours is kept as 6-bit as required, although only 5 bits are functionally necessary for counting 0-23. Keeping 6-bit for compliance, but unused MSB will be zero.
+
+This dual always block approach balances clock domain updates while retaining synchronous resets and meeting functional specs. Area impact is negligible as registers remain the same, but timing improves due to simplified combinational paths.
+
+In summary:
+- Use one always block to update seconds continuously.
+- Use another always block to update minutes and hours when seconds roll over from 59 to 0.
+- Maintain synchronous resets.
+- Hours is a 6-bit register/output as requested.

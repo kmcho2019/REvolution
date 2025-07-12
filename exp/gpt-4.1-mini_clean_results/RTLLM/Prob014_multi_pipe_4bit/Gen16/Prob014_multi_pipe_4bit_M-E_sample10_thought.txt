@@ -1,0 +1,22 @@
+Implement a pipelined 4-bit multiplier using two pipeline stages of registers for intermediate values, but instead of directly generating and storing all partial products at once, perform the multiplication iteratively across pipeline stages with accumulation.
+
+Approach:
+1. Extend the multiplicand (mul_a) by size zeros at the MSB side to align with the final product width.
+2. Use a shift-and-add multiplication principle pipelined over two stages:
+   - Stage 1: On clock edge, sample inputs and generate partial product for the least significant bit of multiplier (mul_b[0]) by ANDing the entire multiplicand with this bit and shifting accordingly. Store this partial product and the shifted multiplicand and shifted multiplier for next bit processing.
+   - Stage 2: On the next clock edge, add the new partial product corresponding to the next bit (mul_b[1]) to the previous partial sum and store the accumulated sum in a register.
+3. Repeat similarly for bits 2 and 3 through internal pipeline registers and combinational logic. Since the prompt limits to two pipeline stages of registers, we will combine two bits per stage:
+   - Stage 1: Partial product generation for bits 0 and 1, and accumulate their sum in a register (first pipeline stage).
+   - Stage 2: Partial product generation for bits 2 and 3, add them to previous sum, register the final sum (second pipeline stage).
+4. The final product is output from the second pipeline stage register.
+5. Reset logic: async active-low reset clears the pipeline registers and output.
+6. This design makes use of iterative addition within pipeline stages, rather than generating all partial products simultaneously, reducing combinational fan-in and complexity and adhering to the requirement of two register stages.
+
+Summary:
+- Two pipeline register stages store partial sums:
+   - Stage 1: sum of partial products for bits 0 and 1.
+   - Stage 2: sum of partial products for bits 2 and 3 + previous sum.
+- The final output is registered.
+- This approach balances pipelining and partial product accumulation, providing efficient resource usage.
+
+This design differs fundamentally from generating all partial products in parallel and summing in multiple pipeline stages; instead, it processes the multiplier bits in halves, accumulating partial sums with two pipeline register stages.

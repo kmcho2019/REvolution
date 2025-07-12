@@ -1,0 +1,13 @@
+Novel design approach using a shift register:
+1. Instead of a counter, use a 4-bit shift register initialized to 4'b1111 on reset
+2. Each clock cycle, shift right with 0 input (becomes 4'b0111, 4'b0011, etc.)
+3. shift_ena is simply the MSB of the shift register
+4. After 4 shifts, the register becomes 4'b0000 and stays there
+5. Reset behavior:
+   - Synchronously load 4'b1111 into the shift register
+   - This makes shift_ena high for exactly 4 cycles (as the '1's shift out)
+6. Advantages:
+   - No arithmetic operations needed
+   - Simple, direct implementation of the 4-cycle requirement
+   - Naturally stops after 4 cycles without additional logic
+   - Clear visual representation of the timing

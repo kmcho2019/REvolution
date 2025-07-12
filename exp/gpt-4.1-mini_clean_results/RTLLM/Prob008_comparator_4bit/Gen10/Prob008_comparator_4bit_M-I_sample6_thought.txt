@@ -1,0 +1,15 @@
+The original design uses a ripple borrow chain to determine if A < B by simulating A - B. While functionally correct, the ripple chain introduces a linear delay that limits maximum frequency.
+
+To optimize:
+1. Replace the ripple borrow chain with direct bitwise comparison logic using the well-known comparator approach:
+   - Start comparing from MSB to LSB.
+   - For each bit i, 
+     - if A[i] > B[i], then A > B.
+     - if A[i] < B[i], then A < B.
+     - else, move to next bit.
+2. This removes the need for borrow signals and subtraction.
+3. Equality check remains the same (XNOR of all bits).
+4. This approach results in minimal logic depth (logically a priority encoder), faster operation, and likely smaller area since no borrow chain or subtraction logic is needed.
+5. The outputs remain mutually exclusive by design.
+
+This logic is simpler, faster, and more power-efficient since we only check bits directly without simulating subtraction.

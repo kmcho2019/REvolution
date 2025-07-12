@@ -1,0 +1,9 @@
+To implement the TopModule, we need to design a state machine that can track the current water level and the previous level. We can use the 3-bit input s to determine the current water level and a separate 3-bit register to store the previous level. Based on the current and previous levels, we can determine the nominal flow rate and whether to open the Supplemental flow valve. We can use a simple state machine with two states: one for when the water level is rising and one for when it's falling. When the reset signal is asserted, we reset the state machine to the state equivalent to a low water level.
+
+We will use the following logic:
+- If the current level is above s[2], all outputs should be 0.
+- If the current level is between s[2] and s[1], only fr0 should be 1.
+- If the current level is between s[1] and s[0], both fr0 and fr1 should be 1.
+- If the current level is below s[0], all outputs (fr0, fr1, fr2) should be 1.
+- If the current level is higher than the previous level, dfr should be 1.
+- On reset, all outputs should be 1 (fr0, fr1, fr2, dfr) and the state machine should be reset to the state equivalent to a low water level.

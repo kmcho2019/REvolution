@@ -1,0 +1,20 @@
+I'll refactor the code with these key changes:
+
+1. State Machine Restructuring:
+   - Use binary encoding (2 bits) instead of one-hot for better area/power
+   - Combine STOP and WAIT states into a single state (STOP_WAIT) with conditional transitions
+   - Move state transitions to a single always block for clarity
+
+2. Output Logic:
+   - Use continuous assignment for 'done' signal instead of registered output
+   - This removes the pipeline delay while maintaining correct timing
+
+3. Counter Logic:
+   - Simplify bit counter to use a single always block
+   - Remove separate shift_enable signal by integrating it into state logic
+
+4. Shift Register:
+   - Keep the efficient LSB-first implementation
+   - Remove clock gating since it adds complexity with minimal benefit for this small design
+
+The refactored version maintains the same functionality but with simpler control logic and better PPA characteristics.

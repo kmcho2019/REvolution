@@ -1,0 +1,14 @@
+Implement a non-restoring radix-2 divider for 8-bit signed/unsigned division using a finite state machine with three states: IDLE, DIVIDE, and DONE.
+
+Key ideas:  
+- Use absolute values for dividend and divisor to simplify core division logic, and handle signs only before and after division.  
+- Non-restoring division algorithm: on each step, shift remainder and quotient left by 1 bit, then add or subtract divisor depending on the sign of remainder from the previous step. This reduces complexity by avoiding explicit remainder restoration.  
+- Maintain a 9-bit remainder register (one extra bit for sign), and an 8-bit quotient register.  
+- Count steps with a 4-bit counter from 0 to 8.  
+- At start (IDLE), latch inputs, compute absolute values, initialize registers.  
+- During DIVIDE, perform non-restoring division iterations: based on MSB (sign bit) of remainder, add or subtract divisor_abs. Shift quotient bits accordingly.  
+- In DONE, correct quotient and remainder signs according to inputs and output the concatenated 16-bit result with remainder in upper 8 bits and quotient in lower 8 bits.  
+- Control res_valid to signal result readiness.  
+- Support synchronous reset and opn_valid handshake for new operations.
+
+This approach reduces complexity by using non-restoring division and a simple state machine, still providing signed/unsigned division with quotient and remainder output.

@@ -1,0 +1,10 @@
+Implement a true Radix-4 Booth multiplier for 8-bit inputs that processes two bits of the multiplier per cycle, reducing iteration count to 4 cycles.
+
+Key points:
+- The multiplier is scanned in overlapping groups of 3 bits (including a zero bit at LSB - a common Booth recoding technique).
+- At each cycle, 3 bits determine the Booth encoding, which selects the partial product (multiplicand multiplied by -2, -1, 0, 1, or 2).
+- The partial product is then shifted appropriately (by 2*cycle index bits) and accumulated into a 32-bit product register (to avoid overflow).
+- Inputs are sign-extended to 9 bits to safely handle two-bit multiples.
+- Use synchronous reset and clocked process.
+- After 4 cycles, the 16-bit product is valid and ready signal is asserted.
+- The design avoids iterative single-bit shifts, instead uses a recode of 3 multiplier bits per cycle, achieving true radix-4 booth behavior.

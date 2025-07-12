@@ -1,0 +1,14 @@
+To simplify the clock implementation while maintaining functionality:
+1. Use separate always blocks for each counter (ss, mm, hh) with clear reset conditions
+2. Simplify hour counting by using a 4-bit register (1-12) and separate BCD digits
+3. Use a simple toggle for PM indicator when hour rolls over from 11 to 12
+4. Reset all counters synchronously with highest priority
+5. Only update counters when enabled (ena)
+6. Use direct BCD counting for seconds and minutes
+7. Simplify hour output by pre-computing BCD values in registers
+
+Key optimizations:
+- Reduced register sizes where possible
+- Eliminated unnecessary bit in ss and mm outputs
+- Simplified hour BCD conversion
+- Clear state transitions for all counters

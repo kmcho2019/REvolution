@@ -1,0 +1,16 @@
+I will implement the Moore FSM using a more explicit and traditional approach with a combinational always block containing a case statement for next state logic. This approach improves readability and maintainability by clearly mapping each state and input combination to the next state.
+
+For state encoding, I use localparam with 2-bit encoding, but will adopt one-hot style signals internally by decoding each state into individual one-hot wires, facilitating output logic without equality comparisons.
+
+The output will be registered, matching Moore FSM behavior, and assigned inside the sequential always block synchronized with clock and reset. This ensures the output changes only on clock edges, potentially improving timing and reducing glitches.
+
+Reset remains synchronous and active-high, resetting state and output to initial conditions.
+
+Thus, the architecture uses:
+- localparam state encoding,
+- explicit case statement for next state combinational logic,
+- registered output updated in sequential logic,
+- synchronous active-high reset,
+- one-hot decoded internal signals for output assignment.
+
+This design trades off a bit more code verbosity for clear state transition definition, glitch-free output transitions, and easy extendibility for larger FSMs.

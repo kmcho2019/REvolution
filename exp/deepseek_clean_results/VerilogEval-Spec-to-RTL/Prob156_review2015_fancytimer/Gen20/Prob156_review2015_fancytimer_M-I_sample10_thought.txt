@@ -1,0 +1,21 @@
+The key issues in the original solution stem from incorrect cycle counting and state timing. Here's my improved approach:
+
+1. **Precise Cycle Counting**:
+   - Implement exact (delay+1)*1000 cycles by:
+     - Using a 14-bit counter (since max cycles = 16*1000 = 16000)
+     - Pre-calculating total cycles when delay is captured
+     - Counting down from total cycles to zero
+
+2. **Simplified State Machine**:
+   - Merge S_CAPTURE into S_IDLE since we can detect pattern and capture delay in same state
+   - Use clearer state transitions with explicit cycle counting
+
+3. **Accurate Output Timing**:
+   - Calculate remaining "phases" (delay - elapsed_time/1000) for count output
+   - Ensure outputs change precisely at clock edges
+
+4. **Optimized Pattern Detection**:
+   - Keep parallel pattern matching but simplify bit counting
+   - Clear shift register after pattern detection to prevent false matches
+
+The improved version maintains parallel pattern detection while fixing the cycle counting accuracy and output timing issues.

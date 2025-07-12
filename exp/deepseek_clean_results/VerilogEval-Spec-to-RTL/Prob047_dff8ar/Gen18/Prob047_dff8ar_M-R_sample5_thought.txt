@@ -1,0 +1,12 @@
+Refactoring approach:
+1. Instead of using a separate submodule for the D flip-flop, implement the flip-flops directly in the TopModule using always blocks
+2. Use a vectorized approach for the 8-bit registers rather than individual bits
+3. Maintain the same functionality (positive edge-triggered with async reset)
+4. This approach reduces hierarchy levels which might help with synthesis optimization
+5. The implementation will be more compact while preserving all original specifications
+
+Key changes:
+- Eliminate the DFF_AR submodule
+- Use a single always block for all 8 flip-flops
+- Keep the same reset behavior (active high async reset to 0)
+- Maintain positive edge triggering

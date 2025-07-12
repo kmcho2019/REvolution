@@ -1,0 +1,16 @@
+The original ROM implementation is functionally correct but has opportunities for PPA optimization. My improvement strategy focuses on:
+
+1. **Area Reduction**: 
+   - Replace the 256x16 memory array with a case statement for the initialized locations (0-3)
+   - Default all other addresses to 0 directly in the combinational logic
+   - This eliminates the need for the full memory array and initialization loop
+
+2. **Power Optimization**:
+   - The case statement approach reduces switching activity since only the active address needs evaluation
+   - No unnecessary memory cells are instantiated
+
+3. **Performance Maintainance**:
+   - Keep the combinational always block for zero-cycle read latency
+   - The case statement provides a direct mapping without additional logic
+
+This approach is particularly effective since only 4 locations need specific values, making the case statement more area-efficient than a full memory array.

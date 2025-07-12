@@ -1,0 +1,8 @@
+Improve the design by using a single always block for synchronous logic with a straightforward approach: 
+- Shift in the serial bit into the MSB of an 8-bit shift register when din_valid is high.
+- Increment a 4-bit counter to track the number of bits received.
+- When 8 bits are collected (cnt == 7), latch the shift register content to the output and assert dout_valid for exactly one clock cycle.
+- Use non-blocking assignments and synchronous reset.
+- This avoids reading shift_reg in the same cycle it is updated, ensuring data consistency.
+- dout_valid is asserted only for one cycle when output is valid, then cleared.
+This approach simplifies timing, avoids race conditions and ensures reliable, clean serial-to-parallel conversion with MSB-first placement.

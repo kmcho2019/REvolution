@@ -1,0 +1,13 @@
+Both examples correctly implement the same functional behavior: output q depends on c selecting among inputs b, e, a, d for c=0..3, and outputs 4'hF otherwise. The logic is combinational with a case statement.
+
+Fusion strategy:
+- Keep the clear, readable case structure for ease of understanding and maintainability.
+- Use non-blocking assignments inside an always_comb (or always @(*) with blocking assignments) to explicitly indicate combinational logic.
+- Use a reg output since q is assigned inside an always block.
+- Explicitly specify '4'h' constants for clarity.
+- Use a smaller c selector range check to minimize unnecessary mux decoding, i.e., if c < 4 use selected input, else 4'hF. This improves synthesis interpretation and could help synthesis tools infer smaller multiplexers.
+- Avoid potential unintended latches by covering all cases in the case statement with a default.
+- Add a comment for clarity.
+- Maintain minimal logic for optimal area, power, and timing.
+
+This combines the clarity and simplicity of Example 1 with the structural soundness and explicit default from Example 2, plus a small enhancement by checking c<4 before case selection.

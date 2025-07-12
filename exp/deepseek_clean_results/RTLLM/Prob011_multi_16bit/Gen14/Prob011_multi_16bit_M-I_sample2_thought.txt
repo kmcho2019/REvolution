@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the accumulator to break the critical path
+   - Simplify done flag generation using a registered version
+   - Reduce counter width to exactly 5 bits (0-17 states)
+
+2. Power Optimization:
+   - Add clock gating for shift register when not in use
+   - Implement operand isolation for accumulator when not adding
+   - Use bit masking for partial product accumulation
+
+3. Area Optimization:
+   - Reduce shifted_bin register to 16 bits with dynamic zero-padding
+   - Share resources between shift and add operations
+   - Optimize control logic to minimize gate count
+
+Key Changes:
+- Two-stage pipelined accumulator with registered intermediate result
+- Clock gating for shift operations
+- Optimized 16-bit shift register with dynamic zero extension
+- Simplified control logic with early termination detection

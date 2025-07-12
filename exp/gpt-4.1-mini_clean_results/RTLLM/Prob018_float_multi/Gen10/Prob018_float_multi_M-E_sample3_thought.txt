@@ -1,0 +1,19 @@
+I will design a fully combinational 32-bit IEEE-754 single-precision floating-point multiplier that completes the entire multiplication in one clock cycle (no multi-cycle FSM). To manage complexity and timing, the design modularizes each step combinationally:
+
+- Extract sign, exponent, mantissa (with implicit bit) directly from inputs.
+- Detect special cases (zero, infinity, NaN) using combinational logic.
+- Compute sign as XOR of inputs.
+- Compute exponent sum with bias correction and handle exponent overflow/underflow.
+- Multiply mantissas (24x24 bits) combinationally producing 48 bits.
+- Normalize the mantissa by detecting the highest bit and adjusting exponent accordingly.
+- Implement IEEE-754 round-to-nearest-even rounding using guard, round, sticky bits.
+- Handle special cases to output NaN/Inf/Zero correctly.
+- Output the final 32-bit IEEE-754 floating-point number immediately.
+
+This single-cycle, combinational approach emphasizes simplicity in control by eliminating FSM and counters, making it suitable for a combinational multiplier stage or short-path combinational block in a pipelined processor.
+
+This design sacrifices latency (must meet timing on a single cycle) but gains simplicity and directness, ideal for high-frequency multipliers with pipelining at higher levels.
+
+All intermediate signals are wires for purely combinational processing, and the clock and reset are used only for registering the output. The output register ensures synchronous output availability.
+
+This approach enables easy insertion into synchronous designs with guaranteed correct IEEE-754 multiplication results in one cycle, relying on synthesis tools to optimize combinational delay.

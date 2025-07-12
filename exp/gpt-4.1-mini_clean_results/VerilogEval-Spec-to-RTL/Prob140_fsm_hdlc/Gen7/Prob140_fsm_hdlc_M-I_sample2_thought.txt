@@ -1,0 +1,25 @@
+The key issue is that `disc` and `flag` outputs depend on detecting specific input-driven transitions, which conflicts with a strict Moore FSM where outputs depend solely on the current state. The previous design attempted to fix this with extra registered signals (`disc_r` and `flag_r`) that detect transitions from S5 and S6 states with input=0, but this leads to a one-cycle misalignment or glitches.
+
+To fix this perfectly, I will redesign the FSM to encode the count of consecutive ones in a 3-bit binary register instead of one-hot encoding, which simplifies the design and reduces flip-flops.
+
+The FSM states correspond to counts 0 through 7+ (error state). We can store the count in a binary counter with special logic for detection.
+
+Outputs `disc`, `flag`, and `err` will be generated synchronously based solely on the current state (count) and previous input, ensuring a Moore FSM behavior with outputs stable during the clock cycle.
+
+To achieve exact one-cycle delayed assertion of `disc` and `flag` after detecting a zero following five or six ones respectively, I will register the input and generate outputs based on the previous cycle's count and input.
+
+Specifically:
+
+- Maintain a 3-bit `count_ones` register representing the current count of consecutive ones (0 to 7, where 7 means 7 or more).
+- Register the input as `in_d` to align previous input.
+- On each clock edge, update `count_ones`:
+  - If reset, count_ones=0
+  - Else if input=1 and count_ones <7, increment count_ones (clamp at 7)
+  - Else if input=0, count_ones=0
+- Generate outputs based on previous cycle's count and previous input:
+  - `disc` is asserted when previous count was 5 and current input is 0 (bit stuffing zero detected)
+  - `flag` is asserted when previous count was 6 and current input is 0 (flag sequence detected)
+  - `err` is asserted when current count_ones is 7 (7 or more ones)
+- This guarantees outputs are stable and asserted for exactly one clock cycle after detecting each event, satisfying the problem timing.
+- This is a Moore FSM because outputs depend only on the registered state (count_ones) and registered input (`in_d`) from previous cycle, both synchronous signals.
+- This implementation reduces flip-flop count (4 flip-flops: 3 for count, 1 for input), simple combinational logic, and meets all timing and output assertions precisely.

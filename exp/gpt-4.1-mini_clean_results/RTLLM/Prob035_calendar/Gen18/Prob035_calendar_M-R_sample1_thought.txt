@@ -1,0 +1,11 @@
+Refactor the calendar module by splitting the combinational next-state logic and the sequential register updates into two separate always blocks. 
+
+1. The first always block (combinational) calculates the next values for seconds, minutes, and hours based on current state.
+2. The second always block (sequential) updates the registers on posedge CLK or async posedge RST.
+3. This separation improves timing by shortening the combinational path inside the sequential block.
+4. Use non-blocking assignments for all sequential logic.
+5. Keep the same counter sizes and rollover logic.
+6. Maintain conditional updates only in the sequential block to reduce toggling.
+7. This style aligns with common RTL coding practices enhancing readability and synthesis flow.
+
+This restructuring achieves the same function but with improved modularity and potential timing benefits.

@@ -1,0 +1,13 @@
+The problem states the flip-flops are initially reset to zero before operation but does not specify a reset input port. To comply, we'll not add any reset input. Instead, we'll rely on Verilog's initial block to set the registers to zero at simulation start. This is a common approach for FPGA synthesis to guarantee known initial flip-flop states (using the FPGA's power-up initialization feature). For ASICs, initial blocks are typically ignored, but as per the problem statement, we can assume this initialization suffices.
+
+The logic connections remain exactly as described:
+
+- XOR input: x and the flip-flop's own output q_xor
+- AND input: x and complement of q_and
+- OR input: x and complement of q_or
+
+Each feeds into the D input of corresponding flip-flops, clocked on the positive edge.
+
+The output z is the NOR of q_xor, q_and, and q_or.
+
+This implementation avoids extra reset inputs and uses the initial block for clarity and adherence to the problem's assumption.

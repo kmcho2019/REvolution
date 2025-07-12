@@ -1,0 +1,9 @@
+Simplify the pipelined 8-bit unsigned multiplier by splitting the addition of partial products into two pipeline stages:
+1. On input enable, register inputs and enable.
+2. Generate partial products for each multiplier bit and add them pairwise into four sums, register these sums.
+3. On next clock cycle, add these four sums pairwise into two sums, register again.
+4. Finally, add the last two sums on a third stage to produce the 16-bit product output and register it.
+
+Use a 3-bit pipeline register for enable signals to track the valid data flow. Output enable is the MSB of this register.
+
+This staged addition pipeline reduces combinational logic depth per cycle, improving timing and lowering complexity compared to a single-cycle summation of all partial products.

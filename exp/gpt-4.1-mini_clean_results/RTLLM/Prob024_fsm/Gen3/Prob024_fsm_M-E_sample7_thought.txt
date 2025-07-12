@@ -1,0 +1,8 @@
+Use a Mealy FSM encoded with explicit states for partial matching progress.  
+Each state represents how many characters of the sequence "1 0 0 1 1" have been matched.  
+On each positive clock edge (with synchronous reset), the state transitions are determined based on the current state and the input bit IN.  
+The MATCH output is asserted combinationally when the FSM is in the state that expects the last '1' of the sequence, and the input IN is '1', indicating the sequence has been matched.  
+To allow overlapping detection, the FSM transitions reuse states for partial matches when possible, e.g. transitioning back to intermediate states instead of the initial state, so sequences like 100110011 yield two MATCH pulses.  
+This design uses a synchronous reset only and a binary-encoded state machine with well-defined transitions, minimizing complexity.  
+The MATCH output is purely combinational (Mealy type) to assert immediately on the matching input.  
+This approach ensures correct continuous and overlapping detection of the given 5-bit pattern.

@@ -1,0 +1,5 @@
+The perpetual calendar module needs to track time in hours, minutes, and seconds with proper rollover behavior. We'll implement this using three separate always blocks for each time unit (seconds, minutes, hours) that trigger on clock edges. Each block will:
+1. Reset to 0 when RST is active
+2. Increment when appropriate (seconds always increment, minutes when seconds roll over, hours when both minutes and seconds roll over)
+3. Roll over to 0 when reaching their maximum value (59 for seconds/minutes, 23 for hours)
+The outputs are 6-bit to comfortably hold values up to 59 (needs 6 bits) and 23 (needs 5 bits).

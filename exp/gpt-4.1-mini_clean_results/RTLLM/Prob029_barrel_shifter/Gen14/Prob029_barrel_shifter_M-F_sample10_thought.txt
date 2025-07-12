@@ -1,0 +1,11 @@
+To fix the design and comply with the specification:
+
+1. Implement the shifts in the correct order: apply the 4-bit rotation controlled by `ctrl[2]` first, followed by the 2-bit rotation controlled by `ctrl[1]`, and then the 1-bit rotation controlled by `ctrl[0]`. This preserves the intended priority and results in correct final output.
+
+2. Use the `mux2X1` submodule as specified for the 2-to-1 multiplexers at each bit. This aligns with the problem statement and ensures structural clarity.
+
+3. Each stage uses eight `mux2X1` instances selecting between the unshifted and shifted bits based on the control bit.
+
+4. Perform modulo-8 indexing using `(i + shift_amount) & 3'b111` to wrap around the bits for rotation.
+
+The design uses three sequential stages feeding outputs into the next, producing the final rotated output correctly while meeting the problem constraints.

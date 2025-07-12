@@ -1,0 +1,7 @@
+To optimize for better performance, power, and area (PPA), I will apply one-hot encoding for the state machine, which can improve timing by reducing combinational logic depth at the cost of a slight area increase. Since there are only six states, the one-hot encoding is manageable. This often reduces glitches and helps synthesis tools optimize register usage and transitions.
+
+To save power, I will implement clock enable logic to only update the state register when the next state differs from the current state, reducing unnecessary toggling. The output logic remains combinational and simple.
+
+Reset remains synchronous as before. The next state logic will be simplified by encoding states as one-hot and using combinational logic that directly generates the next state bits.
+
+This approach can reduce critical path delays and power by reducing unnecessary clock toggles, improving the overall PPA metrics compared to the binary encoded FSM.

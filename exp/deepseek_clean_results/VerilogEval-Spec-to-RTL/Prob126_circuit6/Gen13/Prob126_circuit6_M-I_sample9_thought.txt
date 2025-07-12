@@ -1,0 +1,11 @@
+The current implementation works correctly but can be optimized for better PPA metrics. Here's the improvement strategy:
+
+1. **Timing Optimization**: Replace the ternary operator chain with a case statement, which typically synthesizes to a more balanced multiplexer structure, reducing critical path delay.
+
+2. **Power Optimization**: The case statement will only evaluate one condition per input change, reducing unnecessary switching activity compared to the ternary chain.
+
+3. **Area Optimization**: While the current area is good, a case statement might allow the synthesis tool to better optimize the implementation, potentially using a LUT structure.
+
+4. **Maintain Combinational Behavior**: Ensure the solution remains purely combinational with no latches or flip-flops.
+
+The improved version will use a case statement inside an always_comb block, which is the modern SystemVerilog way to specify combinational logic.

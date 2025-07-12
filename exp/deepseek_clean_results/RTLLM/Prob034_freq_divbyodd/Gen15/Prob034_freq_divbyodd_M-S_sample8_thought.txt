@@ -1,0 +1,13 @@
+Simplified approach for odd frequency division with 50% duty cycle:
+1. Use single counter for both edges (reduces redundant logic)
+2. Generate two phase-shifted clocks from same counter:
+   - pos_clk toggles at midpoint on rising edge
+   - neg_clk toggles at midpoint on falling edge
+3. Combine clocks with OR operation as specified
+4. Reset synchronously initializes counter and clocks
+5. Maintain same toggle point calculation (NUM_DIV-1)/2
+6. Key simplifications:
+   - Single counter instead of dual counters
+   - Clearer clock generation logic
+   - Maintains 50% duty cycle requirement
+   - Follows problem spec exactly (OR combination)

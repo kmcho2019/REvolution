@@ -1,0 +1,20 @@
+To correctly implement the next-state logic for y[1], we need to consider all state transitions where y[1] changes or remains the same. The key insight is that y[1] is the middle bit of the state encoding, and we need to determine when it should be 1 in the next state.
+
+1. y[1] becomes 1 when:
+   - From B (001) to C (010) on w=0
+   - From C (010) to D (011) on w=1
+   - From E (100) to D (011) on w=1
+   - From F (101) to C (010) on w=0
+
+2. y[1] remains 1 when:
+   - In state C (010) staying in C (but transitions to E/D)
+   - In state D (011) staying in D (but transitions to F/A)
+   - In state E (100) staying in E on w=0
+   - In state F (101) staying in F (but transitions to C/D)
+
+3. The minimal logic for y1_next should be:
+   - Set to 1 when:
+     (B & ~w) | (C & w) | (E & w) | (F & ~w)
+   - Otherwise maintain current value (but since this is just combinational logic for the next state, we only need to specify when it's 1)
+
+This gives us a more complete implementation that covers all transitions affecting y[1].

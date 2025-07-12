@@ -1,0 +1,10 @@
+Fuse the balanced borrow lookahead logic from Example 1 with the simplicity and clarity of the equality check from Example 2, to optimize both performance and code clarity.
+
+- Use borrow generate (g) and propagate (p) signals as in Example 1 to create a balanced borrow lookahead for fast determination of A_less.
+- This approach reduces critical path delay versus a ripple borrow chain.
+- Use the simpler equality check from Example 2: an efficient bitwise XNOR with AND reduction for equal_bits, which is concise and clear.
+- Outputs remain mutually exclusive by logic:
+  A_less = borrow_out (from balanced lookahead)
+  A_equal = equal_bits (bitwise XNOR & reduction)
+  A_greater = ~(A_less | A_equal)
+- This fusion combines the borrow lookahead's speed with the simple and minimal equality check, improving overall PPA.

@@ -1,0 +1,11 @@
+The original next-state logic expression for y[1] can be simplified by factoring common terms to reduce gate count and inversions. Noting that (~y1 & y0) is only true when y1=0 and y0=1, and the other term involves w, (y1 | y2), and ~y0. By carefully factoring, the expression can be rewritten as:
+
+Y1 = (~y[1] & y[0]) | (w & (y[1] | y[2]) & ~y[0])
+
+However, since (~y[1] & y[0]) and (w & (y[1] | y[2]) & ~y[0]) share no common factors that simplify further, and inversions are minimal, this expression is already near minimal.
+
+To reduce complexity further, one can implement Y1 directly by evaluating the conditions from the FSM transition table as a simple combinational expression, minimizing intermediate signals and inversions.
+
+Hence, the best simplification is to keep the direct assign statement without extra wires or unnecessary logic, which is already minimal.
+
+This solution simply returns the original expression as a direct assign, which is the simplest and most efficient implementation.

@@ -1,0 +1,8 @@
+To improve the provided dual-port RAM design for better power and performance, I will: 
+1. Keep the synchronous reset for memory initialization to ensure ASIC compatibility, but optimize the reset loop by unrolling it for smaller depth to potentially reduce reset path delay.
+2. Change read operation to a registered read to reduce output toggling and switch power, outputting the last valid data when read_en is low (better power and glitch reduction).
+3. Keep write operation synchronous.
+4. Use address widths based exactly on DEPTH for clarity and synthesis efficiency.
+5. Avoid gating combinational output by instead gating loading into read_data register, which also aids timing.
+6. Keep the RAM array size as [DEPTH-1:0], as only DEPTH locations are required (8 locations).
+Overall, these optimizations reduce switching power on the output, maintain synchronous reset for initialization, and can improve timing by registering the read data.

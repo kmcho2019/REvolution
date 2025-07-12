@@ -1,0 +1,7 @@
+Implement the FSM with one-hot encoding for states to simplify combinational logic and improve speed at the cost of slightly more flip-flops. Use a shift-right approach since data is LSB-first: at each data bit, shift the incoming bit into the MSB of the register while shifting the register right, effectively building the byte from LSB upwards.
+
+Add a dedicated enable signal to only update bit count and shift register during the DATA state to reduce toggling. Hold done high for one cycle synchronously when a valid stop bit is detected. On framing error (stop bit not 1), stay in a WAIT_STOP state until the line goes back to 1, then restart FSM in IDLE.
+
+Use a synchronous reset that resets all state bits and registers. The done output pulses for exactly one clock cycle on successful reception. This approach simplifies state decoding and can enhance timing. It clearly separates each phase and uses the shift-right register to naturally align with LSB-first serial input.
+
+This design offers an alternative state machine style and a slightly different data shifting method than the example, enhancing clarity and potentially synthesis friendliness.

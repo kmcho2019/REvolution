@@ -1,0 +1,11 @@
+To simplify the priority encoder while maintaining functionality, we can use a casez statement which is more natural for priority encoding in Verilog. The approach is:
+
+1. Use casez to match patterns with 'don't care' bits (z)
+2. List cases from highest priority (LSB) to lowest priority (MSB)
+3. Default to 0 when no bits are set
+4. This approach is:
+   - More readable and maintainable
+   - Likely to synthesize to efficient logic
+   - Naturally expresses the priority encoding behavior
+   - Has better PPA characteristics than nested ternary operators
+   - Easier to modify if requirements change

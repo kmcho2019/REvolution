@@ -1,0 +1,13 @@
+To optimize the existing design for better PPA:
+
+1. Comparator optimization: Instead of comparing count == freq, compare count == freq_minus_one, where freq_minus_one = freq - 1. This reduces the comparator complexity and critical path since counting to freq-1 and toggling next cycle is a common pattern.
+
+2. Register freq_minus_one to avoid combinational subtraction on every clock edge, reducing the critical path delay.
+
+3. Introduce synchronous active-high reset for broader compatibility.
+
+4. Further power savings by gating counting logic only when freq != 0 and count < freq_minus_one, to avoid toggling unnecessarily.
+
+5. Maintain minimal area with only one 8-bit counter, one 8-bit register for freq_minus_one, and one flip-flop for wave_out.
+
+These changes should improve timing by shortening the critical path in toggle condition checking and save some power by avoiding toggling when freq=0. Overall, the design becomes slightly more efficient without extra complexity.

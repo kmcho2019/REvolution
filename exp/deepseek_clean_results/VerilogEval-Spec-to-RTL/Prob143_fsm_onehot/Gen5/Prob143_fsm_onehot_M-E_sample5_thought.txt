@@ -1,0 +1,11 @@
+Here's a novel approach using a priority encoder concept for the state transitions:
+
+1. Instead of treating each state independently, we'll implement a priority-based transition system where higher-numbered states have priority in determining the next state when multiple states are active.
+
+2. The output logic will be modified to use a thermometer-like encoding for states S7-S9, where higher states override lower ones in output determination.
+
+3. We'll use a hierarchical structure where we first determine if we're in any of the "special" states (S7-S9) that affect outputs, then handle the regular states.
+
+4. For next_state logic, we'll implement a cascading priority scheme where the highest active state determines the transition behavior.
+
+This approach should be more efficient when multiple states are active simultaneously, as it naturally handles priority without requiring large OR trees.

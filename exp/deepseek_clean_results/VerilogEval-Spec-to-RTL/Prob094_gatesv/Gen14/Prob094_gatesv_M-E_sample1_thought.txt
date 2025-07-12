@@ -1,0 +1,18 @@
+Here's a novel approach using hierarchical bit-slice modules for each output calculation:
+
+1. Instead of using vector operations, we'll create individual bit-slice modules for each output type:
+   - BothSlice: Checks if current bit and left neighbor are both 1
+   - AnySlice: Checks if current bit or right neighbor is 1
+   - DiffSlice: Checks if current bit differs from left neighbor (with wrap-around)
+
+2. Benefits of this approach:
+   - Modular design allows for easier debugging and verification
+   - Each bit-slice can be optimized independently
+   - Clear separation of concerns for each output type
+   - Potential for reuse in larger designs
+
+3. Implementation details:
+   - Instantiate 4 of each slice type (one per bit position)
+   - Handle don't-care bits by not instantiating unnecessary slices
+   - Use generate blocks for clean parameterization
+   - Wrap-around logic is handled within the DiffSlice module

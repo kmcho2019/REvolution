@@ -1,0 +1,9 @@
+To implement the Lemmings behavior, we can design a finite state machine (FSM) that uses a hierarchical approach. The top-level FSM can manage the overall state of the Lemming (walking, falling, digging, or splattered), while separate sub-controllers handle the details of each state. This approach allows for a cleaner and more modular implementation.
+
+We can define four main states: WALKING, FALLING, DIGGING, and SPLATTERED. Each state can have its own set of sub-states or internal logic to handle the specific behavior required. For example, the WALKING state can have sub-states for walking left and right, and the FALLING state can have a counter to track the number of clock cycles spent falling.
+
+To handle the direction of the Lemming, we can use a separate direction controller that updates the direction based on the current state and input signals (bump_left, bump_right, dig, and ground).
+
+The splattering behavior can be handled by a separate module that keeps track of the fall counter and triggers the SPLATTERED state when the counter exceeds the threshold.
+
+This hierarchical approach allows for a more organized and maintainable code, making it easier to add or modify features in the future.

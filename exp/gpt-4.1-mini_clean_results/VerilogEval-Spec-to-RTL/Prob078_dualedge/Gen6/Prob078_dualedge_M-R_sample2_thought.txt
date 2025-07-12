@@ -1,0 +1,9 @@
+To refactor the design while keeping the same functional behavior, I will replace the parameterized EdgeFF module with two distinct modules: one positive-edge-triggered D flip-flop and one negative-edge-triggered D flip-flop. Both modules will use always blocks with appropriate sensitivity lists for clarity.
+
+Instead of a continuous assignment mux controlled by the clock level, I will implement a combinational always block to multiplex the two sampled outputs. This approach still avoids latches by covering all cases and maintains synthesizability.
+
+This refactor improves readability by clearly separating positive and negative edge FF modules and moves the output mux logic into an always @* block, which some might find easier to debug and understand. The main functional structure remains the same, ensuring legal FPGA synthesis without dual-edge FF primitives.
+
+No inverted clocks are generated; the mux is implemented with a case on clk level, and non-blocking assignments are used inside clocked blocks, blocking assignment in combinational blocks.
+
+This offers a clean, modular design variation with the same dual-edge triggered behavior.

@@ -1,0 +1,20 @@
+To optimize the 8-bit multiplier for better Power, Performance, and Area (PPA), I'll implement the following improvements:
+
+1. **Booth Encoding**: Reduce the number of partial products from 8 to 4 by using Radix-4 Booth encoding, which will:
+   - Decrease the number of additions required
+   - Reduce power consumption
+   - Improve timing by shortening the critical path
+
+2. **Carry-Save Adder (CSA) Structure**: 
+   - Replace the simple adder tree with a CSA structure to reduce carry propagation delays
+   - Maintain parallel addition capability while improving timing
+
+3. **Optimized Partial Product Generation**:
+   - Use multiplexers for Booth encoding outputs (-A, 0, +A, +2A)
+   - Implement sign extension properly for negative multiples
+
+4. **Final Addition**:
+   - Use a fast carry-propagate adder (CPA) for the final sum
+   - Keep the output width at 16 bits to handle maximum product
+
+This approach should reduce area (fewer adders), improve timing (shorter critical path), and lower power (fewer operations).

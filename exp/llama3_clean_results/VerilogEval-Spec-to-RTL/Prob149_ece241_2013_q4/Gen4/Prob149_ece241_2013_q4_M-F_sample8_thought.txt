@@ -1,0 +1,7 @@
+To correct the existing design, we need to re-evaluate the logic for the nominal flow rate signals (`fr2`, `fr1`, `fr0`) and the Supplemental flow valve signal (`dfr`). We can achieve this by explicitly considering all possible combinations of the sensor inputs and their changes. 
+
+For the nominal flow rate signals, we should directly assert `fr2`, `fr1`, and `fr0` based on the current sensor state. When the water level is below `s[0]`, all three signals should be asserted. When the water level is between `s[1]` and `s[0]`, `fr1` and `fr0` should be asserted. When the water level is between `s[2]` and `s[1]`, only `fr0` should be asserted. 
+
+For the `dfr` signal, we need to compare the current sensor state with the previous state. If the current state indicates a higher water level than the previous state, `dfr` should be asserted to open the Supplemental flow valve.
+
+We will use a more systematic approach to encode these conditions in the Verilog code, ensuring that all possible scenarios are considered and the correct flow rates are applied based on the sensor inputs and their changes.

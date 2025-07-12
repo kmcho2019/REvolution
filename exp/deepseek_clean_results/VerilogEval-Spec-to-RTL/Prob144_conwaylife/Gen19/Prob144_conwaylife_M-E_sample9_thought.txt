@@ -1,0 +1,21 @@
+Novel Architecture: Parallel Processing with Neighbor State Caching
+1. Neighbor State Caching:
+   - Pre-compute and store neighbor states in a circular buffer
+   - Eliminates redundant neighbor index calculations each cycle
+   - Reduces wire routing complexity by localizing connections
+
+2. Parallel Processing:
+   - Divide the grid into 4x4 blocks (16 blocks total)
+   - Process each block in parallel with dedicated logic
+   - Each block maintains its own neighbor state cache
+
+3. Pipelined Update:
+   - Two-stage pipeline: neighbor state collection and rule application
+   - Overlaps computation for better timing
+   - Uses registered intermediate results
+
+Key Innovations:
+- Circular neighbor state buffers reduce computation overhead
+- Block-based processing enables localized routing
+- Pipelined architecture improves clock frequency
+- Shared neighbor state between adjacent blocks

@@ -1,0 +1,32 @@
+To improve correctness and meet the problem's requirement for minimal SOP and POS forms, we must derive the simplified Boolean expressions for out_sop and out_pos from the given truth table.
+
+Inputs a,b,c,d represent a 4-bit number with 'a' as MSB and 'd' as LSB.
+
+Outputs:
+- out_sop = 1 for inputs 2(0010), 7(0111), 15(1111)
+- out_sop = 0 for 0,1,4,5,6,9,10,13,14
+- Inputs 3,8,11,12 do not occur (don't-cares)
+
+We construct a Karnaugh map considering 'a','b','c','d' and fill 1 for minterms 2,7,15; 0 for the zeros; and X for don't-cares.
+
+From K-map simplification with don't-cares, the minimal SOP for out_sop is:
+
+out_sop = (a & b & c & d) + (~a & b & c & d) + (~a & ~b & c & ~d)
+
+which translates to:
+
+out_sop = a b c d + ~a b c d + ~a ~b c ~d
+
+For minimal POS, expressing out_pos which is the complement of out_sop, we simplify the zeros with don't-cares considered, yielding:
+
+out_pos = (a + b + ~c + d) & (a + ~b + c + d) & (~a + ~b + c + ~d)
+
+Hence:
+
+- out_pos = (a + b + ~c + d) * (a + ~b + c + d) * (~a + ~b + c + ~d)
+
+This matches a minimal product-of-sums form.
+
+We'll implement these expressions directly with bitwise and logic operators, minimizing gate usage without numeric equality comparisons.
+
+This fully addresses the minimal form requirement and uses the don't-care condition to simplify the logic.

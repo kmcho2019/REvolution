@@ -1,0 +1,19 @@
+To implement the TopModule, we need to design a Moore-type finite state machine (FSM) that can recognize the specified sequences. The FSM should have states to track the number of consecutive 1s and handle the special cases for flag detection and error handling. We can break down the FSM into several states:
+
+- S0: Initial state, assuming the previous input was 0.
+- S1 to S5: States to count consecutive 1s.
+- S6: State to detect the flag pattern (01111110).
+- S7: State to detect 7 or more consecutive 1s, which is an error.
+
+We will use a 3-bit state register to represent these states (S0 to S7). The next state logic will be based on the current state and the input bit. The output logic will assert disc, flag, or err signals based on the current state.
+
+The FSM will transition between states as follows:
+- From S0, if the input is 1, move to S1; otherwise, stay in S0.
+- From S1 to S5, if the input is 1, move to the next state; if the input is 0, return to S0.
+- From S5, if the input is 1, move to S6; if the input is 0, move to S1 (because a zero is inserted after five consecutive 1s).
+- From S6, if the input is 0, assert the flag signal and move to S0 (since the flag sequence is detected); otherwise, move to S7.
+- From S7, if the input is 1, stay in S7 (continue counting consecutive 1s); if the input is 0, move to S1.
+
+The disc signal will be asserted when the FSM is in S5 and the input is 0 (indicating a zero inserted after five consecutive 1s). The flag signal will be asserted when the FSM is in S6 and the input is 0. The err signal will be asserted when the FSM is in S7.
+
+The reset signal will be used to reset the FSM to S0.

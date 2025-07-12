@@ -1,0 +1,42 @@
+Model the Lemming as a Moore FSM with the following states:
+
+- WALK_LEFT: walking left on ground
+- WALK_RIGHT: walking right on ground
+- FALL_LEFT: falling, original direction left
+- FALL_RIGHT: falling, original direction right
+- DIG_LEFT: digging, original direction left
+- DIG_RIGHT: digging, original direction right
+- SPLAT: splattered, no movement or outputs
+
+State transitions:
+- RESET: goto WALK_LEFT
+- From WALK_LEFT or WALK_RIGHT:
+  - if ground=0, fall in current direction (FALL_LEFT/RIGHT)
+  - else if dig=1, start digging in current direction (DIG_LEFT/RIGHT)
+  - else if bumped on either side, reverse walking direction
+- From FALL_LEFT/RIGHT:
+  - increment fall timer if ground=0
+  - if ground=1:
+    - if fall time >20, splat
+    - else walk original direction
+- From DIG_LEFT/RIGHT:
+  - if ground=0, fall in original direction (FALL_LEFT/RIGHT)
+  - else continue digging
+- From SPLAT:
+  - stay in SPLAT forever
+
+Outputs are based on states:
+- walk_left: WALK_LEFT active
+- walk_right: WALK_RIGHT active
+- aaah: FALL_LEFT or FALL_RIGHT active
+- digging: DIG_LEFT or DIG_RIGHT active
+
+Fall timer counts during falling; reset when falling ends or on reset.
+
+Handle asynchronous positive edge areset.
+
+Implement as Moore FSM: outputs from state only.
+
+No effect of bump or dig inputs during falling or digging states.
+
+Priority: fall > dig > bump direction change in walking states.

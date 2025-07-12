@@ -1,0 +1,27 @@
+The original solution correctly uses a priority encoder that outputs the index of the highest priority set bit starting from bit 3 down to bit 0, with output zero when input is zero. Given the feedback, the likely cause of mismatch is ambiguity or confusion about indexing convention or output value when no bits are set.
+
+To improve correctness and clarity, explicitly handle the zero input case by adding an output encoding that differentiates between "no bit set" and "bit zero set." Since the problem statement says "if none of the input bits are high, output zero," and bit 0 position is also zero, the output is ambiguous.
+
+To resolve this, we must confirm that output zero corresponds to either "no bit set" or "bit 0 set." The problem states the same output zero in both cases. This means the priority encoder cannot distinguish between "input is zero" and "bit 0 is set."
+
+This can be accepted if it matches the spec. However, the testbench might expect different behavior.
+
+To avoid ambiguity, the best solution is to explicitly prioritize bits from MSB to LSB as given, and return zero if none are set, accepting the ambiguity between zero input and bit 0 set.
+
+Given the feedback and the given priority order, the implementation using continuous assignment is correct and optimal.
+
+However, to ensure no simulation mismatches, I will implement the priority encoder in a combinational always block using `casez` with a default case to explicitly handle the zero input and all other combinations.
+
+This provides clearer and deterministic behavior.
+
+If the testbench expects something else, it should clarify.
+
+Therefore, the improvement strategy is:
+
+- Use an always_comb block to decode priority from MSB down to LSB.
+- Use a casez statement to explicitly handle each combination with priority.
+- Set pos accordingly.
+- For input zero, output zero.
+- Keep output width to 2 bits.
+
+This approach improves readability and might help match testbench expectations.

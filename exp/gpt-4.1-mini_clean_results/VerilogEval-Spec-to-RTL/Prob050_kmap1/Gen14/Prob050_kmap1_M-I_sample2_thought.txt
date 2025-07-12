@@ -1,0 +1,10 @@
+The given design implements out = a | b | c using a parameterized 3-input OR gate module. While modular and clear, this abstraction adds minimal overhead without benefits in such a simple circuit. The function is just a simple OR of three inputs.
+
+To improve power, performance, and area (PPA), I will:
+- Remove the Or3 module and directly implement the output as a continuous assignment using the bitwise OR operator.
+- This eliminates one level of module hierarchy and intermediate wires.
+- Continuous assignments synthesize optimally to a single OR gate or an equivalent minimal gate.
+- This also simplifies code and reduces code size without impacting functionality.
+- The simplification will reduce area slightly, marginally improve timing (one less instantiation), and slightly reduce power due to less fanout/load and no intermediate nets.
+
+This approach is the most straightforward, minimal, and optimal implementation for the given logic function.

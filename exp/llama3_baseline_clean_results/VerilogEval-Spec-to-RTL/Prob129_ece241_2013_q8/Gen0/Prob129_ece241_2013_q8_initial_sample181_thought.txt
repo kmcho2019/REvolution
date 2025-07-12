@@ -1,0 +1,10 @@
+To implement the Mealy-type finite state machine, we need to design a state transition diagram that recognizes the sequence "101" on the input signal x. We can break down the sequence recognition into three states: idle (initial state), seen_1, and seen_10. 
+
+- The idle state is the initial state where the FSM waits for the first '1' in the sequence.
+- Once a '1' is detected, the FSM transitions to the seen_1 state.
+- In the seen_1 state, if a '0' is detected, the FSM transitions to the seen_10 state.
+- In the seen_10 state, if a '1' is detected, the FSM asserts the output z to '1' and transitions back to the seen_1 state, because we want to recognize overlapping sequences.
+- For any other input, the FSM transitions to the appropriate next state based on the current state and input.
+- The FSM also needs to have an asynchronous reset that resets the state machine to the idle state when the aresetn signal is '0'.
+
+We will use a 2-bit variable to represent the current state (idle, seen_1, seen_10), and use a case statement to handle the state transitions and output logic.

@@ -1,0 +1,11 @@
+To refactor the original design while keeping the same core functionality, I will separate the combinational detection of falling edges from the synchronous state update of the output latch. 
+
+Instead of gating the falling edge detection with a `prev_valid` signal, I will initialize the `prev_in` register explicitly on reset to the current input `in`. This avoids missing any falling edges immediately after reset and simplifies the logic by removing the `prev_valid` flag.
+
+The design uses a registered `prev_in` to detect falling edges in combinational logic as `prev_in & ~in`. The result is then OR'ed with the latched `out` register on the clock edge. The synchronous reset clears the `out` register.
+
+This structure ensures that on the first clock cycle after reset, `prev_in` matches the input, so no false detection occurs. Subsequent cycles detect falling edges reliably.
+
+The code separates combinational detection (via a wire) from sequential state updates (inside the `always` block), improving clarity and potentially enabling easier optimization by synthesis tools.
+
+The design is fully synchronous with no clock gating, matching original requirements, but improves correctness and code clarity.

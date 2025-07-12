@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Replace the sequential read operation with a combinational one using 'assign' for potentially better timing
+2. Keep the write operation synchronous for data integrity
+3. Move the memory initialization to a separate initial block (synthesis-friendly)
+4. Simplify the read_data handling by removing the explicit clear when not enabled
+5. Use a generate block for memory initialization to make the code more scalable
+6. Maintain the same functionality while potentially improving timing and area
+
+Key changes:
+- Read operation becomes combinational (no clock dependency)
+- Memory initialization moved to initial block
+- Simplified read_data output handling
+- Maintain same reset behavior for write operations

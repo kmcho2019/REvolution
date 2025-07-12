@@ -1,0 +1,26 @@
+From the waveform, observe that 'state' holds the previous value of 'q' at the clock edge (typical flip-flop behavior). The output 'q' must be a combinational function of inputs 'a', 'b', and the current 'state'.
+
+By analyzing the waveform pattern:
+
+- When state=0, q is usually 0 except when b=1 or (a=1 and b=0).
+- When state=1, q tends to follow a or reset to 0 under some conditions.
+
+Another way is to view 'state' as the memory of last output, and 'q' as:
+
+q = (state & ~b & ~a) | (~state & b) | (a & ~b)
+
+This expression covers:
+
+- When state=1 and a=0, b=0, q=1 (holds)
+- When state=0 and b=1, q=1
+- When a=1 & b=0, q=1 regardless of state
+
+We then update the state at clock edge with q.
+
+Thus, the implementation uses:
+
+- A flip-flop to hold state updated by q on posedge clk.
+- Combinational logic for q as given above.
+- Output state directly from flip-flop.
+
+This matches the waveform characteristics where q depends on the current state and inputs, and state tracks q over time.

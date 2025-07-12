@@ -1,0 +1,4 @@
+Remove the separate combinational signals for next history and update enable by embedding the priority and update logic directly into the sequential always block.  
+This eliminates unnecessary intermediate registers and simplifies the design, while preserving the asynchronous reset and priority of misprediction rollback over prediction update.  
+On each clock edge, if areset is asserted, reset history to zero; else if train_mispredicted is asserted, load rollback history; else if predict_valid is asserted, shift in predict_taken; otherwise hold the current history.  
+This approach keeps the logic simple and synthesizable, minimizing code and registers without changing behavior.

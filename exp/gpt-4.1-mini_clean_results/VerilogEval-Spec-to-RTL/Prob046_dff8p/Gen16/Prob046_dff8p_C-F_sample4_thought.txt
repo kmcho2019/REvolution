@@ -1,0 +1,7 @@
+Fusion strategy:
+- Use a single always block triggered on the negative edge of clk for all bits, simplifying the sequential logic and avoiding generate loops.
+- Retain the synchronous active-high reset to 8'h34.
+- Instead of bitwise conditional update or a wide comparator for clock enable, implement a vector-level clock enable signal 'load' that is asserted if reset is active or the entire input vector 'd' differs from the current 'q'.
+- When 'load' is asserted, update the entire vector at once: this reduces complexity compared to bitwise conditional updates and avoids per-bit gating overhead.
+- This balances power savings (by avoiding unnecessary writes when d == q) with timing and area by keeping the logic simple and without per-bit comparison logic.
+- This design is clean, scalable, and synthesis-friendly, achieving good power efficiency without excessive comparator complexity.

@@ -1,0 +1,10 @@
+Based on the feedback, the original implementation is functionally correct but can be optimized for PPA (Power, Performance, Area). Here's the improved version:
+
+1. Maintain the same 3-state FSM logic (IDLE, GOT_0, GOT_01) for pulse detection
+2. Keep binary state encoding for area efficiency
+3. Add a WAIT state to reduce unnecessary transitions after pulse detection
+4. Optimize power by minimizing state transitions when not needed
+5. Keep output generation simple and glitch-free
+6. Maintain reset initialization and proper clocking
+
+The WAIT state helps reduce power by preventing the FSM from immediately starting a new detection cycle after a pulse is found, which is especially useful if the input has frequent transitions.

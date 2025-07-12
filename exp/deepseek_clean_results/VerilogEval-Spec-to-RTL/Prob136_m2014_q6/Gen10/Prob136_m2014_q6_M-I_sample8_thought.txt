@@ -1,0 +1,16 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. **State Encoding Optimization**: Switch to one-hot encoding which typically offers better performance for small state machines (6 states here) by reducing decoder logic. This trades slightly more flip-flops for faster state transitions.
+
+2. **Output Logic Simplification**: Since z is simply the MSB of the state, we'll maintain this direct mapping but optimize the state assignments to minimize transitions.
+
+3. **Next-State Logic Optimization**: 
+   - Group common transitions (like multiple states going to D when w=1)
+   - Use parallel case synthesis directive to help the tool optimize the logic
+   - Minimize logic depth by simplifying the case statement structure
+
+4. **Clock Gating**: Add simple clock gating when the state remains unchanged to reduce dynamic power.
+
+5. **Reset Optimization**: Keep synchronous reset but make it more area-efficient.
+
+The one-hot encoding will improve performance (reduce tns) while the optimized logic structure will help with both area and power.

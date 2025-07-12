@@ -1,0 +1,7 @@
+The state machine can be simplified by directly implementing the next-state logic and outputs based on the current state and inputs, without any intermediate hierarchical grouping. Since we're using one-hot encoding, each state transition and output can be expressed as simple AND-OR logic of the current state bits and inputs. This approach minimizes logic depth while maintaining clarity.
+
+Key simplifications:
+1. Directly compute next-state signals from current state and inputs
+2. Outputs are simply the current state bits (for done, counting) or OR of shifting states (for shift_ena)
+3. Remove intermediate wires that don't significantly reduce logic
+4. Keep the one-hot encoding benefits of simple state decoding

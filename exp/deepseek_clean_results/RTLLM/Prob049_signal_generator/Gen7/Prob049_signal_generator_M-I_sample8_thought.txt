@@ -1,0 +1,16 @@
+Improvement Strategy:
+1. Timing Optimization: The negative slack (-0.38ns) suggests the critical path is too long. We'll:
+   - Pipeline the direction change logic by adding a register stage
+   - Simplify the boundary detection logic by using single-bit comparisons
+2. Power Optimization: Reduce switching activity by:
+   - Only updating the wave register when needed
+   - Using clock gating for the direction register
+3. Area Optimization: Reduce logic complexity by:
+   - Sharing comparators between increment/decrement paths
+   - Using simpler arithmetic operations
+
+Key Changes:
+- Separate the direction change detection from the wave update
+- Use bitwise operations for boundary detection
+- Add a registered version of the direction signal
+- Optimize the arithmetic operations

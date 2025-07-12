@@ -1,0 +1,17 @@
+Revised solution addressing all feedback points:
+
+1. **Fall Counter Fix**: Made fall counter reset only when leaving fall state, ensuring accurate cycle counting. Splat condition now strictly checks when ground reappears after 20+ cycles.
+
+2. **Strict Priority Enforcement**: Restructured state transitions to explicitly follow fall > dig > bump priority:
+   - First check for falling condition (ground=0)
+   - Then check for dig command (only if not falling)
+   - Finally handle bumps (only if neither falling nor digging)
+
+3. **State Transition Cleanup**:
+   - Removed any bump influence during falling/digging states
+   - Ensured digging only starts from walking states with ground=1
+   - Made falling from digging immediate when ground=0
+
+4. **Output Logic Simplification**: Maintained pure combinatorial outputs but ensured they properly reflect all states including SPLAT.
+
+5. **Reset Consistency**: Guaranteed all transitions maintain proper direction after complex sequences by preserving direction in state encoding.

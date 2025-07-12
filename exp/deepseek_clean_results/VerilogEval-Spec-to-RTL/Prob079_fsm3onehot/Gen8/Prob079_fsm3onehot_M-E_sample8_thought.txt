@@ -1,0 +1,14 @@
+Here's a novel approach using a priority encoder concept for state transitions. Instead of treating each state bit independently, we'll use a priority-based selection where the current state determines which transition logic to activate. This creates a more hierarchical structure that might be more efficient in certain implementations.
+
+Key ideas:
+1. Use the current state as a selector for transition logic
+2. Implement a 4:1 multiplexer-like structure where each "input" is the appropriate next state based on current state
+3. The output is still simply state D (bit 3)
+
+For next_state:
+- When in state A (0001): next_state = in ? B : A
+- When in state B (0010): next_state = in ? B : C
+- When in state C (0100): next_state = in ? D : A
+- When in state D (1000): next_state = in ? B : C
+
+This approach might be more intuitive for some synthesis tools as it clearly separates the transition logic for each state.

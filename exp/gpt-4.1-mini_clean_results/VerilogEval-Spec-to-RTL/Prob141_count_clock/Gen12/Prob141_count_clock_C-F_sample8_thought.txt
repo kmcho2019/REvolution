@@ -1,0 +1,9 @@
+Combine the modular BCD counting approach of Example 1 with the internal binary counting and shift-add BCD conversion logic of Example 2 for better timing, power, and area trade-offs. Use binary counters internally for seconds, minutes, and hours for simple and fast counting with synchronous reset and enable priority on reset. Instead of complex nested if-else increments on BCD digits, maintain simple binary counters to reduce switching and combinational complexity during counting.
+
+Convert binary seconds and minutes to BCD using shift-add multiplication by 10 and subtraction for efficient, low-delay combinational logic, minimizing the longest combinational path compared to multiplication-based or chained if-else logic.
+
+For hours, maintain a binary counter with a rollover from 12 to 1 and toggle the PM indicator on 11 → 12 transition, converting hours to BCD similarly with simple conditional subtraction.
+
+Further improve timing and power by registering the BCD outputs on the clock edge, breaking the combinational path between the binary counters and the BCD outputs, reducing glitches and dynamic power due to glitches on outputs.
+
+This approach balances the clarity, modularity, and performance of Example 1 with the counting simplicity and conversion efficiency of Example 2, enabling good timing closure and maintainability without sacrificing correctness or readability.

@@ -1,0 +1,7 @@
+To optimize the BCD adder for better performance and area, we can simplify the correction condition logic. Instead of using a direct comparator (raw_sum > 9), we derive a minimal logic expression: a 5-bit sum is greater than 9 if either the carry-out bit (bit 4) is 1, or if the 4-bit sum is greater than 9 without carry. This is simplified to: correction_needed = raw_sum[4] | (raw_sum[3] & (raw_sum[2] | raw_sum[1])). This logic avoids a full 5-bit comparator and reduces gate count.
+
+Additionally, we can merge the correction addition (adding 6 when needed) into a single step by using a conditional adder approach and keep the module fully combinational. This slightly reduces area and critical path delay by minimizing comparison overhead.
+
+The output sum and carry-out remain the same: the lower 4 bits of the corrected sum and the fifth bit as carry-out.
+
+This approach maintains correctness while improving area and timing by simplifying the correction detection.

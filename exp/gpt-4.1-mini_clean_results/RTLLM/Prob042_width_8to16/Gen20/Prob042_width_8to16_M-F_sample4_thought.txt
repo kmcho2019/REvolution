@@ -1,0 +1,14 @@
+To meet the requirement that valid_out and data_out are generated one clock cycle *after* the second valid input arrives, introduce an intermediate register stage to pipeline the output.
+
+- Use a flag `has_data` to remember if the first valid 8-bit input has arrived.
+- On the first valid input, store the data in `data_lock` and set `has_data`.
+- On the second valid input (with `has_data` set), concatenate `data_lock` and current `data_in` into an intermediate register `data_next`.
+- Also, set a `valid_next` flag.
+- In the next clock cycle, output registers `data_out` and `valid_out` capture `data_next` and `valid_next`.
+- This delays output by one clock cycle after the second input, satisfying the problem.
+- When outputting the valid data, clear the `has_data` flag to prepare for the next pair.
+- Ensure reset clears all registers.
+- Default `valid_out` to 0 unless the output register is set, avoiding glitches.
+- All registers update on posedge clk or negedge rst_n asynchronously.
+
+This approach introduces a pipeline stage for the outputs, preventing combinational logic causing immediate updates of outputs upon the second valid input, thus fixing the post-synthesis functional failures.

@@ -1,0 +1,8 @@
+The design requires a 2-bit saturating counter with the following behavior:
+1. Asynchronous reset (areset) sets the counter to 2'b01 (weakly not-taken)
+2. On each clock edge:
+   - If train_valid is 1:
+     - Increment counter if train_taken is 1 (but don't exceed 3)
+     - Decrement counter if train_taken is 0 (but don't go below 0)
+   - Else maintain current counter value
+The counter should be implemented using sequential logic with positive edge triggering.

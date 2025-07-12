@@ -1,0 +1,9 @@
+To optimize the timer for better performance, power, and area (PPA), the main target is the decrement logic that currently uses a subtractor which can be relatively large and slow.
+
+Improvement strategy:
+- Replace the full subtractor (counter - 1) with a simpler ripple-borrow decrementer implemented in combinational logic. Decrementing by one can be done by scanning bits from LSB to MSB and flipping bits until the first '1' bit is found, which toggles less logic and can reduce delay.
+- Add clock gating to prevent updating the counter when it is zero (and load=0) so the register does not toggle unnecessarily, reducing power.
+- Keep the design simple and single-clocked with a single 10-bit register (single D flip-flop array).
+- Maintain the existing clean separation between next-state logic and sequential logic for clarity and synthesis friendliness.
+
+This results in reduced combinational path delay on the decrement operation and lower switching activity on the counter register when counting has finished, improving both timing and power efficiency with minimal area increase.

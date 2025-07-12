@@ -1,0 +1,10 @@
+After analyzing both examples and their PPA metrics, I propose a fused solution that:
+1. Maintains the core insight of using 'c' as a selector between two cases (from Example 2)
+2. Simplifies the logic expressions further by better exploiting don't-care conditions (from Example 1 feedback)
+3. Merges the logic into a single expression without intermediate wires to reduce area
+4. Optimizes the OR/AND operations to minimize switching power
+5. Specifically:
+   - For c=1: Output is 1 unless (a=0 AND b=1), which can be expressed as (a OR ~b)
+   - For c=0: Output is 1 when (a=1 AND d=0), but since d is don't-care, we can simplify to just (a) when c=0
+   - This reduces the logic to: out = c ? (a | ~b) : a
+   - The removal of 'd' dependency in c=0 case simplifies logic while still satisfying all required outputs

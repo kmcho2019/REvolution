@@ -1,0 +1,10 @@
+To optimize the FSM for better PPA:
+
+- Move the pattern detection out of the FSM states into a small shift register plus comparator logic. This reduces the FSM states to only four: IDLE, SHIFT, COUNT, and DONE.
+- Use one-hot encoding for the FSM states to simplify next-state logic and minimize combinational complexity.
+- Implement shift_ena assertion for exactly 4 cycles using a 2-bit counter similar to before.
+- Since pattern detection is separate, the FSM just waits for a pattern_detected signal to start shifting, which reduces state transitions and glitching on next state signals.
+- Outputs are combinational from state, keeping timing simple.
+- This reduces the FSM area (fewer states), power (less toggling in FSM logic), and may improve timing as combinational next state logic is simplified.
+
+This clean separation of pattern detection and FSM control leads to a more modular, lower toggle, and potentially faster implementation.

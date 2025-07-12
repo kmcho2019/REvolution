@@ -1,0 +1,14 @@
+The original design is already optimal in terms of minimal logic and correct functionality. However, to improve timing (wns), it's usually better to replace asynchronous reset with synchronous reset to reduce complexity and delay in the clock path. Also, synchronous reset is generally preferred for ASIC flows for easier timing closure.
+
+For power, since 'a' changes slowly, clock gating might reduce toggling but adds complexity and overhead. Here, not necessary.
+
+For area, the current design is minimal: one FF and two simple gates, optimal.
+
+Improvement strategy:  
+- Change asynchronous reset to synchronous reset.  
+- Use non-blocking assignments inside sequential block with synchronous reset.  
+- Keep combinational assignments for rise/down for immediate, one-cycle pulse generation.
+
+This maintains the same functionality and improves timing by avoiding asynchronous reset in the FF.
+
+Note: The change is subtle but beneficial for some synthesis tools and flows, balancing performance and simplicity.

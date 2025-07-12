@@ -1,0 +1,8 @@
+Instead of using separate states for falling left and right, we can use a single falling state and track the previous walking direction separately. This reduces the state machine size while maintaining the same functionality. Key ideas:
+1. Use a 1-bit state register for walking direction (0=left, 1=right)
+2. Use a separate falling flag to track if we're currently falling
+3. Outputs are generated based on current state and falling flag
+4. Bump inputs only affect state when not falling
+5. Ground transitions control the falling flag
+
+This approach reduces the state machine complexity while maintaining all required behavior. The falling condition is tracked separately from the walking direction, which simplifies state transitions.

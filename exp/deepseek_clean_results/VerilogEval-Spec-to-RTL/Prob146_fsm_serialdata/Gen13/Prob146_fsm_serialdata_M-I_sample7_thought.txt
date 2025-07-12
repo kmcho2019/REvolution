@@ -1,0 +1,15 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. State Encoding: Switch to one-hot encoding for the FSM states to simplify decoding logic and potentially improve timing.
+
+2. Bit Counting: Replace the 3-bit counter with a more efficient 4-state counter (one-hot) to reduce comparison logic in the RECEIVE state.
+
+3. Shift Register: Keep the current implementation as it's simple and efficient for this small width (8 bits).
+
+4. Timing Optimization: Move the 'done' signal generation to a separate always block to reduce critical path complexity.
+
+5. Power Optimization: Add explicit enable signals for the shift register to prevent unnecessary switching.
+
+6. Error Handling: Simplify the ERROR state by combining it with STOP state functionality.
+
+These changes should improve timing (reduce WNS), slightly reduce area, and maintain or improve power efficiency.

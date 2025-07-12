@@ -1,0 +1,17 @@
+Refactoring Approach:
+1. **Structural Change**: Instead of separate assign statements, we'll use a single always block with case statements for better readability and maintainability, especially if the FSM grows more complex.
+
+2. **One-Hot Encoding Utilization**: Leverage the one-hot property more explicitly by checking individual state bits in the case statement.
+
+3. **Output Logic**: Maintain the same logic for Y1 and Y3 but express them as continuous assignments from the combinational always block outputs.
+
+4. **Benefits**:
+   - More scalable for FSM extensions
+   - Clearer state transition visibility
+   - Maintains same PPA characteristics since synthesis will optimize similarly
+   - Better for debugging with named states
+
+5. **Verification**:
+   - Functionally equivalent to original
+   - One-hot property preserved
+   - All transitions properly handled

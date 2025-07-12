@@ -1,0 +1,17 @@
+This design will implement the next-state and output logic for the one-hot encoded Moore FSM by deriving explicit expressions for each next state output signal separately, using only minimal intermediate signals for clarity. Rather than grouping the states that lead to S_next via multiple ORs and factoring, we will write direct next-state assignments based on the state transitions given, explicitly listing conditions for each next state.
+
+We decode the current state bits and derive next-state logic expressions directly:
+
+- S_next = (S & ~d) | (S1 & ~d) | (S110 & ~d) | (Wait & ack)
+- S1_next = S & d
+- B3_next = B2
+- Count_next = B3 | (Count & ~done_counting)
+- Wait_next = (Count & done_counting) | (Wait & ~ack)
+
+Outputs are driven directly from current state bits, per Moore FSM:
+
+- shift_ena = B0 | B1 | B2 | B3
+- counting = Count
+- done = Wait
+
+This implementation uses clear, explicit assignments without factoring for easier readability and debugging. The one-hot signals correspond directly to each state and are used to compute next states exactly per the problem specification.

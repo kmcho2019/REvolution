@@ -1,0 +1,18 @@
+To model the behavior of the Lemming, we can design a Moore state machine with the following states: 
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALL: The Lemming is falling.
+- DIG: The Lemming is digging.
+
+We need to manage the transitions between these states based on the input signals. 
+The Lemming's state machine can be described as follows:
+- If the Lemming is walking (WALK_LEFT or WALK_RIGHT) and ground is 0, it falls (FALL).
+- If the Lemming is walking (WALK_LEFT or WALK_RIGHT) and dig is 1 and ground is 1, it starts digging (DIG).
+- If the Lemming is digging (DIG) and ground is 0, it falls (FALL).
+- If the Lemming is falling (FALL) and ground is 1, it resumes walking in the same direction as before the fall.
+- If the Lemming is walking (WALK_LEFT or WALK_RIGHT) and bump_left or bump_right is 1, it switches direction.
+- The initial state is WALK_LEFT.
+
+We can use a 2-bit state register to store the current state of the Lemming.
+We will use an always block to manage the transitions between states based on the current state and input signals.
+We will use another always block to generate the output signals based on the current state.

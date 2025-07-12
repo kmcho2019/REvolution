@@ -1,0 +1,29 @@
+Simplified Lemming State Machine Design:
+
+1. State Reduction:
+   - Combine walking states into one with direction tracking
+   - Combine digging states similarly
+   - Keep separate FALL and SPLAT states
+
+2. Direction Tracking:
+   - Use a separate register to track walking/digging direction
+   - Simplifies state transitions and fall recovery
+
+3. Fall Counter:
+   - Single counter for fall duration
+   - Reset when not falling
+
+4. Priority Handling:
+   - Fall has highest priority
+   - Dig has priority over direction change
+   - Bumps handled only when walking on ground
+
+5. Output Logic:
+   - Direct state-based outputs
+   - Direction register controls walk_left/walk_right
+
+Key Simplifications:
+- Fewer states by combining direction variants
+- Clearer state transitions
+- No need for past state tracking
+- Maintains all specified behavior

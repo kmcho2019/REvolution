@@ -1,0 +1,7 @@
+The problem lies in the fact that we're trying to assign values to the same net (`temp_remainder`) from multiple statements, which is not allowed in Verilog. To fix this, we need to rethink the division logic and implement it in a way that avoids multiple drivers for the same net. One approach is to use a sequential logic design, where we use a series of always blocks to update the `temp_remainder` and `result` registers at each step of the division process. We'll use two always blocks: one to update the input registers (`a_reg` and `b_reg`) and another to perform the division operation. We'll also use a temporary register (`temp`) to store the current remainder and update it at each step.
+
+The division logic will work as follows: we'll compare the higher bits of the dividend with the divisor, update the quotient and remainder accordingly, and shift the dividend to the right. We'll repeat this process until all bits of the dividend have been processed.
+
+We'll use a for loop to iterate through the bits of the dividend and perform the division operation at each step. We'll also use a temporary variable (`temp`) to store the current remainder and update it at each step.
+
+By using a sequential logic design and avoiding multiple drivers for the same net, we can fix the syntax errors and implement the division logic correctly.

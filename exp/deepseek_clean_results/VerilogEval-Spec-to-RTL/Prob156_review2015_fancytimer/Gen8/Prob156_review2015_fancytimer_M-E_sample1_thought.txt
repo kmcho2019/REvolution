@@ -1,0 +1,22 @@
+New Architecture Idea:
+1. **Parallel Pattern Matching**: Instead of a shift register, use combinatorial logic to detect the 1101 pattern in parallel by comparing the last 4 bits. This reduces latency and simplifies detection.
+
+2. **Two-Phase Counting**:
+   - Phase 1: Use a prescaler counter to count 1000 cycles
+   - Phase 2: Use a down-counter for the delay value chunks
+   This separation makes the timing more precise and easier to verify.
+
+3. **Early Delay Capture**: Start capturing delay bits immediately after pattern detection without waiting for a separate state, using the pattern detection as a trigger.
+
+4. **Smart Output Control**:
+   - count output reflects remaining chunks only during counting
+   - done asserts exactly when counting completes
+   - ack handling is edge-sensitive to prevent glitches
+
+5. **Optimized State Machine**: Reduced to just 3 states by combining functionality where possible.
+
+Key Innovations:
+- Eliminates the need for a separate delay capture state
+- More precise cycle counting through separated counters
+- Cleaner state transitions with fewer edge cases
+- More efficient pattern detection logic

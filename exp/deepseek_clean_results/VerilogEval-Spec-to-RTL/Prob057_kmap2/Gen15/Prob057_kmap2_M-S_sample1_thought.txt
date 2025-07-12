@@ -1,0 +1,14 @@
+Simplification Strategy:
+1. Analyze the Karnaugh map to identify essential prime implicants
+2. Observe that the output is 1 in most cases except specific patterns
+3. Instead of OR-ing multiple minterms, implement the inverse logic by NOR-ing the cases where output is 0
+4. This reduces the number of terms needed in the expression
+5. The simplified expression only needs to cover the three cases where output is 0 in the K-map
+
+Key Observations:
+- Output is 0 only when:
+  - cd=11 and ab=00 (!a & !b & c & d)
+  - cd=01 and ab=11 (a & b & !c & d)
+  - cd=10 and ab=11 (a & b & c & !d)
+- All other cases output 1
+- Can implement this with a single NOR gate of these three terms

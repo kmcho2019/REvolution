@@ -1,0 +1,11 @@
+Refactor the fractional frequency divider by 3.5x to improve synchronization and phase alignment:
+
+1. Use a single 3-bit counter incremented on the posedge of `clk` that cycles through 0 to 6 (DIV_TOTAL=7).
+2. Generate two clock enables (`enA` and `enB`) that represent the uneven high periods (4 cycles for `clkA`, 3 for `clkB`), but offset `enB` by half a clock cycle by registering it with the negedge of `clk`. This creates a natural phase shift without needing two separate counters.
+3. Generate two intermediate clock signals (`clk_intA` toggled on posedge when count < 4 and `clk_intB` toggled on negedge when count < 3`).
+4. Synchronize the phase-shifted clock `clk_intB` on negedge using a register, ensuring proper timing.
+5. Combine the two intermediate clocks by OR operation to achieve a fractional clock with evenly spaced edges and a uniform period, realizing the 3.5x division with improved duty cycle and glitch-free operation.
+6. Use only one counter clocked on posedge for simplicity and better synchronization.
+7. Reset and initialization are synchronized on `clk` posedge to avoid asynchronous problems.
+
+This approach removes asynchronous counting between posedge and negedge, avoids metastability, and aligns the phase-shifted clocks properly, resulting in a stable fractional clock output.

@@ -1,0 +1,20 @@
+Simplification Approach:
+1. Eliminate redundant registers by directly using input signals when stable
+2. Leverage the problem's timing constraints (data_en stable for 3 cycles, data changes every 10+ cycles)
+3. Combine enable synchronization and data capture into minimal logic
+4. Maintain metastability protection with 2-stage sync for enable signal
+5. Simplify output logic by directly using synchronized enable
+
+Key Changes:
+- Remove en_a register since data_en is stable long enough
+- Directly synchronize data_en to clk_b domain
+- Use synchronized enable to gate data capture
+- Maintain minimal reset logic
+- Reduce total registers from 3 to 2
+
+Benefits:
+- Fewer registers (2 vs 3) reduces area and power
+- Simpler control flow
+- Maintains same functionality under given timing constraints
+- Still provides proper metastability protection
+- Easier to verify and maintain

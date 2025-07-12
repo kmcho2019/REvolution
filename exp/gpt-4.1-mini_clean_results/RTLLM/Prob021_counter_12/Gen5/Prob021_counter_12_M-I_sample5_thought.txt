@@ -1,0 +1,13 @@
+To optimize the given counter design for better PPA (Performance, Power, Area), the approach involves:
+
+1. **Performance**: Minimize the combinational logic in the critical path by simplifying the next count logic. Instead of a comparison and addition, use arithmetic with modulo wraparound implemented by a less complex construct or leverage the increment and conditional reset in a more hardware-friendly way.
+
+2. **Power**: Implement clock gating by enabling the clock to the counter register only when counting is enabled (valid_count = 1) and reset is not active. This reduces unnecessary toggling when the counter is not updating. Alternatively, use an enable signal in the sequential block to prevent register toggling when counting is disabled.
+
+3. **Area**: Maintain a simple 4-bit register and combinational logic. Avoid introducing additional large logic or complex encoding that can increase area.
+
+Given this, a common power-friendly technique is to use an enable signal inside the sequential block rather than always updating the register. We keep the synchronous reset logic for reset reliability. Also, simplifying the next count logic by using a conditional reset to 0 if incremented value exceeds 11.
+
+Thus, the design uses an enable signal on the flip-flops (via if (valid_count)) which prevents unnecessary toggling, improving power. The next state calculation is done simply by incrementing or resetting, minimizing combinational complexity.
+
+This balance should help improve power and possibly timing without area penalty.

@@ -1,0 +1,8 @@
+The serial2parallel module will utilize a synchronous design to convert serial input data into parallel output data. It will use a 4-bit counter (cnt) to track the number of serial input data bits received. The cnt will be incremented every time a valid serial input data is received. Once 8 serial data bits have been received, the dout_parallel output will be updated with the received serial data and dout_valid will be set to 1, indicating that the parallel output data is valid. The module will also include a reset signal (rst_n) to reset the internal state when it goes low.
+
+To implement this, we'll need to:
+- Use a reg to store the 8-bit parallel output data (dout_parallel).
+- Use a reg to store the validity signal for the output data (dout_valid).
+- Use a 4-bit reg to implement the counter (cnt).
+- Implement a synchronous reset to clear the counter, dout_parallel, and dout_valid when rst_n is low.
+- Update the counter, dout_parallel, and dout_valid based on the state of din_valid and cnt.

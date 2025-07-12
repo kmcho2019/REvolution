@@ -1,0 +1,12 @@
+Fuse the clarity and timing advantage of the three separate always blocks approach (Example 2) with the compact and straightforward logic of the single always block (Example 1) by maintaining separate always blocks for seconds, minutes, and hours. 
+
+Enhance this by implementing explicit enable signals for minutes and hours increments derived from seconds and minutes rollover flags to minimize unnecessary toggling, improving power efficiency. However, instead of comparing counters repeatedly, generate dedicated rollover flags for seconds and minutes counters to be used as enables. This avoids repeated comparison logic and reduces combinational paths for enable signals.
+
+Also, explicitly declare outputs with widths matching the problem requirement (6 bits each for Hours, Mins, and Secs), while using internal narrower widths where possible. This aligns with the requirement and keeps interface consistency. Internally, hours only use 5 bits (0-23), but output is 6 bits with upper bit zero-padded.
+
+This fusion achieves:
+- Modular, easy-to-understand code with three separate always blocks.
+- Reduced critical path by using rollover flags for enabling minute and hour increments.
+- Minimizes toggling of minutes and hours by updating only on rollover.
+- Matches the interface requirement by outputting 6 bits for Hours, zero-extending internally 5-bit hours counter.
+- Clean synchronous reset and nonblocking assignments for robust sequential logic.

@@ -1,0 +1,29 @@
+module TopModule (
+    input  wire clk,
+    input  wire areset,
+    input  wire x,
+    output reg  z
+);
+
+reg state_A;
+
+// Next state logic
+wire next_state_A = state_A & ~x;
+
+// Sequential logic with asynchronous active-high reset
+always @(posedge clk or posedge areset) begin
+    if (areset)
+        state_A <= 1'b1;  // reset to state A
+    else
+        state_A <= next_state_A;
+end
+
+// Mealy output logic combinational
+always @(*) begin
+    if (state_A)
+        z = x;
+    else
+        z = ~x;
+end
+
+endmodule

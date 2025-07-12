@@ -1,7 +1,0 @@
-The main reason for the simulation failure is that the code uses the system task $rose() in the output logic, which is not synthesizable and cannot be used in RTL code meant for synthesis.
-
-In terms of functionality, the next state logic in the module has issues. 
-1. In state A, the condition `if (s == 1)` should be `if (s == 1 && state == A)` because input `s` should only affect the state transition when in state A.
-2. In state B, the condition for staying in state B should consider the count of `w=1` in the 3-clock cycle window. The current condition `if (w == 1 && (state == B || state == A))` does not correctly count the occurrences of `w=1` in the specified window.
-
-These issues in state transition conditions and the use of a non-synthesizable system task contribute to the simulation failure.

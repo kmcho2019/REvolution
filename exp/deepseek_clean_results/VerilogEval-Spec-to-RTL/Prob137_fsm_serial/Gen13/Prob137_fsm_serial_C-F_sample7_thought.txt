@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. State Encoding: Use binary encoding (2 bits) for minimal area while maintaining clear state names (IDLE, RECEIVE, STOP, WAIT)
+2. Data Handling: Implement efficient LSB-first reception with clock gating (only shift in RECEIVE state) to reduce power
+3. Error Handling: Maintain robust WAIT state to handle missing stop bits
+4. Done Logic: Use single-cycle done signal assertion when valid stop bit is detected
+5. Reset: Synchronous reset as specified
+6. Optimizations:
+   - Combine state transitions and data handling in single always block for cleaner code
+   - Use bit_count comparison directly in state transitions
+   - Minimize unnecessary signal toggling by only updating registers when needed
+   - Clear separation of sequential and combinational logic for better synthesis
+   - Clock-gated shift register for power efficiency
+   - Simplified done logic with one-cycle pulse
+
+Key Improvements:
+- Binary state encoding (smaller than one-hot) with clear state names
+- Clock-gated shift register (lower power)
+- Clean state transitions with minimal control logic
+- Single-cycle done signal assertion
+- Robust error handling with WAIT state
+- Efficient data shifting with LSB-first

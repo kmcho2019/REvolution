@@ -1,0 +1,5 @@
+Instead of instantiating a dedicated vector DFF module, implement the 8 asynchronous reset D flip-flops directly inside TopModule using a generate-for loop. This approach explicitly models each bit's flip-flop with asynchronous reset in parallel, enhancing clarity about each bit's behavior.
+
+By writing the always block for each bit separately inside a generate loop, we maintain modularity without a separate module. This also allows customization or future per-bit features more easily. The asynchronous reset and positive edge clock trigger are directly handled per bit.
+
+This method avoids a monolithic vector register, leveraging straightforward generate constructs to create a scalable and explicit bitwise register with async reset.

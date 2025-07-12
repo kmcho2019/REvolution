@@ -1,0 +1,25 @@
+Revised Design Strategy:
+1. State Transition Logic:
+   - Handle all 8 possible sensor combinations explicitly
+   - Define clear transitions between states based on sensor patterns
+   - Maintain state for invalid combinations (default case)
+
+2. Output Logic:
+   - Generate fr2, fr1, fr0 based on current water level (state)
+   - Calculate dfr based on state transitions (only active when moving to higher level)
+
+3. Reset Behavior:
+   - Initialize to STATE_BELOW_S0 (all sensors off)
+   - Set all flow outputs (fr2, fr1, fr0) to 1 (maximum flow)
+   - Set dfr to 0 (no transition on reset)
+
+4. dfr Calculation:
+   - Only assert when moving to a higher water level (lower state number)
+   - Compare current and previous states numerically
+   - Ensure dfr is synchronized with other outputs
+
+Key Fixes:
+- Complete sensor combination handling
+- Proper dfr timing and calculation
+- Correct reset behavior
+- Clear state transition definitions

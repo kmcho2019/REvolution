@@ -1,0 +1,13 @@
+Based on the PPA metrics and feedback, the current implementation is already quite efficient. However, we can make some minor optimizations:
+
+1. Combine the state and direction into a single 2-bit register to potentially reduce routing overhead
+2. Use one-hot encoding for states to potentially improve timing further
+3. Simplify the output logic by precomputing the ~state term
+4. Maintain the same functionality while reducing gate count
+
+The improved version will:
+- Use one-hot encoding for states (01=WALK, 10=FALL)
+- Combine state and direction into a single register
+- Precompute common terms to reduce logic duplication
+- Keep the same asynchronous reset behavior
+- Maintain the exact same functionality as specified

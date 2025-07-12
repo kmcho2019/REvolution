@@ -1,0 +1,17 @@
+This solution implements a hierarchical FSM with parallel request evaluation:
+
+1. Main FSM tracks the current grant state (A/B/C/D)
+2. Parallel combinational logic continuously evaluates requests with priority
+3. State transitions are determined by both current state and request evaluation
+4. Outputs are generated combinationally based on current state
+5. Key innovations:
+   - Separates request evaluation from state tracking
+   - Uses hierarchical states (A as idle, others as active)
+   - Implements priority logic in parallel for faster response
+   - Minimizes state transitions by maintaining grants until request drops
+
+Advantages:
+- Faster response to new requests (evaluated in parallel)
+- Clear separation of concerns between priority and state logic
+- More maintainable structure with explicit state encoding
+- Efficient implementation with minimal registers

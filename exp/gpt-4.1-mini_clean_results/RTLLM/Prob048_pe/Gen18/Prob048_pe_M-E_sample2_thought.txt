@@ -1,0 +1,17 @@
+Implement a 32-bit multiplying accumulator with a wider internal accumulator to avoid frequent overflow and keep full precision over multiple cycles. 
+
+Specifically:
+
+1. Use a 64-bit internal accumulator register `acc` that accumulates the full 64-bit product of inputs `a` and `b`, so no truncation or saturation is needed internally.
+
+2. The output port `c` provides the lower 32 bits of the accumulator, reflecting the least significant part of the accumulated sum.
+
+3. The accumulator is updated synchronously on the rising edge of `clk` or asynchronously reset to zero on `rst` high.
+
+4. No saturation logic is implemented, as the 64-bit accumulator can accumulate large sums without overflow; the user can handle higher bits if needed.
+
+5. Multiplication and addition are done combinationally within an always block, and non-blocking assignments are used for best practice.
+
+This design supports full-precision accumulation of 32x32 products in a 64-bit register, avoiding saturation and overflow complexity, and exposing the lower 32 bits as output, useful for fixed-point or modular arithmetic. The asynchronous reset makes the design responsive to resets immediately.
+
+This design trades off more register width internally to avoid complex overflow and saturation logic, and simplifies the control path.

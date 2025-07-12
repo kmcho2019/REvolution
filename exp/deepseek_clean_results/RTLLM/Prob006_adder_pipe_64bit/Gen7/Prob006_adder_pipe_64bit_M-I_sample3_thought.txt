@@ -1,0 +1,27 @@
+The original solution has several issues that need to be addressed for correct functionality and better PPA:
+
+1. Pipeline Synchronization: The enable signal pipeline (en_pipe) has only 2 stages while the adder has 3 computational stages, causing misalignment.
+
+2. Carry Propagation: The current implementation doesn't properly propagate carries between all stages, potentially leading to incorrect results.
+
+3. Result Assembly: The final result concatenation doesn't account for all intermediate sums correctly.
+
+4. Register Optimization: Some registers can be combined to reduce area.
+
+Improvement Strategy:
+1. Maintain 3-stage pipeline but with proper bit partitioning (16+16+32 bits)
+2. Add proper carry propagation between all stages
+3. Correct the result assembly logic
+4. Extend enable pipeline to match computation stages
+5. Optimize register usage
+6. Maintain clean reset behavior
+7. Ensure correct timing for o_en signal
+
+The improved implementation will:
+- Stage 1: Process first 16 bits (LSB)
+- Stage 2: Process next 16 bits with carry from stage1
+- Stage 3: Process final 32 bits with carry from stage2
+- Properly propagate carries between all stages
+- Correctly assemble final result
+- Maintain 3-cycle latency
+- Keep same interface and functionality

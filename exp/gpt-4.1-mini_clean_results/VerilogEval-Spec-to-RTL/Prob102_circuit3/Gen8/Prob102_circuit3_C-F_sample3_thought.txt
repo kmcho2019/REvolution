@@ -1,0 +1,18 @@
+The waveform reveals the function q = (a|b) & (c|d). Both example implementations correctly realize this function.
+
+Example 1 factors the expression to share the (c|d) term explicitly, which can reduce duplicated logic, lower switching activity, and potentially save area and power. Example 2 uses an always @(*) block, which clarifies combinational intent but can be slightly less optimal than continuous assignments for simple logic.
+
+To fuse the best ideas:
+- Use explicit factoring to share the (c|d) term for better power and area.
+- Use a continuous assignment (assign) to keep the logic purely combinational and straightforward for synthesis.
+- Declare the intermediate wire for (c|d) for clarity and to encourage synthesis to share that logic.
+- Use non-registered output since output is purely combinational.
+- Comment the code to explain the logic and optimization rationale for maintainability.
+
+This fusion preserves the minimal logic depth and area, reduces toggling by sharing sub-expressions, and provides clear combinational semantics to synthesis tools.
+
+Hence, the implementation is:
+- wire cd_or = c | d;
+- q = (a & cd_or) | (b & cd_or);
+
+This combines simplicity, clarity, and synthesis friendliness for potential PPA gains without adding complexity.

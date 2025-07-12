@@ -1,0 +1,13 @@
+Refactor the fractional divider by 3.5 (7/2) using a counter-based approach that counts up to 7 (double the divisor), dividing the input clock frequency by 3.5 cycles by generating two uneven half-periods: 4 and 3 input clock cycles.
+
+Use two separate counters/clocks operating on the posedge and negedge of the input clock to create two phase-shifted clock signals: 
+- One clock (clk_p) toggles every 4 cycles (high) then 3 cycles (low).
+- Another clock (clk_n) does the same but delayed by half input clock period, toggling on negedge, creating a 180° phase shift.
+
+Finally, OR these two clocks to form the fractional divided clock output (clk_div), effectively generating a 3.5x frequency division with balanced duty cycle and uniform output period.
+
+This approach directly implements the problem's described scheme (uneven half-periods, double-edge clocking, phase-shifted signals) with clear state machines on posedge and negedge, avoiding complex phase accumulators and ambiguous edge detection.
+
+Use synchronous reset and clear, cleanly separate posedge and negedge always blocks, and generate output combinationally by OR'ing the two intermediate clocks.
+
+This structure is synthesizable, easy to simulate, and matches the problem requirements closely.

@@ -1,0 +1,11 @@
+Fuse Example 1's efficient modular wrapping using bit-masking with Example 2's explicit localparam indexing to avoid arithmetic in generate loops, thus minimizing inferred adders in synthesis. Use 2D wire arrays for current and next states for clarity and parallelism, but precompute wrap indices as 4-bit unsigned with bit masking instead of conditional localparams.
+
+Implement neighbor summation in fully combinational parallel generate loops, summing 8 neighbors with wrapping via modular arithmetic using bitmask (mod 16). Use a local function for coordinate wrapping that handles signed inputs by adding 16 and masking, avoiding signed arithmetic and tool-inferred arithmetic units.
+
+Use a compact combinational next state logic per cell following the exact rules, and flatten next_state 2D array to a vector.
+
+On clock edge, synchronously load initial data if load asserted, else update to next state.
+
+This fusion keeps clarity, concise and synthesis-friendly wrapping, clean indexing, and parallelism, with efficient arithmetic and no signed operations, improving synthesis results and reducing area and power by avoiding complex address computations and signed arithmetic in generate loops. It also retains clear modular arithmetic from Example 1 and explicit combinational summation and synchronous update from Example 2.
+
+The design achieves the same functionality, improved synthesis friendliness, and clarity.

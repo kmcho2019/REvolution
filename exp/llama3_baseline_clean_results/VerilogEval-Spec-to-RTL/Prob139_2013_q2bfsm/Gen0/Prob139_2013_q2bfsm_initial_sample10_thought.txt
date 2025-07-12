@@ -1,0 +1,10 @@
+To implement the described finite state machine in Verilog, we first identify the distinct states the FSM can be in based on its operation:
+1. **State A (RESET)**: This is the initial state when the reset is asserted. The FSM stays in this state as long as the reset is active.
+2. **State B (SET_F)**: After reset is de-asserted, the FSM transitions to this state where it sets output f to 1 for one clock cycle.
+3. **State C (MONITOR_X)**: Here, the FSM monitors the input x, waiting for the sequence 1, 0, 1 in successive clock cycles.
+4. **State D (SET_G)**: Upon detecting the x sequence, the FSM sets output g to 1 and enters this state.
+5. **State E (MONITOR_Y)**: In this state, the FSM monitors input y, waiting for it to become 1 within two clock cycles after g was set to 1.
+6. **State F (G_PERSISTENT)**: If y becomes 1 within two cycles, the FSM transitions to this state, keeping g = 1 permanently.
+7. **State G (G_RESET)**: If y does not become 1 within two cycles, the FSM transitions to this state, setting g = 0 permanently.
+
+The FSM will be designed using an enum for states, and a case statement within a always_ff block to handle the state transitions and output logic.

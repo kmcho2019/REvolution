@@ -1,0 +1,8 @@
+Refactor the design by explicitly pipelining partial products and partial sums over three stages:  
+1) Register inputs and input enable signal.  
+2) Compute and register all partial products individually as wires, then accumulate partial sums in a first pipeline stage register.  
+3) Register the final sum and output enable signal in the last stage.  
+
+This separates the combinational logic of partial product generation from the addition by introducing a pipeline register for the partial sums, improving timing by shortening the critical path per stage. The pipeline control signal (mul_en) is propagated through pipeline registers alongside data to maintain proper synchronization. Using separate pipeline registers for partial sums adds clarity and registers the intermediate sum explicitly. The output product is gated by output enable for valid data. Reset asynchronously clears registers.
+
+This approach maintains the same 3-cycle pipeline latency but balances combinational complexity and register stages differently, potentially improving timing by breaking the summation into two registered stages (partial sums and final output) instead of a fully combinational multi-operand addition in one stage.

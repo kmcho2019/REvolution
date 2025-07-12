@@ -1,0 +1,8 @@
+The original fix adds default assignments to avoid latch inference but uses always blocks with if conditions, which can be slightly verbose. Since both outputs depend on simple combinational conditions without needing intermediate states, we can optimize for area and power by using continuous assignments instead of always blocks. Continuous assignments avoid unnecessary registers or latches, reduce logic levels, and synthesize into minimal combinational gates. We maintain outputs as reg types by declaring internal wires and assigning the reg outputs from these wires in a simple always @* block if necessary, or directly convert outputs to wire if allowed. However, since the outputs are specified as reg, we can convert the logic to continuous assignments feeding internal wires and use a single always block to assign outputs, thus maintaining clean combinational logic without latches and with minimal power and area. This approach reduces logic depth, eliminates unnecessary conditionals, and leverages efficient gate-level synthesis.
+
+To summarize the improvements:
+- Use continuous assignments for combinational logic, reducing area and power.
+- Assign outputs in a single always @* block to avoid latches and keep outputs as reg.
+- This results in minimal logic, fewer transitions, and smaller synthesized area.
+
+This method yields the same functionality with improved PPA metrics.

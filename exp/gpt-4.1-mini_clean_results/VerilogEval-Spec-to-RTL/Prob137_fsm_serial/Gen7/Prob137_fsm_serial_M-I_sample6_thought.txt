@@ -1,0 +1,5 @@
+To optimize the existing FSM design for better power and potentially performance, I will add an enable signal for the shift register and bit counter updates during the RECEIVE state, so that these registers only toggle when receiving bits, reducing unnecessary switching. This small clock gating through enable signals reduces dynamic power. Also, I will remove redundant resets of bit_count and shift_reg in states where these values are not used. The shift register is still used to sample data bits, but no need to reset it continuously outside IDLE and after byte completion. 
+
+For performance, I keep the binary encoding because the 4-state machine is simple and binary encoding is area-compact. The done signal remains asserted for only one clock cycle. The synchronous reset remains as requested.
+
+Overall, this approach reduces unnecessary register toggling and signal switching to improve power without impacting performance or area significantly.

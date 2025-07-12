@@ -1,0 +1,16 @@
+Improved Lemming State Machine Design:
+
+1. **State Encoding**: Maintain one-hot encoding for clarity but simplify to 4 states (WALK, DIG, FALL, SPLAT)
+2. **Direction Logic**: Make direction switching unconditional on current direction when bumped
+3. **Priority Handling**: Strictly enforce fall > dig > bump priority in state transitions
+4. **Fall Counter**: Count all consecutive cycles where ground=0, reset when ground=1
+5. **Edge Cases**: Properly handle simultaneous conditions (e.g., bump+dig+fall)
+6. **Output Logic**: Keep pure Moore outputs with clear state-based assignments
+7. **Reset**: Initialize all registers properly on reset
+
+Key Improvements:
+- Correct direction switching logic (any bump changes direction)
+- Strict priority ordering in state transitions
+- Accurate fall timer counting all falling cycles
+- Clean handling of simultaneous conditions
+- Simplified and more robust state machine

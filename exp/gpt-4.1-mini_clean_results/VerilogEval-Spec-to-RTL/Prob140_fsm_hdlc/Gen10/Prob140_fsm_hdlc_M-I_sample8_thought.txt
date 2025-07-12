@@ -1,0 +1,15 @@
+To improve PPA while maintaining clarity and correctness, use a binary-encoded FSM with 3-bit state representing the count of consecutive 1s (0 to 6), plus three special output states: DISC, FLAG, and ERR.
+
+This reduces the state encoding bits from 4 to 3 for counting states and adds 3 extra states, total 10 states still fitting in 4 bits, but now states are encoded to minimize transitions:
+
+- Use binary encoding for count states (S0 to S6).
+- Use sequential encoding for output states (DISC, FLAG, ERR).
+- Implement next-state logic using a straightforward combinational process that increments the count on input=1, resets on 0, and transitions to output states when needed.
+- Outputs remain Moore type, asserted only in output states.
+- On output states, the machine returns to count states according to the input bit to avoid extra cycles.
+- This encoding likely reduces logic complexity, minimizing critical path delay and area.
+- The combinational next-state logic is simpler and more symmetric, reducing gate depth and power.
+- Also, outputs are one-hot detected with minimal logic.
+- Maintain synchronous reset to S0.
+
+This will improve timing and slightly reduce area and power compared to the original implementation.

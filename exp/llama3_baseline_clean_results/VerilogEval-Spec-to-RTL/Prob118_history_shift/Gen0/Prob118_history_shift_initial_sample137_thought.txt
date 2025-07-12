@@ -1,0 +1,6 @@
+To implement the TopModule, we need to design a 32-bit global history shift register. 
+We'll use a reg type variable to store the current history and update it based on the input signals. 
+When predict_valid is high, we shift in the predict_taken value from the LSB side to update the branch history. 
+When train_mispredicted is high, we load the branch history register with the history after the completion of the mispredicted branch. 
+We'll use an if-else statement to prioritize the misprediction over the prediction when both occur at the same time. 
+Finally, we'll assign the updated history to the output predict_history.

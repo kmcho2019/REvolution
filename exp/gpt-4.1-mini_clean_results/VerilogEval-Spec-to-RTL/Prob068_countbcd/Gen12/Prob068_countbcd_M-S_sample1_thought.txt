@@ -1,0 +1,9 @@
+Simplify the 4-digit BCD counter by treating the entire 16-bit register as a packed set of digits but avoid nested if-else by generating enable signals that cascade carries in a simple sequential manner. Use a single always block that increments the ones digit every cycle, and conditionally increments each upper digit based on its enable signal.
+
+The enable signals will be one-hot signals that indicate when each upper digit should increment (i.e., when the lower digit reaches 9 and rolls over).
+
+This approach keeps the logic clear, reduces nesting complexity, and uses simple carry propagation with minimal logic depth.
+
+Pack the four digits into the 16-bit output by concatenation.
+
+Keep synchronous reset and positive edge clock triggering.

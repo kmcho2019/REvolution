@@ -1,0 +1,16 @@
+Refactoring Strategy:
+1. State Encoding: Keep the same state encoding (A:000, B:001, C:011, D:010, E:110, F:111) for consistency and output optimization.
+
+2. State Transition Logic: Replace the case statement with parallel ternary assignments for next_state computation. This makes the state transitions more explicit and may help synthesis tools optimize better.
+
+3. Output Logic: Maintain the simple bit-check (current_state[2]) as it's efficient and clear.
+
+4. State Storage: Keep the synchronous reset in a separate always block for clarity.
+
+5. Readability: The refactored version makes each state's transitions immediately visible through parallel assignments rather than nested in a case statement.
+
+Key Changes:
+- Explicit ternary assignments for each state's possible transitions
+- Maintain same state encoding and output logic
+- Keep synchronous reset handling
+- Slightly more verbose but potentially more readable transition logic

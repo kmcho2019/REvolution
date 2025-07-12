@@ -1,0 +1,9 @@
+To improve the PPA of the 100-bit rotator, we will replace the function-based next-state logic with a single always block using case statements and explicit muxing to avoid combinational function overhead. We will also decode the ena inputs into one-hot rotation enables and gate the rotation logic accordingly, so that when ena is 00 or 11, the register holds its value without unnecessary switching in the rotate logic.
+
+Moreover, by directly writing the rotate logic with bitwise concatenations and explicitly separating load and rotation, synthesis tools can better optimize muxing and timing.
+
+This approach reduces combinational logic fanout and may lead to better timing (WNS), power, and area by eliminating function call overhead and redundant recomputation of rotated values.
+
+We maintain the same functional priority: load > rotate left > rotate right > hold.
+
+The code will be fully synchronous, with combinational muxes inside the always block, which can be optimized for clock gating or enable gating if needed downstream.

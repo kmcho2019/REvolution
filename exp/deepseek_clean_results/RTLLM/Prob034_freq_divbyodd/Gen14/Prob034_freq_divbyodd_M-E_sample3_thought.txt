@@ -1,0 +1,14 @@
+Novel State Machine Approach:
+1. Instead of separate counters, use a single state machine that tracks both rising and falling edges
+2. Implement edge detection to precisely control when to toggle the output
+3. Use a toggle register that changes state at calculated mid-points of the division cycle
+4. Maintain symmetry by having the state machine progress equally for both clock phases
+5. The state machine transitions are controlled by both clock edges through a combined always block
+6. Reset initializes the state machine to a known state with output low
+
+Key Advantages:
+- Single unified control logic instead of separate counters
+- More precise edge alignment through state transitions
+- Simplified duty cycle control via state machine symmetry
+- Reduced logic by eliminating separate edge domains
+- Clear state progression makes timing easier to verify

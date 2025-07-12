@@ -1,0 +1,9 @@
+The sequence detector module will utilize a finite state machine (FSM) to detect the specific 4-bit binary sequence 1001. The FSM will transition through five states: IDLE, S1, S2, S3, and S4. 
+1. In the IDLE state, the detector waits for the start of the sequence (1).
+2. When the first '1' is detected, the FSM transitions to the S1 state.
+3. In the S1 state, the detector checks for the next '0' and transitions to the S2 state if the bit matches.
+4. In the S2 state, the detector checks for the next '0' and transitions to the S3 state if the bit matches.
+5. In the S3 state, the detector checks for the final '1' and transitions to the S4 state if the bit matches.
+6. In the S4 state, the sequence_detected output is asserted high.
+7. If at any point the bit does not match the expected sequence, the FSM transitions back to the IDLE state.
+8. The reset_n signal will reset the FSM to the IDLE state when it is low.

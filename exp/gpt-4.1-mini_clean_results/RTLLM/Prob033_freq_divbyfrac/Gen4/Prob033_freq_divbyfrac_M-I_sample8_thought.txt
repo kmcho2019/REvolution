@@ -1,0 +1,14 @@
+To implement a fractional frequency divider by 3.5 using the double-edge clocking technique, we exploit the fact that 3.5 = 7/2. We generate a divided clock with a period spanning 7 input clock cycles. Within this period, we create two clock pulses: one lasting 4 cycles and the other 3 cycles, alternating.
+
+The approach:
+- Use a 3-bit counter cycling from 0 to 6 (7 cycles total).
+- Generate two intermediate clocks (clk_intA and clk_intB) that toggle at different counts to produce two uneven pulses per period (4 and 3 cycles).
+- clk_intB is phase shifted by half a clock period, effectively by triggering on the negative edge of the input clock.
+- Both intermediate clocks are generated on opposite edges of clk.
+- Finally, OR clk_intA and clk_intB to form the fractional divided clock clk_div with improved duty cycle uniformity and smoother transitions.
+
+Reset initializes the outputs and counter.
+
+This design ensures a 3.5x division (input frequency divided by 3.5) with a near 50% duty cycle and smooth waveform by leveraging the interleaving of two uneven clocks with half-clock phase difference.
+
+This meets the problem's explicit requirements: counter cycling through 7 clocks, generating uneven pulses (3 and 4 clocks), phase shifting intermediate clocks by half a clock period (using both edges), and logically OR-ing them for output.

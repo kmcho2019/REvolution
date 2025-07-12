@@ -1,0 +1,7 @@
+To optimize PPA for this 4-bit priority encoder, we can reduce combinational logic and switching activity by encoding the output directly using a simple priority encoding scheme without generating multiple one-hot signals. Using a simple combinational always block with a `casez` statement can give the synthesis tool better flexibility to optimize the priority encoder, potentially lowering area and power due to less redundant logic.
+
+This approach also minimizes the logic depth by relying on case analysis for the first set bit rather than AND gates for each priority signal, yielding equivalent functionality with potentially better power and area results.
+
+The code uses an always_comb block with a priority casez statement, checking inputs starting from bit 3 down to bit 0. If no bits are set, it defaults to zero output.
+
+This method reduces switching and logic gate count, improving power and area slightly while keeping performance optimal.

@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the comparison logic by splitting it into two stages to reduce critical path
+   - Use one-hot encoding for shift register to simplify comparison logic
+2. Power Optimization:
+   - Add explicit enable signal to freeze shift register updates after detection
+   - This prevents unnecessary toggling of shift register bits
+3. Area Consideration:
+   - Maintain minimal register usage (3-bit shift + found flag)
+   - Keep comparison logic simple but pipelined for better timing
+4. Reset Handling:
+   - Maintain clean synchronous reset for all registers
+5. Detection Logic:
+   - Break sequence detection into two steps for better timing:
+     1. Detect '110' in shift_reg
+     2. Check current data bit is '1' in next cycle
+
+Key Benefits:
+- Improved timing with pipelined comparison
+- Reduced power with explicit enable control
+- Maintained small area footprint
+- Clean synchronous behavior

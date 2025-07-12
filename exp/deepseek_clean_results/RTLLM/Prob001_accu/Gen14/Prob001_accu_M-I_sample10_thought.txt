@@ -1,0 +1,18 @@
+To optimize the accumulator module for better PPA metrics, I'll implement these improvements:
+
+1. **Performance (Timing):**
+   - Pipeline the accumulator by splitting the addition into two stages (register the intermediate sum)
+   - This breaks the critical path from a 10-bit adder chain to two smaller additions
+
+2. **Power:**
+   - Add register enable signals to prevent unnecessary switching
+   - Only update registers when valid_in is active
+
+3. **Area:**
+   - Keep the 10-bit accumulator but optimize register usage
+   - Share adder resources where possible
+
+The improved design will:
+- Use a registered intermediate sum to break the critical path
+- Gate all register updates with valid_in
+- Maintain the same functionality but with better timing and power characteristics

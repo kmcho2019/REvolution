@@ -1,0 +1,5 @@
+To optimize the design for better Power, Performance, and Area (PPA), I will implement clock gating to reduce unnecessary register toggling when both load and ena are low. This reduces dynamic power consumption by preventing clocking of the flip-flops when no state change is expected. The asynchronous reset remains unchanged for correct reset behavior.
+
+I will create an enable signal for the flip-flops clock based on load or ena, gating the main clock. This small optimization can reduce toggling inside the register without affecting timing significantly due to the simple logic for gating. The next-state combinational logic is kept as is for clarity and small logic depth. This should improve power by reducing unnecessary transitions and could slightly improve area by possibly enabling synthesis to optimize gating logic.
+
+The logic priority (load > ena) remains intact and shifting is implemented via concatenation as before.

@@ -1,0 +1,7 @@
+To implement the state output logic for the given finite-state machine in the TopModule, we first need to understand the transitions and how they relate to the one-hot encoded states. Given the state assignments, we can derive the logic for Y1 and Y3 by examining the conditions under which the state flip-flops y[1] and y[3] should be set.
+
+For Y1 (corresponding to state B, since y[1] represents state B in the one-hot encoding), it should be 1 when the next state is B. From the state machine description, state B can be reached from state A when w is 1.
+
+For Y3 (corresponding to state D, since y[3] represents state D in the one-hot encoding), it should be 1 when the next state is D. D can be reached from B when w is 0, from C when w is 0, from E when w is 0, or from D when w is 0 and the current state is D itself in a more complex scenario but based on the given transitions, D can be directly reached from B, C, or E when w is 0.
+
+Based on these conditions, we can directly write the Verilog code to implement these logic conditions.

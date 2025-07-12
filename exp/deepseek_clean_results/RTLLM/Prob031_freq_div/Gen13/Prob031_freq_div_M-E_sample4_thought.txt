@@ -1,0 +1,14 @@
+Here's a novel approach using a single shared counter with multiple comparison points to generate all three clock outputs. The key innovations are:
+
+1. Single Counter Architecture: Instead of separate counters for each clock domain, we use one master counter that counts continuously. This reduces area by eliminating redundant counter logic.
+
+2. Phase-Aligned Outputs: All output clocks are derived from the same counter, ensuring their edges are perfectly aligned with each other and the input clock. This is useful for synchronous systems.
+
+3. Efficient Comparison Logic: We use bitwise comparisons against specific counter values to generate the different clock frequencies, minimizing logic complexity.
+
+4. Parameterized Design: The division ratios are parameterized, making the module easily adaptable to different input frequencies.
+
+The master counter runs at the input clock rate (100MHz) and counts from 0 to 99 (for 100 divisions). The outputs are generated as follows:
+- CLK_50 toggles every time bit 0 changes (effectively dividing by 2)
+- CLK_10 toggles when the counter reaches 4, 9, 14,... (every 5 counts)
+- CLK_1 toggles when the counter reaches 49 (every 50 counts)

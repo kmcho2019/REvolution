@@ -1,0 +1,9 @@
+Refactor the design by removing the generate-for loop inside the 8-bit carry-lookahead adder and instead explicitly declare the carry and sum signals bit by bit. This approach keeps the same carry-lookahead logic but restructures it in a straightforward, manual fashion which might improve code readability for some users and better suits tools that have limitations with generate blocks.
+
+At the top 16-bit level, maintain the instantiation of two 8-bit adders, but replace the intermediate carry wire with a named signal that makes the carry flow explicit.
+
+This refactor:
+- Retains full combinational carry-lookahead logic.
+- Avoids generate blocks, replacing them with explicit assignments.
+- Keeps modularity and hierarchical design.
+- Keeps clarity for manual verification and debugging.

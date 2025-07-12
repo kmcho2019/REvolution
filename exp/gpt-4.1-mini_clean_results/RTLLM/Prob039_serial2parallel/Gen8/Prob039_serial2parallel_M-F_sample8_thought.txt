@@ -1,0 +1,7 @@
+To address the feedback, I will introduce an internal wire to hold the concatenated value `{din_serial, shift_reg[7:1]}`. This avoids recomputing the same concatenation twice in the same clock cycle, which can marginally improve synthesis optimization by sharing logic.
+
+The logic of shifting in the new bit at the MSB remains unchanged, ensuring that after receiving 8 bits, the bits are aligned with the first received bit at MSB and the last at LSB.
+
+I will keep the rest of the design intact: a 4-bit counter increments only on `din_valid`, and when it reaches 7, the output parallel data and valid signal are asserted for one cycle. The reset is active low synchronous reset, clearing all registers.
+
+This micro-optimization improves area and timing slightly without changing the functional behavior or increasing complexity.

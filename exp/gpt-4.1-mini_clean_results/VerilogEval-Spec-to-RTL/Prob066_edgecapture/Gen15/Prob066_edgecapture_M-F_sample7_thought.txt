@@ -1,0 +1,7 @@
+The main issue comes from initializing `prev_in` to zero on reset, which can cause incorrect detection of falling edges immediately after reset if the input has high bits. To fix this, we should initialize `prev_in` to the current input value during reset, so no false falling edges are detected right after reset.
+
+Also, to avoid any potential glitches or race conditions, we'll keep the falling edge detection combinational but ensure `prev_in` updates synchronously with `in`. The output register `out` remains latched and accumulates falling edges by OR'ing with newly detected edges every clock cycle, and clears on synchronous reset.
+
+This approach guarantees that no false falling edges are detected right after reset, that the output captures all falling edges as required, and that all signals update synchronously on the positive edge of the clock with a proper reset.
+
+This removes simulation mismatches and aligns with the original functional intent.

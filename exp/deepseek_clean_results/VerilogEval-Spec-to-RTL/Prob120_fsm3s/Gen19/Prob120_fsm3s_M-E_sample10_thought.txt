@@ -1,0 +1,18 @@
+I'll implement a novel "pre-decoded" state machine architecture that eliminates the need for explicit state transitions in the combinational logic. Instead, I'll use the current state and input to directly generate the next state through bitwise operations. This approach:
+
+1. Uses mathematical relationships between state encodings to compute next state
+2. Eliminates traditional case/if-else statements for state transitions
+3. Maintains Moore machine behavior with output purely dependent on state
+4. Uses Gray code encoding for states to minimize switching power
+5. Implements synchronous reset to state A (00 in Gray code)
+
+The state encoding will be Gray code:
+A = 00
+B = 01
+C = 11
+D = 10
+
+The next state logic is derived by observing that:
+- When in=0, next state is current state XOR {0, state[1]}
+- When in=1, next state follows a different XOR pattern based on current state
+This mathematical approach reduces logic depth compared to traditional implementations.

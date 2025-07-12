@@ -1,0 +1,18 @@
+The fusion strategy combines the best aspects of both examples while optimizing for PPA:
+
+1. From Example 1: 
+   - Single-stage edge detection (current vs previous input) for lower latency
+   - Compact implementation using just one register (prev_in)
+   - Efficient bitwise operation (in & ~prev_in)
+
+2. From Example 2:
+   - Clean single always block structure
+   - Clear separation of sequential and combinational logic
+   - Potential for better synthesis optimization
+
+Key improvements in the fused solution:
+- Maintains single-cycle latency like Example 1
+- Uses only one register like Example 1 (better area than Example 2)
+- Explicit combinational output assignment like Example 2 (better for synthesis)
+- Combines the most efficient edge detection logic from both
+- Results in clean, readable code with optimal PPA characteristics

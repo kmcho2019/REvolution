@@ -1,0 +1,23 @@
+Simplification Strategy:
+1. Boolean Analysis:
+   - ModuleA: z = (x^y)&x = x&~y (same as before)
+   - ModuleB: Truth table matches XNOR (same as before)
+   - Final output is (A1 OR B1) XOR (A2 AND B2)
+
+2. Key Observations:
+   - All submodules receive identical inputs (x,y)
+   - Therefore A1 = A2 and B1 = B2 (redundant instances)
+   - Output simplifies to (A OR B) XOR (A AND B)
+
+3. Boolean Reduction:
+   - (A OR B) XOR (A AND B) = A XOR B (by boolean algebra)
+   - Therefore z = (x&~y) XOR ~(x^y)
+
+4. Final Optimization:
+   - Can implement directly with two operations:
+     1. x & ~y
+     2. ~(x ^ y)
+   - Then XOR these results
+   - No need for separate modules or redundant instances
+
+This reduces the design to just three fundamental operations while maintaining identical functionality.

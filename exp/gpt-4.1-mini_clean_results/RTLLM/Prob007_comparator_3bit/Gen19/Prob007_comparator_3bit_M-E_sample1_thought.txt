@@ -1,0 +1,17 @@
+I will implement the 3-bit comparator by leveraging the difference between the two numbers as a 4-bit signed result (including a sign bit) and then decode the sign and zero detection to generate the comparison outputs. Specifically:
+
+1. Calculate the subtraction result `diff = A - B` extended to 4 bits to capture the sign.
+
+2. If `diff` is zero, then `A_equal` is high.
+
+3. If `diff` is positive (MSB of diff is 0 and diff != 0), then `A_greater` is high.
+
+4. Otherwise, if `diff` is negative (MSB of diff is 1), then `A_less` is high.
+
+This method uses the natural arithmetic difference and simplifies comparison to checking sign and zero. It is also fully combinational and concise.
+
+It has the advantage of being easily scalable to wider bit-widths by extending the subtraction size accordingly.
+
+The outputs remain mutually exclusive since the diff can only be zero, positive, or negative.
+
+I will implement this using unsigned subtraction with a 4-bit wide wire and then decode its sign and zero to determine the output signals.

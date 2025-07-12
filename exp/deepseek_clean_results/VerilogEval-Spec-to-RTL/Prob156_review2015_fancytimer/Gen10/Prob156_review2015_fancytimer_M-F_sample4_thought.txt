@@ -1,0 +1,21 @@
+Key fixes to address the feedback:
+1. **Cycle Counting Precision**: Implement exact cycle counting by:
+   - Making cycle_counter count to 999 (1000 cycles) before decrementing period_counter
+   - Only updating period_counter when cycle_counter completes a full 1000-cycle period
+   - Ensuring count output reflects the correct remaining time
+
+2. **Pattern Match Alignment**: 
+   - Shift pattern_buffer on every clock cycle in SEARCH state
+   - Only transition to CAPTURE_DELAY when exact pattern is matched
+
+3. **Count Output Timing**:
+   - Update count output only at the start of each 1000-cycle period
+   - Maintain stable count value throughout each period
+
+4. **Done Signal Control**:
+   - Assert done only after final period completes
+   - Hold done until ack is received
+
+5. **Reset Behavior**:
+   - Clear all registers and outputs on reset
+   - Start fresh pattern detection after ack

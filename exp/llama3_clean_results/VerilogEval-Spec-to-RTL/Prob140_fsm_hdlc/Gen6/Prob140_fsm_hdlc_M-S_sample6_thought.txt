@@ -1,0 +1,9 @@
+To simplify the solution, we can focus on reducing the number of states in the finite state machine (FSM) while maintaining its functionality. The current implementation has a state for each number of consecutive ones, which leads to a higher complexity.
+
+A simplified approach can be achieved by recognizing that we primarily need to track the number of consecutive ones and then react based on specific conditions such as seeing a zero after five consecutive ones (discard), seeing a zero after six consecutive ones (flag), or continuing to see ones beyond six (error).
+
+By maintaining a counter for consecutive ones and handling the transitions based on the current state (reset, idle, counting ones, flag, or error), we can significantly reduce the complexity of the FSM.
+
+This simplification involves directly handling the output signals (`disc`, `flag`, `err`) based on the current state and the input, ensuring that the signals are correctly synchronized with the state transitions.
+
+We aim to achieve this simplification while ensuring the FSM correctly identifies the sequences `0111110` for discarding a bit, `01111110` for flagging the beginning/end of a frame, and `01111111...` for signaling an error.

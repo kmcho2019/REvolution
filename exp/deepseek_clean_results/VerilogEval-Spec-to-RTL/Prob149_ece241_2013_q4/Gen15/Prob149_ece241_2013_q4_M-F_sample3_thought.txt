@@ -1,0 +1,25 @@
+Key fixes and improvements:
+
+1. **Correct fr0 Logic**: 
+   - fr0 should be active when water is below s[2] (not above highest sensor)
+   - Specifically: active in states "Between s[2]-s[1]", "Between s[1]-s[0]", and "Below s[0]"
+   - New logic: fr0 <= ~s[2] (simpler and correct)
+
+2. **Correct fr1 Logic**:
+   - fr1 should be active when water is below s[1]
+   - Specifically: active in states "Between s[1]-s[0]" and "Below s[0]"
+   - New logic: fr1 <= ~s[1] & ~s[2]
+
+3. **Maintain fr2 Logic**:
+   - fr2 is correct - only active when all sensors are off (below s[0])
+   - Keep existing logic: fr2 <= ~s[0] & ~s[1] & ~s[2]
+
+4. **Improved dfr Logic**:
+   - Need to properly detect rising water level between states
+   - Compare current and previous sensor patterns properly
+   - Only assert dfr when water is rising from a lower state
+   - Use case statement for clear state transitions
+
+5. **Reset Handling**:
+   - Maintain correct reset behavior (all outputs high)
+   - Reset prev_s to all zeros (no sensors active)

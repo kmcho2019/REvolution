@@ -1,0 +1,11 @@
+Fixed approach addressing the feedback:
+1. Maintain the 2-bit counter (sufficient for 4 cycles)
+2. Add a 'done' flag to track when the 4 cycles are complete
+3. Set 'done' flag after counter reaches 0
+4. Only allow counter decrement when not done
+5. shift_ena is asserted when counter is non-zero AND not done
+6. Reset behavior:
+   - Reset clears the done flag and initializes counter to 3
+   - After 4 cycles, done flag is set and prevents further counting
+   - shift_ena remains low until next reset
+7. This ensures shift_ena is exactly 4 cycles after reset and never reasserts

@@ -1,0 +1,14 @@
+Refactoring the design, I will keep the same functional behavior but implement the read and write operations differently for structural clarity. Instead of using two separate always blocks for write and reset, I will merge reset and write operations into one always block triggered by posedge clk only, relying on the asynchronous reset signal to synchronously clear memory.
+
+For the read operation, I will convert the combinational assignment to a registered output that updates on the clock edge when read_en is asserted, otherwise outputs zero. This introduces a 1-cycle read latency but provides a registered output that can improve timing and reduce glitching on the read_data bus.
+
+This approach also means removing the asynchronous reset in the read logic and making all outputs synchronous. It aligns with many FPGA/ASIC coding styles that prefer synchronous outputs for better timing closure.
+
+Overall, this refactor:
+- Merges reset and write into one block with synchronous reset and write
+- Registers the read_data output on clk to improve timing stability
+- Keeps read and write independent, allowing simultaneous access
+- Uses minimal address widths based on DEPTH
+- Initializes the RAM to zero on reset
+
+This provides a clean, synchronous RAM interface with a small read latency tradeoff and clear clocked logic.

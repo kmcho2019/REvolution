@@ -1,0 +1,16 @@
+Assign the 4 input bits directly as x[3], x[2], x[1], x[0]. Since the Karnaugh map rows are indexed by x[3]x[4] and columns by x[1]x[2], and we only have x[3:0], we interpret x[4] as x[0].
+
+Thus:
+- Row bits = x[3], x[0]
+- Column bits = x[1], x[2]
+
+From the Karnaugh map, f=1 at positions:
+(11,00), (11,01), (10,00), (10,01), (01,11)
+
+Translate these to minterms and simplify:
+
+f = (x[3] & ~x[1]) | (~x[3] & x[0] & x[1] & x[2])
+
+This is a minimal expression directly derived from the map.
+
+Implement this simple logic expression without extra wires.

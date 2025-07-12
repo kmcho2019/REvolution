@@ -1,0 +1,18 @@
+The problem is that toggling clk_div1 and clk_div2 at the same count (half of NUM_DIV) on positive and negative edges does not generate a proper symmetrical clock for odd division. For odd divisors, we need to toggle the output clocks at counts that correctly space the rising and falling edges to achieve near 50% duty cycle overall.
+
+A common approach for odd division is to toggle the output clocks clk_div1 and clk_div2 at counts spaced by (NUM_DIV+1)/2 and (NUM_DIV-1)/2 respectively, which are the two halves of the odd number. This spaces the toggles differently on posedge and negedge, generating edges at alternating intervals that create a correct divided output.
+
+Specifically:
+
+- On the positive edge: toggle clk_div1 when cnt1 reaches (NUM_DIV-1)/2
+- On the negative edge: toggle clk_div2 when cnt2 reaches (NUM_DIV/2) = (NUM_DIV+1)/2 - 1
+
+The counters cnt1 and cnt2 count from 0 to NUM_DIV-1, rolling over.
+
+Using these two toggles on positive and negative edges and OR'ing clk_div1 and clk_div2 yields a divided clock with period NUM_DIV input clocks and approximately 50% duty cycle.
+
+We also eliminate the initial block (not synthesizable) and rely on a generate-time assertion or a comment that NUM_DIV must be odd.
+
+This approach fixes the timing mismatch and produces a correct odd division frequency divider.
+
+We implement the counters, toggle logic, and reset logic accordingly.

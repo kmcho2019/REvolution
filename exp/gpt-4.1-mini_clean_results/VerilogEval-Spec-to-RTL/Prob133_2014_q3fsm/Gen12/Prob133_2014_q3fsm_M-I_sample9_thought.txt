@@ -1,0 +1,11 @@
+To improve the design's PPA, focus on reducing combinational logic delay and dynamic power by minimizing switching and simplifying operations:
+
+- Move the z output update to be registered one cycle after the 3rd w sample evaluation (Mealy to Moore style) to shorten combinational paths and simplify logic, easing timing.
+- Use a single always block for sequential logic for clarity and to potentially help synthesis optimization.
+- Reduce toggling on w_count by only incrementing it if w=1 (already done) and increment cycle counter every cycle in B.
+- Use a 2-bit cycle counter from 0 to 2 to track cycles, resetting after 3 cycles.
+- Set z to 1 only one cycle after the 3rd w input evaluation if exactly two w=1 in the group, else 0.
+- This reduces combinational additions on the critical path and simplifies output logic.
+- Maintain minimal state encoding and counters to keep area low.
+- Synchronous active high reset remains.
+- This approach slightly increases output latency by one cycle but improves timing and potentially power by reducing immediate combinational calculation of z.

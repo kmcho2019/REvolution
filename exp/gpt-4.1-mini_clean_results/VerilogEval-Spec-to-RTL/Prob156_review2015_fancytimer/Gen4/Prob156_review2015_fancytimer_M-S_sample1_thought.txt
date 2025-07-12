@@ -1,0 +1,25 @@
+Implement a simple FSM with four states: IDLE (search pattern), LOAD_DELAY (shift in 4 bits MSB first), COUNTING (count (delay+1)*1000 cycles), DONE (assert done and wait for ack).
+
+Pattern detection in IDLE: shift data into a 4-bit shift register and detect 1101.
+
+In LOAD_DELAY: shift delay bits MSB first into a 4-bit register by shifting left and inserting the incoming bit at LSB.
+
+When delay is fully loaded, start COUNTING: set a cycle counter to 1000 cycles per tick and a tick counter to delay. The counting cycles represent remaining time: output count = tick_counter.
+
+Counting steps:
+- cycle_counter counts from 999 down to 0 (or 0 up to 999)
+- When cycle_counter completes, if tick_counter > 0, decrement tick_counter.
+- When tick_counter == 0 and cycle_counter == 999, done counting.
+
+Outputs:
+- During COUNTING: counting=1, count=tick_counter (starting at delay)
+- During DONE: done=1, counting=0, count don't care
+- Else: done=0, counting=0, count don't care
+
+Synchronous reset puts FSM into IDLE and resets all registers.
+
+Do not sample data outside IDLE and LOAD_DELAY states.
+
+This design avoids off-by-one errors by carefully assigning count = tick_counter and initializing tick_counter = delay at counting start.
+
+Use simple counters and minimal registers for clarity.

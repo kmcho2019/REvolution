@@ -1,0 +1,20 @@
+To fix the fractional frequency divider by 3.5 using double-edge clocking and generate a clean phase-shifted clock (`clk_neg`), the design must:
+
+1. Use separate counters synchronized to posedge and negedge clocks to avoid asynchronous sampling of signals.
+   - The posedge domain counter drives `clk_pos`.
+   - The negedge domain counter drives `clk_neg`.
+   This ensures clean, metastability-free operation and precise phase alignment.
+
+2. Both counters count modulo 7 (DIV_COUNT=7), but each will produce complementary pulse widths shifted by half clock cycle:
+   - `clk_pos` is high for 4 cycles (counts 0..3), low for 3 cycles.
+   - `clk_neg` is high for 3 cycles, low for 4 cycles, starting half clock period delayed from `clk_pos` (counts 0..2 high).
+
+3. With the counters synchronized to respective clock edges, generate `clk_pos` and `clk_neg` directly from their counters, creating the desired uneven high/low duty cycles.
+
+4. Finally, OR the two clocks to create the fractional divided output `clk_div` with ~50% duty cycle and frequency clk/3.5.
+
+This approach resolves metastability issues by avoiding cross-edge sampling and produces phase-shifted signals inherently aligned with clock edges. Using symmetrical counters in posedge and negedge domains ensures stable, glitch-free fractional division.
+
+The reset is synchronous in each domain for stability.
+
+This design cleanly implements fractional division by 3.5 with balanced duty cycle via double-edge clocking.

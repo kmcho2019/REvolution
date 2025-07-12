@@ -1,0 +1,7 @@
+To optimize PPA (power, performance, area), eliminate the costly combinational multiplication by 10 used in BCD digit extraction. Instead, use a simple combinational divider by 10 with subtractive logic, which is efficient for small numbers (max 59 for seconds/minutes and max 12 for hours). This avoids multiplication and long chains of if-else. 
+
+Additionally, register the BCD outputs so they update only when the counter increments or on reset, reducing unnecessary toggling and dynamic power. This way, outputs change only once per second instead of every clock cycle.
+
+Maintain the current synchronous counting structure for clarity and correctness, and keep pm toggle logic as is.
+
+This approach reduces critical path delay by avoiding multiplication, lowers dynamic power by output registering, and potentially reduces area by simpler combinational logic.

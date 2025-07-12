@@ -1,0 +1,16 @@
+Implement a fully pipelined 64-bit ripple carry adder where each pipeline stage handles 8 bits addition with carry-in and carry-out registered to propagate to the next stage in the following clock cycle. This enables high clock frequency by breaking the addition into 8 pipeline stages.
+
+The design:
+- Registers inputs and enable on first stage.
+- Each of the 8 stages adds 8 bits of adda and addb slices plus carry-in from previous stage.
+- Each stage registers its sum output and carry-out.
+- The carry-out from stage N is input carry-in of stage N+1 in next clock cycle.
+- The pipeline enable signal is shifted through 8 registers to track valid data.
+- After 8 cycles, the 65-bit result (concatenation of all 8 sum slices and final carry-out) is output with o_en asserted.
+- The output is stable only when o_en=1.
+
+This approach balances pipeline depth, registers carry explicitly between stages, and synchronizes valid data through enable registers.
+
+The final result is assembled by concatenating the 8 sum segments and final carry-out from last stage.
+
+This clean pipeline structure ensures latency of 8 cycles but high throughput with new inputs accepted each cycle when i_en=1.

@@ -1,0 +1,10 @@
+To implement a 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3, we first need to understand the basic structure of an LFSR and how the taps affect the next state. In a Galois LFSR, the shift register shifts right, and bits at tapped positions are XORed with the least significant bit (LSB) to compute their next value. We will initialize the LFSR with a non-zero value to ensure it cycles through all possible non-zero states.
+
+Given that our LFSR has taps at positions 5 and 3 (noting that the positions are 1-indexed, and the LSB is q[0]), the next state of the bits can be calculated as follows:
+- The next state of q[4] (MSB) is q[3] XOR q[0] (since there's a tap at position 5).
+- The next state of q[2] is q[1] XOR q[0] (since there's a tap at position 3).
+- The next states of q[3], q[1], and q[0] are q[2], q[0], and q[4] respectively, as they shift right.
+
+On reset, the LFSR should be initialized to a non-zero state. Since the problem specifies the output should reset to 1, and assuming the LSB (q[0]) is what's being directly observed for the reset condition, we'll initialize all bits to 0 except for the LSB, which will be set to 1 on reset.
+
+The module will be implemented using always blocks to handle the sequential logic triggered on the positive edge of the clock.

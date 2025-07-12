@@ -1,0 +1,5 @@
+Refactor the design by separating the shift register and counter logic from the output and valid signal generation to avoid race conditions and improve clarity. Implement a synchronous process that shifts in the serial bit into the MSB of an 8-bit shift register when din_valid is high and increments a 3-bit counter (enough for counting to 7). When the counter reaches 7 (indicating 8 bits received, indexed 0 to 7), assert dout_valid for one clock cycle and latch the complete shift register value to dout_parallel.
+
+This approach uses a 3-bit counter instead of 4-bit to optimize size, and explicitly updates dout_parallel only when the full 8 bits are received. The dout_valid pulse is generated synchronously and resets after one cycle. Reset is synchronous and clears all registers. This structure avoids overlapping assignments and potential simulation race conditions by staging output registers in a separate always block.
+
+The first received serial bit will appear in dout_parallel[7] (MSB), shifting older bits down towards LSB, consistent with the requirement.

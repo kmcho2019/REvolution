@@ -1,0 +1,5 @@
+To correctly track the previous water level before the last sensor change, we must register the current level every clock cycle and update the previous level only when a sensor change is detected. This means we keep both `prev_level` and `curr_level` as registered signals updated in sequence: on a sensor change, `prev_level` is set to the old `curr_level` (the one before the change), and `curr_level` is updated to the new level decoded from `s`. We initialize them on reset to represent the low water level with all valves open. 
+
+Nominal flow outputs (`fr2, fr1, fr0`) can be combinationally derived from the current sensor reading `s` as per the table. The supplemental flow valve output (`dfr`) is asserted if the current level is higher than the previous level (water rising). Using synchronous registers for levels guarantees stable comparison, and a synchronous reset ensures outputs and state start in the expected condition.
+
+This method fixes the logic for detecting water level rises and ensures correct reset behavior with outputs matching the expected default state during reset.

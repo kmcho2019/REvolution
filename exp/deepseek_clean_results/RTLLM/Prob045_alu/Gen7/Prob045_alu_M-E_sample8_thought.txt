@@ -1,0 +1,18 @@
+The "Parallel Execution with Late Selection" architecture:
+1. Instead of a single computation path, we implement parallel execution units for different operation groups (arithmetic, logical, shift, comparison)
+2. Each group computes its result independently and in parallel
+3. A final multiplexer selects the appropriate result based on the operation code
+4. Flag generation is distributed to each operation group where relevant
+5. Benefits:
+   - Potentially better timing as operations don't share the same critical path
+   - More modular design that's easier to pipeline
+   - Clear separation of concerns between operation types
+   - Easier to optimize individual operation groups
+
+Key features:
+- Separate arithmetic unit handles ADD/ADDU/SUB/SUBU with dedicated flag generation
+- Logical operations unit computes AND/OR/XOR/NOR in parallel
+- Shift unit handles all shift operations with shared shifter logic
+- Comparison unit handles SLT/SLTU separately
+- LUI operation is handled as a special case
+- Final result selection happens in one clean multiplexing stage

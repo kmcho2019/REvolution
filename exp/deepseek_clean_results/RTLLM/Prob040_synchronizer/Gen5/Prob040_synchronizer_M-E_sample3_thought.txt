@@ -1,0 +1,20 @@
+This design implements a novel request-acknowledge handshake protocol for clock domain crossing:
+
+1. Instead of simple enable synchronization, we use a 4-phase handshake:
+   - Request (req) is generated in clk_a domain when data_en rises
+   - Request is synchronized to clk_b domain (2 FF stages)
+   - Acknowledge (ack) is generated in clk_b domain after data capture
+   - Acknowledge is synchronized back to clk_a domain (2 FF stages)
+
+2. Key advantages:
+   - More robust synchronization with explicit handshake
+   - Clear data validity windows
+   - Built-in flow control
+   - Lower probability of metastability
+   - Explicit edge detection ensures single data capture per enable
+
+3. Implementation details:
+   - Edge detector in clk_a domain creates pulse for new data
+   - Handshake signals cross clock domains with proper synchronization
+   - Data is only captured when both request and acknowledge are stable
+   - Output register updates only when valid synchronized data is available

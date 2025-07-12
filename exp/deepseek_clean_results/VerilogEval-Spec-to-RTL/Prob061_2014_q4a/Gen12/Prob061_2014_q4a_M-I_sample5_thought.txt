@@ -1,0 +1,19 @@
+The current implementation has a slight timing violation (negative WNS) and uses concurrent if statements. To improve PPA:
+
+1. Timing Improvement:
+- Replace concurrent if statements with if-else to reduce critical path
+- This makes the priority explicit and reduces multiplexer complexity
+
+2. Power Optimization:
+- The if-else structure prevents redundant evaluations when both L and E are high
+- This reduces unnecessary switching activity
+
+3. Area Consideration:
+- The change maintains the same flip-flop structure
+- The control logic becomes slightly simpler with explicit priority
+
+The improved version will:
+- Maintain identical functionality
+- Have better timing due to simpler control logic
+- Reduce power by eliminating redundant condition checks
+- Keep area nearly identical

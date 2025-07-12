@@ -1,0 +1,9 @@
+Implement the serial 2's complementer as a 2-state Moore FSM with states WAIT and DONE, where WAIT means the first '1' bit has not been found yet and DONE means the first '1' has been seen, so bits are inverted thereafter. Use asynchronous reset to reset to WAIT state.
+
+Instead of registering the input, directly use input x in combinational next-state logic, simplifying the design and saving one flip-flop. Store the FSM state in a single bit register. The output z depends only on the current state and input x to maintain Moore FSM output property: z = x if in WAIT state, else inverted x.
+
+No separate inversion bit register is needed; the FSM state itself encodes whether to invert or not.
+
+This minimal FSM toggles state only once per number: when the first '1' is encountered on input bits starting from LSB, afterward output the bitwise inverted bits, achieving the 2's complement serially.
+
+This approach requires just one state bit register, asynchronous reset, no input registering, and combinational output logic, minimizing latency, area, and power.

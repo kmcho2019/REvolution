@@ -1,0 +1,19 @@
+The Lemming's behavior can be modeled as a finite state machine with several states: walking left, walking right, falling, digging, and splattered. We will use a Moore state machine, where the outputs are determined solely by the current state. The states will be:
+
+- Walking Left: The Lemming is walking to the left. It will switch to walking right if it hits an obstacle on the left, and vice versa.
+- Walking Right: The Lemming is walking to the right. It will switch to walking left if it hits an obstacle on the right, and vice versa.
+- Falling: The Lemming has lost ground and is falling. It will continue falling until it hits the ground again.
+- Digging: The Lemming is digging. It will continue digging until it reaches the other side.
+- Splattered: The Lemming has fallen for too long and has hit the ground, causing it to splatter. It will remain in this state forever.
+
+We will use a counter to track the number of clock cycles the Lemming has been falling. If this counter exceeds 20 and the Lemming hits the ground, it will transition to the splattered state.
+
+The state transitions will be as follows:
+
+- Walking Left/Right to Falling: When ground = 0.
+- Falling to Walking Left/Right: When ground = 1 and the fall counter is less than or equal to 20.
+- Walking Left/Right to Digging: When dig = 1 and ground = 1.
+- Digging to Falling: When ground = 0.
+- Falling to Splattered: When ground = 1 and the fall counter exceeds 20.
+
+We will use a case statement to implement the state transitions and output logic.

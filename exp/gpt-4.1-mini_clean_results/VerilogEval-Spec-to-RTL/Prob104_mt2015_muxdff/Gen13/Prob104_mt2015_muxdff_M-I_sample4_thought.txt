@@ -1,0 +1,9 @@
+To improve PPA while maintaining correct functionality, I will integrate the mux combinational logic inside the D flip-flop module as a clock enable signal to reduce switching activity, replacing the mux with a clock enable. When L is asserted, the flip-flop loads r_in; otherwise, it holds its state. This reduces unnecessary toggling on q_in and mux output, improving power efficiency and potentially timing by removing the mux delay.
+
+This design uses a DFF with clock enable, where the clock enable is L and the input data is r_in. When L=0, clock enable disables updating, keeping Q stable. We keep q_in input to connect the feedback signal as required, but it's not used as data input; it can be removed from TopModule ports, but since the interface requires it, we keep it.
+
+This change reduces power and possibly area slightly by removing the multiplexer logic. For clarity, q_in is not connected internally, but retained for interface compatibility.
+
+Additionally, we add an asynchronous reset input (optional) to ensure known startup state, but since problem constraints didn't specify reset, we keep initial state as is.
+
+Hence, the TopModule uses a DFF with clock enable to load r_in when L=1, otherwise hold Q.

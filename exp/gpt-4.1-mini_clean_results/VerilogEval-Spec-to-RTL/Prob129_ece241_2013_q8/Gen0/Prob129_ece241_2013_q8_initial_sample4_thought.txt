@@ -1,0 +1,15 @@
+Implement a 3-state Mealy FSM that detects the sequence "101" on input x.
+States will represent how much of the sequence has been matched so far:
+- S0: initial state, no matching bits yet.
+- S1: matched '1'.
+- S2: matched "10".
+
+On input transitions:
+- From S0, if x=1 go to S1, else stay in S0.
+- From S1, if x=0 go to S2, else stay in S1 (still matched a starting 1).
+- From S2, if x=1 output z=1 (sequence detected), and go to S1 (overlapping allowed).
+  Else if x=0 go back to S0.
+
+Reset is asynchronous on negative edge of aresetn and resets FSM to S0.
+Output z is combinational and depends on current state and input x.
+Sequential logic is on positive edge of clk.

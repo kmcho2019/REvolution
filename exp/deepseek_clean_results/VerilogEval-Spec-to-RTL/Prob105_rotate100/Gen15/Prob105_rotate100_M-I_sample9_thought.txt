@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Implement a pipelined version to break the critical path into two stages
+   - First stage handles load and rotation direction selection
+   - Second stage performs the actual rotation operation
+
+2. Power Optimization:
+   - Add clock gating for the rotation logic when no rotation is needed (ena=2'b00 or 2'b11)
+   - This prevents unnecessary switching activity in the rotation logic
+
+3. Area Optimization:
+   - Maintain the current efficient rotation operations (concatenation)
+   - Keep the case statement structure for clear control flow
+   - The pipelining will add some registers but improve timing significantly
+
+The improved solution will:
+- Reduce timing violations through pipelining
+- Lower power consumption with clock gating
+- Maintain reasonable area while improving overall PPA

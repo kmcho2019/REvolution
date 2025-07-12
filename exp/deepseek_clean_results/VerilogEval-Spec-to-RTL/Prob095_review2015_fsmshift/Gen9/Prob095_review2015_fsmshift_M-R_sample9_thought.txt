@@ -1,0 +1,12 @@
+Refactoring strategy:
+1. Use a 3-bit counter to properly count 4 cycles (0-3) with clear overflow
+2. Implement shift_ena as a combinational output using assign statement
+3. Simplify the sequential logic to only handle counter increment and reset
+4. Make reset behavior explicit - counter starts at 0 and counts to 3 (4 cycles)
+5. shift_ena is high when counter < 4 (0-3) and low otherwise
+
+Key improvements:
+- Clear separation of combinational and sequential logic
+- Proper cycle counting with 3-bit counter (though only 2 bits needed)
+- shift_ena controlled purely by counter value
+- More maintainable and verifiable structure

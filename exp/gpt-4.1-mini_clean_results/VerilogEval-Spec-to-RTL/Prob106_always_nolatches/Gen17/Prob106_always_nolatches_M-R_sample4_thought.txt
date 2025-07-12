@@ -1,0 +1,5 @@
+Refactor the module to eliminate the intermediate `reg` variable and the `always` block, replacing the decoding logic with four direct continuous assignment comparisons. Each output is directly driven by a boolean expression that compares the full 16-bit scancode against the respective arrow key scancode constant.
+
+This approach reduces logic by avoiding the case decoder and intermediate encoding, leading to simpler combinational logic for synthesis and potentially smaller area and power. It also improves readability by explicitly showing the direct mapping from input to outputs without extra encoding steps.
+
+All outputs remain one-hot and mutually exclusive if the input is one of the specified scancodes. The design is purely combinational, with outputs declared as wires assigned by continuous assignment.

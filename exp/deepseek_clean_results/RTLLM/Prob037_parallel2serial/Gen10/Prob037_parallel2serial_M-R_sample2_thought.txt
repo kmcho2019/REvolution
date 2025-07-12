@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Representation: Replace binary counter with one-hot encoding for simpler decoding and potentially better timing
+2. Data Path: Use explicit bit selection instead of shifting to eliminate the shift operation overhead
+3. Control Logic: Move all combinational logic to assign statements for clearer data flow
+4. Valid Signal: Generate directly from state without additional comparison
+5. Reset Handling: Maintain synchronous reset but simplify the initialization
+
+Key Improvements:
+- One-hot state machine eliminates counter arithmetic
+- Direct bit selection avoids shift operation timing overhead
+- All combinational logic in assign statements improves readability
+- Valid signal generation becomes trivial with one-hot encoding
+- Reduced sequential logic complexity

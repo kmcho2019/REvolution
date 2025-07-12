@@ -1,0 +1,15 @@
+To solve this problem, we can implement a Moore-type finite state machine (FSM) in Verilog. The FSM will have several states to recognize the sequences 01111110, 01111110, and 01111111... (7 or more consecutive 1s). 
+
+The FSM states can be:
+- S0: Initial state or after seeing a 0
+- S1: After seeing a 1
+- S2: After seeing two consecutive 1s
+- S3: After seeing three consecutive 1s
+- S4: After seeing four consecutive 1s
+- S5: After seeing five consecutive 1s
+- S6: After seeing six consecutive 1s
+- S7: After seeing seven or more consecutive 1s
+
+From S0 to S5, if a 0 is seen, we go back to S0. If we reach S6 and see a 0, we flag the end of a frame. If we reach S7, we flag an error. If we are in S5 and see a 1, we discard the bit (disc) and go back to S0.
+
+To implement the FSM, we will use a case statement to determine the next state based on the current state and the input. We will use a separate case statement to determine the output based on the current state.

@@ -1,0 +1,25 @@
+module TopModule(
+    input clock,
+    input a,
+    output reg p,
+    output reg q
+);
+
+reg p_next, q_next;
+
+initial begin
+    p = 0;
+    q = 0;
+end
+
+always @(*) begin
+    p_next = a | (p & q);
+    q_next = p;
+end
+
+always @(posedge clock) begin
+    p <= p_next;
+    q <= q_next;
+end
+
+endmodule

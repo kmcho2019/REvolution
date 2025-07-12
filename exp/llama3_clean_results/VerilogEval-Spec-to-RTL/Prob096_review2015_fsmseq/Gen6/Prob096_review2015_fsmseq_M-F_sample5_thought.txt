@@ -1,0 +1,9 @@
+The issue with the existing code lies in the handling of the `seq_found` signal and its impact on the `start_shifting` output. Once the sequence 1101 is detected, `seq_found` should remain 1 until the `reset` signal is asserted. However, the current implementation does not explicitly handle this condition, leading to functional errors.
+
+To fix this, we need to modify the code to ensure that `seq_found` remains 1 once the sequence is detected, regardless of the subsequent input data. This can be achieved by adding an explicit condition to handle the case when `seq_found` is already 1 and `reset` is 0, keeping `seq_found` as 1 in this condition.
+
+Additionally, we will assign `start_shifting` the value of `seq_found` directly to minimize unnecessary transitions and ensure that `start_shifting` remains 1 once the sequence is detected.
+
+We will also ensure that the shift register is correctly updated and checked against the target sequence, even after the sequence is found, to prevent any potential issues with the input sequence changing after the initial match.
+
+By addressing these issues, we can create a more reliable and efficient implementation of the finite-state machine that accurately detects the sequence 1101 in the input bit stream and maintains the `start_shifting` output as required.

@@ -1,0 +1,20 @@
+The original design iterates 16 cycles checking one multiplier bit each cycle, which corresponds to a basic shift-and-add multiplier, not a radix-4 Booth multiplier. Radix-4 Booth encoding groups multiplier bits in overlapping triplets (two bits plus a previous bit) and thus can process two bits per cycle, reducing the number of cycles roughly by half.
+
+To implement radix-4 Booth:
+- On reset: sign-extend multiplicand and multiplier to 17 bits (the multiplier is extended by one extra bit at LSB for previous bit = 0).
+- Use a 4-bit cycle counter (0 to 4) since for 8-bit inputs radix-4 needs ceil(8/2) = 4 cycles.
+- On each cycle, examine a 3-bit group (multiplier bits [2*i+1:2*i-1]) to generate Booth code (-2,-1,0,1,2) corresponding to partial product multiples of multiplicand.
+- Add/subtract 0, multiplicand, or 2*multiplicand shifted appropriately from accumulator register.
+- Shift accumulator and multiplier registers together (accumulator includes higher bits of product), moving two bits each cycle.
+- After 4 cycles, output the 16-bit product and assert ready signal.
+
+Also:
+- Use synchronous reset only (posedge clk) for better synthesis compatibility.
+- Separate combinational logic for Booth decoding.
+- Keep registers width and sign-extensions consistent.
+- Keep the design purely synchronous to avoid latch inference.
+- Use signed arithmetic where needed.
+
+This approach reduces cycle count from 16 to 4, lowers switching activity, and aligns with radix-4 Booth algorithm requirements, improving performance and reducing area and power.
+
+Below is a fully synchronous radix-4 booth multiplier with 8-bit inputs producing 16-bit output with ready signal, following the above plan.

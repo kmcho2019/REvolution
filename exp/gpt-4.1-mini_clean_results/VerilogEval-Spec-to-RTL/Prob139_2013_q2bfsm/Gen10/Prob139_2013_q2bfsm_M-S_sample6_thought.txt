@@ -1,0 +1,12 @@
+Simplify the FSM by directly encoding the required behavior with a clear sequential state machine that explicitly tracks these phases:
+
+- State A: Wait for reset release, outputs low.
+- State B: Assert f=1 for exactly one cycle after reset release.
+- State C: Shift in x inputs each cycle to detect the pattern 101 using a 3-bit shift register.
+- State D: Once pattern 101 detected, assert g=1 and monitor y for 2 cycles max.
+- State E: If y=1 within 2 cycles, stay with g=1 forever (until reset).
+- State F: If y≠1 after 2 cycles, set g=0 forever (until reset).
+
+Use only a few states with explicit outputs for clarity. Keep all output and state registers synchronous to clk with synchronous active-low reset. Update pattern shift register only in state C to align with pattern detection timing. Implement timer in state D counting up to 2 cycles to monitor y. Outputs f and g are registered and updated only at clock edges for timing clarity.
+
+This approach keeps the FSM easy to read and debug, meets the timing requirements exactly, and eliminates complexity like typedefs or overlapping state and output logic.

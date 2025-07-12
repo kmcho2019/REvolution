@@ -1,0 +1,16 @@
+To optimize the existing design for better PPA, we maintain the same algorithmic approach but improve the correction addition logic by using a more concise and regular adder structure. Instead of manually coding bitwise addition with individual wires and complex carry generation, we use a 4-bit adder with the correction (6) masked by the correction_needed signal. This reduces gate-level complexity and improves synthesis optimization.
+
+Moreover, to simplify the correction detection logic, we keep the existing Boolean expression since it's already efficient.
+
+The carry-out after correction will be the OR of the raw carry out (bit 4 of raw sum) and the carry out from the correction addition, ensuring correctness.
+
+This approach balances hardware simplicity and clarity, potentially reducing area and power due to clearer synthesis of adder structures, while maintaining performance.
+
+Key changes:
+- Use a dedicated 4-bit adder for sum_low + (correction_needed ? 6 : 0) instead of bitwise manual addition.
+- Correction_needed logic remains the same.
+- Final carry is OR of raw carry and correction carry.
+
+This will help synthesis tools infer optimized arithmetic cells and possibly reduce delay and area.
+
+No change to inputs and outputs or overall interface.

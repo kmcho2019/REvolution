@@ -1,0 +1,9 @@
+The original code is functionally correct but has some inefficiencies: it uses shifts by variable amounts inside the sequential always block, which can lead to longer combinational paths and impact timing; also, the multiplicand shifts by multiples of 2*cycle_cnt inside the always block increase area and delay. To fix this, I will pre-shift the multiplicand multiples outside the always block and select the properly shifted value by indexing rather than shifting inside the clocked block. This reduces combinational complexity inside the clocked block.
+
+Specifically, for each cycle (0 to 3), the product additions or subtractions involve multiplicand or 2*multiplicand shifted by 0, 2, 4, or 6 bits (i.e., multiplied by 4^cycle). I will precompute these shifted values into small arrays and then select the correct value according to the booth factor and cycle count.
+
+Also, I will adjust the cycle count to run from 0 to 3 (4 cycles total), which suffices for radix-4 8-bit multiplication. The ready signal will be asserted after the 4th cycle.
+
+This approach keeps the core algorithm intact but improves timing and area by removing large variable shifts from the clocked always block and replacing them with multiplexed pre-shifted values.
+
+The rest of the design remains the same: sign-extend inputs on reset, shift multiplier by 2 bits each cycle, decode Booth bits, update accumulator accordingly, and assert ready with product output when done.

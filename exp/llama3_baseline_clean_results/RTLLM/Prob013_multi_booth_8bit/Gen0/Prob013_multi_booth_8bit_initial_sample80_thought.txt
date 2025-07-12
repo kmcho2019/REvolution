@@ -1,0 +1,8 @@
+To implement the 8-bit Radix-4 Booth multiplier, I will use a combination of registers and counters to manage the multiplication process. On the positive edge of the clock signal (clk) or the positive edge of the reset signal (reset), the module will perform the following operations:
+- Initialize two 16-bit registers, multiplier and multiplicand, with the inputs a and b when reset is high.
+- During normal operation (reset is low), the multiplicand register will be left-shifted by 1 to simulate the Booth algorithm's shifting operation if the counter (ctr) is less than 16.
+- If the current bit of the multiplier register (multiplier[ctr]) is 1, the product register (p) will accumulate the value of the multiplicand register (multiplicand).
+- The counter (ctr) will be incremented by 1.
+- Once the counter (ctr) reaches 16, indicating the completion of the multiplication process, the ready signal (rdy) will be set to 1.
+
+The multiplier will utilize a 5-bit counter (ctr) to iterate over the bits of the multiplier register. The product register (p) will accumulate the partial products based on the Booth encoding.

@@ -1,0 +1,5 @@
+Fuse the strengths of both examples by using binary-encoded FSM for area and power efficiency, combined with one-hot style modular clarity in next state logic by structuring the combinational part clearly. Implement the shift register with a shift-left scheme to directly place the incoming LSB bit at bit 0, matching the serial LSB-first convention naturally. Gating the bit counter and shift register enables only during the reading state reduces unnecessary toggling, lowering power.
+
+Generate the done pulse synchronously when the stop bit is correctly received, and hold the out_byte register only at that time. For robustness, after detecting an incorrect stop bit, enter an error recovery state that waits for the line to return idle (stop bit 1) before reattempting reception.
+
+This hybrid solution improves area and power by efficient state encoding and gating, improves performance with simplified combinational next-state logic, and uses the natural LSB-first shift-left pattern for clarity and verification. It keeps clean, non-blocking sequential logic and minimizes toggling outside active reception.

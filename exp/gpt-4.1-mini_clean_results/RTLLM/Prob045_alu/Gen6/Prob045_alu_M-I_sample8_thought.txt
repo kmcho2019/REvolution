@@ -1,0 +1,17 @@
+To improve PPA (performance, power, and area) of the given ALU design, I will:
+
+1. Avoid computing all operations unconditionally. Instead, compute only the needed operation inside the case statement, minimizing switching activity and reducing area.
+
+2. Replace the current `case (1'b1)` with a direct `case(aluc)` to leverage the known opcode encoding, enabling better synthesis optimizations.
+
+3. Compute the carry and overflow only for add/sub operations and gate these signals inside the always block, reducing unnecessary logic.
+
+4. Avoid redundant wires and simplify the design by moving shift amounts and sign-extension logic inside the case branches.
+
+5. For LUI, implement the standard MIPS behavior: `r = {b[15:0], 16'b0}`, i.e., use `b` as immediate and set lower 16 bits zero.
+
+6. Drive `flag` as a 1-bit register set only for SLT and SLTU, else zero (never 'z') to be synthesis-friendly.
+
+7. Compute zero and negative flags combinationally from the final result (`r`) outside the always block.
+
+This yields a cleaner, lower-power and smaller-area design with shorter critical paths.

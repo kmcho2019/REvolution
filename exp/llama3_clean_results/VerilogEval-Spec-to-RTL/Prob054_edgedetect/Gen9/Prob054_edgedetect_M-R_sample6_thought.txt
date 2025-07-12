@@ -1,0 +1,13 @@
+To refactor the given code and improve its performance, power consumption, and area, we will focus on simplifying the combinational logic and reducing the number of operations within the always block. 
+
+One way to achieve this is by using a for loop within the always block to iterate over each bit of the input vector `in`. This approach reduces code redundancy and makes the code more maintainable. 
+
+Additionally, we will maintain the same functionality of detecting a 0 to 1 transition in the input signal and setting the corresponding output bit in the next clock cycle.
+
+To further optimize the design, we can consider using a more explicit method for detecting the positive edge transition by comparing the current input with the previous input stored in a register. This can be achieved by using a non-blocking assignment within a clocked always block to update the previous value register and detect the edge.
+
+We will also consider optimizing the design for better PPA metrics by reducing switching activity and minimizing the critical path. However, in this case, since the `prev_in` register is updated every clock cycle, any bit that does not change in `in` still causes a change in `prev_in`. We can mitigate this by only updating `prev_in` when a change is detected in `in`, but this might add complexity and could negatively impact area or performance.
+
+Our refactoring strategy will be to combine the efficient edge detection mechanism with an area-efficient approach of using a single register to store the previous value of the input vector. We will use a non-blocking assignment within a clocked always block to update the previous value register and detect the edge.
+
+We will achieve this by using a more efficient encoding scheme for the output and minimizing the number of operations within the always block. Additionally, we will ensure that our solution is well-structured, readable, and maintainable by using clear and descriptive variable names, proper indentation, and concise comments to explain the code.

@@ -1,0 +1,15 @@
+Here's a simplified Radix-4 Booth multiplier design:
+
+1. Use 16-bit registers for multiplicand and multiplier to handle sign extension
+2. Implement a 3-bit counter (since 8 bits / 2 bits per step = 4 steps)
+3. At each clock cycle:
+   - Examine 3 bits of multiplier (current pair + previous LSB)
+   - Perform the appropriate operation based on Booth encoding
+   - Shift multiplier right by 2 bits (Radix-4)
+4. Complete in exactly 4 cycles (for 8-bit inputs)
+5. Set ready signal when counter reaches 4
+
+Key simplifications:
+- Removed separate prev_bit register by using multiplier[0] directly
+- Simplified case statement to basic Booth operations
+- Fixed shift operations to be consistent with Radix-4

@@ -1,0 +1,5 @@
+To fuse the best ideas from both examples, implement the counter update inside a single always @(posedge clk) block with clear control flow for loading and decrementing, ensuring clarity and direct state update. Simultaneously, prepare the next counter value combinationally outside the always block as a wire. Then update the register with this next count inside the clocked block. 
+
+This fusion keeps the clarity and straightforwardness of the procedural approach from Example 2, while also cleanly separating combinational next-state logic from sequential register update as in Example 1. It facilitates easier optimization of combinational logic and better timing. The counter only decrements when non-zero and not loading, and holds zero once reached. 
+
+Also, the output terminal count (tc) is assigned combinationally from the registered counter, ensuring simple timing for the output signal. This combined approach is clean, synthesis-friendly, and respects the single D flip-flop usage for the counter register.

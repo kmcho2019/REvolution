@@ -1,0 +1,12 @@
+To solve this problem, I will design a finite state machine (FSM) with the following states:
+- IDLE: Wait for the start bit (0) on the input line.
+- STARTED: Shift in the 8 data bits.
+- STOPPED: Check if the stop bit is 1.
+- ERROR: Wait for a stop bit (1) if the stop bit check fails.
+The FSM will also have a reset state, which will be active-high synchronous.
+
+The design will use a counter to keep track of the number of data bits received and a shift register to store the received data.
+
+When the FSM is in the IDLE state and receives a start bit, it will move to the STARTED state. In the STARTED state, it will shift in the data bits and increment the counter. Once all 8 bits are received, it will move to the STOPPED state to check the stop bit. If the stop bit is 1, it will set the done signal high and move back to the IDLE state. If the stop bit is 0, it will move to the ERROR state and wait for a stop bit. When a stop bit is received in the ERROR state, it will move back to the IDLE state.
+
+The design will use a synchronous reset to reset the FSM to the IDLE state when the reset signal is high.

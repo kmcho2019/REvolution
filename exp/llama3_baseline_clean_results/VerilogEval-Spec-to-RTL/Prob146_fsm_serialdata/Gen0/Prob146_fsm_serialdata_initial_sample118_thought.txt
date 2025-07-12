@@ -1,0 +1,16 @@
+To solve this problem, we will implement a finite state machine (FSM) in the TopModule. The FSM will have the following states: 
+- IDLE: The initial state, where it waits for the start bit (0).
+- START_BIT: After detecting the start bit, it moves to this state.
+- DATA_BITS: Here, it collects the 8 data bits.
+- STOP_BIT: After receiving the 8 data bits, it moves to this state to verify the stop bit.
+- ERROR: If the stop bit does not appear when expected, the FSM moves to this state to wait for a stop bit before attempting to receive the next byte.
+We will use counters and shift registers to implement the data collection and verification.
+
+The FSM will have the following transitions:
+- From IDLE to START_BIT when the input is 0.
+- From START_BIT to DATA_BITS.
+- From DATA_BITS to STOP_BIT after collecting 8 bits.
+- From STOP_BIT to IDLE if the stop bit is 1, and assert done. If the stop bit is 0, move to ERROR.
+- From ERROR to IDLE when a stop bit (1) is detected.
+
+We will use an 8-bit shift register to store the incoming data bits and a counter to keep track of the number of data bits collected.

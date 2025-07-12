@@ -1,0 +1,13 @@
+To optimize for better power, performance, and area (PPA), we target the following improvements:
+1. Use a positive edge clocking style with inverted clock inside the module to ease timing closure and synthesis tool optimizations, as negative edge clocking can complicate timing analysis.
+2. Retain synchronous reset to avoid asynchronous reset overhead.
+3. Use a single always block for all bits for area and power efficiency.
+4. Use a localparam for reset value to ensure the constant is only stored once.
+5. Optionally, add clock enable gating (based on input change) to reduce unnecessary toggling when d is unchanged; this reduces power.
+6. Keep modularity intact for clarity and reusability.
+
+This approach leverages positive edge triggering (with inverted clk internally) for better synthesis compatibility, synchronous reset for clean reset behavior, and clock gating for power saving by updating q only when d changes or reset is asserted.
+
+By minimizing toggling on q when d is stable, we reduce dynamic power. The inversion of clk inside the module allows the top-level interface to remain as negative edge triggered from the user’s perspective, preserving interface contract.
+
+Overall, these changes aim to improve timing closure and reduce switching power without functional changes.

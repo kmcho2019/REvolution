@@ -1,0 +1,10 @@
+To improve PPA metrics while maintaining clarity and synthesis friendliness, I will flatten the multiplexer logic to a single vectorized conditional assignment without multiple submodule instantiations. This reduces hierarchy overhead and simplifies routing, which may improve timing (WNS/TNS) and reduce area and power. Using a single continuous assignment for all 100 bits ensures the synthesis tool can optimize mux logic globally, potentially sharing logic and reducing gate count.
+
+This approach:
+- Maintains full functionality as a 2-to-1 mux selecting between two 100-bit inputs.
+- Avoids additional module instances and generate loops, minimizing hierarchy and instantiation overhead.
+- Uses a single vectorized assign statement for optimal synthesis.
+- Should reduce area and power slightly due to less routing and control logic.
+- Likely improves performance by reducing logic depth and routing complexity.
+
+Overall, flattening the design to a simple single-assignment mux is an effective PPA optimization given the original design's already simple logic.

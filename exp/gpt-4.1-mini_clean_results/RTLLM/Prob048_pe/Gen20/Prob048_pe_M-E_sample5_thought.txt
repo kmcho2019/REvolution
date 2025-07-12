@@ -1,0 +1,9 @@
+Implement the multiplying accumulator with a 64-bit accumulator register to hold the full precision of repeated 32x32 multiplications without overflow or saturation.  
+This approach accumulates the full 64-bit product in a 64-bit register, preventing loss of data from overflow during accumulation.  
+The output port 'c' will provide the lower 32 bits of the accumulator, giving the current accumulated sum truncated to 32 bits.  
+Use an asynchronous active-high reset that zeroes the 64-bit accumulator on reset.  
+Perform all operations (multiplication and addition) in a synchronous always block triggered by the positive clock edge.  
+This design trades off output precision (providing lower 32 bits only) for full internal accumulation to avoid overflow errors.  
+It is simpler to synthesize and avoids saturation or overflow detection logic, which reduces combinational path complexity.  
+If upper bits are needed later, the 64-bit accumulator can be easily accessed or extended.  
+This design suits applications tolerant to truncated lower bits output or those that handle overflow externally.

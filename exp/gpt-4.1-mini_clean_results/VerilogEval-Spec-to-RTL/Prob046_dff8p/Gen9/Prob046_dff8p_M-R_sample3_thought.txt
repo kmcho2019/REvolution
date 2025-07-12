@@ -1,0 +1,12 @@
+Refactor the design by merging all eight flip-flops into a single 8-bit register with synchronous reset inside a single always block triggered on the negative edge of clk. Instead of parameterizing each bit's reset value in separate DFF instances, hardcode the entire reset value (8'h34) directly in the synchronous reset assignment. This reduces module instantiations, eliminates parameter passing overhead, and simplifies the design.
+
+This approach maintains the original functionality:
+- negative edge triggered DFFs,
+- synchronous active high reset to 0x34,
+- vectorized inputs and outputs,
+
+while improving clarity, reducing code verbosity, and potentially enhancing PPA by consolidating logic into one register block.
+
+Note: This removes the modular per-bit DFF abstraction but preserves bitwise behavior in a vector register.
+
+This also simplifies verification and synthesis with fewer generated modules.

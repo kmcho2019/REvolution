@@ -1,0 +1,9 @@
+Refactor the 16-bit CLA module to explicitly compute the carry vector using a recursive carry lookahead formula based on group propagate and generate signals, rather than using a simple carry chain in a generate loop. This involves computing group propagate (P_group) and group generate (G_group) signals for blocks of bits, then using these to compute carries more hierarchically.
+
+In particular, implement carry signals for 4-bit groups first and then combine them to get the carries at each bit. This will structure the carry logic to be more parallel and hierarchical, reducing the carry propagation delay compared to a linear chain.
+
+For the top-level 32-bit adder, instantiate two 16-bit CLA blocks as before, but keep consistent zero-based indexing internally and map from 1-based input/output indices with straightforward assignments. The summation logic remains combinational with only assign statements.
+
+This approach retains the combinational and hierarchical nature but structurally improves the carry logic clarity and timing potential by grouping carries and avoiding a simple linear chain. It also uses assign statements extensively and no always blocks.
+
+The indexing is kept consistent as zero-based internally; only top-level ports use 1-based indexing as per the requirement.

@@ -1,0 +1,12 @@
+To solve this problem, we can design a Moore state machine with several states to model the different behaviors of the Lemming. The states can be: 
+- IDLE_LEFT: The Lemming is walking left.
+- IDLE_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered.
+
+We can use a counter to keep track of the number of clock cycles the Lemming has been falling. If the Lemming hits the ground after falling for more than 20 clock cycles, it will splatter. 
+
+We will use areset to asynchronously reset the state machine to the IDLE_LEFT state. 
+
+The outputs will be determined by the current state of the state machine. For example, if the state machine is in the IDLE_LEFT state, walk_left will be 1. If the state machine is in the FALLING state, aaah will be 1.

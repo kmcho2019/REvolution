@@ -1,0 +1,7 @@
+The original code implements a pulse detection module using a counter-based approach. However, to refactor this code and improve its readability and maintainability, we can utilize a state machine-based approach. This involves defining explicit states to represent the different phases of the pulse sequence and transitioning between these states based on the input signal `data_in`.
+
+The state machine will have four states: IDLE, RISING, PEAK, and FALLING. The IDLE state represents the initial condition where `data_in` is 0. The RISING state is entered when `data_in` transitions from 0 to 1, indicating the start of a potential pulse. The PEAK state is entered after one clock cycle in the RISING state, waiting for `data_in` to transition back to 0. The FALLING state is entered when `data_in` transitions from 1 to 0, indicating the end of the pulse.
+
+By using a state machine, the logic for pulse detection becomes more explicit and easier to understand. We will use a `reg` to keep track of the current state and use an `always` block to handle the state transitions and output generation.
+
+To further improve the code, we can use an `enum` to define the states, making the code more readable and maintainable. We will also use a separate `always` block to handle the reset condition, making the code more modular and easier to understand.

@@ -1,0 +1,14 @@
+To simplify the original solution while maintaining the correct shift-and-accumulate multiplication functionality, I will:
+
+1. Use asynchronous active-low reset as originally requested.
+2. Use straightforward logic without additional enable signals to keep the design simple.
+3. Keep a 5-bit shift counter `i` counting from 0 to 17 to track the operation phases.
+4. On `start` assertion with `i == 0`, load the multiplicand and multiplier registers.
+5. From `i == 1` to `i == 16`, if the LSB of `areg` is 1, add the shifted multiplier to the accumulator `yout_r`.
+6. Shift `areg` right and `breg` left by one each cycle in this phase.
+7. Generate the done flag when `i == 16`.
+8. Reset `done` at `i == 17` or when not started.
+9. Reset all registers on `rst_n == 0`.
+10. When `start` is low, reset the counter and accumulation registers to zero for simplicity.
+
+This approach trades some toggling and power efficiency for easier readability and simpler control logic.

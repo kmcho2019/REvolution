@@ -1,0 +1,5 @@
+I will use a single 2-to-1 multiplexer (mux) controlled by vibrate_mode to select which output to activate when ring is high. Specifically, when ring is asserted, the module outputs a 2-bit vector where one bit represents the ringer and the other the motor; the mux picks the motor when vibrate_mode=1 and the ringer when vibrate_mode=0, ensuring mutual exclusivity.
+
+This approach encodes the outputs as a vector and then extracts them, allowing a compact and parameterizable selection structure that cleanly separates output logic from control logic. It emphasizes modularity and showcases the use of vector and mux assignment in Verilog.
+
+If ring is low, both outputs are zero. If ring is high, the mux selects one of the two active outputs according to vibrate_mode.

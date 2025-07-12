@@ -1,0 +1,9 @@
+The provided code can be refactored by reducing the number of generate loops and leveraging the use of non-blocking assignments within a single always block. This approach simplifies the overall structure of the code and maintains the same functionality. 
+
+To begin, we can eliminate the separate generate loops for each output vector (`out_both`, `out_any`, `out_different`) and instead use a single loop that calculates all three outputs simultaneously. This reduces the amount of code duplication and makes the design more modular.
+
+Furthermore, instead of using generate statements with conditional expressions for the wrap-around case in `out_different`, we can use the modulo operator (`%`) to handle the indexing in a more concise manner.
+
+Additionally, we can use always blocks instead of generate statements to allow for more flexibility in the design, although in this case, the functionality remains combinatorial, so always blocks with no sensitivity list (implying combinational logic) are equivalent to the original generate statements but offer an alternative way to express the design.
+
+By using a single loop and always blocks, the code becomes more streamlined and potentially easier to understand and maintain.

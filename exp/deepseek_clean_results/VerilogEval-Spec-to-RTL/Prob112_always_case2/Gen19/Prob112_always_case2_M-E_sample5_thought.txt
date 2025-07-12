@@ -1,0 +1,8 @@
+This implementation uses a thermometer-style approach where we:
+1. First generate a mask that identifies all bits from LSB to the first '1'
+2. Then count the number of zeros in this mask to determine the position
+3. The mask is created by OR-reducing all higher bits for each position
+4. This approach has a more regular structure that may be better for certain synthesis tools
+5. It naturally handles the all-zeros case by producing zero output
+
+The key insight is that the position of the first '1' can be determined by counting how many consecutive zeros precede it. This is done by creating a mask where each bit represents whether all previous bits were zero.

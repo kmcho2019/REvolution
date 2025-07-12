@@ -1,0 +1,5 @@
+To optimize the given design for better performance, power, and area, I will flatten the hierarchy by implementing the 256-to-1 mux as a simple direct index using the sel input. Instead of decomposing into multiple mux modules, using a single continuous assignment `assign out = in[sel];` leverages synthesis tools' ability to optimize multiplexers efficiently.
+
+This approach eliminates the multi-level mux tree, reducing propagation delay and area by avoiding logic replication. It also reduces switching activity as only the selected bit drives the output. The flat mux is functionally equivalent and synthesizes well, preserving correctness while improving PPA metrics.
+
+No additional modules are needed, and the module interface stays unchanged. This change drastically simplifies the design and should yield better overall results.

@@ -1,0 +1,14 @@
+To optimize the FSM for better performance, power, and area (PPA), the main focus is simplifying the next-state logic and reducing unnecessary transitions without changing the functional behavior.
+
+Improvements:
+1. Use one-hot encoding for states to potentially improve synthesis timing on FPGA or ASIC flows where one-hot FSMs can yield faster clocks, at the minor expense of area. However, since the state count is only 3, area increase is minimal.
+2. Simplify next state logic by directly encoding transitions without redundant assignments.
+3. Reduce toggling of the output signal z by asserting it only in the minimal logic condition, avoiding unnecessary recomputation.
+4. Maintain the asynchronous negative edge reset as required.
+5. Use blocking assignments in combinational logic for clarity and synthesis friendliness, non-blocking for sequential.
+
+By employing one-hot encoding, the FSM uses three flip-flops, each representing one state. The transitions become simple assignments without extra decoding logic, which can reduce critical path delay and power switching activity.
+
+This trade-off slightly increases area (three flip-flops vs two) but generally improves timing and can reduce glitching in logic. Given the small FSM, area increase is minimal.
+
+Overall, the redesign trades slight area increase for better timing and power efficiency, which improves the PPA metrics while maintaining correctness and meeting all specs.

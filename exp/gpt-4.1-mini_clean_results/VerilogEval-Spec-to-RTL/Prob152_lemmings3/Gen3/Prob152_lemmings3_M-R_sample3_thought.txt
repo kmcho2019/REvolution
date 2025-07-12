@@ -1,0 +1,12 @@
+Refactor the FSM by splitting the direction (walking left/right) and the behavioral state (walking, falling, digging) into two separate registers. This separation clarifies direction updates and makes direction logic combinational and explicit. Instead of toggling direction on any bump, explicitly set direction to right if bumped on left, to left if bumped on right, and flip direction if bumped on both sides simultaneously.
+
+Also, use a register to track previous ground to detect transitions and prevent bumps affecting direction during ground edges or falling/digging states.
+
+The FSM behavior is:
+- Direction changes only when walking on stable ground (ground=1 and prev_ground=1).
+- Priority of behaviors remains fall > dig > bump.
+- While walking and stable ground, direction updates as per bump inputs.
+- When falling or digging, direction holds steady, bumps ignored.
+- Outputs are purely combinational from current state and direction.
+
+This approach improves clarity, correctness, and adherence to the spec.

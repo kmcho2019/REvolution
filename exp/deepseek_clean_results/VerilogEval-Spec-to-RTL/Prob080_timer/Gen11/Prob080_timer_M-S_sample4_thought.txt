@@ -1,0 +1,12 @@
+Simplified design approach:
+1. Remove the else-if condition and let the counter decrement naturally when not loading
+2. The counter will automatically saturate at 0 due to unsigned arithmetic
+3. Combine the load and decrement operations in a single always block
+4. Maintain the same terminal count detection logic
+5. Eliminate explicit check for counter != 0 since unsigned underflow will naturally stop at 0
+
+Key simplifications:
+- Removed conditional check for counter != 0
+- Let unsigned arithmetic handle the zero case naturally
+- Fewer conditions in the always block
+- Same functionality with simpler logic

@@ -1,0 +1,17 @@
+To improve synthesis compatibility and optimize for performance, power, and area, the design will:
+
+1. Declare inputs and outputs as signed vectors to simplify sign handling and enable native signed arithmetic in synthesis tools.
+
+2. Perform subtraction directly on signed N-bit inputs, avoiding extra sign extension logic and wider intermediate signals, thus reducing area and complexity.
+
+3. Use a combinational always block with blocking assignments for clarity and synthesis friendliness.
+
+4. Handle zero result by checking if the subtraction yields zero and then explicitly setting the sign bit to zero, preventing negative zero representation.
+
+5. Maintain parameters Q (fractional bits) and N (total bits) to keep fixed-point precision consistent.
+
+6. Keep internal result stored in a register `res` for clarity, assigned directly from the subtraction result.
+
+7. Provide a testbench with the same parameterization for thorough verification, using signed ports for direct arithmetic and eliminating unnecessary sign extension.
+
+This approach leverages signed data types, simplifying the design and improving synthesis results while preserving the fixed-point subtraction semantics, sign handling, and explicit zero representation as required.

@@ -1,0 +1,14 @@
+Simplified and corrected design for 3.5x fractional divider:
+
+1. Maintain 7-cycle period (0-6) as base for 3.5x division
+2. Generate two complementary clock phases:
+   - Phase A: High for first 3 cycles (0-2)
+   - Phase B: High for next 4 cycles (3-6)
+3. Use simple counter with two phase registers
+4. Combine phases with XOR (not OR) to create proper fractional division
+5. Key improvements:
+   - Correct phase combination logic (XOR instead of OR)
+   - Proper duty cycle by alternating 3/4 cycle phases
+   - Single always block for all sequential logic
+   - Maintains accurate 3.5x division ratio
+   - No need for explicit phase shifting - achieved through counter timing

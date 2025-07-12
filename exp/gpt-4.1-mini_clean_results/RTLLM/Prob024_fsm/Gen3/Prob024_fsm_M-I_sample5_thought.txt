@@ -1,0 +1,11 @@
+To improve the given FSM solution, I will optimize the next_state logic to reduce critical path delays. Currently, the next state calculation depends on multiple nested if-else conditions inside a case statement, which could introduce logic depth. I will flatten and simplify the next state transitions using a combinational approach with minimal comparisons, possibly encoding the states differently or simplifying conditions.
+
+Moreover, the MATCH output logic can be decoupled from next_state calculation by assigning MATCH based on the current state and input, making it a pure Mealy output. This can reduce timing complexity as MATCH will be generated combinationally from known signals without waiting for next_state.
+
+Also, I will use non-blocking assignments in sequential blocks and blocking in combinational blocks, ensuring good coding practice.
+
+The resulting design will have lower logic depth, potentially improving the timing slack (WN/S), while maintaining minimal area and power as the FSM is small.
+
+The state encoding remains the same for clarity but transitions and MATCH logic are optimized for simpler combinational paths.
+
+Finally, I will add comments clarifying the Mealy output generation and overlapping sequence detection.

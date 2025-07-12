@@ -1,0 +1,19 @@
+Here's a novel approach using a priority-encoded state transition scheme that leverages the one-hot property differently:
+
+1. Instead of computing each next_state bit separately, we'll use a priority encoder that:
+   - First checks for active state bits in priority order (D highest, A lowest)
+   - For each active state, computes the transition based on input
+   - Uses the priority to ensure only one transition is applied
+
+2. Key innovations:
+   - Single conditional assignment per state transition path
+   - Eliminates parallel bit operations by using priority
+   - Reduces gate count by sharing common input conditions
+   - Maintains one-hot properties through exclusive selection
+
+3. Output logic remains simple (state[3]) as it can't be optimized further
+
+4. Benefits:
+   - Potentially lower power due to reduced switching activity
+   - More compact implementation with fewer gates
+   - Clear state transition priority that's easy to modify

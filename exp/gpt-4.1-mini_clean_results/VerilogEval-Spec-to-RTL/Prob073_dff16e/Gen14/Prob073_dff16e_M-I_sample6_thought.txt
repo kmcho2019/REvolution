@@ -1,0 +1,7 @@
+To improve the PPA of the existing solution, I will split the 16-bit register into two separate 8-bit registers for the upper and lower bytes. Each register will have its own always block with a simple write-enable signal derived from byteena bits. This avoids the conditional concatenation and potentially reduces multiplexer logic on the critical path, improving timing.
+
+Using separate registers enables clearer byte-wise clock enable logic, which synthesis tools can optimize into clock gating or transparent latches if supported. This can also reduce power due to gating unnecessary toggling on bytes that are not written.
+
+The synchronous reset remains active-low and applies to both bytes independently.
+
+This design keeps code readable and better maps to byte enables, which may improve timing and power, while potentially reducing area by simplifying mux structures.

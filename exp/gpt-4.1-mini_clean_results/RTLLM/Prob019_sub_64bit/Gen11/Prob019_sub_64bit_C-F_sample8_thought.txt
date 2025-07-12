@@ -1,0 +1,13 @@
+Fuse the modular borrow-chained approach of example 1 with the efficient two's complement subtraction of example 2 to build a high-performance 64-bit subtractor.
+
+Strategy:
+- Use two 32-bit carry lookahead adders (CLAs) for the lower and upper 32-bit parts, chaining the carry-out from the lower CLA as carry-in to the upper CLA. This modular decomposition reduces carry propagation length from 64 to 32 bits per block, improving timing over a flat 64-bit CLA.
+- Perform subtraction by adding A to the two's complement of B, i.e., A + (~B + 1). The initial carry-in to the lower 32-bit adder will be 1, representing the +1 for two's complement.
+- This merges the fast carry lookahead arithmetic from example 2 with the borrow/ carry chain splitting of example 1.
+- Overflow detection remains the same: overflow occurs if sign of A differs from B and the result sign differs from A.
+- This structure balances performance (due to shorter carry chains and lookahead adders), modularity, and clear subtraction semantics, reducing critical path delay compared to ripple borrow subtractors and the flat CLA.
+- Additionally, it minimizes area and power by avoiding full 64-bit flat carry chain and ripple borrow chains.
+- The 32-bit CLA blocks implement fast carry propagation internally for better performance.
+- The design is fully combinational, uses structural hierarchy for clarity, and aligns with the original overflow detection requirement.
+
+This approach combines modular decomposition for timing, fast carry logic for performance, and efficient two's complement subtraction for correctness.

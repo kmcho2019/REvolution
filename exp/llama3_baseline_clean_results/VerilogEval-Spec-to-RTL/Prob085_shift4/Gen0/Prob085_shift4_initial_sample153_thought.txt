@@ -1,0 +1,6 @@
+To implement the TopModule, we can use a 4-bit register to store the shift register's state. The register's next state will be determined by the current state and the input signals. On the positive edge of the clock, the register will be updated based on the following conditions:
+- If areset is asserted, the register is reset to zero.
+- If load is asserted, the register is loaded with the data input.
+- If ena is asserted and load is not asserted, the register is shifted right, with the most significant bit being set to zero and the least significant bit being discarded.
+- If neither load nor ena is asserted, the register remains unchanged.
+We can use a always block to describe the register's behavior and a if-else statement to prioritize the load input over the ena input.

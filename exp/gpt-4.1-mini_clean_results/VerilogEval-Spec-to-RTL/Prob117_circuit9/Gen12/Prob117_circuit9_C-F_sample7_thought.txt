@@ -1,0 +1,16 @@
+Fuse the two example solutions by combining explicit next-state logic separation with arithmetic increment and modulo-7 behavior, rather than a large case statement. Since the sequence is a cyclic counting modulo 7 through {4,5,6,0,1,2,3}, we can encode q as a 3-bit register representing this state.
+
+When input 'a' is high, the state is forced to 4, otherwise it advances to the next value in the sequence by incrementing modulo 7. The advantage is removing the large case statement in favor of a simple arithmetic modulo operation, which should reduce combinational logic complexity and area.
+
+To implement the modulo 7 behavior on a 3-bit value, since valid states are 0-6 inclusive (except q=7 invalid), we treat the state as modulo 7. The sequence start point is 4, which is reset by 'a=1'.
+
+On the rising edge of clk, q is updated based on a: if a=1, q=4; else q = (q+1)%7.
+
+Also, to ensure safe behavior, if q somehow goes out of range (7), reset it to 4.
+
+This fusion improves clarity and efficiency by replacing case with arithmetic while preserving correct behavior and robustness.
+
+Advantages:
+- Reduced combinational complexity (only an adder and modulo 7 logic).
+- Cleaner and more scalable code.
+- Explicit reset on invalid states to 4 ensures safe operation.

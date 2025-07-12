@@ -1,0 +1,12 @@
+To improve performance, power, and area (PPA) over the provided solution, we keep the same minimal 2-bit state encoding and the Moore FSM design. 
+
+Key improvements:
+- Simplify bump detection logic by combining bump_left and bump_right into a single bump signal, reducing logic complexity.
+- Implement a synchronous active-high reset instead of asynchronous. While async reset is convenient, synchronous reset often yields better timing closure and reduces routing congestion, improving performance and power.
+- Use non-blocking assignments consistently and keep the combinational next_state logic simple with explicit default assignment.
+- Minimize output logic by directly decoding state bits.
+- Ensure the sensitivity list of the combinational always block is fully inferred by using always @(*) for synthesis-friendly design.
+- Slightly reorder conditions to prioritize early exits for clarity and small synthesis advantages.
+- Overall, preserve the FSM behavior exactly but streamline the bump processing and reset style to favor synthesis optimizations.
+
+These changes should reduce path delays (better TNS/WNS), cut down logic toggle (power), and remove routing congestion due to async reset nets (area). The state encoding and FSM structure remain the same for minimal area. This balanced approach yields better PPA while retaining code clarity and correctness.

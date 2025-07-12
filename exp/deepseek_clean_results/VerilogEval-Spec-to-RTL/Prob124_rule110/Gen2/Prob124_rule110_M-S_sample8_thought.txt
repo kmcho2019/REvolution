@@ -1,0 +1,13 @@
+To simplify the Rule 110 implementation while maintaining correctness:
+1. Use a single always block for both sequential and combinational logic
+2. Implement the truth table directly using bitwise operations for clarity
+3. For each cell, the next state can be expressed as:
+   - ~Left & Center | ~Left & Right | Center & Right
+   - This matches all cases where next state is 1 in the truth table
+4. Handle boundaries by treating missing neighbors as 0
+5. Use non-blocking assignment for the sequential update
+6. This approach:
+   - Eliminates the need for a separate next_q register
+   - Directly implements the truth table
+   - Handles boundaries cleanly
+   - Reduces code complexity while maintaining functionality

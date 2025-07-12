@@ -1,0 +1,30 @@
+The original design correctly implements a pipelined IEEE-754 single-precision floating-point multiplier with comprehensive handling of special cases, normalization, rounding, and overflow/underflow scenarios. However, the reported PPA metrics suggest moderate timing margin (WNS ~ -1.56 ns), decent power, and relatively large area due to wide intermediate buses and propagation of many flag signals across all pipeline stages.
+
+To optimize for better Power, Performance, and Area (PPA), the following improvements will be made:
+
+1. **Reduce internal exponent width from 10 bits to 9 bits**:
+   - The exponent sum range fits within 9 bits (max ~ 254 + overflow), reducing register width and combinational logic cost.
+   - Keep bias and intermediate calculations consistent without unnecessary bit widening.
+
+2. **Minimize propagation of status flags and sign bits**:
+   - Use a single pipeline register to hold combined special case indicators instead of propagating multiple individual flags.
+   - This reduces flip-flop count and switching activity.
+
+3. **Move rounding combinational logic into sequential block (Stage 3)**:
+   - Instead of an always @(*) block, implement rounding logic within the clocked always block, breaking the long combinational path.
+   - This improves timing and timing predictability.
+
+4. **Optimize sticky bit calculation**:
+   - Reduce width of sticky bit computation by truncating product bits beyond precision needed for rounding, decreasing switching and logic depth.
+
+5. **Use non-blocking assignments consistently in sequential blocks**:
+   - To follow best synthesis and simulation practices.
+
+6. **Compact the pipeline into 3 stages if possible**:
+   - Combine certain operations to reduce pipeline overhead, balancing latency and throughput.
+
+7. **Clarify naming and code structure for maintainability**.
+
+The improved design retains full IEEE-754 compliance and special case handling while improving timing margins and reducing area and power through signal width reductions, clocked rounding, and simplified flag propagation.
+
+This approach will yield better clock frequency potential, lower power through fewer toggling signals and registers, and reduced area from narrower buses and simplified control logic.

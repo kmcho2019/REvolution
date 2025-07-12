@@ -1,0 +1,7 @@
+To develop a novel solution, let's consider a different architectural approach. Instead of directly updating the history register based on the input signals, we can use a finite state machine (FSM) to manage the state transitions and updates. This approach can provide a more modular and scalable design.
+
+We'll define two states: `IDLE` and `UPDATE`. In the `IDLE` state, the module waits for input signals to determine the next action. When `predict_valid` is high, the module transitions to the `UPDATE` state to update the history register with the predicted branch direction. If `train_mispredicted` is high, the module also transitions to the `UPDATE` state but updates the history register with the history after the mispredicted branch.
+
+The FSM will use a counter to keep track of the current state and ensure that the updates are applied in the correct order. We'll also use a temporary register to store the updated history value before writing it to the `predict_history` register.
+
+This approach allows for easier modification and extension of the module's functionality, as new states and transitions can be added as needed.

@@ -1,0 +1,19 @@
+Simplified Design Approach:
+
+1. **Proper Zero Extension**: Only extend the multiplicand (mul_a) by 4 bits as specified, since extending the multiplier (mul_b) is unnecessary for partial product generation.
+
+2. **Two-Stage Pipeline**: Implement exactly two register stages as required:
+   - First stage registers partial products (bit 0+1 and bit 2+3 sums)
+   - Second stage registers the final sum
+
+3. **Simplified Reset**: Apply reset to all pipeline registers synchronously for consistent behavior.
+
+4. **Direct Implementation**: 
+   - Generate partial products using simple AND and shift operations
+   - Use explicit register stages rather than combinational paths
+   - Maintain clear separation between pipeline stages
+
+5. **Optimized Structure**: 
+   - Remove unnecessary wire declarations
+   - Combine related operations in each pipeline stage
+   - Keep the generate block only for partial product generation

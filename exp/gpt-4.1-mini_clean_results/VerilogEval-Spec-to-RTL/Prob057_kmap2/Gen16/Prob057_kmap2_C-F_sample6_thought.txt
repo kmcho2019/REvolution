@@ -1,0 +1,27 @@
+Combine the clarity, minimal logic depth, and common sub-expression sharing from Example 1 with the compact, direct continuous assignment style of Example 2 to produce a well-factored, minimal sum-of-products expression.
+
+Key fusion points:
+- From Example 1, reuse complemented inputs and common terms to avoid redundant inversion and repeated logic.
+- Factor the logic to share common terms like (a|b) and (~a|~b) explicitly in separate wires for clarity and reduced gate count.
+- Use direct continuous assignment (assign) to produce concise and readable Verilog.
+- Avoid nested ternary operators (Example 2 style) that can increase critical path depth.
+- Maintain flat OR-combination of product terms (Example 1 style) for optimized synthesis.
+- This fusion keeps the design simple, easily synthesizable, and optimized for performance, power, and area.
+
+The resulting logic expression:
+
+Let:
+  not_a = ~a
+  not_b = ~b
+  not_c = ~c
+  not_d = ~d
+  a_or_b = a | b
+  not_a_or_not_b = not_a | not_b
+
+Then:
+  out = (not_c & not_d & not_a_or_not_b)
+      | (not_c & d & not_b)
+      | (c & not_d & not_a)
+      | (c & d & a_or_b)
+
+This approach reuses common terms, simplifies synthesis, and optimizes gate sharing.

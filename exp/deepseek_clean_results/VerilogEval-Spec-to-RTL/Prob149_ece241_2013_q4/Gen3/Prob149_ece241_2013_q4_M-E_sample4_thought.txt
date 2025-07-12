@@ -1,0 +1,11 @@
+My new approach uses a hierarchical state machine that directly tracks the water level position relative to the sensors, with explicit handling of transitions between levels. Key features:
+
+1. **Four Distinct States**: Representing each possible water level range (ABOVE, MID_HIGH, MID_LOW, BELOW) with clear transitions.
+
+2. **Transition Detection**: By comparing current and previous states, we can accurately determine if water level is rising or falling.
+
+3. **Output Generation**: Each state directly maps to its required nominal flow outputs (fr2, fr1, fr0), while dfr is set based on rising transitions.
+
+4. **Reset Handling**: Synchronous reset initializes to BELOW state with all outputs active.
+
+This design provides clear state visibility and precise control over transitions, making it easier to verify against requirements.

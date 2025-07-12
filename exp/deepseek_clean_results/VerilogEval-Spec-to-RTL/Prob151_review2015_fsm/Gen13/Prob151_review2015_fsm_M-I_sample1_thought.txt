@@ -1,0 +1,28 @@
+Improvement Strategy:
+
+1. Pattern Detection Fix:
+- Maintain pattern register only in IDLE state
+- Clear pattern register only on reset or state transition from IDLE
+- Ensure full 4-bit pattern is captured before detection
+
+2. State Machine Optimization:
+- Keep essential states (IDLE, SHIFT, COUNT, NOTIFY)
+- Ensure proper state transitions with correct timing
+- Clear shift counter when leaving SHIFT state
+
+3. Output Timing Correction:
+- Generate shift_ena exactly during SHIFT state
+- Assert counting only during COUNT state
+- Assert done only during NOTIFY state
+- All outputs synchronous to clock edges
+
+4. Reset Handling:
+- Proper synchronous reset behavior
+- Clear all registers on reset
+- Start in IDLE state
+
+Key Improvements:
+- Fixed pattern detection timing
+- Precise 4-cycle shift_ena generation
+- Correct state transition timing
+- Synchronous output generation

@@ -1,0 +1,9 @@
+To implement the radix-2 divider, we need to consider both signed and unsigned division operations. The design should start by checking for a valid operation request (opn_valid high and res_valid low), then save the inputs, and initialize the necessary registers and counters. The division process involves shifting and subtracting the divisor from the dividend, updating the quotient and remainder accordingly. The result validity is managed by setting res_valid high when the division is complete and clearing it upon reset or when the result is consumed.
+
+The key components of this design are:
+- A control logic to handle the operation start, division process, and result validity.
+- A datapath that includes shift registers for the dividend and divisor, and a subtraction unit.
+- A multiplexer to select the correct result based on the carry-out of the subtraction.
+- Counters to track the number of division steps and to manage the result validity.
+
+The implementation involves using Verilog's always block to describe the combinational and sequential logic, and utilizing if-else statements to handle different conditions during the division process.

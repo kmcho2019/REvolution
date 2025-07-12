@@ -1,0 +1,17 @@
+I will simplify the design by using a single-bit state encoding (binary state) instead of one-hot encoding, because there are only two states. This reduces flip-flop count from two to one, saving area and power. The reset is still asynchronous active-high as required.
+
+The binary state encoding:
+- 0: State A
+- 1: State B
+
+State transitions:
+- From A (0): if x=0 stay in A, if x=1 go to B
+- From B (1): stay in B regardless of x
+
+The output z is Mealy type depending on current state and input:
+- In A: z = x
+- In B: z = ~x
+
+This encoding and logic match the original FSM behavior exactly but are simpler and more efficient. The asynchronous reset still initializes to state A (0).
+
+This simplification reduces logic and flip-flops while preserving correct functionality and reset behavior.

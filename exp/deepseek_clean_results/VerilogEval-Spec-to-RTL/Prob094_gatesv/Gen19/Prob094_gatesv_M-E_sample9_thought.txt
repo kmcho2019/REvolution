@@ -1,0 +1,18 @@
+Novel approach using shift registers and parallel comparators:
+
+1. **Shift Register Technique**: Instead of direct bit operations, use a shift register approach to create neighbor relationships. This provides a more scalable solution for wider inputs.
+
+2. **Parallel Comparison**: Implement all three required operations (AND, OR, XOR) in parallel using dedicated comparison logic for each bit position.
+
+3. **Circular Buffer**: For the out_different calculation, implement a true circular buffer by rotating the input bits, then perform element-wise XOR.
+
+4. **Boundary Optimization**: Explicitly handle boundary conditions by:
+   - Setting out_both[3] to 0 (don't care)
+   - Setting out_any[0] to 0 (don't care)
+   - Properly implementing the circular wrap-around for out_different
+
+Key advantages:
+- More modular and scalable design
+- Clear separation of neighbor relationships
+- Easier to extend to wider bit widths
+- More explicit handling of boundary conditions

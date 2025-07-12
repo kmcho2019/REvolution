@@ -1,0 +1,13 @@
+To solve this problem, we will implement a Mealy Finite State Machine (FSM) in Verilog. The FSM will have six states: S0 (initial state), S1, S2, S3, S4, and S5. Each state represents a step in the sequence of inputs that we are trying to match. We will use a single-bit input IN and will output a MATCH signal when the sequence 10011 is detected. The FSM will also support continuous input and loop detection.
+
+We will initialize the FSM with the RST signal. When RST is active, the FSM will reset to the initial state (S0) and set the MATCH signal to 0. 
+
+The state transitions will be as follows:
+- S0: If IN is 1, move to S1; otherwise, stay in S0.
+- S1: If IN is 0, move to S2; otherwise, move back to S0.
+- S2: If IN is 0, move to S3; otherwise, move back to S0.
+- S3: If IN is 1, move to S4; otherwise, move back to S0.
+- S4: If IN is 1, move to S5 and set MATCH to 1; otherwise, move back to S0.
+- S5: Move back to S0.
+
+This way, the FSM will correctly detect the sequence 10011 and output a MATCH signal at the same time as the last occurrence of IN=1.

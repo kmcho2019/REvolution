@@ -1,0 +1,14 @@
+Instead of using a counter with a decoder, we can implement the ring counter directly using a shift register approach with feedback. The key ideas are:
+
+1. Use a simple 8-bit shift register where the output is fed back to the input
+2. Initialize to 8'b00000001 on reset
+3. On each clock edge, shift left by 1 bit
+4. When the '1' reaches the MSB (bit 7), the feedback brings it back to the LSB (bit 0)
+5. This creates a continuous rotating pattern of a single '1' through the 8 bits
+
+This approach:
+- Eliminates the need for a separate counter and decoder
+- Uses direct shifting which is more efficient
+- Clearly shows the "ring" nature of the counter
+- Handles wrap-around naturally through the feedback
+- Maintains the one-hot property at all times

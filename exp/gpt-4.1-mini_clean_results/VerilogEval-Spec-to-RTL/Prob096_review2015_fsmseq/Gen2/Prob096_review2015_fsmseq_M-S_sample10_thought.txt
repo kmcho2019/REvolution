@@ -1,0 +1,6 @@
+Simplify the FSM by using a single always block for state transitions and output logic.
+Encode states as 3-bit values to directly represent the number of matched bits of the sequence "1101".
+Use minimal states: 0 (no match), 1 ('1' matched), 2 ('11' matched), 3 ('110' matched).
+On detecting input sequence completion (current state 3 and data=1), set start_shifting.
+Once start_shifting is set, keep it until synchronous reset.
+This reduces the combinational logic to just updating the state in a simple case statement and merges output logic inside the same sequential block.

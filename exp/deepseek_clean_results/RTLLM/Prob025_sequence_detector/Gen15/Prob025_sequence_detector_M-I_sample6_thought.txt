@@ -1,0 +1,15 @@
+To optimize the design for better PPA metrics while maintaining functionality, I'll implement these improvements:
+
+1. Pipelining for Timing: Split the detection logic into two stages to improve timing closure by reducing the combinational path. The first stage will detect the "100" pattern in the shift register, and the second stage will combine this with the current data_in.
+
+2. Clock Gating for Power: Add an enable signal to freeze the shift register when not in active detection mode (after detecting "100" pattern), reducing unnecessary toggling and dynamic power.
+
+3. State Encoding for Area: Use one-hot encoding for the shift register bits to potentially help with placement optimization while maintaining the same functionality.
+
+4. Registered Output: Keep the registered output for clean timing characteristics.
+
+These changes should:
+- Improve timing by reducing the critical path
+- Further reduce power consumption
+- Maintain or slightly improve area efficiency
+- Keep the same detection functionality

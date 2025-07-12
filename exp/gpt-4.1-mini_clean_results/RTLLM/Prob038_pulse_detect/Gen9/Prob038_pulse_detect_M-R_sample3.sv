@@ -1,0 +1,21 @@
+module pulse_detect (
+    input  wire clk,
+    input  wire rst_n,
+    input  wire data_in,
+    output wire data_out
+);
+
+    reg [2:0] shift_reg;
+
+    // Shift in data_in at each clock
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            shift_reg <= 3'b000;
+        else
+            shift_reg <= {shift_reg[1:0], data_in};
+    end
+
+    // Detect the pattern 0->1->0 (3'b010)
+    assign data_out = (shift_reg == 3'b010);
+
+endmodule

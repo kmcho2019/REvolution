@@ -1,0 +1,7 @@
+To improve the previous design for better PPA while maintaining pipelining, we introduce a multi-stage partial sum accumulation pipeline to reduce combinational path length and improve timing. Instead of summing all 8 partial products in one combinational step, we break the addition into two pipeline stages: first stage sums pairs of partial products into four 16-bit values, the second stage sums those four sums into the final product. This reduces logic depth per cycle, increasing max frequency.
+
+We also register partial products and partial sums to reduce glitching and power. The enable signal is pipelined in sync with data to gate updates properly. By distributing addition across pipeline stages and registering partial sums, we reduce critical path, dynamic power, and potentially area (adder sharing possible later).
+
+The pipeline latency is increased to 4 cycles: input register, partial product generation, partial sum level 1, partial sum level 2/output register. Enable signal propagates accordingly.
+
+This structured pipeline keeps throughput at one product per cycle when enabled, improves timing by shorter combinational paths per stage, and reduces power by registering intermediate values and gating with enable signals.

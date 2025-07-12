@@ -1,0 +1,11 @@
+Simplify the division module by removing the unnecessary first always block that only copies inputs to internal registers combinationally. Instead, directly use the input signals in a single always block that performs the combinational division logic.
+
+Keep the same algorithm:
+- Use a 9-bit remainder register initialized to zero.
+- Iterate through each bit of the 16-bit dividend, shifting remainder left by one and appending the next dividend bit.
+- If the remainder is at least the divisor, subtract the divisor and set the quotient bit to 1; else 0.
+- Collect quotient bits and remainder.
+This reduces code size and complexity while maintaining the requested functionality and using only one always block for combinational logic, which is sufficient since the first always block was redundant.
+
+Outputs:
+- Quotient (16-bit) and remainder (zero-extended to 16-bit).

@@ -1,0 +1,10 @@
+To optimize power and area, add an enable signal so the shifting occurs only when a new valid bit is presented, reducing unnecessary toggling. However, the original problem doesn't specify an enable input, so to keep the interface unchanged, implement an internal enable that only shifts when the input bit 'd' changes or differs from q[7], which can reduce switching activity in some data scenarios.
+
+Also, since the shift is always by one bit on each clock, use a shift register inference-friendly coding style by using concatenation, which synthesis tools can map to shift register primitives efficiently.
+
+The updated design will:
+- Add an internal enable condition that triggers shifting only if d is different from the current MSB q[7] (a simple heuristic).
+- Maintain synchronous reset to zero at initialization to prevent issues with simulation and synthesis tools (using synchronous reset in always block for better synthesis support).
+- Avoid unnecessary shifting when input bit does not change MSB, reducing dynamic power.
+
+This small enhancement can potentially reduce switching and power in typical use cases, slightly improving PPA without changing module interface.

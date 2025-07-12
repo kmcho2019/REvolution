@@ -1,0 +1,9 @@
+To improve the original design for better PPA, I will focus on output signal timing and register the output 'z' to reduce combinational output delay, improving setup timing (wns) and reducing glitching which lowers power. This adds a single-bit register stage for 'z' aligned with the clock, trading off a one-cycle latency for detection. 
+
+The FSM state machine logic remains combinational and minimal with three states encoded as 2 bits. The asynchronous reset remains on the state register as required. The output 'z' is asserted synchronous to clk based on the computed combinational detection signal.
+
+Separating combinational next_state and the registered output reduces logic on critical timing paths and can help synthesis tools better optimize the design.
+
+This approach will improve worst negative slack and dynamic power by eliminating direct combinational output toggling, with minimal area impact. It adheres strictly to the interface and functional requirements.
+
+Also, I will use nonblocking assignments in sequential always blocks for best coding style and clarity.

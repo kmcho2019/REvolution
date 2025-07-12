@@ -1,0 +1,17 @@
+Instead of dividing the 512-bit automaton into 8 blocks of 64 bits, I will implement the entire 512-bit Rule 90 logic in a single module without any internal sub-modules to minimize inter-module signal propagation overhead.
+
+To handle the boundary conditions cleanly, I will create a 514-bit wide internal register that pads zeros at both ends (left and right boundary zeros). The register q_pad[513:0] holds {0, q[511:0], 0} at every step.
+
+At each clock cycle, if load is high, q is loaded with the input data directly. Otherwise, q updates according to the Rule 90 formula:
+
+  q_next[i] = q_pad[i] ^ q_pad[i+2]; for i = 0 to 511
+
+This formulation uses the left and right neighbors of q[i] shifted by one position (due to the padded zeros).
+
+Advantages:
+- Single module simplifies timing, area, and connectivity.
+- No wide fan-in clock enable comparator is used; clock enable is simply load or always update.
+- Clean boundary handling with the padded vector, avoiding complicated boundary multiplexers.
+- Synchronous logic with nonblocking assignments and combinational next state logic.
+
+This approach trades off some combinational fanout (since the entire 512-bit vector updates each clock), but reduces control complexity and simplifies timing paths, potentially improving overall performance.

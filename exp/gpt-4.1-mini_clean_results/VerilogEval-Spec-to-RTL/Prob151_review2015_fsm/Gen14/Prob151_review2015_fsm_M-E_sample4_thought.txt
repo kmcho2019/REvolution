@@ -1,0 +1,5 @@
+Implement the FSM using one-hot encoding for states to improve timing by reducing logic levels in state decoding and transitions. Use a shift register of the last four data bits to detect the 1101 pattern instead of multiple SEARCH states, thus simplifying pattern detection.
+
+When the pattern is detected, move to a SHIFT state where a dedicated 3-bit shift_counter counts exactly 4 cycles, asserting shift_ena during this period. Then transition to COUNT state asserting counting output, waiting for done_counting signal. Finally, move to DONE state asserting done output until ack is received, then reset to initial state.
+
+All state transitions and counters are updated synchronously on posedge clk with active-high synchronous reset. Outputs are assigned directly from the state (Moore FSM). This approach simplifies pattern detection logic, potentially improving critical path and reduces state decoding complexity due to one-hot encoding.

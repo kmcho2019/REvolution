@@ -1,0 +1,7 @@
+To simplify the solution, we can eliminate the enumeration of states and directly determine the output values based on the sensor inputs. We can also simplify the logic for determining the `dfr` output by tracking the previous state of the sensors and comparing it with the current state.
+
+We can use a simple if-else statement to determine the output values based on the sensor inputs. For example, if `s[2]` is high, we set all flow rate outputs to 0. If `s[2]` is low and `s[1]` is high, we set `fr0` to 1 and the others to 0, and so on.
+
+To determine the `dfr` output, we can use a separate logic that checks if the current sensor state indicates a higher water level than the previous state. We can store the previous sensor state in a register and compare it with the current state at each clock cycle.
+
+The reset signal will reset the previous sensor state and set all flow rate outputs to 1 and `dfr` to 1, simulating the water level being low for a long time.

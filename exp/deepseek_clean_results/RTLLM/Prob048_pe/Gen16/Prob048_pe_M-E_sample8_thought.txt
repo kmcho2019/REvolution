@@ -1,0 +1,11 @@
+This design implements a pipelined, power-optimized MAC with the following innovations:
+1. Two-stage pipelined multiplier to improve timing (critical path split)
+2. Clock-gated accumulator register to reduce dynamic power
+3. Early termination for zero operands to save computation
+4. Carry-save adder structure for the accumulation
+5. Operand isolation during reset to prevent unnecessary toggling
+
+The pipeline stages are:
+Stage 1: Partial product generation (Booth encoding)
+Stage 2: Final product generation and accumulation
+The clock gating is implemented using the input operand values to disable the accumulator clock when inputs are zero.

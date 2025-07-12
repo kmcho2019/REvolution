@@ -1,0 +1,10 @@
+To optimize the decade counter for better PPA metrics, I'll implement the following improvements:
+1. Timing Optimization: Replace the 4-bit comparator with a simpler equality check for value 10 (4'b1010). Since we only need to detect one specific value, we can optimize the logic by checking each bit individually (q[3] & ~q[2] & q[1] & ~q[0]).
+2. Power Optimization: Add an enable signal that only allows counting when necessary, reducing unnecessary switching activity.
+3. Area Optimization: Use a more efficient state encoding scheme that requires fewer flip-flops or simpler combinational logic. However, since we need to represent values 1-10, a 4-bit counter remains the most area-efficient approach.
+
+The improved design will:
+- Maintain the same functionality (count 1-10 with synchronous reset)
+- Reduce critical path delay by simplifying the wrap-around detection
+- Minimize power consumption by reducing unnecessary switching
+- Keep area usage efficient

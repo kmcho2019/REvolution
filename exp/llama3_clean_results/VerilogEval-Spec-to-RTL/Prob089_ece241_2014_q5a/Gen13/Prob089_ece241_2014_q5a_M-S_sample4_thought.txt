@@ -1,0 +1,7 @@
+To simplify the existing solution, we will focus on minimizing the combinational logic and ensuring that the design accurately implements the serial 2's complement logic. Given the current design's functionality, we aim to reduce complexity by eliminating unnecessary operations and dependencies. 
+
+One key simplification is to directly update the `z` output based on the current `x` input and the previous state of `carry`, without explicitly storing the new `carry` value in a separate flip-flop. This approach maintains the correctness of the 2's complement logic while reducing the number of registers and associated logic.
+
+By directly calculating `z` as `x ^ carry` and then updating `carry` based on `x`, we ensure that the output `z` at each clock cycle is the 2's complement of the input bit stream up to that point. This simplification also reduces the switching activity, as `carry` only changes when `x` is 1, potentially leading to power savings.
+
+Overall, the strategy involves reducing the number of flip-flops, simplifying the combinational logic, and ensuring that the asynchronous reset is efficiently handled, all while maintaining the design's functionality.

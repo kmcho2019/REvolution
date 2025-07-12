@@ -1,0 +1,29 @@
+To improve the original design for better synthesis compatibility and slight PPA improvements, I will:
+
+- Remove the 'initial' block since it is not synthesizable and may cause mismatches in hardware. Instead, I will add a synchronous reset input inside the module driven by a local reset signal that initializes the flip-flops to zero on the first clock edge. Because the problem does not provide a reset input, I will generate an internal reset signal using a simple power-on reset synchronizer.
+
+- However, since the problem states "Assume that the D flip-flops are initially reset to zero before the machine begins" and no reset input is available, the best synthesis-compatible approach is to add an asynchronous internal reset generated using an internal signal, which is asserted for one cycle after power-up. This is a common technique in FPGA designs (a power-on reset) and better than relying on the 'initial' block.
+
+- If an internal asynchronous reset is not allowed, then synthesizers can infer flip-flops with preset/clear attributes (if the target technology allows), or otherwise leave the design with an initial block for simulation only. Since the problem does not specify a reset input, I will implement a power-on reset internally using a small shift register that synchronously deasserts the reset after a few clock cycles.
+
+- Declare z as wire and implement the NOR gate with a continuous assignment instead of a combinational always block, which is cleaner and more synthesizable.
+
+- Use intermediate wires for the D inputs to improve code clarity and possibly synthesis optimization.
+
+- Keep all flip-flops as positive-edge triggered with synchronous reset.
+
+This approach guarantees deterministic initialization of flip-flops, avoids the non-synthesizable initial block, and improves synthesis friendliness and slightly improves performance by simplifying output logic and resetting flip-flops properly.
+
+If the problem does not want to add extra input ports, the internal power-on reset generation logic is a common solution.
+
+Hence the improved design is:
+
+- Internal power-on reset logic with a 2-bit shift register (reset asserted for 2 cycles after power-up).
+
+- Synchronous reset on all flip-flops.
+
+- Outputs computed with continuous assignment for clarity.
+
+- No initial block.
+
+This should meet the problem spec ("flip-flops initially reset to zero before the machine begins") while being synthesizable, reliable, and efficient.

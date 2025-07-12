@@ -1,0 +1,5 @@
+A novel architectural idea is to implement the 16-bit up/down counter by explicitly separating the increment and decrement operations using combinational logic and multiplexing to select the next count value. Instead of using the built-in +1/-1 operators directly on the register, we calculate incremented and decremented values first, then select the appropriate next state based on `up_down`. This may clarify datapath behavior and facilitate easier pipelining or extension.
+
+To reduce glitches and improve timing, the increment and decrement computations are done in parallel combinational logic, then a multiplexer chooses between them. The synchronous reset is maintained. This approach might be slightly longer combinational logic, but can be optimized by synthesis tools. It also explicitly demonstrates the two possible next states, which may help with formal verification and debugging.
+
+This design also adds an explicit 'next_count' signal representing the next counter value before registering it on the clock edge, enhancing code readability and potentially enabling easier modifications such as adding stall/enabling in the future.

@@ -1,0 +1,5 @@
+To improve timing and avoid combinational feedback by basing data_out on the next_state signal, the output should be registered directly from the current state instead. This means data_out is driven by the current state (Moore output) rather than the next state, which reduces combinational logic between state and output, enhancing timing and simplifying synthesis.
+
+To do this, simply change the output assignment to depend on the current state, not next_state, within the sequential always block. The rest of the FSM logic remains the same, as the current states already encode when data_out should be high (in PULSE_DETECTED state).
+
+This small fix keeps the FSM functional and correct, while improving timing robustness as suggested by the feedback.

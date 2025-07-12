@@ -1,5 +1,0 @@
-The issue in the code lies in the way the LFSR is shifting. In the logic `{q[4] ^ q[2], q[4], q[3], q[2], q[1]}`, the XOR operation for the tap positions is incorrect. In a Galois LFSR with taps at bit positions 5 and 3, the LSB output bit should be XORed with the taps (positions 5 and 3) to produce the next state. However, in the current code, the XOR operation is being performed at the wrong bit positions.
-
-This incorrect XOR logic is causing the LFSR to deviate from the expected maximal-length sequence of states, leading to 4412 mismatches in the simulation results.
-
-To rectify this issue, the XOR operation should be done correctly considering the tap positions, ensuring that the LFSR progresses as intended for a 5-bit maximal-length Galois LFSR.

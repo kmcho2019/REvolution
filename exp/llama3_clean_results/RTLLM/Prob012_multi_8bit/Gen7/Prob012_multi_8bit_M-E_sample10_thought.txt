@@ -1,0 +1,11 @@
+To implement a novel 8-bit multiplier architecture, we can utilize a combination of look-up tables (LUTs) and a partial product accumulator. The idea involves dividing the 8-bit multiplier into two parts: the higher 4 bits and the lower 4 bits. For each part, we pre-compute the partial products of the multiplicand (A) with all possible values of the multiplier parts. These pre-computed values are stored in LUTs. Then, we sum the partial products corresponding to the actual multiplier values to obtain the final product.
+
+This approach takes advantage of the fact that for any 8-bit number, there are only 256 possible values, making it feasible to pre-compute and store the results for each possible combination of the higher and lower parts of the multiplier. By using LUTs to store these pre-computed values, we can efficiently calculate the product by simply looking up the corresponding partial products and summing them.
+
+The key components of this architecture include:
+1. **LUTs for Partial Products:** Two LUTs are needed, one for the higher 4 bits of the multiplier and one for the lower 4 bits. Each LUT stores the pre-computed products of the multiplicand (A) with all possible values of the respective multiplier part.
+2. **Partial Product Accumulator:** This component is responsible for summing the partial products retrieved from the LUTs based on the actual values of the higher and lower parts of the multiplier.
+3. **Multiplier Partitioning:** The 8-bit multiplier (B) is divided into two 4-bit parts. The higher 4 bits (B[7:4]) and the lower 4 bits (B[3:0]) are used to index into the respective LUTs.
+4. **Final Product Calculation:** The final product is calculated by summing the partial products retrieved from the LUTs. The partial product corresponding to the higher 4 bits of the multiplier is shifted left by 4 bits (to account for the position of the higher 4 bits in the final product) before being added to the partial product corresponding to the lower 4 bits.
+
+This novel architecture offers a unique approach to 8-bit multiplication, leveraging the efficiency of LUTs to store pre-computed partial products and an accumulator to sum these products, potentially offering advantages in terms of speed and area efficiency compared to traditional multiplication methods.

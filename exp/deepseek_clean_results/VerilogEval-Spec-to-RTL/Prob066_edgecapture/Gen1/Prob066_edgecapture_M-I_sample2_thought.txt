@@ -1,0 +1,9 @@
+The original solution has two main issues:
+1. The transition detection uses the old prev_in value while simultaneously updating it, creating a race condition
+2. The capture logic could be more explicit about maintaining state until reset
+
+Improved strategy:
+1. First store the current input in prev_in register
+2. Then use this stored value to detect 1->0 transitions in the next cycle
+3. Make the capture logic clearer by separating transition detection from state maintenance
+4. Still maintain synchronous reset functionality

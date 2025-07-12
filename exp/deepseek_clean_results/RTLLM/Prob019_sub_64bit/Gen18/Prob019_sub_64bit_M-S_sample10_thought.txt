@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. **Basic Subtraction**: Replace carry-lookahead with simple arithmetic subtraction (A - B) which Verilog handles natively. This eliminates complex carry chain logic while maintaining correct functionality.
+
+2. **Direct Overflow Detection**: 
+   - Keep overflow logic but simplify expression by directly checking the three sign bits
+   - Overflow occurs when subtracting numbers with different signs and result sign doesn't match minuend (A)
+
+3. **Structural Simplicity**:
+   - Remove intermediate signals (p, g, carry)
+   - Use single continuous assignment for result
+   - Maintain same overflow detection condition but with cleaner expression
+
+Key Benefits:
+- Eliminates complex carry propagation logic
+- Reduces wire count and routing complexity
+- Maintains identical functionality
+- More readable and maintainable code
+- Better synthesis results due to simpler structure

@@ -1,0 +1,10 @@
+To optimize for better PPA (timing, power, area), we will make the following improvements:
+
+- Adopt one-hot state encoding instead of binary encoding:
+  One-hot encoding can reduce the combinational logic complexity and improve timing by minimizing the next-state decoding, especially for FPGA implementations or when synthesis tools can exploit it well.
+- Remove the explicit shift_count counter and replace it with a 4-bit shift_ena shift register that acts as an enable pulse lasting exactly 4 cycles.
+  This reduces the toggle activity of a binary counter and simplifies the sequential logic.
+- Use a single always_ff block for state and shift_ena shift register to keep synchronous reset and logic clean.
+- Drive outputs directly from state bits and shift_ena bits to maintain Moore output style and clarity.
+- Keep pattern detection states (SEARCH0..SEARCH3) as one-hot for fast pattern matching.
+- This approach trades minimal area increase from one-hot states (7 bits instead of 3) for better timing and simpler control logic with a shift register pulse for shift_ena.

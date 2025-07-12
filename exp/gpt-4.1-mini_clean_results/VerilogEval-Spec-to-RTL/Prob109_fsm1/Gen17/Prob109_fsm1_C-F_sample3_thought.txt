@@ -1,0 +1,18 @@
+Fuse the clean, minimal next-state logic from Example 1 with the explicit state register approach, driving the Moore output as a continuous assignment like Example 1 for clarity and optimized synthesis.
+
+Strategy:  
+- Use a 1-bit reg `state` to hold FSM state with asynchronous reset to state B (1).  
+- Calculate next state with the minimal XOR/NOT expression from Example 1, ensuring minimal combinational complexity.  
+- Drive `out` directly as a continuous assignment from `state` (Moore output depends only on state), removing the need for output to be reg, which reduces flip-flop usage and logic.  
+- Keep the always block clean (just state update) and avoid a separate combinational always block, aiding synthesis tools for better timing and power.  
+- This merges the simplicity and efficiency of Example 1's logic with the explicit state clarity of Example 2, providing a clear, minimal, low-power, and low-area FSM implementation.
+
+This design ensures:  
+- Minimal logic in next state calculation.  
+- Output is purely combinational from state, no register overhead.  
+- Asynchronous reset cleanly handled.  
+- Explicit state reg provides better readability than implicitly using output as state.  
+- Potentially better synthesis optimization from explicit and simple logic.  
+- Maintains Moore machine semantics and correct functionality.
+
+Overall, this fusion yields a cleaner, more synthesizable, and minimal FSM with excellent PPA characteristics.

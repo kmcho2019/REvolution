@@ -1,0 +1,17 @@
+The current implementation is already quite efficient, but we can explore a slight optimization by rearranging the Boolean expression to potentially reduce the number of operations:
+
+1. Original expression: out = a | (~a & ~b & c)
+2. We can apply Boolean algebra to factor out ~a:
+   out = a | (~a & (~b & c))
+3. This can be rewritten using the identity (x | (~x & y)) = x | y:
+   out = a | (~b & c)
+4. The new expression is mathematically equivalent but uses one fewer operation (eliminates the ~a term)
+5. Benefits:
+   - Reduced gate count (from 3 operations to 2)
+   - Potentially better synthesis results
+   - Maintains exact same functionality
+6. PPA impact expected:
+   - Same timing (still single-level logic)
+   - Slight area reduction
+   - Possibly lower power due to fewer operations
+7. Don't-cares remain handled the same way

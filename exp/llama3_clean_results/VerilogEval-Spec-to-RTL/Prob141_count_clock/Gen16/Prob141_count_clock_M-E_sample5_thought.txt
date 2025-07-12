@@ -1,0 +1,11 @@
+The novel architectural idea is to utilize a single counter for the entire clock system, which increments every second. This counter will be divided into three sections: seconds, minutes, and hours. Each section will have its own logic to handle the wrapping around and the AM/PM toggle. 
+
+The seconds section will be a 6-bit counter (0-59), the minutes section will also be a 6-bit counter (0-59), and the hours section will be a 5-bit counter (0-11) with an additional bit to handle the AM/PM indicator. 
+
+The benefits of this approach include reduced complexity, as there is only one counter, and improved scalability, as additional features like alarm functionality can be easily added. 
+
+Moreover, to minimize switching activity and optimize PPA, the design will be structured to only update the output values when necessary, i.e., when the counter increments. 
+
+The reset logic will be simplified, setting the entire counter to zero and the AM/PM indicator to AM. 
+
+To achieve better PPA, the design will utilize bitwise operations for the BCD conversion and will minimize the number of combinational logic gates.

@@ -1,0 +1,29 @@
+Let's explicitly encode the 4-bit input number from (a,b,c,d) with a as the MSB and d as the LSB.  
+The numbers for which output=1 are 2(0010),7(0111),15(1111), and output=0 for given zero minterms, while others (3,8,11,12) never occur and can be treated as don't-cares.
+
+Instead of directly writing SOP or POS from minterms, a different architectural approach is to implement a combinational decoder that compares the input vector to each of the three "1" numbers, and OR their results to get out_sop.
+
+For out_pos, we invert the logic: it is 0 for specific minterms, so we can implement it by ANDing the complements of zero-minterm detectors, simplified as an explicit product-of-sums by checking which zeros are active.
+
+This approach is clean, modular, and easily verified.
+
+Thus:
+
+- Create three equality detectors for 2, 7, and 15, each outputting 1 when inputs match exactly those numbers.
+- out_sop is the OR of those detectors.
+- For out_pos (minimal product-of-sums), identify the zero minterms as 0,1,4,5,6,9,10,13,14, build maxterms for these zeros and AND them.  
+  We can also build zero detectors and NOR them to get the output, then simplify the final product-of-sums manually or logically as a combination of maxterms for the zero inputs.
+
+This explicit comparison approach avoids mistakes in logic simplification and provides correct minimal expressions.
+
+We implement the detectors by comparing the input vector to constants with bitwise XNOR and AND.
+
+Finally, outputs:
+
+- out_sop = match2 | match7 | match15
+
+- out_pos = AND of maxterms for zeros = product of sums of each zero minterm complemented to build maxterms.
+
+We will provide simplified expressions where possible.
+
+This approach is different from direct minimized boolean expressions and ensures correctness.

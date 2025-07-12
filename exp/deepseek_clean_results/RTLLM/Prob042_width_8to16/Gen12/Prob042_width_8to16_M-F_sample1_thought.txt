@@ -1,0 +1,15 @@
+Revised Design Strategy:
+1. Use a state-based approach with explicit tracking of data collection status
+2. Maintain a buffer register to store the first 8-bit input
+3. Implement a control flag to indicate when the first byte is ready
+4. Only generate output when both bytes are available (after two valid inputs)
+5. Clear all registers and flags on reset
+6. Properly align first byte to upper bits and second byte to lower bits
+7. Generate valid_out only when complete 16-bit data is ready
+
+Key Improvements:
+- Explicit state tracking replaces problematic counter logic
+- Clear separation between data collection and output generation
+- Guaranteed correct byte ordering in output
+- Proper timing of valid_out signal
+- More reliable operation across clock cycles

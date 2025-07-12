@@ -1,0 +1,21 @@
+To correct and optimize the implementation:
+
+1. For out_sop (Sum-of-Products):
+   - Clearly implement all true cases (2,7,15) with proper minterms
+   - 2: ~a & b & ~c & d
+   - 7: ~a & b & c & d
+   - 15: a & b & c & d
+   - No simplification possible as terms don't share common sub-expressions
+
+2. For out_pos (Product-of-Sums):
+   - First identify all false cases (0,1,4,5,6,9,10,13,14)
+   - Convert these to maxterms by complementing inputs
+   - Group maxterms with common literals to minimize expression
+   - Use don't-care conditions (3,8,11,12) to potentially simplify further
+
+3. Optimization:
+   - For SOP: Keep direct implementation as no further optimization possible
+   - For POS: Group terms by common patterns in false cases:
+     - Cases 0,1,4,5 share ~a | ~d
+     - Cases 6,9,10,13,14 can be grouped by common literals
+   - Final POS will be product of these grouped terms

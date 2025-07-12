@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Use a compact 3-state FSM instead of shift register to save area
+2. Implement "early termination" logic to reset state on incorrect bits
+3. State transitions only occur when matching expected sequence bits
+4. Eliminate shift register completely, reducing area and power
+5. Add detection latch that holds 'found' state until reset
+
+Key Advantages:
+- No shift register needed (reduces area)
+- State machine resets immediately on incorrect bits (saves power)
+- Only 3 states required (1101 has 4 bits but overlapping patterns possible)
+- Clear state transitions with explicit conditions
+- Maintains synchronous reset behavior

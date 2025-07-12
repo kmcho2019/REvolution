@@ -1,0 +1,18 @@
+Novel approach using shift registers and pipelining:
+
+1. Instead of calculating all 512 XOR operations in parallel, use a serial processing approach with shift registers
+2. Implement a 3-stage shift register to track current cell and its neighbors
+3. Process one cell per clock cycle, rotating through all 512 cells
+4. Use a counter to track current processing position
+5. Maintain two separate registers:
+   - One for current state (updated only after full cycle)
+   - One for next state (built incrementally)
+6. Advantages:
+   - Dramatically reduces combinatorial logic
+   - Lower power consumption (only one XOR active per cycle)
+   - Easier timing closure
+   - Scales better to larger arrays
+7. Trade-off:
+   - Requires 512 cycles to complete one full update
+   - But allows much higher clock frequency
+8. Boundary conditions handled by masking the shift register inputs

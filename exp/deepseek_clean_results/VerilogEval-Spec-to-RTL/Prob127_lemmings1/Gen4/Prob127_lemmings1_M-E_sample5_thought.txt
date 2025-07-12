@@ -1,0 +1,13 @@
+Here's a novel approach using a toggle-based state machine instead of explicit state encoding:
+
+1. Instead of maintaining LEFT/RIGHT states, we'll use a single toggle bit that flips on bumps
+2. The current direction is determined by the toggle bit's value (0=left, 1=right)
+3. Any bump (left or right) will toggle the direction
+4. This eliminates the need for separate state transition logic for left/right cases
+5. The asynchronous reset still initializes to walk left (toggle=0)
+
+Key advantages:
+- Simpler state transition logic (just XOR with bump signals)
+- Single condition for all state changes
+- Maintains same behavior while reducing logic complexity
+- Still a proper Moore machine with outputs derived purely from state

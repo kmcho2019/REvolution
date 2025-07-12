@@ -1,0 +1,12 @@
+To fix the reported issues, the barrel shifter must apply the shift stages in the correct order: first shift by 4 positions if `ctrl[2]` is high, then by 2 positions if `ctrl[1]` is high, and finally by 1 position if `ctrl[0]` is high. This ensures the total rotation amount corresponds exactly to the control signal as intended.
+
+Additionally, since the problem requires using a `mux2X1` submodule for the multiplexers, I will define this simple 2-to-1 mux module and instantiate it for each bit of every stage. This guarantees compliance with the specification and avoids ambiguity or testbench mismatch.
+
+The design will have three stages of shifting: 
+- Stage 1 shifts by 4 positions controlled by `ctrl[2]`, 
+- Stage 2 shifts the output of Stage 1 by 2 positions controlled by `ctrl[1]`, 
+- Stage 3 shifts the output of Stage 2 by 1 position controlled by `ctrl[0]`.
+
+Each stage uses 8 instances of `mux2X1` to select between the unshifted bit and the bit shifted by the corresponding amount.
+
+This modular, clear approach ensures correctness, testbench compatibility, and synthesizability.

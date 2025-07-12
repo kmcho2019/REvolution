@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. Use a single 5-bit adder to compute the raw sum of A, B, and Cin
+2. Detect overflow (sum > 9) using simple bit pattern matching:
+   - Either when the 5th bit is set (sum >= 16)
+   - Or when bits [3:0] are between 10-15 (pattern 1XXX where X includes at least one more 1)
+3. Apply correction by adding 6 (0110) only when overflow occurs
+4. Carry-out is simply the overflow signal
+5. Use a multiplexer to select between raw sum and corrected sum for cleaner implementation
+
+Key Simplifications:
+- Replace complex bitwise correction with straightforward +6 addition
+- Use clearer overflow detection logic
+- Maintain single adder operation
+- Reduce gate count by using multiplexer for final sum selection

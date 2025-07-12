@@ -1,0 +1,5 @@
+We can simplify the design by removing the explicit function and generate block, replacing them with a single procedural for-loop inside a combinational always block to compute the next state vector. This reduces code complexity and avoids the need for multiple intermediate wires and named blocks.
+
+The combinational block will compute the entire next state vector based on the current q, handling boundaries with zero neighbors as required. Then, the sequential always block updates q to either the loaded data or the computed next state on each clock edge.
+
+This approach is easier to read and maintain while keeping the same functionality of simultaneously updating all 512 cells each clock cycle.

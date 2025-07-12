@@ -1,0 +1,34 @@
+The original solution uses two AND terms and two inverters to implement the logic: out = (c & (a | ~b)) | (a & ~c). Analyzing the Karnaugh map with don't-cares allows more flexibility. By treating don't-cares as 1 in certain positions, we can attempt to find a simpler or more balanced expression with fewer inversions or less logic depth.
+
+Looking carefully:
+- Rows 10 and 11 in cd cover all 1s for ab=01,10,11 (except 00).
+- The column 10 and 11 in ab cover 1s for several rows.
+- The 1s cover a large portion where a=1 or b=1 with some dependency on c.
+
+Let's try to factor the expression differently to minimize inverters and gate levels.
+
+One alternative is to express out as:
+out = a | (c & ~b)
+
+Because:
+- When a=1, out=1 regardless.
+- If a=0, then out depends on c and b.
+
+Check against the map:
+- For a=0,b=0,c=1: out=1 (since c=1 & b=0)
+- For a=0,b=1,c=1: out=0 (since c=1 & b=1 -> out=0)
+- For a=0,b=0,c=0: out=0
+
+Check the K-map entries to confirm this covers all 1s and treats don't-cares as convenient.
+
+Testing the new expression matches or exceeds the original in terms of correctness and requires only one inverter (~b) and an OR gate with a single variable a, reducing gate count and delay.
+
+Hence, the improved implementation is:
+
+out = a | (c & ~b);
+
+This reduces the number of gates and inverters, potentially improving power and area.
+
+This approach uses fewer inverted signals and a shallower logic depth compared to the original.
+
+Since d is don't care, it's ignored for output logic.

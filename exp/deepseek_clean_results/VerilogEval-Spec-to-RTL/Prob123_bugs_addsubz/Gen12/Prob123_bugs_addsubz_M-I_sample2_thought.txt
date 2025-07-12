@@ -1,0 +1,19 @@
+The current solution is functionally correct but has room for PPA optimization based on the metrics:
+
+1. **Power Optimization**:
+   - The XOR operation on `b` can be made conditional using `do_sub` to reduce switching
+   - The adder can be split into two paths (add/sub) with output muxing to prevent unnecessary toggles
+
+2. **Area Optimization**:
+   - The zero detection can share logic with the adder's carry chain
+   - Remove redundant wire declarations by directly assigning outputs
+
+3. **Timing Maintenance**:
+   - Keep the parallel computation structure
+   - Use simple arithmetic expressions that synthesize well
+
+Key improvements:
+- Conditional operand inversion to reduce power
+- Direct output assignments to reduce area
+- Maintain single-cycle operation
+- Simplified zero detection logic

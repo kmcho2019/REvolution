@@ -1,0 +1,27 @@
+Here's a novel approach using a digit-serial multiplier with pipelined accumulation:
+
+1. Digit-Serial Architecture:
+   - Processes multiplier bits in pairs (2 bits per cycle)
+   - Reduces partial product count by 50%
+   - More efficient than bit-serial but simpler than full parallel
+
+2. Radix-4 Booth Encoding:
+   - Encodes multiplier bits to reduce partial products
+   - Supports 0, ±1, ±2 multiplicand operations
+   - More efficient than simple AND-based partial products
+
+3. Two-Stage Pipeline:
+   - Stage 1: Booth encoding and partial product selection
+   - Stage 2: Accumulation of partial products
+   - Balanced pipeline stages for optimal throughput
+
+4. Pipelined Accumulation:
+   - Uses carry-save adder for intermediate sums
+   - Final carry-propagate adder in second stage
+   - Registered outputs for clean timing
+
+5. Advantages:
+   - Reduced hardware complexity vs full parallel
+   - Higher throughput than bit-serial
+   - Easily scalable to larger sizes
+   - Power efficient due to reduced switching

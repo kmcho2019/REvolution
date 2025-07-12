@@ -1,0 +1,13 @@
+To refactor the decade counter while preserving the core functionality, I will eliminate the explicit clock enable and multiple conditional branches to simplify the logic and potentially improve timing and area.
+
+The key idea is to compute the next counter value combinationally based on the current state and reset, then update the counter on the clock edge. The counter increments by one on each clock cycle, rolling over from 9 back to 0.
+
+This will be implemented using a single always block triggered on the positive clock edge with synchronous reset. The next value logic is computed by a simple ternary operator: if the current count is 9, next is 0; else next is current + 1.
+
+By doing so, we:
+
+- Remove separate clock enable and redundant comparisons,
+- Simplify combinational logic,
+- Maintain synchronous reset and clean code.
+
+This structure improves readability, reduces logic depth and possible switching glitches, which can benefit power, timing, and area.

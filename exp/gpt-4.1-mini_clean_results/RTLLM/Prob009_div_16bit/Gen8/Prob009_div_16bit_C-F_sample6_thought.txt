@@ -1,0 +1,14 @@
+Fuse strengths from both examples by:
+
+- Retaining the two always-block structure (input latching and division computation) for clarity and synthesis optimization.
+- Using a single 9-bit remainder register to hold shifted remainder plus incoming dividend bit, allowing clean and consistent subtraction and comparison.
+- Zero-extending the 8-bit divisor to 9 bits, avoiding subtle bit indexing bugs.
+- Employing a restoring division algorithm with a loop shifting remainder and comparing with divisor, setting quotient bits accordingly.
+- Using blocking assignments for proper combinational logic simulation semantics.
+- Declaring the loop index as an integer local to the combinational division block.
+- Minimizing unnecessary intermediate registers, ensuring a clean separation of input latching and division calculation.
+- Outputting the remainder by zero-extending the lower 8 bits of the 9-bit remainder to 16 bits to meet spec.
+- Adding concise comments to improve maintainability.
+- Structuring code for clean readability and synthesis friendliness.
+
+This fusion achieves clean, functionally correct, and easily verifiable combinational division with improved design hygiene, while maintaining the given interface and blocking assignment style.

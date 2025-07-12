@@ -1,0 +1,11 @@
+To address the task of identifying bytes in a serial communication protocol, we can implement a novel architectural idea that utilizes a combination of counters and flags to track the start and stop bits, as well as the data bits in between.
+
+The new architecture, dubbed "ByteTracker," consists of three primary components:
+
+1.  **Start Bit Detector (SBD):** This module is responsible for detecting the start bit (0) in the incoming serial stream. It uses a simple flag to track whether a start bit has been detected.
+2.  **Data Bit Collector (DBC):** Once a start bit is detected, the DBC takes over and collects the subsequent 8 data bits. It utilizes a counter to keep track of the number of bits received and a shift register to store the collected data bits.
+3.  **Stop Bit Verifier (SBV):** After collecting the 8 data bits, the SBV checks the next incoming bit to verify if it's a stop bit (1). If the stop bit is correct, it sets the "done" signal high, indicating that a valid byte has been received.
+
+The ByteTracker architecture offers several advantages, including improved performance, reduced power consumption, and a more efficient use of area. By breaking down the task into smaller, specialized modules, we can optimize each component individually, leading to a more efficient overall design.
+
+The ByteTracker architecture also provides a high degree of flexibility, allowing it to be easily modified or extended to support different serial communication protocols.

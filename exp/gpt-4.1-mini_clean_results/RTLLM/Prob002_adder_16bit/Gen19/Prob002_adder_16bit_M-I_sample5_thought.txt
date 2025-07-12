@@ -1,0 +1,14 @@
+To improve the original 16-bit adder design while preserving modularity and combinational logic, I will implement an 8-bit carry-lookahead adder (CLA) instead of the ripple carry adder for the 8-bit blocks. This will reduce carry propagation delay inside each 8-bit adder, thus improving overall timing for the 16-bit adder.
+
+The 16-bit adder will still instantiate two 8-bit adders. The lower 8-bit block receives the module's carry-in and produces an internal carry-out, which is passed to the upper 8-bit CLA block.
+
+The carry-lookahead adder computes generate (G) and propagate (P) signals for all bits and computes carries in parallel, removing the ripple carry chain inside the 8-bit block and drastically improving delay.
+
+This approach keeps the modular hierarchy, improving performance significantly without increasing area much. Power could also be slightly improved because carry toggling is minimized by faster carry resolution.
+
+In summary:
+- Replace the ripple-carry 8-bit adder with an 8-bit carry-lookahead adder.
+- Keep the 16-bit adder hierarchy identical, instantiating two 8-bit CLA modules.
+- Retain full combinational logic.
+
+This upgrade will reduce the longest carry path delay from 16 ripple stages to approximately 8 CLA stages, providing better timing and potentially lower power consumption.

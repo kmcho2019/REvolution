@@ -1,0 +1,14 @@
+To address the HDLC framing problem with a novel approach, we can leverage a combination of counters and comparators to detect the specific sequences. The idea is to maintain two counters: one for tracking the number of consecutive ones and another for the total number of bits since the last reset or flag condition. By comparing these counters against predefined thresholds, we can determine when a flag, discard, or error condition has been met.
+
+The key insight is to use a modular counter for the consecutive ones, allowing it to wrap around and restart when it exceeds the threshold, indicating a potential flag or error condition. Additionally, using a separate register to track the total bits since the last flag or reset enables accurate detection of the sequences.
+
+This approach simplifies the state machine logic, reducing the number of states and transitions required, which can lead to improvements in area and power consumption. Furthermore, by directly comparing counter values, the combinational logic complexity is reduced, potentially leading to better timing performance.
+
+The solution involves the following components:
+
+1. **Consecutive Ones Counter**: A 3-bit counter to track the number of consecutive ones encountered.
+2. **Total Bits Counter**: A 4-bit counter to track the total number of bits since the last reset or flag condition.
+3. **Comparator Logic**: To compare the counter values against the thresholds for flag, discard, and error conditions.
+4. **Output Logic**: To generate the discard, flag, and error signals based on the comparator outputs.
+
+This design is more modular and scalable, making it easier to adjust thresholds or add new conditions in the future.

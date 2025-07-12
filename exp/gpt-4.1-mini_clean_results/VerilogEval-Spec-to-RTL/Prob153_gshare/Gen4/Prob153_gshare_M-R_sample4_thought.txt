@@ -1,0 +1,39 @@
+Refactor the design by separating the PHT read ports explicitly as combinational reads for prediction and training, avoiding registered outputs for prediction. This allows the prediction outputs to reflect the PHT state of the current cycle's inputs, meeting the timing requirements.
+
+Implement the PHT as a synchronous RAM with combinational read ports by reading asynchronously (Verilog reg arrays allow combinational read), indexing with current inputs for prediction and training simultaneously.
+
+Use a single always block for all sequential updates (PHT writes and global history updates) triggered on posedge clk or async reset. Within it:
+
+- On async reset, initialize global_history and all PHT entries to weakly taken (2'b10).
+
+- On normal operation:
+
+  - If training is valid:
+
+    - Update the PHT entry at train_index immediately based on the current PHT content and train_taken.
+
+    - If train_mispredicted, restore global_history to train_history (discard predicted updates).
+
+    - Else if prediction valid (and no mispredict), update global_history by shifting in predict_taken (computed from current PHT read for prediction).
+
+    - Else keep global_history unchanged.
+
+  - Else (no training):
+
+    - If prediction valid, update global_history by shifting in predict_taken.
+
+    - Else keep global_history unchanged.
+
+For priority: training with mispredict > training without mispredict > prediction only.
+
+Prediction outputs are always combinational:
+
+- predict_taken = MSB bit of PHT[predict_index]
+
+- predict_history = current global_history register
+
+This approach eliminates one-cycle prediction latency and ensures correct priority updates to global history and PHT entries in line with problem timing requirements.
+
+The synchronous write and combinational read of PHT with correct indexing and explicit read-before-write semantics ensure consistent behavior. The asynchronous reset with for-loop clears all PHT entries reliably.
+
+This redesign meets all timing and functional requirements, producing stable, accurate predictions with coherent global history updates.

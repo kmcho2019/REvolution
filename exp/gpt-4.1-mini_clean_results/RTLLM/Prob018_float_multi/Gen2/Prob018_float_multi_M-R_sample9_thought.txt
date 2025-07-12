@@ -1,0 +1,13 @@
+Refactor the design into a clean 4-stage pipeline using a state machine with explicit state encoding.  
+Move all variable declarations to module scope, including all intermediate signals and temporaries.  
+Replace illegal variable declarations inside always blocks with registered variables at module scope.  
+Use combinational blocks for extracting inputs and special case detection, while the sequential always block only updates registers on clock.  
+Implement the multiplication process step-by-step using a state machine:  
+- STATE_IDLE: wait for valid inputs (or simply start on each clock) and extract inputs  
+- STATE_SPECIAL_CHECK: identify NaNs, Infs, zeros  
+- STATE_MULTIPLY: multiply mantissas and add exponents  
+- STATE_NORMALIZE_ROUND: normalize product, apply rounding, adjust exponent  
+- STATE_OUTPUT: produce final IEEE 754 result handling overflow/underflow/specials  
+Use a single clocked always block with nonblocking assignments for sequential logic and combinational always blocks for logic that can be combinational.  
+Maintain the counter/state register as 3-bit and move the shift amount to a register to avoid illegal procedural integer declaration.  
+This structure improves code clarity, compliance to Verilog syntax, and synthesis friendliness.

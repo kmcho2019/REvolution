@@ -1,0 +1,15 @@
+The original design implements q as the inverse parity (XNOR) of inputs a, b, c, d using a single assign statement with XOR and negation operators. This is already minimal and optimal for a combinational parity function in terms of logic depth, area, and power. 
+
+To improve PPA, we can consider rewriting the logic to use only NAND/NOR gates or use balanced logic structures that are better optimized by synthesis tools. Since XOR gates tend to be more power-hungry and slightly slower than basic gates, expressing the parity using only NAND or NOR gates could yield slight improvements in power and area on some technologies.
+
+One approach is to express q = XNOR(a, b, c, d) using a chain of XNORs, implemented with standard gates:
+
+- First compute p1 = a XNOR b = ~(a ^ b)
+- Then compute p2 = c XNOR d = ~(c ^ d)
+- Finally, q = p1 XNOR p2 = ~(p1 ^ p2)
+
+This breaks the logic into balanced two-level XNORs, potentially enabling better gate sharing and reduced glitching compared to a four-input XOR+negation.
+
+This balanced approach might slightly reduce switching activity and improve timing by balancing signal paths, and could synthesize to fewer or smaller gates depending on the technology.
+
+Hence, the improved design implements the output as a cascade of two-input XNORs using only assign statements.

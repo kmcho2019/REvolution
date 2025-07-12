@@ -1,0 +1,16 @@
+To implement the Lemming behavior, we need a Moore state machine with multiple states to handle walking, falling, and digging. The state transitions should follow these rules:
+1. Reset initializes the state to walking left.
+2. Falling has the highest priority when ground=0.
+3. Digging is only possible when walking on ground (ground=1) and dig=1.
+4. Bumping changes direction only when walking (not falling or digging).
+5. The direction is preserved during falling and digging.
+
+We'll use these states:
+- WL: walking left
+- WR: walking right
+- FL: falling left (was walking left before falling)
+- FR: falling right (was walking right before falling)
+- DL: digging left (was walking left before digging)
+- DR: digging right (was walking right before digging)
+
+The output signals are derived directly from the current state.

@@ -1,0 +1,13 @@
+The novel architectural idea for the Gshare branch predictor is to implement a modular and pipelined architecture. The predictor will consist of three main stages: history update, index calculation, and prediction. Each stage will be designed to minimize the critical path and maximize the throughput.
+
+The history update stage will be responsible for updating the global branch history register based on the predicted branch outcome. This stage will also handle the asynchronous reset.
+
+The index calculation stage will calculate the index to access the pattern history table (PHT) using a hashing function that combines the PC and global history. This stage will use a combination of shifters and XOR gates to calculate the index.
+
+The prediction stage will use the calculated index to access the PHT and retrieve the corresponding saturating counter. The counter will be used to make the branch prediction, and the predictor will output the predicted branch direction and the updated global history.
+
+The predictor will also have a training interface that will update the PHT based on the actual branch outcome and the predicted outcome. The training interface will also handle mispredictions and recover the global history to the state immediately after the mispredicting branch completes execution.
+
+To improve the accuracy of the predictor, a confidence-based mechanism will be implemented. The predictor will maintain a confidence level for each entry in the PHT, and the confidence level will be updated based on the accuracy of the predictor's predictions.
+
+The modular and pipelined architecture will allow for a high-throughput and low-latency implementation of the Gshare branch predictor. The confidence-based mechanism will improve the accuracy of the predictor, and the training interface will ensure that the predictor is updated correctly based on the actual branch outcomes.

@@ -1,0 +1,15 @@
+The main logic of shifting bits into the MSB side and counting received bits is correct, but the output assignment duplicates the shift and may cause confusion or subtle timing issues. Also, dout_valid is asserted simultaneously with shifting in the last bit, so dout_parallel should simply output the current shift_reg which already contains all 8 bits shifted in after the last din_serial bit is loaded.
+
+To fix this cleanly:
+1. Shift the incoming bit into shift_reg on each valid din_serial.
+2. Increment cnt on each valid bit.
+3. When cnt reaches 7 (meaning 8 bits received, counting from 0), output shift_reg as dout_parallel and assert dout_valid for one cycle.
+4. Reset cnt to zero after output.
+5. Ensure dout_valid only pulses for one clock cycle.
+6. On reset, clear all registers.
+
+This avoids duplicating the shift in dout_parallel assignment and removes any ambiguity in timing. Also, by aligning dout_parallel with shift_reg, the output reflects the complete 8-bit data assembled so far, including the last input bit.
+
+This design is fully synchronous, uses non-blocking assignments, and meets the requirement that the first received bit is in the MSB of dout_parallel.
+
+The code below implements this corrected approach.

@@ -1,0 +1,9 @@
+To optimize for better power, performance, and area (PPA) while preserving the same behavior and clarity, we can apply these improvements:
+
+- Compute a combined bump signal (`bump = bump_left | bump_right`) once to simplify next-state logic and reduce redundant logic gates.
+- Remove redundant assignments in the combinational block by using a clear if-else hierarchy with early exits.
+- Use a single "direction_flip" signal derived from bump conditions to reduce gate count and complexity.
+- Keep the asynchronous reset and Moore output style unchanged for simplicity and correctness.
+- Maintain the compact 2-bit encoding, which is already optimal in terms of flip-flop count.
+
+These steps reduce combinational logic complexity, likely improving timing (WNS, TNS) and lowering power by reducing switching on bump signals. The area remains minimal with no added registers. Overall, this cleaner and slightly more efficient logic supports better PPA metrics.

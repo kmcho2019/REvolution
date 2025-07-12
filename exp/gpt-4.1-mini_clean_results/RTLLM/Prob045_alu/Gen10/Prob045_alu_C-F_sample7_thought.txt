@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by implementing a mostly combinational ALU that precomputes key arithmetic and logic results with minimal duplication, and uses a procedural combinational always block with a case statement for output selection. 
+
+This approach keeps clarity and maintainability with explicit register assignments inside the always block (better than nested ternary muxes), while performing all operations in parallel to maintain speed. 
+
+Improve area and clarity by sharing arithmetic adders for ADD/ADDU and SUB/SUBU with consistent carry/overflow logic, accurately reflecting MIPS semantics. Fix the LUI operation to place the immediate value in the upper 16 bits (typical MIPS behavior). Avoid assigning 'z' to flag output; assign 0 for non-SLT/SLTU to simplify synthesis and reduce glitches.
+
+Calculate zero flag combinationally outside always block for efficiency. Also, define signed operands explicitly for SLT, SLTU, and signed shifts. Provide clear comments and consistent style. 
+
+This fusion produces a clean, synthesizable, and efficient ALU suitable for 32-bit MIPS ISA with all requested flags and operations.

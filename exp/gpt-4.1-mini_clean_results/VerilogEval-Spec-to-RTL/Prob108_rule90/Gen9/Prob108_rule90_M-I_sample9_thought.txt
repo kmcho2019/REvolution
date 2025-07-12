@@ -1,0 +1,9 @@
+To optimize for better PPA, I will remove the clock enable (ce) signal and always update the registers at every clock edge with the next state or load data. This simplification removes the costly comparison logic (q_out != next_state), which may reduce the critical path and area. The power saved by gating is likely outweighed by the added comparison logic cost and the complexity of clock gating.
+
+I will keep the design modular with 8 blocks of 64 bits each, but directly update q_out without clock enable, reducing logic and timing complexity.
+
+Also, I will simplify the boundary wiring by assigning left and right boundaries without overlapping assignments or wire arrays; this reduces interconnect overhead and logic.
+
+This approach maintains functional correctness and reduces area and potentially increases max clock frequency by removing the expensive state comparison logic, while the power should remain reasonable since the XOR logic toggling remains unchanged.
+
+Overall, this provides a clean, straightforward design with good timing and area characteristics.

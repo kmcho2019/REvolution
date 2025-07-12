@@ -1,5 +1,0 @@
-1. The code uses an asynchronous reset (`~resetn`), but the problem description specified that the reset should be synchronous. This can lead to unpredictable behavior during reset de-assertion and cause mismatches in the output values.
-
-2. The usage of `byteena` signals is incorrect. The condition in the `always` block to update `d_flipflop` and `q_flipflop` arrays based on `byteena` only covers one byte at a time, not the upper or lower bytes specified in the problem description. This faulty logic results in incorrect updates to the flip-flops, leading to output mismatches.
-
-3. The warning about sensitivity to all 16 words in `q_flipflop` in the `always @*` block indicates that the code redundantly triggers this block whenever any element in the array changes, potentially impacting simulation efficiency without functional consequences.

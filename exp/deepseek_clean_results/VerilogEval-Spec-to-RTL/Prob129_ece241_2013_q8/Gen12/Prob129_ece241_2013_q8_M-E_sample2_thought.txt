@@ -1,0 +1,17 @@
+My novel approach uses a 3-state Mealy FSM with state encoding optimized for pattern detection:
+1. States represent the progress in detecting "101":
+   - IDLE: No relevant bits detected
+   - GOT1: First '1' detected
+   - GOT10: '10' sequence detected
+2. State transitions occur based on current state and input x
+3. Output z is asserted when in GOT10 state and x=1 (completing "101")
+4. The design uses one-hot encoding for states to simplify decoding logic
+5. Reset initializes to IDLE state
+6. Overlapping sequences are handled naturally by the state transitions
+
+Key advantages:
+- Explicit state machine makes the pattern recognition clear
+- One-hot encoding simplifies next-state logic
+- Minimal states (3) as required
+- Mealy output depends on current state and input
+- Efficient implementation with clear timing

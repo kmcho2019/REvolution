@@ -1,0 +1,11 @@
+New approach: Implement a state machine with explicit states to track the behavior shown in the waveform:
+1. IDLE state: Both p and q are 0, waiting for 'a' to be 1 during clock high
+2. P_ACTIVE state: p follows 'a' when clock is high (q remains 0)
+3. Q_ACTIVE state: q becomes 1 after p was 1, and both reset when 'a' is 1 during clock low
+
+Key features:
+- Uses explicit states for clearer behavior
+- Only updates outputs on clock edges
+- Properly handles the delayed q activation after p
+- Correctly implements the reset condition when 'a' is high during clock low
+- More closely matches the waveform timing relationships

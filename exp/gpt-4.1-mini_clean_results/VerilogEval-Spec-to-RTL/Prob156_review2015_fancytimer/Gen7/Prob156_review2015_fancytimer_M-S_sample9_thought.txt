@@ -1,0 +1,13 @@
+Simplify the design by using a straightforward FSM with four states: SEARCH, LOAD, COUNT, WAIT_ACK.
+
+- In SEARCH: shift in serial bits to detect start pattern "1101".
+- In LOAD: shift in 4 bits MSB first to load delay.
+- In COUNT: count exactly (delay+1)*1000 clock cycles using two counters:
+   - cycle_counter: counts from 0 to 999 (1000 cycles)
+   - tick_counter: counts delay+1 down to 0 (each representing 1000 cycles)
+- Output count as the current remaining tick (delay down to 0), stable for each 1000 cycle block.
+- After counting completes, assert done and wait in WAIT_ACK until ack is high.
+- Ignore data input during LOAD, COUNT, WAIT_ACK to avoid re-detection.
+- Use synchronous reset to initialize FSM and registers.
+
+This clear structure removes intermediate signals like delay_bits_loaded by encoding loading in the LOAD state and counts cycles carefully to avoid off-by-one errors.

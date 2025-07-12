@@ -1,0 +1,15 @@
+Here's a novel approach using a hybrid state machine and pattern matching technique that optimizes for both power and area:
+
+1. **Two-Phase Detection**: Split the 4-bit sequence into two 2-bit segments ('10' and '01') 
+2. **Hierarchical Matching**: First detect the '10' pattern, then look for '01' in the next cycle
+3. **Minimal State Storage**: Only store partial match information (1-bit flag) between cycles
+4. **Early Termination**: Immediately reset if any intermediate bit doesn't match
+5. **Clock Gating**: Only update state when needed to reduce dynamic power
+
+Advantages:
+- Reduces state storage to just 1 bit (vs 4-bit shift register)
+- Early termination saves power by avoiding unnecessary transitions
+- Clock gating reduces switching activity
+- Maintains single-cycle detection capability
+- Naturally handles overlapping sequences
+- Better timing due to simpler comparison logic

@@ -1,0 +1,22 @@
+To improve the solution, I will ensure that the `shift_ena` signal is asserted for exactly 4 clock cycles immediately after the synchronous reset is deasserted, aligning precisely with expected timing. This means `shift_ena` should go high starting on the first clock after reset, stay high for 4 cycles, and then go low indefinitely until the next reset.
+
+The prior code asserts `shift_ena` based on the counter being non-zero but loads counter = 4 on reset, which keeps `shift_ena` high during reset (if reset lasts multiple cycles). To fix this, I will:
+
+- Assert `shift_ena` starting on the first clock *after* reset.
+- Load the counter to 3 when reset is asserted (because the first cycle counts as cycle 1), then count down each cycle, enabling shift_ena while counter >= 0 (or shift_ena for exactly 4 cycles).
+- Use a 3-bit counter initialized to zero and a shift_ena register to control timing precisely.
+- Make sure the counter does not decrement during reset to avoid off-by-one issues.
+- Keep all logic synchronous with positive edge clk.
+
+Since pattern detection is mentioned but no pattern input or specification is given, I will focus only on the reset-driven behavior as requested.
+
+This guarantees:
+- On reset, shift_ena becomes high on the next clock cycle.
+- It remains high for exactly 4 cycles (from counter = 3 down to 0).
+- Then shift_ena remains low indefinitely until next reset.
+
+This is optimal and meets the specification exactly with minimal logic and no unnecessary toggling.
+
+No combinational assignments inside clocked block ensure clean synthesis.
+
+Overall, this fixes the timing mismatch and off-by-one issues, yielding correct functional behavior and low area/power usage.

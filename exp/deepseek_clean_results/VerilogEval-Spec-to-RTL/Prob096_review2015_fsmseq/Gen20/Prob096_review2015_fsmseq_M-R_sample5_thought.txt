@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Replace the shift register + comparator approach with an explicit state machine
+2. Use a 4-state FSM that tracks progress through the 1101 sequence
+3. Implement the FSM using combinational always block for next state logic
+4. Separate the state register update into a sequential always block
+5. Maintain the same functionality but with potentially better timing characteristics
+6. Keep the power optimization by freezing state transitions after detection
+
+Key Changes:
+- Explicit state encoding (4 states) instead of shift register
+- Clear progression through the sequence (S0->S1->S2->S3)
+- Separate combinational and sequential logic blocks
+- Maintains same output behavior (start_shifting latches until reset)
+- Potentially better timing due to simpler state transitions

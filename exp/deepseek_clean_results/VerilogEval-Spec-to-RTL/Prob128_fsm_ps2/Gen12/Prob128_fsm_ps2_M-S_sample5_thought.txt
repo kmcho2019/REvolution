@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove redundant state tracking: Instead of tracking all 3 states, just track whether we're in a message (1-bit flag) and count received bytes (2-bit counter)
+2. Combine state and counter: Use the counter itself to indicate both message state and position
+3. Simplify done logic: Make done purely combinational based on current state
+4. Reduce register count: Only need 2 bits of state (counter) instead of previous 2+1
+5. Maintain same functionality: Still properly detects message boundaries and asserts done after 3rd byte
+
+Key Simplifications:
+- Eliminate separate state tracking by using counter as both state and position
+- Make done combinational for simpler timing
+- Reduce to just 2 bits of state
+- Maintain same cycle-accurate behavior

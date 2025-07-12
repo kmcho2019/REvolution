@@ -1,0 +1,4 @@
+Refactor the design to explicitly separate next state logic from output logic inside an always block that updates the stored state on the clock's positive edge. The output `q` will be assigned combinationally from the current state and inputs, as before, but instead of using a wire for next state logic, use a reg variable `next_state` inside the sequential always block for clarity. This approach improves code readability by making the state update explicit, and keeps `q` as a combinational output assigned outside the always block. The core logic remains the same:
+- next_state = (state & ~b) | (~state & (a ^ b))
+- q = next_state combinationally
+- state <= next_state at posedge clk

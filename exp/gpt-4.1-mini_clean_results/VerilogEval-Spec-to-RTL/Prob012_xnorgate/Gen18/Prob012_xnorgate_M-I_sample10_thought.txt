@@ -1,0 +1,11 @@
+To optimize the XNOR implementation for better PPA while still using only NAND gates, reduce the gate count and logic levels. The previous design uses 4 NAND gates and 4 logic levels, which is relatively deep and consumes more area.
+
+A well-known minimal NAND-based XNOR implementation uses just 3 NAND gates:
+- nand1 = NAND(a, b)
+- nand2 = NAND(a, nand1)
+- nand3 = NAND(b, nand1)
+- out = NAND(nand2, nand3)
+
+This structure requires only 3 NAND gates and 3 logic levels, reducing both area and delay. It also reduces redundant computations of NOT a and NOT b from the previous design.
+
+Hence, implementing XNOR with this 3-NAND gate structure will improve performance, power, and area metrics compared to the original 4-level NAND gate solution.

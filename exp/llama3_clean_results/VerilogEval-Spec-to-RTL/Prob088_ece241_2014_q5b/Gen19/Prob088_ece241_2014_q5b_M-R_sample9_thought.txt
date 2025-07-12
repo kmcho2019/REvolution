@@ -1,0 +1,9 @@
+To refactor the given Verilog code for the Mealy finite-state machine implementing a 2's complementer, we will explore alternative approaches to state machine encoding and output generation. The original code uses a one-hot encoding scheme where state A is represented by 1'b1 and state B is represented by 1'b0. The state transitions are defined using a case statement within an always block, and the output `z` is generated based on the current state and input `x`.
+
+Our refactoring strategy involves simplifying the state machine encoding and leveraging the `assign` statement for combinational logic to generate the output `z`. We will maintain the asynchronous active-high reset and ensure that all sequential logic is triggered on the positive edge of the clock.
+
+Instead of using a case statement for state transitions, we can directly assign the next state based on the current state and input `x`. This approach simplifies the code and potentially reduces the area and power consumption by minimizing the combinational logic required for state transitions.
+
+For output generation, using an `assign` statement for `z` directly ties the output to the current state and input `x`, eliminating the need for a separate always block. This simplification can further contribute to area and power reduction.
+
+By restructuring the state machine and output generation logic, we aim to achieve a more efficient implementation in terms of Power, Performance, and Area (PPA) metrics while maintaining the core functionality of the 2's complementer.

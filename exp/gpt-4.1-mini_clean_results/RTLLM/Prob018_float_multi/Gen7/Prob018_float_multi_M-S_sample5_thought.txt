@@ -1,0 +1,15 @@
+To simplify the IEEE-754 32-bit floating-point multiplier while preserving correctness, we reduce pipeline stages to two for clarity and straightforwardness. We avoid excessive intermediate flags and minimize internal signal widths to essentials.
+
+Key simplifications:
+- Two pipeline stages: decode/prepare inputs and multiply/normalize/round/output.
+- Single clock domain with sequential processing; no multi-stage pipeline counters.
+- Direct extraction of sign, exponent, mantissa with implicit leading bit added for normalized numbers.
+- Straightforward multiplication of 24-bit mantissas producing 48-bit product.
+- Normalization using the top bits of the product and exponent adjustment.
+- Basic rounding to nearest even with guard, round, sticky bits.
+- Handling special cases (zero, infinity, NaN) directly in output logic.
+- Using blocking assignments in combinational parts and non-blocking in sequential blocks for synthesis friendliness.
+- No explicit sticky bit calculation over large ranges; sticky computed from OR of trailing bits.
+- Counter signal removed as not necessary in simplified two-stage design.
+
+This simplification reduces complexity, improves readability, and maintains full IEEE-754 compliance for multiplication, special cases, normalization, rounding, overflow, and underflow.

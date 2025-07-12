@@ -1,0 +1,39 @@
+The waveform shows 'p' and 'q' outputs that change primarily on clock edges but the transitions of 'q' occur on both clock edges, matching the value of 'p' at different times.
+
+Observing the waveform carefully:
+
+- 'p' updates on the rising edge of 'clock':
+  - At each rising edge, if 'a' = 1, 'p' becomes 1.
+  - If 'a' = 0 and 'p' was 1, 'p' resets to 0.
+  - If 'a' = 0 and 'p' was 0, 'p' remains 0.
+  This matches a flip-flop with load-enable driven by 'a'.
+
+- 'q' updates on the falling edge of 'clock':
+  - At falling edge, 'q' samples the current 'p'.
+  - This explains why 'q' lags 'p' by half a clock cycle and can update on clock=0 times.
+
+Hence, the circuit uses two flip-flops triggered on opposite edges of the clock:
+
+- 'p' is a positive-edge triggered flip-flop: p <= a | (p & a);
+  Since p becomes 1 when a=1, otherwise goes to 0.
+
+- 'q' is a negative-edge triggered flip-flop, sampling 'p'.
+
+This dual-edge-triggered design reproduces the given waveform:
+
+- 'p' changes on posedge clock depending on 'a'.
+- 'q' changes on negedge clock copying 'p'.
+
+Initialize 'p' and 'q' to 0 for starting conditions.
+
+This interpretation aligns exactly with the waveform transitions for 'p' and 'q'.
+
+Implementation:
+
+- Use two always blocks: one @(posedge clock) for p, and one @(negedge clock) for q.
+- On posedge clock: p <= a;
+- On negedge clock: q <= p;
+
+This satisfies all waveform behavior, including the 0 and 1 transitions and the timing of changes for both outputs.
+
+This approach is synthesizable and correct per the waveform provided.

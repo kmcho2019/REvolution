@@ -1,0 +1,24 @@
+To refactor the solution while maintaining the same core functionality, I'll make these key changes:
+
+1. **Replace combinational always block with assign statement**:
+   - Convert the detection logic to a continuous assignment
+   - This makes the code more concise and potentially easier to optimize during synthesis
+
+2. **Simplify state representation**:
+   - Instead of tracking all 3 previous bits, we'll track just the necessary state information
+   - Use a minimal state machine that only remembers the relevant pattern progress
+
+3. **Combine shift and detect logic**:
+   - Merge the shift register update and detection into a single always block
+   - This reduces the number of always blocks while maintaining the same functionality
+
+4. **Optimize reset handling**:
+   - Keep the asynchronous reset but simplify the reset conditions
+   - Clear both state and output simultaneously during reset
+
+The refactored version will:
+- Maintain the same sequence detection behavior (1001)
+- Use fewer always blocks
+- Have cleaner state representation
+- Keep the registered output for good timing
+- Remain functionally equivalent to the original

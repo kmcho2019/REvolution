@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Replace the always block with continuous assignments where possible
+2. Separate combinational and sequential logic more clearly
+3. Use functions for saturating counter updates to improve readability
+4. Make GHR update logic more explicit with a priority encoder
+5. Use generate block for PHT initialization to make reset logic cleaner
+
+Key changes:
+- Move PHT update logic to combinational always block
+- Use continuous assignments for prediction outputs
+- Create separate functions for counter increment/decrement
+- Explicitly show GHR update priority (train_mispredicted > train_valid > predict_valid)
+- Initialize PHT using generate block for better synthesis

@@ -1,0 +1,9 @@
+Implement a byte receiver FSM that samples and shifts bits using a counter and a shift register, but this time use a binary-encoded FSM with three states: IDLE, RECEIVING, and WAIT_STOP. 
+
+- In IDLE state, wait for a falling edge start bit (detect in == 0) to begin reception.
+- In RECEIVING state, shift in each of the 8 data bits serially on each clock cycle; bits come LSB first, so shift register shifts right with new bit loaded into MSB position.
+- After 8 bits are received, move to WAIT_STOP state to verify the stop bit (which should be logic 1).
+- If stop bit is correct, output the received byte, pulse done high for one clock cycle, and return to IDLE.
+- If stop bit is incorrect, remain in WAIT_STOP until the line goes back to idle (logic 1), then return to IDLE (recovery).
+  
+This design uses a simple 2-bit state encoding (binary) to reduce area, and the done pulse is generated in a dedicated combinational signal triggered only during correct stop bit detection. The shift register updates only during RECEIVING state, preventing unnecessary toggling. The bit counter increments only in RECEIVING state and resets otherwise. This architecture is minimal and straightforward while preserving functionality and meeting all requirements.

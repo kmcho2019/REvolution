@@ -1,0 +1,13 @@
+Here's a simplified approach that maintains all required functionality while reducing complexity:
+
+1. **State Machine**: Use just 4 states (RESET, F_PULSE, WAIT_PATTERN, MONITOR_Y) to clearly separate concerns
+2. **Pattern Detection**: Track last 3 x values with a shift register, but only check when we have 3 valid samples
+3. **Timeout Handling**: Simple counter for the 2-cycle y monitoring window
+4. **Output Logic**: Directly tied to state machine with clear conditions
+5. **Permanent Outputs**: Once set, outputs remain until reset without additional flags
+
+Key simplifications:
+- Eliminates separate g_permanent flag by using state transitions
+- Clear state progression with minimal transitions
+- Combines pattern detection and timeout in straightforward way
+- Outputs directly derived from state and conditions

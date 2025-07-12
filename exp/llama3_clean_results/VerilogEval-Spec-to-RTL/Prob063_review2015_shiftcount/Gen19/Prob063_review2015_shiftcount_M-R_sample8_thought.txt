@@ -1,0 +1,10 @@
+The original code implements a four-bit shift register that also acts as a down counter. To refactor this code, we can use a different structure by employing a more combinational approach with the help of `assign` statements for the next state logic, while still using an `always` block for the sequential update. This approach can simplify the code and make it easier to understand and maintain. Additionally, we can take advantage of Verilog's built-in arithmetic operators to simplify the decrement operation.
+
+The idea is to first define the next state logic using `assign` statements, which will handle the shifting and decrementing operations based on the current state and input signals. Then, use an `always` block to update the state register `q_reg` based on the next state logic. This separation can make the code more modular and easier to understand.
+
+The key refactoring steps include:
+- Define a new signal `q_next` that will hold the next state value based on the current state `q_reg` and the input signals.
+- Use `assign` statements to define the combinational logic for `q_next`, handling both the shift and decrement operations.
+- Keep the sequential update logic in an `always` block, updating `q_reg` with `q_next` on the positive edge of the clock.
+
+By structuring the code in this way, we aim to improve readability and potentially simplify the synthesis outcome, which could lead to better performance, power, and area metrics.

@@ -1,5 +1,0 @@
-The issue in the provided Verilog code lies in the state transition and output logic when the FSM is in state B. The FSM is designed to count the occurrences of "w = 1" over three clock cycles in state B. However, the implementation of this counting logic is faulty. 
-
-When "w = 1," the code increments the `w_counter`. But the problem arises because the code does not reset the `w_counter` after three clock cycles in state B. This causes the `w_counter` to keep incrementing across multiple sets of three clock cycles, leading to incorrect behavior in setting the output 'z'. As a result, the output 'z' is often incorrect, creating mismatches during simulation.
-
-To adhere to the design intent, the FSM in state B should properly reset the `w_counter` after three clock cycles to restart the counting process for the next set of "w" inputs. Without this reset mechanism, the FSM fails to count the "w = 1" occurrences accurately, leading to the observed simulation failures.

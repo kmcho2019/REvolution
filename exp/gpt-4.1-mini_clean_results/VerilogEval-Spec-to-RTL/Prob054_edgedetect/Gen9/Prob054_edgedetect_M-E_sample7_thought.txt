@@ -1,0 +1,11 @@
+Instead of storing the previous input and detecting the rising edge by comparing with it, this design will use a shift register approach for each bit. Specifically, for each bit of the input vector, we will shift the bit values through a two-stage register chain on every clock cycle. By comparing the two consecutive previous states, the module can detect a 0-to-1 transition by checking if the earlier stored bit was 0 and the later stored bit is 1. The pedge output will then be driven by this condition.
+
+This design uses a 2-bit shift register per bit (implemented as a 2D reg array or concatenated vector). The pedge output is derived from comparing the two delayed input states.
+
+Advantages:
+- The edge detection is done purely by comparing shift register stages, which may be conceptually clearer as a "history" buffer.
+- This structure could be easily extended to detect more complex sequences by increasing the shift register depth.
+- The approach still produces a 1-cycle pulse output delayed by one cycle after the 0->1 transition.
+- Uses a slightly different register structure, which may help in certain synthesis or test scenarios.
+
+We implement a single always block clocked by clk to shift in the current input and update pedge synchronously.

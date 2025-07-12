@@ -1,0 +1,26 @@
+The original solution correctly implements next-state logic for Y2 (state B) and Y4 (state D) from a one-hot encoded 6-bit state input y and input w. The code is functionally correct, purely combinational, and matches the given state transitions.
+
+To improve PPA (power, performance, area), we can simplify the expressions by factoring common terms and reducing redundant logic, which can help synthesis tools generate more optimal netlists:
+
+- Many next states are combinations of inputs and states that can be grouped for simpler logic.
+- For example, nextD combines terms B, C, E, F all ANDed with w, so nextD = w & (B | C | E | F).
+- Similarly, nextA = (A & w) | (D & w) = w & (A | D).
+- nextB is only from A & ~w.
+- nextC = (~w) & (B | F).
+- nextE = (~w) & (C | E).
+- nextF = D & ~w.
+
+This reduces the total AND gates and OR gates, enabling better synthesis results.
+
+Also, rename outputs to Y1 and Y3 as requested in the problem statement (Y1 corresponds to y[1], B, and Y3 corresponds to y[3], D), correcting the output port naming to match the interface requested:
+
+- output Y1 corresponds to next-state bit for y[1] (B)
+- output Y3 corresponds to next-state bit for y[3] (D)
+
+This resolves any mismatches in port naming and aligns with the problem statement, preventing port errors during integration.
+
+Thus, the code has:
+- Proper port names: Y1 and Y3
+- Simplified next state equations for lower logic complexity.
+
+The module remains purely combinational and adheres to the problem requirements.

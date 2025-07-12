@@ -1,0 +1,13 @@
+The original design uses a 2-bit register to store the last fetch signal to select output ad2. This introduces an extra register and small latency, and slightly increases switching power. 
+
+To improve PPA:
+- Replace the 2-bit `last_fetch` register with a clock-enable gated approach that only updates the respective instruction registers (`ins_p1` and `ins_p2`) on valid fetch signals. This avoids unnecessary writes and reduces power.
+- Use two separate registers (`ins_p1` and `ins_p2`) as requested by the problem statement (one for each source), eliminating the last_fetch register.
+- Output `ins` and `ad1` from `ins_p1` only, as those fields are based on instructions fetched from source 1 (or source 2 if needed). Since the original specification is ambiguous, assign `ins` and `ad1` from `ins_p1`.
+- Output `ad2` from `ins_p2` directly.
+- Use clock enable logic inside the always block to update only the register corresponding to the fetch signal.
+- Retain synchronous active-low reset to clear both registers.
+  
+This approach improves power by preventing unnecessary register toggling, improves clarity by following the problem’s original two-register structure, and avoids the extra `last_fetch` register. It keeps combinational logic minimal, aiding timing and area.
+
+This will yield better power savings due to clock gating within the always block and maintain straightforward extraction of outputs.

@@ -1,0 +1,26 @@
+The previous implementation attempted to model the behavior with `p` updating at the clock rising edge and `q` at falling edge, but its logic for setting and clearing `p` was too simplistic and caused inferred latches and mismatches.
+
+To fix this, we should:
+
+1. Remove the initial block and rely on synchronous reset or initial values consistent with the waveform (the waveform shows outputs unknown (x) before the first clock rising edge, so no asynchronous reset is needed).
+
+2. Explicitly define the behavior of `p` and `q` as two registers updated on opposite edges:
+
+   - At the rising edge of the clock, update `p` based on the input `a` and the current `q`.
+   - At the falling edge of the clock, update `q` to follow the current value of `p`.
+
+3. From the waveform, `p` goes high when `a` is high and `q` is low, and resets to 0 when `a` is low regardless of `q`. This is inferred from the transitions around 90ns to 110ns where `p` follows `a` when `q` is 0, but remains 1 when `q` is 1 and `a` toggles.
+
+4. So the update logic for `p` at the rising clock edge can be:
+
+   - If `a`=1, set `p`=1.
+   - Else if `q`=1, keep `p`=1.
+   - Else `p`=0.
+
+5. `q` simply captures `p` at falling clock edges.
+
+This approach eliminates inferred latches by ensuring `p` is always assigned a value on rising edge, and `q` always updates on falling edge.
+
+This double-edge triggered FSM matches the waveforms better, as `p` holds its state if `q` is high, even if `a` drops to 0, and `q` acts like a delayed version of `p` sampled on falling edge.
+
+This corrected implementation should conform to the waveform closely without inferred latches and provide deterministic state transitions.

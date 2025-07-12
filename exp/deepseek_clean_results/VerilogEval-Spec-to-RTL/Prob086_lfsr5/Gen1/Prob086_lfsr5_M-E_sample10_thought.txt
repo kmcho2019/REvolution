@@ -1,0 +1,13 @@
+To implement a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3, I propose a different approach that clearly separates the feedback logic from the shifting operation:
+
+1. Use a 5-bit register for the current state
+2. Implement the feedback as a separate operation before the shift:
+   - Calculate feedback as q[0] (LSB)
+   - XOR the feedback with tapped bits (q[4] and q[2])
+3. Perform the shift operation:
+   - Right shift all bits by 1
+   - Insert the feedback result at the MSB
+4. Reset initializes to 1 (00001)
+5. This approach makes the feedback and shift operations more explicit and modular
+
+The key difference from the previous solution is that we first compute all the XOR operations needed for the tapped bits, then perform a clean shift operation, making the data flow more visible.

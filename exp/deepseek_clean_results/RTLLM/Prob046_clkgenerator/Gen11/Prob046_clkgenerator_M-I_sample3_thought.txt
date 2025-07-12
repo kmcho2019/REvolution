@@ -1,0 +1,18 @@
+Improved clock generator design addressing all identified issues:
+
+1. **Reset Handling**: Changed to synchronous reset for better consistency with typical design practices. Clock starts immediately after reset deassertion.
+
+2. **Enable Logic**: Simplified enable behavior - maintains last state when disabled rather than forcing clock low, which is more typical for clock gating.
+
+3. **Initialization**: Removed non-synthesizable initial block in favor of reset-based initialization.
+
+4. **Timing Control**: Fixed the timing to ensure precise 50% duty cycle regardless of enable state changes.
+
+5. **Testbench Compatibility**: Maintained simple interface while ensuring all control paths are properly handled.
+
+Key improvements:
+- Fully synthesizable design
+- Predictable behavior under all control conditions
+- Precise timing control
+- Better match between simulation and synthesis
+- Maintained parameterized period functionality

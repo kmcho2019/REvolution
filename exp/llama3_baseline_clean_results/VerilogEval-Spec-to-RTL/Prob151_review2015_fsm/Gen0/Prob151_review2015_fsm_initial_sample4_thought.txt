@@ -1,0 +1,13 @@
+The TopModule finite-state machine will be implemented using an enumeration of states, which will determine the current state of the timer based on the input sequence. The states can be defined as follows: 
+- IDLE: initial state, looking for the start pattern (1101)
+- SHIFT1, SHIFT2, SHIFT3, SHIFT4: shifting in the duration bits
+- COUNTING: waiting for the counters to finish counting
+- DONE: notifying the user of the timer expiration
+- RESET: resetting the state machine after acknowledging the timer expiration
+
+The state machine will transition between these states based on the current state and the input signals. 
+- When reset is high, the state machine goes to the IDLE state. 
+- In the IDLE state, the state machine checks for the start pattern (1101) and transitions to the SHIFT1 state if detected.
+- In the SHIFT1, SHIFT2, SHIFT3, and SHIFT4 states, the state machine asserts the shift_ena signal for exactly 4 clock cycles and then transitions to the COUNTING state.
+- In the COUNTING state, the state machine waits for the done_counting signal to be high and then transitions to the DONE state.
+- In the DONE state, the state machine asserts the done signal and waits for the ack signal to be high before transitioning to the IDLE state.

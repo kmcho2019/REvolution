@@ -1,0 +1,14 @@
+The initial half adder implementation using simple XOR and AND gates is already optimal for logic depth, area, and power from a pure RTL perspective. However, to further optimize power and area, especially in advanced process technologies or when targeting specific libraries, we can:
+
+1. Use explicitly instantiated technology primitives if available, which could reduce gate count or power.
+2. Minimize switching activity by gating inputs when both inputs are equal (sum and cout outputs remain stable).
+3. Combine output assignments into a single always_comb block to potentially aid synthesis tools in resource sharing and reduce switching transitions.
+4. Add a minimal level of input buffering or use combinational logic that reduces glitching.
+
+In pure RTL, these gains are minimal since XOR and AND are the fundamental minimal logic for half adder.
+
+Given the constraints and to still stay synthesizable and generic, we will implement the half adder in an always_comb block that computes sum and cout simultaneously, which might help synthesis tools optimize power by sharing logic and reducing transient glitches.
+
+This approach does not increase complexity but can slightly improve switching power by avoiding separate continuous assignments.
+
+No changes are made to the logic itself since it is minimal and correct.

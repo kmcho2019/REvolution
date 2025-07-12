@@ -1,0 +1,7 @@
+I will simplify the design by implementing the entire 512-bit Rule 90 cellular automaton directly in one module without breaking it into smaller blocks. This reduces complexity and removes the need for explicit boundary signal wiring between blocks.
+
+The next state for each cell is the XOR of its left and right neighbors, with the boundary neighbors at indices -1 and 512 treated as zero. This can be handled cleanly by extending the current state with zeros at both ends in combinational logic.
+
+The design uses a single 512-bit register updated every clock cycle. When load is high, it loads the input data; otherwise, it updates the state based on Rule 90. This single always block keeps the design simple and easy to understand, with minimal combinational logic for next state calculation.
+
+This approach reduces code size, removes generate loops, and keeps the logic straightforward while preserving all required functionality.

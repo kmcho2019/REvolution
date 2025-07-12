@@ -1,0 +1,10 @@
+Novel Dual-Buffer Architecture:
+1. Maintain two history registers - one for committed state (safe_history) and one for speculative updates (spec_history)
+2. On prediction: Update spec_history with predict_taken while keeping safe_history unchanged
+3. On misprediction: Rollback by copying safe_history and appending train_taken to both registers
+4. On commit (no misprediction): Copy spec_history to safe_history
+5. Benefits:
+   - Clear separation between speculative and committed state
+   - More natural handling of rollbacks
+   - Potential for better timing as critical path is split
+   - Easier to extend for out-of-order execution scenarios

@@ -1,0 +1,25 @@
+A different architectural approach is to manually handle fixed-point addition by explicitly separating sign and magnitude, then performing addition or subtraction on magnitudes, and reconstructing the signed fixed-point result.
+
+Key steps:
+
+1. Extract sign bits of inputs `a` and `b`.
+
+2. Calculate magnitudes (absolute values) as unsigned numbers by conditionally inverting and adding one if negative (manual two's complement absolute).
+
+3. Based on sign bits:
+   - If same sign: sum magnitudes; assign sign of inputs to result.
+   - If different signs: subtract smaller magnitude from larger magnitude; assign sign of operand with larger magnitude.
+
+4. Since the numbers are fixed-point in two's complement with Q fractional bits, magnitude calculations ignore the fraction/integer split—they treat all bits as a unit.
+
+5. The final magnitude is then converted back to signed two's complement form by applying sign and producing the N-bit output.
+
+6. Overflow is naturally limited by N bits; no saturation logic is added.
+
+7. Implementation uses purely combinational logic with local variables (regs) to hold magnitudes and intermediate sums/differences.
+
+This approach explicitly implements two's complement absolute value logic and conditional addition/subtraction on unsigned magnitudes, clarifying the fixed-point adder behavior at the bit level without relying on signed arithmetic operators.
+
+This meets the problem requirement for conditional addition or subtraction based on sign bits, and sets the result sign accordingly.
+
+The output `c` is assigned combinationally from the registered result `res`.

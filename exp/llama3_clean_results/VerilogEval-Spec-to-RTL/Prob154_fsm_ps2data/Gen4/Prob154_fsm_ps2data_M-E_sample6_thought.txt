@@ -1,0 +1,7 @@
+To implement the finite state machine that searches for message boundaries in a byte stream, we can utilize a novel architectural idea that employs a shift register to store the incoming bytes. This approach allows us to efficiently store and shift the bytes, enabling us to easily extract the 24-bit message when a packet is received.
+
+The new architecture consists of a 24-bit shift register, where each byte is shifted into the register as it is received. We use a counter to keep track of the number of bytes received since the last message boundary was detected. When the counter reaches 3, we know that we have received a complete message, and we assert the `done` signal.
+
+The state machine has two main states: `IDLE` and `RECEIVING`. In the `IDLE` state, we wait for a byte with `in[3] = 1` to arrive, indicating the start of a new message. Once this byte is received, we transition to the `RECEIVING` state, where we start shifting the incoming bytes into the shift register.
+
+By using a shift register to store the incoming bytes, we can efficiently extract the 24-bit message when a packet is received, and we can easily reset the register when the `reset` signal is asserted.

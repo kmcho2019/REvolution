@@ -1,0 +1,15 @@
+The previous code had a syntax error because it declared a local reg inside the always block and used blocking assignments in a sequential block for constructing the concatenated sum. 
+
+To fix this, I will:
+1. Declare a reg array outside the always block to hold intermediate sums (`sum_concat`).
+2. Use a combinational always block or continuous assignment for assembling `sum_concat` from the sum_stage slices, since sum_stage is combinational.
+3. Then, assign `result` with a non-blocking assignment in the sequential always block by concatenating the final carry and `sum_concat`.
+4. Keep the pipeline registers and enable propagation as before.
+5. Use non-blocking assignments inside sequential logic to avoid race conditions.
+6. Preserve the 8-bit stage width and 8-stage pipeline for balance in PPA.
+
+This resolves syntax errors and makes the pipeline clean and synthesizable. The combinational assembly of the sum slices improves clarity and synthesizability.
+
+Additionally, I will add comments to improve code readability.
+
+No other structural changes are needed as the design is efficient for 64-bit addition with an 8-stage pipeline.

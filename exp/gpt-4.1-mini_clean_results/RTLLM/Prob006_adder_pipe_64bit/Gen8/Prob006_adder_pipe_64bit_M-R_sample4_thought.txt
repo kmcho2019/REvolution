@@ -1,0 +1,9 @@
+To refactor while keeping the core idea of a fully pipelined 64-bit ripple carry adder with one-bit addition per cycle, I will:
+
+- Use a generate loop to create the 64 pipeline stages instead of unrolling manually inside an always block.
+- Separate the pipeline registers for operands, sum bits, and carry signals into arrays.
+- Implement each stage as combinational logic from registered inputs, with registered outputs updated on the clock edge, improving clarity.
+- Synchronize the input enable signal using a shift register array to generate the output enable.
+- Build the final result by concatenating the pipelined sum bits and carry-out once the pipeline latency completes.
+- Use a straightforward, clean pipeline stage structure with explicit staged registers.
+- Maintain the latency of 65 cycles, but enhance code modularity and readability.

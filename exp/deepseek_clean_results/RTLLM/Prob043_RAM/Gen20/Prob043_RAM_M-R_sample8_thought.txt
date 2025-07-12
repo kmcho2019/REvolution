@@ -1,0 +1,18 @@
+Refactoring Strategy:
+1. Use packed array for memory declaration to improve area efficiency
+2. Implement synchronous write operation with proper clock enable (not clock gating)
+3. Make read path fully combinational for immediate data availability
+4. Use continuous assignments for output control
+5. Simplify reset implementation using array initialization
+6. Benefits:
+   - More standard synchronous design practices
+   - Better area utilization with packed array
+   - Cleaner separation of control and data paths
+   - Maintains same functionality while being more synthesis-friendly
+
+Key Changes:
+- Memory now declared as packed array [0:DEPTH-1] of WIDTH-bit registers
+- Write operation uses standard clocked always block with enable
+- Read path uses continuous assignment with address decoding
+- Output uses simple enable gate
+- Reset clears entire array in one operation

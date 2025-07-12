@@ -1,0 +1,9 @@
+To implement the 64-bit Johnson counter without using a shift loop or bit-by-bit assignments, we exploit vector concatenation directly with a conditional operator to efficiently update the counter. Instead of always shifting right and complementing the LSB, we interpret the counter update in terms of Q[0]: if Q[0] == 0, we shift right and insert 1 at the MSB; if Q[0] == 1, we shift right and insert 0 at the MSB. This logic can be expressed as:
+
+Q <= {Q[0] ? 1'b0 : 1'b1, Q[63:1]};
+
+This compact expression not only optimizes for performance by minimizing critical path and logic depth but also yields an elegant and easily synthesizable design.
+
+Additionally, reset is implemented asynchronously and active-low to set Q to zero at any time, ensuring known initial conditions.
+
+This approach provides minimal logic, fast clocking capability, and reduces both area and power consumption by avoiding iterative constructs and intermediate registers.

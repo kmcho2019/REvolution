@@ -1,0 +1,7 @@
+Replace the single 16-bit shift register with a 4-entry 4-bit register array to store stack elements, accessed directly by a 2-bit stack pointer (SP). SP now tracks the number of elements (0 to 4), incrementing on push and decrementing on pop. This eliminates costly 16-bit shifts on every operation, improving timing and power. 
+
+On push (RW=0), if not full, store dataIn into stack_mem[SP], then increment SP. On pop (RW=1), if not empty, decrement SP first, then output stack_mem[SP]. This ensures dataOut is the top element, and we do not need to clear the popped element explicitly as SP controls valid entries.
+
+EMPTY and FULL flags are combinational based on SP. The reset sets SP to 0 and clears all stack_mem entries to zero. DataOut holds last popped value, zero on reset or if pop attempted on empty. 
+
+This approach reduces switching activity, area (no wide shifts), and critical path delay, thus improving PPA. All operations remain synchronous on Clk with enable and active-high reset.

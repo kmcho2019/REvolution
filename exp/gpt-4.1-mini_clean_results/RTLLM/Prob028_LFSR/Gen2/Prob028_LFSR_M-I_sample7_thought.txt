@@ -1,0 +1,6 @@
+The original design is functionally correct and simple, but initializing the LFSR to a non-zero seed (4'b0001) to avoid lock-up is a good practice. However, keeping the reset assignment inside the always block as a synchronous reset is typical and fine, but to enhance clarity and synthesis friendliness, we can:
+- Use an asynchronous reset for immediate initialization.
+- Declare the feedback signal as a localparam function for clarity.
+- Add parameterization for the seed value to improve flexibility.
+- Keep the feedback calculation combinational and outside the always block.
+These changes improve maintainability and slightly improve PPA by enabling synthesis tools to better optimize the reset and logic separation.

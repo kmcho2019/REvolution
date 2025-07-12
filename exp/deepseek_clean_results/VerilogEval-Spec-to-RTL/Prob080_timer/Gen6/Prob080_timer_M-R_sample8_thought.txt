@@ -1,0 +1,16 @@
+Refactoring Strategy:
+1. Move the counter update logic from always block to continuous assignment
+2. Use a wire for the next counter value calculation
+3. Maintain the same functionality but with purely combinational logic for counter update
+4. Keep the single flip-flop requirement by only registering the counter value
+5. Benefits:
+   - More explicit separation of combinational and sequential logic
+   - Easier to pipeline if needed in future
+   - Clearer data flow visualization
+   - Maintains same PPA characteristics while offering more flexibility
+
+Key Changes:
+1. Replace always block with continuous assignment for next counter value
+2. Use explicit wire for combinational logic
+3. Keep the same zero-hold behavior and load priority
+4. Maintain efficient OR reduction for tc generation

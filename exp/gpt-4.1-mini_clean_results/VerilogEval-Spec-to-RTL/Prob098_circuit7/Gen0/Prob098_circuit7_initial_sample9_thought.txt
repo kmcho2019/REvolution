@@ -1,0 +1,17 @@
+The output q is updated on the positive clock edge. From the waveform:
+- At 15ns (clk rising edge), a=0, q=1
+- At 35ns (clk rising edge), a=1, q remains 1
+- At 45ns (clk rising edge), a=1, q changes to 0
+q changes state only at positive edges, and its next value depends on a and the current value of q.
+By tracking q's transitions:
+- When q=0 and a=0 at rising edge, q becomes 1
+- When q=1 and a=1 at rising edge, q becomes 0
+- Otherwise, q remains the same.
+
+This describes q toggling to 1 if it's 0 and a=0, or toggling to 0 if it's 1 and a=1, else q unchanged.
+
+To implement:
+- On posedge clk, update q with these conditions.
+- Initialize q to 0 or unknown initially; waveforms show X at time 0.
+
+Implement the above logic in an always block triggered on posedge clk.

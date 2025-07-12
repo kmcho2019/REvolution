@@ -1,0 +1,5 @@
+Refactor the design using a small finite state machine (FSM) with two states: IDLE and ACCUMULATE. On valid_in being high, transition from IDLE to ACCUMULATE state and keep accumulating data while counting inputs. When the count reaches 4, output the accumulated sum, assert valid_out for one cycle, then reset and return to IDLE.
+
+This approach separates control and data path cleanly and avoids multiple additions in one cycle by performing accumulation on each valid input and outputting the stored sum after 4 inputs.
+
+Also, separate combinational logic for next-state and outputs from sequential logic for clarity and better synthesis results.

@@ -1,0 +1,17 @@
+To simplify the existing solution, we can focus on reducing the complexity of the state machine and the logic. 
+
+Firstly, we can remove the separate flag for waiting for a stop bit and instead use the existing state machine to handle this condition. 
+
+Secondly, we can simplify the counter and start detection flag reset logic to reduce the number of operations in the critical path. 
+
+Thirdly, we can minimize the number of operations in the always block to reduce the combinational logic depth and improve the effective clock period. 
+
+Lastly, to further simplify the design, we can consider removing the shift register and instead use a simpler approach to collect the incoming bits.
+
+The simplified design will have the following states: IDLE, RECEIVE, and DONE. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the DONE state will handle the stop bit verification.
+
+We will use a 3-bit counter to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+By simplifying the state machine and the logic, we can reduce the complexity of the design while maintaining its functionality.

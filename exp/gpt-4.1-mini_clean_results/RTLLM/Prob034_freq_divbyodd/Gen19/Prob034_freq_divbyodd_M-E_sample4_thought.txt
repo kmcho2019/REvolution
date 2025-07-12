@@ -1,0 +1,12 @@
+To implement an odd-frequency divider, I will use a single up-counter that counts from 0 to NUM_DIV-1 and generates the divided clock output by toggling the output at specific counts to achieve a duty cycle close to 50% despite the odd divisor.
+
+Architecture:
+- Parameter NUM_DIV (odd) defines the division factor.
+- A counter increments on each rising clock edge, resetting to zero at NUM_DIV-1.
+- The divided clock output clk_div is toggled at counts 0 and at HALF_DIV (the midpoint).
+- Since NUM_DIV is odd, toggling at two counts spaced approximately half of NUM_DIV apart yields a frequency divided by NUM_DIV with a nearly 50% duty cycle.
+- Reset asynchronously sets counter and clk_div to 0.
+- This approach uses one counter and one output register, minimizing area and power.
+- The design operates solely on the rising clock edge to keep timing simple and avoid negative-edge complications.
+- The clk_div output toggles twice per cycle of the input clock, so its frequency is input clock / NUM_DIV.
+- Compile-time check ensures NUM_DIV is odd.

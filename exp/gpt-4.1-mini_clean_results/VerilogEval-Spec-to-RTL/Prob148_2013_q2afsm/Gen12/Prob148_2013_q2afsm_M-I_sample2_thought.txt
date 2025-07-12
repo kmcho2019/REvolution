@@ -1,0 +1,13 @@
+To improve PPA, focus on reducing unnecessary toggling of the grant output register by making `g` a combinational output instead of a registered one. Since `g` directly depends on state, it is safe and more power-efficient to drive it combinationally, reducing flip-flops and switching activity.
+
+Also, encode states using one-hot encoding since with 4 states, one-hot can simplify next-state logic and outputs and potentially improve performance by reducing combinational logic depth. Although one-hot increases register count, with only 4 states this is minimal and can help timing.
+
+Keep the synchronous active-low reset and positive clock edge triggering intact. Use separate always blocks for state register and next-state logic to maintain clarity and synthesis friendliness.
+
+Summary of improvements:
+- One-hot state encoding to reduce next-state logic complexity.
+- `g` output as purely combinational (assign statement) to save flip-flops and reduce switching.
+- Maintain separate always blocks for state and next-state.
+- Maintain synchronous active-low reset.
+
+This should reduce power and potentially improve timing while keeping area reasonable for 4 states.

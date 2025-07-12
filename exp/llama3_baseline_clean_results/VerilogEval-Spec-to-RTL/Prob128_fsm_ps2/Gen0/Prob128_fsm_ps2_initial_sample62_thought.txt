@@ -1,0 +1,7 @@
+The problem can be solved by implementing a finite state machine (FSM) that tracks the number of bytes received in a message. The FSM has the following states: 
+- Idle: This is the initial state where the FSM waits for a byte with in[3] = 1 to indicate the start of a message. 
+- Byte1: After receiving the first byte, the FSM transitions to this state.
+- Byte2: After receiving the second byte, the FSM transitions to this state.
+- Done: After receiving the third byte, the FSM transitions to this state and signals done in the next cycle.
+
+The FSM uses the in[3] bit to determine the start of a message. When a byte with in[3] = 1 is received, the FSM transitions to the Byte1 state. If a byte without in[3] = 1 is received in the Idle state, the FSM remains in the Idle state.

@@ -1,0 +1,27 @@
+Implement the fixed-point adder using a two's complement arithmetic approach that leverages the inherent nature of fixed-point numbers as signed integers. Instead of explicitly extracting absolute values and handling sign-magnitude logic, use two's complement arithmetic to perform direct addition of inputs `a` and `b`.
+
+To properly handle the overflow and sign consistency:
+
+1. Perform a full-width addition of `a` and `b` in an extended width (`N+1` bits) to detect overflow.
+
+2. Truncate or saturate the result back to `N` bits depending on overflow detection:
+
+   - Saturation logic clamps the result to the maximum or minimum representable fixed-point value based on overflow indication and sign bits.
+
+3. Keep the fractional point consistent at Q bits, so the binary point is not shifted or changed by addition.
+
+This approach simplifies the design by using the natural binary addition of two's complement signed fixed-point numbers and only focuses on overflow detection and saturation, ensuring the result remains within representable range. The result register `res` stores the saturated output.
+
+Advantages:
+
+- Simpler and more intuitive implementation using standard two's complement addition.
+
+- Overflow handled explicitly by saturation, preventing wrap-around errors.
+
+- Fully combinational logic with a register for result storage.
+
+- Parameterizable for any fixed total width `N` and fractional bits `Q`.
+
+- The MSB (sign bit) correctly reflects the sign after addition.
+
+This method respects fixed-point semantics without dealing with absolute values, subtraction, or sign-magnitude conversions explicitly.

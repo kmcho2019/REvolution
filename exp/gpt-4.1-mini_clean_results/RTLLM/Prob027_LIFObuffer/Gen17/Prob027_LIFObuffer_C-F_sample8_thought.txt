@@ -1,0 +1,14 @@
+The superior design merges the clarity and power optimizations from both examples:
+
+1. Use a single always_ff block for synchronous logic with non-blocking assignments for SP, dataOut, and stack_mem, ensuring clean and safe register updates.
+2. Retain the SP counting scheme from 4 (empty) down to 0 (full), which is intuitive and minimal in bit width (3 bits).
+3. Calculate push and pop operations combinationally, gating stack_mem writes only on push operations, preventing unnecessary toggling.
+4. Update dataOut only on pop to minimize switching.
+5. Avoid clearing stack_mem on pop for power saving.
+6. On reset, clear stack_mem, SP, and dataOut synchronously, using a loop for initialization as standard practice; synthesis tools handle this efficiently.
+7. Combine push and pop conditions into a single valid_op signal to gate SP updates and reduce unnecessary toggling.
+8. Minimize combinational arithmetic depth by precomputing next_SP clearly.
+9. Use clear, descriptive comments.
+10. Maintain simple combinational EMPTY and FULL flags derived from SP for minimal logic.
+
+This fusion achieves a balance between performance (short critical path), power (minimal toggling and gated writes), and area (simple pointer logic and small memory). The design is modular, clean, and synthesis-friendly.

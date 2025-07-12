@@ -1,0 +1,5 @@
+To optimize the given 32-bit Galois LFSR for better PPA, the main idea is to reduce switching activity and critical path length caused by XORing all bits on every cycle. Instead of XORing the entire shifted register with the replicated feedback bit masked by TAP_MASK, we update bits conditionally: the MSB (bit 31) receives the feedback bit, and other tapped bits are XORed with the feedback bit only when feedback is active. Non-tap bits simply shift right unchanged.
+
+This can be implemented by shifting right by 1 bit, then conditionally XORing only the tap bits with the feedback bit (q[0]). This selective XOR lowers toggling on non-tap bits, reducing dynamic power and critical path complexity. The synchronous reset remains unchanged.
+
+This approach keeps the code synthesizable, clean, and potentially reduces gate count and switching power while maintaining correct LFSR behavior.

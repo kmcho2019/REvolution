@@ -1,0 +1,12 @@
+Novel DDS-inspired Approach:
+1. Use a phase accumulator (32-bit) for finer frequency resolution and smoother transitions
+2. Implement frequency control by adding the input frequency value to the accumulator each clock cycle
+3. Generate square wave by using the MSB of the accumulator (natural overflow creates perfect 50% duty cycle)
+4. Advantages:
+   - Linear frequency control (output freq = (freq * clk_freq)/2^32)
+   - No counter comparison needed (reduces critical path)
+   - Inherent glitch-free operation
+   - Scalable to higher precision
+5. Tradeoffs:
+   - Larger accumulator size (32-bit vs original 8-bit)
+   - More complex frequency calculation but better resolution

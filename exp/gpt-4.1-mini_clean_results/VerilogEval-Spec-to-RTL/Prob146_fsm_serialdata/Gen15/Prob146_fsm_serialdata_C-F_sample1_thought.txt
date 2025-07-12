@@ -1,0 +1,13 @@
+To create a superior solution, I will fuse the strengths of both examples:
+
+- Use a clear, minimal 2-bit binary FSM encoding (IDLE, RECEIVE, STOP, WAIT_STOP) for small area and simple logic.
+- Implement a Moore FSM style with done and out_byte registered synchronously, ensuring done pulses for exactly one cycle on a valid stop bit.
+- Shift bits in the correct LSB-first order by shifting the shift register right and inserting new bits into MSB, preserving serial order with minimal logic overhead.
+- Use clock gating by enabling updates to bit_count and data_shift only during the RECEIVE state to reduce toggling and dynamic power.
+- Avoid redundant resetting of bit_count by controlling it clearly only on reset or start bit detection.
+- Keep all sequential logic synchronous on posedge clk with active-high reset, separating combinational and sequential logic cleanly.
+- Include a WAIT_STOP state to recover from invalid stop bits by waiting for line idle (stop bit = 1) before restarting.
+- Reduce switching by holding registers stable in non-active states.
+- Maintain concise, well-commented code that is easy to read and synthesizes well for timing, power, and area.
+
+This fusion yields a robust, efficient serial receiver FSM that balances clarity, power, and performance.

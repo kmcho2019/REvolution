@@ -1,0 +1,12 @@
+Implement the 64-bit subtractor as a single combinational subtractor using Verilog's built-in signed arithmetic capabilities combined with explicit overflow detection logic. 
+
+Key ideas:
+- Perform the subtraction directly as A - B using the Verilog minus operator, interpreting A and B as signed 64-bit values.
+- Extract the sign bits of operands and result to detect overflow based on the signed subtraction overflow rules:
+  Overflow occurs if:
+  - A is positive and B is negative but result is negative (positive overflow)
+  - A is negative and B is positive but result is positive (negative overflow)
+- Use signed reg or wire types to ensure arithmetic is treated as signed.
+- This approach avoids the complexity of multi-level CLA or other carry-lookahead structures, relying on synthesis tools to optimize subtraction efficiently.
+- The simplicity improves readability, reduces structural overhead, and lets synthesis target FPGA/ASIC-specific optimizations.
+- The design is fully combinational with no clock or registers, suitable for a high-precision arithmetic unit.

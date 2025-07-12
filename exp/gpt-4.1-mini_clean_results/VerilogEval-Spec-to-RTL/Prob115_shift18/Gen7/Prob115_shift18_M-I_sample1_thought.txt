@@ -1,0 +1,7 @@
+To optimize for better power efficiency and slightly improve timing, avoid computing both left and right shifted values unconditionally. Instead, gate shift computations by the enable signal and direction. This reduces unnecessary toggling when not shifting or shifting only in one direction. Use a combinational always block with ena gating to compute shifted value only if enabled, else hold current value. This also simplifies the mux tree.
+
+Implement the shift computations inside the clocked block as combinational functions that execute only when ena is high, otherwise the register holds its previous value or loads new data on load. This approach reduces the switching activity in combinational logic.
+
+Additionally, express shifts using bit-slicing and replication clearly for easy synthesis, keep the sign-extension explicit for the arithmetic right shift, and keep the synchronous load behavior intact. This gives a good balance of clarity and power optimization without major area impact.
+
+Overall, this solution reduces dynamic power by gating shift logic, may slightly reduce delay by minimizing large mux paths, and maintains the same area and functional correctness.

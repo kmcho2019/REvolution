@@ -1,0 +1,19 @@
+Here's a novel approach using a bitmask technique combined with a priority encoder concept:
+
+1. Instead of explicitly listing all cases, we can recognize that the output is 1 in specific patterns:
+   - When x2=1 and x3=0 (rows 3 and 4)
+   - When x3=1 and x1=1 (rows 6 and 8)
+
+2. We can create a 3-bit mask where each bit represents one of these conditions:
+   - Mask bit 0: x3=0 and x2=1
+   - Mask bit 1: x3=1 and x1=1
+
+3. The output is then the OR of these mask bits, meaning if either condition is true, output is 1
+
+4. This approach reduces the logic to simple AND-OR operations while still correctly implementing the truth table
+
+Advantages:
+- More compact logic than case statement
+- Directly implements the observed patterns in the truth table
+- Easier to scale for similar patterns in larger truth tables
+- Potentially better for synthesis optimization

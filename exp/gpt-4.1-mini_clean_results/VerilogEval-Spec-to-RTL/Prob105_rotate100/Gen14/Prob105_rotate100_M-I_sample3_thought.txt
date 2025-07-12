@@ -1,0 +1,7 @@
+To optimize the design for power and timing without changing functionality, add a clock enable (ce) signal for the register update to prevent unnecessary toggling when no load or rotation occurs (ena = 2'b00 or 2'b11). This reduces switching activity inside the register, lowering dynamic power.
+
+For timing, implement the rotation logic as explicit conditional expressions instead of a case statement, which might give synthesis tools a clearer mux structure. This can marginally improve the critical path by eliminating the case statement decoder logic.
+
+Maintain the clean separation between combinational next-state calculation and sequential register update.
+
+Overall, adding a clock enable signal to gate the register clocking only when needed will improve power and timing without area penalty. This approach is simple, well-supported, and effective for large-bit registers like this 100-bit rotator.

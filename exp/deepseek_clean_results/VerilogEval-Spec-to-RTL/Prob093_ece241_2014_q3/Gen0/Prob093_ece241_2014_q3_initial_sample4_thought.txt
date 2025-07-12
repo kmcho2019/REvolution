@@ -1,0 +1,12 @@
+To implement the given Karnaugh map using a 4-to-1 multiplexer and 2-to-1 multiplexers, we need to determine the 4 inputs (mux_in[3:0]) for the 4-to-1 mux based on the K-map. The 4-to-1 mux will select one of these inputs based on {a,b}. Each mux_in[i] corresponds to a column in the K-map (ab combination). 
+
+For each column (ab combination), we observe the output pattern based on cd:
+1. ab=00 (mux_in[0]): Output is 0 when cd=00, 1 when cd=01, 1 when cd=11, 1 when cd=10 → This simplifies to d' + c
+2. ab=01 (mux_in[1]): Output is always 0 → 0
+3. ab=11 (mux_in[2]): Output is 0 when cd=00, 0 when cd=01, 1 when cd=11, 0 when cd=10 → This is c AND d
+4. ab=10 (mux_in[3]): Output is 1 when cd=00, 0 when cd=01, 1 when cd=11, 1 when cd=10 → This is d' + c
+
+We can implement mux_in[0] and mux_in[3] using the same logic (d' + c), while mux_in[1] is 0 and mux_in[2] is c AND d. We'll use 2-to-1 muxes to implement these functions:
+- For d' + c: Use a 2-to-1 mux with select=c, inputs: 1 (when c=1) and d' (when c=0)
+- For c AND d: Use a 2-to-1 mux with select=c, inputs: 0 (when c=0) and d (when c=1)
+- d' can be implemented with a 2-to-1 mux with select=d, inputs: 1 (when d=0) and 0 (when d=1)

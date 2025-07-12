@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Use one-hot encoding for better timing and simpler decoding (4 states = 4 bits)
+2. Shift Logic: Move shift register to combinational logic to reduce clock load
+3. Done Signal: Generate as combinational output based on current state and input
+4. Bit Counting: Use a simpler 3-bit counter with clear condition
+5. State Transitions: Simplify by combining ERROR and IDLE states since they have similar behavior
+6. Output: Make out_byte combinational for better timing
+
+Key Improvements:
+- One-hot encoding reduces state decoding complexity
+- Combinational shift logic reduces clock domain crossings
+- Simplified state machine with 3 states instead of 4
+- Cleaner separation of combinational and sequential logic
+- Reduced power by minimizing clocked elements

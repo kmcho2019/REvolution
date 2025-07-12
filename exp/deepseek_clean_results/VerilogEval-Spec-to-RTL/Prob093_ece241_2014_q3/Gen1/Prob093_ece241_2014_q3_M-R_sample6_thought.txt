@@ -1,0 +1,23 @@
+To correctly implement the Karnaugh map, we need to carefully analyze each output mux_in[x] based on the cd inputs for each ab selector case:
+
+1. mux_in[0] (ab=00):
+   - cd=00:0, cd=01:1, cd=11:1, cd=10:1
+   - This is equivalent to (c OR d) except when cd=00
+   - We can implement this as (d OR (c AND ~(c NOR d))) but simpler to just use a truth table
+
+2. mux_in[1] (ab=01):
+   - Always 0 as per K-map
+
+3. mux_in[2] (ab=11):
+   - cd=00:0, cd=01:0, cd=11:1, cd=10:0
+   - Exactly (c AND d)
+
+4. mux_in[3] (ab=10):
+   - cd=00:1, cd=01:0, cd=11:1, cd=10:1
+   - This is (NOT d) OR (c AND d)
+
+We can implement these using minimal 2-to-1 muxes:
+- mux_in[0]: Use c as select - when c=1 output 1, else output d
+- mux_in[1]: Hardwired 0
+- mux_in[2]: c AND d (same as before)
+- mux_in[3]: Use d as select - when d=1 output c, else output 1

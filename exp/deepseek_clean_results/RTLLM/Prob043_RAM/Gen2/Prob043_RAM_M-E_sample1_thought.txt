@@ -1,0 +1,11 @@
+Novel Bank-Switched Dual-Port RAM Architecture:
+1. Split the memory into two identical banks (Bank A and Bank B) each 4-deep
+2. Alternate writes between banks while maintaining a single read port
+3. Read operations check both banks simultaneously with priority to the most recently written bank
+4. Uses a write pointer to track which bank was last written
+5. Benefits:
+   - Reduces write contention by spreading writes across banks
+   - Enables speculative reads from both banks in parallel
+   - Maintains single-cycle read latency
+   - Naturally balances memory wear
+6. Reset initializes both banks and control signals

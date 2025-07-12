@@ -1,0 +1,12 @@
+Fuse the modular 32-bit CLA blocks from Example 1 with a hierarchical carry-lookahead structure to minimize carry chain delay while maintaining clarity and efficiency:
+
+- Perform subtraction as A + (~B) + 1, using two 32-bit CLA blocks (lower and upper) for modularity and shorter carry chains.
+- Implement each 32-bit CLA as a hierarchical CLA with 8-bit sub-blocks. This reduces carry propagation delay internally and improves timing compared to a flat 32-bit carry ripple.
+- Precompute the full 64-bit complemented B once, avoiding duplicated inversion.
+- Pass carry-in=1 to the lower 32-bit CLA to realize the +1 for two's complement subtraction.
+- The upper 32-bit CLA gets the carry-out from the lower CLA as its carry-in.
+- Overflow detection remains per specification: overflow when sign(A) ≠ sign(B) and sign(result) ≠ sign(A).
+- This fusion balances performance (shorter carry chains with hierarchical CLA blocks), power (reducing toggling by modular CLAs), and area (modular and parameterized CLAs, reusing blocks).
+- The design is fully combinational, structured, and synthesis friendly with parameterizable block sizes, ensuring maintainability and extensibility.
+
+This approach improves timing by hierarchical carry lookahead inside each 32-bit block and limits long carry chains to only two blocks, enhancing frequency headroom over flat 64-bit CLA, and reducing hardware duplication from pure carry-select styles.

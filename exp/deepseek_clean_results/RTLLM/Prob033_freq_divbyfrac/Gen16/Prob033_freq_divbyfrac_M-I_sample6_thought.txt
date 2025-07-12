@@ -1,0 +1,18 @@
+Improved design strategy for accurate 3.5x fractional division:
+
+1. Maintain the fundamental 7-cycle period (0-6) for precise frequency division
+2. Generate two complementary clock phases with proper duty cycles:
+   - Phase A: 4 cycles high (0-3), 3 cycles low (4-6)
+   - Phase B: 3 cycles high (0-2), 4 cycles low (3-6)
+3. Implement proper phase shifting:
+   - Create delayed Phase A using negative edge flip-flop
+   - Create advanced Phase B by sampling at negative edge with correct alignment
+4. Optimized phase combination:
+   - Use OR operation as originally specified to combine phases
+   - Ensure non-overlapping phases to prevent glitches
+5. Key improvements:
+   - Correct phase alignment through proper edge-triggered sampling
+   - Precise 50% duty cycle through accurate phase combination
+   - Simplified and more reliable counter logic
+   - Proper reset initialization
+   - Clear separation of phase generation and combination

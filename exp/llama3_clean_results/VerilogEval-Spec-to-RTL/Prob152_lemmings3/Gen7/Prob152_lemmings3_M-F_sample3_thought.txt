@@ -1,0 +1,17 @@
+The provided code has several issues with the state machine's transitions and output logic. To address these issues, we will:
+
+1.  Reorder the conditions in the `case` statements to ensure that the most specific conditions are checked first. This will prevent the state machine from transitioning to an incorrect state when multiple conditions are true.
+2.  Modify the handling of `bump_left` and `bump_right` while in the `FALLING` or `DIGGING` states to ignore these signals in the state transition logic, not just in the output logic.
+3.  Explicitly handle the situation where `bump_left` and `bump_right` are both high at the same time, causing the Lemming to switch directions.
+4.  Update the `last_walking_direction` variable to always reflect the correct walking direction before falling, whether the Lemming was walking or digging.
+5.  Simplify the combinational logic and minimize the number of flip-flops used to optimize the design's Power, Performance, and Area (PPA) metrics.
+6.  Use more efficient state encoding to reduce the number of combinational logic blocks.
+
+The corrected code will include the following modifications:
+
+1.  Reorder the conditions in the `case` statements to prioritize the most specific conditions.
+2.  Modify the handling of `bump_left` and `bump_right` while in the `FALLING` or `DIGGING` states to ignore these signals in the state transition logic.
+3.  Explicitly handle the situation where `bump_left` and `bump_right` are both high at the same time.
+4.  Update the `last_walking_direction` variable to always reflect the correct walking direction before falling.
+5.  Simplify the combinational logic and minimize the number of flip-flops used.
+6.  Use more efficient state encoding to reduce the number of combinational logic blocks.

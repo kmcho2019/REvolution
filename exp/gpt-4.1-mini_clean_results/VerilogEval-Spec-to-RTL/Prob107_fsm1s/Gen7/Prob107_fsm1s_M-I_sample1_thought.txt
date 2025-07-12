@@ -1,0 +1,5 @@
+To improve PPA, the key idea is to separate output logic from next-state computation to minimize unnecessary toggling and enable better synthesis optimization. Since the output depends solely on the current state (Moore output), it can be assigned directly from the state register using a continuous assignment. This removes output from the combinational always block, potentially reducing switching activity and critical path delay.
+
+Additionally, keep state update logic and next-state logic clean and non-blocking assignments only in sequential always block. Retaining 1-bit state encoding minimizes flip-flops and area.
+
+This approach reduces output logic complexity and switching, thus improving power and performance without area penalty.

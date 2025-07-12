@@ -1,0 +1,12 @@
+The original solution is modular and clear, using a dedicated nand4 module instantiated twice with 'keep' attributes to preserve the physical gate mapping. This ensures clarity and physical fidelity but can restrict synthesis optimizations that could improve power and area.
+
+To improve PPA, I will remove the 'keep' attributes so the synthesis tool can optimize by merging or restructuring gates if beneficial, reducing power and area without affecting functionality. Additionally, since the nand4 module only performs a straightforward 4-input NAND, I will inline the NAND logic directly in TopModule to eliminate module overhead and flatten the design for better synthesis optimization and timing.
+
+This inlining reduces hierarchy and removes attribute overhead, giving the synthesis tool full freedom for optimization while keeping the design extremely simple and minimal. The code will remain combinational and easily understandable.
+
+In summary, the improvements are:
+- Remove 'keep' synthesis attributes to enable optimizations.
+- Inline the 4-input NAND logic inside TopModule for flattening and synthesis freedom.
+- Retain clean, clear combinational assignments for ease of understanding and minimal overhead.
+
+These changes should improve power and area with no impact on timing or functionality.

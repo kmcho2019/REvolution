@@ -1,0 +1,39 @@
+I will implement the gshare branch predictor using a single global history register and a double-buffered PHT to cleanly handle simultaneous prediction and training with correct priority and timing:
+
+1. Maintain one 7-bit global history register (`ghr`) updated only on committed outcomes or misprediction recovery.
+
+2. On prediction requests:
+   - Compute index = predict_pc ^ ghr.
+   - Read the 2-bit saturating counter from the current PHT (specifically the stable committed version).
+   - Output the prediction (`predict_taken`) based on MSB of the counter.
+   - Output the current `ghr` as `predict_history` (the history state *used* for prediction).
+   - Store the predicted bit in a small register to be used for speculative update on the next clock edge if no training misprediction happens.
+
+3. On training requests:
+   - Compute index = train_pc ^ train_history.
+   - Update the PHT entry based on `train_taken`.
+   - If `train_mispredicted`:
+     - Recover `ghr` to `train_history` (state after mispredicted branch), discarding any speculative history.
+     - Discard the speculative predicted bit from the prediction interface this cycle.
+   - Else (not misprediction):
+     - Update `ghr` by shifting in the actual `train_taken`.
+
+4. Priority: if training (especially misprediction) occurs on the same cycle as prediction, training updates the PHT and GHR first, overriding speculative prediction updates.
+
+5. Speculative update of `ghr` with predicted outcome is delayed by one cycle and canceled if misprediction occurs before then. This avoids complex speculative history rollback.
+
+6. The PHT is a single 128-entry 2-bit saturating counter RAM, synchronously updated on training.
+
+7. On reset, clear `ghr` and initialize PHT entries to weakly not taken (2'b01).
+
+This architecture simplifies handling of speculation and rollback by:
+- Only maintaining one committed global history,
+- Keeping the prediction outputs consistent with the current `ghr`,
+- Speculatively storing the predicted bit for a single cycle and updating `ghr` only if no training misprediction resets it.
+
+This approach guarantees that outputs reflect the exact history used for prediction, respects training priority, and cleanly models the timing semantics described.
+
+The code ensures:
+- Prediction outputs stable values when no prediction is made.
+- PHT is updated exactly once per training cycle.
+- Global history is only updated based on training, preventing desynchronization.

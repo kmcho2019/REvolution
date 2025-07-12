@@ -1,0 +1,11 @@
+I'll refactor the FSM implementation while maintaining the same functionality. Key changes:
+
+1. Separate the combinational next-state logic from the sequential state register using continuous assignments (assign statements) instead of a single always block.
+
+2. Use a parameterized one-hot encoding for the states to potentially improve timing (though it uses more flip-flops).
+
+3. Make the output logic more explicit by showing all state conditions that produce z=1.
+
+4. Keep synchronous reset but implement it more cleanly with a separate always block for just the register.
+
+This approach separates concerns more clearly - combinational logic is handled with assign statements while sequential elements are in always blocks. The one-hot encoding makes state transitions more direct in the combinational logic.

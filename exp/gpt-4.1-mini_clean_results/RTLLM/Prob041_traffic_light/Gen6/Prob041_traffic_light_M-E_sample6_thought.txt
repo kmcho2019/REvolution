@@ -1,0 +1,22 @@
+Implement the traffic light controller as a Moore FSM with four explicit states: idle, s1_red, s3_green, s2_yellow. The FSM cycles through these states in order: idle → s1_red → s3_green → s2_yellow → s1_red and so on.
+
+Use an 8-bit countdown counter to measure time in each state with specific durations:
+- s1_red: 10 clock cycles
+- s3_green: 60 clock cycles, but when pass_request occurs and remaining green time > 10, shorten remaining green time to 10 cycles.
+- s2_yellow: 5 clock cycles
+
+The pedestrian button pass_request only affects green state by limiting the remaining green time once per green period.
+
+Store the output signals (red, yellow, green) as registers updated synchronously to avoid glitches.
+
+The FSM state and the counter are updated synchronously on the positive edge of the clock or asynchronously reset by rst_n (active low). The next state is determined by the current state and the counter hitting zero.
+
+Remember to save previous output signals (p_red, p_yellow, p_green) to implement the logic of resetting counter values based on output transitions if desired.
+
+Overall, this design uses clear states with fixed timers and a logic to shorten green on pedestrian request without additional flags.
+
+Outputs:
+- clock: outputs the current counter value
+- red/yellow/green: indicate active light
+
+The pedestrian light logic follows from the lane light state, so it's not separately modeled.

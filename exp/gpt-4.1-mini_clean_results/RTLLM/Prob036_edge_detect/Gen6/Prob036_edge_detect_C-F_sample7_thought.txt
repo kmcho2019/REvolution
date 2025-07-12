@@ -1,0 +1,9 @@
+Fuse the two approaches to optimize PPA and code clarity:  
+- Use a single delayed register for 'a' (like both examples) to detect edges by comparing with current 'a'.  
+- Generate synchronous one-cycle pulses for rise and down outputs as registered outputs for glitch-free timing and easier downstream handling.  
+- Use non-blocking assignments inside the always block with asynchronous reset for safe synthesis and clear timing.  
+- Instead of combinational assignments for rise/down, register these signals inside the sequential block, setting them based on edge detection logic, ensuring clean and synchronous outputs that last exactly one clock cycle.  
+- This approach reduces combinational logic on outputs, improves timing and glitch robustness, and maintains minimal logic and register use (only two flip-flops: one for delay and one for output).  
+- Reset initial conditions cleanly to zero to avoid metastability or unknown states.  
+
+This combined design achieves minimal flip-flop count, synchronous glitch-free output pulses, and clear, safe Verilog coding style.

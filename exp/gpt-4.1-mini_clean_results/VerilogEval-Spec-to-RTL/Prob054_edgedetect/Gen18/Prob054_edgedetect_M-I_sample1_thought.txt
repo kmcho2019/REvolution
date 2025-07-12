@@ -1,0 +1,7 @@
+To optimize the given design for better power and area without impacting timing significantly, I will reduce toggling in the prev_in register by registering the input only when it changes. This can be done by clock-gating the prev_in update using a simple enable that checks if in differs from prev_in. However, as we must keep the design synchronous and straightforward, I'll implement a small optimization by using a single always_ff block for clarity and explicitly mention that synthesis tools can infer minimal registers.
+
+Additionally, I will simplify the output assignment by directly registering pedge as the positive edge detection of each bit, keeping minimal combinational logic and avoiding unnecessary intermediate signals.
+
+The area savings are likely minimal since this is a very small design, but toggling reduction can help power slightly.
+
+Overall, the improvement is subtle: enable updating prev_in only when input changes, potentially reducing switching in prev_in register and keeping pedge logic minimal.

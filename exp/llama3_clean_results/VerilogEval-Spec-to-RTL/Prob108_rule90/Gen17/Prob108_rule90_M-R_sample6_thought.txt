@@ -1,0 +1,9 @@
+To refactor the existing code while maintaining its core functionality, we can focus on simplifying the combinational logic further and streamlining the sequential logic for updating `q_reg`. The main refactoring strategy involves directly applying the Rule 90 logic to update `next_state` without the need for conditional statements or complex combinational logic. We can utilize a more straightforward method to calculate `next_state` by leveraging the properties of the Rule 90 cellular automaton.
+
+Firstly, simplify the boundary conditions by directly assigning `left` and `right` based on the index `i` without using conditional statements. Then, apply the XOR operation to calculate `next_state[i]` directly.
+
+Secondly, keep the sequential logic simple by updating `q_reg` directly on the positive edge of the clock. This involves checking the `load` signal and either loading `data` into `q_reg` or updating `q_reg` with `next_state`.
+
+Lastly, maintain the same output assignment to ensure that `q` reflects the current state of `q_reg`.
+
+By refactoring the code in this manner, we aim to improve readability, simplify the combinational logic, and maintain efficient sequential logic updates, thus potentially enhancing the overall PPA metrics of the design.

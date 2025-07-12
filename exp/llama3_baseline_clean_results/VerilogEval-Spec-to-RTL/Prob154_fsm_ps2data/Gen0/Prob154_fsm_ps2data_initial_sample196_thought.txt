@@ -1,0 +1,7 @@
+To implement the module TopModule, we need to design a finite state machine (FSM) that can identify the message boundaries in a byte stream. The FSM should have at least three states: an idle state, a first byte state, a second byte state, and a third byte state. The idle state will continuously check for the start byte (in[3] = 1) and move to the first byte state when it is found. The first byte state will store the first byte and move to the second byte state, the second byte state will store the second byte and move to the third byte state, and the third byte state will store the third byte and signal done.
+
+We will use a counter to keep track of the current state. The counter will be initialized to 0 and will increment by 1 for each byte received after the start byte. Once the counter reaches 3, we will signal done and reset the counter.
+
+We will use registers to store the bytes of the message. The registers will be initialized to 0 and will be updated with each new byte received.
+
+The reset signal will be used to reset the FSM to its initial state. When the reset signal is high, the counter and the registers will be reset to their initial values.

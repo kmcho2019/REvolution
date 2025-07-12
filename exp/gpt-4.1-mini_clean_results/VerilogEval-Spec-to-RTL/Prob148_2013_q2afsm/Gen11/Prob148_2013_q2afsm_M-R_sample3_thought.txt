@@ -1,0 +1,12 @@
+Refactor the FSM to use a binary-encoded state machine instead of one-hot encoding, which reduces flip-flop count from 3 to 2 bits for four states. Represent states as 2-bit values:
+
+- A = 2'b00 (idle)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+This reduces area and power by minimizing state flip-flops. The output logic is implemented via a combinational always block that sets grant bits based on the current state. Next-state logic is rewritten with a combinational always block and uses blocking assignments for clarity.
+
+Synchronous active-low reset initializes to idle state A.
+
+This style uses explicit state definitions with parameters and groups next state and output computations in separate always blocks for clarity and maintainability.

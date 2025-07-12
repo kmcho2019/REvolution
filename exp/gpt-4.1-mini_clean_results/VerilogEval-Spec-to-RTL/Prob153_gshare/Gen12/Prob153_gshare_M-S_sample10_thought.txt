@@ -1,0 +1,19 @@
+Implement the gshare predictor using a single global history register (ghr) that is both the committed and current speculative history:
+
+- At each clock edge:
+  - If training with misprediction occurs, recover the global history to the provided train_history (the post-misprediction committed history).
+  - Else if training valid (non-misprediction), update the PHT at the train_index with the taken value.
+  - Else if prediction valid, update the global history by shifting in the predicted bit from the PHT entry indexed by (predict_pc XOR current ghr).
+
+- Prediction outputs are generated combinationally each cycle based on:
+  - The current global history (before update).
+  - The current predict_valid and predict_pc inputs.
+  - The PHT entry at (predict_pc XOR ghr).
+
+- predict_history outputs the global history used for the prediction (i.e., the ghr before update).
+
+- When prediction and training (with mispredict) happen simultaneously, training recovery takes priority, ensuring correct global history.
+
+- PHT updates occur synchronously at clock edge.
+
+This simplified design removes separate committed and speculative histories, reduces registers, and uses combinational logic for prediction output, aligning with the problem's timing requirements and simplifying behavior.

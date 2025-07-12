@@ -1,0 +1,7 @@
+Refactor the synchronous decade counter by removing the combinational always block and instead using continuous assignment for next-state logic. The next state will be computed using a simple ternary operator with equality check for 10, leveraging `assign` to drive next_q combinationally. The register update remains inside an always @(posedge clk) block with synchronous reset.
+
+This change:
+1. Simplifies the logic by replacing manual bitwise detection of 10 with a simple equality comparison (`q == 4'd10`), potentially easing synthesis.
+2. Uses continuous assignment (`assign`) for next state, improving code conciseness and clarity.
+3. Keeps synchronous reset active high and resets q to 1.
+4. Maintains minimal registers and simple control flow, preserving the same function and timing characteristics but altering style.

@@ -1,0 +1,21 @@
+Here's a novel approach using a priority encoder style implementation that leverages the one-hot encoding property more explicitly:
+
+1. Instead of using OR operations, we'll implement the state transitions as explicit conditional assignments based on the current state. This makes the state transition logic more readable and potentially more synthesis-friendly.
+
+2. For Y1 (next state B):
+- Only transitions from state A (y[0]) when w=1
+- This remains a simple AND gate as in the original solution
+
+3. For Y3 (next state D):
+- Instead of OR'ing multiple y bits, we'll explicitly list all transitions that lead to D:
+  - From B (y[1]) when w=0
+  - From C (y[2]) when w=0
+  - From E (y[4]) when w=0
+  - From F (y[5]) when w=0
+- This creates a more direct mapping of the state machine transitions
+
+4. Benefits:
+- More explicit state transition logic
+- Potentially better synthesis optimization as each condition is clearly stated
+- Easier to modify if state transitions change
+- Still maintains minimal logic depth

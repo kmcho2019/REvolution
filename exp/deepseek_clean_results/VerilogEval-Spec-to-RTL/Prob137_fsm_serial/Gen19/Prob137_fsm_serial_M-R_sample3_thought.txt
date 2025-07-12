@@ -1,0 +1,17 @@
+Refactoring Strategy:
+1. State Machine: Convert to a one-hot encoded FSM for potentially faster state transitions
+2. Data Handling: Use continuous assignments for shift register and counter logic
+3. Control Logic: Replace combinational always block with assign statements where possible
+4. Done Signal: Generate directly from state and input without intermediate register
+5. Reset Logic: Keep synchronous reset but simplify implementation
+6. Optimization:
+   - One-hot encoding may improve timing at the cost of area
+   - Continuous assignments can reduce logic levels
+   - Remove unnecessary registers where combinational logic suffices
+
+Key Changes:
+- One-hot state encoding (4 bits) replaces binary encoding
+- Shift register and counter implemented with continuous assignments
+- Next state logic implemented with assign statements
+- Done signal generated combinatorially
+- Simplified control path

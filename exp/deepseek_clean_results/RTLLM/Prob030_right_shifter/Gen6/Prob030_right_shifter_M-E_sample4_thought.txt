@@ -1,0 +1,5 @@
+Instead of physically shifting bits each cycle, we can implement a circular buffer with a write pointer that moves backward. This approach:
+1. Uses a static register and a 3-bit pointer to track the "current" position
+2. On each clock, decrements the pointer (modulo 8) and writes the new bit
+3. Outputs the register contents rotated by the pointer position
+This eliminates the physical shifting operation, potentially reducing power consumption as only one bit changes per cycle. The rotation is done combinatorially at output.

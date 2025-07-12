@@ -1,0 +1,20 @@
+From the waveform, p and q start unknown, then p goes low at the first rising clock edge, and q becomes zero after the first falling clock edge. Later, p transitions to 1 only when 'a' is 1 at rising clock edges; q follows p but remains 0 or 1 in a way that suggests q acts like a "latched" or "enabled" version of p, but updated only on the falling clock edge.
+
+Notably, at time 115ns when clock is 0, both p and q go to 1 and remain stable for many cycles even though 'a' toggles. At 165ns when clock is 1 and 'a' is 1, p is 1 and q remains 1. Later, when clock is 0 and 'a' is 1 (175ns+), both p and q drop to zero.
+
+This implies the circuit has two states:
+
+- When clock is high (active phase), p samples 'a' and can be set to 1 or 0 accordingly.
+- When clock is low (inactive phase), q samples p and acts as a "memory" of the last p during the previous clock cycle.
+- Moreover, when clock falls from 1 to 0, q updates to p.
+- When clock rises from 0 to 1, p updates to a OR q (holding p at 1 if q is 1 or a is 1). This introduces a latch effect on p, remembering previous q.
+
+Hence, p is updated at posedge clock as p <= a | q (set if 'a' or 'q' is 1), and q updates at negedge clock as q <= p.
+
+This scheme allows p and q to latch high state when 'a' is 1 or q is previously high, matching the waveform where p and q maintain 1 until reset by a specific condition.
+
+Implementing a 2-bit latch where p captures the OR of 'a' and q at posedge clock, and q captures p at negedge clock produces the observed behavior.
+
+Initialize both p and q to zero for deterministic start.
+
+This approach introduces memory effect across both edges of clock, consistent with waveform transitions.

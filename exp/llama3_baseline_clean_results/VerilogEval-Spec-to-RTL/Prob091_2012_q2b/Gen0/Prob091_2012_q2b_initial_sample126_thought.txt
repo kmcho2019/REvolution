@@ -1,0 +1,20 @@
+To implement the state output logic for the given finite-state machine, 
+we first need to identify the conditions under which each state flip-flop 
+(y[0] to y[5]) is set to 1. Given the one-hot encoding and the transition 
+rules, we can derive the logic for Y1 (input to state flip-flop y[1]) and 
+Y3 (input to state flip-flop y[3]) by inspection. 
+
+For Y1, which corresponds to state B, it is set when the current state is 
+A and w is 0 (to stay in A or move to B) or when the current state is B 
+and w is 0 (to move to D). It is also set when the current state is D and 
+w is 0 (to move to A), but since D's one-hot encoding does not directly 
+set y[1], we focus on the transitions involving B and the condition from 
+D to A.
+
+For Y3, which corresponds to state D, it is set when the current state is 
+B and w is 0 (to move to D), when the current state is C and w is 0 (to 
+move to D), when the current state is D and w is 0 (to move to A), or 
+when the current state is E and w is 0 (to move to D).
+
+By analyzing the transition rules, we can formulate the Boolean equations 
+for Y1 and Y3 based on the current state (y[5:0]) and the input w.

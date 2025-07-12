@@ -1,0 +1,11 @@
+Implement a 64-bit pipelined ripple carry adder by dividing the 64-bit addition into 4 pipeline stages, each stage adding 16 bits with a ripple carry passing between stages. Each stage consists of a 16-bit ripple carry adder module that performs addition in one clock cycle. Pipeline registers hold inputs, intermediate carries, and partial sums to synchronize stages. The enable signal is pipelined through 5 stages (input + 4 adder stages) so that the output enable indicates when the 65-bit result is valid.
+
+This approach reduces the latency to 4 cycles compared to 64 cycles in the bit-by-bit stage design and simplifies logic by having 4 moderate-sized adders in series. The carry ripples within each 16-bit adder combinationally, but pipeline stages isolate these adders and register results. The final stage outputs the concatenated 65-bit result (64-bit sum plus final carry-out). Reset synchronously clears all pipeline registers.
+
+Key points:
+- Use a reusable 16-bit ripple carry adder combinational module.
+- Pipeline registers between each 16-bit adder stage.
+- Carry-out from one stage registers and feeds carry-in to next stage.
+- i_en input registered to synchronize enable through pipeline.
+- The output enable o_en becomes high when result is stable after stage 4.
+- Reset clears all registers synchronously.

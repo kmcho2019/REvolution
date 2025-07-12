@@ -1,0 +1,11 @@
+The previous solution uses an enum for states and separate registers for each byte, which adds complexity. We can simplify by:
+1. Using a 2-bit state register directly (no enum)
+2. Storing bytes in a 24-bit shift register instead of separate registers
+3. Simplifying state transitions to just increment a counter
+4. Combining state and data logic into a single always block
+
+The simplified FSM will:
+- Stay in state 0 until in[3]=1 (start of message)
+- Progress through states 1 and 2 to collect next two bytes
+- In state 2, output the 3-byte message and assert done
+- Reset to state 0 after completing a message

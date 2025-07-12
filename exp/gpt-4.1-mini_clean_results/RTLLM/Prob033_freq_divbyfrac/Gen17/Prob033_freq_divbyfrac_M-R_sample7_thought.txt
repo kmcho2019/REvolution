@@ -1,0 +1,12 @@
+To fix the original design’s issues with double-edge counting and phase-shifted toggling, I will:
+- Use a single posedge clock domain.
+- Double the internal clock frequency by generating a clock enable signal at both edges, effectively creating a "half-clock" tick.
+- Implement a half-cycle counter incremented on every clk edge by using a signal toggled on every clk edge and sampled on posedge clk.
+- Use this higher resolution counter to toggle `clk_pos` and `clk_neg` at appropriate counts corresponding to half cycles.
+- Generate `clk_pos` toggling at counts 0 and 8 (4 full cycles).
+- Generate `clk_neg` toggling at counts 4 and 11 (3.5 cycles offset by half clock cycle).
+- Finally, OR `clk_pos` and `clk_neg` to produce the fractional division output.
+  
+This avoids multiple always blocks updating the same register asynchronously, and the entire logic is synchronous to posedge clk, improving timing and synthesis friendliness. The half-cycle counter effectively counts half periods by triggering increments on an internal toggle signal that changes on every clk edge.
+
+This structure preserves the double-edge counting idea but implements it with a synchronous posedge clk-only counter, making the design synthesizable and correct.

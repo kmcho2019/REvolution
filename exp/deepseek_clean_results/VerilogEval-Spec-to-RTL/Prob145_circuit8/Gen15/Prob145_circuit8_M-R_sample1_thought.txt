@@ -1,0 +1,19 @@
+After analyzing the waveform and the issues in the previous implementation, here's a cleaner approach using a state machine:
+
+1. Key Insights:
+   - p is a sampled version of 'a' but only when q=0
+   - q acts as a state that remembers if p was 1 in the previous cycle
+   - q resets immediately when 'a' is high at falling edge
+   - p should only change at rising clock edges
+
+2. Refactoring Approach:
+   - Use a simple state machine with q as the state bit
+   - Generate p combinatorially based on current state and inputs
+   - Update state (q) synchronously at rising clock edges
+   - Implement immediate reset of q at falling edges using separate logic
+
+3. Improvements:
+   - Clear separation of combinational and sequential logic
+   - Single always block for state updates
+   - Combinational output for p
+   - Proper handling of asynchronous reset condition

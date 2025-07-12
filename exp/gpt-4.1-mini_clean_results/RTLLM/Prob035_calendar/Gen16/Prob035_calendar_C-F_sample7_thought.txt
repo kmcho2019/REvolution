@@ -1,0 +1,9 @@
+To fuse the best ideas from both examples and create a superior design for the perpetual calendar:
+
+- Use a single always block triggered on posedge CLK or RST to synchronize all increments and resets, avoiding any inter-block timing or synchronization issues.
+- Keep Hours as 6 bits, Mins and Secs as 6 bits, as requested in the problem statement (the examples used 5-bit Hours to save area, but the original problem specifies 6-bit for Hours).
+- Implement clear, readable nested conditions for increments and rollovers to avoid complex combinational paths while maintaining clarity.
+- Ensure that Mins only increments when Secs roll from 59 to 0, and Hours only increments when both Mins and Secs roll from 59 to 0, to minimize unnecessary toggling and switching activity.
+- Use non-blocking assignments to ensure correct sequential logic behavior.
+- Add comments for clarity and maintainability.
+- This approach keeps timing optimized by updating only the necessary registers each cycle, reduces power by limiting toggling to rollover events, and keeps area minimal and clean.

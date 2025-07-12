@@ -1,0 +1,20 @@
+Refactoring Strategy:
+1. State Encoding:
+   - Replace separate digit registers with packed BCD counters (ss, mm, hh)
+   - Use continuous assignments for digit extraction and overflow detection
+
+2. Logic Restructuring:
+   - Move all counter logic to combinational always blocks
+   - Use sequential always block only for register updates
+   - Simplify hour counter by treating it as modulo-12 counter
+
+3. Output Optimization:
+   - Remove intermediate digit registers
+   - Generate outputs directly from packed counters
+   - Simplify PM generation using hour counter value
+
+Key Improvements:
+- Reduced register count by using packed BCD format
+- Clear separation of combinational and sequential logic
+- Simplified hour counter with direct modulo arithmetic
+- More efficient overflow detection logic

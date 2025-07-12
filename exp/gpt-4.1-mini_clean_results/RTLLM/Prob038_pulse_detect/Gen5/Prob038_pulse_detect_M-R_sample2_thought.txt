@@ -1,0 +1,7 @@
+To refactor the pulse_detect module while maintaining the same pulse detection logic, I will implement the state machine using an enumerated type with binary encoding instead of one-hot encoding. The output data_out will be generated combinationally from the state register directly, rather than registering the output separately.
+
+The combinational next_state logic will be placed inside an always block sensitive only to the current state and data_in. The state register will update on the clock edge or reset. This separation of combinational next state logic and synchronous state updates follows a classic FSM style.
+
+The data_out signal will be assigned combinationally (using assign) based on the current state indicating pulse end, which avoids registering the output. This slightly simplifies the register logic while still producing a one-clock-cycle pulse on data_out.
+
+This approach reduces flip-flop usage (from 4 in one-hot to 2 in binary state encoding) and clearly separates combinational and sequential logic. It also demonstrates another common FSM coding style and the use of `assign` for output generation.

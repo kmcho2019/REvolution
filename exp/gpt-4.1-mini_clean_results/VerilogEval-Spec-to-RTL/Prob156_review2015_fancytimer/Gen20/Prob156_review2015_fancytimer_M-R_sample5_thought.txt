@@ -1,0 +1,16 @@
+To fix the functional issues and clarify the design, I will refactor the code as follows:
+
+- Use a clean FSM with one synchronous always block for all registers including outputs.
+- Separate combinational next-state and next-output signals from registered state and outputs.
+- Outputs (`count`, `counting`, `done`) will be registered signals updated on clock edge from combinational next-output signals.
+- Pattern detection and delay loading done by shifting registers only during corresponding states, ignoring input during counting/done.
+- Initialize counters and outputs only at state transitions to avoid races or using unlatched next-state registers.
+- Clear and consistent use of nonblocking assignments only in the synchronous block.
+- Use an enumerated state type for clarity.
+- Avoid assigning outputs in combinational blocks directly to registers; instead use separate next signals to feed registers.
+- This approach ensures all outputs are stable and updated synchronously, eliminating ambiguity and mismatches.
+- Delay loading count is done on the clock edge after shifting data, guaranteeing stable delay_reg before starting count.
+- Counting logic counts 0 to 999 cycles, decrements tick_counter accordingly, and transitions to DONE on completion.
+- DONE state asserts done, waits for ack to transition to IDLE.
+
+This approach improves clarity, correctness, and synthesis friendliness and fixes the previous issues with outputs freezing or incorrect transitions.

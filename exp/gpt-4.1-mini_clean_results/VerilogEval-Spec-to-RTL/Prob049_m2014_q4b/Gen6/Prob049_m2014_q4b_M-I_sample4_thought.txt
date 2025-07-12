@@ -1,0 +1,13 @@
+To optimize the existing D flip-flop with asynchronous reset for better power and area, the best practical improvement is to replace the asynchronous reset with a synchronous reset if the design permits. This reduces asynchronous switching and can improve timing and power, since the reset is only sampled at the clock edge. However, since the requirement explicitly states asynchronous reset, we must keep asynchronous reset.
+
+Given that, a common industry practice to reduce glitches and power is to use a synchronous reset in combination with an asynchronous reset synchronizer or to ensure the asynchronous reset is only active when needed. Since the problem scope is a single flip-flop, the next step is to encode the asynchronous reset as active low if allowed, as active-low reset signals are often better supported in libraries, but problem states 'ar' is active high.
+
+Since the reset is asynchronous and active high, minimal logic is involved. Thus, the current code is already minimal and optimal in area and performance.
+
+For power optimization, adding a clock enable can reduce toggling on q, but since there is no enable input and it is not specified, we cannot add it.
+
+Therefore, the best improvement here is to explicitly define the default value of q and add a reset condition to initialize q to zero on simulation start, improving simulation correctness and synthesis tool confidence.
+
+In summary, keep the logic as-is, but add an initial block to define the initial value of q to zero, which can assist simulation and sometimes synthesis tools to better optimize reset circuitry.
+
+No other logic change is possible without changing the functional requirements.

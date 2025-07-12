@@ -1,0 +1,7 @@
+To provide a novel architectural approach, I will implement the 8-bit asynchronous-reset D flip-flop array using a single always block with a vector register rather than instantiating individual flip-flops. This approach is more compact, using behavioral RTL that explicitly describes the asynchronous reset and clocked data loading for the entire 8-bit vector.
+
+The asynchronous reset will be handled with the sensitivity list including both posedge clk and posedge areset, ensuring immediate reset of the entire register to zero. This approach reduces module instantiation overhead and simplifies the design while keeping the asynchronous reset behavior intact.
+
+Using a single vector register and one always block also leverages synthesis tools' ability to efficiently map this into hardware, potentially optimizing power and area compared to multiple individual flip-flops. It is also easier to maintain and modify.
+
+The output q is assigned directly from the register. This method keeps the semantics explicit: reset asynchronously clears all bits, and on clock edge, the input vector d is loaded into the register q.

@@ -1,0 +1,11 @@
+To create a superior 4-digit BCD counter, I will fuse the strengths of both examples:
+
+- Use a single 16-bit register to hold all digits, minimizing area and simplifying output wiring.
+- Implement a digit-wise, sequential carry propagation with local increment logic inside the clocked block to reduce critical combinational path length.
+- Use a clean, reusable BCD increment function returning carry and incremented digit.
+- Generate enable signals combinationally by checking digit rollover conditions directly from the current count, enabling immediate downstream reaction without adding sequential delay.
+- Apply gated digit updates only when the preceding digit rolls over, reducing unnecessary toggling and power.
+- Keep combinational logic minimal outside the clocked block and employ non-blocking assignments for sequential updates.
+- This approach improves timing by breaking down carry computation, optimizes power by gating digit increments, maintains compact area by using a single register, and enhances clarity and modularity.
+
+The module supports synchronous active-high reset, and all logic is triggered on posedge clk. The output q packs digits in 16-bit vector (thousands to ones), and ena reflects when upper digits increment ([3:1] digits) per spec.

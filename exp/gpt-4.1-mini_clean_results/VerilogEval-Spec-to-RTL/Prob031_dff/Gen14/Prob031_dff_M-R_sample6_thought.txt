@@ -1,0 +1,5 @@
+The original design uses a separate DFF module instantiated inside TopModule with an always block for the flip-flop. To refactor, I will integrate the flip-flop behavior directly inside the TopModule using an always_ff block (SystemVerilog style) if allowed, or standard always block with blocking assignment to show a slightly different coding style. Also, I will change the output q from reg to wire by introducing an intermediate register internally, then assign the output to this register. This keeps the same functionality but uses a different style.
+
+Since assign statements cannot model storage elements like flip-flops directly, I cannot replace the always block with assign for the sequential logic. Instead, I can internalize the register and expose the output as a wire, which contrasts with the previous module where q was an output reg.
+
+This refactor maintains clean, synthesizable, positive edge-triggered DFF behavior, but demonstrates a different module internal structure and port definition style, achieving the same result without instantiation of a submodule.

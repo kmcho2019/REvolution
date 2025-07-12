@@ -1,0 +1,9 @@
+Refactor the 4-bit LFSR to separate the combinational feedback logic from the sequential shifting logic more explicitly. Instead of calculating the next state inside the always block, calculate the next LFSR value using a combinational always block or continuous assignment and then register it on the clock edge.
+
+This approach enhances readability by clearly distinguishing between next-state logic and state registers. The feedback remains the inverted XOR of out[3] and out[2] as per the specification.
+
+Also, keep synchronous reset active high and initialize the LFSR to a non-zero seed (4'b0001) to avoid lock-up. 
+
+The testbench remains mostly the same, with clear clock generation and synchronous reset stimulation.
+
+This refactoring improves modularity and can help synthesis tools optimize by explicitly defining next state logic and registering separately.

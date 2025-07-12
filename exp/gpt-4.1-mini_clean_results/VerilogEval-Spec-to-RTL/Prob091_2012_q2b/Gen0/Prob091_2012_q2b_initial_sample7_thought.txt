@@ -1,0 +1,25 @@
+We have a one-hot encoded FSM with 6 states represented by y[5:0]:
+A = 000001, B = 000010, C = 000100, D = 001000, E = 010000, F = 100000.
+The transitions depend on input w, producing next states encoded one-hot as well.
+
+We want to find combinational logic for Y1 and Y3, which are the inputs to flip-flops y[1] and y[3] respectively.
+
+Y1 corresponds to state B (y[1]), Y3 corresponds to state D (y[3]).
+
+By the FSM transition table, the next state signals (inputs to flip-flops) can be found by inspecting all transitions that lead to these states:
+
+For Y1 (state B):
+- From A to B on w=1: so if y[0] & w
+No other transitions to B.
+
+So Y1 = y[0] & w
+
+For Y3 (state D):
+- From B to D on w=0: y[1] & ~w
+- From C to D on w=0: y[2] & ~w
+- From E to D on w=0: y[4] & ~w
+- From F to D on w=0: y[5] & ~w
+
+So Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w
+
+This is the simplest implementation by inspection.

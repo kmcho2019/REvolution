@@ -1,0 +1,10 @@
+Refactor the serial-to-parallel converter by separating the shift register logic and the counter logic into independent always blocks for better modularity. Use a continuous assignment to drive the output parallel data directly from the shift register, removing the need to explicitly latch `dout_parallel` in the counter block. Implement a state-like valid generation scheme by asserting `dout_valid` as a pulse exactly when the count reaches 7 (i.e., after 8 bits collected).
+
+This approach:
+- Uses a dedicated always block for shifting serial data whenever `din_valid` is asserted.
+- Uses another always block for counting the number of bits received.
+- Uses continuous assignment for `dout_parallel`, reflecting the current state of the shift register.
+- Uses a register to generate a one-clock-cycle pulse for `dout_valid` synchronized to the counter.
+- Keeps synchronous reset for all registers.
+
+This structure improves readability and separates concerns without changing functionality.

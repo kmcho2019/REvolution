@@ -1,0 +1,5 @@
+The provided code implements a TopModule with 8 D flip-flops, each with an active high asynchronous reset. To refactor this code, we can maintain the same functionality but simplify the structure by directly using the `reg` data type to model the flip-flops within the TopModule, rather than instantiating a separate DFF_8bit module. This simplification aims to maintain the same functionality while potentially improving the area metric due to reduced overhead from module instantiation.
+
+We can use a single `always` block to handle both the asynchronous reset and the synchronous D flip-flop operation. This approach allows for a straightforward implementation of the required behavior without adding unnecessary complexity. By using the `posedge` keyword for the clock and the `posedge` sensitivity for the asynchronous reset, we ensure that the reset is handled immediately when asserted, and the flip-flop captures the input `d` on the positive edge of the clock `clk`.
+
+This refactoring maintains the core idea of the original design but streamlines the implementation, which can potentially lead to improved area optimization by the synthesis tool.

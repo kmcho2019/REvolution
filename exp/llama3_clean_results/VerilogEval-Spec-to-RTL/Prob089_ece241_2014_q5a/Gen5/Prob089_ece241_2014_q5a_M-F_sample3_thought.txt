@@ -1,0 +1,11 @@
+To fix the existing Verilog code for the serial 2's complementer Moore state machine, we need to correct two primary issues: the asynchronous reset logic and the 2's complement calculation. 
+
+First, we must ensure that the asynchronous reset logic correctly resets all internal states to their initial values when the reset is asserted, regardless of the clock edge. This can be achieved by using a separate `always` block for the asynchronous reset, allowing it to be triggered by the reset signal's positive edge and ensuring that it overwrites any changes made by the clock-sensitive logic.
+
+Second, we must correct the 2's complement calculation logic. The current implementation incorrectly updates the carry bit and does not properly invert the input bits after the sign bit is encountered. To fix this, we should add the carry to the inverted input bits after the sign bit is set. 
+
+Furthermore, we should simplify the carry update logic to correctly reflect the 2's complement calculation rules. This involves setting the carry to 1 when the input bit is 1 after the sign bit is encountered, as this indicates a borrow in the 2's complement representation.
+
+Finally, we should ensure that the output `z` is correctly updated based on the current state of the sign bit and the carry.
+
+By addressing these issues, we can create a functional and correct serial 2's complementer Moore state machine that accurately handles asynchronous reset and performs the 2's complement calculation for input sequences of arbitrary length.

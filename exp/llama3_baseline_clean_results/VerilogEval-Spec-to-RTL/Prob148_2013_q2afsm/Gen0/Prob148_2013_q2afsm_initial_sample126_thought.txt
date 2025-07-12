@@ -1,0 +1,7 @@
+The TopModule should implement a finite state machine (FSM) with four states: A, B, C, and D. Each state represents a different device being granted access to the resource or no device being granted access. The FSM should be implemented using separate always blocks for the state table and the state flip-flops. The state table always block will determine the next state based on the current state and input signals, while the state flip-flops always block will update the current state on the positive edge of the clock. The outputs g[2:0] will be determined by the current state.
+
+To implement the priority system, the FSM should check the input signals in the following order: r[0], r[1], r[2]. If any of these signals are 1, the FSM should grant access to the corresponding device. The FSM should also handle the case where multiple devices are requesting access at the same time.
+
+We will use a 2-bit binary code to represent the four states: A (00), B (01), C (10), and D (11). However, since D is not actually used in the state machine, we can reuse one of the other state codes for it or not use it at all. In this case, we can use the same state code for D as A since D is not actually a separate state but rather a part of state A's next state decision.
+
+The FSM outputs g[2:0] will be determined by the current state. In state B, g[0] should be 1, and in state C, g[1] should be 1. In state A, all g[i] signals should be 0.

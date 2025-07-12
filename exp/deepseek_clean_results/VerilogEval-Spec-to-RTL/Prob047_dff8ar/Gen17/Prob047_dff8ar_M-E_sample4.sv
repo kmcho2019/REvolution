@@ -1,0 +1,12 @@
+module TopModule (
+    input clk,
+    input areset,
+    input [7:0] d,
+    output reg [7:0] q
+);
+
+always @(posedge clk or posedge areset) begin
+    q <= areset ? 8'b0 : d;
+end
+
+endmodule

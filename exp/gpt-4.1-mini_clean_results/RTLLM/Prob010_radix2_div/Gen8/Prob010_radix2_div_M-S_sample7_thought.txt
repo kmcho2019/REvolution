@@ -1,0 +1,23 @@
+Implement a straightforward radix-2 restoring divider for 8-bit operands supporting signed and unsigned division as follows:
+
+1. On opn_valid, capture and preprocess inputs:
+   - Calculate absolute values of dividend and divisor if signed.
+   - Store sign flags for quotient and remainder correction at the end.
+   - Initialize a 17-bit shift register with {8'd0, dividend_abs, 1'b0}, i.e., remainder (9 bits) concatenated with quotient (8 bits).
+   - Store negated divisor_abs for subtraction.
+
+2. Each cycle (8 cycles total):
+   - Shift shift register left by 1 bit.
+   - Subtract divisor_abs from the upper 9 bits (remainder part).
+   - If subtraction is >= 0, update remainder with subtraction result and set quotient LSB to 1.
+   - Else restore remainder (keep shifted value) and set quotient LSB to 0.
+
+3. After 8 cycles, apply sign corrections:
+   - Quotient sign = dividend_sign XOR divisor_sign.
+   - Remainder sign = dividend_sign.
+
+4. Output concatenated {remainder[7:0], quotient[7:0]} as 16-bit result and assert res_valid.
+
+5. Reset and ready to accept next operation when res_ready is asserted.
+
+This approach uses one shift register and simple logic to implement radix-2 division with minimal states and control signals, adhering closely to the problem description.

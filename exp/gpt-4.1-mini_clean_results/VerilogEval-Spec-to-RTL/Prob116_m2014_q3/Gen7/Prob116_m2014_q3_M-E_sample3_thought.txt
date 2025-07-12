@@ -1,0 +1,9 @@
+Instead of manually deriving the minimized logic expression from the Karnaugh map, this approach treats the four input bits as an address to a 16-entry ROM (lookup table) initialized with the given function values. The "don't care" entries will be assigned zero to keep the ROM content straightforward.
+
+This architecture uses a combinational ROM implemented as a case statement inside a combinational always block, mapping each 4-bit input to the corresponding output bit according to the Karnaugh map.
+
+This method is flexible, easy to verify, and avoids errors in bit-to-K-map mapping and manual minimization since the exact function is encoded directly. It also clearly separates the mapping logic from the combinational logic.
+
+The indexing of the input bits is explicitly defined as x[3]x[2]x[1]x[0], and the Karnaugh map cells will be matched to their corresponding input values accordingly by using the same bit ordering.
+
+This solution avoids confusion about bit positions by explicitly defining the mapping in the ROM entries and is easily extendable or modifiable.

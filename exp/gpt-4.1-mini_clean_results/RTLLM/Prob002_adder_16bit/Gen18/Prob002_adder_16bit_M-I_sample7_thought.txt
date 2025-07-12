@@ -1,0 +1,15 @@
+To improve the given 16-bit adder for better performance (timing) while maintaining modularity and simplicity, we can replace the ripple-carry approach between two 8-bit adders with a carry-lookahead between these two blocks.
+
+Specifically, instead of waiting for the carry-out from the lower 8-bit adder to feed the upper 8-bit adder as carry-in, we will compute the block propagate and block generate signals for the lower 8-bit adder and use a simple carry-lookahead logic to generate the carry-in to the upper block combinationally.
+
+This reduces the critical path by eliminating the sequential ripple between the two 8-bit adders and replacing it with a faster block-level carry calculation.
+
+Implementation details:
+- Modify adder_8bit to output block propagate (P) and block generate (G) signals.
+- Within adder_16bit, compute carry_mid = G_lower | (P_lower & Cin).
+- Use carry_mid as the carry-in to the upper 8-bit adder.
+- This improves timing without drastically increasing complexity.
+- Power and area increase are minimal since block propagate and generate are simple bitwise reductions.
+- Keep the internal carry chain inside adder_8bit unchanged to maintain modularity.
+
+This hierarchical carry-lookahead approach enhances speed by reducing carry propagation delay across the 16-bit boundary.

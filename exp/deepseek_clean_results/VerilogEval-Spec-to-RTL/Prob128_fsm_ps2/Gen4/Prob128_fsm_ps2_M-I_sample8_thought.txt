@@ -1,0 +1,12 @@
+Improvement Strategy:
+1. State Encoding Optimization: Use one-hot encoding for the 3 states (IDLE, BYTE1, BYTE2) to potentially improve timing and simplify decoding logic
+2. Output Logic Simplification: Remove the separate combinational block by directly computing 'done' in the sequential block
+3. Reset Optimization: Maintain synchronous reset but simplify the reset logic
+4. Power Optimization: Keep the gated in[3] check but implement it more efficiently
+5. Area Reduction: Eliminate the next_done register by directly assigning done in the sequential block
+
+Key Improvements:
+- One-hot encoding may provide better timing for state transitions
+- Simplified output logic reduces area and power
+- More efficient reset handling
+- Maintains all functionality while potentially improving PPA metrics

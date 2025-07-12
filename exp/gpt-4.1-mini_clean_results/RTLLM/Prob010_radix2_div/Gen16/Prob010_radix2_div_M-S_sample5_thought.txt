@@ -1,0 +1,17 @@
+Implement a radix-2 iterative divider handling 8-bit operands (signed/unsigned) over 8 clock cycles.
+
+Key points:
+- On opn_valid, latch inputs, extract signs if signed, convert operands to absolute values.
+- Use a 17-bit shift register (SR) to hold remainder and quotient during division:
+  SR = {remainder[7:0], quotient[8:0]} initially dividend_abs shifted left by 1.
+- NEG_DIVISOR = two's complement of divisor_abs.
+- Each cycle:
+  - Subtract divisor_abs from the remainder portion (upper bits of SR).
+  - If subtraction is >=0 (no borrow), shift left SR and set LSB of quotient = 1.
+  - Else shift left SR with quotient bit = 0.
+- Repeat for 8 cycles; then sign-correct quotient and remainder if signed.
+- Output {remainder[7:0], quotient[7:0]} in a 16-bit result.
+- res_valid asserted when division done.
+- Synchronous reset initializes all states.
+
+This approach keeps logic simple, uses just one shift register for remainder+quotient, and minimal auxiliary registers.

@@ -1,0 +1,17 @@
+The state output logic for the finite-state machine can be derived by inspection using the given one-hot encoding. We need to implement the logic for output signals Y1 and Y3, which correspond to the input of state flip-flops y[1] and y[3], respectively.
+
+From the given state machine, we can see that the next state of y[1] (which corresponds to state B) is 1 when the current state is A and the input w is 1. Similarly, the next state of y[3] (which corresponds to state D) is 1 when the current state is B or E or F and the input w is either 1 or 0, or when the current state is C and the input w is 0.
+
+Using the one-hot encoding, we can express the current states as follows:
+- A: y[5:0] = 000001
+- B: y[5:0] = 000010
+- C: y[5:0] = 000100
+- D: y[5:0] = 001000
+- E: y[5:0] = 010000
+- F: y[5:0] = 100000
+
+Now, we can write the logic equations for Y1 and Y3 based on the state machine transitions.
+Y1 will be 1 when the current state is A and the input w is 1.
+Y3 will be 1 when the current state is B, C, D, E, or F and the input w is either 1 or 0, or when the current state is C and the input w is 0.
+
+Using these conditions, we can write the Verilog code to implement the state output logic.

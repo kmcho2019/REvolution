@@ -1,0 +1,10 @@
+Fuse the clean, direct indexed ROM-based selection from Example 1 with the explicit case-style combinational multiplexer from Example 2 to create a highly readable, minimal-delay, low-switching implementation. 
+
+- Use a small 5-entry ROM array for inputs {b, e, a, d, 4'hF}, indexed by c capped at 4, for compact and clear data selection.
+- Replace the one-hot gating with a direct combinational multiplexer using a case statement, avoiding the extra AND-OR gates for power and area efficiency.
+- This preserves the clarity and correctness of Example 1's mapping and Example 2's power-aware gating concept by minimizing redundant logic.
+- The case statement inherently prevents switching on unselected inputs, reducing dynamic power better than explicit AND gating of all inputs.
+- The constant 4'hF is directly output without extra gating, reducing unnecessary toggling.
+- This approach achieves the best balance: minimal logic levels, reduced area, lower power, and clean maintainable code.
+
+In summary, implement a capped index to select the output from a ROM array using a case statement, mapping c=0->b, 1->e, 2->a, 3->d, and default 4'hF, ensuring minimal switching and optimal PPA.

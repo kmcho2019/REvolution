@@ -1,0 +1,17 @@
+Here's a novel approach using a lookup table (LUT) style implementation that leverages the regularity of the state transitions:
+
+1. **LUT Concept**: Instead of using case statements, we'll implement the state machine as a mathematical function that directly computes the next state based on current state and input. This eliminates branching logic.
+
+2. **Mathematical Encoding**: 
+   - Observe that next_state[1] = (state == 2'b01 & ~in) | (state == 2'b10 & in) | (state == 2'b11)
+   - next_state[0] = (state == 2'b00 & in) | (state == 2'b01) | (state == 2'b11 & in)
+   - This can be derived by analyzing the truth table of the state transitions
+
+3. **Output Logic**: 
+   - Output is simply the AND of both state bits (since D=2'b11 is the only state with output 1)
+
+4. **Advantages**:
+   - Eliminates sequential logic (case statements)
+   - Potentially better timing due to parallel bit computation
+   - More regular structure that could scale better with larger state machines
+   - Clear mathematical relationship between inputs and outputs

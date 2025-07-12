@@ -1,0 +1,11 @@
+Refactor the FSM by separating the state register update and output registers from the next-state combinational logic and output combinational signals. Use a synchronous always block for state updates and prev_in, but generate next_state and the intermediate output signals (disc_int, flag_int, err_int) purely combinationally with `assign`. Then, use registers to synchronize outputs for one-cycle assertion.
+
+This approach clearly distinguishes combinational next-state and output logic from sequential registers. It simplifies reasoning about outputs as combinational signals derived directly from current state and inputs, then registered for output. Also, outputs are set combinationally for the next cycle and then registered synchronously.
+
+The structure:
+- `reg [2:0] state, prev_in;` updated on clk
+- `wire [2:0] next_state;` combinational next state logic
+- `wire disc_int, flag_int, err_int;` combinational output signals based on current state, prev_in, and current input
+- Output registers disc, flag, err updated synchronously to assert signals for one full cycle after condition is detected
+
+This modular style makes the FSM easier to analyze and modify, while preserving the required synchronous behavior and output timing.

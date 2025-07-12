@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Recognize that the entire system can be reduced to a single Boolean expression by combining all logic operations
+2. Observe that:
+   - Module A output is x & ~y
+   - Module B output is x ~^ y (XNOR)
+   - Final output is (A_out OR B_out) XOR (A_out AND B_out)
+3. Simplify the expression algebraically:
+   - (A_out OR B_out) XOR (A_out AND B_out) is equivalent to A_out XOR B_out
+   - Substituting the module outputs: (x & ~y) ^ (x ~^ y)
+   - This further simplifies to y & ~x
+4. Implement this minimal expression directly in the top module, eliminating all submodules
+5. This achieves the same functionality with zero submodules and minimal logic

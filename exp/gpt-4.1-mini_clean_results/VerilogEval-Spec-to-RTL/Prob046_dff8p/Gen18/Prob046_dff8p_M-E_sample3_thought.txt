@@ -1,0 +1,7 @@
+Implement the 8-bit register using eight individual negative-edge triggered D flip-flops with synchronous reset, each explicitly instantiated as a separate module instance. Each flip-flop will synchronously reset to 0x34's corresponding bit value. This explicit instantiation approach promotes modularity and clear mapping to hardware flip-flops.
+
+Instead of clock gating or clock enable logic, keep the design simple: on every negative edge of clk, if reset is asserted, each flip-flop synchronously resets to its bit of 0x34; otherwise it loads the respective bit of input d. 
+
+This approach provides clarity in hardware mapping, easier testability of individual bits, and clean separation of each bit's flip-flop behavior. The synchronous reset pattern remains intact and follows the negative edge clk triggering.
+
+The TopModule will instantiate eight instances of the DFF module parameterized by the reset bit. This is a straightforward and structurally clear design differing from the previous clock enable approach.

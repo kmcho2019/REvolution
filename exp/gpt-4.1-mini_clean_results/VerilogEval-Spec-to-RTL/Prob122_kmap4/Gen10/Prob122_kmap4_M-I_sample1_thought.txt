@@ -1,0 +1,13 @@
+The original implementation computes the 4-input parity by first XOR-ing pairs then XOR-ing those results, which is already minimal in logic depth and area for a 4-input XOR.
+
+To further optimize for power and area, especially since the XOR operator is associative and commutative, we can leverage the Verilog reduction XOR operator `^` directly on all four inputs in one expression, avoiding intermediate wires. This reduces netlist size and potentially reduces switching activity due to less routing and fewer intermediate signals, leading to a slight power and area improvement.
+
+This one-liner is also highly synthesis-friendly, as synthesis tools recognize reduction XORs and implement them efficiently, often with minimal logic depth and area.
+
+Hence, the strategy:
+- Remove intermediate wires.
+- Use a single reduction XOR expression over {a,b,c,d}.
+- Maintain clear code readability by using a single assign statement.
+- Keep purely combinational logic with minimal gates.
+
+This approach preserves function, improves area and power slightly, and keeps timing optimal.

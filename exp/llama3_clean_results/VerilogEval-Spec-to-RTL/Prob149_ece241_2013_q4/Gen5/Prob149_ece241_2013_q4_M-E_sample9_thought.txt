@@ -1,0 +1,9 @@
+To solve the water flow control problem with a novel approach, we can design a hierarchical finite state machine (FSM) that transitions between states based on the water level sensor inputs. The FSM can have four main states: ABOVE_S2, BETWEEN_S2_S1, BETWEEN_S1_S0, and BELOW_S0, corresponding to the different water level ranges.
+
+In each state, we can determine the flow rate signals (fr2, fr1, fr0, and dfr) based on the current state and the previous state. We can use a separate variable to track the previous state of the water level, allowing us to accurately determine when the water level has risen.
+
+The FSM can be implemented using a always block with a case statement, where each case represents a state. We can use a variable to store the current state and update it based on the water level sensor inputs.
+
+The dfr signal can be determined by comparing the current state with the previous state. If the current state indicates a higher water level than the previous state, we can set dfr to high.
+
+We can also use a separate always block to handle the synchronous reset, ensuring that the FSM and all output signals are properly reset when the reset input is asserted.

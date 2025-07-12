@@ -1,0 +1,16 @@
+To correctly implement TopModule for hierarchical use in full_module, we need to:
+
+1. Create a generic module that can be instantiated for each bit position (0, 1, 2)
+2. Each instance should handle its specific bit operation:
+   - Bit 0: q[1] ^ q[2]
+   - Bit 1: q[0]
+   - Bit 2: q[2] (pass-through)
+3. Use a clean mux implementation to select between load and operation modes
+4. Keep the interface simple with only necessary connections
+5. Ensure all calculations use only input values (no feedback loops)
+
+The improved design will:
+- Remove the problematic q0/q1 inputs and use only q_in/r_in
+- Add a bit position parameter to customize behavior per instance
+- Implement correct logic for each bit position
+- Use a simple mux for load/operation selection

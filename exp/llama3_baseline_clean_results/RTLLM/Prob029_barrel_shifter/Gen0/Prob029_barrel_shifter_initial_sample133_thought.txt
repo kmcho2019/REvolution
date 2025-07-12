@@ -1,0 +1,9 @@
+The barrel shifter module will be implemented using a hierarchical approach. The top-level module `barrel_shifter` will contain three stages of 2-to-1 multiplexers, with each stage controlled by a bit of the `ctrl` signal. The shifting operation will be achieved by connecting the input to the multiplexers in a way that each stage can either pass the input unchanged or shift it by a certain number of positions.
+
+The first stage, controlled by `ctrl[2]`, will shift the input by 4 positions. This is achieved by connecting the input to the multiplexers in a way that the output of the multiplexers is either the original input or the input shifted by 4 positions.
+
+The second stage, controlled by `ctrl[1]`, will shift the output of the first stage by 2 positions if `ctrl[1]` is high. This is achieved by connecting the output of the first stage to the multiplexers in a way that the output of the multiplexers is either the output of the first stage or the output of the first stage shifted by 2 positions.
+
+The third stage, controlled by `ctrl[0]`, will shift the output of the second stage by 1 position if `ctrl[0]` is high. This is achieved by connecting the output of the second stage to the multiplexers in a way that the output of the multiplexers is either the output of the second stage or the output of the second stage shifted by 1 position.
+
+The `mux2X1` submodule will be used to implement the 2-to-1 multiplexers used in each stage. The `mux2X1` submodule will take two inputs, `in0` and `in1`, and a select signal `sel`. If `sel` is 0, the output will be `in0`, and if `sel` is 1, the output will be `in1`.

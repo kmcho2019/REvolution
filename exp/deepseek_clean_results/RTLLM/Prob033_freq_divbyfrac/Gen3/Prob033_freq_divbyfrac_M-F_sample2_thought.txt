@@ -1,0 +1,10 @@
+To properly implement the 3.5x fractional divider with double-edge clocking:
+1. Use two separate counters running on opposite clock edges (posedge and negedge)
+2. Each counter divides by 7 (0-6) but with staggered starts
+3. Generate intermediate clocks:
+   - clk1: 4 cycles high, 3 low (posedge counter)
+   - clk2: 3 cycles high, 4 low (negedge counter, phase shifted)
+4. OR the two intermediate clocks to create the final output
+5. Reset synchronizes both counters to known states
+6. This creates the required phase-shifted versions and combines them properly
+7. Duty cycle correction comes naturally from the staggered counter phases

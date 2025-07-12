@@ -1,0 +1,20 @@
+The original design implements all partial product additions in a single cycle, resulting in a long combinational path and limiting max clock frequency (WNS ~ -0.99 ns). To optimize for better performance and reduce critical path delay, the summation of partial products can be pipelined over multiple stages. 
+
+Improvement strategy:
+- Break the 8 partial product sums into a balanced binary adder tree with registers at intermediate stages.
+- This splits the long multi-operand addition into smaller additions over two pipeline stages, reducing logic depth per clock cycle.
+- Maintain proper pipelined enable signal propagation.
+- Keep input registers and output registers as before.
+- This reduces critical path delay, improving WNS and clock frequency, potentially also reducing power by gating toggling in shorter combinational blocks.
+- Area impact is moderate due to added pipeline registers but overall timing gain justifies this tradeoff.
+
+The pipeline stages:
+- Stage 1: Generate partial products and add pairs: sum01 = pp0 + pp1, sum23 = pp2 + pp3, sum45 = pp4 + pp5, sum67 = pp6 + pp7 (registered sums)
+- Stage 2: Add sums from stage 1: sum0123 = sum01 + sum23, sum4567 = sum45 + sum67 (registered sums)
+- Stage 3: Add two sums from stage 2 to get final product (registered output)
+
+Enable signals are registered along the pipeline to indicate valid outputs. Reset clears all registers synchronously (except enable which is async reset low active for robustness).
+
+This staged adder tree reduces adder size per stage from 8-input 16-bit addition to smaller 2-input 16-bit additions, greatly improving timing. It also keeps the pipeline throughput at one multiplication per clock once filled.
+
+This solution retains the same interfaces and functionality, improving maximum clock frequency and power efficiency by reducing critical path and dynamic toggling on large adders.

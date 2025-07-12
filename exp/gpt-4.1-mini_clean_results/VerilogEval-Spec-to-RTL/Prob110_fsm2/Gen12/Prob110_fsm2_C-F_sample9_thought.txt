@@ -1,0 +1,8 @@
+Fuse the best of both examples by using a minimal 1-bit state encoding for area and power efficiency, explicitly separating combinational next-state logic in an always @(*) block for clarity and synthesis friendliness, while keeping Moore output logic as a continuous assignment for clean separation of output and state logic. Maintain asynchronous active-high reset for reliable reset behavior and non-blocking assignments in the sequential block. This approach retains clarity, modularity, and resource minimalism while ensuring optimal PPA.
+
+Specifically:
+- Use 1-bit state encoding with localparams OFF=1'b0, ON=1'b1.
+- Use an always @(*) block for next_state combinational logic using case statement.
+- Use always @(posedge clk or posedge areset) for state register with async reset.
+- Assign output combinationally via continuous assignment depending on state.
+- Avoid unnecessary widening of state or complicated ternary operators for simplicity and optimal synthesis.

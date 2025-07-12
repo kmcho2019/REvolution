@@ -1,0 +1,7 @@
+Implement the calendar with three distinct always blocks, each handling one time unit: seconds, minutes, and hours. This separation follows the original instruction and helps modularize the logic, making each counter independently clear and easily maintainable. 
+
+Each always block is triggered on posedge CLK or posedge RST, allowing synchronous reset for all counters. The seconds counter increments every clock cycle; when it reaches 59, it wraps to zero and triggers the minutes counter to increment. The minutes counter increments only when the seconds rollover from 59 to 0; similarly, when minutes reach 59 and seconds roll over, minutes reset and hours increment. The hours counter increments only when both minutes and seconds roll over from 59 to 0, wrapping from 23 back to 0.
+
+This method provides a natural cascade with clear boundaries, aligns with original instructions, avoids combinational loops or race conditions by using non-blocking assignments, and offers a straightforward hierarchical counter implementation. Using 6 bits for seconds and minutes and 6 bits for hours (though 5 bits would suffice) simplifies the interface uniformity, as requested output ports are 6 bits for all, giving a slight margin.
+
+This modular and classic approach supports easier debugging, better scalability, and clean separation of concerns, which might be advantageous for some design flows and verification tasks.

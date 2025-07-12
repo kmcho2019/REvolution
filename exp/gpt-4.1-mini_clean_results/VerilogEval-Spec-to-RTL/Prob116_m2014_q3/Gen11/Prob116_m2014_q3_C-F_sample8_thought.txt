@@ -1,0 +1,10 @@
+To create a superior solution, we combine the clarity and correctness of explicit Gray-to-binary decoding from both examples with the simplified single-case lookup of Example 1. The fusion strategy is:
+
+1. Keep explicit Gray-to-binary conversion of rows (x3,x4) and columns (x1,x2) to avoid misinterpretation of Gray-coded inputs.
+2. Use the decoded 4-bit address {row_bin1, row_bin0, col_bin1, col_bin0} as a flat case selector for a single combinational always block.
+3. Handle don't-care cells as 0 for safety and simpler logic.
+4. This approach avoids nested case statements for better synthesis and readability.
+5. Clearly name wires to maintain code clarity.
+6. The result is functionally exact, fully combinational, no inferred latches, and structured for straightforward verification and potential optimization.
+
+This fusion preserves correctness by proper decoding, improves readability and synthesis friendliness by flattening the case statement, and offers a solid basis for future PPA improvements.

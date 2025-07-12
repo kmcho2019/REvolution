@@ -1,0 +1,9 @@
+To implement the TopModule, we can use a simple state machine that determines the output flow rate based on the current water level and the previous sensor change. The state machine will have three main states: above the highest sensor, between sensors, and below the lowest sensor. We will use the input s to determine the current state and then use a combination of logic to determine the output flow rate. We will also include a synchronous reset that resets the state machine to a default state.
+
+We will use the following logic:
+- When the water level is above the highest sensor, all outputs should be zero.
+- When the water level is between sensors, the output flow rate should be determined by the water level and the previous sensor change.
+- When the water level is below the lowest sensor, all outputs should be asserted.
+- If the sensor change indicates that the previous level was lower than the current level, the supplemental flow valve should be opened.
+
+We will use Verilog's always block to implement the state machine and the logic to determine the output flow rate.

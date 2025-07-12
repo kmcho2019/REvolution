@@ -1,0 +1,11 @@
+To implement the data width conversion circuit, we can use a finite state machine (FSM) approach with two states: IDLE and WAIT_FOR_SECOND_DATA. The IDLE state is the initial state where the circuit waits for the first valid 8-bit input data. Once the first valid data is received, it is stored in a temporary register (data_lock), and the state transitions to WAIT_FOR_SECOND_DATA. In this state, the circuit waits for the second valid 8-bit input data. When the second valid data is received, the circuit concatenates the stored first data (data_lock) with the second data (data_in) to form the 16-bit output data (data_out). The valid_out signal is asserted in the same clock cycle as the data_out. The circuit then transitions back to the IDLE state, waiting for the next pair of valid input data.
+
+We will use a flag signal (flag) to track whether the first valid data has been received and stored. The flag is initially set to 0 and is set to 1 when the first valid data is received. The flag is reset to 0 when the second valid data is received and the output is generated.
+
+The data_out register is updated on the positive edge of the clock signal (posedge clk) or the negative edge of the reset signal (negedge rst_n). On reset, the data_out register is cleared to 0.
+
+We will use the following variables:
+- data_lock: a register to store the first valid 8-bit input data.
+- flag: a flag signal to track whether the first valid data has been received and stored.
+- data_out: a 16-bit register to store the converted output data.
+- valid_out: a signal to indicate the validity of the output data.

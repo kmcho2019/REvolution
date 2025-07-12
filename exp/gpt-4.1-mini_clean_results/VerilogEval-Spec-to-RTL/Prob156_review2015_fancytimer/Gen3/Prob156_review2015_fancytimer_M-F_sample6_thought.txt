@@ -1,0 +1,23 @@
+Fix the bit shifting direction to correctly implement MSB-first capture for both the pattern detection and delay reading by shifting left and inserting the new data bit at LSB: `shift_reg <= {shift_reg[2:0], data};` is correct for MSB-first if we consider the earliest bit as MSB. To clarify and confirm, since data arrives serially MSB-first, each new bit is the next MSB bit. Shifting left and appending the new bit at LSB collects bits MSB-first.
+
+Ensure `shift_reg` is not cleared each clock in the SEARCH state but updated continuously to allow the 4-bit sliding window pattern detection.
+
+For delay bits, similarly shift left and add new bits at LSB to collect delay MSB-first bits properly.
+
+Count the bits read from 0 to 3 in `bits_read`. When `bits_read == 4` (after shifting in 4 delay bits), transition to COUNT.
+
+Initialize the timer `remaining` to `delay_reg + 1` to implement counting `(delay + 1) * 1000` cycles.
+
+Implement a 10-bit cycle counter from 0 to 999 that counts clock cycles, decrement `remaining` after each 1000 cycles.
+
+Output `count` as the current remaining delay value during counting, showing the remaining delay ticks as required (each held for 1000 cycles).
+
+After counting completes (remaining == 0 and cycle_count == 999), transition to DONE asserting `done`. Wait for user `ack` to return to SEARCH.
+
+Use a single synchronous always block for state, registers, and counters. Use combinational logic for next_state.
+
+Do not clear pattern registers on every clock in SEARCH; they must retain their shifted-in bits.
+
+On reset, initialize all registers and state appropriately.
+
+This design ensures correct timing, pattern detection, delay reading, counting duration, and handshake with user.

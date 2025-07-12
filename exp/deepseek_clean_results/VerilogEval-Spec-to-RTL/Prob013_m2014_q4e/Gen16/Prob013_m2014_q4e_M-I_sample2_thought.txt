@@ -1,0 +1,11 @@
+The original implementation uses a case statement which is unnecessarily complex for a simple NOR gate. We can optimize this by:
+1. Using a direct NOR operation (out = ~(in1 | in2)) which is more efficient
+2. Removing the redundant 'reg' declaration since we can use continuous assignment
+3. Eliminating the unnecessary default case
+4. Using a simpler continuous assignment style which will synthesize to a single NOR gate
+
+This optimization will:
+- Reduce logic levels (better timing)
+- Minimize area (single gate instead of LUT/mux)
+- Lower power consumption (less switching activity)
+- Maintain the same functionality

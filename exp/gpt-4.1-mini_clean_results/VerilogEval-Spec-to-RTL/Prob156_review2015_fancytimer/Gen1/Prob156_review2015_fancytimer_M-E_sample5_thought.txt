@@ -1,0 +1,32 @@
+Use a fully synchronous FSM with clearly defined states and internal signals to avoid race conditions. 
+
+Key ideas:
+
+- Use a 4-bit shift register for incoming data, updated every clock in SEARCH state, to detect pattern 1101.
+
+- Once detected, transition to a LOAD_DELAY state where 4 bits are loaded serially, MSB first, into a delay register.
+
+- After loading the delay, transition to COUNTING. Implement a cycle counter counting from 0 to 999 to represent 1000 clock cycles per unit delay.
+
+- Maintain a separate down-counter for delay units (initialized to delay). Output 'count' = current delay units. When cycle counter hits 999, decrement delay units.
+
+- When delay units reach zero and cycle counter is at 999 (meaning final 1000 cycles elapsed), transition to DONE.
+
+- In DONE state, assert done=1 and wait for ack=1 to return to SEARCH and start over.
+
+- Ignore data input in LOAD_DELAY after finishing and in COUNTING, DONE states.
+
+- Outputs:
+  * counting = 1 only in COUNTING state.
+  * done = 1 only in DONE state.
+  * count = valid only in COUNTING (outputs current delay units remaining). Otherwise, zero.
+
+- Use synchronous reset to initialize all registers and FSM state.
+
+This approach keeps all logic in a single sequential always block for state, counters, and outputs to avoid any race conditions.
+
+The delay bits are loaded MSB first by shifting delay left and inserting the input bit at LSB during LOAD_DELAY.
+
+State transitions are defined explicitly based on counters and inputs.
+
+No ambiguous 'x' assignments for outputs; outputs are always driven to valid logic values.

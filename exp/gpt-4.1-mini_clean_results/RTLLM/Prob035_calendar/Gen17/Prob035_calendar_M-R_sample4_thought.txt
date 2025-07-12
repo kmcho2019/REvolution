@@ -1,0 +1,9 @@
+Refactor the perpetual calendar module by separating the counting logic into three synchronous always blocks for Secs, Mins, and Hours individually. Each block handles its own wrap-around and increment logic with awareness of the upstream carry signals from the lower counters. The RST signal asynchronously clears all counters. This modularizes the design, improving readability and potential for easier synthesis optimizations.
+
+- Secs increments every clock cycle; rolls over from 59 to 0 and asserts a carry.
+- Mins increments on Secs carry; rolls over from 59 to 0 and asserts a carry.
+- Hours increments on Mins carry; rolls over from 23 to 0.
+
+Using explicit carry signals simplifies the understanding of increment conditions. The counters are updated independently, yet coordinated by carry flags. This approach uses multiple always blocks triggered by posedge CLK or posedge RST, maintaining asynchronous reset but synchronous count updates. Non-blocking assignments and explicit carry signals improve design clarity and maintainability.
+
+This refactoring maintains all requested functionality but structures the design as a clear hierarchical counter chain instead of nested if-else logic inside a single always block.

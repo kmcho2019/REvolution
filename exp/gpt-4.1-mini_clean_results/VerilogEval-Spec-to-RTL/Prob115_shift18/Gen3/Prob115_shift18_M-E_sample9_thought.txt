@@ -1,0 +1,7 @@
+Implement a classic 64-bit barrel shifter using a hierarchical mux-based shifting network controlled directly by the 2-bit amount input. Decompose the shift into two stages: first shift by 8 bits if requested, then shift by 1 bit if requested, both directions separately handled via multiplexers. For left shifts, zero-fill the shifted-in bits; for arithmetic right shifts, replicate the MSB to maintain sign extension.
+
+The key novelty here is to use multiplexers and conditional concatenations to build a combinational barrel shifter that performs either a shift-left by 0,1,8,9 bits or arithmetic shift-right by 0,1,8,9 bits depending on amount, but implemented in a modular way without separate stages or intermediate wires that depend on the previous output register state. This enables a straightforward combinational mapping from input q to next q without intermediate registers or multi-level shifts.
+
+On the clock edge, if load is high, load data; else if ena is high, shift using this combinational barrel shifter output; else hold q.
+
+This design is different from the prior two-stage shifting logic by consolidating all shifts into a single barrel shifting operation, reducing logic depth and enabling potentially better timing and clearer shift semantics.

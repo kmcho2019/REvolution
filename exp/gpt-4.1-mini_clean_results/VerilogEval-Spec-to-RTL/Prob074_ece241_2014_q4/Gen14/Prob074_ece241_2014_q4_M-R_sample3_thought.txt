@@ -1,0 +1,7 @@
+I will refactor the design by explicitly adding a synchronous reset input to properly initialize the flip-flops to zero before the FSM starts, removing the simulation-only initial block. This will ensure consistent behavior in both simulation and synthesis.
+
+Moreover, I will organize the combinational logic that computes the D inputs of the flip-flops in a separate always_comb (or always @*) block for clarity. The flip-flops themselves will be updated in a synchronous always block triggered on the positive clock edge and synchronous reset.
+
+Finally, I will declare the output `z` as a continuous assignment of the NOR of flip-flop outputs, similar to before, but keeping the overall design modular and clearly separating combinational and sequential logic.
+
+This approach meets the original specification, improves synthesis compatibility, and removes reliance on simulation-only constructs.

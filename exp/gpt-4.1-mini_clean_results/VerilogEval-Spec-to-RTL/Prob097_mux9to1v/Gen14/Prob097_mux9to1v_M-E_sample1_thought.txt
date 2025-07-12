@@ -1,0 +1,11 @@
+Instead of using a single large 9-to-1 multiplexer indexed by `sel`, I will implement the 16-bit wide multiplexer hierarchically by breaking it down into smaller 3-to-1 mux blocks at the bit level. Each bit of the output will be selected by a 3-stage mux tree: first, three groups of inputs (a,b,c), (d,e,f), and (g,h,i) are muxed by the lowest 2 bits of `sel` (sel[1:0]) into three intermediate 16-bit wires. Then the middle stage muxes these three intermediate outputs based on `sel[3:2]`. Since `sel` ranges from 0 to 8 for valid inputs, we decode `sel` into two parts: a high 2-bit index to select one of the three groups, and a low 2-bit index to select an element within that group. For sel values from 9 to 15 (outside 0-8), the output will default to all ones.
+
+This hierarchical mux structure modularizes the design and shows explicit bitwise muxing, which can be more transparent for teaching or for synthesis tools that optimize small mux blocks better. It also emphasizes structural design rather than behavioral conditional operators.
+
+Key points:
+- Split inputs into three groups of three.
+- First level selects one input from each group using sel[1:0].
+- Second level selects the final output from the three intermediate outputs using sel[3:2].
+- Output all ones for sel >= 9.
+
+This approach allows clear, modular, and scalable hierarchical mux design.

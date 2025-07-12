@@ -1,0 +1,7 @@
+The given solution implements the function as a 4-input XOR, which perfectly matches the given K-map pattern. Since the original solution already uses minimal XOR logic with two intermediate XOR operations, the design is near-optimal in terms of gate count and delay.
+
+To further optimize for better Power, Performance, and Area (PPA), a good strategy is to use the Verilog built-in reduction XOR operator, which might help the synthesis tool produce more efficient XOR trees or dedicated XOR gates optimized for the target technology. This reduces intermediate wires and logic, potentially improving area and power.
+
+Additionally, by coding it as a single reduction XOR expression, we enable synthesis tools to better recognize the XOR pattern and optimize it internally, possibly better than manual decompositions.
+
+Therefore, replacing the intermediate XOR wires with a single assign using reduction XOR of all inputs is a small but practical improvement for PPA without changing functionality.

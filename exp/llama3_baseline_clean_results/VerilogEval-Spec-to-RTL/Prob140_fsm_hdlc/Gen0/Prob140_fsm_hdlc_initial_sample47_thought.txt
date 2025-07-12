@@ -1,0 +1,25 @@
+To solve this problem, we need to design a Moore-type finite state machine (FSM) that can recognize the specified bit patterns in a continuous stream of data. The FSM should have states to track the number of consecutive 1s seen so far and to determine whether a flag, discard, or error condition has been met. 
+
+We can break down the design into the following steps:
+1. Define the states of the FSM and the transitions between them based on the input and the current state.
+2. Determine the output signals (disc, flag, err) for each state.
+3. Implement the FSM in Verilog using a state machine description.
+
+The states can be as follows:
+- S0: Initial state or reset state, assuming the previous input was 0.
+- S1 to S5: States for 1 to 5 consecutive 1s, respectively.
+- S6: State for 6 consecutive 1s (potential flag or discard).
+- S7: State for 7 or more consecutive 1s (error).
+
+The transitions are based on the current state and the input bit:
+- From S0, if the input is 1, move to S1; otherwise, stay in S0.
+- From S1 to S5, if the input is 1, move to the next state; if the input is 0, reset to S0.
+- From S6, if the input is 0, signal a flag and reset to S0; if the input is 1, move to S7.
+- From S7, if the input is 1, stay in S7 (error condition); if the input is 0, reset to S0.
+
+The outputs are determined based on the current state and the previous state:
+- disc is asserted when transitioning from S5 to S0 (indicating a bit needs to be discarded).
+- flag is asserted when transitioning from S6 to S0 (indicating the start/end of a frame).
+- err is asserted when in S7 (indicating 7 or more consecutive 1s).
+
+The reset signal resets the FSM to S0.

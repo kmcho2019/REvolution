@@ -1,0 +1,11 @@
+To improve the provided solution, we will focus on addressing the functional errors in the finite-state machine implementation. 
+
+1.  **Pattern Register Size**: The pattern register size is defined as reg \[3:0\] pattern. However, when checking the pattern against 4'b1101, the leftmost bit will always be zero. To fix this, we can define the pattern register as reg \[3:0\] pattern and update it correctly to hold the last 4 bits of the input data.
+
+2.  **SHIFT State**: In the SHIFT state, the shift_cnt variable is being incremented every clock cycle. However, the condition to transition to the COUNT state is based on the shift_cnt being less than 4. We need to adjust the initial value of shift_cnt and the condition to ensure that shift_cnt is incremented exactly 4 times before transitioning to the COUNT state.
+
+3.  **Error Handling**: We need to add error handling for cases where the input data does not match the expected pattern or where the done_counting or ack signals are not asserted as expected.
+
+4.  **Code Optimization**: To optimize the code for better PPA, we can simplify the state machine logic and reduce the number of signals.
+
+By addressing these issues, we can improve the functionality and efficiency of the finite-state machine implementation.

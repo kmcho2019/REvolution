@@ -1,0 +1,17 @@
+Simplify the FSM by using two separate 1-bit registers: one for direction (0 = left, 1 = right) and one for falling status (0 = walking, 1 = falling). This avoids encoding states as two-bit values and makes logic more straightforward.
+
+On async reset, set direction to left (0) and falling to 0.
+
+At each clock:
+- If falling, check ground; if ground returns, clear falling but keep direction.
+- If walking and ground disappears, set falling.
+- If walking and ground present, update direction based on bumps:
+  - If either bump_left or bump_right is high (including both), flip direction.
+- Ignore bumps when falling.
+
+Moore outputs depend on these registers:
+- aaah = falling
+- walk_left = ~falling & ~direction
+- walk_right = ~falling & direction
+
+This approach reduces state complexity and uses simple bit-flips to handle bumps and transitions, keeping all behavior intact.

@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. Remove unnecessary generate block - since size is fixed at 4, we can unroll the loop
+2. Reduce register usage - don't need to store all partial products separately
+3. Combine intermediate sums directly in pipeline stages
+4. Simplify reset logic by using fewer registers
+5. Maintain same functionality with less hardware
+
+Key Improvements:
+- Eliminate pp_reg array since we can directly use the partial products
+- Combine sum calculations in single expressions
+- Reduce total register count from 6 to 3
+- Maintain same pipeline depth (2 stages)
+- Same timing characteristics but with less area

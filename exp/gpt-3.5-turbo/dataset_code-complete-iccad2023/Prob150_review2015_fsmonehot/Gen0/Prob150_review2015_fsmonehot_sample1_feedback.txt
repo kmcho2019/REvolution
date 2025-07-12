@@ -1,5 +1,0 @@
-The errors in the simulation log are due to incorrect assignments of the output signals in the Verilog code. The output signals `B3_next`, `S_next`, `S1_next`, `Count_next`, and `Wait_next` are declared as outputs in the module but are assigned values directly in the `always @*` block using non-blocking assignments, which is not allowed for output ports. Output ports can only be assigned using continuous assignment (`assign` statements).
-
-The error messages point out that these output signals are declared as wires in the module but are being assigned values within the `always @*` block, which is incorrect. This mismatch between the declaration and assignment causes the errors during elaboration of the simulation.
-
-To resolve this issue, the output signals should be assigned using `assign` statements outside the `always @*` block to ensure proper assignment through continuous assignment.

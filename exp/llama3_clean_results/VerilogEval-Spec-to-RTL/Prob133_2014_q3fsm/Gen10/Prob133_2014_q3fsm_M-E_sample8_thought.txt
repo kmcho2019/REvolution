@@ -1,0 +1,9 @@
+To address the issues in the previous implementation, we can design a new finite state machine (FSM) that utilizes a different architectural approach. The main idea is to use a combination of counters and flags to track the state transitions and output logic.
+
+The FSM will have two main states: STATE_A and STATE_B. In STATE_A, the FSM waits for the input s to become 1, at which point it transitions to STATE_B. In STATE_B, the FSM uses a counter to track the number of clock cycles and a flag to indicate whether the output z should be set to 1.
+
+The FSM examines the input w for exactly three clock cycles after transitioning to STATE_B. It uses a separate counter to track the number of clock cycles where w is 1. If the count of w = 1 is exactly 2, the FSM sets the output z to 1 in the following clock cycle.
+
+To improve the implementation, we can use a single always block to handle all the state transitions and output logic. This approach reduces the complexity of the code and makes it easier to understand and maintain.
+
+Additionally, we can use parameterized constants to define the number of clock cycles for examining the input w. This makes the code more flexible and easier to modify if the requirements change.

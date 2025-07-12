@@ -1,0 +1,11 @@
+To implement the 4-bit unsigned number pipeline multiplier, we need to break down the multiplication process into stages where each stage performs a specific operation. 
+
+Firstly, we extend the input signals by adding "size" number of zero bits at the most significant bit positions. This can be done by concatenating the input signals with zeros. 
+
+Next, we use a generate block to perform multiplication for each bit position of the multiplier. For each bit position, if the corresponding bit in the multiplier is 1, we left-shift the multiplicand by the bit position. If the bit is 0, the partial product is set to 0.
+
+Then, we use registers to store the intermediate sum values. On the positive edge of the clock signal or the falling edge of the reset signal, we update the registers with the sum of the corresponding partial products.
+
+Finally, we calculate the final product by summing up the values of the registers. The final product is updated on the positive edge of the clock signal or the falling edge of the reset signal.
+
+The module will have two levels of registers: one to store the partial products and another to store the intermediate sum values. This will create a pipeline effect, allowing the module to process new inputs every clock cycle.

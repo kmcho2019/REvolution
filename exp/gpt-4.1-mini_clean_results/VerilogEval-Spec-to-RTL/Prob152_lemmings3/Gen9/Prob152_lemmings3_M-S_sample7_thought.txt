@@ -1,0 +1,25 @@
+The original design uses a 3-bit state encoding with direction and state type packed, and separate prev_ground register for edge detection. To simplify while keeping functionality:
+
+- Use a single bit state for walking/falling/digging by enumerating states explicitly, including direction in the state encoding.
+- Merge prev_ground logic by storing it inside the state register as an additional bit, or use a simpler approach by detecting ground transitions combinationally using a small register.
+- The bump direction logic can be simplified by assigning direction directly in bump cases, with priority clearly handled by if-else.
+- Use straightforward if-else without nested case for next_state.
+- The outputs remain combinational based on current state.
+- Keep async reset and posedge clk sequential logic.
+- This reduces state encoding complexity and next_state logic nesting, making the FSM simpler.
+
+The result is a Moore FSM with 4 states encoding direction and mode (walk-left, walk-right, fall-left, fall-right, dig-left, dig-right can be combined if desired), but to keep outputs separate, let's keep direction bit plus 2-bit mode:
+
+Define modes:
+
+00 = walking
+
+01 = falling
+
+10 = digging
+
+State bits: [direction][mode(2 bits)] => 3 bits total but use simpler combinational logic and a single always block for next_state.
+
+To track prev_ground, keep a register updated on every clock edge; no need for separate always block, just combine with state register always block.
+
+This simplifies next_state logic while maintaining the needed functionality and prioritization.

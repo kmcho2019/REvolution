@@ -1,0 +1,12 @@
+To optimize the 4-bit ripple-carry adder for better performance (lower delay) without adding significant complexity or area, I will convert the ripple-carry structure into a simple carry-lookahead adder (CLA).
+
+Specifically:
+- Use generate (G) and propagate (P) signals to compute carries in parallel, breaking the ripple carry delay bottleneck.
+- Compute carry-out bits directly from inputs and initial carry-in using CLA logic.
+- This reduces the carry propagation delay from linear to constant (2-3 gate delays), improving timing.
+- Keep the FullAdder module but instantiate only sum bits; sum calculation is straightforward as x[i] ^ y[i] ^ carry[i].
+- The final carry-out (overflow) is assigned as sum[4].
+- The design slightly increases area due to additional carry logic but improves performance significantly.
+- The overall power impact is minimal due to fewer sequential carry dependencies and less glitching.
+
+This approach balances clarity, performance, and area while keeping the code clean and synthesizable.

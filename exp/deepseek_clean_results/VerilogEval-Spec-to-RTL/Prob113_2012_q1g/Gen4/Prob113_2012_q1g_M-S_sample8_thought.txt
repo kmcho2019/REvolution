@@ -1,0 +1,12 @@
+To simplify the implementation while maintaining correct functionality, I'll analyze the Karnaugh map more carefully:
+
+1. The first term should cover all cases where x[3]=0 and x[2]x[1]x[0] is either 000 or 010 (top-left and top-right corners of first row)
+2. The second term should cover the entire x[3]x[2]=11 row except when x[1]x[0]=10
+3. The third term should cover the x[3]x[2]=10 cases where either:
+   - x[1]=0 (covers both 1000 and 1001)
+   - x[1]x[0]=01 (covers 1001 again, but we'll let synthesis optimize this)
+
+The simplified Boolean expression is:
+f = (~x[3] & ~x[2] & ~x[0]) | (~x[3] & x[2] & ~x[1] & ~x[0]) |
+    (x[3] & x[2] & ~(x[1] & ~x[0])) |
+    (x[3] & ~x[2] & (~x[1] | x[0]))

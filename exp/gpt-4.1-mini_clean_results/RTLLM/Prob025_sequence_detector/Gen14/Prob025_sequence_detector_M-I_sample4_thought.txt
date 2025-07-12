@@ -1,0 +1,10 @@
+To optimize the existing FSM sequence detector for better PPA, I will:
+
+- Change the FSM encoding from 3-bit binary to one-hot encoding to reduce combinational logic complexity and critical path delay. One-hot encoding increases flip-flop count slightly but simplifies next-state logic and potentially improves timing.
+- Derive the output `sequence_detected` directly from the registered state (S4) rather than from next_state, eliminating glitches and reducing switching power.
+- Simplify the next-state logic using one-hot encoding, with clear conditional assignments for each next state.
+- Retain synchronous active-low reset for consistency.
+- Maintain Moore output style, asserting output only when FSM is in S4.
+- Ensure the output is a registered signal updated on the clock edge for timing stability.
+
+This approach trades minimal extra FFs for simpler logic and cleaner output timing, helping reduce critical path delay and glitches, thereby improving performance and power without increasing area excessively.

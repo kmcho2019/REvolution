@@ -1,0 +1,19 @@
+The current solution works correctly but can be optimized for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. Replace if-else with case statement: 
+   - Case statements typically synthesize to more balanced multiplexer structures, improving timing (performance)
+   - This also makes the code more readable and maintainable
+
+2. Use localparam for magic numbers:
+   - Replace hardcoded '4'hf' with a named constant for better code clarity
+   - This doesn't affect PPA but improves maintainability
+
+3. Remove redundant comparisons:
+   - The original checks all values of c, but we only need to match specific cases
+   - The default case handles all other values more efficiently
+
+These changes will:
+- Improve timing by reducing critical path length
+- Maintain the same power characteristics
+- Potentially reduce area slightly by simplifying the selection logic
+- Improve code maintainability without sacrificing functionality

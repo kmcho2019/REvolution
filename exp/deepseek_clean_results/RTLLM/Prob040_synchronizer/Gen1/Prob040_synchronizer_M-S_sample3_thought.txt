@@ -1,0 +1,11 @@
+The simplified design maintains the core functionality while reducing complexity by:
+1. Removing redundant registers - data_reg isn't needed since data_in is stable during data_en
+2. Simplifying the enable path by directly synchronizing data_en
+3. Maintaining the two-stage synchronization for metastability protection
+4. Keeping the output gated by the synchronized enable signal
+5. Preserving proper reset handling for both clock domains
+
+The simplification works because:
+- data_in remains constant during data_en (so we don't need to capture it separately)
+- The change interval is long enough (10 clk_b cycles) to ensure proper synchronization
+- data_en duration (3 clk_b cycles) is sufficient for the two-stage sync to work

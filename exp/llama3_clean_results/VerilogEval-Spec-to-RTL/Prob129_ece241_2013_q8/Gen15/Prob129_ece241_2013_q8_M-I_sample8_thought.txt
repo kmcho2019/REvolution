@@ -1,0 +1,13 @@
+The given Verilog code implements a Mealy-type finite state machine to recognize the sequence "101" on the input signal x. To improve the solution, we will focus on optimizing the design for better Power, Performance, and Area (PPA) metrics. 
+
+Given the PPA metrics, the design has a relatively small area and power consumption. However, there is a negative timing slack (tns and wns), indicating that the design may not meet the required timing constraints. To address this, we will explore optimizations that can improve the timing performance without significantly impacting power and area.
+
+One potential optimization is to use a more efficient coding style for the sequential logic. We will maintain the asynchronous reset to ensure correct reset behavior and use a continuous assignment for the output logic to assert the output when the sequence "101" is detected.
+
+Additionally, we will introduce state machines states as follows:
+- Idle: Initial state. The shift register is set to "00".
+- State1: The first "1" is detected. The shift register is set to "10".
+- State2: The "0" is detected after the first "1". The shift register is set to "01".
+
+We will also replace the shift register with individual state bits to avoid the issues with the "always" block sensitivity list.
+By making these targeted optimizations, we aim to improve the timing performance of the design while keeping power and area consumption in check.

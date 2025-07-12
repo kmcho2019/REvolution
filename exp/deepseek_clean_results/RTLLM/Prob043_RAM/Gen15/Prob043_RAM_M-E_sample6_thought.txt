@@ -1,0 +1,14 @@
+Novel Bank-Switching Architecture:
+1. Split the RAM into two identical banks (Bank A and Bank B)
+2. Alternate bank usage on each clock cycle for write operations
+3. Read operations always access the opposite bank of current write bank
+4. Benefits:
+   - Eliminates read/write conflicts completely
+   - Provides deterministic timing for both read and write paths
+   - Enables back-to-back read/write operations without stalls
+   - Simplifies timing closure with fixed access patterns
+5. Implementation:
+   - Use a toggle bit to track current write bank
+   - Read bank is always the inverse of write bank
+   - Double buffering ensures data coherency
+   - Reset initializes both banks and toggle state

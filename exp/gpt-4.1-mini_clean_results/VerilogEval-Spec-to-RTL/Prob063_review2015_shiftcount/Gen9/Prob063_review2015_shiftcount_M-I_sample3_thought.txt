@@ -1,0 +1,15 @@
+To improve PPA, the main target is reducing critical path delay and power.
+
+- The subtract operation `q - 1` can be replaced by a more efficient decrementer for 4 bits, for instance by a ripple decrement that is structurally simpler or by using a dedicated `q - 1` operation which synthesis will optimize anyway. Since the target is small, we trust synthesis here.
+
+- To reduce the critical path, we can break the multiplexing logic into simpler steps by first selecting enable signals and then updating state.
+
+- To reduce power, we only update the register if either `shift_ena` or `count_ena` is asserted; otherwise, hold the current value, preventing unnecessary toggling.
+
+- We can combine the control into a single enable and use a ternary operator inside the always block.
+
+- The shift operation uses MSB-first shifting: `{q[2:0], data}`. To reduce combinational delay, we keep this as is because it is minimal.
+
+- Also, replace the explicit subtraction with `q - 1` to leave arithmetic to synthesis.
+
+Overall, the improvements are minimal because the initial design is already optimal for a small 4-bit register, but these tweaks can simplify logic and potentially improve timing and power slightly.

@@ -1,0 +1,16 @@
+An alternative approach to emulate a dual-edge triggered flip-flop on FPGAs is to use a single posedge triggered flip-flop clocked by a clock derived at twice the input clock frequency. Since we cannot double the clock frequency externally here, we can internally create a clock enable pulse on both edges of the original clock and use it to gate data sampling in a posedge flip-flop triggered by the original clock.
+
+Specifically:
+- Use a posedge flip-flop clocked by clk.
+- Create a pulse that goes high at both posedge and negedge of clk by sampling clk with a small delay or a separate signal.
+- Use this pulse as a clock enable (CE) to conditionally update the flip-flop.
+- The flip-flop's input combines the current input 'd' and the enable signal to update at both edges logically.
+
+Since FPGAs don't allow posedge and negedge triggered always blocks together, we can generate an enable pulse that is asserted for one clk cycle after each clk edge by detecting clk edges using a delayed version of clk.
+
+This approach uses:
+- One delayed version of clk (registered clk)
+- Edge detection logic comparing current clk and delayed clk to generate an enable pulse for one clk cycle at each edge
+- One posedge clk triggered flip-flop with clock enable using this pulse to sample input 'd' on both edges.
+
+This solution is resource efficient and avoids a combinational mux on the output, potentially improving timing and reducing glitches.

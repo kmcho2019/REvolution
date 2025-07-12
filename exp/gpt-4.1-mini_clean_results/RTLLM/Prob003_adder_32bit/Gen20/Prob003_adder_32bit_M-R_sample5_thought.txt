@@ -1,0 +1,5 @@
+I will refactor the 16-bit CLA module to explicitly compute the carry signals using parallel prefix logic expressions for carry lookahead, rather than relying on a generate loop. Specifically, I will compute carries C[1] to C[16] by building hierarchical carry generate and propagate signals at groups of 4 bits (4-bit blocks) to speed up carry propagation inside each 16-bit block.
+
+This approach keeps the hierarchical and modular 2x16-bit structure but uses explicit carry-lookahead calculations inside each 16-bit block to reduce carry propagation delay. The top-level 32-bit adder still chains two 16-bit blocks, but inside each 16-bit block the carry is computed in parallel with logic expressions rather than sequential generate loops.
+
+This refactoring improves clarity of carry calculation and better demonstrates CLA logic inside the 16-bit block while maintaining the interface and hierarchical design of the original solution.

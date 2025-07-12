@@ -1,0 +1,21 @@
+To improve the existing balanced tree popcount design, I will focus on reducing area and power while maintaining timing by simplifying the partial popcount units and reducing the number of adders.
+
+Key improvements:
+
+1. Replace popcount17 units with a more area-efficient approach: use popcount8 units and a popcount7 unit, rather than one large popcount17. Popcount8 can be efficiently implemented using a known 3-level adder tree of popcount4 and popcount2 adders, reducing logic complexity.
+
+2. Since 255 = 8 + 8 + 8 + 8 + 8 + 8 + 8 + 7 (8 groups of 8 bits and 1 group of 7 bits), this reduces the largest base popcount block size, simplifying partial count units.
+
+3. Use compact adder modules at merging stages, always adding inputs of the same bit-width to reduce zero-padding and unnecessary bit-width expansion.
+
+4. The final merging tree will add 9 partial counts (8x popcount8 + 1x popcount7), performing merges in a balanced binary tree to avoid long critical paths.
+
+5. Since max popcount is still 255, the output is 8 bits. Intermediate widths are accordingly sized to avoid over-sizing adders.
+
+6. Implement popcount8 and popcount7 modules by leveraging popcount4 and simple adders for efficient area and power.
+
+7. Use generate loops only where clarity helps, but keep explicit for smaller counts to help synthesis.
+
+This approach will reduce area by using smaller and fewer adders, power by reducing toggling in smaller adders, and maintain timing via balanced merging.
+
+Overall, this restructuring balances PPA by optimizing base units and maintaining a balanced tree merge.

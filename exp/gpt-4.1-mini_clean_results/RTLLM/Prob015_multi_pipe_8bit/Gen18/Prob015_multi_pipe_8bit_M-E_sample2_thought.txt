@@ -1,0 +1,16 @@
+Implement an 8-bit unsigned multiplier using a 4-stage pipeline to improve performance and balance the addition complexity. The pipeline stages are:
+
+1) Input stage: Register inputs (mul_a, mul_b) and enable (mul_en_in).
+2) Partial product generation stage: Generate 8 partial products (each multiplicand shifted by one bit of multiplier).
+3) Partial sum stage: Perform a balanced tree addition of partial products in two clock cycles:
+   - Stage 3: Sum partial products pairwise to get four 16-bit sums.
+   - Stage 4: Sum those four sums pairwise to get the final product.
+4) Output stage: Register the final product and propagate the enable signal.
+
+The enable signal is propagated through a 4-bit shift register matching the pipeline depth, ensuring output enable is valid only when the product is valid.
+
+This architecture reduces critical path delay by splitting the addition of 8 partial products into two balanced addition stages, minimizing combinational logic per stage. It also reduces power by limiting logic switching per cycle and gates registers by updating only when enable is asserted.
+
+Reset is synchronous active-low. All registers update on clock rising edge with proper reset handling.
+
+Output is gated by mul_en_out, zeroing mul_out otherwise, ensuring valid output only when a multiplication completes.

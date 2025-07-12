@@ -1,0 +1,18 @@
+To improve PPA, refactor the clock counters to use simple binary counters internally for seconds, minutes, and hours, with hour counted 1 to 12 as a binary number. Convert to BCD only at output to reduce combinational logic and area. This reduces the need for multiple nested BCD increment and rollover checks. 
+
+For hours, implement a 4-bit binary counter (1 to 12) instead of separate BCD digits, toggling PM on rollover from 11 to 12. Seconds and minutes can be 6-bit binary counters (0-59). On each ena pulse, increment seconds; if seconds reach 59 then reset to 0 and increment minutes; if minutes reach 59 then reset and increment hours; if hours reach 12 then wrap to 1 and toggle PM.
+
+Use synchronous reset to initialize time to 12:00:00 AM (hours=12, minutes=0, seconds=0, pm=0).
+
+At output, convert hours, minutes, and seconds binary counters to BCD digits to form the 8-bit hh, mm, ss outputs. This conversion is purely combinational and simplifies sequential logic.
+
+This reduces combinational depth in the counting path, lowers area from fewer comparators and less complex rollover detection, and reduces switching in combinational logic, improving power.
+
+Overall, the improved architecture:
+- Internal counters: seconds [5:0], minutes [5:0], hours [3:0]
+- PM flip-flop toggled on hour rollover from 11 to 12
+- Output BCD encoding combinationally
+- Synchronous reset sets time to 12:00:00 AM and pm=0
+- Only increments on ena pulse
+
+This approach optimizes timing and area while maintaining functional correctness.

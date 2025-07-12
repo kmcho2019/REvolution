@@ -1,0 +1,18 @@
+State Machine Approach:
+1. Instead of simple edge detection with registers, implement a 4-state FSM:
+   - IDLE: No edge detected
+   - RISE_DETECTED: Rising edge found
+   - FALL_DETECTED: Falling edge found
+   - STABLE: Input has been stable for multiple cycles
+
+2. Benefits:
+   - More robust against glitches (can add debounce logic)
+   - Easily extendable for pulse width measurement
+   - Clear state transitions make timing analysis simpler
+   - Can add hysteresis for noisy signals
+
+3. Implementation:
+   - States encoded as one-hot for better timing
+   - Outputs derived directly from state
+   - Synchronous reset maintains clean startup
+   - State transitions based on current and previous input values

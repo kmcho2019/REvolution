@@ -1,0 +1,9 @@
+Implement a single always block to sequentially update Hours, Mins, and Secs together, simplifying control flow and potentially improving synthesis optimization. 
+
+On each clock edge, if reset is asserted, clear all counters to zero. Otherwise, increment seconds. If seconds overflow from 59 to 0, increment minutes; if minutes overflow from 59 to 0 simultaneously, increment hours; if hours overflow from 23 to 0, wrap around. 
+
+Use nonblocking assignments with temporary variables inside the always block to ensure correct synchronous updates and avoid race conditions.
+
+This approach reduces control logic duplication by handling all counters in one block, making timing paths potentially shorter and easier for tools to optimize, while preserving functionality.
+
+Outputs Hours, Mins, and Secs are 6-bit registers for uniformity and to meet problem specs.

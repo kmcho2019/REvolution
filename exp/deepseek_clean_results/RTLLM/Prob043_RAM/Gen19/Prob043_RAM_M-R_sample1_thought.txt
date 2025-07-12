@@ -1,0 +1,18 @@
+Refactoring Strategy:
+1. Memory Initialization: Move from initial block to synchronous reset for better synthesis compatibility
+2. Read Path: Keep combinational read but implement with always_comb for clearer intent (SystemVerilog)
+3. Write Path: Maintain synchronous write but use always_ff for better linting
+4. Output Behavior: Use explicit register for read_data with clear enable control
+5. Enhancements:
+   - Use SystemVerilog constructs for better readability
+   - Explicitly declare memory as logic type
+   - Separate reset logic from write logic
+   - Add localparam for address width calculation
+   - Document read-during-write behavior in comments
+
+Key Changes:
+- More synthesis-friendly reset implementation
+- Clearer intent with SystemVerilog always_comb/always_ff
+- Better separation of concerns in always blocks
+- More maintainable with localparam
+- Improved documentation

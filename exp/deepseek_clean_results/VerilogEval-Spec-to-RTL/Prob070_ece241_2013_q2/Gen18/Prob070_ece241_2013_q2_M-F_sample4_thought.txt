@@ -1,0 +1,23 @@
+Corrected Design Strategy:
+
+1. Truth Table Analysis:
+   - Output=1 cases (minterms): 2(0010), 7(0111), 15(1111)
+   - Output=0 cases (maxterms): 0(0000), 1(0001), 4(0100), 5(0101), 6(0110), 9(1001), 10(1010), 13(1101), 14(1110)
+   - Don't-cares: 3,8,11,12 (can be used for optimization)
+
+2. SOP Implementation:
+   - Must include all minterms explicitly since no further simplification is possible without violating requirements
+   - Keep original minterms: ~a~bc~d (2), ~abcd (7), abcd (15)
+   - This correctly covers all output=1 cases and implicitly handles output=0 cases
+
+3. POS Implementation:
+   - Need to cover all maxterms where output=0
+   - Canonical POS would be product of all maxterms (sums of literals for 0-output cases)
+   - After optimization using don't-cares, we get:
+     (a|b|c|d) & (a|b|c|~d) & (a|~b|c|d) & (a|~b|c|~d) & 
+     (a|~b|~c|d) & (~a|b|c|~d) & (~a|b|~c|d) & (~a|~b|c|~d) & (~a|~b|~c|d)
+   - Further optimized to: (c) & (a|b|d) & (a|~b|d) & (~a|b|~d) & (~a|~b|d)
+
+4. Implementation:
+   - SOP remains correct as originally implemented
+   - POS needs complete rewrite to properly handle all 0-output cases

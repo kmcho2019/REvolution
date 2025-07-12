@@ -1,0 +1,14 @@
+Fuse the parallel precomputation style from Example 1 with the simplified case-based single always block from Example 2 to create a clean, maintainable, and synthesis-friendly ALU. 
+
+The fused approach:
+- Precompute arithmetic flags (carry and overflow) only for ADD/SUB variants with dedicated wires, ensuring accuracy and clarity.
+- Compute all shift and logic results as wires to clarify combinational dataflow, avoiding redundant signals and removing unused ones.
+- Use a single always_comb block to select the output `r` and assign `carry`, `overflow`, `negative`, and `flag` based on `aluc`.
+- Assign the `zero` flag combinationally outside the always block to guarantee it reflects the final `r`.
+- Avoid high impedance outputs; instead assign `flag` to 0 when not SLT or SLTU for synthesis friendliness.
+- Maintain correct LUI semantics: per MIPS ISA, LUI loads the immediate into upper 16 bits with zeros in lower 16 bits. Since the problem gives `a` and `b` as operands (no immediate input), interpret `b[15:0]` as the immediate value for LUI, forming `r = {b[15:0], 16'b0}` — more standard.
+- Use signed operands for signed arithmetic and comparisons.
+- Ensure all outputs are driven explicitly in all cases.
+- Keep carry flag semantics consistent: for subtraction, define carry as NOT borrow (carry=1 if no borrow), which matches the typical unsigned borrow logic.
+
+This fusion balances clarity, correctness, and synthesis optimizations, while maintaining clean separation of combinational logic and output selection.

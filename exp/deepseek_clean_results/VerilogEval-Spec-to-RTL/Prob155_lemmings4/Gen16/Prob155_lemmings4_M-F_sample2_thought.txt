@@ -1,0 +1,29 @@
+Revised Lemming State Machine Design:
+
+1. Clear State Separation:
+   - Split states into distinct categories: walking (left/right), falling, digging, and splat
+   - Use explicit state encoding for better readability and debugging
+
+2. Strict Priority Enforcement:
+   - Implement priority logic in sequence: splat > falling > digging > bump
+   - Ensure each condition is only checked when higher priorities are not active
+
+3. Accurate Falling Behavior:
+   - Track falling state separately with proper edge detection
+   - Maintain direction during falling and after recovery
+   - Implement precise fall timer with splat condition
+
+4. Correct Digging Transitions:
+   - Only start digging when on ground and not falling
+   - Continue digging until ground disappears
+   - Transition to falling when digging stops
+
+5. Output Logic Simplification:
+   - Direct mapping from current state to outputs
+   - Splat state overrides all other outputs
+
+Key Improvements:
+- Explicit state machine makes transitions clearer
+- Proper handling of edge cases in priority logic
+- Correct timing for falling and digging states
+- Better separation of concerns in state transitions

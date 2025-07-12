@@ -1,0 +1,7 @@
+To optimize the existing 100-bit rotator for power and timing, I will reduce unnecessary toggling by updating the output register only when a load or a rotation is requested. Specifically, I will add a condition to perform the register update only if load is asserted or ena is 01 or 10. When ena is 00 or 11, the register remains unchanged, preventing redundant toggles. This simple gating reduces dynamic power by minimizing switching activity.
+
+For timing, although the rotation is inherently a wide 100-bit operation, early gating of updates reduces switching at the flip-flop inputs, which can reduce delay slightly by lowering net switching capacitance. Additionally, by explicitly coding a single always block and using a combined if-else structure, we maintain synthesis tool friendliness.
+
+No major architectural changes like a barrel shifter are implemented here because the performance is acceptable and complexity would increase. This focused optimization improves power without sacrificing clarity or functionality and maintains the original interface and behavior exactly.
+
+Hence, the key improvement is conditional register updates to avoid unnecessary toggles and power dissipation when no load or rotation is requested.

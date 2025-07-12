@@ -1,0 +1,20 @@
+Novel Architecture Idea: LUT-based Parallel Decoder with One-Hot Encoding
+
+Key Concepts:
+1. Use a Look-Up Table (LUT) approach with parallel comparators for each valid scancode
+2. Implement one-hot encoding for intermediate key detection
+3. Convert one-hot to binary output using a priority encoder
+4. Generate valid signal by OR-ing all detection signals
+5. Advantages:
+   - Fully parallel comparison for minimal critical path
+   - Clear separation between detection and encoding logic
+   - Easily scalable to more key codes
+   - Potential power savings from parallel structure
+   - Explicit one-hot encoding makes timing predictable
+
+Implementation Approach:
+1. Create individual comparators for each scancode
+2. Generate one-hot detection signals
+3. Use a parallel priority encoder for binary output
+4. Combine detection signals for valid output
+5. Default to all zeros when no match found

@@ -1,0 +1,15 @@
+The key realization is that each TopModule instance needs to properly implement the feedback logic from the original full_module while maintaining a clean hierarchical design. The feedback pattern is:
+- Bit 0 (LSB): q[1] ^ q[2]
+- Bit 1: q[0]
+- Bit 2 (MSB): q[2]
+
+To achieve this:
+1. Each TopModule instance should receive the necessary neighboring bits as inputs
+2. The feedback logic should be position-specific:
+   - For bit 0: XOR of bits 1 and 2
+   - For bit 1: direct feedback from bit 0
+   - For bit 2: direct feedback from itself
+3. The multiplexer selects between load value (r_in) and computed feedback value
+4. All operations are synchronized to the clock edge
+
+This ensures the hierarchical design correctly implements the original feedback pattern while maintaining modularity.

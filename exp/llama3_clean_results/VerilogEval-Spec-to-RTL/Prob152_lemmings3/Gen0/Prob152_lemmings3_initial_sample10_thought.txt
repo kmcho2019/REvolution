@@ -1,0 +1,15 @@
+To implement the Lemmings finite state machine, we will define the states as follows:
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling due to lack of ground.
+- DIGGING: The Lemming is digging into the ground.
+
+The state transitions will be determined by the input signals (bump_left, bump_right, ground, dig) and the current state. 
+
+When the Lemming is walking (either left or right), it can transition to the opposite walking state if bumped, start digging if dig is high and ground is present, or start falling if ground is not present.
+
+When the Lemming is falling, it will continue falling until ground is present again, at which point it will resume walking in the original direction.
+
+When the Lemming is digging, it will continue digging until ground is no longer present, at which point it will start falling. Once it hits ground again, it will resume walking in the original direction.
+
+The outputs (walk_left, walk_right, aaah, digging) will be determined by the current state.

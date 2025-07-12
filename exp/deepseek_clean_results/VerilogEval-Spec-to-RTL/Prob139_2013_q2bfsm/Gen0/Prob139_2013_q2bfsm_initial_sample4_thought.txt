@@ -1,0 +1,16 @@
+To implement this FSM, we need to:
+1. Define states (A, B, C, D, E, F) to track the sequence of operations
+2. Use sequential logic to transition between states on clock edges
+3. Implement the pattern detection for x (1,0,1 sequence)
+4. Implement the timeout mechanism for y detection (2 clock cycles)
+5. Generate outputs f and g based on current state
+6. Reset synchronously to state A when resetn is low
+
+State transitions:
+- A: Initial state (reset), transitions to B when resetn goes high
+- B: Sets f=1 for one cycle, then moves to C
+- C: Watches for x=1, moves to D when seen
+- D: Watches for x=0, moves back to C if x=1 or to E if x=0
+- E: Watches for x=1, moves to F if seen (sets g=1) or back to C if x=0
+- F: Checks y for 1 within 2 cycles, stays in F with g=1 if y=1 seen, else moves to G
+- G: Maintains g=0 until reset

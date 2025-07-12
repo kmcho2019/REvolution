@@ -1,0 +1,16 @@
+Simplified design approach:
+1. Remove unnecessary features:
+   - Eliminate clock enable (ce) since it's hardwired to 1
+   - Remove parameter validation (not needed for synthesis)
+   - Remove WIDTH parameter (spec requires fixed 8-bit width)
+
+2. Simplify hierarchy:
+   - Implement as single flat module instead of hierarchical
+   - Directly instantiate 8 DFFs with synchronous reset
+
+3. Maintain core functionality:
+   - Keep positive edge-triggered behavior
+   - Preserve synchronous reset setting outputs to 0
+   - Maintain 8-bit input/output as specified
+
+This results in a minimal, straightforward implementation that meets all requirements while reducing complexity and potential overhead.

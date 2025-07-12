@@ -1,0 +1,7 @@
+The issue in the original code is that it attempts to assign an 8-bit expression to a 1-bit output, causing a width mismatch and unintended behavior.
+
+To fix this while keeping the output a single bit, we need to select a single bit from the chosen 8-bit input vector. Usually, selecting the least significant bit (bit 0) is a simple choice.
+
+For refactoring, instead of using the bitwise AND/OR operations, I'll implement the 2-to-1 mux using a continuous assignment with a ternary operator directly on the selected bit of inputs `a` and `b`. This keeps it simple, explicit, and synthesizable.
+
+Thus, the output `out` will be:

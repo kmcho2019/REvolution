@@ -1,0 +1,10 @@
+To refactor the Rule 90 cellular automaton implementation while maintaining the same functionality:
+1. Use continuous assignments (assign) instead of procedural blocks for combinational logic
+2. Create a next_state wire that calculates all cell updates in parallel
+3. Handle boundary conditions explicitly:
+   - Leftmost cell (q[0]) uses 0 as left neighbor
+   - Rightmost cell (q[511]) uses 0 as right neighbor
+4. Use a register with clocked update for the state storage
+5. Maintain the load functionality to initialize the state
+6. The implementation will be more transparent about the neighbor relationships
+7. All XOR operations are performed in parallel for better timing

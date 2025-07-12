@@ -1,0 +1,11 @@
+Here's a novel approach using a hierarchical multiplexer structure:
+
+1. Observation: The K-map shows that for each ab combination, the output depends on cd in specific patterns.
+2. Key Insight: We can treat each mux_in[x] as a separate 2-to-1 multiplexer problem where the select line is one of c or d, and the inputs are derived from the other variable.
+3. Implementation Strategy:
+   - mux_in[0] (ab=00): Output is 1 only when cd=01 → use d as select, with inputs tied to 0 (when d=1) and c (when d=0)
+   - mux_in[1] (ab=01): Always 0 → hardwired
+   - mux_in[2] (ab=11): Output is 1 when cd=00 or 11 → use XNOR of c and d
+   - mux_in[3] (ab=10): Output is 1 for cd=00,10,11 → use OR between ~d and (c AND d)
+
+This approach uses the minimal number of 2-to-1 muxes (3 total) plus the required 4-to-1 mux, while correctly implementing the K-map.

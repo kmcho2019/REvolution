@@ -1,0 +1,5 @@
+The goal of refactoring the existing code is to improve its structure and potentially simplify the logic for better power, performance, and area (PPA) optimization. One approach to refactoring is to explicitly define the conditions for the output `f` based on the input `x`, considering all relevant bits as specified in the Karnaugh map. Given that `x` is a 4-bit input but the Karnaugh map only specifies dependencies on `x[3]`, `x[2]`, and `x[1]`, we can focus on these bits. 
+
+The condition from the Karnaugh map can be directly translated into a Verilog expression. However, to improve readability and maintainability, we can break down the logic into intermediate signals that represent the conditions specified in the map. This can make the code more modular and easier to understand.
+
+Specifically, we can define signals for the conditions when `x[3]` is 1 and at least one of `x[1]` or `x[2]` is 1, and when `x[3]` is 0 and both `x[1]` and `x[2]` are 1. Then, we can use these signals to assign the value of `f`. This approach does not change the underlying logic but presents it in a more structured and potentially more maintainable way.

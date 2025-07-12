@@ -1,0 +1,18 @@
+The refactored solution will use continuous assignments with Boolean expressions derived from the Karnaugh map, eliminating the need for a case statement. Here's the approach:
+
+1. K-map Analysis:
+   - Identify prime implicants from the given K-map
+   - Derive minimal sum-of-products expression
+   - Observe that output is 0 in only 6 cases, which can be expressed as:
+     out = !( (c&d&!a&!b) | (!c&d&!a&b) | (!c&d&a&b) | (c&!d&a&b) | (c&!d&a&!b) | (!c&!d&a&b) )
+
+2. Implementation:
+   - Use continuous assignment with the derived Boolean expression
+   - Group terms to minimize logic operations
+   - The expression can be simplified by factoring common terms
+
+3. Benefits:
+   - More direct hardware mapping (no case statement decoder)
+   - Potentially better area optimization in synthesis
+   - Clear relationship to original K-map
+   - Maintains same functionality as original solution

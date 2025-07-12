@@ -1,0 +1,25 @@
+Improved strategy for correct edge detection and capture:
+
+1. **Proper Edge Detection**:
+   - Use registered previous input (prev_in) to ensure stable comparison
+   - Detect falling edges when prev_in=1 and current in=0
+   - This ensures edge detection happens exactly at clock boundaries
+
+2. **Capture Logic**:
+   - Once a falling edge is detected, maintain the output until reset
+   - Use OR operation to preserve previously detected edges
+   - This meets the requirement of "capturing" transitions
+
+3. **Reset Handling**:
+   - Synchronous reset clears both prev_in and captured registers
+   - Ensures clean state initialization
+
+4. **Optimization**:
+   - Minimal register usage (only prev_in and captured)
+   - Simple combinational logic for edge detection
+   - All operations properly synchronized to clock edges
+
+Key improvements:
+- Correct edge detection timing by using registered previous value
+- Proper maintenance of captured edges until reset
+- Clean and efficient implementation

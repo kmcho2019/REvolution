@@ -1,0 +1,9 @@
+Implement a multi-cycle radix-2 restoring divider for 8-bit operands supporting signed and unsigned division.  
+On opn_valid and idle state, latch inputs and convert to unsigned magnitudes, remembering signs if signed mode.  
+Use a 17-bit shift register SR representing {remainder[8:0], quotient[7:0]} initialized with remainder=0 and quotient=dividend magnitude.  
+At each cycle (for 8 cycles), shift SR left by 1, subtract divisor magnitude from upper remainder bits, and update remainder and quotient bits accordingly.  
+After 8 cycles, apply sign corrections to quotient and remainder based on operand signs.  
+Output result concatenates remainder (upper 8 bits) and quotient (lower 8 bits).  
+Manage control with a running flag, 4-bit counter, and res_valid signal.  
+Avoid declaring variables inside always blocks by predeclaring temporaries outside.  
+This reduces complexity and ensures synthesizable clean Verilog code.

@@ -1,0 +1,18 @@
+Based on the feedback, I'll revise the barrel shifter implementation with these key improvements:
+
+1. **Clear Right Rotation**: Implement right rotation (lower bits move right) as it's more common for barrel shifters and matches typical expectations.
+
+2. **Fixed Shift Logic**: Correct the bit selection in the shift module to properly handle wrap-around rotation:
+   - For right rotation, we'll take the lower SHIFT_AMOUNT bits and move them to the top
+   - Use proper bit ranges that don't overlap or leave gaps
+
+3. **Additive Shift Control**: Make the control signal additive so ctrl value represents total shift amount:
+   - ctrl=0: no shift
+   - ctrl=1: shift by 1
+   - ctrl=2: shift by 2
+   - ctrl=3: shift by 3 (1+2)
+   - etc. up to ctrl=7: shift by 7 (1+2+4)
+
+4. **Simplified Structure**: Use a single always block with case statement for clarity and to ensure proper additive behavior.
+
+The new implementation will properly rotate bits right by the sum of all enabled control bits, with correct wrap-around behavior at all shift amounts.

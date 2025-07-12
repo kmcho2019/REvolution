@@ -1,0 +1,19 @@
+I will fuse the strengths of both examples by combining a clear, modular approach with a slight optimization for power without compromising synthesis clarity or timing.
+
+From Example 1, I adopt:
+- Clean separation of combinational next-state logic using concise conditional operators.
+- Direct Moore output assignment from the state register, reducing extra output registers.
+
+From Example 2, I adopt:
+- Use of synchronous reset and state update with non-blocking assignments for safe, clear sequential logic.
+- The conditional state update `if (state != next_state)` to reduce unnecessary toggling and save dynamic power.
+
+However, I will merge these with a small enhancement to maintain simplicity and encourage straightforward synthesis: I will use a single always @(*) block with a ternary operator for next-state logic for concise combinational logic, improving readability and minimizing logic depth.
+
+This fusion results in:
+- Minimal and readable combinational logic.
+- Reduced dynamic power by avoiding redundant state writes.
+- Clean and synthesis-friendly sequential logic with synchronous reset.
+- Clear state encoding using localparams for maintainability.
+
+This approach balances clarity, power efficiency, minimal area, and straightforward synthesis and debugging.

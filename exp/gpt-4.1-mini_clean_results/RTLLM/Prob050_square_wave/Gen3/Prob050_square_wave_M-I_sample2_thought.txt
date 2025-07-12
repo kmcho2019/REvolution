@@ -1,0 +1,11 @@
+To improve the existing design, focus on reducing power consumption and enhancing timing without increasing area. 
+
+1. Power optimization: Introduce an enable signal for the counter and toggle logic that activates only when freq is non-zero, preventing unnecessary toggling or counting when the output should be steady. This reduces switching activity and dynamic power consumption.
+
+2. Timing optimization: Replace the equality comparator (count == freq) with a simpler carry-out from an adder by counting up to freq, which may improve the critical path. However, since count and freq are both 8-bit, the comparator delay is limited. A small improvement is to use an equality check that can be optimized by synthesis tools.
+
+3. Area: Maintain minimal registers and combinational logic. Adding an enable signal does not increase area significantly.
+
+4. Initialization: Add synchronous reset input to initialize count and wave_out, improving reliability in various FPGA/ASIC flows and possibly reducing glitches at startup.
+
+Overall, the design will use an enable signal, synchronous reset, and clearer structure to improve PPA without impacting area significantly.

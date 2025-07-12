@@ -1,0 +1,15 @@
+module TopModule (
+  input clk,
+  input L,
+  input q_in,
+  input r_in,
+  output reg Q
+);
+
+  always @(posedge clk)
+    if (L)
+      Q <= r_in;
+    else
+      Q <= q_in;
+
+endmodule

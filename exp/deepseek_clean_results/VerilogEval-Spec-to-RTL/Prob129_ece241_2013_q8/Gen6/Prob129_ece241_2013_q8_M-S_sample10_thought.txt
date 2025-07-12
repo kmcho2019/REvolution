@@ -1,0 +1,10 @@
+The current solution is already quite minimal, but we can simplify it further by:
+1. Eliminating the explicit history register since we only need to track the sequence progression
+2. Using just 3 states to represent the FSM progression (IDLE, GOT1, GOT10)
+3. Making the output purely combinational based on current state and input
+4. Maintaining the same functionality with overlapping sequence detection
+
+The state transitions will be:
+- IDLE: wait for first '1'
+- GOT1: got '1', wait for '0'
+- GOT10: got '10', wait for '1' (which triggers output)

@@ -1,0 +1,15 @@
+I will refactor the FSM using 2-bit state encoding instead of 3 bits to save area. I'll explicitly separate combinational logic for next state, w_count update, and output z generation using blocking assignments and continuous assignments wherever possible.
+
+The w_count update and output z will be done in separate always blocks: one synchronous for state and w_count, one combinational for next_state, and one combinational for the z output (derived from registered signals) to decouple logic and improve timing.
+
+I will also remove the internal `reg` declaration inside the sequential block by precomputing total_count combinationally before the sequential block. This avoids synthesizing muxed registers for total_count and keeps arithmetic outside the clocked block.
+
+By gating w_count updates to only occur in B states, and zeroing it in state A cleanly, unnecessary toggling is reduced.
+
+Overall, the state transitions and main logic remain the same, but the code uses:
+- 2-bit state encoding (4 states total)
+- Combinational always blocks for next_state and output logic
+- Synchronous always block for state and counter registers
+- Explicit separate wire for total_count used to drive output z combinationally, registered on clock edge for timing stability
+
+This modular approach clarifies datapath and control separation, likely improving synthesis results for timing and power.

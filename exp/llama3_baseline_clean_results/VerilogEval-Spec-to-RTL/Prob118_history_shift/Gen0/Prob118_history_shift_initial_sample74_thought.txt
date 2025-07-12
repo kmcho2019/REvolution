@@ -1,0 +1,12 @@
+To implement the TopModule, we need to design a 32-bit global history shift register. 
+This register should have the ability to shift in new values from the LSB side when a branch prediction is made, 
+and to load a new value when a branch misprediction occurs. 
+In the case of a branch prediction, we shift in the predict_taken value from the LSB side. 
+In the case of a branch misprediction, we load the train_history value concatenated with the train_taken value. 
+We should also include a reset mechanism that resets the history counter to zero when areset is asserted.
+
+To handle the situation where both a prediction and a misprediction occur at the same time, 
+we should prioritize the misprediction, as it will also flush out the branch that is currently making a prediction.
+
+We can use a Verilog always block to describe the sequential logic of the module, 
+and use the assign statement to continuously assign the value of the register to the output predict_history.

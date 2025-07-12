@@ -1,0 +1,21 @@
+To optimize the sequence detector for better PPA (Power, Performance, Area) metrics while maintaining functionality, I propose these improvements:
+
+1. Timing Optimization:
+   - Keep the shift register approach but add a pipeline register for the detection output to improve timing closure
+   - This breaks the critical path into two stages (shift + detect)
+
+2. Power Optimization:
+   - Add clock gating to the shift register when no new data is expected
+   - Use a registered output to reduce glitches and switching activity
+
+3. Area Optimization:
+   - Maintain the minimal 4-bit shift register
+   - Simplify the detection logic to use a single AND gate with inverted inputs
+   - The output register adds minimal area while improving timing
+
+Key Benefits:
+- Better timing with pipelined output (reduced WNS/TNS)
+- Lower dynamic power through clock gating and registered output
+- Minimal area increase from output register offset by simpler detection logic
+- Maintains same detection capability (including overlapping sequences)
+- Improved clock-to-output timing

@@ -1,0 +1,8 @@
+To improve PPA, factor common terms in the next state equations to reduce logic complexity and switching activity:
+
+- For next_state[0], factor out ~in: next_state[0] = ~in & (A | C)
+- For next_state[1], factor out in: next_state[1] = in & (A | B | D)
+- For next_state[2], factor out ~in: next_state[2] = ~in & (B | D)
+- For next_state[3], already minimal: next_state[3] = in & C
+
+This factoring reduces the number of gates, simplifies the combinational logic, and reduces toggling, which benefits power and area without affecting functionality or timing. The output remains the same, asserted only when in state D.

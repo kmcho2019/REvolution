@@ -1,0 +1,11 @@
+To implement the required functionality, I propose a novel architectural idea that involves using a finite state machine (FSM) with a separate module for counting and another for detecting the input sequence. The FSM will control the flow of data between these modules and manage the state transitions.
+
+The sequence detector module will be responsible for detecting the input sequence 1101 and shifting in the next 4 bits to determine the delay. The counting module will then use this delay value to count for the required number of clock cycles.
+
+The FSM will have four main states: IDLE, DETECT_SEQUENCE, COUNTING, and DONE. In the IDLE state, the FSM will wait for the input sequence to be detected. Once the sequence is detected, the FSM will transition to the DETECT_SEQUENCE state, where it will shift in the next 4 bits to determine the delay.
+
+After the delay is determined, the FSM will transition to the COUNTING state, where it will start the counting module. The counting module will decrement the counter every clock cycle until it reaches zero.
+
+Once the counter reaches zero, the FSM will transition to the DONE state, where it will assert the done signal and wait for the ack signal to be asserted. Once the ack signal is asserted, the FSM will transition back to the IDLE state and reset the counting module and sequence detector module.
+
+This architectural idea provides a clear and modular approach to implementing the required functionality, making it easier to understand and maintain.

@@ -1,0 +1,10 @@
+The waveform suggests p and q behave as a 2-bit shift register loading the input 'a' synchronously on the positive clock edge. Initially both are unknown, then at the first posedge clock p loads 'a', and q loads the previous value of p. This means q follows p delayed by one clock cycle.
+
+A simple approach:
+- On each posedge clock:
+  - q <= p
+  - p <= a
+
+This fully synchronous design initializes both outputs to zero to avoid unknowns and matches the timing and pattern in the waveform, simplifying the previous logic by removing any combinational dependency on p and q themselves for the next p value.
+
+Thus, p always captures the current input 'a' and q latches the previous p, forming a simple 2-bit shift register of input 'a'.

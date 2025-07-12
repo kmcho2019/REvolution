@@ -1,0 +1,7 @@
+To solve this problem, we will design a finite state machine (FSM) that operates in the following states: 
+- IDLE: The initial state where we wait for a start bit (0) to arrive. 
+- RECEIVE_DATA: After detecting a start bit, we shift in the incoming bits and store them in the out_byte register. 
+- VERIFY_STOP: After receiving 8 data bits, we check for the stop bit (1). If it's correct, we assert the done signal and go back to the IDLE state. 
+- WAIT_FOR_STOP: If the stop bit is not detected, we wait until we find a stop bit before going back to the IDLE state.
+
+The out_byte register is updated each clock cycle in the RECEIVE_DATA state. The done signal is asserted each time we correctly receive a byte.

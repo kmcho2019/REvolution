@@ -1,0 +1,15 @@
+To create a superior 4-bit comparator, fuse the borrow-lookahead subtraction logic of Example 1 (which directly models the subtraction and borrow chain for accurate and fast A_less detection) with the explicit hierarchical bitwise equality checks from Example 2 for clear and optimized equality detection.
+
+Key improvements:
+- Use the standard borrow generate and propagate signals and borrow-lookahead logic from Example 1 for A_less, which gives correct and fast borrow detection.
+- Instead of deriving equality from all borrow propagates, explicitly generate per-bit equality signals using bitwise XNOR, enabling better clarity and reuse.
+- Implement a hierarchical equality detection structure similar to Example 2 but optimized by generating all equal_bits once and then AND-reducing, improving power and logic sharing.
+- Derive A_greater from the negation of A_less and equality, ensuring mutual exclusivity.
+- Factor out repeated equality checks by generating per-bit equality signals, reused in borrow propagate and equality detection.
+- This fusion balances performance (borrow-lookahead), power (shared equality signals), and area (clear logic sharing), improving clarity and synthesis potential.
+
+This approach ensures:
+- Borrow lookahead logic for A_less with minimal delay,
+- Simple, reusable equality logic with minimal redundant computation,
+- Mutually exclusive, clear outputs,
+- Compact, maintainable code combining best practices from both examples.

@@ -1,0 +1,7 @@
+To improve the existing solution's performance and power efficiency, I will add an enable signal for counter updates so that the counter register only toggles when it needs to change. Specifically, the counter will load a new value when load=1 or decrement when load=0 and counter is not zero. When the counter is zero and load=0, the counter holds its value, and no toggling occurs.
+
+This gating reduces unnecessary switching activity (power) and simplifies the combinational logic since the counter only updates on meaningful changes, potentially improving timing. The decrement logic is still just a subtract-1, which is efficient. The output tc remains asserted when the counter is zero.
+
+I will keep a single always block triggered on posedge clk as required (using a single DFF register for the 10-bit counter). The enable gating is implemented by controlling the next count value only when updates are needed.
+
+This approach balances simplicity, power, and timing improvements within the problem constraints.

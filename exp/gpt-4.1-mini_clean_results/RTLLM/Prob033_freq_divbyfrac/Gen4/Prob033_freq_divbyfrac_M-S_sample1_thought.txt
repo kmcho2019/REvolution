@@ -1,0 +1,7 @@
+Simplify the fractional frequency divider by 3.5x using a single counter and generating two internal clocks toggling at counts corresponding to the uneven cycle lengths (4 and 3). Use a clock enable signal triggered on both the positive and negative edges of the input clock to effectively double the counting rate, achieving half-cycle resolution.
+
+By counting both edges, the counter increments every half clock cycle, cycling through 7 half-cycles (total 3.5 full cycles). Generate the output clock by toggling it at specific half-cycle counts to produce a 50% duty cycle signal over 7 half cycles (3.5 full cycles).
+
+This approach keeps the design synchronous by implementing a clock enable pulse at each half clock, realized by a XOR of clk and a delayed version of clk, or by using the negative edge clock to increment the counter. Using an always block sensitive to both posedge and negedge of clk with synchronous reset achieves this cleanly.
+
+The final output clock toggles at counts 0 and 4 (half cycles), producing high for 4 half cycles and low for 3 half cycles, resulting in a 3.5 division with good duty cycle balance and phase alignment without complex phase-shifting logic.

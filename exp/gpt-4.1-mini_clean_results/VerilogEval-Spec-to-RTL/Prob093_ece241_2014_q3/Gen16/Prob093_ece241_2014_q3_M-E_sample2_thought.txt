@@ -1,0 +1,53 @@
+We want to implement the given K-map as a function f(a,b,c,d) using only one 4-to-1 mux with inputs mux_in[3:0] selected by {a,b}, and the inputs mux_in[3:0] are functions of c and d.
+
+Each mux_in[i] corresponds to the output column in the K-map for ab = i (00,01,11,10). The four mux_in inputs implement the four different columns of the K-map as functions of c,d.
+
+To build each mux_in[i], we can use 2-to-1 muxes controlled by c or d, choosing between constants or variables, with no logic gates.
+
+The goal is to implement each mux_in[i] as a tree of 2-to-1 muxes to realize the column function.
+
+First, extract the 4 output bits for each ab column (mux_in[i]) for cd=00,01,11,10:
+
+ab=00 (mux_in[0]):
+cd=00->0,01->1,11->1,10->1
+
+ab=01 (mux_in[1]):
+cd=00->0,01->0,11->0,10->0
+
+ab=11 (mux_in[2]):
+cd=00->0,01->0,11->1,10->0
+
+ab=10 (mux_in[3]):
+cd=00->1,01->0,11->1,10->1
+
+Implementing each mux_in[i] as mux trees:
+
+1) mux_in[0] (ab=00):
+Outputs: 0 1 1 1 for cd=00,01,11,10.
+Treat c as selector for first mux:
+if c=0 (cd=00 or 01): outputs 0 (d=0) or 1 (d=1) → equals d
+if c=1 (cd=10 or 11): outputs 1 (d=0 or 1)
+So mux_in[0] = c ? 1 : d
+
+2) mux_in[1] (ab=01):
+Always 0
+Assign 0.
+
+3) mux_in[2] (ab=11):
+Outputs: 0 0 1 0 for cd=00,01,11,10.
+If c=0 → 0
+If c=1 → output depends on d: cd=10(d=0) output 0, cd=11(d=1) output 1
+So mux_in[2] = c ? d : 0
+
+4) mux_in[3] (ab=10):
+Outputs: 1 0 1 1 for cd=00,01,11,10
+Try selecting on d:
+d=0 (cd=00,10): output 1,1 → output 1
+d=1 (cd=01,11): output 0,1 → output c
+So mux_in[3] = d ? c : 1
+
+All these expressions use only mux-like constructs (select input chooses between constants or inputs), no logic gates. The top-level mux uses {a,b} as selector, choosing the corresponding mux_in[i].
+
+This implements the K-map exactly with one 4-to-1 mux (external) and four 2-to-1 muxes inside TopModule for mux_in[0..3].
+
+The code will use continuous assignments with mux (?:) operators that map directly to 2-to-1 muxes, adhering strictly to problem constraints.

@@ -1,0 +1,16 @@
+module TopModule(
+    input clk,
+    input ar,
+    input d,
+    output reg q
+);
+
+always @(posedge clk or ar) begin
+    if (ar) begin
+        q <= 0;
+    end else if (posedge clk) begin
+        q <= d;
+    end
+end
+
+endmodule

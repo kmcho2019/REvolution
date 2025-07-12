@@ -1,0 +1,7 @@
+To implement a 32-bit Galois Linear Feedback Shift Register (LFSR) with taps at positions 32, 22, 2, and 1, we'll create a module named TopModule. The module will have a 32-bit output vector q, which will be initialized to 32'h1 upon reset. We will use a synchronous reset, meaning that when the reset signal is high, the output q will be reset on the next positive edge of the clock. 
+
+The LFSR will operate as follows: on each positive edge of the clock, the output q will shift right by one bit. The taps at positions 32, 22, 2, and 1 will XOR the current value of q[0] to produce the next state of their respective positions. However, note that in a Galois LFSR, taps are actually considered in the context of the polynomial that defines the LFSR's feedback function, and the tap positions are counted from the MSB down to the LSB. 
+
+Thus, our tap positions are at bits 31 (not 32, since we count from 0), 21, 1, and 0. This corresponds to a polynomial of x^32 + x^22 + x^2 + x + 1. 
+
+The Verilog code will implement a 32-bit vector to hold the current state of the LFSR and use a procedural block to handle the shift and feedback operations on each clock cycle.

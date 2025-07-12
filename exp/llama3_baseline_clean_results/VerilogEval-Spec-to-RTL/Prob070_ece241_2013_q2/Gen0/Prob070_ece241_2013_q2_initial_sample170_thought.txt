@@ -1,0 +1,28 @@
+To solve this problem, we need to first determine the conditions for which the output should be 1. The given conditions for a logic-1 are when the binary representation of the inputs a, b, c, d corresponds to the numbers 2, 7, or 15. 
+
+For out_sop, we will use a sum-of-products (SOP) form, which involves using the OR operator to combine product terms. The product terms are formed by ANDing the input variables or their complements. Since we are looking for the minimum SOP, we will only include the terms that cover all the required minterms without including any unnecessary terms.
+
+For out_pos, we will use a product-of-sums (POS) form, which involves using the AND operator to combine sum terms. The sum terms are formed by ORing the input variables or their complements. To get the minimum POS, we need to find the minimum set of sum terms that cover all the conditions where the output is 0.
+
+Given inputs:
+- a = 1, b = 0, c = 0, d = 0 for the number 2 (in binary: 0010)
+- a = 0, b = 1, c = 1, d = 1 for the number 7 (in binary: 0111)
+- a = 1, b = 1, c = 1, d = 1 for the number 15 (in binary: 1111)
+
+And the numbers that should result in a logic-0 are:
+- 0 (0000)
+- 1 (0001)
+- 4 (0100)
+- 5 (0101)
+- 6 (0110)
+- 9 (1001)
+- 10 (1010)
+- 13 (1101)
+- 14 (1110)
+
+For the minimum SOP, we can directly implement the conditions for a logic-1:
+- For 2: a & ~b & ~c & ~d
+- For 7: ~a & b & c & d
+- For 15: a & b & c & d
+
+For the minimum POS, we need to find the conditions where the output is 0 and then take the complement of those conditions. However, a more straightforward approach in this case is to use the fact that the POS form is the dual of the SOP form. We can derive the POS form from the SOP form by applying De Morgan's laws, which involves changing AND to OR, OR to AND, and complementing the terms.

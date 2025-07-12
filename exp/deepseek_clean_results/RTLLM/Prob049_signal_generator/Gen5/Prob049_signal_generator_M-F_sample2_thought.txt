@@ -1,0 +1,12 @@
+To fix the triangle wave generator, I'll:
+1. Correct the state transition conditions to occur exactly at the boundaries
+2. Transition to decrement state when wave reaches 31 (not before)
+3. Transition to increment state when wave reaches 0 (not after)
+4. Maintain all other functionality including reset behavior
+5. Ensure clean transitions without overshooting or undershooting the bounds
+
+The key changes are:
+- Change increment state transition check to wave == 31 (5'b11111)
+- Change decrement state transition check to wave == 0 (5'b00000)
+- Keep the same state machine structure but with accurate boundary detection
+- Maintain synchronous operation with clock and reset

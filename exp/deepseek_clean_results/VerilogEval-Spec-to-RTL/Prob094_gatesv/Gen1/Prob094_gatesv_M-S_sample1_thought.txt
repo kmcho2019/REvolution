@@ -1,0 +1,6 @@
+To simplify the TopModule implementation while maintaining functionality:
+1. For out_both: We can use a bitwise AND operation between the input and its left-shifted version (with zero fill). This automatically handles the neighbor checks in parallel.
+2. For out_any: Similarly, use a bitwise OR operation between the input and its right-shifted version (with zero fill).
+3. For out_different: Use a bitwise XOR between the input and its circular left-shifted version (achieved by concatenation) to implement the wrap-around comparison.
+
+This approach eliminates individual bit assignments and uses more efficient bitwise operations.

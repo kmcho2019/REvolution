@@ -1,0 +1,18 @@
+After analyzing the waveform, I realize the circuit can be implemented much more simply:
+
+1. Key observations:
+   - p simply follows 'a' but only updates on rising clock edges when 'a' is high
+   - q is a delayed version of p that updates on falling clock edges
+   - No complex state machine is needed - just edge-triggered registers
+
+2. Simplified approach:
+   - Use a single always block for p that updates on posedge clock
+   - Use another always block for q that updates on negedge clock
+   - p directly follows 'a' when clock is high
+   - q simply takes the previous value of p
+   - No need for state variables or edge detection
+
+3. Benefits:
+   - Fewer registers and simpler logic
+   - Clear direct relationship between inputs and outputs
+   - Matches the waveform behavior exactly

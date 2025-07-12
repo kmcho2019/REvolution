@@ -1,0 +1,14 @@
+To optimize the implementation, I'll make the following changes:
+1. Use one-hot encoding for states to potentially improve timing and simplify output logic
+2. Separate the state transition logic into priority-based assignments instead of nested if-else
+3. Combine related states (left/right variants) to reduce state count
+4. Use continuous assignments for outputs where possible
+5. Explicitly handle the priority of conditions (fall > dig > bump)
+
+The new state encoding will be:
+- WALK_L (walking left)
+- WALK_R (walking right)
+- FALL (falling, direction stored separately)
+- DIG (digging, direction stored separately)
+
+This reduces the state machine complexity while maintaining the same behavior.

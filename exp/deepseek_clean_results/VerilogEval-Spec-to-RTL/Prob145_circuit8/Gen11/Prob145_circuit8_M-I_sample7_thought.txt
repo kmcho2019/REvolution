@@ -1,0 +1,19 @@
+After carefully analyzing the waveform and the feedback, here's the improved approach:
+
+1. Key Observations:
+   - p should only update at rising clock edges when q is 0
+   - q becomes 1 only after p has been 1 at a rising edge
+   - q resets to 0 when a is high during a low clock phase (asynchronous reset)
+   - p maintains its value until next rising edge when q is 1
+
+2. Improvements:
+   - Proper sequencing of q update - it should only change after seeing p=1 at a clock edge
+   - Clear separation of synchronous and asynchronous behaviors
+   - Correct handling of p output when q is 1 (should hold previous value)
+   - Proper initialization
+
+3. Implementation Strategy:
+   - Use two always blocks: one for synchronous behavior (posedge clock) and one for asynchronous reset (negedge clock)
+   - Track p and q as state variables
+   - Implement proper gating for p updates based on q state
+   - Ensure q only updates after seeing p=1 at a clock edge

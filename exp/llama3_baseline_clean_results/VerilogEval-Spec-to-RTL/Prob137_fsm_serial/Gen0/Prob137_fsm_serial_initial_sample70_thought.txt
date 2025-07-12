@@ -1,0 +1,7 @@
+To implement the finite state machine (FSM) that identifies bytes in a serial communication protocol, we will define states for each step of the process: idle, start bit detection, data bits reception, and stop bit verification. The FSM will start in the idle state, waiting for the start bit. Once the start bit is detected, it transitions to the state where it receives the data bits. After all 8 data bits are received, it checks for the stop bit. If the stop bit is correct, the FSM signals that a byte has been received by asserting the 'done' signal and then returns to the idle state, waiting for the next start bit. If the stop bit is not correct, it waits until a stop bit is detected before returning to the idle state.
+
+The FSM will be implemented using a Moore machine approach, where the output is a function of the current state. We will use an enumeration to define the states for clarity and maintainability. The 'done' signal will be asserted during the state transition from stop bit verification to idle when the stop bit is correct. The 'in' input signal will be sampled at each clock edge to determine the current bit value.
+
+Given that the serial protocol sends the least significant bit first, we will accumulate the data bits in the order they are received, ensuring that the final byte is correctly composed from the received bits.
+
+Additionally, we will include an active-high synchronous reset to ensure the FSM resets to the idle state and clears any internal state when the 'reset' input is high.

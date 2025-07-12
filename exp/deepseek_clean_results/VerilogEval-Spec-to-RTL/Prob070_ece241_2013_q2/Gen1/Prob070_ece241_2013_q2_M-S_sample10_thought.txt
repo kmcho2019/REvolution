@@ -1,0 +1,14 @@
+To simplify the implementation while maintaining correct functionality:
+
+1. For out_sop (Sum-of-Products):
+   - Only need to OR the minterms where output is 1 (2,7,15)
+   - 2: a=0,b=0,c=1,d=0 (0010)
+   - 7: a=0,b=1,c=1,d=1 (0111)
+   - 15: a=1,b=1,c=1,d=1 (1111)
+   - Simplified SOP: (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+2. For out_pos (Product-of-Sums):
+   - Can be derived by complementing the SOP of the inverse function
+   - But simpler to implement directly as the AND of maxterms where output is 0
+   - After analysis, the minimal POS is actually equivalent to the SOP in this case
+   - So we can use the same implementation for both outputs

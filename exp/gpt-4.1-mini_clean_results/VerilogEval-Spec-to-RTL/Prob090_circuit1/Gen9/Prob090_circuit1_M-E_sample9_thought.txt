@@ -1,0 +1,7 @@
+The observed output corresponds to the logical AND of inputs a and b: q is high only when both a and b are 1. To implement this combinational logic differently from direct AND gates or NAND-based gates, I propose using a simple multiplexer-based architecture. 
+
+The idea is to use input 'a' as the select signal of a 2-to-1 MUX, and input 'b' as the data input selected when a=1. If a=0, the output q is forced to 0; if a=1, q follows b. This is logically equivalent to q = a & b, but structurally distinct.
+
+This approach illustrates an alternative structural implementation using a mux primitive, which may be beneficial in some design contexts, such as easily replacing logic or fitting mux-based synthesis cells. It also makes explicit the role of one input as an enabling signal controlling the propagation of the other.
+
+No behavioral assign statement is used; the module is purely structural with a primitive mux. This gives a fresh perspective on AND implementation.

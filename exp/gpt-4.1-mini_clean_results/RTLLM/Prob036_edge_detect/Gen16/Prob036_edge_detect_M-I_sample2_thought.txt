@@ -1,0 +1,13 @@
+The original solution is already minimal and efficient, using a single registered version of the input and simple combinational logic for edge detection. To optimize for PPA without altering functionality, the main improvement is switching from an asynchronous active-low reset to a synchronous active-low reset. 
+
+Reasons and benefits for synchronous reset:
+- Synchronous resets typically lead to better timing closure due to simpler clock tree and data path.
+- Easier power gating as the reset signal does not need to toggle asynchronously.
+- Slight reduction in area and power as the asynchronous reset flip-flop cells tend to be larger and more power-consuming.
+- Simplifies timing analysis.
+
+The functionality remains identical: on the clock edge, the delayed signal is updated or reset synchronously; the edges are detected combinationally exactly as before, generating one clock pulse for rise and down signals. This improvement is usually favored in modern FPGA and ASIC design flows for cleaner timing and lower complexity.
+
+No change to the interface or output behavior is needed.
+
+Additionally, include comments explicitly describing synchronous reset behavior for clarity.

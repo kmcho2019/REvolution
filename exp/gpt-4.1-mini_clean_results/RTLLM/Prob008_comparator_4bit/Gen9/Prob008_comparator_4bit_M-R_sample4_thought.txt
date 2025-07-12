@@ -1,0 +1,11 @@
+Refactor the 4-bit comparator by using continuous assignments and intermediate wires to explicitly compute the subtraction result (A - B) and borrow bits using a ripple-borrow style chain. Instead of directly computing borrow generate and propagate signals separately, implement the borrow chain as sequential borrow bits using logic derived from A, B, and previous borrow. Then derive the outputs from the borrow out and equality of inputs.
+
+This approach explicitly models each borrow bit as in a ripple borrow subtractor without using generate/propagate logic. Equality is still computed with a reduction XNOR to check if A == B. The final borrow out indicates if A < B.
+
+This style uses only continuous assignments (no procedural blocks), expresses the borrow bits stepwise for clarity, and keeps outputs mutually exclusive:
+
+- A_less: borrow from MSB is high (A < B)
+- A_equal: all bits equal (A == B)
+- A_greater: otherwise (A > B)
+
+This explicit ripple borrow chain may improve code readability by following the data flow of subtraction borrow bits in sequence.

@@ -1,0 +1,53 @@
+To optimize the module for better performance, power, and area (PPA), it's best to replace the explicit case statement with a minimized Boolean expression derived from the Karnaugh map. This reduces gate count, critical path delay, and switching activity.
+
+We start by interpreting the Karnaugh map, mapping inputs as previously established:
+
+- Row bits: x[3]x[4] = x[2]x[3] (Verilog bits)
+- Column bits: x[1]x[2] = x[0]x[1] (Verilog bits)
+
+Let:
+- r1 = x[2]
+- r0 = x[3]
+- c1 = x[0]
+- c0 = x[1]
+
+The Karnaugh map is:
+
+        c1c0
+    r1r0 00 01 11 10
+    00   d  0  d  d
+    01   0  d  1  0
+    11   1  1  d  d
+    10   1  1  0  d
+
+With don't-cares chosen for simplification, and following the Karnaugh map:
+
+- From the map and using the assigned 'd' values (typically 0 or whatever simplifies the logic best), we derive a minimized SOP form.
+
+Deriving the function using Karnaugh map simplification (or Boolean algebra):
+
+Minimized logic (expressed in terms of bits as per above mapping):
+
+f = r1' r0 c1 + r1 r0' + r1 r0 c0' + r1' r0' c0' c1'
+
+Mapping back:
+
+- r1 = x[2]
+- r0 = x[3]
+- c1 = x[0]
+- c0 = x[1]
+
+Hence:
+
+f = (~x[2] & x[3] & x[0]) 
+  | (x[2] & ~x[3]) 
+  | (x[2] & x[3] & ~x[1]) 
+  | (~x[2] & ~x[3] & ~x[1] & x[0])
+
+This expression is compact and easy to implement with basic gates, leading to better PPA than a full case statement.
+
+We implement f as a continuous assignment to a wire for simpler and efficient synthesis.
+
+This approach eliminates the need for a combinational always block, avoiding unnecessary registers and enabling synthesis tools to optimize better.
+
+Overall, this yields a cleaner, smaller, and faster implementation matching the Karnaugh map function.

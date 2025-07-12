@@ -1,0 +1,15 @@
+To fix the provided Verilog code, we need to address the issues mentioned in the feedback. Firstly, we need to correct the state table logic to ensure that the FSM transitions to the correct state when only 'r[2]' is high. This means that when the current state is 'A' (2'b00) and only 'r[2]' is high, the next state should be set to 'D' (2'b11).
+
+Secondly, we need to utilize state 'D' correctly. Since state 'D' is supposed to grant access to device 2, we should set 'g[2]' to 1 when the FSM is in state 'D'.
+
+We also need to ensure that the priority system is implemented correctly. Device 0 has the highest priority, followed by device 1, and then device 2. This means that if multiple devices are making requests, the FSM should grant access to the device with the highest priority.
+
+We will keep the same state codes as before:
+- State A: 2'b00
+- State B: 2'b01
+- State C: 2'b10
+- State D: 2'b11
+
+We will use a 2-bit signal 'state' to represent the current state of the FSM.
+
+By addressing these issues, we can ensure that the FSM behaves as expected and grants access to the correct device based on the priority system.

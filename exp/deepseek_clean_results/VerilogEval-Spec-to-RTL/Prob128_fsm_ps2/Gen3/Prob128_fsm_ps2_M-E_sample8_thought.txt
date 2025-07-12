@@ -1,0 +1,8 @@
+Instead of using a counter, we can implement this as a pattern recognizer using a shift register:
+1. Maintain a 24-bit shift register (3 bytes) that stores the last 3 received bytes
+2. On each clock, shift in the new byte and check if the oldest byte (now at bits[23:16]) has in[3]=1
+3. If the oldest byte has in[3]=1, then we've just shifted out a complete 3-byte message
+4. Assert 'done' when we detect this condition
+5. Reset clears the shift register
+
+This approach is more parallel and can potentially detect message boundaries faster, though it uses more registers. It also has the advantage of being able to detect message boundaries even if we start receiving in the middle of a message stream.

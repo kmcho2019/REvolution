@@ -1,0 +1,21 @@
+Implement the 256-to-1 mux using a binary tree of 2-to-1 multiplexers to minimize fan-in and allow a very regular, scalable structure.
+
+Architecture:
+- We use a 8-level deep binary mux tree (since 2^8=256).
+- At each level, the number of muxes is halved compared to the previous level.
+- Each 2-to-1 mux selects one of two inputs based on one bit of the selection signal (sel).
+- Level 0: 128 2-to-1 muxes select between pairs of bits from `in` using sel[0].
+- Level 1: 64 2-to-1 muxes select among level 0 outputs using sel[1].
+- ...
+- Level 7: 1 2-to-1 mux selects among the two outputs of level 6 using sel[7].
+
+Advantages:
+- Very simple 2-to-1 mux building blocks with minimal fan-in.
+- Very regular structure amenable to efficient synthesis and routing.
+- Each mux only depends on one bit of the select line simplifying timing.
+- The longest path traverses 8 mux levels, but each mux has only a single bit select and two inputs.
+- Can be implemented purely combinationally.
+
+The code uses generate loops to instantiate each level of the mux tree, connecting the outputs accordingly.
+
+This approach differs fundamentally from the previous 4-to-1 mux tree by focusing on binary decisions per mux, simplifying logic and control signals.

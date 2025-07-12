@@ -1,0 +1,10 @@
+To simplify the design while maintaining functionality:
+
+- Remove the 64-bit block partitioning and implement the 512-bit state as a single vector register.
+- Compute the next state vector using vector bitwise operations instead of per-bit generate loops:
+  next_state = (q << 1) ^ (q >> 1), with boundary bits padded with zero.
+- On load, load the entire 512-bit data vector directly.
+- On each clock edge (posedge clk), update q with data when load is high; otherwise update with next_state.
+- This approach drastically reduces code complexity and leverages synthesis tools' optimization of wide vector operations.
+- The boundary conditions (bits outside range) are assumed zero by shifting in zeros.
+- This single always block approach is clean, concise, and fully functional for Rule 90.

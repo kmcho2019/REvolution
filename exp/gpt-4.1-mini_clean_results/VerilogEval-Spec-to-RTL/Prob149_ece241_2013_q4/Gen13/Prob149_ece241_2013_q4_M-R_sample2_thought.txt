@@ -1,0 +1,9 @@
+Refactor the design by separating the water level decoding into a pure combinational function using case statements to explicitly map sensor inputs to water levels according to the problem specification.
+
+Use a single always_ff block triggered on the clock to store the previous sensor state and previous water level only when sensors change. Use a separate always_comb block (or continuous assign) to generate nominal flow rate outputs and the dfr output based on the stored levels.
+
+Implement reset synchronously by initializing prev_s and prev_level to the "below s[0]" state, which corresponds to no sensors asserted and all flow valves open.
+
+This structure improves clarity by cleanly separating combinational decoding and registered state, explicitly mapping sensor inputs to water level states, and clarifying output assignments. It also removes the fallback heuristics and uses clear case patterns matching exactly the problem's sensor assertion states.
+
+Finally, outputs (fr2, fr1, fr0, dfr) are assigned combinationally from registered water levels, ensuring stable and predictable behavior synchronized with clk and reset.

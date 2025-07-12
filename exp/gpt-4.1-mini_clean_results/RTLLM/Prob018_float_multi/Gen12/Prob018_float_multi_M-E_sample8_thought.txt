@@ -1,0 +1,23 @@
+We will implement a non-pipelined, combinationally-driven floating-point multiplier that completes the entire IEEE-754 single-precision multiplication in one clock cycle but uses a FSM to handle sequencing and manage special cases distinctly. The approach involves:
+
+1. **FSM Control:**
+   - Use a 3-bit counter to step through stages inside the same clock domain.
+   - At each cycle, extract, process, multiply, normalize, round, and output sequentially.
+
+2. **Simplification:**
+   - Perform special cases checks explicitly before multiplication.
+   - Use a 48-bit product register (24x24 multiplication) but perform multiplication only once at counter=1.
+   - Maintain separate registers for mantissas, exponents, signs, and control bits updated each cycle.
+
+3. **Normalization & Rounding:**
+   - Normalize the product mantissa based on the leading bits.
+   - Extract guard, round, and sticky bits for rounding at the proper step.
+   - Implement round-to-nearest-even rounding.
+
+4. **Output Handling:**
+   - Generate the final IEEE 754 result after rounding.
+   - Handle overflow (set to inf), underflow (set zero), NaNs and zeros correctly.
+
+This approach trades off latency (multi-cycle latency) for simpler combinational blocks, easing timing closure and reducing peak power and area usage compared to a fully combinational single-cycle design. The small state machine and sequential operations also simplify sticky bit generation and rounding control.
+
+The internal signals correspond to the requirements and state machine stages that process multiplication step by step within the module, synchronized by clk and reset.

@@ -1,0 +1,16 @@
+I will implement a simpler state machine with four states to handle the functionality:
+
+- SEARCH: shift in data bits to detect the pattern 1101.
+- LOAD_DELAY: shift in 4 bits of delay (MSB first).
+- COUNT: count (delay + 1) * 1000 cycles using a micro_counter (0 to 999) and a remaining_steps counter (delay down to 0). Output count shows remaining delay step.
+- DONE: assert done, wait for ack before returning to SEARCH.
+
+The synchronous reset clears all registers and returns to SEARCH.
+
+Counting logic:
+- At COUNT state entry, load remaining_steps = delay + 1.
+- For each 1000 cycles (micro_counter from 0 to 999), keep count output stable at the current remaining_steps - 1.
+- Decrement remaining_steps after each 1000 cycle period.
+- When remaining_steps reaches 0 and micro_counter finishes, transition to DONE.
+
+This approach keeps data shifts and counting straightforward without extra duplicate registers or complicated transition flags.

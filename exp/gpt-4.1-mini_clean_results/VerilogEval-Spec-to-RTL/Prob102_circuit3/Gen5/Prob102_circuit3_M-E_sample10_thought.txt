@@ -1,0 +1,15 @@
+Analyze the truth table: q is 1 whenever at least one of the inputs a or b is 1 AND at least one of the inputs c or d is 1; otherwise q is 0.
+
+A novel way to implement this logic is to use NAND and NOR gates with De Morgan's laws. For example, q can be expressed as:
+
+q = ~( (~(a|b)) | (~(c|d)) )
+
+We can build this using two NOR gates and one NAND gate:
+
+- p = ~(a|b) (NOR gate)
+- r = ~(c|d) (NOR gate)
+- q = ~(p | r) (NAND gate)
+
+This approach uses only NOR and NAND gates, which can be beneficial if the target technology has fast or low-power NOR and NAND primitives. It also structurally differs from the straightforward OR-AND style, providing a different architectural perspective.
+
+We'll implement this using continuous assignments and the bitwise operators ~, |, &.

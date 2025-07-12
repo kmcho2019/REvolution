@@ -1,0 +1,11 @@
+The main challenge is the undefined initial state of the flip-flop output 'out' because there is no reset, causing simulation and synthesis mismatches. Since adding reset is disallowed, we cannot fix hardware initialization, but we can modify the design to make synthesis tools handle it better and avoid simulation-synthesis mismatches.
+
+One effective approach is to avoid using the flip-flop output 'out' directly as input to the combinational XOR, because this feedback through the flip-flop output inside the same always block can lead to confusion or inference issues in some synthesis tools.
+
+Instead, we use a separate reg to hold the current state and compute the next state in combinational logic, then update the state at the clock edge. This clarifies the data flow for synthesis and simulation, improving compatibility.
+
+No initial block is used because it doesn't affect synthesis and can cause mismatches.
+
+This structure is standard for state machines and latches clarity and synthesis reliability without impacting PPA (performance, power, area).
+
+The module interface and functional behavior remain unchanged.

@@ -1,0 +1,18 @@
+Implement a simple sequential 8-bit Radix-4 Booth multiplier following the given instructions, but reduce complexity by:
+
+1. Using a single 16-bit product register that concatenates the multiplier and an appended zero bit (multiplier extended to 9 bits) and a 16-bit accumulator.
+
+2. Using a 5-bit counter to iterate 8 times (processing 2 bits per cycle) for full 8-bit multiplier.
+
+3. For each cycle:
+   - Extract 3 bits from the product register for Radix-4 Booth recoding.
+   - Based on Booth encoding, add/subtract 0, M, or 2M to the upper 16 bits of the product register.
+   - Arithmetic right shift the product register by 2 bits for next step.
+
+4. On reset:
+   - Sign-extend multiplicand and multiplier inputs as required.
+   - Initialize product register to {0, multiplier, 0} (zero extended upper bits, multiplier and appended zero).
+
+5. After all iterations, output the lower 16 bits of the product register as the final product and assert ready.
+
+This design avoids a state machine for simplicity and follows the Booth algorithm directly.

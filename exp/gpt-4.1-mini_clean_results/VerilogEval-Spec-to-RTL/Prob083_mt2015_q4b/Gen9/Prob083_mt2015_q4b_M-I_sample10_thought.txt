@@ -1,0 +1,3 @@
+The current solution uses the sum-of-products form for XNOR, which is functionally correct and synthesizable. However, using the Verilog built-in XNOR operator (`~^`) directly expresses the intent more clearly, and synthesis tools generally map it to an optimized XOR/XNOR gate primitive. This typically results in slightly better power and area metrics since the synthesis tool can recognize and implement a single XOR/XNOR gate rather than decomposing into multiple gates.
+
+Hence, to improve power and area without affecting performance, replace the `(x & y) | (~x & ~y)` expression with the `~(x ^ y)` operator, maintaining a fully combinational assignment. Add a concise comment clarifying the logic for readability.

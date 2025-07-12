@@ -1,0 +1,8 @@
+The problem can be solved using a finite state machine with several states: 
+IDLE (initial state), PATTERN_DETECT (detecting the pattern 1101), 
+SHIFT (shifting in 4 more bits), COUNT (waiting for the counters to finish), 
+DONE (notifying the user and waiting for acknowledgement). 
+The state machine starts in IDLE and transitions to PATTERN_DETECT when the pattern is detected. 
+In PATTERN_DETECT, it asserts shift_ena for 4 clock cycles, then transitions to COUNT. 
+In COUNT, it waits for done_counting to be high, then transitions to DONE. 
+In DONE, it asserts done and waits for ack to be high, then transitions back to IDLE.

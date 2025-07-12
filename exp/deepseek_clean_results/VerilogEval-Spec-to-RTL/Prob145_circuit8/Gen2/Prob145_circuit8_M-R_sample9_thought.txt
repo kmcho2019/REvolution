@@ -1,0 +1,13 @@
+The waveform analysis reveals a simpler behavior than initially thought:
+1. Output p is high only when both clock and input a are high (p = clock & a)
+2. Output q captures p's value on the negative edge of clock (q becomes what p was during the previous high phase)
+
+This can be implemented more directly:
+- Use combinational logic for p (AND of clock and a)
+- Use a flip-flop for q that samples p on negative clock edges
+- Remove the state machine as it's unnecessary for this behavior
+
+This approach is simpler and matches the waveform exactly:
+- p is purely combinational (clock AND a)
+- q is sequential, capturing p's value at clock falling edges
+- No need for explicit state tracking

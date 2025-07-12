@@ -1,0 +1,11 @@
+Refactor the design to use explicit state registers to represent p and q, and implement the sequential updates as a state machine. Instead of relying on non-blocking assignments within an always block, use a synchronous always block to update a two-bit state register. Then, drive outputs p and q from the state bits. This clarifies the sequential logic and cleanly separates state updates and outputs.
+
+Specifically:
+- Combine p and q into a 2-bit state register `state`.
+- On each posedge clock, update `state` according to the same logic:
+  - next_q = current p
+  - next_p = a | (p & q)
+- Assign outputs p and q from `state`.
+- Initialize the state to 0 to avoid 'x' at start.
+  
+This refactoring maintains the original logic and timing but uses clearer state encoding and output assignment, improving readability and ease of verification.

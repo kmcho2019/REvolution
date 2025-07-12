@@ -1,0 +1,25 @@
+The improved design addresses both the synthesis issue and optimizes for better PPA (Power, Performance, Area) with these key enhancements:
+
+1. Parameter Accessibility Fix:
+   - Make 'size' parameter accessible through proper hierarchical instantiation
+   - Ensure testbench can properly reference the parameter
+
+2. Pipeline Optimization:
+   - Distribute additions across pipeline stages to reduce critical path
+   - Stage 1: pp[0] + pp[1]
+   - Stage 2: (intermediate sum) + pp[2] + pp[3]
+   - Final stage: output register
+
+3. Power Optimization:
+   - Add clock gating for partial product generation
+   - Only generate active partial products when multiplier bit is high
+
+4. Area Optimization:
+   - Remove unnecessary full-width registers
+   - Use sequential accumulation approach
+   - Share adders between pipeline stages
+
+5. Code Structure:
+   - Better signal naming for clarity
+   - Group related operations
+   - Add detailed comments

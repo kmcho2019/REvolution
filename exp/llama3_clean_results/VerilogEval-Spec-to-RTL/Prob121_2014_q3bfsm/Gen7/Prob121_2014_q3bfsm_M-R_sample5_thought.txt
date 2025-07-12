@@ -1,0 +1,11 @@
+To refactor the provided Verilog code, we can leverage a more streamlined approach to implement the finite-state machine (FSM) and output logic. The primary objective is to maintain the same functionality while simplifying the structure and potentially improving the PPA metrics.
+
+One significant refactoring strategy is to eliminate the use of separate modules for the next state logic and output logic, instead incorporating these directly into the main module. This approach can simplify the design and potentially reduce area usage by minimizing module overhead.
+
+Another optimization involves re-examining the clock gating logic. The original implementation disables the clock when the state doesn't change, which can reduce power consumption. However, this might introduce additional complexity and timing considerations. A simpler approach could involve directly enabling the clock without conditional gating, as the state machine's transitions and stable states are well-defined.
+
+For the state machine itself, maintaining the current state encoding (one-hot or binary) is essential for simplicity and to avoid unnecessary complexity in the next state and output logic.
+
+Lastly, utilizing `assign` statements for combinational logic where possible can improve readability and potentially simplify the synthesis process, as these are more straightforward for tools to optimize.
+
+The refactored code aims to maintain the same functionality while embracing a more streamlined and potentially more efficient structure.

@@ -1,0 +1,10 @@
+Implement a simple register-based solution without FSM states to store the first valid 8-bit data. On each clock cycle, if valid_in is asserted and the stored flag indicates this is the second byte, concatenate the stored first byte with the new byte and update output registers. The valid_out and data_out signals are registered and asserted one cycle after receiving the second valid input, thus ensuring the required timing.
+
+Key points:
+- Use a flag to remember whether the first byte has been stored.
+- Store the first byte on the first valid input.
+- On the next valid input, concatenate stored byte (high bits) and new byte (low bits).
+- Register the output data and valid signal so they appear one clock cycle after the second byte is received.
+- Clear registers on reset.
+- Simple combinational and sequential logic only, no FSM or SystemVerilog constructs.
+This reduces complexity while fully meeting the timing and functional requirements.

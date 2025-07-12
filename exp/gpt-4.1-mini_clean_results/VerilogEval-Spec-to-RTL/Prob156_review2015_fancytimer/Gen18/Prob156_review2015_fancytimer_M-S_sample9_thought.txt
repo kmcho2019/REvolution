@@ -1,0 +1,25 @@
+I will implement a straightforward FSM with four states: SEARCH, LOAD_DELAY, COUNT, and WAIT_ACK. Key ideas:
+
+1. **Pattern detection (1101) MSB-first:**
+   Use a 4-bit shift register updated every clock in SEARCH state by shifting left and inserting new data bit at LSB. When it matches 4'b1101, go to LOAD_DELAY.
+
+2. **Load delay bits (4 bits) MSB-first:**
+   Shift in each bit like the pattern detection, count loaded bits. Once 4 bits loaded, store as delay.
+
+3. **Counting timer:**
+   Count (delay+1)*1000 clock cycles.  
+   Implement a 10-bit cycle counter (0 to 999) and a 4-bit tick counter counting down from delay to 0.  
+   Output `count` shows current tick value stable for 1000 cycles, from delay down to 0.
+
+4. **Ignore data input after loading delay until done.**
+
+5. **Signal outputs:**
+   - counting asserted only during COUNT state.  
+   - done asserted only during WAIT_ACK state.  
+   - count output valid only during COUNT state, don't-care otherwise.
+
+6. **Synchronous reset initializes the FSM to SEARCH and clears all counters.**
+
+This approach has a single always block controlling all registers and counters, avoiding multiple drivers and simplifying reset and state transitions. Data input is used only in SEARCH and LOAD_DELAY states; ignored otherwise to prevent false pattern matches.
+
+This clean and simple FSM matches requirements and is easier to understand and verify.

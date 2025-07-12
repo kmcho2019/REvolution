@@ -1,0 +1,9 @@
+The current implementation is already quite optimized, but we can simplify it further by leveraging the one-hot encoding properties more effectively:
+
+1. For next_state[0] (A): Only transitions from A or C when in=0, which can be expressed as (~in & (state[0] | state[2]))
+2. For next_state[1] (B): Only transitions from A, B, or D when in=1. Since it's one-hot, we can simplify to (in & (state[0] | state[1] | state[3]))
+3. For next_state[2] (C): Only transitions from B or D when in=0, which is (~in & (state[1] | state[3]))
+4. For next_state[3] (D): Only transitions from C when in=1, which is (in & state[2])
+5. Output is simply state[3] since D is the only state with output=1
+
+The simplification comes from recognizing that in one-hot encoding, only one state bit is active at a time, allowing us to write more direct expressions.

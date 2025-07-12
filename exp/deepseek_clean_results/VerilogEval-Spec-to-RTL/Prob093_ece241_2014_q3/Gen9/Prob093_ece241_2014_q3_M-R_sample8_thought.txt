@@ -1,0 +1,18 @@
+1. For mux_in[0] (ab=00):
+   - Output 0 when cd=00, else 1
+   - This can be implemented as OR of c and d (c | d) since we want 0 only when both are 0
+
+2. For mux_in[1] (ab=01):
+   - Always 0 as per K-map
+   - Direct assignment to 0
+
+3. For mux_in[2] (ab=11):
+   - Output matches c exactly (1 when c=1, 0 when c=0)
+   - Direct assignment to c
+
+4. For mux_in[3] (ab=10):
+   - Output 0 only when cd=01 (c=0,d=1)
+   - This is equivalent to ~(~c & d) which simplifies to c | ~d
+   - Alternatively, we can think of it as output 1 unless we have c=0 and d=1
+
+The implementation will use simple assign statements to create these logical relationships directly from the inputs c and d.

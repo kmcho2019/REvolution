@@ -1,0 +1,17 @@
+To implement this module, we need a finite state machine (FSM) with three states:
+1. IDLE: Waiting for the first byte with in[3]=1
+2. BYTE2: First byte received, waiting for second byte
+3. BYTE3: Second byte received, waiting for third byte
+
+The FSM transitions:
+- From IDLE to BYTE2 when in[3]=1
+- From BYTE2 to BYTE3 unconditionally on next byte
+- From BYTE3 back to IDLE unconditionally on next byte (and assert done)
+
+We'll need:
+- A 3-state FSM with state register
+- A shift register to store the 3-byte message
+- A counter to track which byte we're receiving
+- Output logic for done and out_bytes
+
+The out_bytes should be valid when done is asserted, which happens in the cycle after the third byte is received.

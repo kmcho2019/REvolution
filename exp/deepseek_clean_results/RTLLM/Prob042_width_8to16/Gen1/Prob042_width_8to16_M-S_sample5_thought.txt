@@ -1,0 +1,8 @@
+The original solution uses a flag (has_first_byte) to track state, but we can simplify this by directly using the data_lock register as state indicator. If data_lock is non-zero, it means we have the first byte. This eliminates the need for a separate flag register while maintaining the same functionality. Here's the simplified approach:
+1. Use data_lock to store first byte and as implicit state indicator
+2. When valid_in arrives:
+   - If data_lock is empty (0), store input byte
+   - Else, concatenate with stored byte and output
+3. Clear data_lock after output generation
+4. Maintain same reset behavior
+This reduces register usage while keeping the same functionality.

@@ -1,0 +1,9 @@
+To implement the required finite state machine with the fewest states possible, we can utilize a combination of states and counters. 
+The FSM has an initial state (A) where it waits for 's' to become 1. Once 's' is 1, it transitions to state B, where it starts counting the number of clock cycles where 'w' is 1 over the next three cycles. 
+If exactly two of these cycles have 'w' as 1, then in the following cycle, 'z' is set to 1; otherwise, 'z' is 0. 
+This can be achieved with a minimal number of states by using a counter to keep track of the cycles and the count of 'w' being 1, rather than having a separate state for each cycle.
+We'll use a 2-bit counter to track the number of cycles and a 2-bit counter to track the number of times 'w' is 1. 
+When 's' is 1, the FSM moves to the counting phase (state B), and after three cycles, it determines 'z' based on the count of 'w'.
+Given that we need to check 'w' over the next three clock cycles after 's' becomes 1, we'll use a simple counter to keep track of these cycles and another to count 'w'. 
+Since 's' is only considered in state A, once we move to state B, we only consider 'w'. 
+Upon reset, the FSM resets to state A.

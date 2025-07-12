@@ -1,0 +1,5 @@
+The existing solution uses individual XORs followed by an OR and a negation to detect equality. While this is minimal, a slightly more compact and potentially more area- and power-efficient implementation is to leverage the built-in vector XOR operator and reduction OR operator together: (A ^ B) produces a vector of bitwise XORs, and then reduction OR '|' aggregates the XOR bits to detect any difference. Negating this result yields the equality check.
+
+This approach reduces explicit intermediate wires and gates by combining operations in one expression, which may simplify synthesis and reduce wiring overhead. The critical path logic remains essentially the same, but the code is more concise and potentially leads to better PPA metrics due to less interconnect and gate duplication.
+
+Thus, improvement strategy: replace explicit per-bit XOR and OR wires with a single expression: z = ~(|(A ^ B)).

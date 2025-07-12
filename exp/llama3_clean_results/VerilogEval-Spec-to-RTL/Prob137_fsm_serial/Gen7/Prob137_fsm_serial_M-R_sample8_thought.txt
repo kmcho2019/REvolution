@@ -1,0 +1,13 @@
+To refactor the existing code, we will consider optimizing the state machine encoding to reduce the combinational logic depth, minimize unnecessary updates to the shift register, and optimize the design for better area efficiency.
+
+We will use a 2-state FSM: IDLE and RECEIVE. The IDLE state will wait for the start bit, and the RECEIVE state will collect the incoming bits.
+
+The shift register will be used to collect the start bit, 8 data bits, and the stop bit will be checked separately. This approach simplifies the logic and reduces the number of states required.
+
+To optimize the design for better PPA, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.
+
+We will also optimize the logic for resetting the done signal to avoid any potential synchronization issues and reduce unnecessary switching activity.
+
+The main difference in this refactored code will be the use of a 2-state FSM instead of a 3-state FSM. The WAIT_STOP state will be removed, and the logic for waiting for a stop bit will be incorporated into the IDLE state.
+
+The new code will also use a single always block to handle all the logic, reducing the size of the shift register and implementing a more efficient state machine encoding.

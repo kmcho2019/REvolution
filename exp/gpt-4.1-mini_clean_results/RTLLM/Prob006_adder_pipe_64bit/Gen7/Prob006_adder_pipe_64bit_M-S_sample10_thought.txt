@@ -1,0 +1,15 @@
+To simplify the pipelined 64-bit ripple carry adder while maintaining correct functionality:
+
+- Use 64 pipeline stages, one per bit, to strictly follow the ripple carry behavior, propagating the carry bit by bit per clock cycle.
+- Register each bit of inputs and carry at each stage.
+- Maintain pipeline registers for `adda`, `addb`, and carry-in per stage.
+- Calculate sum bit and carry-out for each stage in the clocked process.
+- Register the output sum bits and propagate carry to the next stage in the next cycle.
+- Register and propagate the enable signal through a shift register to generate `o_en`.
+- After 64 cycles from input enable, the full 65-bit sum and `o_en` will be valid.
+- This design trades latency (64 cycles) for simple and correct ripple carry pipelining with minimal logic per stage.
+- Use a single always block synchronous to `clk` and `rst_n` to update pipeline registers.
+- The final result is concatenated from sum bits and the last carry.
+- Reset all pipeline registers on reset.
+
+This approach eliminates slice-based vector registers and array-of-registers complexities. It uses straightforward per-bit pipelining with clear carry propagation matching ripple carry addition fundamentals.

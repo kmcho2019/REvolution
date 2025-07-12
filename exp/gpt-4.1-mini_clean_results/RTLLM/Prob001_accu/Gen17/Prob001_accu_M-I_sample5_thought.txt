@@ -1,0 +1,5 @@
+To further optimize power and performance, introduce an explicit enable signal for accumulator and count registers to prevent unnecessary toggling when valid_in is low. Also, implement the accumulator as a 4-stage adder tree pipelined over four clock cycles to reduce critical path length, enabling higher clock frequencies. This approach spreads addition operations, reducing combinational delay per cycle, thus improving timing (lower WNS).
+
+Additionally, replace the counter with a 2-bit state machine indicating accumulation phase and output phase, which reduces glitching and improves clarity. Maintain the valid_out as a one-cycle pulse triggered only on completion of four inputs. The accumulator width remains at 10 bits to safely store sums.
+
+These changes slightly increase latency (four cycles per output) but significantly reduce the critical path and switching in accumulator registers, improving both performance and power. Overall, the design balances power saving, timing improvement, and clean control logic with minimal area impact.

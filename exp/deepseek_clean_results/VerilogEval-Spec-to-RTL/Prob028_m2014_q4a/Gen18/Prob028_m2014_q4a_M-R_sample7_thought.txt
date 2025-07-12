@@ -1,0 +1,12 @@
+To refactor the D latch implementation while maintaining the same functionality, I'll switch from using a continuous assignment to an always block. The key considerations are:
+
+1. Maintain identical behavior: q follows d when ena is high, holds value when ena is low
+2. Use an always_latch block (SystemVerilog) for better semantic clarity
+3. Explicitly handle all cases to avoid unintended latches
+4. Keep the interface identical (same ports and directions)
+
+The always_latch block is more appropriate here because:
+- It clearly documents the designer's intent to create a latch
+- Synthesis tools can better optimize latch implementations
+- It helps catch unintended latches during compilation
+- May lead to better power optimization as the evaluation only occurs when inputs change

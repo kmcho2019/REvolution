@@ -1,0 +1,10 @@
+Fuse the two examples by:
+- Using an internal 4-bit counter counting 0 to 9 for simpler wrap detection and arithmetic.
+- On synchronous reset, set count to 0, corresponding to output q=1.
+- On reaching count==9, wrap to 0 to get counts 0 to 9 internally.
+- Assign output q as count+1, ensuring a 1 to 10 count sequence, like Example 1.
+- Register the output q inside the clocked always block to reduce combinational delay and switching at output.
+- Avoid combinational always block; this folds logic, reduces critical path, and enhances timing.
+- Keep simple comparator (count == 9) for wrap detection, which synthesis tools optimize well.
+- Use non-blocking assignments consistently for reliable synchronous design.
+- This fusion yields the clarity and efficiency of Example 1 with the output registered for performance benefits hinted in feedback, improving timing and power without increasing area.

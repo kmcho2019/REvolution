@@ -1,0 +1,18 @@
+Fuse the two examples by combining clear separation of combinational and sequential logic (from Example 1) with simple synchronous reset and saturation logic (from Example 2). The fusion strategy is:
+
+- Use a registered accumulator `acc` as a 32-bit register.
+- Compute the full 64-bit product combinationally.
+- Accumulate only the lower 32 bits of the product (since outputs and accumulator are 32-bit).
+- Use a separate combinational block to calculate the next accumulator value with saturation logic on overflow (like Example 1).
+- Implement synchronous reset on the rising clock edge only (avoid async reset for better timing closure).
+- Drive the output `c` directly from the accumulator register `acc` to avoid unnecessary combinational logic on output.
+- Use non-blocking assignments in sequential logic.
+- This approach keeps the data path clean, modular, and synthesizable with clear timing, saturation protection, and minimal output logic.
+- The design targets unsigned 32-bit operands and saturates on addition overflow, preventing wrap-around.
+- This fusion improves clarity, maintainability, and synthesis friendliness over both examples.
+
+The resulting design has:
+- Combinational multiplier and saturation logic separated from sequential accumulator register.
+- Synchronous reset.
+- Registered output `c`.
+- Straightforward saturation on overflow.

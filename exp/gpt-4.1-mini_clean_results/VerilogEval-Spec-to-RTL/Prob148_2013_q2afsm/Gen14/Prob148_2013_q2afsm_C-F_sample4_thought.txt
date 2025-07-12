@@ -1,0 +1,11 @@
+Combine the clarity and area/power efficiency of the 2-bit binary-encoded FSM (Example 1) with the clean output logic style of the one-hot encoded FSM (Example 2). 
+
+Strategy:
+- Use a 2-bit state encoding (A=00, B=01, C=10, D=11) for minimal flip-flops, improving area and power.
+- Keep the synchronous active-low reset and explicit next-state combinational logic with priority checks from Example 1 to ensure correct prioritization and maintain timing.
+- For output logic, rather than case statement, define outputs `g` by decoding the state bits directly with simple combinational expressions. This blends the directness of Example 2's output and the compactness of Example 1's FSM.
+- Use separate always blocks for state register and next-state logic, and a combinational always block for output logic, following best RTL style.
+- Maintain non-blocking assignments in sequential blocks and blocking assignments in combinational logic.
+- This fusion yields a minimal-state FSM with clear prioritization and straightforward output, enhancing maintainability and area while preserving correct behavior and timing.
+
+Overall, this design provides a concise, efficient, and readable FSM implementation with balanced PPA characteristics.

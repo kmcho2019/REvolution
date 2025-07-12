@@ -1,0 +1,21 @@
+To fix the issues:
+
+1. **Pattern Detection and Delay Loading MSB-First:**  
+   Shift registers must load new bits at the MSB position, shifting existing bits right. So update with `pattern_shift <= {data, pattern_shift[3:1]};` and similarly for `delay_reg`. This ensures that the first bit received goes to the MSB, matching the problem specification.
+
+2. **Delay Counting Duration:**  
+   The count duration is `(delay + 1)*1000` cycles. Initialize the tick_counter to `delay_reg + 1` so that counting includes the extra 1000 cycles.
+
+3. **Stable 'count' Output:**  
+   The 'count' output should hold the current tick_counter value for the entire 1000-cycle interval before decrementing. To avoid glitches, update `count` only when cycle_counter is zero, so count reflects the current tick for full 1000 cycles.
+
+4. **Cycle and Tick Counters Interaction:**  
+   The cycle_counter counts from 0 to 999 repeatedly. When cycle_counter reaches 999 (end of a 1000-cycle tick), decrement tick_counter if it's not zero. When tick_counter reaches zero and the last 1000-cycle interval is finished (cycle_counter == 999), the timer is done.
+
+5. **State Transition and Resets:**  
+   Reset pattern_shift and delay_reg at the start of SEARCH to prevent stale data. On reset or entering SEARCH state, clear all related registers.
+
+6. **Avoid Multiple Assignments to Same Registers:**  
+   Initialize tick_counter and cycle_counter in the counting state's sequential block when entering COUNTING to avoid race conditions and off-by-one errors.
+
+This corrected approach respects MSB-first loading, accurate counting with added 1 to delay, stable count output for entire 1000 cycles, and clean state machine transitions.

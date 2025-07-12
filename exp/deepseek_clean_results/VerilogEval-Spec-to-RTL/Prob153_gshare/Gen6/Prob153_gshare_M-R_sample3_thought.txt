@@ -1,0 +1,12 @@
+The key issues in the original implementation stem from timing and priority handling between prediction and training operations. To improve this, I'll restructure the design with these changes:
+
+1. **Separate State and Logic**: Use explicit registers for PHT and GHR, with clear update logic
+2. **Strict Priority Handling**: Implement a priority encoder that gives training operations precedence over predictions
+3. **Explicit Next-State Logic**: Calculate next GHR value in a dedicated combinational block
+4. **Clean Reset Initialization**: Initialize all state synchronously on reset
+
+The main improvements are:
+- Clear separation between current state and next-state calculations
+- Explicit priority handling for concurrent operations
+- More maintainable state update logic
+- Better timing control for PHT updates

@@ -1,0 +1,26 @@
+Novel Approach: Pipelined Pattern Detection with Dual-Counters
+
+1. **Parallel Pattern Detection**: Instead of a shift register, use a 4-stage pipeline to detect "1101" pattern in parallel, reducing detection latency.
+
+2. **Dual-Counter System**:
+   - Main counter (cycle_counter) counts up to 1000 cycles
+   - Delay counter (delay_counter) tracks remaining delay periods
+   - This separation simplifies timing control
+
+3. **Smart State Encoding**:
+   - Use one-hot encoding for states (IDLE, DETECTED, LOAD, COUNT, FINISH)
+   - More explicit state transitions
+
+4. **Early Capture Logic**:
+   - Begin capturing delay bits immediately after pattern detection
+   - Use a separate 4-bit capture register
+
+5. **Output Management**:
+   - Clear output control signals with dedicated logic
+   - Maintain count output only during active counting
+
+Key Innovations:
+- Pipeline pattern detection for faster response
+- Separate cycle and delay counters for precise timing
+- Explicit state machine with clear transitions
+- Optimized output signal generation

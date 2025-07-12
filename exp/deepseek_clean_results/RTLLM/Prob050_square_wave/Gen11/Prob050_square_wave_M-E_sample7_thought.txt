@@ -1,0 +1,13 @@
+Novel Architecture: Phase Accumulator DDS Approach
+1. Instead of a simple counter, use a phase accumulator that continuously adds the frequency control word
+2. The MSB of the accumulator naturally creates a square wave with precise frequency control
+3. Benefits:
+   - More precise frequency control (no quantization at freq boundaries)
+   - Smoother frequency transitions
+   - No need for explicit counter comparisons
+   - Easily scalable to higher resolutions
+4. Implementation:
+   - 16-bit accumulator for better frequency resolution
+   - Use top bit as square wave output
+   - Frequency control word calculated as (desired_freq * 2^16) / clk_freq
+   - Handle freq=0 case with synchronous clear

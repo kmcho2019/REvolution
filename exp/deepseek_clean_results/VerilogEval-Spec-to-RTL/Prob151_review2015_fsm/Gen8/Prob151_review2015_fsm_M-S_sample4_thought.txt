@@ -1,0 +1,13 @@
+Simplified approach:
+1. Use only 4 states (IDLE, SHIFT, COUNT, DONE) to cover all required operations
+2. Track pattern detection using a 4-bit shift register
+3. Count shifts using a simple 2-bit counter (since we need exactly 4 shifts)
+4. Make outputs directly dependent on current state
+5. Reset clears all state and returns to IDLE
+
+Key simplifications:
+- Remove redundant pattern checks - only check full pattern in IDLE state
+- Use simple counter for shift cycles instead of pattern bits
+- Clear state transitions with minimal conditions
+- Outputs are pure combinatorial functions of state
+- Reset properly initializes all state

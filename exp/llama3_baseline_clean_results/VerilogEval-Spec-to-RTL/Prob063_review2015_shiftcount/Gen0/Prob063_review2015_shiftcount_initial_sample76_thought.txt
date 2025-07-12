@@ -1,0 +1,6 @@
+To implement the TopModule, we need to consider the two main operations: shifting the data and decrementing the count. 
+For shifting, we need to check if shift_ena is high. If it is, we shift the data into the most significant bit of the register, shifting all other bits one position to the right.
+For decrementing, we need to check if count_ena is high. If it is, we decrement the current value in the register.
+Since the system doesn't use both shift_ena and count_ena at the same time, we can implement the logic for shifting and decrementing separately without worrying about priority.
+We can use a 4-bit register to store the current value, and use combinational logic to determine the next state of the register based on the current state and the input controls.
+We'll use the always_ff block to describe the sequential behavior of the register, and use if-else statements to handle the different cases.

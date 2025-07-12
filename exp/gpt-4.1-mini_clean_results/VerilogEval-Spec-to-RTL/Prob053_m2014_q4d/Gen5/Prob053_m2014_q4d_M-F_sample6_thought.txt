@@ -1,0 +1,7 @@
+The feedback points out that initializing the output register directly in its declaration (e.g., `output reg out = 1'b0`) is often unsupported by synthesis tools and can cause mismatches in post-synthesis simulation. Since the specification forbids any reset signal, we cannot add explicit reset logic.
+
+The best approach is to remove the initialization and keep the design strictly conforming to standard synchronous logic without any reset or initial assignment. This means the flip-flop's initial state will be undefined (X) on power-up, which matches real hardware behavior.
+
+This approach eliminates synthesis and post-synthesis simulation mismatches by ensuring the code is fully synthesis-friendly and correctly models hardware behavior as per the given constraints.
+
+Thus, the fix is to remove the initialization from the output register declaration and keep the rest of the logic intact.

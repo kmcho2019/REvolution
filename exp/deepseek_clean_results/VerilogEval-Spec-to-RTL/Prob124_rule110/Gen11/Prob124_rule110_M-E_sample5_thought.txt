@@ -1,0 +1,18 @@
+Novel Architecture: Hierarchical Rule 110 with Pipelined Processing
+
+Key Innovations:
+1. **Hierarchical Processing**: Divide the 512-bit array into 64 segments of 8 bits each. Each segment is processed independently with its own boundary conditions, reducing the critical path.
+
+2. **Pipelined Evaluation**: Implement a two-stage pipeline where:
+   - Stage 1: Compute intermediate next states for each segment
+   - Stage 2: Combine segment results with proper boundary handling
+
+3. **Shared Boundary Logic**: Instead of duplicating boundary logic for each bit, implement shared boundary registers between segments.
+
+4. **Parallel Rule Evaluation**: Use a ROM-based approach to implement the Rule 110 truth table, allowing efficient sharing of the evaluation logic.
+
+Benefits:
+- Improved timing due to shorter combinational paths in each segment
+- Reduced power consumption from localized processing
+- Better area efficiency through shared boundary logic
+- Maintains full Rule 110 functionality while being more scalable

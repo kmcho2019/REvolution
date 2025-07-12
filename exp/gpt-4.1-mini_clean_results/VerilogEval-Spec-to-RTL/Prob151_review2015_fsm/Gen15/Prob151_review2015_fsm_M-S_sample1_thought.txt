@@ -1,0 +1,9 @@
+Simplify the FSM by combining the pattern detection states into a single 4-bit shift register that captures the last 4 bits of serial data, checking for the pattern 1101 directly on every clock cycle. This removes multiple states for pattern detection and avoids complex state transitions for that purpose.
+
+Use a simple 3-state FSM: IDLE (searching for pattern), SHIFT (shift_ena asserted for 4 cycles), and WAIT (waiting for done_counting and then ack).
+
+Maintain a 2-bit shift_count to count the 4 cycles of shifting.
+
+Outputs are purely Moore outputs from the current state.
+
+This approach reduces the number of states and logic complexity while keeping clear, synchronous logic and meeting all functional requirements.

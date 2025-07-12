@@ -1,0 +1,19 @@
+Refactoring Strategy:
+1. State Encoding: Keep 2-bit encoding but use one-hot for better timing (4 states)
+2. Shift Register: Replace with parallel load when all bits are received
+3. Done Signal: Generate combinatorially from state and input
+4. Error Handling: Simplify by treating ERROR same as IDLE when waiting for stop bit
+5. Bit Counting: Use a separate register and increment only when needed
+6. Output Logic: Move to combinational block to reduce critical path
+7. Key Changes:
+   - Use one-hot state encoding for better timing
+   - Replace shift register with parallel load
+   - Generate done combinatorially
+   - Simplify state transitions
+   - Reduce register updates
+
+Benefits:
+1. Better timing by reducing combinational paths
+2. Lower power by minimizing register updates
+3. Smaller area by simplifying state machine
+4. Clearer separation of combinational and sequential logic

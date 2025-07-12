@@ -1,0 +1,7 @@
+To improve the existing solution, the focus will be on optimizing the Power, Performance, and Area (PPA) metrics. The current design is functionally correct, but there might be opportunities to enhance it by re-examining the implementation details. 
+
+One potential approach is to directly use the `sel` input to drive the multiplexer logic without the need for an intermediate array to store the input values. This can be achieved by utilizing a case statement within the always block to explicitly select the output based on the `sel` value. For `sel` values beyond 8 (which correspond to the inputs `a` through `i`), the output can be directly set to all ones as per the problem statement.
+
+This approach aims to simplify the logic and potentially reduce the area and power consumption by eliminating the need for the array and the associated logic to populate it. Furthermore, directly driving the output selection based on the `sel` input might allow for more efficient synthesis and mapping onto the target technology, potentially improving the performance (timing) as well.
+
+Additionally, since the problem statement specifies setting all output bits to '1' for unused cases (sel=9 to 15), the case statement can be structured to include a default condition that sets the output to all ones for any `sel` value outside the range of 0 to 8.

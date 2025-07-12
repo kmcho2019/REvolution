@@ -1,0 +1,21 @@
+Refactoring Strategy:
+1. State Representation:
+   - Replace binary hour counter with direct BCD representation (4-bit tens + 4-bit ones)
+   - Split seconds and minutes into separate 4-bit tens/units registers
+   - This eliminates BCD conversion logic and reduces register width
+
+2. Logic Restructuring:
+   - Move rollover detection into combinational assign statements
+   - Use continuous assignments for output values
+   - Simplify PM toggle logic by making it purely combinational
+
+3. Clock Domain Optimization:
+   - Maintain ena-gating but make it more explicit
+   - Separate increment logic for each digit to reduce critical path
+   - Use parallel always blocks for better synthesis
+
+Key Improvements:
+- Direct BCD representation eliminates conversion logic
+- Separated digit registers reduce register width
+- More combinational logic reduces sequential dependencies
+- Clearer structure while maintaining same functionality

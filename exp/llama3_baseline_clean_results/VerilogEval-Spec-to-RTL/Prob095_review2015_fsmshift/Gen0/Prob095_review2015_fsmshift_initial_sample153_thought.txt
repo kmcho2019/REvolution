@@ -1,0 +1,5 @@
+To solve this problem, we can create a finite state machine (FSM) with two main states: an IDLE state and a SHIFT state. When the module is reset, it should assert shift_ena for 4 clock cycles and then deassert it. This behavior can be achieved by using a counter to keep track of the number of clock cycles since the reset. We can also add a shift counter to keep track of the number of cycles shift_ena has been asserted after reset.
+
+Upon reset, the module will start counting and assert shift_ena. Once the counter reaches 4, shift_ena will be deasserted and the module will stay in the IDLE state until the next reset. 
+
+The module can be implemented using a simple always block that updates the state and the counters on every positive clock edge. The reset is synchronous and will reset the counters and the state when asserted.

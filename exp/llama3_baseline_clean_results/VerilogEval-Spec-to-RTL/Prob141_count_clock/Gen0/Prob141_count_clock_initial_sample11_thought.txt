@@ -1,0 +1,10 @@
+To implement the TopModule, we need to create a set of counters for hours, minutes, and seconds, along with a mechanism to determine whether the clock is in AM or PM mode. We will use a finite state machine (FSM) or a set of counters to track the hours, minutes, and seconds. The counters will be clocked by the fast-running clk, and the ena signal will be used to increment the counters once per second. The reset signal will be used to reset the counters to their initial values. The pm signal will be asserted based on the current hour.
+
+We will use the following counters:
+- ss (seconds): 0-59
+- mm (minutes): 0-59
+- hh (hours): 1-12
+
+When the seconds counter reaches 59 and ena is high, it will reset to 0 and increment the minutes counter. When the minutes counter reaches 59, it will reset to 0 and increment the hours counter. When the hours counter reaches 12, it will wrap around to 1 if it is in AM mode and to 1 if it is in PM mode, and toggle the pm signal. The pm signal will be set high when the hours counter reaches 12 in the PM mode.
+
+To implement this, we can use a set of 8-bit counters for seconds, minutes, and hours, and a 1-bit signal to track the AM/PM mode.

@@ -1,0 +1,20 @@
+Fusion Strategy:
+1. State Encoding: Use a 2-bit encoding like Example 2 but optimize it further by:
+   - Using state[1] to indicate falling (aaah output)
+   - Using state[0] to indicate walking direction
+   - This reduces the state machine to effectively 3 states while maintaining clarity
+
+2. State Transition Logic: Combine the best aspects from both examples:
+   - Use the efficient nested if-else structure from Example 1
+   - Add the state transition optimization from Example 2 (only update when needed)
+   - Simplify bump detection logic by checking current direction
+
+3. Output Logic: Optimize by:
+   - Making aaah purely dependent on state[1]
+   - Using state[0] directly for walking direction when not falling
+   - Ensuring mutually exclusive walk_left/walk_right outputs
+
+4. Power/Area Optimization:
+   - Remove redundant state (FALL_LEFT/FALL_RIGHT) by storing direction during fall
+   - Minimize combinational logic by leveraging state bit meanings
+   - Keep the state update optimization to reduce unnecessary transitions

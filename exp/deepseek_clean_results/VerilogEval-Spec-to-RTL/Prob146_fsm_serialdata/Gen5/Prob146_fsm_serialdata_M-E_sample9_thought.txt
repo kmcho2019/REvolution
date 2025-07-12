@@ -1,0 +1,14 @@
+Here's a novel approach using a shift register with parallel load and a bit counter with early termination detection:
+
+1. Instead of a traditional FSM, we'll use a data-driven approach where the reception process is controlled by the bit counter and shift register status.
+2. The system will have two main phases: 
+   - Detection phase: Waits for start bit (0) while idle
+   - Reception phase: Automatically shifts in 8 bits then checks stop bit
+3. Key innovations:
+   - Use of a 'reception_active' flag to control the process flow
+   - Early termination detection if stop bit is missing
+   - Parallel assignment of received data when complete
+4. The done signal is generated combinatorially based on current state
+5. Reset synchronously clears all registers and returns to idle state
+
+This approach reduces state transitions and combines control logic with data path for better efficiency.

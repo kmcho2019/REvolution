@@ -1,0 +1,7 @@
+To optimize the original design for better performance and area while maintaining power efficiency, combine the addition and correction step into a single addition operation by directly adding A, B, Cin, and a conditional 6 correction value using a small combinational logic block for correction detection. This avoids chaining two separate additions (first A+B+Cin, then +6), thereby reducing critical path delay and area.
+
+Specifically, detect if correction is needed using a minimal logic expression on the raw sum (without full 5-bit addition) by replicating correction condition from partial sums. Instead of a separate conditional addition, use a 5-bit adder that sums A, B, Cin, and conditionally adds 6 directly in one step. This reduces hardware and improves speed by eliminating the double addition.
+
+The Cout is still obtained from the MSB of the final 5-bit sum to indicate carry out of the BCD digit. The combinational logic is simplified to minimize toggling and power consumption.
+
+Overall, this approach merges the two addition steps and keeps the design purely combinational and compact, reducing latency and area while maintaining correctness.

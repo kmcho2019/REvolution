@@ -1,0 +1,11 @@
+To optimize for better performance, power, and area, implement the 8 D flip-flops as a single 8-bit register updated in a single always block triggered on the positive edge of the clock. This removes the overhead of eight separate module instantiations, reducing hierarchy levels and potentially improving timing and area. It also simplifies clock distribution and can reduce fanout on the clock signal, improving power consumption.
+
+Additionally, to avoid mismatches caused by unknown initial states, add an asynchronous active-low reset input to initialize the output register to zero. This ensures a defined output state after reset and improves testbench stability. The reset is optional if not requested, but it is good practice.
+
+If reset is not desired, at least add an initial block to initialize q to zero for simulation consistency. However, synthesizable reset is preferred in real designs.
+
+The interface remains the same except an added reset input, or reset can be omitted if strictly not allowed.
+
+Since the problem specifies only clk, d, q, we will implement without reset and instead initialize q to zero using an initial block for simulation correctness.
+
+This approach keeps the original interface and meets the functional requirement while improving PPA.

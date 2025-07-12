@@ -1,0 +1,10 @@
+Combine the best of both examples by implementing a 100-bit synchronous rotator with load and two-direction rotation. Prioritize load, then rotate only when ena indicates a valid direction (2'b01 for right, 2'b10 for left), else hold state to prevent unnecessary toggling, saving power. Use a case statement with clear comments for readability.
+
+Enhance timing and power efficiency by:
+- Minimizing the logic in the always block to a single clock edge operation.
+- Avoiding state changes when no rotation or load is requested, preventing extra switching.
+- Implementing rotation via concatenation for clear, synthesis-friendly logic.
+- Adding a register enable signal internally to gate updates of q, avoiding redundant toggling.
+This balances correctness, clarity, and minor power gains without increasing design complexity.
+
+No complex barrel shifter pipeline or multi-stage rotate is introduced to maintain single-cycle rotation latency and simplicity. The design remains clean and synthesizable while improving power efficiency by gating q updates internally.

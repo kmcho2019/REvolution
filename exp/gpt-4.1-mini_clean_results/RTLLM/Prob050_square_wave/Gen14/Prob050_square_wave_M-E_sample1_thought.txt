@@ -1,0 +1,9 @@
+Implement a toggle-based square wave generator with an 8-bit counter that counts from 0 up to (freq-1). On each clock cycle, increment the counter if freq is not zero. When the counter reaches (freq-1), reset it to zero and toggle wave_out.
+
+This method directly implements the toggling behavior specified, with wave_out as a registered output that toggles at a rate controlled by freq. If freq=0, the counter and toggling are disabled, and wave_out remains steady low.
+
+This approach uses a single always block triggered on clock's rising edge, ensuring synchronous operation. The toggling logic is simple and timing paths are clear: increment counter -> compare -> toggle wave_out. It avoids combinational logic based on freq, improving timing and reducing glitches.
+
+The duty cycle is 50%, since wave_out toggles every freq clock cycles, thus creating a square wave with period = 2*freq clocks.
+
+This design is straightforward, uses minimal registers (count and wave_out), and matches the requested interface. It provides clean, synthesizable code reflecting the natural hardware implementation of a frequency divider and toggling output.

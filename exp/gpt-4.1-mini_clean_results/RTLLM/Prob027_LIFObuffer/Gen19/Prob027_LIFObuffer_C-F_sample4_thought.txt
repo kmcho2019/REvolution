@@ -1,0 +1,14 @@
+Fuse the clear separation of combinational next-state logic from Example 1 with the power and timing optimizations from Example 2 by:
+
+1. Using explicit next-state signals (next_SP, next_dataOut) calculated combinationally outside the clocked always block, improving clarity and potentially simplifying timing.
+2. Maintaining synchronous reset that clears stack_mem, SP, and dataOut using a for-loop for straightforward initialization.
+3. Using the SP encoding from both (4 = empty, 0 = full) but avoiding arithmetic in push address calculation by computing the push address combinationally as (SP - 1) only when push is enabled; otherwise, no memory write.
+4. Updating dataOut only on pop operations to minimize toggling.
+5. Only updating SP and stack_mem on valid operations (push or pop) to avoid unnecessary toggling.
+6. Keeping stack_mem unmodified on pop (no clearing) for power efficiency.
+7. Separating combinational push/pop enables from clocked updates for better timing and cleaner code.
+8. Deriving EMPTY and FULL flags combinationally from SP.
+9. Using non-blocking assignments in the synchronous always block for safe register updates.
+10. Commenting clearly on the intended behavior and conditions.
+
+This fusion balances readability, performance, power savings, and area efficiency, making the design modular, synthesis-friendly, and easy to maintain.

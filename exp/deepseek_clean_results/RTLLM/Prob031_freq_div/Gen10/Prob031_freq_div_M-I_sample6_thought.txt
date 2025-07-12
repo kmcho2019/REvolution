@@ -1,0 +1,22 @@
+Optimization Strategy:
+1. Counter Optimization:
+   - For CLK_10: Reduce counter width from 3-bit to 2-bit since we only count to 4 (0-4)
+   - For CLK_1: Use a more efficient counting scheme by counting to 99 (0-99) and toggling at 49, but with better bit utilization
+
+2. Clock Gating:
+   - Implement clock gating for higher division counters to reduce switching activity
+   - Only enable counter increments when needed for the specific divided clock
+
+3. Parameter Utilization:
+   - Fully parameterize the design to allow flexible division ratios
+   - Calculate counter limits based on parameters to avoid hard-coded values
+
+4. Resource Sharing:
+   - Share common counter logic where possible to reduce area
+   - Use derived clocks from higher divisions where applicable
+
+Key Improvements:
+- Reduced counter widths for area savings
+- Clock gating for power reduction
+- Better parameter utilization for maintainability
+- More efficient counting schemes

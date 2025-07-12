@@ -1,0 +1,17 @@
+module ROM (
+    input  [7:0]  addr,
+    output [15:0] dout
+);
+
+    reg [15:0] mem [255:0];
+
+    initial begin
+        mem[0] = 16'hA0A0;
+        mem[1] = 16'hB1B1;
+        mem[2] = 16'hC2C2;
+        mem[3] = 16'hD3D3;
+    end
+
+    assign dout = mem[addr];
+
+endmodule

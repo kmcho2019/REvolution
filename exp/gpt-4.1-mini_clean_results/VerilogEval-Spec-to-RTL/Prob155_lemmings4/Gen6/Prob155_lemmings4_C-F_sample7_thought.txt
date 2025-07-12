@@ -1,0 +1,25 @@
+Fuse the strengths of both designs by keeping the single packed 3-bit state+direction register from Example 1 (compact, unified state+dir register reduces mux complexity), and adopt the explicit, clear bump handling from Example 2 (exact conditions for bump_left, bump_right, bump_both with correct direction assignments).
+
+Use Moore FSM style outputs as in Example 1 for clarity.
+
+Maintain asynchronous active-high reset resetting to walk left state.
+
+Retain the saturating 5-bit fall counter from Example 1 for clean counting and splatter detection, saturating at 31.
+
+In next state logic, prioritize fall > dig > bump direction changes when walking, consistent with spec.
+
+Implement bump logic exactly as in Example 2 within the walking state:  
+- bump both sides: toggle direction  
+- bump_left only: walk right  
+- bump_right only: walk left  
+- no bump: maintain direction
+
+During fall and dig, bumps and dig signals are ignored for direction changes.
+
+Keep clear combinational next-state logic with defaults and explicit state cases for maintainability and performance.
+
+Use non-blocking assignments in sequential block for safe, synchronous state updating.
+
+This fusion blends Example 1's compact state packing and output encoding with Example 2's exact bump-direction assignments for correctness and clarity, resulting in a well-structured, efficient FSM design.
+
+This yields an improved code balancing code readability, correctness, and potential for synthesis optimization.

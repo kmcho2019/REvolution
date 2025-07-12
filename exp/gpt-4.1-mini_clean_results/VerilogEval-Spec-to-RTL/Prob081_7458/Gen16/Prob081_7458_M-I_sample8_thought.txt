@@ -1,0 +1,8 @@
+To optimize the existing modular solution for better PPA without losing clarity, we flatten the design by removing parameterized modules and intermediate wires. Since the AND gates have fixed small input sizes (2 and 3), directly implementing the logic in assign statements eliminates the overhead of extra module instantiations and reduces the number of internal signals. This reduces area and power, and can improve timing slightly due to fewer logic levels and simplified netlists. The design remains fully combinational, concise, and easily synthesizable.
+
+Specifically:
+- Remove the parameterized AndGateN module.
+- Compute each AND group inline using the & operator directly.
+- Combine AND outputs by direct OR using | operator.
+- Implement all logic directly in TopModule using assign statements.
+This yields a minimal, flat, and efficient design matching the 7458 logic function.

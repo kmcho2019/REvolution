@@ -1,0 +1,9 @@
+To create a synthesizable clock generator module that produces a periodic clock output toggling every PERIOD/2 cycles, we must avoid using delay statements (#) or infinite loops. Instead, the module should use an input clock and reset, and a counter to divide the input clock frequency. On each input clock edge, the counter increments, and when it reaches half the PERIOD, the output clock toggles, and the counter resets.
+
+Since the problem statement only defines an output clk, we need to add an input clock and reset for a practical and synthesizable design. The module will take an input clock (clk_in) and a synchronous active-high reset (rst). When rst is asserted, the output clock is reset to zero and counter cleared. Otherwise, the counter counts up to PERIOD/2 - 1 and toggles the output clock.
+
+This approach uses synchronous logic, is synthesizable, and works in hardware as a clock divider generating the desired output clock frequency.
+
+If an input clock is not allowed, the problem is unsynthesizable as is. But in real hardware, a clock generator requires a base clock input.
+
+Thus, this code will add an input clock and reset, implement a counter-based clock divider producing the output clk signal toggling every PERIOD/2 input clock cycles.

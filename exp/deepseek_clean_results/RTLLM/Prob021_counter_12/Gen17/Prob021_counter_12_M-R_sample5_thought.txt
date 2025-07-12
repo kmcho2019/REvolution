@@ -1,0 +1,7 @@
+Refactoring approach:
+1. Remove the problematic gated clock and implement synchronous enable using valid_count
+2. Keep the efficient wrap-around logic but implement it with a continuous assignment
+3. Use a combinational always block for the next state logic and a sequential block for state storage
+4. This maintains the same functionality while improving timing and reliability
+5. The wrap-around check is still done via pattern matching (4'b1011) for efficiency
+6. Reset remains asynchronous for consistent initialization

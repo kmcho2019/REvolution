@@ -1,0 +1,13 @@
+The design already uses minimal logic: a single XOR feeding a D flip-flop clocked on clk, which is optimal in area and performance for this functionality.
+
+Since the specification explicitly forbids a reset, we cannot add one to avoid the initial unknown state. This is a natural hardware behavior and typically accepted.
+
+For power optimization, we can gate the flip-flop clock to avoid toggling 'out' when the input 'in' equals the current 'out' value (since XOR would be 0 and output wouldn't change). Clock gating can reduce unnecessary switching in the flip-flop and save power.
+
+We implement a clock enable (ce) signal that is high only if `in ^ out` is 1, so the flip-flop only toggles when needed. This reduces flip-flop switching activity without changing the functional behavior.
+
+This optimization reduces dynamic power consumption by minimizing unnecessary flip-flop toggling, with negligible area overhead (a small combinational XOR and clock enable).
+
+No change to performance critical path occurs since clock gating control is combinational logic before the clock.
+
+Hence, the improved design introduces a clock enable to gate flip-flop updates, optimizing power while preserving the original functionality and interface.

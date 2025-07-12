@@ -1,0 +1,5 @@
+To implement the TopModule, we need a finite state machine (FSM) that can recognize the proper bit pattern and then enable the shift register for exactly 4 clock cycles. However, the problem description does not specify the proper bit pattern. For the sake of this example, let's assume that the proper bit pattern is not required for enabling the shift register after reset. Instead, upon reset, we directly start a counter to keep track of the 4 clock cycles during which shift_ena should be high.
+
+The FSM will have a reset state where it initializes a counter to count the clock cycles and asserts shift_ena. Once the counter reaches 4, the FSM moves to a state where shift_ena is deasserted and stays there until the next reset.
+
+Given that reset should be active high and synchronous, we'll use a simple if statement inside the always block to check for the reset condition and handle it accordingly.

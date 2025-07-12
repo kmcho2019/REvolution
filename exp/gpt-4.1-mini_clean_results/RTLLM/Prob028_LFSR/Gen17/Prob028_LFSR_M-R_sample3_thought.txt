@@ -1,0 +1,7 @@
+Refactor the LFSR implementation by separating the feedback calculation into a combinational wire using an assign statement, and then update the register in a synchronous always block on the rising edge of the clock with synchronous reset.
+
+This approach explicitly distinguishes combinational feedback logic from the sequential state update, making the design more modular and easier to understand or modify.
+
+The register is reset synchronously (on posedge clk) when rst is asserted, initializing the output to zero. On each clock rising edge without reset, the register shifts left, inserting the computed feedback bit at LSB.
+
+This refactoring maintains the same functional behavior and feedback logic but changes the style from combining feedback and state update in one always block with asynchronous reset, to a synchronous reset style with combinational feedback assignment.

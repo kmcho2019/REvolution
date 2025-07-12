@@ -1,0 +1,16 @@
+To improve the existing design and avoid the subtle synthesis and functional mismatches, we will separate the logic to make it more robust and synthesis-friendly:
+
+1. Keep `prev_in` updated with `in` every cycle.
+2. Detect falling edges on `in` by comparing `prev_in` and `in`.
+3. Generate a separate combinational signal `falling_edge = prev_in & ~in`.
+4. Update the output register `out` only with the OR of its previous value and `falling_edge`, which is simpler and more explicit.
+5. On synchronous reset, clear `out` and initialize `prev_in` to `in` to prevent spurious edge detection.
+
+This explicit separation avoids potential race conditions or latches and helps synthesis tools infer the intended sequential logic cleanly, improving functional correctness.
+
+For PPA:
+- This approach minimizes combinational path length by isolating falling edge detection and only then updating the `out` register.
+- It avoids unnecessary logic duplication and maintains a minimal register count.
+- Output `out` will still hold bits until reset, matching spec.
+
+Overall, this is a clean, synthesizable, and functionally correct implementation.

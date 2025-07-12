@@ -1,0 +1,11 @@
+To solve this problem, we need to design a finite state machine (FSM) with several states. The states are: 
+- Idle: Looking for the pattern '1101' to start the timer
+- Shifting: Shifting in 4 bits after the pattern '1101' is detected
+- Counting: Counting for (delay[3:0] + 1) * 1000 clock cycles
+- Done: Waiting for the ack signal after the timer times out
+
+The FSM will use a counter to keep track of the remaining time and will output the current remaining time on the count[3:0] output.
+
+We will use a shift register to store the delay value after the pattern '1101' is detected.
+
+We will also use a flag to indicate when the FSM is counting.

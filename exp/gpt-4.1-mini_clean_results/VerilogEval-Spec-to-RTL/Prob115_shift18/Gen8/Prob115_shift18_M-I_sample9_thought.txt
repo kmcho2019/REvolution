@@ -1,0 +1,17 @@
+To optimize for better power, performance, and area (PPA), we focus on reducing the critical path and switching activity:
+
+1. Break the 64-bit shift operations into two stages:
+   - First, perform either an 8-bit shift or a 1-bit shift.
+   - This reduces large multiplexers and concatenation logic.
+   
+2. Use a two-level shift approach:
+   - Shift by 8 bits if amount[0] is set, else shift by 1 bit.
+   - Then, select direction (left or arithmetic right) afterwards.
+
+3. By splitting shift amount and direction, we reduce the fan-in of multiplexers and complexity of combinational logic.
+
+4. Implement the arithmetic right shift using sign extension explicitly to limit the number of replicated bits.
+
+5. Keep the synchronous load and enable logic as is for clarity.
+
+This restructuring reduces the complexity of multiplexers, resulting in a shorter critical path and less switching, improving overall PPA.

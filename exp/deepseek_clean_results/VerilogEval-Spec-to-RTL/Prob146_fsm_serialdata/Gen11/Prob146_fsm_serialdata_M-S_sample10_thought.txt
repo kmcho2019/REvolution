@@ -1,0 +1,14 @@
+Simplification Strategy:
+1. Remove ERROR state - The spec allows waiting for stop bit without explicit error handling
+2. Combine STOP and IDLE functionality - Since we must wait for stop bit anyway, we can handle this in IDLE state
+3. Simplify state machine to just 2 states: IDLE and RECEIVE
+4. Optimize bit counting by using shift register fill status instead of separate counter
+5. Simplify done signal generation by making it purely combinatorial based on state and input
+6. Reduce register updates by only modifying shift_reg during RECEIVE state
+
+Key improvements:
+- Fewer states (2 instead of 4)
+- No separate bit counter
+- Cleaner state transitions
+- Reduced register updates
+- Maintains all required functionality

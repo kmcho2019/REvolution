@@ -1,0 +1,15 @@
+The original design uses combinational carry logic with nested ternaries, resulting in a ripple carry chain that limits maximum clock frequency and causes relatively high combinational delay on the critical path. It also updates all digits every clock, even when no change occurs, which could increase power consumption.
+
+To optimize for better PPA:
+
+1. **Timing improvement**: Replace the nested ternary carry logic with a digit-by-digit update approach using clock enables for each digit. This effectively implements a ripple carry BCD counter but staggers the enable signals, reducing combinational depth each cycle by only updating digits when enabled.
+
+2. **Power reduction**: Use enable signals to conditionally update digits. This reduces toggling in digits that don't change (digits only update when their enable is high).
+
+3. **Enable signal timing**: Generate the `ena` signals based on the current digit value before the clock edge (combinational), so they reflect when a digit increments in the next clock cycle.
+
+4. **Simplify carry logic**: Instead of calculating next values and nested carries all at once, propagate carry signals through enables and increment digits only if their enable is asserted.
+
+This approach reduces combinational logic depth per clock cycle, improving timing, and reduces unnecessary toggling for power savings. The area impact is minimal and even slightly reduced due to simpler next-value logic.
+
+The synchronous reset remains as in the original design.

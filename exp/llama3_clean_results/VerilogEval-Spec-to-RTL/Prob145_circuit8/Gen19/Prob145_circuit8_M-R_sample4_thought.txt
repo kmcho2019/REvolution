@@ -1,0 +1,5 @@
+To refactor the code, we can use a different approach by utilizing a state machine with two states: idle and set_q. When 'a' is high for two consecutive clock cycles, 'q' is set high. The state machine is implemented using a single always block at the posedge of the clock. We can also use a counter to keep track of the number of consecutive clock cycles 'a' has been high. The 'p' output is simply set to 'a'.
+
+The main change is in the way the state machine is implemented. Instead of directly updating 'q' based on 'a' and 'prev_a', we use a counter to keep track of the consecutive 'a' high cycles. This allows us to accurately set 'q' after two consecutive 'a' high cycles. We also restructure the logic to minimize the number of transitions and optimize for PPA.
+
+Additionally, we use a single variable to keep track of the state and the counter, reducing the number of registers required.

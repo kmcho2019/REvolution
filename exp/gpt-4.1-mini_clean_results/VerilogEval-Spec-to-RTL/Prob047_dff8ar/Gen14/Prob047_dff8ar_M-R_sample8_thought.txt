@@ -1,0 +1,5 @@
+Refactor the 8-bit asynchronous reset D flip-flop vector by implementing it using eight instances of a simple 1-bit DFF module with async reset instead of a single vector always block. This modularizes the design at the bit level, separating each bit's storage with explicit DFF instantiations.
+
+The TopModule will instantiate these eight 1-bit DFFs and wire each bit individually. This approach demonstrates an alternative structural style favoring modular hierarchy and can provide clearer debugging granularity.
+
+Functionally, it maintains the same behavior: each bit asynchronously resets to 0, and all flip-flops trigger on the positive clock edge. This explicit per-bit instantiation style contrasts the vectorized always block approach but preserves correctness and clarity.

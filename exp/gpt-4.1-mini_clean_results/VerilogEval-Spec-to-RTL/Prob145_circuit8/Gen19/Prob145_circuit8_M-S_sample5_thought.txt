@@ -1,0 +1,9 @@
+From the waveform, p and q start unknown and initialize to 0 at the first rising clock edge.
+
+- On every clock rising edge, q gets the previous p value (one cycle delayed).
+- p updates to input 'a' only when q is 0; otherwise, p stays the same.
+- This creates a sequence where p can change when q is zero, and q always lags p by one cycle.
+- Initialization of p and q to 0 on reset is implicit at the first clock edge.
+- The simplified code uses a single always block with non-blocking assignments that update q from old p, then p based on q, ensuring correct sequencing and simplicity.
+
+This matches the waveform behavior and output transitions with minimal complexity.

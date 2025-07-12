@@ -1,0 +1,25 @@
+Fuse the best ideas by maintaining the simple, minimal combinational next-state logic and synchronous active-low reset from both examples, but improve area and power by using a 2-bit binary state encoding instead of one-hot. 
+
+Use four states encoded as:
+
+- 2'b00: Idle (A)
+- 2'b01: Grant device 0 (B)
+- 2'b10: Grant device 1 (C)
+- 2'b11: Grant device 2 (D)
+
+This reduces flip-flops from 3 to 2, saving area and dynamic power. The outputs g[2:0] are generated combinationally based on state, so only one grant bit is 1 at a time, which reduces toggling and simplifies output logic. 
+
+The next-state logic follows the original priority scheme (r[0] > r[1] > r[2]) and sustain grant states as long as the request persists; else transitions back to idle. 
+
+Synchronous active-low reset initializes to idle.
+
+Use non-blocking assignments in sequential always block and blocking assignments in combinational always block, as per best practices.
+
+This fusion balances area, power, and performance:
+
+- Area reduced by using binary encoding (2 flip-flops vs 3).
+- Power reduced due to fewer flip-flops toggling and simpler output gating.
+- Performance maintained with simple combinational logic and minimal states.
+- Output logic clean and glitch-free since only one grant bit is asserted at a time.
+
+Overall, this design improves PPA metrics compared to the one-hot FSMs without sacrificing clarity or correctness.

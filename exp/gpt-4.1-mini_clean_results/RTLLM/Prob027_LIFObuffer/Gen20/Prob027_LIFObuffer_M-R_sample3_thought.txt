@@ -1,0 +1,11 @@
+Refactor the LIFO buffer by splitting control logic and datapath for clarity and modularity:
+
+- Use a combinational always @* block to calculate next stack pointer and determine memory write/read enables.
+- Use synchronous always @(posedge Clk) block for sequential updates (SP, dataOut, stack_mem).
+- Implement stack_mem as a 4-element register array, updating only on push.
+- On pop, read dataOut from the current SP location without clearing stack_mem to save power.
+- Use a one-hot-style push_en and pop_en signal generation to clarify operations.
+- Update EMPTY and FULL flags in a separate always_comb (or assign) based on SP.
+- Reset asynchronously or synchronously according to input spec (same synchronous here).
+- Keep the SP pointer counting from 4 down to 0, with 4 meaning empty and 0 meaning full.
+- This separation improves readability and debugging ease by clearly separating next-state logic from registers.

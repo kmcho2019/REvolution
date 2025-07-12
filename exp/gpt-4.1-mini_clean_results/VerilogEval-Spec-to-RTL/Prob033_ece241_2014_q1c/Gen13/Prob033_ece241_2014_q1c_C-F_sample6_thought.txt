@@ -1,0 +1,11 @@
+I will combine the modular clarity and explicit carry handling of the ripple-carry adder from Example 1 with the improved performance-oriented carry lookahead logic concept from Example 2.
+
+Fusion strategy:
+- Implement the TopModule behaviorally using the '+' operator on 8-bit signed inputs for clean, concise, and synthesis-friendly addition. This lets synthesis tools optimize the adder for power, area, and speed using internal advanced adder architectures (carry lookahead, carry select, etc.), which is usually better than hand-crafted explicit logic.
+- Extract the sum (lower 8 bits) and the carry-out from the 9-bit extended addition to access carry into and out of the MSB for overflow calculation.
+- Calculate overflow using the canonical formula: overflow = carry_into_msb XOR carry_out_of_msb.
+- This approach keeps code minimal and readable, allowing EDA tools to optimize the implementation to balance timing, power, and area.
+- It avoids manually coding long chains of logic that might increase complexity and glitches.
+- Use of signed arithmetic in Verilog ensures correct 2's complement addition semantics.
+
+This fusion leverages the straightforward correctness and modularity of Example 1 and the performance and power benefits expected from Example 2's carry lookahead design — but realized via efficient synthesis on behavioral code rather than explicit gate-level constructs.

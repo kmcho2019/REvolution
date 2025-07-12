@@ -1,0 +1,14 @@
+To implement the function out = in1 & ~in2, I can use a NAND gate with inputs in1 and in2 followed by an inverter. The NAND gate outputs ~(in1 & in2), and the inverter outputs the complement of that, which is in1 & in2. But since I want in1 & ~in2, this direct NAND-inverter approach would implement the wrong logic.
+
+Instead, another approach is to use a NAND gate with one input inverted by exploiting De Morgan's theorem: out = in1 & ~in2 = ~(~in1 + in2).
+
+Thus, implement out as a NOR gate fed by inverted in1 and in2:
+
+- invert in1 -> inv_in1
+- feed inv_in1 and in2 into a NOR gate: out = ~(inv_in1 + in2) = in1 & ~in2.
+
+This uses two gates (one inverter and one NOR), which is the dual of the original solution but with different gate types.
+
+This alternative structural design might help in technologies where NOR gates are cheaper or faster than AND gates and could provide a different optimization angle.
+
+So, instantiate an inverter for in1 and a NOR gate for inv_in1 and in2.

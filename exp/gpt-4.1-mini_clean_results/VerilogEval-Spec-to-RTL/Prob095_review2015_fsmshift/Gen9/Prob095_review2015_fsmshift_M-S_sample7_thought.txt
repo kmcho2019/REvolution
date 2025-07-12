@@ -1,0 +1,5 @@
+To simplify, we can treat the synchronous reset as a regular state initializer: while reset is high, keep a 4-cycle counter loaded with 4. On each clock cycle when reset is low and the counter is not zero, decrement it. Assert shift_ena whenever the counter is nonzero.
+
+This approach avoids edge detection logic altogether by leveraging the synchronous nature of reset: during reset, counter is loaded; after reset is released, the counter counts down automatically for exactly 4 cycles, enabling shift_ena during that time.
+
+No separate FSM or edge detection is needed since the spec requires only asserting shift_ena for 4 cycles after reset release. If a bit pattern trigger is added later, additional logic can be integrated, but for now, this meets the reset-driven enabling requirement clearly and simply.

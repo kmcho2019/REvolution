@@ -1,0 +1,13 @@
+To implement Conway's Game of Life with toroidal (wrapping) boundaries on a 16x16 grid, we'll need to:
+1. Handle the 256-bit data loading when 'load' is high
+2. For each cell, calculate its next state based on its 8 neighbors (with wrap-around)
+3. Update all cells synchronously on the clock edge
+
+The key challenges are:
+- Calculating neighbor counts with wrap-around for edge/corner cells
+- Efficiently computing next states for all 256 cells in parallel
+- Implementing the toroidal neighbor calculation using modular arithmetic
+
+We'll break this down into:
+1. A neighbor counter module that counts live neighbors for any given cell
+2. The main module that instantiates this logic for all cells and handles the state update

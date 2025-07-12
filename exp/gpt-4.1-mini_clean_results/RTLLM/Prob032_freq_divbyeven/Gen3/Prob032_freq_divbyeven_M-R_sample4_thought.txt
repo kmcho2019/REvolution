@@ -1,0 +1,9 @@
+To refactor the frequency divider with a different structure while preserving the core functionality, I will implement the counter and clock toggle logic using a finite state machine (FSM) style with an explicit state representing whether the output clock is high or low.
+
+Instead of toggling the output clock directly on counter wrap, I'll model clk_div as a registered signal that changes state explicitly between HIGH and LOW states after counting half of NUM_DIV cycles. The counter will count from 0 up to half the division period (NUM_DIV/2 - 1), and then the FSM transitions the clk_div state and resets the counter.
+
+This approach uses an enumerated state type for clk_div states, enhancing code readability and clarity of operation.
+
+Additionally, I will continue to size the counter width dynamically, keep the parameter check for evenness, and maintain synchronous reset.
+
+This structure shows a different style (state machine with explicit states) compared to the original toggle-on-counter logic.

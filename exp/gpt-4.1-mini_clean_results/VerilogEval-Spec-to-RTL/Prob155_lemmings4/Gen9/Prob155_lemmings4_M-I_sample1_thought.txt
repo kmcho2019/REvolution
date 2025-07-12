@@ -1,0 +1,11 @@
+To improve the existing design's PPA, I will focus on reducing unnecessary toggling, simplifying combinational logic, and gating the fall_timer increment for power savings, while keeping the same FSM behavior.
+
+Key improvements:
+- Introduce an enable signal for the fall_timer to only increment when in FALL state and the timer is less than maximum (31), reducing switching activity.
+- Simplify bump direction toggling logic by consolidating bump conditions into fewer signals and conditions, reducing combinational complexity.
+- Use non-blocking assignments consistently in sequential blocks.
+- Keep outputs as pure Moore outputs to avoid glitches.
+- Avoid resetting fall_timer every cycle; reset only on mode changes, minimizing transitions.
+- Retain asynchronous reset for fast recovery.
+
+These changes keep the design behavior unchanged but reduce switching and logic complexity, thereby improving power and timing margins without area increase.

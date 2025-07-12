@@ -1,0 +1,12 @@
+The given design is already efficient, implementing a right shift with a single non-blocking assignment that concatenates the new bit `d` at the MSB and shifts the rest right by one bit. The initialization of `q` to zero is also correct for simulation.
+
+To optimize for PPA:
+- Introduce a synchronous reset input to reliably initialize `q` in hardware instead of relying solely on the `initial` block, which is ignored by some synthesis tools and target technologies.
+- Add an enable input to gate shifting operation to reduce power consumption by avoiding unnecessary shifting.
+- Keep the core logic unchanged to maintain minimal area and maximum performance.
+- These additions enable better power management and deterministic reset behavior, improving overall design robustness with minimal area and timing overhead.
+
+This enhanced design thus provides:
+- Synchronous reset for robust initialization.
+- Enable signal for power savings.
+- Still minimal logic and timing impact, maintaining short critical path.

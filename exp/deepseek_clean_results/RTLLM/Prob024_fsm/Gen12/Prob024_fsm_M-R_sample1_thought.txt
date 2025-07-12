@@ -1,0 +1,24 @@
+To refactor this FSM implementation while maintaining identical functionality, I'll make these key changes:
+
+1. State Representation:
+   - Keep binary state encoding but represent states as explicit bits
+   - Eliminate localparam and use direct bit assignments for better readability
+
+2. Output Generation:
+   - Make MATCH purely combinational using assign statement
+   - This removes the output register but maintains Mealy behavior
+
+3. State Transition Logic:
+   - Use separate always blocks for state registers and combinational logic
+   - Express next state logic more directly using if-else statements
+
+4. Reset Handling:
+   - Keep synchronous reset but simplify the implementation
+   - Remove output register initialization since MATCH is now combinational
+
+Key improvements:
+- More explicit state encoding
+- Purely combinational output reduces latency
+- Simpler state transition logic
+- Reduced register usage
+- Maintains identical functionality with fewer resources

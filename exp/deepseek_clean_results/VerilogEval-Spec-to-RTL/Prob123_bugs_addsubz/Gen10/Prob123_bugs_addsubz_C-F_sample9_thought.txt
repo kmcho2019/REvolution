@@ -1,0 +1,22 @@
+The optimal fusion strategy combines the strengths of both examples while addressing their minor limitations:
+
+1. **Arithmetic Operation**:
+   - Use Example 1's efficient single-adder approach (inverting b and using do_sub as carry-in)
+   - Maintain Example 2's explicit wire declarations for better readability
+   - Keep the 8-bit result width for cleaner implementation (no need for 9-bit sum)
+
+2. **Zero Flag Generation**:
+   - Adopt Example 1's reduction NOR approach (~|out) as it's more direct and potentially faster than equality comparison
+   - Use continuous assignment for combinational clarity
+
+3. **Structural Improvements**:
+   - Combine the inversion and carry-in logic into a single expression
+   - Use explicit intermediate wires to help synthesis tools optimize
+   - Make all outputs purely combinational for better synthesis
+
+Key advantages of this fusion:
+- Minimal logic levels for optimal timing
+- Efficient zero detection with reduction operator
+- Clean structural representation
+- Potential power savings through reduced switching
+- Better readability with named intermediate wires

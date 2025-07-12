@@ -1,0 +1,37 @@
+From the waveform, the state output corresponds to the stored flip-flop value that updates on the rising edge of clk. Initially state is 0 after the first rising clock edge at 15ns.
+
+Examining the transitions:
+
+- At 45ns clk rising edge, a=0, b=1, state=0 → q=1; state updates to 1
+- At 65ns clk rising edge, a=1, b=1, state=0 → q=0; state updates to 0
+- At 75ns clk rising edge, a=0, b=0, state=1 → q=1; state stays 1
+- At 95ns clk rising edge, a=1, b=1, state=1 → q=1; state stays 1
+- At 115ns clk rising edge, a=1, b=0, state=1 → q=0; state updates to 0
+- At 135ns clk rising edge, a=0, b=0, state=1 → q=1; state stays 1
+
+The output q seems to be the next state value.
+
+From these points, the state update depends on a, b, and current state.
+
+Trying to deduce next state logic:
+
+- When state=0:
+    - If b=1 and a=0, next state=1
+    - If a=1 and b=1, next state=0
+    - Otherwise stay 0
+
+- When state=1:
+    - If a=1 and b=0, next state=0
+    - Otherwise stays 1
+
+This matches the waveforms.
+
+This logic can be expressed as:
+
+next_state = (state & ~(a & ~b)) | (~state & (~a & b));
+
+Output q = next_state
+
+Thus, state updates to next_state at clock posedge, and q outputs next_state.
+
+We'll implement a D flip-flop for state and combinational logic for next_state and q.

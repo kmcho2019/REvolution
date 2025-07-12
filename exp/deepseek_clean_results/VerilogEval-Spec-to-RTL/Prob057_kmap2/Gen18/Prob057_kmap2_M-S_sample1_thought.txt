@@ -1,0 +1,20 @@
+Simplification Approach:
+1. K-map Analysis:
+   - The K-map shows that 'out' is 1 in most cases except when:
+     - ab=11 and cd=00 (a & b & ~c & ~d)
+     - ab=01 and cd=11 (~a & b & c & d)
+     - ab=10 and cd=11 (a & ~b & c & d)
+     - ab=10 and cd=10 (a & ~b & c & ~d)
+
+2. Simplified Expression:
+   - Instead of using multiple intermediate terms, we can directly express the output using these conditions
+   - out = ~( (a & b & ~c & ~d) | (~a & b & c & d) | (a & ~b & c & d) | (a & ~b & c & ~d) )
+
+3. Further Optimization:
+   - Notice that the last two terms share (a & ~b & c)
+   - Combine them: (a & ~b & c & (d | ~d)) = (a & ~b & c)
+   - Final expression becomes: out = ~( (a & b & ~c & ~d) | (~a & b & c & d) | (a & ~b & c) )
+
+4. Implementation:
+   - Use continuous assignment with the simplified expression
+   - Fewer operations than original solution while maintaining functionality

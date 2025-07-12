@@ -1,0 +1,7 @@
+To optimize the existing decade counter for better PPA (performance, power, area), the following improvements are applied:
+1. Remove the intermediate next_q register by integrating next state logic directly into the sequential always block, reducing combinational logic and register usage.
+2. Implement the counter with a simple addition and rollover logic inside the sequential block, minimizing combinational paths.
+3. Use a compact expression to detect decimal 10 (binary 1010) and reset to 1.
+4. The synchronous reset remains active-high and sets the counter to 1.
+5. Non-blocking assignments are maintained to ensure clean sequential design.
+These changes simplify the logic and reduce area by eliminating an extra register and combinational always block, potentially improving timing by shortening the critical path and lowering power by reducing switching logic.

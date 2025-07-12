@@ -1,0 +1,13 @@
+Simplify the design by removing the popcount17 module and directly using a single-level tree of popcount8 modules combined with smaller popcount4 modules and single bits to cover 255 bits.
+
+Break the 255-bit input into 31 groups of 8 bits (except the last one which can have fewer bits) and count each group's population using a simple popcount8 module.
+
+Sum all partial counts using a balanced binary adder tree composed of 8-bit adders.
+
+This eliminates the intermediate popcount17 layer, reduces module hierarchy, and simplifies summation stages, improving clarity while keeping the entire design combinational and modular.
+
+Use reusable popcount4 and popcount8 modules for clarity and conciseness.
+
+The total count fits in 8 bits (max 255).
+
+This approach balances simplicity and clarity with efficiency.

@@ -1,0 +1,14 @@
+Here's a novel approach using a shift register and state machine to detect arrow key sequences:
+
+1. Instead of directly comparing the 16-bit scancode, we'll implement a small state machine that tracks the PS/2 protocol sequence
+2. Arrow keys in PS/2 protocol are typically preceded by a break code (0xF0) and have a prefix byte (0xE0)
+3. The module will:
+   - Shift in incoming scancode bytes
+   - Detect the sequence pattern for arrow keys (E0 followed by keycode)
+   - Output the corresponding direction signal when a valid sequence is detected
+4. This approach more accurately models actual PS/2 keyboard behavior and can be extended to handle more complex sequences
+
+Advantages:
+- More realistic simulation of actual keyboard behavior
+- Easier to extend for handling key releases or other special keys
+- Potential power savings by only activating outputs during valid sequences

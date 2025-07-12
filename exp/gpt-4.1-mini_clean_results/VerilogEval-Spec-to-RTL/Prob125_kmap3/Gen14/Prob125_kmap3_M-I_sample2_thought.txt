@@ -1,0 +1,7 @@
+Optimize the original implementation by simplifying the boolean expression further and using continuous assignments with wires instead of regs and always blocks. The Karnaugh map simplifies to:
+out = (a & ~c) | (c & (~b | a)) 
+which can be factored to:
+out = (a & ~c) | (c & ~b) | (c & a)
+This is minimal already, but we can remove redundant terms: since (c & a) overlaps with (a & ~c), the minimal SOP is (a & ~c) | (c & ~b) | (c & a).
+Since (c & a) is covered by (a & ~c) when c=0 and (c & a) when c=1, all covered.
+We keep all three terms to ensure correctness. Implementing with wires and a single assign reduces area and power by removing the always block and regs. This also improves performance by reducing logic levels and switching overhead.

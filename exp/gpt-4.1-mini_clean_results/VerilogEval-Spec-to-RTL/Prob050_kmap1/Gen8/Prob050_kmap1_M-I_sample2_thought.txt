@@ -1,0 +1,14 @@
+The given design correctly implements the function using a 4-to-1 multiplexer, but this adds extra logic levels and some unnecessary switching since three inputs are tied to constant 1. To improve PPA (performance, power, area), a direct Boolean expression implementation is better.
+
+From the K-map, the function can be expressed as:
+out = (b | c) | (~b & ~c & a)
+
+This means:
+- If either b or c is 1, output is 1.
+- Else if b=0 and c=0, output equals a.
+
+This requires fewer gates and less logic depth than the mux approach.
+
+By sharing the inverted signals (~b and ~c), gate count and power are minimized. Also, the direct gate-level implementation improves timing by reducing the logic levels to two.
+
+This approach reduces static and dynamic power (less switching on unused mux inputs), reduces gate count (area), and improves critical path delay (performance).

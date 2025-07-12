@@ -1,0 +1,16 @@
+Novel approach using a shift register and bit counting:
+1. Use a 3-bit shift register to track the last 3 w values (eliminates need for position counter)
+2. Implement a simple 2-state FSM (A and B)
+3. In state B:
+   - Shift in new w value each cycle
+   - After every 3 cycles, count the number of 1's in the shift register
+   - Set z=1 in the next cycle if count equals 2
+4. Use a modulo-3 counter to track when to evaluate (simpler than position tracking)
+5. Reset all registers when returning to state A
+
+Advantages:
+- Shift register naturally maintains last 3 values without complex indexing
+- Simple bit counting replaces pattern matching
+- Clear separation between data collection and evaluation
+- Minimal state machine with clean transitions
+- Efficient implementation with basic operations

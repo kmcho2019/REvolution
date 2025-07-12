@@ -1,0 +1,25 @@
+The provided solution correctly implements a radix-2 division algorithm with signed/unsigned support and handles division by zero gracefully. However, there are some opportunities to optimize the design for better PPA (performance, power, area):
+
+1. **Simplify remainder and quotient registers:**
+   The current implementation keeps the remainder in 9 bits, and shifts quotient and remainder separately on each iteration. Instead of shifting quotient bits each cycle, it's more hardware-efficient to build the quotient from MSB to LSB by left-shifting the remainder and injecting the quotient bit in the LSB of remainder. This avoids separate shifting and concatenations, which can simplify logic and registers.
+
+2. **Use a single shift register for remainder+quotient (like SR) as in the original spec:**
+   Maintaining one 17-bit shift register (SR) that contains remainder in the upper bits and quotient in the lower bits (shifted left each iteration) reduces the number of registers and muxes, potentially improving area and timing.
+
+3. **Refine subtraction logic:**
+   Currently, subtraction is done by adding the two’s complement of divisor; borrow is extracted from carry out. We can keep this approach but inline it more clearly, and limit arithmetic widths.
+
+4. **Register absolute values immediately on input capture:**
+   Pre-calculate absolute values combinationally and register them to avoid repeated calculations and complex logic within the iterative division steps.
+
+5. **Reset handling and control signals:**
+   Use synchronous reset, remove redundant signals, and clarify the FSM controlling division process.
+
+6. **Clarify output formation:**
+   After division completion, extract remainder and quotient from SR, apply sign corrections once, and output result.
+
+The strategy is to balance resource usage by using the single SR register for quotient and remainder combined (matching the original design intent), optimizing shifting and subtraction in one logic block, and simplifying control FSM. This should reduce logic and registers, improve timing and power, while keeping the same functionality.
+
+The final code uses a 17-bit SR register: upper 9 bits for remainder, lower 8 bits for quotient. Each cycle shifts left by 1, tries subtracting divisor from remainder, sets quotient bit accordingly. The control FSM manages start and end of division, res_valid timing, and supports signed/unsigned operation correctly.
+
+This implementation matches the original design concept but is refactored for clarity, synthesis friendliness, and PPA.

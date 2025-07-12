@@ -1,0 +1,14 @@
+The core fix is to properly align the output assertion timing with the FSM states and inputs to produce Moore outputs asserted exactly one cycle after the event. To do this, store the current input and state at each clock edge, and use the *previous* state and input (both registered) to decide outputs on the current cycle, ensuring outputs are asserted in the cycle *after* detecting a condition.
+
+Specifically:
+
+- At each clock edge, save `state` and `in` into registers `prev_state` and `prev_in`.
+- Outputs `disc` and `flag` assert when previous state was S5 or S6 respectively, *and* the previous input was 1, and current input is 0 (this means a transition from 1 to 0 after 5 or 6 consecutive ones).
+- The key is that both `prev_state` and `prev_in` represent the FSM and input conditions during the previous cycle, and the current input `in` represents the current cycle's input.
+- To keep outputs Moore-type (depend only on current state), introduce an intermediate registered signal capturing the output conditions triggered by previous state's transitions and current input.
+- For the error signal `err`, since error condition is stable in state S7, assert `err` whenever *previous* state is S7, to delay assertion by one cycle.
+- This alignment ensures outputs are asserted one clock cycle after the triggering sequence.
+- Initialize `prev_state` and `prev_in` to 0 on reset to start with previous input zero and state zero as required.
+- This properly satisfies the timing requirements and yields correct output assertion.
+
+Thus, outputs depend on registered signals from previous cycle FSM and inputs, with current input included in output logic for one-cycle delay, perfectly implementing the Moore FSM behavior requested.

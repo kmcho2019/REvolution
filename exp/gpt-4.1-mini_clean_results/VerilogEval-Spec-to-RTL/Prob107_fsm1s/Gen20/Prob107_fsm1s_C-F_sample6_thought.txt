@@ -1,0 +1,11 @@
+I will fuse the best ideas from both examples by maintaining the clarity of separate combinational and sequential always blocks from Example 2, using explicit named state encoding for readability, and leveraging the minimal one-bit state encoding and direct output assignment from Example 1 for compactness.
+
+Specifically, the fusion strategy is:
+- Use named localparams for states (B=0, A=1) to enhance code readability and maintainability.
+- Separate combinational next_state logic in one always block and synchronous state update with active-high reset in another always block, preserving clean RTL structure.
+- Assign the Moore output as a continuous assignment directly from the state signal, avoiding redundant registers or extra logic.
+- Keep the next_state and state registers as 1-bit reg variables to maintain minimal state encoding.
+- Provide a default next_state assignment in the combinational block for safety and synthesis friendliness.
+- This approach yields a clean, readable, minimal, and high-quality FSM design optimized for PPA while being very clear and maintainable.
+
+The resulting code balances clarity, minimalism, and synthesis friendliness better than the examples individually.

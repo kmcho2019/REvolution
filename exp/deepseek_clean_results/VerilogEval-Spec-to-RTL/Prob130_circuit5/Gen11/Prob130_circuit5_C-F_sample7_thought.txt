@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. **Selection Logic**: Combine the efficient bit selection approach from Example 1 with the clear case structure from Example 2. We'll use a direct 4:1 multiplexer pattern with concatenated inputs for hardware efficiency while maintaining readability.
+
+2. **Default Handling**: Adopt the efficient 'f' output detection from both examples (checking c[3:2]) but implement it as an early condition to optimize power and area.
+
+3. **Optimizations**:
+   - Use concatenation for input ordering (b, e, a, d) to match the selection pattern
+   - Implement selection using simple bit slicing when c is 0-3
+   - Default to '1111' when c is outside 0-3 (detected via c[3:2])
+   - Single assignment for clean synthesis and timing
+
+Advantages:
+- More hardware efficient than Example 2 (avoids decoder logic)
+- Clearer structure than Example 1 (direct mux pattern)
+- Excellent timing (single level of logic)
+- Minimal area (no unnecessary comparators)
+- Low power (early default detection)

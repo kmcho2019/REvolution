@@ -1,0 +1,15 @@
+Novel approach using parallel edge detectors with memory:
+
+1. Instead of tracking previous values, implement 32 independent falling-edge detectors
+2. Each detector has its own 1-bit memory (flip-flop) that gets set when a falling edge is detected
+3. The memory bits remain set until reset, satisfying the capture requirement
+4. This architecture:
+   - Clearly separates edge detection from memory function
+   - Processes each bit independently in parallel
+   - Uses simple AND-NOT gates for edge detection
+   - Provides direct visibility into each bit's transition history
+   - Scales well to any bus width
+5. The implementation uses:
+   - 32 DFFs for previous input values (implicit in edge detection)
+   - 32 DFFs for output memory
+   - Simple combinational logic for edge detection

@@ -1,0 +1,12 @@
+I will fuse the clear, straightforward nested increment and synchronous reset logic from Example 1 with the gated enable signals and conditional increments from Example 2 to optimize for both timing and power without adding complexity.
+
+Specifically:
+- Use four 4-bit registers for digits as in both examples.
+- Perform increments sequentially with conditional logic, but avoid nested if-else cascades by using enable signals that are combinationally generated to gate increments of the higher digits.
+- Generate ena signals combinationally as in Example 2 to reflect when each upper digit is enabled to increment (i.e., when all lower digits are 9).
+- Update each digit on the positive clock edge only when its enable is asserted, minimizing toggling for upper digits.
+- Keep synchronous active-high reset.
+- Use a simple inline increment-with-rollover function or inline logic.
+- This merges Example 2's clearer enable gating and Example 1's straightforward reset and increments to reduce critical path length (flatten carry logic into separate increments) and minimize switching activity for upper digits.
+
+The resulting design will be functionally equivalent, more modular, and potentially better in timing and power.

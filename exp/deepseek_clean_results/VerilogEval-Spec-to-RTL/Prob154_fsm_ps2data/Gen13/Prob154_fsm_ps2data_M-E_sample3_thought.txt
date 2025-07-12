@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of storing bytes in separate registers, use a 24-bit shift register to accumulate incoming bytes. This reduces the number of registers needed.
+2. Simplified State Machine: Use a single-bit state (collecting/not collecting) combined with a 2-bit counter to track byte positions.
+3. Early Done Detection: The done signal can be generated combinatorially from the counter value, reducing latency.
+4. Power Optimization: Only shift in new data when in collecting state, reducing unnecessary switching.
+5. Reset Handling: Clear all registers on reset, including the shift register.
+
+Key Advantages:
+- Reduced register count (single 24-bit shift register vs three 8-bit registers)
+- Simpler state machine (1-bit state + 2-bit counter)
+- Combinatorial done signal for immediate response
+- Lower power consumption due to gated shifting
+- More compact implementation

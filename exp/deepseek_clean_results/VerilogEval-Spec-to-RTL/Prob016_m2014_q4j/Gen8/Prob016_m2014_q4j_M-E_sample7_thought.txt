@@ -1,0 +1,7 @@
+Here's a novel approach using a carry-select adder architecture, which provides better performance than ripple-carry while maintaining reasonable area overhead for a 4-bit adder:
+
+1. **Concept**: Split the 4-bit addition into two 2-bit segments that compute in parallel with different carry assumptions.
+2. **Parallel Processing**: The lower 2 bits use a ripple-carry adder, while the upper 2 bits compute both possible cases (carry=0 and carry=1).
+3. **Carry Selection**: When the actual carry from the lower bits is ready, it selects the correct upper sum through multiplexers.
+4. **Benefits**: This reduces the critical path compared to pure ripple-carry, as the upper bits computation happens in parallel with the lower bits.
+5. **Implementation**: Use two 2-bit ripple adders for the upper bits (with carry=0 and carry=1), and multiplex the results based on the actual carry from lower bits.

@@ -1,0 +1,21 @@
+Novel Architecture Idea:
+1. Unified Counter Approach:
+   - Use a single 32-bit counter to track time in seconds since midnight
+   - Convert this to hh:mm:ss format using division/modulo operations
+   - This reduces the number of registers and simplifies control logic
+
+2. State Machine with Precomputation:
+   - Maintain current time in both raw seconds and BCD formats
+   - Precompute next BCD values in parallel with counter updates
+   - Use a state machine to handle AM/PM transitions and 12-hour wrap-around
+
+3. Optimized BCD Conversion:
+   - Implement fast BCD conversion using shift-and-add-3 algorithm
+   - Pipeline the conversion to break critical paths
+   - Use shared arithmetic units for all digit conversions
+
+Key Advantages:
+- Reduced register count by using a single timebase counter
+- Simplified control logic with precomputed next states
+- Better timing through pipelined BCD conversion
+- Easier to extend/modify (e.g., for 24-hour format)

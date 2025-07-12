@@ -1,0 +1,15 @@
+To design an 8-bit Radix-4 Booth multiplier, we first need to understand the Booth algorithm, which is used for multiplying two binary numbers. In the Booth algorithm, each bit of the multiplier is examined from right to left, and depending on the current bit and the previous bit, a decision is made whether to add the multiplicand, subtract it, or do nothing to the product, and then the multiplicand is shifted right by one bit position.
+
+In this implementation, we'll use two 16-bit registers to hold the multiplier and multiplicand. The multiplier register is initialized with the 8-bit input 'a' and its sign bit replicated 8 times to fill the upper 8 bits. The multiplicand register is initialized with the 8-bit input 'b' and its sign bit replicated 8 times to fill the upper 8 bits.
+
+On the positive edge of the clock signal or the reset signal, the module performs the multiplication process. If the reset signal is high, the registers are reset. If the reset signal is low, the module checks the counter (ctr). If the counter is less than 16, the multiplicand register is left-shifted by 1 bit to simulate the Booth algorithm's shifting operation.
+
+The Booth algorithm involves examining pairs of bits from the multiplier (Y[2i+1:2i]) to determine the operation. For Radix-4, we consider the bits in groups of two. The Booth encoding rules are:
+- If Y[2i+1:2i] = 00, do nothing.
+- If Y[2i+1:2i] = 01, add the multiplicand (X) to the product.
+- If Y[2i+1:2i] = 10, subtract the multiplicand (X) from the product.
+- If Y[2i+1:2i] = 11, add 2*X to the product.
+
+However, in this simplified description, we directly check each bit of the multiplier and accumulate the product accordingly, which simplifies the explanation but in practice, we follow the Booth algorithm's rules for each pair of bits (considering Radix-4, the Booth algorithm checks two bits at a time and decides based on those).
+
+We use a 5-bit counter (ctr) to track the current bit being examined in the multiplier. The counter is incremented by 1 on each clock cycle until it reaches 16, indicating the completion of the multiplication process. Once the counter reaches 16, the ready signal (rdy) is set to 1.

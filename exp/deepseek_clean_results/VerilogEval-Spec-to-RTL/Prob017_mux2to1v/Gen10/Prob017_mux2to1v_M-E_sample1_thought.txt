@@ -1,0 +1,12 @@
+Innovative approach using bitwise operations:
+1. Instead of using a traditional mux structure, we'll exploit the fact that:
+   - When sel=0: out = a & ~0 (all bits pass through)
+   - When sel=1: out = b & ~0 (all bits pass through)
+2. Create a 100-bit mask where all bits are equal to sel
+3. Use this mask to select between a and b through bitwise operations:
+   - out = (a & ~mask) | (b & mask)
+4. This approach:
+   - Eliminates explicit conditional logic
+   - Uses only parallel bitwise operations
+   - May offer better synthesis results in some technologies
+   - Provides identical functionality to traditional mux

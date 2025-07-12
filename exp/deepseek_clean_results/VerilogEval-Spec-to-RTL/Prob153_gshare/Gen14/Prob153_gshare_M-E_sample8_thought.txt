@@ -1,0 +1,13 @@
+Novel Architectural Idea: "Speculative GHR Update with Rollback"
+1. Instead of waiting for training to update GHR, speculatively update it during prediction
+2. Maintain both speculative and confirmed GHR states
+3. On misprediction, roll back to the confirmed GHR state
+4. This allows faster prediction feedback while maintaining correctness
+5. Use separate PHT read/write ports to avoid conflicts between prediction and training
+6. Implement PHT as dual-port memory to allow simultaneous read (prediction) and write (training)
+
+Key Advantages:
+- Predictions can use most recent branch history immediately
+- Training corrections handled via rollback mechanism
+- Parallel PHT access eliminates read-after-write hazards
+- More accurate predictions due to faster GHR updates

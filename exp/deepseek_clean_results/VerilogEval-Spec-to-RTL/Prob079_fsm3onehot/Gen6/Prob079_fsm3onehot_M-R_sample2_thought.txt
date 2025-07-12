@@ -1,0 +1,16 @@
+Refactoring Approach:
+1. Maintain the same state transition behavior and output logic
+2. Switch to using continuous assignments (assign) for all logic
+3. Simplify the next_state logic by:
+   - Directly implementing the state transition table with minimal operations
+   - Leveraging one-hot encoding properties to reduce logic complexity
+   - Using parallel assignments for each next_state bit
+4. Keep output logic as simple as possible (just state[3])
+5. Eliminate any redundant intermediate signals
+
+Key Improvements:
+- Pure combinational logic using only assign statements
+- Each next_state bit has a direct, minimal expression
+- Common terms (~in) are naturally factored by the synthesis tool
+- Clear mapping from state transition table to implementation
+- Maintains optimal PPA characteristics

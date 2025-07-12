@@ -1,0 +1,9 @@
+To fix the barrel shifter and strictly follow the design specification, I will implement each stage as a set of 8 individual 2-to-1 multiplexers (mux2X1), one per bit. Each mux selects either the current bit or the bit shifted by that stage's amount (4, 2, or 1), depending on the corresponding control bit.
+
+This bit-wise muxing approach accurately models the hardware described, where each stage shifts the intermediate result by its amount if enabled, otherwise passes bits unchanged. The shifts are performed circularly (rotate), so indexing wraps around modulo 8.
+
+By cascading these stages, the total rotation amount equals the sum of the enabled ctrl bits (4*ctrl[2] + 2*ctrl[1] + ctrl[0]). This corrects the previous approach where large-block concatenations were used without per-bit selection.
+
+The design includes a `mux2X1` module for clarity and reuse, instantiated 8 times per stage to process all bits independently.
+
+Thus, the barrel shifter becomes a cascade of three stages, each using mux2X1 arrays controlled by ctrl bits to rotate the data as intended.

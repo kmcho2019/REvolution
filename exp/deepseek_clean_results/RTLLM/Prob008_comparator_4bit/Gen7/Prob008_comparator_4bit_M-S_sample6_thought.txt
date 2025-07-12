@@ -1,0 +1,15 @@
+Simplification Strategy:
+1. Remove redundant intermediate signals by directly computing outputs
+2. Use simple bitwise comparison for equality (XNOR reduction)
+3. For magnitude comparison, implement MSB-first priority logic:
+   - Compare bits from MSB to LSB
+   - First unequal bit determines the result
+   - No need for carry-lookahead since we can terminate early
+4. Make less-than output explicit rather than derived from other outputs
+5. Maintain mutual exclusivity with simpler logic structure
+
+Key Simplifications:
+- Eliminated all intermediate wires (gt_3, gt_2, etc.)
+- Direct MSB-first comparison replaces carry-lookahead logic
+- Explicit less-than calculation instead of derived from other outputs
+- Reduced gate count while keeping same functionality

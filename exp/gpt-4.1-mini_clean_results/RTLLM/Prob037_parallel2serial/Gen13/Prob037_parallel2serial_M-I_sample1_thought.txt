@@ -1,0 +1,7 @@
+To improve the original solution's power and timing, capture the parallel input `d` into an internal register at the start of serialization (when counter is 0). Then, output the serialized bits from this registered data rather than directly from `d`. This reduces glitches on `dout` caused by asynchronous changes on `d` and stabilizes output data during serialization.
+
+Also, modify `valid_out` to be high for the full 4-cycle serialization period, indicating all serial bits are valid and available, not just the first bit. This can simplify downstream logic and reduces unnecessary toggling.
+
+Keep the counter synchronous reset and simple 2-bit counter. Use shifting on the registered data to output each bit sequentially from MSB to LSB without indexing, reducing combinational logic complexity.
+
+This approach trades a 4-bit register and simple logic for reduced dynamic power (due to fewer glitches) and potentially better timing because the muxing of input data bits is replaced by shift register output. The valid signal extension aligns with the serialization window for clarity.

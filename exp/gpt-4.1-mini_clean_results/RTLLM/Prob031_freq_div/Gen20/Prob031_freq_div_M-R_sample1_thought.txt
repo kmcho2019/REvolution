@@ -1,0 +1,5 @@
+Refactor the frequency divider to use a single always block with separate counters and clocks updated synchronously on the positive edge of CLK_in or reset. Instead of toggling output clocks directly inside conditional branches, use intermediate signals to indicate when to toggle, improving readability.
+
+The 50MHz clock division remains a toggle flip-flop. For the 10MHz and 1MHz clocks, counters increment each clock cycle, and when they reach their toggle thresholds, the corresponding clock output toggles and counters reset. Use parameters for the division values to enhance maintainability.
+
+This approach groups all logic into a single always block, reducing code duplication, and enhancing structural clarity while preserving synchronous reset behavior and correct timing.

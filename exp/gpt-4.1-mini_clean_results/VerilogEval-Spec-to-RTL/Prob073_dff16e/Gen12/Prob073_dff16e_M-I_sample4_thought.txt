@@ -1,0 +1,7 @@
+To improve power efficiency and potentially reduce dynamic toggling inside the flip-flops, I will add clock enables to the flip-flops that correspond to each byte-enable bit. This way, when a byte is disabled, the flip-flops in that byte do not toggle and do not sample new data, effectively reducing switching activity and dynamic power consumption. 
+
+The synchronous active-low reset remains unchanged, applied to all flip-flops simultaneously.
+
+The implementation will split the 16-bit register into two 8-bit registers, each with its own clock enable driven by the respective byteena bit. On reset, both registers reset to zero. On clock edges, each 8-bit register updates only when its enable is asserted, capturing the corresponding 8 bits from d.
+
+This approach should preserve the original functionality while potentially reducing power by gating updates at flip-flop level, improving power without compromising timing or area significantly.

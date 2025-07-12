@@ -1,0 +1,26 @@
+To improve PPA, the focus is on reducing comparator complexity and switching activity. Instead of comparing the full 10-bit counter to 999 every cycle, we can count modulo 1000 by leveraging an addition and rollover via arithmetic. Since 1000 is less than 1024 (2^10), we can implement a counter that increments and rolls over at 999 using an arithmetic approach:
+
+- Use the 10-bit counter q.
+- At each clock, increment q.
+- If q equals 999, wrap to zero.
+  
+However, the direct comparator (q == 999) might introduce critical path delay and switching glitches. To optimize:
+
+- Implement a binary up-counter with synchronous reset.
+- Use a smaller comparison by checking q against 999 with a combinational signal.
+- Implement the reset condition using a single equality check with minimal logic.
+
+For power reduction:
+
+- Instead of an addition with a comparator, exploit that 999 is 0x3E7, which is 10 bits. By subtracting 999 and checking zero, the comparison logic might be smaller.
+- Add a one-cycle enable signal that only toggles when counting, but since counting is continuous, no gating here.
+
+Overall, optimize the comparator by rearranging its logic to a minimal form (using combinational logic), and ensure the counter increments and resets synchronously.
+
+Alternatively, given the problem constraints, one small area and delay improvement is to rewrite the comparison as a less-than check (q < 999), which synthesis tools might optimize better.
+
+Final approach: Replace the 'q == 999' with 'q == 10'd999' (with decimal literal to ensure clarity), keep synchronous reset, and check for wrap-around with minimal logic.
+
+This is a minor optimization but might improve synthesis results by clearer comparison literals and slightly simpler logic.
+
+Additionally, add a note to guide synthesis tools to use addition with rollover, which often is optimized efficiently.

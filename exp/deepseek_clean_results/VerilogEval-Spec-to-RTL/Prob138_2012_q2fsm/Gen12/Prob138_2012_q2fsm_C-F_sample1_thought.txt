@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. State Encoding: Use a hybrid encoding that combines Gray-code properties for minimal transitions (A:000, B:001, C:011, D:010) with one-hot characteristics for output states (E:110, F:111). This maintains the efficient output logic (z = current_state[2]) while minimizing state transition power.
+
+2. State Transition Logic: Implement using a case statement for readability and synthesis optimization, but add parallel ternary operations for the most common transitions (A→B and D→A/F) to potentially reduce critical path delay.
+
+3. Output Logic: Keep the simple bit-check (current_state[2]) as it's the most area and power efficient implementation from both examples.
+
+4. Reset Handling: Use the combined state storage and reset logic for area efficiency, with synchronous reset to match the specification.
+
+5. Robustness: Include a default case that forces a reset to state A, making the FSM self-correcting for any undefined states.
+
+Key Innovations:
+- Hybrid state encoding optimized for both transition power and output logic
+- Case statement with selective ternary optimizations for critical paths
+- Minimal output logic with direct bit check
+- Combined reset and state storage
+- Full coverage of all possible states

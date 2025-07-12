@@ -1,0 +1,11 @@
+To implement a frequency divider by an odd number using two counters for positive and negative edges, I will use the following approach:
+
+- Use two separate counters: cnt_pos increments on the positive edge of clk, cnt_neg increments on the negative edge of clk.
+- Both counters count modulo NUM_DIV.
+- When cnt_pos reaches NUM_DIV-1, toggle clk_div_pos.
+- Similarly, when cnt_neg reaches NUM_DIV-1, toggle clk_div_neg.
+- The final divided clock output clk_div is obtained by OR'ing clk_div_pos and clk_div_neg.
+- This produces two pulse trains each toggled at one edge of the input clock, together providing a frequency divided output by the odd number NUM_DIV.
+- The output will have a frequency of clk/(NUM_DIV), and the OR logic combines the toggling to produce a near 50% duty cycle output.
+- All registers are reset synchronously by an active low reset rst_n.
+- This dual-counter, dual-flipflop architecture strictly separates positive and negative edge logic, which suits odd-number division and improves waveform symmetry.

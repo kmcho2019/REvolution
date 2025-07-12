@@ -1,0 +1,21 @@
+The original solution has conceptual correctness but some Verilog syntax and coding style errors:
+
+1. **Illegal procedural assignment to wires:** The subtraction operation `{sub_carry, sub_result} = SR_upper + NEG_DIVISOR;` is illegal inside an always block. This must be done combinationally outside or by using reg variables inside the always block with a temporary reg.
+
+2. **Width mismatch in SR update:** SR is 17 bits, but the assignment attempts to concatenate 9 + 8 + 1 = 18 bits or 19 bits. We need precise bit slicing and shifting to keep consistent 17-bit width.
+
+3. **Improving code clarity:** We will use separate registers and combinational assignments to clearly separate sequential and combinational logic.
+
+4. **Control signals and naming:** Make sure `res_valid` is controlled only by FSM states and operations.
+
+Improvement strategy:
+- Use a combinational block to calculate `sub_result` and `sub_carry` from the current remainder part of SR and NEG_DIVISOR.
+- Update SR in sequential block by shifting left by 1 bit and inserting the quotient bit (carry_out).
+- Keep SR as 17 bits: remainder is upper 9 bits, quotient lower 8 bits plus 1 extra bit used for shifting. We'll define SR as [16:0] where bits [16:8] remainder (9 bits), [7:0] quotient (8 bits).
+- When shifting left by 1, discard the MSB remainder bit shifted out, shift left remainder and quotient together, and insert the carry_out in LSB of quotient.
+- At the end, extract quotient and remainder properly (quotient in SR[7:0], remainder in SR[16:8]).
+- Signed correction on output result when `res_valid` is asserted.
+
+This revision fixes the Verilog illegal assignments, matches widths carefully, and preserves radix-2 division algorithm as requested.
+
+The final code will have clear separation of combinational and sequential logic for ease of verification and synthesis.

@@ -1,0 +1,9 @@
+The original design uses an explicit ripple-carry adder with a manually generated carry chain, which is clear and accurate but has a linear carry propagation delay and consumes extra wiring resources. To improve PPA (Power, Performance, Area):
+
+- Use Verilog’s built-in addition operator for the combined operation `a + (~b + 1)` controlled by `do_sub` using conditional XOR and carry-in. This lets synthesis tools infer optimized carry chain hardware, improving timing and area.
+- Replace the manual ripple carry chain with a single addition expression to reduce code complexity, routing overhead, and help synthesis utilize device primitives for faster add/subtract.
+- Compute the zero flag using a reduction NOR `~|out`, which is already optimal.
+- Keep all assignments inside a combinational always block with blocking assignments, as synthesis tools prefer that style.
+- This approach reduces code complexity and area, likely improves timing due to inferred carry chains, and reduces unnecessary carry wire toggling, thus lowering power.
+
+Overall, the new solution retains correctness, simplifies the implementation, and leverages synthesis optimizations for better PPA.

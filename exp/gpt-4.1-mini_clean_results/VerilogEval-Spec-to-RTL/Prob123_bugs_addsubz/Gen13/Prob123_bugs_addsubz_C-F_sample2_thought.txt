@@ -1,0 +1,13 @@
+Fuse the strengths of both examples by implementing the 8-bit adder-subtractor in a single combinational always block with blocking assignments for clarity and synthesis friendliness, while using vector operations and an explicit ripple carry chain computed inside the always block (like Example 1) for straightforward control and easy debug. 
+
+This approach benefits from:
+- Clear behavioral style with only one always @(*) block, ensuring combinational logic and no inferred latches.
+- Explicit ripple carry adder implementation for explicit carry generation and propagation, improving transparency.
+- Vectorized conditional inversion of B (via XOR with do_sub replicated vector), minimizing manual loops.
+- Blocking assignments in the always block to ensure correct combinational logic without race conditions.
+- Zero detection via reduction NOR (~|out) for precise zero flag setting.
+- Using reg types for outputs and intermediate signals inside always block, which synthesis tools handle efficiently.
+- Avoiding generate blocks for carry logic reduces complexity in small-width designs, while still offering explicit carry path.
+- Maintains interface compatibility and good readability for maintenance.
+
+This fusion captures clarity, maintainability, explicit carry logic, and synthesis efficiency, while fixing the original bug correctly and keeping the design easy to understand and verify.

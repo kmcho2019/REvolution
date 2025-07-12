@@ -1,0 +1,21 @@
+Simplified Design Approach:
+
+1. State Reduction:
+   - Combine walking left/right into a single WALK state with direction tracking
+   - Eliminate redundant states by using direction register
+
+2. Priority Handling:
+   - Implement fall > dig > bump priority in WALK state
+   - Only check bumps when not falling or digging
+
+3. Simplified Direction Logic:
+   - Use single direction register (1=left, 0=right)
+   - Toggle direction on bump, with both bumps toggling direction
+
+4. Fall Counter:
+   - Reset counter when entering FALL state
+   - Check splatter condition when ground reappears
+
+5. Output Logic:
+   - Directly derive outputs from current state and direction
+   - All outputs zero in SPLAT state

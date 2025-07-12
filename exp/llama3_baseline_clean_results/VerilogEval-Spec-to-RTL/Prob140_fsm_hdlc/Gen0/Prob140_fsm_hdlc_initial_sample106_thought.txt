@@ -1,0 +1,18 @@
+To implement the required functionality, we can design a Moore-type finite state machine with the following states:
+- S0: Initial state, assuming the previous input was 0.
+- S1: One 1 encountered.
+- S2: Two 1s encountered.
+- S3: Three 1s encountered.
+- S4: Four 1s encountered.
+- S5: Five 1s encountered.
+- S6: Six 1s encountered, flag detected.
+- S7: Seven or more 1s encountered, error detected.
+- Sdisc: A bit needs to be discarded.
+
+From the initial state S0, if a 0 is encountered, we stay in S0. If a 1 is encountered, we move to S1.
+From S1 to S5, if a 1 is encountered, we move to the next state, and if a 0 is encountered, we move back to S0.
+From S5, if a 1 is encountered, we move to S6 (flag detected), and if a 0 is encountered, we move to Sdisc (bit needs to be discarded).
+From S6, if a 1 is encountered, we move to S7 (error detected), and if a 0 is encountered, we move back to S0.
+From S7, we stay in S7 as long as 1s are encountered, and move back to S0 when a 0 is encountered.
+
+We will use a 3-bit state register to represent the 8 states.

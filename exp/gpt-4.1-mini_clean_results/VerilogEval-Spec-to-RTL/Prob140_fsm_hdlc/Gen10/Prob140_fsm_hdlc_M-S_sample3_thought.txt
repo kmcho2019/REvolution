@@ -1,0 +1,9 @@
+The original solution uses a 3-bit saturating counter for the number of consecutive 1s and explicit next state and output logic. To simplify further while maintaining functionality:
+
+- Use a single 3-bit counter register that increments with each input '1' up to a max of 7 and resets to 0 on input '0'.
+- Generate outputs from the current count and input without separate next_state variable, relying only on combinational signals derived from the state and input.
+- Since output signals are Moore outputs asserted on the cycle after detection, the outputs are registered directly from the conditions based on the previous state's count and current input.
+- This removes the need for a separate next_state signal and simplifies the always @(*) block to just combinational outputs.
+- Synchronous reset clears the counter and outputs.
+- The counter saturates at 7 (error).
+- This leads to minimal logic with only one sequential block and direct combinational output assignments, simplifying the code and making it very concise.

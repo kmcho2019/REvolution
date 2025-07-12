@@ -1,0 +1,11 @@
+The finite state machine (FSM) will start in a reset state, where it waits for the input byte stream to arrive. Once a byte with in[3]=1 is received, it will transition to a state where it captures the next two bytes. After capturing the third byte, it will signal done in the next clock cycle and output the 24-bit message. 
+
+The FSM will have four states: 
+1. RESET: reset state, discard bytes until in[3]=1
+2. BYTE1: capture the first byte of the message
+3. BYTE2: capture the second byte of the message
+4. BYTE3: capture the third byte of the message and signal done in the next clock cycle
+
+We'll use a 2-bit state variable to represent these four states. The state will be updated on the positive edge of the clock.
+
+The output out_bytes will be valid whenever the done signal is asserted, which is when the FSM is in the state after BYTE3. We can use a 24-bit register to store the captured bytes and output them when the done signal is asserted.

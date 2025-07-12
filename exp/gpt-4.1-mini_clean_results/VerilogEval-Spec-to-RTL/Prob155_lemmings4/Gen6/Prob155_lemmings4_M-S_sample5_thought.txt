@@ -1,0 +1,7 @@
+Simplify the design by:
+1. Merging the fall_timer update directly into the mode logic without conditional increments, just saturate at max.
+2. Remove conditional register updates on direction and fall_timer; update unconditionally every clock cycle to simplify sequential logic.
+3. Simplify bump logic by combining bump_left and bump_right signals into one 'bumped' signal for direction toggling logic.
+4. Streamline next state logic with fewer nested conditions, relying on priority of fall > dig > bump as before.
+5. Keep clear localparams for mode and direction to maintain readability.
+This reduces combinational complexity and sequential logic branching while preserving the exact FSM behavior.

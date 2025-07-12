@@ -1,0 +1,11 @@
+Refactor the design to separate the counting and toggling logic more explicitly by using an always block for count and a separate always block for toggling wave_out triggered by a pulse generated when count reaches freq-1. This pulse acts as a toggle enable, creating a two-stage approach.
+
+Additionally, instead of checking (count == freq), precompute freq_minus_one and compare count with that, reducing the combinational comparator complexity.
+
+The counting always block increments or resets count based on enable and toggle_pulse. The toggle always block toggles wave_out only on the toggle_pulse rising edge.
+
+This decouples counting and toggling, improving clarity and potentially enabling better timing because toggle_out changes on a registered pulse rather than directly comparing count inside the toggle logic.
+
+Also, maintain the synchronous active-low reset and gating counting when freq=0.
+
+Overall, this restructuring preserves the functionality but with cleaner separation of concerns and potentially improved timing.

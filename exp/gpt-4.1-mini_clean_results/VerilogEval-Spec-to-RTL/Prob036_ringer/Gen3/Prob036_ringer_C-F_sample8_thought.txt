@@ -1,0 +1,20 @@
+Both examples implement the logic correctly and succinctly: ringer is active when ring=1 and vibrate_mode=0, motor when ring=1 and vibrate_mode=1, and both outputs off otherwise.
+
+Example 1 uses simple continuous assignments with ternary operators, which are minimal and clean, enabling efficient synthesis. Example 2 uses an always_comb block with nested if-else, which is functionally equivalent but slightly more verbose.
+
+To fuse the best of both:
+- Use continuous assignments for simplicity, clarity, and to enable synthesis tools to optimize for area and power.
+- Avoid redundant negations by explicitly expressing ringer and motor using straightforward boolean expressions.
+- Ensure outputs are mutually exclusive and driven by the same conditions to avoid glitches.
+- Keep outputs as wires unless registers are required to avoid unnecessary flip-flops.
+- This approach ensures minimal logic gates, clear semantics, and is optimal for power and area.
+
+Final logic:
+- ringer = ring & ~vibrate_mode
+- motor  = ring & vibrate_mode
+
+This exactly matches both examples' functionality, implemented with continuous assignment for compactness and clarity.
+
+No additional overhead of always block registers is introduced, and this style is often preferred in purely combinational logic.
+
+This fusion balances clarity, minimal logic, and synthesis efficiency.

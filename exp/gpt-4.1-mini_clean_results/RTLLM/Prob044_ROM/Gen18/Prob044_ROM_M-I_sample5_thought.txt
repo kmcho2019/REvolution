@@ -1,0 +1,5 @@
+To improve PPA while maintaining functional correctness, transform the ROM read port into a synchronous read using a clock input. This modification allows for better timing closure and enables output data to be registered, reducing combinational path delay and improving maximum operating frequency (performance). 
+
+Add an input clock signal, register the output data on the rising clock edge, and keep the memory initialization unchanged. This synchronous design is more friendly for FPGA block RAM inference and ASIC memory generators, usually resulting in lower power and better area efficiency compared to asynchronous reads.
+
+This approach preserves functionality but improves performance and potentially reduces power consumption by adding an output register stage and making read timing predictable.

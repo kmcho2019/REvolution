@@ -1,0 +1,8 @@
+Implement the 4-bit pipeline multiplier with two sequential pipeline stages separating partial product generation and accumulation:
+
+- Extend the multiplicand by size zeros on MSB side as required.
+- In the first pipeline stage, generate all partial products in parallel (mul_b bit × shifted mul_a_ext) and register them.
+- In the second pipeline stage, perform a registered addition of the partial products by splitting them into two groups (bits 0 & 1, bits 2 & 3) and summing each group, then summing those intermediate sums to form the final product.
+- Registers separate each pipeline stage, allowing a multi-cycle latency but increasing clock frequency due to simpler combinational logic in each stage.
+- Reset logic clears all pipeline registers and output synchronously.
+- This approach cleanly separates product generation from addition, with registers between, and balances addition over two pipeline stages.

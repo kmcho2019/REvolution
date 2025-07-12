@@ -1,0 +1,13 @@
+Fuse Example 1's approach of SP counting down from full (4) to empty (4) with push decrementing SP and pop incrementing SP, combined with Example 2's explicit dataOut update only on pop and skipping unnecessary memory clearing for power savings. Use Example 1's SP scheme (4 = empty, 0 = full) to avoid negative indices, but incorporate Example 2's clean combinational flag logic and careful synchronous control with valid_op gating to minimize toggling. Also adopt Example 1's single always_ff block style for synthesis friendliness and clarity.
+
+Key fusion points:
+- SP range: 0 (full) to 4 (empty), decrement on push, increment on pop.
+- dataOut updated only on pop (read) operations.
+- stack_mem written only on push, no clearing on pop.
+- valid_op signal to gate SP and stack updates, reducing toggling when no operation.
+- Flags EMPTY and FULL combinational from SP.
+- Reset clears SP to 4, dataOut to 0, and zeroes stack_mem.
+- Use a single clocked always block for all sequential logic.
+- Keep push/pop operation detection combinational outside sequential block.
+- Include comments and clarity for maintainability.
+This fusion preserves clarity, optimizes power by gating updates, and keeps pointer arithmetic safe and easy for synthesis.

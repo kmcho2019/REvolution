@@ -1,0 +1,7 @@
+The original code implements a Mealy finite-state machine using one-hot encoding for a 2's complementer. To refactor this code with a different structure, we can utilize a more explicit state machine encoding and directly assign the output `z` based on the current state and input `x`. This approach simplifies the combinational logic for `z` and maintains the one-hot encoding for the state machine.
+
+Instead of using an `always` block to continuously evaluate the output `z`, we can use an `assign` statement to directly assign the value of `z` based on the state and input `x`. This change reflects the combinational nature of the output `z` more explicitly.
+
+For the state machine, we keep the one-hot encoding but explicitly define the states and transitions. The state `A` is represented by `1'b0` and state `B` by `1'b1`. The transition from `A` to `B` occurs when `x=1`, and the machine stays in `B` regardless of `x`. This explicit definition maintains the original functionality while using a clearer structure for the state machine.
+
+By using `assign` for the output and explicitly defining the state transitions, the refactored code aims to maintain the same functionality as the original while potentially improving readability and synthesis efficiency due to its more explicit and straightforward structure.

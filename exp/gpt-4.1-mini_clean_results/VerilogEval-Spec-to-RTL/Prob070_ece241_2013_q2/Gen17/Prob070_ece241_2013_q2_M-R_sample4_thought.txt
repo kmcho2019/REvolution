@@ -1,0 +1,20 @@
+The original expressions for out_sop and out_pos contain a mistake: the minterm for input 2 (0010) was not properly included, causing functional mismatches. To refactor while keeping the same minimal forms (correct ones), I will explicitly calculate the minterms for 2, 7, and 15, and then simplify again for SOP and POS forms.
+
+Minterms for outputs=1:  
+- 2 = 0010 => a'=1, b'=1, c=1, d'=1 -> a' b' c d'  
+- 7 = 0111 => a'=1, b=1, c=1, d=1 -> a' b c d  
+- 15= 1111 => a=1, b=1, c=1, d=1 -> a b c d  
+
+Note that 7 and 15 share b c d. So SOP minimal is:  
+out_sop = a' b' c d' + b c d
+
+Double check POS: zeros are 0,1,4,5,6,9,10,13,14. The minimal POS form corresponding to the negation of the SOP is:  
+out_pos = (a + b + c' + d)(b' + c' + d')
+
+The refactoring will be:  
+- Use assign statements directly with the minimal SOP and POS expressions.  
+- Use intermediate wires to clarify the logic terms.  
+- Avoid always blocks; keep the design purely combinational with assign statements.  
+- This clarifies the function and avoids errors in implementation.  
+
+This restructuring keeps the minimal logic and makes it clear and verifiable, avoiding the mistakes from the prior version.

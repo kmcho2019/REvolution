@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples:
+
+- From Example 1: The use of one-hot decoding for the present state cleanly isolates each valid state, facilitating straightforward logic expressions for the next state bits and output z. This reduces large case statements and clearly separates logic paths, potentially improving timing and readability.
+
+- From Example 2: The combinational always block with case statements for next state and output assignment is simple and direct, but can be optimized to use combinational logic expressions instead of case statements for output z and next state bits to reduce area and power.
+
+Fusion Strategy:
+1. Use one-hot signals to decode the valid present states (as in Example 1) but replace equality comparators with simple decoded enable signals by combining basic logic rather than large comparators when possible.
+2. Express next state bits as clear Boolean equations derived from the FSM table, using these one-hot signals combined with input x, similar to Example 1.
+3. Instead of a continuous assignment for Y0, implement a combinational always block that assigns both Y0 and z to keep outputs registered (if desired), or use continuous assignments with clean logic expressions to reduce logic and power.
+4. For output z, use a simple direct combinational expression (z = s011 | s100) instead of a case statement.
+5. Remove redundant logic and handle undefined states by mapping them to state 000, ensuring clean synthesis.
+6. Since the clock is unused and the FSM is combinational in this module, keep outputs as wires with continuous assignments to reduce unnecessary registers and simplify the design.
+
+This fusion balances clear state decoding, low-complexity combinational logic, and minimal power and area while preserving excellent timing.

@@ -1,0 +1,5 @@
+To optimize for power and area while maintaining clarity and correctness, remove the parameterized ByteSplitter module and implement the splitting directly inside TopModule using simple assign statements. This eliminates the minor overhead of module instantiation and parameter handling, allowing synthesis tools to infer the slicing as pure wiring without any additional logic or buffers.
+
+This flattening reduces the complexity of the design hierarchy, likely decreasing synthesis overhead and net switching activity, which can improve power and area metrics. Since the input and outputs are fixed width, parameterization is unnecessary and introduces only slight overhead.
+
+The direct assignment approach achieves zero-delay, zero-overhead combinational slicing with minimal netlist complexity, maximizing performance and minimizing power and area.

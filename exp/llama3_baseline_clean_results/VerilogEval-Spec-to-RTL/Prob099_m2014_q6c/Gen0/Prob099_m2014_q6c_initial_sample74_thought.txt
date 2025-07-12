@@ -1,0 +1,19 @@
+To implement the state machine, we will use a one-hot encoding for the states. 
+We need to derive the next-state logic equations for Y2 and Y4 (corresponding to y[1] and y[3]) 
+based on the given state machine. 
+For Y2, which corresponds to state B (000010 in one-hot encoding), 
+we need to consider the transitions that lead to state B. 
+From the state machine, we can see that state A (000001) goes to state B when w is 0, 
+and state F (100000) goes to state C (which is not our concern for Y2) when w is 0. 
+However, there is no direct transition to B from other states. 
+So, the next-state logic equation for Y2 can be derived as y[0] & ~w.
+
+For Y4, which corresponds to state D (001000 in one-hot encoding), 
+we need to consider the transitions that lead to state D. 
+From the state machine, we can see that state B (000010) goes to state D when w is 1, 
+state C (000100) goes to state D when w is 1, 
+and state E (010000) goes to state D when w is 1. 
+So, the next-state logic equation for Y4 can be derived as (y[1] | y[2] | y[4]) & w.
+
+We also need to implement the output signals Y1 and Y3, 
+which are just y[0] and y[2] respectively.

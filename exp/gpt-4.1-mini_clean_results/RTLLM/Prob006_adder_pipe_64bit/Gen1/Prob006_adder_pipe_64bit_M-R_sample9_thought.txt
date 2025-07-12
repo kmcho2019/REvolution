@@ -1,0 +1,9 @@
+Refactor the 64-bit ripple carry adder pipeline by separating the pipeline registers and the combinational addition logic more explicitly.
+
+Instead of performing the addition and storing partial sums directly in registers inside a single always block, we pipeline the input operands and enable signals first, then perform combinational addition for each stage at each clock cycle. The carry between stages is also registered and passed along the pipeline.
+
+This approach uses explicit pipeline registers for inputs and carry signals and uses combinational adders to generate the sum outputs at each stage. The partial sums and final carry are then registered together as the output result at the last pipeline stage.
+
+By using separate always blocks and assign statements for addition, the design becomes clearer and separates combinational and sequential logic better. The output enable signal is pipelined along with the data.
+
+This approach retains the same functionality and pipeline depth (4 stages), but improves code clarity and modularity.

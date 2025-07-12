@@ -1,0 +1,9 @@
+To address the issues in the previous design, we can implement a two-stage pipeline architecture for the finite state machine (FSM). The first stage will handle the detection of the start bit and the reception of the data bits, while the second stage will verify the stop bit and output the received data byte.
+
+We will use a different approach to handle the stop bit verification. Instead of checking the stop bit in the Receive state, we will introduce a new state, WaitStop, where the FSM will wait for the stop bit after receiving the 8 data bits. This will simplify the logic and improve the overall performance of the FSM.
+
+To optimize the area consumption, we will use a more efficient state encoding scheme, such as binary encoding, and reduce the number of flip-flops required. We will also minimize the switching activity by only updating the state and output registers when necessary.
+
+We will use a parallel-in serial-out (PISO) shift register to receive the data bits, which will simplify the logic and reduce the area consumption. The PISO shift register will shift in the incoming bits in parallel and then shift them out serially, allowing us to easily handle the LSB-first order of the data bits.
+
+To improve power consumption, we will use clock gating to disable the clock to the state registers and output signals when not needed. This will reduce the switching activity and minimize the power consumption.

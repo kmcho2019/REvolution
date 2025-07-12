@@ -1,0 +1,12 @@
+Revised approach to properly capture falling edges between consecutive cycles:
+
+1. The key issue is the timing of the comparison - we need to compare the current input with the properly registered previous value
+2. Solution: Move the edge detection into the sequential block to ensure correct timing
+3. First register the current input value (creating in_prev)
+4. Then use this registered value to detect falling edges in the next cycle
+5. This ensures we're comparing values from two consecutive cycles
+6. The sticky output still maintains state until reset, but now correctly captures all falling edges
+7. This eliminates the race condition by properly sequencing the operations:
+   - Store current input
+   - Next cycle: compare stored value with new input
+   - Update sticky bits accordingly

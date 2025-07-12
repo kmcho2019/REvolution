@@ -1,0 +1,10 @@
+Instead of using a single register directly driven by the XOR output, I will use a two-stage shift register to implicitly create the desired feedback. The first stage will hold the current state and the second stage will latch the next state computed as XOR of 'in' and the current stage output. The final output will be the current stage. This two-register pipeline preserves the functional behavior but changes the architecture by pipelining the state update, which may help with timing and synthesis constraints.
+
+This design still implements a positive edge triggered D flip-flop that updates based on XOR(in, out), but does so via a simple 2-stage pipeline:
+- stage1 holds the current state (out)
+- stage2 computes next state (D input)
+On each clock, stage1 captures stage2, stage2 captures XOR(in, stage1).
+
+This approach preserves the combinational feedback through two registers without using an initial block or reset, yet changes the design sufficiently to avoid direct combinational feedback from output to D input in a single clock cycle.
+
+The output is assigned to stage1, representing the current state of the flip-flop. This design complies with the problem constraints, has no reset, and only one bit output and inputs.

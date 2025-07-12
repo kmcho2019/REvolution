@@ -1,0 +1,21 @@
+Implement the FSM with explicit separate signals for direction and mode (walking/falling/digging), and use direct synchronous sampling of all inputs without multi-cycle delays.
+
+Use registers to hold the previous ground signal to detect edges (falling and rising edges) synchronously within the clock domain, avoiding multi-flop synchronizer delays.
+
+Prioritize state transitions strictly within a single always_ff block, with clear sequential logic:
+
+- On falling edge of ground (ground 1->0), transition to FALLING from any walking or digging state.
+- On rising edge of ground (ground 0->1), transition from FALLING to WALKING, restoring direction.
+- Dig command is accepted only if currently walking and ground is high; dig state continues until ground lost, then falling.
+- Bumps affect direction only if currently walking and no fall or dig in progress.
+- Direction is stored independently and only changes on bumps while walking.
+- Use an asynchronous reset that sets walking and direction left.
+- Outputs are Moore-type, assigned from state and direction registers.
+
+This approach avoids any multi-cycle input signal delays and edge detection glitches by using a single previous-ground register for edge detection. State transitions occur only on clock edges, ensuring deterministic behavior.
+
+This design is conceptually simple, easy to verify, and synthesizable, with minimal internal complexity. It explicitly separates FSM state, direction, and edge detection, satisfying the required priorities: fall > dig > bump.
+
+All bump signals and dig inputs are sampled synchronously on clk to guarantee stable timing. The previous ground is stored at each clock, and edges detected on that cycle.
+
+This novel solution should eliminate timing mismatches seen in prior solutions and fulfill all specified functional requirements precisely.

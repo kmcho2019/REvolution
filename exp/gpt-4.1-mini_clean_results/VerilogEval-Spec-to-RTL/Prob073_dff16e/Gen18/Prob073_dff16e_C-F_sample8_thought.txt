@@ -1,0 +1,10 @@
+Fuse the power and timing benefits of splitting the register into two 8-bit registers with byte enables, but improve the design by eliminating the extra combinational assignment of q. Instead, assign q synchronously in the same clocked process, concatenating the two byte registers. This approach removes combinational fanout on q, preventing glitches and reducing critical path delay. 
+
+Additionally, instantiate two separate 8-bit registers updated only when their corresponding byteena bit is set, thus minimizing toggling and power consumption. Apply the synchronous active-low reset simultaneously to both bytes.
+
+This fusion yields a design that is:
+- Power efficient: byte enables gate writes per byte minimizing unnecessary toggling.
+- Performance optimized: q assigned synchronously without combinational logic, reducing glitches and critical path.
+- Area friendly: only simple 8-bit registers and concatenation in one clock domain, avoiding extra mux or masking logic.
+
+Overall, this design provides an optimal balance between clarity, power saving, timing improvement, and minimal area.

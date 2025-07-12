@@ -1,0 +1,15 @@
+Fuse the minimal 2-bit binary FSM encoding from both examples for area efficiency with the fine-grained state separation and done signaling logic from Example 1 to ensure clean, glitch-free done pulse generation.
+
+Implement a four-state FSM: IDLE (waiting for start bit=0), RECEIVE (shift in 8 data bits LSB first), CHECK_STOP (validate stop bit=1), and RECOVER (wait for line to return high if stop bit invalid).
+
+Use a single always block for all sequential logic (state, bit counter, shift register, done, and output) to minimize clock domain crossings and simplify timing and power.
+
+Gate the shift register and bit counter updates strictly to RECEIVE state to reduce unnecessary toggling and dynamic power.
+
+Hold the shift register stable outside RECEIVE to further reduce switching activity.
+
+Use a synchronous active-high reset.
+
+Assert done only for one cycle exactly when a valid stop bit is detected, updating out_byte simultaneously.
+
+This fusion balances compact area (2-bit state), power saving (update registers only when needed), and clear signaling for done, while keeping logic simple and timing efficient.

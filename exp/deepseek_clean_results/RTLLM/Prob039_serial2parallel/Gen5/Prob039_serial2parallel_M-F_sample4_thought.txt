@@ -1,0 +1,19 @@
+The key issues in the previous implementation were related to output generation timing and data composition. Here's the improved approach:
+
+1. Correct Output Generation:
+   - Store incoming bits in a shift register (buffer) that shifts left on each valid input
+   - The MSB (most significant bit) comes first, so we shift new bits into the LSB
+   - After 8 valid inputs, the complete buffer contains all bits in correct order
+
+2. Timing Fixes:
+   - Separate the buffer update and output generation clearly
+   - Output the complete buffer contents only after all 8 bits are collected
+   - Generate dout_valid one cycle after the 8th bit is received
+
+3. Implementation Improvements:
+   - Use a 3-bit counter to track received bits (0-7)
+   - Clear counter and buffer on reset
+   - Only update buffer when din_valid is high
+   - Generate parallel output when counter reaches 7 (8th bit)
+
+This ensures correct timing and data ordering while maintaining the synchronous design principles.

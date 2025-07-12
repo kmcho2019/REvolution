@@ -1,0 +1,18 @@
+To simplify the implementation while maintaining correctness, let's analyze the Karnaugh map more carefully:
+
+1. First, observe that the output is 1 in these specific cases:
+   - When x[3:2] is 00 and x[1:0] is 00 or 10 (top-left and top-right corners)
+   - When x[3:2] is 11 and x[1:0] is 00, 01, or 10 (bottom-left, bottom-middle, and bottom-right)
+   - When x[3:2] is 10 and x[1:0] is 00, 01, or 10 (middle-left, middle-middle, and middle-right)
+
+2. We can express this as:
+   - f = 1 when:
+     (x[3:2] == 2'b00 && (x[1:0] == 2'b00 || x[1:0] == 2'b10)) OR
+     (x[3:2] == 2'b11 && (x[1:0] != 2'b11)) OR
+     (x[3:2] == 2'b10 && (x[1:0] != 2'b11))
+
+3. This can be simplified to:
+   f = (~x[3] & ~x[2] & ~x[1] & ~x[0]) |  // 0000
+       (~x[3] & ~x[2] & x[1] & ~x[0]) |   // 0010
+       (x[3] & x[2] & ~(x[1] & x[0])) |   // 11xx except 1111
+       (x[3] & ~x[2] & ~(x[1] & x[0]))    // 10xx except 1011

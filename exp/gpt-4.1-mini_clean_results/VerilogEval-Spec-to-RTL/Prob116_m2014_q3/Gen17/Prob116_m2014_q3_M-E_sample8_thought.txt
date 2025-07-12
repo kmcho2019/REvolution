@@ -1,0 +1,7 @@
+This new design approach bypasses Gray code decoding by directly addressing the Karnaugh map cells using the original input bits arranged per the problem statement. We interpret the 4-bit input x as x[4]x[3]x[2]x[1] mapped to x[3], x[2], x[1], x[0] in Verilog. 
+
+Instead of decoding Gray codes, we use nested case statements corresponding directly to row and column Gray-coded bits, applying the Karnaugh map values (with don't-cares resolved cleverly to simplify logic) to output f. We assign don't-care ('d') entries to values that yield the simplest minimized logic, using the Karnaugh map's grouping insight.
+
+This approach is fully combinational, readable, and exploits the original Gray code structure by evaluating one dimension at a time, avoiding XOR overhead from Gray-to-binary conversions, which may reduce logic depth and area. The use of nested case statements clearly reflects the 2D nature of the Karnaugh map.
+
+The module uses only combinational logic and is synthesizable.

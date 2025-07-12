@@ -1,0 +1,10 @@
+Refactor the module to use continuous assignments with a generate block to produce the 25 output bits combinationally. Instead of a procedural always block with loops, use two nested generate loops to explicitly assign each bit of the output vector via XNOR of the appropriate input bits.
+
+This approach utilizes structural RTL coding style and the built-in XNOR operator (~^) for clarity and potential synthesis efficiency. The inputs remain packed in a vector, and indexing is handled carefully to match the specified output bit order. Since continuous assignments are used, the output port will be declared as wire.
+
+Steps:
+- Pack inputs into a 5-bit vector.
+- Use two generate loops (i, j) from 0 to 4.
+- Compute output index as 24 - (5*i + j).
+- Assign out[index] = inputs[4 - i] ~^ inputs[4 - j].
+- Declare out as wire [24:0].

@@ -1,0 +1,13 @@
+The core issue is that the output in a Moore machine must depend only on the current state, not directly on input bits. In the given solution, the output `z` depends combinationally on both the current state and the input `x`, which violates the Moore FSM definition and causes timing/output glitches.
+
+To fix this, we can register the input bit in a flip-flop on the clock edge before generating the output based only on the state and stored input bit. Specifically:
+
+- Introduce a register to store the input bit `x` at each clock cycle.
+- Output `z` depends only on the state and the stored input bit (not the current input).
+- On reset, state is S0 and output `z` is 0.
+- In state S0, output the stored bit as is.
+- On detecting the first '1' input bit (on clock edge), transition to S1.
+- In state S1, output the inversion of the stored bit.
+- This guarantees output `z` changes only at clock edges and is purely a function of the state and registered input bit, fulfilling the Moore FSM requirement.
+
+This approach aligns with classic Moore FSM design and ensures proper timing and glitch-free outputs.

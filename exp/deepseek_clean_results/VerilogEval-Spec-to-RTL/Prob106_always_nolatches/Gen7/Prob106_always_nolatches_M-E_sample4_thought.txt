@@ -1,0 +1,8 @@
+Instead of using explicit comparators, we can implement a ROM-based lookup table that directly maps the 16-bit scancode to the 4-bit output pattern. This approach:
+1. Uses a single memory access instead of multiple comparators
+2. Naturally handles all cases (including default "none") without explicit conditionals
+3. Can be more area-efficient for larger scancode sets
+4. Provides consistent timing regardless of input pattern
+5. Easily extensible to support more keys by just expanding the ROM
+
+The ROM is implemented as a Verilog case statement that synthesizes into a LUT. We use the scancode as the address and output a 4-bit vector where each bit corresponds to an arrow key.

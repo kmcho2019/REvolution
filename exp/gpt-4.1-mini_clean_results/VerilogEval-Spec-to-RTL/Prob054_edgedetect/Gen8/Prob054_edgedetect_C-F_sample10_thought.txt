@@ -1,0 +1,17 @@
+The superior solution fuses the clarity and stage separation of Example 1 with the minimalism and single-block style of Example 2 by using two clocked always blocks:
+
+1) One always block to register the input into prev_in for clean timing separation.
+2) A second always block to register the detected edges based on prev_in and current input.
+
+This approach retains the two-stage pipeline for clarity and timing, explicitly showing which signals are registered and when, but avoids mixing prev_in updates with edge detection in the same block. Separating prev_in and pedge registers can help synthesis tools better optimize timing and reduce combinational logic depth between registers.
+
+Additionally, edge detection remains a simple combinational bitwise operation (~prev_in & in), registered at the second stage, producing a one-cycle output pulse delayed by one clock cycle after a 0->1 bit transition.
+
+This approach:
+- Improves code clarity by explicitly separating input sampling and edge detection outputs.
+- Avoids subtle ordering dependencies by splitting prev_in and pedge into distinct clocked blocks.
+- Is efficient in area and power with minimal combinational logic and two 8-bit registers.
+- Produces output pulses on pedge exactly one clock cycle after each 0->1 bit transition.
+- Makes timing and pipelining explicit and clear for easier maintenance and potential optimization.
+
+Overall, this fusion yields a clean, robust, and timing-friendly design that clearly conveys synchronous semantics and matches problem requirements.

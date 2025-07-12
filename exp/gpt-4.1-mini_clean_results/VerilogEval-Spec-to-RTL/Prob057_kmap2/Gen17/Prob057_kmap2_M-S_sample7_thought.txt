@@ -1,0 +1,55 @@
+The Karnaugh map can be directly translated into sum-of-minterms form, but to simplify, I will first write down all minterms where the output is 1, then try to factor or combine them simply.
+
+From the map, outputs of 1 are at these positions (cd, ab):
+
+00 00: a=0,b=0,c=0,d=0 => ~a~b~c~d  
+00 01: a=0,b=1,c=0,d=0 => ~a b ~c ~d  
+00 10: a=1,b=0,c=0,d=0 => a ~b ~c ~d  
+00 11: no (0)  
+01 00: a=0,b=0,c=0,d=1 => ~a ~b ~c d  
+01 10: a=1,b=0,c=0,d=1 => a ~b ~c d  
+01 01 and 11: no  
+10 00: a=0,b=0,c=1,d=0 => ~a ~b c ~d  
+10 01: a=0,b=1,c=1,d=0 => ~a b c ~d  
+10 10 and 11: no  
+11 01: a=0,b=1,c=1,d=1 => ~a b c d  
+11 10: a=1,b=0,c=1,d=1 => a ~b c d  
+11 11: a=1,b=1,c=1,d=1 => a b c d  
+
+Now, looking for simplified groups:
+
+- All terms where c=0 and b=0: (c=0 & ~b) -> covers several terms.
+- Also terms with c=1 and d=1 & a or b set.
+
+An easier approach: Use boolean algebra to minimize:
+
+Observation:
+
+- When c=0 and d=0, output=1 except when a=1,b=1 (from K-map)
+- So for c=0, d=0 output= ~a + ~b (since only 11 is 0)
+- When c=0,d=1 output=1 except for a=1,b=1? Actually 01 row d=1 includes 4 minterms with some zeros.
+
+Alternatively, group all terms with ~c:
+
+(~c & ( ~a | ~b ))  // covers all when c=0 and either a=0 or b=0
+
+Then for c=1:
+
+- When c=1, output=1 when d=1 and (a or b) (see last group)
+- When c=1, d=0, output=1 when a=0, b=any or b=1,a=0 in some cases
+
+Given that, a simpler expression would be:
+
+out = (~c & (~a | ~b)) | (c & d & (a | b)) | (c & ~d & ~a)
+
+This expression has only three terms and maintains all minterms.
+
+This matches some groups of the original, but is simpler.
+
+Hence the implementation:
+
+1) define na, nb, nc, nd
+
+2) assign out = ( ~c & ( ~a | ~b ) ) | ( c & d & (a | b) ) | ( c & ~d & ~a )
+
+This reduces to three product terms and one or more ORs, fewer wires, less complexity while maintaining the original functionality.

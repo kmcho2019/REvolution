@@ -1,0 +1,16 @@
+To fix the existing code, we need to address the logical errors in the finite state machine (FSM) implementation. The key issues are with the next state logic for the BYTE_3 state and the 'done' signal generation logic. 
+
+For the BYTE_3 state, instead of checking for the next byte with in[3]=1 to transition back to BYTE_1, we should unconditionally transition back to IDLE after asserting 'done' for one cycle. This means that once we've received the third byte of a message, we should assert 'done' in the next clock cycle and then immediately return to the IDLE state to wait for the next message.
+
+For the 'done' signal generation logic, we need to ensure that 'done' is asserted for only one clock cycle after the third byte of a message is received. We can achieve this by using a separate signal that is set when we transition from BYTE_2 to BYTE_3 and then cleared when we transition back to IDLE.
+
+By revising the next state logic and 'done' signal generation logic according to these principles, we can ensure that the FSM correctly detects message boundaries and asserts the 'done' signal as expected.
+
+Here's an outline of the refactoring steps:
+
+1.  **Correct Next State Logic:** Modify the next state logic for the BYTE_3 state to unconditionally transition back to IDLE after asserting 'done'.
+2.  **Revise Done Signal Generation:** Use a separate signal to generate the 'done' signal, which is asserted for one clock cycle after the third byte of a message is received.
+3.  **Implement Reset Logic:** Ensure that the FSM resets correctly by initializing the state and any additional signals when the 'reset' signal is high.
+4.  **Simplify Using Combinational Logic:** Where possible, use 'assign' statements or combinational 'always' blocks to simplify the logic and reduce the number of sequential elements.
+
+By addressing these issues and revising the FSM implementation, we can improve the correctness and efficiency of the design.

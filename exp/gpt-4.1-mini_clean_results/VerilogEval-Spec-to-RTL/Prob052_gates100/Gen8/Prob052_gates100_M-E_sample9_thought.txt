@@ -1,0 +1,16 @@
+To provide a novel architectural approach, I will implement a tree-based hierarchical reduction of the 100-bit input vector to compute the AND, OR, and XOR outputs. Instead of a single for-loop or direct reduction operators, the inputs will be paired and reduced stepwise in multiple pipeline-like stages within a combinational always block. This emulates a balanced binary tree reduction structure, commonly used in hardware to reduce logic depth and improve timing.
+
+The hierarchy works as follows:
+- Stage 1: Reduce the 100 inputs in pairs (50 results)
+- Stage 2: Reduce the 50 results in pairs (~25 results)
+- Continue reducing until only one result remains for AND, OR, and XOR
+
+Since 100 is not a power of two, the last group will handle leftover inputs appropriately.
+
+Advantages:
+- Structured multi-level reduction clarifies the logic flow and maps naturally to hardware.
+- Balanced tree reduction improves critical path delay compared to naive serial looping.
+- Still purely combinational with no registers or latency.
+- Each stage uses simple bitwise operations on intermediate vectors.
+
+Outputs are assigned from the final reduced results of AND, OR, and XOR at the last stage.

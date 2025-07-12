@@ -1,0 +1,15 @@
+I will implement the design by explicitly instantiating three D flip-flops with synchronous reset, each clocked on the positive edge of clk, and with reset active high. To handle the required zero initialization before operation begins (as stated in the problem), I will add an internal synchronous reset signal that is asserted only for the first clock cycle after power-up using a small reset controller (a simple register initialized to 1, cleared after the first clock). This will reset all three flip-flops synchronously at the first clock edge, setting them to zero.
+
+Each D input will be directly connected to the output of the corresponding gate described:
+
+- For the XOR flip-flop: D = x XOR q_xor
+- For the AND flip-flop: D = x AND (NOT q_and)
+- For the OR flip-flop: D = x OR (NOT q_or)
+
+The outputs of these flip-flops (q_xor, q_and, q_or) feed a 3-input NOR gate to produce output z.
+
+This approach explicitly models the D flip-flops with synchronous reset and ensures initial zero state, cleanly separating combinational logic and sequential elements. No vector state register is used; instead, three separate flip-flop instances are created using always blocks. This is a novel approach compared to previous vector-based FSM design.
+
+The internal reset logic is simple and completely contained in the module, requiring no external reset input, as per problem statement.
+
+This explicit structure also enhances readability and clarity about which signals correspond to which flip-flops.

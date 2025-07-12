@@ -1,0 +1,12 @@
+To correctly implement the serial-to-parallel converter according to the requirement that the first received serial bit is placed at the most significant bit (MSB) of the parallel output and the last at the least significant bit (LSB), the incoming bit should be shifted into the MSB side. This can be done by shifting the register right and inserting the new bit at the MSB position on each valid clock cycle.
+
+Thus, instead of shifting left and inserting at LSB, we shift right and insert at MSB: 
+`shift_reg <= {din_serial, shift_reg[7:1]};`
+
+We keep counting the valid input bits with a 4-bit counter. When the count reaches 7 (indicating the 8th bit just arrived), we latch the shift register value to dout_parallel and assert dout_valid for one cycle.
+
+This approach aligns the first received bit to dout_parallel[7] and the last to dout_parallel[0], meeting the specification.
+
+All resets and updates remain synchronous to clk, active low reset, and dout_valid is asserted only for one clock cycle after 8 bits are collected.
+
+This fix ensures proper ordering of bits and the output valid signal behavior as required.

@@ -1,0 +1,26 @@
+Here's a novel architectural approach using a combination of shift registers and counters to implement the specified behavior:
+
+1. **Pulse Generation**:
+   - Use a simple state machine to generate the single-cycle f pulse after reset
+   - Implement this with a dedicated state that self-transitions to clear f
+
+2. **Sequence Detection**:
+   - Instead of a traditional state machine for the 1-0-1 pattern, use a 3-bit shift register
+   - Compare the shift register contents directly to detect the sequence
+   - This reduces state complexity and makes timing explicit
+
+3. **y Monitoring**:
+   - Implement a 2-cycle timeout counter when monitoring y
+   - Use a status register to track permanent g state
+   - The counter provides precise timing for the 2-cycle window
+
+4. **Output Control**:
+   - Separate temporary and permanent output logic
+   - Use the status register to maintain g permanently
+   - Clear all temporary states on reset
+
+Key innovations:
+- Shift register for efficient sequence detection
+- Precise counter-based timing for y monitoring
+- Clean separation between temporary and permanent states
+- Minimal state machine complexity

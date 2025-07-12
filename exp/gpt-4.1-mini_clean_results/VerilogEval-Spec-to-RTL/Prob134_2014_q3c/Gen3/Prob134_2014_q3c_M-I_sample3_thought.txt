@@ -1,0 +1,15 @@
+To improve PPA, I aim to reduce the combinational logic complexity and switching activity by exploiting common patterns in the next state transitions and output logic:
+
+1. The FSM has only 5 states, and some next states repeat across input conditions. This allows factoring next state bits into simpler expressions instead of using a case function.
+
+2. For output z, it is high only for states 011 and 100. We can detect this with a simple combinational OR of state bits.
+
+3. For next_state bits, observe next states in the table and derive minimized logic expressions for each bit of next_state as a function of y and x. This removes the need for a function and case statement, replacing it with simple combinational expressions that can map to low-level gates or LUTs, saving area and power.
+
+4. Outputs Y0 and z remain combinationally assigned from next_state and y respectively.
+
+This approach uses pure assign statements with synthesized minimized combinational expressions, reducing mux usage, logic depth, and switching, thus improving area and power while maintaining zero timing violations.
+
+Note: We still treat input y as present state, and next_state is purely combinational output.
+
+Summary: Replace function and case with minimized combinational boolean expressions for next_state bits and z output.

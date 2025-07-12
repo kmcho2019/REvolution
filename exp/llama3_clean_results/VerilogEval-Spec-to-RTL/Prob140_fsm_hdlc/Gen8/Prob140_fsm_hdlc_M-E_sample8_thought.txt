@@ -1,0 +1,7 @@
+A novel approach to implementing the HDLC framing decoder involves utilizing a counter-based design, where a counter tracks the number of consecutive ones in the input stream. This approach simplifies the state machine logic and reduces the number of states required. The key insight is that the conditions for flag, discard, and error can be expressed in terms of the count of consecutive ones.
+
+The design will consist of a counter that increments when a one is detected in the input stream and resets when a zero is encountered. Based on the count value, the design will assert the appropriate output signals. This approach eliminates the need for a complex state machine, reducing area and potentially improving timing.
+
+To implement this, we will use a small counter (3-4 bits) to track the consecutive ones and compare this value against the thresholds for flag, discard, and error conditions. The outputs will be generated based on these comparisons, ensuring that the design correctly identifies the start and end of frames, discards bits as necessary, and signals errors.
+
+This counter-based approach offers a simpler, more scalable, and potentially more efficient solution compared to a traditional state machine, especially when dealing with protocols that require tracking sequences of bits.

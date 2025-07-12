@@ -1,0 +1,19 @@
+The current solution is functionally correct but has room for PPA optimization. Here's the improvement strategy:
+
+1. **Power Optimization**:
+   - Replace the XOR operation with a mux-based approach to reduce switching activity when do_sub is stable
+   - Use conditional inversion instead of full XOR to minimize dynamic power
+
+2. **Area Optimization**:
+   - Eliminate the intermediate sum wire since it's only used once
+   - Combine the zero detection directly with the output assignment
+
+3. **Timing Preservation**:
+   - Maintain the single adder structure to preserve critical path
+   - Keep the parallel zero detection for fast flag generation
+
+4. **Code Clarity**:
+   - Use more descriptive signal names
+   - Maintain clean continuous assignment style
+
+The improved version should reduce power consumption while maintaining or improving area without impacting timing.

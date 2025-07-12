@@ -1,0 +1,15 @@
+To fix the code, we need to address two main issues: 
+1. The next state determination when the Lemming is falling and the ground reappears. 
+2. The handling of cases where the Lemming is bumped while digging or falling.
+
+When the Lemming is falling and the ground reappears, we need to determine the next state based on the previous state before falling, not the current digging value. We can achieve this by introducing a new variable, `previous_walking_state`, to store the previous walking state (IDLE_LEFT or IDLE_RIGHT) before falling.
+
+Regarding the second issue, we need to explicitly handle the cases where the Lemming is bumped while digging or falling. According to the problem description, being bumped while digging or falling does not affect the walking direction. Therefore, we can ignore the `bump_left` and `bump_right` signals when the Lemming is in the DIGGING or FALLING states.
+
+Here's the revised approach:
+
+1.  We introduce a new variable, `previous_walking_state`, to store the previous walking state (IDLE_LEFT or IDLE_RIGHT) before falling.
+2.  When the Lemming is falling and the ground reappears, we determine the next state based on the `previous_walking_state`.
+3.  We ignore the `bump_left` and `bump_right` signals when the Lemming is in the DIGGING or FALLING states.
+
+By addressing these issues, we can ensure that the code correctly implements the behavior of the Lemming, including walking, falling, and digging.

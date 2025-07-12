@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pre-compute the terminal count condition (q_next == 10'd999) in a separate always block to break the critical path
+   - Use a registered terminal_count signal to reduce comparison logic in the critical path
+   - This reduces the combinational path from counter+comparison to just the counter
+
+2. Power Optimization:
+   - Maintain the simple incrementer but add clock gating when the counter is not needed (though not shown in this basic implementation)
+   - The terminal_count signal now toggles only once per 1000 cycles, reducing dynamic power
+
+3. Area Optimization:
+   - The two-always block structure might slightly increase area but significantly improves timing
+   - The tradeoff is favorable given the timing violation in the original design
+
+The improved version maintains identical functionality while addressing the timing violation.

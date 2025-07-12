@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Timing Optimization: Switch from binary to one-hot encoding for state machine to reduce fan-out and improve timing closure
+2. Power Reduction: Only update 'done' and output registers when necessary, not every cycle
+3. Area Reduction: Use shift register approach for out_bytes instead of separate registers
+4. State Machine Simplification: Remove redundant default case to save area
+5. Output Handling: Maintain clean output behavior where out_bytes is only valid when done is asserted
+
+Key Changes:
+- One-hot state encoding (4 states) for better timing
+- Shift register implementation for out_bytes to reduce area
+- Conditional updates for 'done' and output registers
+- Simplified state transitions
+- Maintained synchronous reset behavior

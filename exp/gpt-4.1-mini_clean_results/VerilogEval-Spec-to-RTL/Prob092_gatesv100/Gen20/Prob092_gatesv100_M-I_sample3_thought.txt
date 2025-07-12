@@ -1,0 +1,7 @@
+Optimize the design by replacing the procedural always block and reg outputs with continuous assignments to wires. Use vectorized bitwise operations to implement out_both, out_any, and out_different efficiently:
+
+- For out_both: assign out_both[98:0] = in[98:0] & in[99:1], and explicitly set out_both[99] = 0.
+- For out_any: assign out_any[99:1] = in[99:1] | in[98:0], and set out_any[0] = 0.
+- For out_different: since neighbor to the left wraps around, assign out_different = in ^ {in[0], in[99:1]}.
+
+This removes the loop and reg usage, enabling parallel logic synthesis with less area, power, and improved timing.

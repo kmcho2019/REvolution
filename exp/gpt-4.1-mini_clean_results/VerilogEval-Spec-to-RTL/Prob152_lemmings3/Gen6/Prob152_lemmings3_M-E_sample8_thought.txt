@@ -1,0 +1,31 @@
+Implement a Moore FSM with explicit symbolic states instead of encoding direction and mode into bits. Use an enumerated state for the FSM representing all combinations of direction and behavior (walking left/right, falling left/right, digging left/right). This simplifies next-state logic, as direction is inherent in the state name, avoiding bit manipulations.
+
+On each clock edge, update the state based on current inputs and the present state.
+
+To handle asynchronous reset, reset the FSM to WALK_LEFT state.
+
+Outputs directly derived from the state: walking left or right, falling ("aaah"), digging.
+
+State transitions:
+- From WALK_LEFT or WALK_RIGHT:
+   - If ground=0, transition to FALLING with same direction.
+   - Else if dig=1 and ground=1, transition to DIGGING with same direction.
+   - Else if bump(s):
+       - If both bumps, flip direction (e.g., WALK_LEFT -> WALK_RIGHT).
+       - Else if bump_left only, move to WALK_RIGHT.
+       - Else if bump_right only, move to WALK_LEFT.
+   - Else remain in walking same direction.
+
+- From FALLING states:
+   - If ground=1, return to walking same direction.
+   - Else remain falling.
+
+- From DIGGING states:
+   - If ground=0, transition to FALLING same direction.
+   - Else remain digging.
+
+Ignore bumps and dig inputs while falling or digging.
+
+This approach avoids tracking previous ground explicitly; instead, transitions on ground=0 or ground=1 are handled combinationally in the FSM.
+
+This clear enumeration and logic improve code clarity and correctness, easy to debug and maintain.

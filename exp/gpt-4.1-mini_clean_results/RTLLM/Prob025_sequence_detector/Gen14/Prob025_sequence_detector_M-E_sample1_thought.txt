@@ -1,0 +1,16 @@
+I will implement the sequence detector using a Moore FSM approach with 5 explicit states representing how many bits of the sequence "1001" have been matched so far. The output sequence_detected will be asserted only in the final state corresponding to the full match.
+
+The FSM states will be:
+- IDLE: No bits matched yet.
+- S1: Matched '1'
+- S10: Matched '10'
+- S100: Matched '100'
+- S1001: Matched '1001' (final state with sequence_detected = 1)
+
+The FSM will transition on each clock cycle based on the input bit. After detecting the full sequence, the FSM will consider overlaps and transition accordingly to allow detection of consecutive sequences.
+
+Reset will be asynchronous active-low (`reset_n`), which is common in hardware design, meaning that when reset_n=0, FSM resets to IDLE.
+
+The output sequence_detected will be registered and asserted for exactly one clock cycle upon entering the S1001 state.
+
+This design uses parameters for state encoding, simple case statements for clarity, and the asynchronous reset for fast initialization. The Moore FSM style cleanly separates output logic from state transitions.

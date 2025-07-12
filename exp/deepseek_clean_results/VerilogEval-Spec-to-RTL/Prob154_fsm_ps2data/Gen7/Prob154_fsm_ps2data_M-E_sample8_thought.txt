@@ -1,0 +1,12 @@
+Novel Architecture Idea: Shift Register with Early Boundary Detection
+1. Instead of using a counter-based state machine, implement a shift register that continuously stores incoming bytes
+2. Add a parallel boundary detection circuit that identifies when the 3-byte message starts (in[3]=1)
+3. Use a 3-stage pipeline to track valid message bytes once boundary is detected
+4. Output the collected bytes when all 3 valid bytes are received
+5. Key innovation: The shift register allows for continuous monitoring of the stream while the boundary detection works in parallel, enabling lower latency and better timing
+
+Advantages:
+- Parallel processing improves timing (critical path is shorter)
+- Shift register implementation is more area-efficient for this specific pattern
+- Clear separation between boundary detection and message collection
+- Easier to extend for longer message lengths if needed

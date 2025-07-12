@@ -1,0 +1,6 @@
+To improve PPA while preserving the required functionality, focus on reducing power and slightly improving timing. 
+
+- Replace the case statement with simple combinational logic to avoid decoding the 2-bit bump vector: since any bump on left or right triggers a state change (and bump_left always causes walk right; bump_right causes walk left; simultaneous bumps toggle), express the next_state as a combinational expression using bump inputs and current state.
+- The current asynchronous reset is necessary per spec, but we can keep it as is.
+- Maintain direct output assignment for minimal output logic.
+- This optimization reduces logic depth and simplifies the combinational path, potentially improving timing and lowering dynamic power due to less switching logic.

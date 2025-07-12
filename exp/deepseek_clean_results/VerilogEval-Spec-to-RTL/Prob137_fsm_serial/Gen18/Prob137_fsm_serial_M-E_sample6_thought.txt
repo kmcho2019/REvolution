@@ -1,0 +1,13 @@
+Novel Architecture:
+1. Unified Shift-State Register: Combine the data shift register with state tracking bits to reduce register count
+2. Bit-Position Encoding: Use the shift register's position to implicitly track bit count, eliminating explicit counter
+3. Early Stop Detection: Check for stop bit validity during reception to fail fast
+4. Compact FSM: Reduce to just 2 states (IDLE and ACTIVE) by leveraging shift register metadata
+5. Parallel Processing: Process start/stop conditions in parallel with data shifting
+
+Key Innovations:
+- Eliminates separate bit counter by using shift register position
+- Combines state and data storage for area efficiency
+- Early stop bit checking reduces latency on bad frames
+- Simplified FSM with fewer transitions
+- Parallel processing improves timing

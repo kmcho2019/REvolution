@@ -1,0 +1,12 @@
+Fuse the best ideas from both examples by registering the input 'a' and additionally registering the outputs 'rise' and 'down' to ensure glitch-free, fully synchronous pulses that remain high for exactly one clock cycle after the detected edge. This meets the problem requirement that rise and down signals are set to 1 on the clock cycle following the edge and then reset until the next edge occurs.
+
+Key enhancements in this fusion:
+- Use asynchronous active-low reset for immediate initialization.
+- Register previous input 'a' to detect edges synchronously.
+- Register the 'rise' and 'down' outputs rather than purely combinational signals, preventing glitches and providing stable outputs throughout the clock cycle.
+- Use non-blocking assignments in sequential always blocks for clear, synthesizable RTL.
+- Keep logic minimal and efficient: only three flip-flops total, one for a_prev and one each for rise and down.
+- Add detailed comments for clarity and maintainability.
+- This design provides clean, one-clock-cycle wide pulses synchronized with clk, robust for further system integration.
+
+This approach delivers a robust, synthesizable, low-power, low-area solution with superior output stability and clarity compared to the examples.

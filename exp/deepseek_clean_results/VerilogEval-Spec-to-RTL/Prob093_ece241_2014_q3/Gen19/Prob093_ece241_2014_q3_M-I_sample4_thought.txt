@@ -1,0 +1,23 @@
+Improved Implementation Strategy:
+1. For mux_in[0] (ab=00):
+   - K-map shows: 0 (cd=00), 1 (01), 1 (11), 0 (10)
+   - This can be represented as d when c=0, and d when c=1 except cd=10
+   - More accurately: (c & d) | (~c & d) but we need to exclude cd=10
+   - Correct implementation: d & ~(c & ~d) which simplifies to d & (c | ~d)
+
+2. For mux_in[1] (ab=01):
+   - Always 0 as per K-map (correct in original)
+
+3. For mux_in[2] (ab=11):
+   - Only 1 when cd=11 (c AND d) (correct in original)
+
+4. For mux_in[3] (ab=10):
+   - K-map shows: 1 (00), 0 (01), 1 (11), 1 (10)
+   - This is equivalent to ~d OR c, but must be 0 when cd=01
+   - Correct implementation: ~(c & ~d) & (c | ~d) which simplifies to c | (d & ~c)
+
+Key Improvements:
+1. mux_in[0] now correctly implements the K-map by ensuring it's 0 when cd=10
+2. mux_in[3] now properly handles the cd=01 case where output should be 0
+3. All expressions are minimized while maintaining correctness
+4. Still uses only basic operations allowed by the problem constraints

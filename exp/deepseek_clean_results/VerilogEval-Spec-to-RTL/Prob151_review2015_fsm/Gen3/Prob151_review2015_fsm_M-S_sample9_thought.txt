@@ -1,0 +1,13 @@
+To simplify the FSM while maintaining functionality, we can make these key changes:
+
+1. **Pattern Detection**: Only update the pattern register in IDLE state to prevent false detections
+2. **Shift Counter**: Remove separate counter and use state duration for shift_ena timing
+3. **Output Logic**: Make outputs directly dependent on current state (combinational) for immediate response
+4. **State Encoding**: Keep minimal states but simplify transitions
+5. **Reset**: Clear all registers including pattern register on reset
+
+The simplified FSM will have the same behavior but with cleaner implementation:
+- IDLE: Wait for 1101 pattern
+- SHIFT: Assert shift_ena for exactly 4 cycles
+- COUNTING: Wait for done_counting
+- DONE: Assert done until ack received

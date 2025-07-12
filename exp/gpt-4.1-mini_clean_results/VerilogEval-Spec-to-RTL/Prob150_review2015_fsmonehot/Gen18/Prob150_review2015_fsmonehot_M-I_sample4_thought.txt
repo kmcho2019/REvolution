@@ -1,0 +1,10 @@
+The original solution is functionally correct and clear, but some logic expressions can be simplified to reduce logic complexity and thus improve power and area slightly without changing performance. Specifically:
+
+- S_next currently is `(S & ~d) | (S1 & ~d) | (S110 & ~d) | (Wait & ack)`, which can be factored to `(~d & (S | S1 | S110)) | (Wait & ack)`.
+- Count_next is `(B3) | (Count & ~done_counting)`, which is minimal already.
+- Wait_next is `(Count & done_counting) | (Wait & ~ack)`, also minimal.
+- For shift_ena, currently it is `B0 | B1 | B2 | B3`; since these states are contiguous in one-hot encoding bits 4-7, we can OR the bits as `(state[7:4] != 0)` which synthesizes the same way but expresses intent clearly.
+
+This factoring reduces number of gates and signal fanouts, improving area and power slightly.
+
+I will keep code fully combinational and as simple as possible for clarity and good PPA.

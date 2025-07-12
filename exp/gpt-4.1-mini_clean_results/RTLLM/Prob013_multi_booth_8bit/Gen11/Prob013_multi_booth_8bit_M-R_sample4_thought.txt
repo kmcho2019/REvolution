@@ -1,0 +1,10 @@
+Refactor the radix-4 Booth multiplier by structuring it as a Moore state machine with two states: IDLE and BUSY.
+
+- Use a 4-bit cycle counter (0 to 3) since radix-4 processes two bits per cycle for 8-bit inputs.
+- On reset or start, load registers: multiplicand sign-extended to 16 bits, multiplier extended with 2 trailing zero bits (to extract 3 bits for Booth encoding).
+- Use continuous assignments (`assign`) for Booth bit extraction and factor decoding outside the always block.
+- Inside a synchronous always block, on each clock cycle when BUSY, add the partial product to the product register shifted appropriately and shift the product arithmetic right by 2 bits.
+- Once 4 cycles complete, set ready signal to 1 and output the lower 16 bits of the product.
+- Keep `p` registered and `rdy` controlled by the state machine.
+- This structure clarifies control flow, separates combinational and sequential logic, and uses fewer blocking/non-blocking assignments inside always blocks, improving readability and synthesis friendliness.
+- Also explicitly sign-extend partial products and use clear signals for partial product generation.

@@ -1,0 +1,9 @@
+To implement the 100-bit left/right rotator, we can use a combination of conditional statements and bit manipulation techniques. The module will have a 100-bit register to store the current state of the rotator. 
+
+On every clock cycle, we will check the load signal. If it's high, we will load the data into the register. 
+
+If the load signal is low, we will check the ena signal to determine the direction of rotation. If ena is 2'b01, we will rotate right by one bit. If ena is 2'b10, we will rotate left by one bit. If ena is 2'b00 or 2'b11, we will not rotate.
+
+We will use concatenation to achieve the rotation. For a right rotation, we will take the least significant bit and concatenate it with the remaining 99 bits. For a left rotation, we will take the most significant bit and concatenate it with the remaining 99 bits shifted one position to the right.
+
+We will use a synchronous design, so all operations will be done on the rising edge of the clock.

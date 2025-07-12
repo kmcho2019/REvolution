@@ -1,0 +1,24 @@
+The root cause of the mismatch on walk_left and walk_right outputs is the separation of walking direction (`dir`) and state (`state`) signals. Currently, outputs depend solely on the `state` register, but the direction is stored in a separate `dir` register that updates asynchronously with the state. This can lead to transient mismatches when switching walking direction or resuming walking after falling/digging.
+
+To fix this, we should unify the walking direction into the FSM state encoding itself rather than maintaining a separate `dir` register. This way, the walking direction and state are fully encoded in a single state variable, ensuring output signals are always consistent with the current state without mismatch or glitches.
+
+Thus, the FSM will have four states:
+- WL: walking left
+- WR: walking right
+- FA_L: falling with last direction left
+- FA_R: falling with last direction right
+- DG_L: digging with last direction left
+- DG_R: digging with last direction right
+
+We will increase the state encoding width accordingly (3 bits) to include direction in falling and digging states. This keeps all state-dependent behavior in one variable.
+
+Transitions:
+- From WL/WR: if ground=0 → FA_L/FA_R (keep direction), else if dig=1 → DG_L/DG_R, else if bumped → switch walking direction state.
+- From FA_L/FA_R: if ground=1 → resume WL/WR, else remain in falling.
+- From DG_L/DG_R: if ground=0 → FA_L/FA_R (same direction), else remain digging.
+- Bumps are ignored during falling/digging.
+- Reset sets the state to WL.
+
+Outputs are directly derived from current state only, ensuring no mismatch or glitches.
+
+This state-encoding approach is cleaner and strictly Moore, satisfying the problem requirements and eliminating the mismatch on walk outputs.

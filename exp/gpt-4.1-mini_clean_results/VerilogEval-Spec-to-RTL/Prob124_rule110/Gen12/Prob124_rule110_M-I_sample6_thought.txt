@@ -1,0 +1,17 @@
+To optimize for better timing, power, and area (PPA), we should reduce the large combinational fanout and critical path caused by computing all 512 next states in a single cycle. The update logic, though simple per bit, is replicated fully, potentially causing routing congestion and high dynamic power.
+
+Improvement strategy:
+1. **Partition the update into smaller blocks**: Instead of computing all 512 cells in parallel, split into 8 blocks of 64 cells. Compute each block sequentially across 8 clock cycles, storing intermediate states in a buffer. This lowers combinational logic per cycle, improving timing and power by reducing switching activity and fanout.
+2. **Introduce a small FSM and counter** to control block selection and output update timing.
+3. **Use internal registers to hold intermediate updated states**, only committing the full updated 512-bit state after all blocks are processed.
+4. **Keep load synchronous and immediate**: when load is asserted, the entire state is loaded directly.
+5. This sequential multi-cycle update approach trades throughput for improved timing and power efficiency, which is valuable in real silicon implementations when clock frequency or power is critical.
+
+The final design:
+- On load: `q` loaded immediately.
+- Otherwise: every clock cycle processes 64 cells next state using zero-padded `q` as base.
+- The partial results accumulate into a shadow register.
+- After 8 cycles, shadow becomes new `q`.
+- This reduces the critical path combinational logic per clock and dynamic power.
+
+This enhancement better balances logic complexity, reduces max combinational path and switching activity, thereby improving timing, power, and area efficiency while still producing correct Rule 110 behavior per cycle (just with 8-cycle latency per full generation update).

@@ -1,0 +1,37 @@
+Design a Moore FSM with states encoding direction (walking left or right), falling, digging, and splattered.  
+State outputs:  
+- walk_left = 1 when walking left and not falling/digging/splattered  
+- walk_right = 1 when walking right and not falling/digging/splattered  
+- aaah = 1 when falling and not splattered  
+- digging = 1 when digging and not splattered  
+
+Inputs: clk, areset (async posedge), bump_left, bump_right, ground, dig.  
+On reset, go to walking left state.  
+
+Transitions:  
+- If splattered, remain splattered forever until reset.  
+- If falling:  
+  - increment fall timer  
+  - if ground == 1: if fall timer > 20, splatter, else go back to walking (direction same as before fall)  
+- Else if walking:  
+  - if ground == 0, start falling with fall timer 1  
+  - else if dig == 1, start digging  
+  - else if bumped (bump_left or bump_right), switch walking direction  
+- Else if digging:  
+  - if ground == 0, start falling with fall timer 1 and keep direction  
+  - else continue digging  
+
+Fall timer counts number of clock cycles spent falling.  
+Implement async reset: when areset is 1 at posedge, reset state to walking left, fall timer 0, splattered cleared.  
+Use one-hot or enumerated states for simplicity.  
+
+States:  
+- WLK_L (walking left)  
+- WLK_R (walking right)  
+- DIG_L (digging while facing left)  
+- DIG_R (digging while facing right)  
+- FALL_L (falling with previous direction left)  
+- FALL_R (falling with previous direction right)  
+- SPLAT (splattered, all outputs 0)  
+
+Outputs according to states as described above.

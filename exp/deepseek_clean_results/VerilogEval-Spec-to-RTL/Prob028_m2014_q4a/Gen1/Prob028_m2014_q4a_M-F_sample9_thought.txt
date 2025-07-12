@@ -1,0 +1,6 @@
+To fix the synthesis issue while maintaining correct D latch behavior, we should modify the implementation to better match what synthesis tools expect. The key changes are:
+1. Use blocking assignment (=) instead of non-blocking (<=) for latch implementation
+2. Keep the same sensitivity list (@(d or ena)) as it correctly represents the level-sensitive nature
+3. Ensure the output is declared as reg since it's assigned in an always block
+4. The functionality remains identical - q follows d when ena is high, holds value when ena is low
+This style is more likely to be recognized by synthesis tools while preserving the intended latch behavior.

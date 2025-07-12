@@ -1,0 +1,7 @@
+To improve synthesis robustness and clarity, separate the combinational falling-edge detection from the sequential logic. Compute the falling edge for each bit in a wire signal before the clocked always block, then update `out` and `prev_in` synchronously with non-blocking assignments.
+
+This separation makes the design intent clearer to synthesis tools and reduces timing hazards by explicitly defining what is combinational and what is sequential.
+
+The synchronous reset remains active-high and sets `out` to zero and `prev_in` to current `in` to avoid false detection.
+
+This approach should eliminate minor mismatches due to synthesis optimizations or feedback logic inference and maintain clean and stable operation.

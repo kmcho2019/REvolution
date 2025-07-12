@@ -1,0 +1,6 @@
+Combine the clarity and explicit boundary handling of Example 1's generate loops with the area and power efficiency of Example 2's vectorized assignments.  
+- Use vector operations for out_both and out_any to minimize gate count and simplify logic (Example 2 style).  
+- For out_different, instead of a generate loop or manual bit assignments, implement the wrap-around XOR via a single vector rotation of `in` followed by XOR with `in`. This uses vector rotation, which is a common and efficient hardware operation, reducing synthesis complexity and enabling better optimization.  
+- Explicitly set boundary bits for out_both and out_any outside of vector operations to avoid conditional generate blocks and reduce mux logic (Example 2 style).  
+- Use a clean and simple combinational implementation without generate loops, enabling synthesis tools to infer minimal and optimal logic.  
+This fusion balances code clarity, synthesis efficiency, and maintainability.

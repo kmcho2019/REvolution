@@ -1,0 +1,29 @@
+Fusion Strategy:
+1. Boundary Handling Optimization:
+   - Maintain explicit boundary conditions (left=0 for q[0], right=0 for q[511])
+   - Simplify boundary logic by using concatenation with zeros for neighbor access
+
+2. State Management:
+   - Keep single register approach from Example 1 for minimal area
+   - Use non-blocking assignments for clean synchronous behavior
+
+3. Parallel Computation:
+   - Implement full parallel XOR computation for all 512 cells
+   - Optimize neighbor access using bit concatenation to reduce logic depth
+
+4. Clocking and Loading:
+   - Single always block for synchronous updates
+   - Clear priority to load signal when active
+
+Key Improvements:
+1. Reduced logic depth by using concatenated neighbor access
+2. Cleaner boundary handling without conditional operators
+3. Maintained full parallelism while optimizing critical path
+4. Simplified state management with single register
+5. Clear clocking structure with proper reset/load behavior
+
+The fused solution combines:
+- The efficient boundary handling from both examples
+- The simpler state management from Example 1
+- The clean clocking structure from Example 1
+- Optimized neighbor access for better timing

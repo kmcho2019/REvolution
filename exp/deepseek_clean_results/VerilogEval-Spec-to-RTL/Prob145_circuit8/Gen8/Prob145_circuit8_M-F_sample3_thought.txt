@@ -1,0 +1,15 @@
+After carefully analyzing the waveform and feedback, here's the corrected understanding:
+1. p should be a registered output that captures the value of 'a' only at positive clock edges
+2. q should be a delayed version of p, but with additional conditions:
+   - q becomes 1 only after p has been 1 for a full cycle
+   - q is cleared asynchronously when 'a' is high while clock is low
+3. The key is to properly sequence the state transitions:
+   - p updates on clock edges based on 'a'
+   - q follows p but with a cycle delay and clear condition
+
+New approach:
+1. Make p a simple flip-flop capturing 'a' on clock edges
+2. Implement q as a state that:
+   - Gets set to p's previous value on clock edges
+   - Gets cleared when (a & ~clock) is true
+3. This matches the waveform where q only follows p after a full cycle delay

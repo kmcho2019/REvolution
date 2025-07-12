@@ -1,0 +1,7 @@
+Refactor the clock generator by implementing a simple counter-based toggling mechanism within a clocked always block that triggers on an internal simulation clock (e.g., using an initial dummy clock or a delay-based event). Since the requirement is for a standalone clock generator (not driven by an external clock), we can simulate the clock toggle using a counter incremented at every time unit and toggle `clk` when the counter reaches half the PERIOD. 
+
+This approach removes the use of an infinite `always begin` block with delays, avoiding simulation scheduling ambiguities, and replaces it with a more deterministic method. 
+
+The implementation uses a 1-time-unit driven internal counter updated via an `always` block triggered by an internal `tick` event scheduled with `#1` delay, toggling the clock when the counter matches HALF_PERIOD. This method ensures consistent toggling aligned with simulation time, improving compatibility with testbenches expecting clock edges at well-defined times.
+
+This solution keeps the clock generation self-contained, simple, and deterministic without reliance on non-synthesizable delay loops in `always begin`, satisfying the problem constraints and addressing feedback about simulation failures.

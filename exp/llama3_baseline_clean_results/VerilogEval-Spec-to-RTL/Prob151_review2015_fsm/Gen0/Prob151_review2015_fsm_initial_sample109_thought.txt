@@ -1,0 +1,10 @@
+To implement the finite-state machine that controls the timer, we will design a Moore machine with the following states:
+- IDLE: Initial state, searching for the start sequence 1101.
+- SHIFT: Shift in 4 more bits to determine the duration to delay after detecting the start sequence.
+- COUNT: Wait for the counters to finish counting.
+- DONE: Notify the user and wait for the user to acknowledge the timer.
+We will use a 2-bit state register to represent these four states. The state transitions and output values will be determined based on the current state, the input values (data, done_counting, ack), and the counter value (not included in this implementation).
+
+The state machine will start in the IDLE state. When the start sequence 1101 is detected, it will transition to the SHIFT state and assert shift_ena for exactly 4 clock cycles. After that, it will transition to the COUNT state and assert counting. It will wait in the COUNT state until done_counting is high, then transition to the DONE state and assert done. It will wait in the DONE state until ack is high, then transition back to the IDLE state.
+
+We will use a separate counter to count the number of clock cycles in the SHIFT state, so that we can assert shift_ena for exactly 4 clock cycles.

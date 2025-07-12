@@ -1,0 +1,13 @@
+Simplified solution approach:
+1. Use a 2-bit counter (0-3) to track the 4 cycles (since 4 states fit in 2 bits)
+2. Make shift_ena active when counter is not 3 (i.e., cycles 0,1,2)
+3. Stop counting after reaching 3 (holds at 3 indefinitely)
+4. Reset behavior:
+   - Set counter to 0 (first cycle)
+   - Count up to 3 (total of 4 cycles)
+   - Hold at 3 (shift_ena stays low)
+5. Advantages:
+   - Minimal state (2-bit counter)
+   - Simple comparison (counter != 3)
+   - Naturally stops after 4 cycles
+   - Meets all requirements with minimal logic

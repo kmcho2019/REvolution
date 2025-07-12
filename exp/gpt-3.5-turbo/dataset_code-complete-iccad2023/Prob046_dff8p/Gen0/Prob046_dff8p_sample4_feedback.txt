@@ -1,5 +1,0 @@
-1. The instantiation of the `dff_with_reset` modules inside the generate block in `TopModule` is incorrect. The D input should be connected to `d[i]` not `q_temp[i]`. This means that each D flip-flop is not receiving the correct data input.
-
-2. In the `TopModule`, the `always` block that assigns values to `q_temp` does not handle the reset signal correctly. The `reset` signal is synchronous and should be checked during the negative edge of the clock, but in the current implementation, it is checked as a synchronous reset on the positive edge of the clock. This can lead to incorrect reset behavior.
-
-These issues lead to the misbehavior of the flip-flop outputs and the failing simulation results observed.

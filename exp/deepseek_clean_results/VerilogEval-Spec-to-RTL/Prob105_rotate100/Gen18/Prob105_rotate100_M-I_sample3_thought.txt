@@ -1,0 +1,14 @@
+Improvement Strategy: Optimized Rotation Logic with Parallel Computation
+1. Current implementation uses a case statement with concatenation for rotation, which creates a large mux structure.
+2. Instead, we can compute both rotation directions in parallel and use the ena signals as masks to select the appropriate result.
+3. This approach:
+   - Reduces critical path by eliminating the large mux
+   - Maintains parallel computation of both rotation directions
+   - Uses simple bitwise operations for selection
+4. Power optimization:
+   - Only the bits that actually change will toggle
+   - No intermediate wires needed for rotated values
+5. Area optimization:
+   - Simpler logic structure
+   - More efficient use of gates
+6. Maintains same functionality while improving timing and area

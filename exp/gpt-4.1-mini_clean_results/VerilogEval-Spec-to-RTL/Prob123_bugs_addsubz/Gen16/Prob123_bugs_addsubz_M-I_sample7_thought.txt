@@ -1,0 +1,12 @@
+The original solution uses an explicit ripple carry adder with generate blocks, which ensures correctness and clarity but may suffer in timing and area due to carry propagation delay and extra logic for carry calculation.
+
+To improve PPA:
+
+- Replace the explicit ripple carry adder with the built-in '+' operator which modern synthesis tools optimize efficiently, often mapping to carry-lookahead or other optimized architectures, improving timing and area.
+- Use a single always @(*) block with conditional addition/subtraction via 'do_sub' and b XORed with do_sub plus do_sub carry-in to implement subtract via two's complement, thus preserving the arithmetic operation correctness.
+- Compute zero flag via reduction NOR (~|out), ensuring correct zero detection.
+- This approach simplifies the code, reduces unnecessary intermediate wires and carry logic, and allows synthesis tools to generate optimized hardware, improving power, area, and timing metrics.
+- Maintain the use of reg for outputs for compatibility.
+- This strategy keeps correctness intact while leveraging synthesis tool optimizations for better PPA.
+
+Overall, the improved design is simpler, more maintainable, and likely synthesizes into a more optimized netlist with better power and area characteristics without sacrificing functionality.

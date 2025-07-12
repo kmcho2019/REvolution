@@ -1,0 +1,15 @@
+Improvement strategy:
+1. Maintain the same core LFSR functionality with XOR feedback and inversion
+2. Optimize for Power-Performance-Area (PPA) by:
+   - Using a synchronous reset instead of asynchronous for better timing
+   - Removing the inversion operation by adjusting the feedback polynomial
+   - Combining operations to reduce logic levels
+3. Keep the same initialization value (4'b0001)
+4. Use a more standard feedback polynomial (x^4 + x^3 + 1) that achieves same sequence without inversion
+5. Reduce register transitions by using a synchronous design
+
+Key improvements:
+- Synchronous reset improves timing closure
+- Eliminated inverter reduces gate count
+- Standard polynomial makes design more maintainable
+- Same sequence generation with fewer operations

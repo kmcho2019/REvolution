@@ -1,0 +1,7 @@
+To implement a 4-digit BCD counter, we need to consider the following:
+- We have 4 decimal digits (ones, tens, hundreds, thousands), each encoded in 4 bits.
+- We will use a binary counter for each digit but need to ensure they wrap around at 10 (not 16) because they are BCD digits.
+- Each digit should have an enable signal that indicates when it should be incremented. This signal is active high and should be set when the lower digits wrap around (reach 10).
+- The counter should have a synchronous active-high reset that resets all digits to 0 and disables the enable signals.
+
+The module will consist of four 4-bit BCD counters, each incrementing only when the previous one wraps around, and an enable signal for each of the upper three digits that is high when the digit should be incremented. A global enable signal will control whether the counter increments on the clock edge.

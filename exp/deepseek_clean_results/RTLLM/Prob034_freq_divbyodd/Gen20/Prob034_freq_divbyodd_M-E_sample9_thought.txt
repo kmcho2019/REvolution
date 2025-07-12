@@ -1,0 +1,14 @@
+Novel dual-edge synchronized divider architecture:
+1. Use a single counter that counts on both clock edges (dual-edge counting)
+2. Implement a phase-shifted toggle signal that's offset by half a clock cycle
+3. Generate the divided clock by XOR-ing the main and phase-shifted toggle signals
+4. This creates perfect 50% duty cycle by construction
+5. The XOR operation naturally aligns the transitions for odd division
+6. Reset synchronizes both the main counter and phase-shifted version
+
+Key advantages:
+- Single counter simplifies design
+- Perfect 50% duty cycle guaranteed by XOR symmetry
+- No glitches due to clean transition points
+- Phase alignment handled mathematically by the XOR
+- More efficient implementation with fewer comparators

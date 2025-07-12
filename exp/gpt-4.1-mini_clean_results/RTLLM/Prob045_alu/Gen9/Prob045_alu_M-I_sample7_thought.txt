@@ -1,0 +1,17 @@
+To optimize the original ALU design for better Power, Performance, and Area (PPA):
+
+1. **Reduce unnecessary computations**: Compute arithmetic flags (carry, overflow) and set-on-less-than flags only when their corresponding operations are active, avoiding toggling during unrelated operations.
+
+2. **Refactor flag output behavior**: Drive `flag` to 0 instead of high-impedance (`z`) or constant update to simplify synthesis and reduce toggling.
+
+3. **Share shift logic**: Combine all shift operations using a single barrel shifter logic and dynamically select the shift amount and shift type to avoid multiple independent shifters, reducing area.
+
+4. **Simplify carry generation**: For subtraction carry (borrow), use well-known arithmetic properties to simplify carry logic.
+
+5. **Clarify LUI implementation**: According to the MIPS ISA, LUI loads immediate into the upper 16 bits and zeros the lower 16 bits, so the result is `{b[15:0], 16'b0}` since usually immediate is in the lower half of `b`. To match the problem statement using `a`, keep `{a[15:0], 16'b0}` as done.
+
+6. **Minimize combinational logic in always block**: Precompute conditions outside always block when possible to improve performance and reduce critical path length.
+
+7. **Use meaningful variable names and avoid redundant signals** to help synthesis tools optimize the design.
+
+This strategy will reduce toggling and logic complexity, improving power consumption and area while maintaining correctness and performance.

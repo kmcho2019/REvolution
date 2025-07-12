@@ -1,0 +1,24 @@
+Revised Fractional Divider Design:
+
+1. **Cycle Counting Approach**:
+   - Use a 3-bit counter to track 7 clock cycles (0-6) for 3.5x division
+   - Alternate between 4-clock high and 3-clock low periods
+
+2. **Phase Generation**:
+   - Create two phase-shifted clocks:
+     * Main phase (clk_main) toggles at count 0 (start) and count 4 (midpoint)
+     * Secondary phase (clk_shift) is same but delayed by half cycle
+
+3. **Duty Cycle Correction**:
+   - Use negative edge sampling to create precise half-cycle delay
+   - Combine both phases with OR to average the duty cycle
+
+4. **Reset Handling**:
+   - Initialize counter to 0
+   - Ensure both phase clocks start low
+
+Key Improvements:
+- Precise 7-cycle period control through counter
+- Accurate half-cycle delay using negedge sampling
+- Proper duty cycle through phase combination
+- Clear state machine behavior

@@ -1,0 +1,32 @@
+Improvements to fix the timing and logic issues:
+
+1. **Reset and initial f pulse**:  
+   Make sure that after synchronous reset de-assertion (resetn goes high), the FSM stays in state A for one clock cycle, then goes to state B to assert f=1 for exactly one cycle. To do this, add an explicit wait in state A until resetn is deasserted at clock edge, then move to B on the next clock edge.
+
+2. **Sequence detection of x=1,0,1**:  
+   Improve the sequence detector to properly handle overlaps and ensure it progresses correctly:  
+   - C0: wait for x=1 (start of sequence)  
+   - C1: expect x=0; if not zero, go back to C0 if x=1 (possible restart), else stay in C0  
+   - C2: expect x=1; if matched, go to D else if x=1, restart sequence (C1), else back to C0
+
+3. **Y monitoring in state D**:  
+   Use a 2-cycle counter starting at zero when entering D: count cycles 0 and 1 (two cycles).  
+   On cycle 0, if y=1, go immediately to E; else increment count.  
+   On cycle 1, if y=1, go to E else after cycle 1 expires go to F.  
+   This matches “within at most two clock cycles.”  
+   Implement counter update and next_state based on the new counter value and y.
+
+4. **Outputs f and g**:  
+   - f=1 only in B (one cycle after reset de-assertion).  
+   - g=1 in D (during y monitoring) and E (permanent success).  
+   - g=0 otherwise including F and A.
+
+5. **Code style and encoding**:  
+   Keep the enumerated type for clarity; no area penalty here.  
+   Use a registered output for f and g updated synchronously with the state to avoid glitches.
+
+6. **Synchronous reset and next_state updates**:  
+   Correctly update y_counter only in state D, reset otherwise.  
+   Manage off-by-one counts carefully.
+
+This will fix the mismatches, ensure exact one-cycle f pulse, robust sequence detection, and correct g behavior per spec.

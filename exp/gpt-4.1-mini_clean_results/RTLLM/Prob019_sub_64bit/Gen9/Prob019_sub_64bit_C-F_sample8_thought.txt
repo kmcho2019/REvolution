@@ -1,0 +1,11 @@
+Fusion strategy:
+
+- Use the hierarchical modular approach from Example 1 that breaks 64-bit inputs into four 16-bit blocks, each implemented with two cascaded 8-bit CLA subtractors to speed local borrow propagation.
+- Optimize the 8-bit CLA subtractor by implementing proper carry-lookahead logic using group propagate and generate signals, instead of ripple carry logic in the generate loop, to reduce carry chain delay within each 8-bit block.
+- Maintain the 16-bit block interface with borrow ripple between blocks to keep modularity and manageable routing.
+- Share the complemented B signal once per 16-bit block to reduce inversion power overhead.
+- Perform overflow detection at top level by comparing sign bits of A, B, and result as (A_sign != B_sign) && (result_sign != A_sign), consistent with both examples.
+- This fusion retains high performance from CLA blocks with fast carry, better power efficiency by limiting repeated B inversion, clear modular hierarchy, and straightforward overflow detection.
+- The design balances speed, modularity, power efficiency, and synthesis friendliness with scalable, reusable components.
+
+This approach yields a fast, power-optimized 64-bit subtractor with clean overflow logic suitable for high-precision arithmetic operations.

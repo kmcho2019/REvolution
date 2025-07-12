@@ -1,0 +1,14 @@
+I'll refactor the code with these key changes:
+1. Use one-hot encoding for the state machine to simplify decoding logic
+2. Separate the output logic (done and out_byte) into a combinational block
+3. Use a shift register with enable signal to reduce unnecessary switching
+4. Simplify the bit counter by making it part of the state transitions
+5. Use continuous assignments for simpler combinational logic
+
+The state machine will remain functionally identical but with improved structure:
+- IDLE: 0001
+- RECEIVE: 0010
+- STOP: 0100
+- ERROR: 1000
+
+The shift register will only update when in RECEIVE state, and outputs will be generated combinationally based on current state.

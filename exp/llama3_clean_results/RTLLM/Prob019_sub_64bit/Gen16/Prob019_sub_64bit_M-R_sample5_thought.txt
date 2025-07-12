@@ -1,0 +1,14 @@
+To refactor the existing code for a 64-bit subtractor with overflow checking, we aim to maintain the core functionality while potentially improving performance, power consumption, and area utilization. 
+
+The main strategy involves reorganizing the logic to simplify the overflow detection and potentially reduce switching activity. Instead of directly assigning the result of `A - B` to the output and then checking for overflow based on the sign bits, we can use a more explicit approach to detect overflow conditions. This can involve checking the signs of `A` and `B` before the subtraction and predicting the potential overflow based on the signs of the operands and the result.
+
+We also consider using always blocks for the assignments, which might offer more flexibility in terms of handling sequential logic or adding additional checks in the future, although for a purely combinational circuit like this, the difference is mainly stylistic.
+
+Another aspect to consider is the use of intermediate signals to break down the logic into more manageable parts, potentially reducing the complexity of the combinational logic and making the design easier to understand and optimize.
+
+Our refactoring steps include:
+1. **Simplify Overflow Detection**: Use a more direct method to detect overflow conditions based on the signs of `A`, `B`, and the result.
+2. **Use Intermediate Signals**: Break down the logic into simpler parts using intermediate signals for better readability and potential optimization.
+3. **Consider Always Blocks**: Instead of using `assign` statements, utilize `always` blocks for a more traditional or sequential design approach, even though the functionality remains combinational.
+
+Given the simplicity and efficiency of the current design, these refactoring steps aim to enhance readability, maintainability, and potentially improve PPA metrics without altering the fundamental operation of the subtractor.

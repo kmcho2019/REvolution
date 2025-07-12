@@ -1,0 +1,20 @@
+Implement the timer with a 5-state FSM: IDLE, START_DETECT, DELAY_LOAD, COUNT, and WAIT_ACK.
+
+- In IDLE, clear all and prepare to detect the pattern.
+- In START_DETECT, shift in each incoming bit into a 4-bit shift register; when it matches 1101, move to DELAY_LOAD.
+- In DELAY_LOAD, shift in 4 delay bits MSB first (i.e., first bit received is delay[3]) into a delay register.
+- Once delay is loaded, move to COUNT.
+- COUNT runs a 1000-cycle counter for each (delay + 1) ticks. A separate tick counter holds the current remaining delay value.
+- The count output shows the current remaining delay value (starting from delay down to 0), stable during each 1000-cycle interval.
+- When counting finishes, signal done and wait in WAIT_ACK until ack goes high.
+- On ack, return to IDLE for next pattern detection.
+
+This approach uses two counters:
+ - cycle_counter counts 1000 cycles per tick
+ - tick_counter counts down the ticks
+
+The data input is only used in START_DETECT and DELAY_LOAD states and ignored during COUNT and WAIT_ACK.
+
+All state changes and counting occur on posedge clk with synchronous reset.
+
+This architecture cleanly separates pattern detection and delay loading, making the code modular and readable.

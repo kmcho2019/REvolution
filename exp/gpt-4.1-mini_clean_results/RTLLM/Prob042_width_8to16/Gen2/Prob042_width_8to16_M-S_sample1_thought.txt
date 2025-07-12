@@ -1,0 +1,10 @@
+Use a simple two-state approach: a "waiting for first byte" and a "waiting for second byte" state.
+
+- On reset, clear registers.
+- When valid_in is high:
+  - If waiting for first byte, store it in data_lock and move to waiting for second byte.
+  - If waiting for second byte, concatenate stored first byte with current byte, output data_out and valid_out in the next cycle, then return to waiting for first byte.
+- Use a registered output_valid and output_data that update one cycle after receiving the second byte.
+- This avoids extra flags or complicated logic and ensures the output appears exactly one clock cycle after receiving the second input.
+
+The design is synchronous and minimal, clearly tracking when to store and when to output.

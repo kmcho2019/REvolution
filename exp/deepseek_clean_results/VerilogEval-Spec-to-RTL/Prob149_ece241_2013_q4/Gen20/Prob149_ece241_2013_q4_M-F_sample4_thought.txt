@@ -1,0 +1,25 @@
+Revised Design Approach:
+
+1. State Representation:
+   - Use 4 distinct states matching exact sensor patterns from specification
+   - Explicitly handle all valid sensor combinations (000, 001, 011, 111)
+
+2. Output Logic:
+   - Directly implement truth table from specification
+   - fr outputs depend only on current state (water level)
+   - dfr depends on state transition direction (rising level)
+
+3. Transition Handling:
+   - Track previous state to detect rising/falling levels
+   - Only consider valid adjacent level transitions for dfr
+   - Maintain outputs during invalid sensor patterns
+
+4. Reset Behavior:
+   - Force all outputs high (1111) in reset
+   - Initialize to LOW state (no sensors active)
+
+Key Improvements:
+- Simplified state encoding matches sensor patterns
+- Precise output generation per specification
+- Correct rising edge detection only between valid levels
+- Proper handling of invalid sensor patterns

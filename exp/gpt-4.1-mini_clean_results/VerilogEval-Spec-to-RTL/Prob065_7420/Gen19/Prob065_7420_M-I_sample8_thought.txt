@@ -1,0 +1,11 @@
+The original solution is already very clean, modular, and synthesizable. However, slight optimization for Power, Performance, and Area (PPA) can be considered by using the built-in Verilog primitive `nand` with four inputs directly, instead of manually creating a nand4 module. This can hint synthesis tools to map the logic to optimized NAND gates present in standard cell libraries, potentially reducing gate count or power consumption.
+
+Using the 4-input primitive NAND gates inline also reduces module hierarchy, potentially lowering area and improving timing marginally due to one less module boundary.
+
+Thus, the strategy is to:
+- Remove the explicit nand4 module.
+- Use built-in `nand` gate primitives with four inputs each.
+- Keep the TopModule interface intact.
+- Maintain readability by clear instantiation of two 4-input NAND gates.
+
+This approach can produce a slightly more optimized netlist with less module overhead, potentially reducing power and area while maintaining the exact functional behavior and timing.

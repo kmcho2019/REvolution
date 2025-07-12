@@ -1,0 +1,17 @@
+The original design attempts to produce an odd division using two counters on posedge and negedge clocks, toggling divided clocks at half and full counts, then OR-ing them. However, this can cause glitches and improper timing alignment because both toggling events happen at the same counter values without phase offset, and OR-ing two toggles leads to uneven duty cycle or frequency errors.
+
+Improvement strategy:
+
+1. Use two counters incremented on opposite clock edges to create phase-shifted toggling events.
+
+2. Instead of toggling clk_div1 and clk_div2 at both half and full counts, toggle each only once per full cycle but offset by half the count to achieve a 50% duty cycle combined output.
+
+3. Implement toggling of clk_div1 on posedge when counter reaches half count and toggling of clk_div2 on negedge when its counter reaches full count - 1 (or vice versa) — this phase shifts the toggling events.
+
+4. OR-ing clk_div1 and clk_div2 then produces a clean, nearly 50% duty cycle output at clk/NUM_DIV frequency.
+
+5. Ensure counters reset properly and count from 0 up to NUM_DIV-1.
+
+6. Add proper comments and parameter checks.
+
+This approach aligns with standard odd clock divider techniques that leverage phase-shifted toggling on both clock edges, improving output waveform quality and correctness.

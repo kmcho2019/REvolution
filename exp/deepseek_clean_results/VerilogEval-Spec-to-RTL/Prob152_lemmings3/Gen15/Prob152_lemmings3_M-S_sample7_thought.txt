@@ -1,0 +1,13 @@
+To simplify the solution while maintaining functionality, I'll focus on:
+
+1. Reducing state encoding complexity by using only 2 states (WALK and FALL) and combining digging as a condition within WALK state
+2. Eliminating the separate direction register by encoding direction in the state itself
+3. Simplifying output logic by making it directly dependent on state
+4. Maintaining the priority order: fall > dig > bump
+5. Handling all transitions in a single case statement for clarity
+
+Key simplifications:
+- Merge DIG state into WALK state with a digging flag
+- Use 2-bit state encoding: [0] for direction, [1] for fall/not fall
+- Make outputs purely combinatorial based on state
+- Simplify transition logic by removing nested conditionals

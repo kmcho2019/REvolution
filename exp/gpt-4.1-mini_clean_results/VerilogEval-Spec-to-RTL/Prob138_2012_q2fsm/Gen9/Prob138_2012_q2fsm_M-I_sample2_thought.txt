@@ -1,0 +1,9 @@
+To optimize the given FSM design for better PPA:
+
+- Remove the conditional state update (state_change) in the sequential block to simplify logic and reduce potential timing overhead and switching from the comparator.
+- Always update the state register at every clock edge (except when reset is active), which can simplify clock enable logic in synthesis.
+- Retain synchronous active-high reset and separate combinational next-state logic and sequential state register for clarity.
+- Keep the same 3-bit encoding and case statement for next-state logic for minimal combinational complexity.
+- Keep the output z as a continuous assignment for minimal switching.
+  
+This should simplify the sequential logic, potentially improve timing and power slightly, and keep area roughly the same.

@@ -1,0 +1,28 @@
+The original design correctly implements the required functionality with simple mux-based shifts by 1 or 8 bits and sign-extension for arithmetic right shifts. However, it uses separate wires and multiplexers for each shift amount and direction, which can increase combinational logic depth and switching activity.
+
+To optimize for better performance, power, and area (PPA), the improved approach will:
+
+1. Minimize multiplexers and logic depth by combining the two shift amounts into a single 64-bit shifted wire for left and right directions using a compact two-level mux:
+   - First perform shift by 8 bits or 1 bit using a 2-to-1 mux for each direction.
+   - Then select the final shifted output by direction, eliminating duplicated muxing and intermediate wires.
+
+2. Use a single always_comb block for the shift logic, reducing repeated wires and improving synthesis sharing.
+
+3. Exploit Verilog shift operators for clarity, using << and >>> with fixed amounts, which synthesis tools can optimize as wiring rearrangements for shifts by constants. The >>> operator performs an arithmetic right shift automatically.
+
+4. Reduce switching and power by gating shift logic with `ena` in the always block, so shift calculations only affect the state when enabled.
+
+5. Maintain synchronous load priority over shifting, preserving existing correct behavior.
+
+This improved design reduces the number of muxes and intermediate signals, simplifies combinational logic, and relies on synthesis-friendly operators for shifts by constant amounts, thereby improving timing, power, and area metrics.
+
+The concise combinational shift calculation is:
+
+- For left shifts: shift left by either 1 or 8 bits using (amount[0] ? 8 : 1) and fill zeros.
+- For arithmetic right shifts: use arithmetic shift right by 1 or 8 bits using >>> operator.
+
+The shift amount and direction extracted directly from the 2-bit amount, used in the shift operators.
+
+The register update block uses load and ena signals as before.
+
+Overall, this reduces mux count, depth, and switching, enhancing PPA with minimal code complexity increase.

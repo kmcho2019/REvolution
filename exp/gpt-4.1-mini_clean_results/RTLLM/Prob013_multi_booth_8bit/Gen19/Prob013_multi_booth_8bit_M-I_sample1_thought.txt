@@ -1,0 +1,55 @@
+The original design uses a simple FSM with a single calculation state performing one Booth step per clock cycle by shifting the multiplicand and accumulating the product conditionally. This yields a critical path in the combinational logic where addition and shift happen every cycle, potentially limiting max frequency. 
+
+To optimize power and timing:
+
+1. **Reduce combinational complexity:** Instead of computing the addition combinationally with the shift of the multiplicand and the multiplier bit check combined in the next-state logic, we can pipeline these operations and separate them to occur across clock cycles.
+
+2. **Shift the multiplier (instead of multiplicand):** Booth encoding usually involves shifting the multiplier and inspecting two bits at a time to decide the partial product addition. The original design shifts multiplicand left every cycle, which is unusual and causes unnecessary switching. Shifting multiplier right instead is more conventional and reduces toggling in multiplicand.
+
+3. **Implement Radix-4 Booth algorithm properly:** The user requested a radix-4 booth multiplier. That means processing 2 bits of multiplier per cycle (with an overlapping bit), reducing cycles from 16 to 8 iterations. 
+
+4. **Use registers for partial product accumulation and the multiplier shifted right each cycle.**
+
+5. **Use a separate counter to count 8 cycles (for 8 iterations with radix-4).**
+
+6. **Ready signal goes high after 8 cycles, indicating multiplication is complete.**
+
+7. **Perform signed extension of inputs at reset/load.**
+
+8. **Use only synchronous reset for simplicity and to avoid mixed asynchronous reset signals, improving synthesis optimization.**
+
+By implementing a proper radix-4 Booth multiplier with these improvements, the design will:
+
+- Reduce the number of cycles from 16 to 8.
+
+- Reduce toggling on multiplicand and product by keeping multiplicand stable.
+
+- Reduce critical path since addition happens only when needed per cycle with precomputed multiplicand multiples.
+
+- Improve power by minimizing switching on shift registers and arithmetic units.
+
+- Improve timing by reducing combinational complexity.
+
+The module interface and signals remain as specified.
+
+This approach respects the user's description but implements a more classical and efficient radix-4 Booth multiplier algorithm.
+
+---
+
+Key steps per cycle:
+
+- Extract 3 bits from the multiplier register (current two bits + previous bit) for Booth encoding.
+
+- Determine the multiple of the multiplicand to add to the product: 0, +1x, +2x, -1x, or -2x multiplicand.
+
+- Add or subtract the multiple to the product shifted right by 2 bits per cycle.
+
+- Shift multiplier right by 2 bits per cycle.
+
+- Increment iteration count; after 8 iterations (covering 16 bits), finish.
+
+- Output product and raise ready.
+
+---
+
+We will use signed 17-bit product register (to handle sign extension during shifting), 16-bit signed multiplicand, and 17-bit multiplier register (multiplier plus appended zero bit for Booth encoding).

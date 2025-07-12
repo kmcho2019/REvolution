@@ -1,0 +1,7 @@
+To implement the multi-bit MUX-based synchronizer, we need to follow the given specification closely. The design involves several key components:
+1. Data Register (data_reg): Stores the input data signal data_in, updated on the positive edge of clk_a or the falling edge of arstn.
+2. Enable Data Register (en_data_reg): Stores the input enable signal data_en, updated similarly to data_reg.
+3. Enable Control Registers (en_clap_one and en_clap_two): Updated on the positive edge of clk_b or the falling edge of brstn. These registers control the output data selection based on the enable signal.
+4. Output Assignment: dataout is assigned the value of data_reg when en_clap_two is active, otherwise, it retains its previous value.
+
+The implementation involves using D flip-flops for data_reg, en_data_reg, en_clap_one, and en_clap_two, and a simple combinational logic for the output assignment. The use of two enable control registers (en_clap_one and en_clap_two) ensures that the output data is synchronized with clk_b and delayed by two cycles as required.

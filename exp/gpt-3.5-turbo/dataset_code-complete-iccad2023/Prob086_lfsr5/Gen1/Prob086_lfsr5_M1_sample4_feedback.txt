@@ -1,8 +1,0 @@
-The main issue in the code is with the feedback logic in the LFSR. In a Galois LFSR, the feedback bit should be XORed with the tap positions to generate the next state. In this case, the XOR operation for the `next_q[0]` is set incorrectly. 
-
-The correct feedback logic for the Galois LFSR with taps at bit positions 5 and 3 should be:
-```
-next_q[0] = q[4] ^ q[2];
-```
-
-This incorrect feedback logic leads to incorrect state transitions in the LFSR, causing a large number of mismatches in the simulation output. As a result, the LFSR does not function as intended and fails to produce the correct maximal-length sequence.

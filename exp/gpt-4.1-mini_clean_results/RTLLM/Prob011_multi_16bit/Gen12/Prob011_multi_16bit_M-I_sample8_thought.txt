@@ -1,0 +1,13 @@
+The original design combines the multiplier and product in a single 32-bit register and shifts right each cycle, adding a shifted multiplicand when the LSB is set. Although correct and compact, it updates the entire 32-bit product register every cycle, which may increase dynamic power and timing pressure.
+
+Improvement strategy:
+- Separate multiplier and product registers explicitly to minimize wide shifts and updates.
+- Use an explicit 5-bit counter (i) as described in the problem statement for controlling the multiplication steps.
+- On each cycle, test the LSB of the multiplier (breg[0]), conditionally add the multiplicand shifted by the current bit index (i-1) to an accumulator register (yout_r).
+- Shift the multiplier right by 1 each cycle to process each bit serially, reducing bus toggling.
+- Clear registers on reset and control start/done precisely as specified.
+- This approach aligns exactly with the problem's requested implementation details, likely reducing switching activity by shifting a narrower multiplier register and keeping the product register updated only on adds, improving power and possibly timing.
+- The done flag is managed explicitly at counts 16 and 17.
+- Start signal resets the counter and registers as specified.
+
+This code fully conforms to the problem statement, splitting control, data registers, and done generation clearly, and should improve area and power by limiting wide register shifts.

@@ -1,0 +1,11 @@
+I will implement the FSM using one-hot encoding for clarity and potentially faster state decoding, given only three states. Instead of separate byte registers, I will use a 24-bit shift register that shifts in each byte on every message byte receive, which simplifies data handling. The FSM will have states: SEARCH (discard bytes until in[3]=1), BYTE2 (store second byte), BYTE3 (store third byte and assert done).
+
+The done signal will be a one-clock-cycle pulse asserted immediately after receiving the third byte. I will implement synchronous reset that clears all registers.
+
+In this design:
+- SEARCH state loads the first byte into bits [23:16] only when in[3] = 1.
+- BYTE2 loads second byte into [15:8].
+- BYTE3 loads third byte into [7:0] and asserts done.
+- The 24-bit shift register is loaded byte-wise as per state, reducing register count and complexity.
+- The done signal and out_bytes are registered together, making outputs stable and aligned with done assertion.
+- This approach trades the use of a shift register for simpler data path and one-hot FSM for simplicity and possibly faster timing.

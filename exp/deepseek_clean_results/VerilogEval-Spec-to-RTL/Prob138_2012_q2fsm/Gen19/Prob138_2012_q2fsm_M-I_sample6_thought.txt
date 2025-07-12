@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. **Critical Path Optimization**: Rebalance the state transition logic to reduce the critical path delay. Specifically, we'll simplify the D state transition logic by removing the conditional operator and using an if-else structure, which typically synthesizes more efficiently.
+
+2. **Power Reduction**: Implement clock gating for states with stable outputs (E when w=1) to reduce dynamic power consumption. This will be done by adding a clock enable signal for these states.
+
+3. **Area Optimization**: Share common transition logic between states C and F (both transition to D when w=0) by combining these cases in the state machine.
+
+4. **State Encoding**: Maintain the Gray code encoding but verify it provides the best balance between switching activity and output logic simplicity.
+
+Key Changes:
+- Modified state transition logic for better timing
+- Added clock gating control
+- Combined common transition cases
+- Maintained optimal output logic

@@ -1,0 +1,22 @@
+The provided state diagram represents a finite state machine (FSM) with four states (A, B, C, D), but upon closer inspection, we can see that state D is not actually utilized in the state transitions. We will thus implement the FSM with three states: A (initial state, no device has access), B (device 0 has access), and C (device 1 has access). Since device 2 has the lowest priority, it can only receive a grant if it is the only device making a request.
+
+We will use a 2-bit state variable (to represent the three states) and implement the state transitions according to the state diagram. We will use separate always blocks for the state table and the state flip-flops. The FSM outputs (g) will be described using an always block.
+
+State codes:
+- A: 2'b00
+- B: 2'b01
+- C: 2'b10
+
+Transitions:
+- A to B: if r[0] = 1
+- A to C: if r[0] = 0 and r[1] = 1
+- B to B: if r[0] = 1
+- B to A: if r[0] = 0
+- C to C: if r[1] = 1
+- C to A: if r[1] = 0
+- Reset to A: if resetn = 0
+
+Output logic:
+- g[0] = 1 if current state is B
+- g[1] = 1 if current state is C
+- g[2] = 1 if current state is A and r[0] = 0 and r[1] = 0 and r[2] = 1

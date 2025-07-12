@@ -1,0 +1,15 @@
+To simplify the Rule 90 cellular automaton implementation while maintaining functionality:
+
+1. **Direct Vector Operations**: Instead of using a generate block, we can perform the XOR operations directly on the vector with shifted versions of itself. This leverages Verilog's bitwise operations while keeping the code concise.
+
+2. **Boundary Handling**: The left and right boundaries can be handled by concatenating zeros with the vector, effectively implementing q[-1]=0 and q[512]=0.
+
+3. **Simpler Logic**: The next state can be calculated in one line by XORing left-shifted and right-shifted versions of q, with zeros padded at the boundaries.
+
+4. **Maintain Clocked Behavior**: Keep the same synchronous update with load functionality.
+
+Key simplifications:
+- Eliminate generate block in favor of direct vector operations
+- Handle boundaries through concatenation
+- Single expression for next state calculation
+- Same synchronous behavior

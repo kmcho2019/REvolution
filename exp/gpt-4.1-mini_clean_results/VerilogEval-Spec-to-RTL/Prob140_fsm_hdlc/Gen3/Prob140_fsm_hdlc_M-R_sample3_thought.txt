@@ -1,0 +1,13 @@
+Refactor the Moore FSM to use a one-hot style state encoding and separate output logic with continuous assignments (`assign`) rather than registering outputs inside a clocked always block. 
+
+The FSM still tracks the count of consecutive ones in states S0 to S6, with transient DISC and FLAG states for the one-cycle output pulses, and an ERROR state. 
+
+The state is updated synchronously with the clock and reset. The outputs disc, flag, and err are purely combinational and depend only on the current state (Moore), via continuous assignments.
+
+This clearly separates the sequential logic (state register and next-state logic) from output logic, which is combinational and simplifies timing analysis.
+
+Also use `localparam` for state definitions and avoid SystemVerilog typedefs to maximize compatibility.
+
+Reset synchronously brings the FSM to S0, which behaves like previous input zero.
+
+This approach retains the exact FSM behavior and output timing, but with a cleaner separation of logic and no clocked output registers.

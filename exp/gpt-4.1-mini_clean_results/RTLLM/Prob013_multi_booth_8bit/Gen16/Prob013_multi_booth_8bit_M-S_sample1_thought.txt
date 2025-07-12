@@ -1,0 +1,14 @@
+Simplify the 8-bit Radix-4 Booth multiplier by removing the FSM and reducing control complexity. Use a 5-bit counter to track cycles (0 to 4) and perform all operations directly on clock edges without explicit states.
+
+Implement the Booth algorithm as follows:
+- On reset, sign-extend inputs and initialize registers and counter.
+- On each clock cycle (when counter < 5), extract 3 Booth bits from the multiplier, compute the partial product using a simple combinational case statement, and accumulate it shifted by 2*counter.
+- Arithmetic right shift the multiplier by 2 bits each cycle.
+- Increment the counter; when it reaches 5, assert ready (rdy) and output the lower 16 bits of the accumulator.
+- Hold output and ready stable after completion until next reset.
+
+This approach eliminates FSM states and next-state logic, reducing code and control overhead while maintaining radix-4 Booth functionality and correct timing.
+
+Use standard sign extension and straightforward arithmetic right shifts. Keep all operations synchronous to clk and reset, and use non-blocking assignments for registers.
+
+This yields a clean and minimal design suitable for synthesis and easy verification.

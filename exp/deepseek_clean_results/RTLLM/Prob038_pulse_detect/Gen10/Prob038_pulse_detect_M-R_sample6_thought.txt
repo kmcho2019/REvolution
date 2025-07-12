@@ -1,0 +1,16 @@
+Refactored approach using continuous assignment and explicit state encoding:
+
+1. Instead of using a shift register, we'll implement a 3-state FSM that tracks the pulse detection progress:
+   - IDLE (00): Waiting for first 0
+   - GOT_0 (01): Received first 0, waiting for 1
+   - GOT_01 (10): Received 0-1, waiting for final 0
+
+2. Use continuous assignment for the output to make the design more combinational
+3. State transitions are explicitly defined in the always block
+4. Output is assigned when in GOT_01 state and current input is 0
+
+Benefits:
+- More explicit state machine makes the design intent clearer
+- Separates combinational output logic from sequential state logic
+- Easier to modify state behavior if requirements change
+- Still maintains same functionality as original

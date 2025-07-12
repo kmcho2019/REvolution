@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization: 
+   - Remove gated clock implementation to eliminate combinational logic in clock path
+   - Consolidate logic into a single always block for cleaner timing paths
+2. Power Optimization:
+   - Use synchronous enable/disable instead of clock gating
+   - Remove redundant freq==0 checks
+3. Area Optimization:
+   - Eliminate unnecessary gated_clk register
+   - Maintain 8-bit counter as reasonable default
+4. Functionality:
+   - Keep same behavior but with cleaner implementation
+   - Ensure freq=0 case still produces constant low output
+
+Key Changes:
+1. Single always block implementation
+2. Synchronous control without clock gating
+3. Simplified state transitions
+4. More synthesis-friendly structure

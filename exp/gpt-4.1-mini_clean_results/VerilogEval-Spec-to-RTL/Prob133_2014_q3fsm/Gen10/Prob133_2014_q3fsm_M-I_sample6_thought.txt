@@ -1,0 +1,13 @@
+To optimize the FSM for better power, performance, and area (PPA), we will refine the original design by:
+
+- Separating the cycle count and w accumulator into individual 2-bit registers instead of packing into a single 4-bit register. This reduces toggling on bits not updated every cycle and simplifies critical path combinational logic.
+- Introducing a clock enable for the counters to update only in state B, minimizing register toggling during state A.
+- Simplifying the equality check for exactly two occurrences of w=1 in three cycles by directly comparing the sum (which ranges from 0 to 3).
+- Keeping a registered output z that asserts one cycle after the 3-cycle window as required.
+- Retaining the simple 1-bit state register and synchronous active-high reset.
+- Maintaining clear separation between combinational next-state/next-output logic and sequential updates.
+- Using localparam for state encoding and adding comments for clarity.
+
+This approach reduces toggle activity, simplifies combinational paths, and keeps area minimal while preserving the required FSM behavior and timing. The separate registers for counters should improve timing by isolating logic and minimize dynamic power by gating updates. The output logic is optimized to avoid unnecessary complexity.
+
+Overall, the improvements aim for cleaner, more modular design with enhanced timing margin and lower power, while maintaining functionality and minimal state count.

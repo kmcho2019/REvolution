@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. Direction Implicit in State: Instead of separate direction bit, encode direction directly in state names (WL/WR for walking left/right). This eliminates the need for a separate direction register.
+
+2. Hierarchical States: Use a two-level state machine where the top level distinguishes between MOVING (walking/digging) and FALLING states. This simplifies priority handling.
+
+3. Event-Driven Transitions: Implement transition conditions as separate always blocks for each state type, making the priority rules more explicit.
+
+4. Output Encoding: Use a one-hot-like encoding for outputs where each output is directly driven by specific states, reducing output logic complexity.
+
+Key Innovations:
+- Eliminates direction register by merging into state encoding
+- Hierarchical structure naturally enforces priority rules
+- Separate transition blocks improve readability and optimization
+- Outputs directly tied to states reduces logic levels

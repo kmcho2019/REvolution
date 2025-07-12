@@ -1,0 +1,18 @@
+The original implementation is already optimal for this trivial combinational logic. However, to demonstrate alternative Verilog coding styles while maintaining identical functionality and PPA metrics, we can:
+
+1. Use a continuous assignment (assign statement) - already shown in original
+2. Use an always block with blocking assignment
+3. Use an always block with non-blocking assignment
+4. Use a gate-level primitive (buf)
+
+For this refactoring, I'll choose option #2 - using an always block with blocking assignment. This shows:
+- Different syntax while maintaining combinational behavior
+- Same timing characteristics (still purely combinational)
+- Identical PPA metrics since synthesis will produce the same netlist
+- Demonstrates procedural assignment alternative to continuous assignment
+
+The key points are:
+- Blocking assignment (=) for combinational logic
+- Sensitivity list includes all inputs (in)
+- Output declared as reg type (required for procedural assignment)
+- Functionality remains identical to original

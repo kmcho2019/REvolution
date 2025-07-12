@@ -1,0 +1,15 @@
+The initial design correctly implements the 8-bit to 16-bit concatenation and delays valid_out/data_out by one cycle after receiving the second byte. However, the main improvement is to ensure that valid_out and data_out remain stable for the entire clock cycle and that valid_out is asserted only for one clock cycle exactly after the concatenation.
+
+To achieve this:
+
+- Use two pipeline stages: one to latch the concatenated data and a valid flag upon receiving the second byte, and another to output the valid_out and data_out signals.
+
+- Avoid resetting valid_out_d inside the same always block unconditionally; instead, generate valid_out based on a registered valid flag that gets asserted only when second byte arrives, and then cleared in the next cycle.
+
+- Maintain stable output signals by registering them synchronously and asserting valid_out for exactly one clock cycle after data_out is valid.
+
+- Ensure that if only one data byte has arrived, valid_out and data_out remain de-asserted until the second byte arrives.
+
+This pipeline stage approach guarantees the output timing matches the problem description exactly and avoids glitches or instability in output signals.
+
+This approach retains simplicity, fully synchronous design, and clean separation between input capture, output formation, and output signaling.

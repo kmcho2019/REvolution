@@ -1,0 +1,11 @@
+Implement the FSM with a classic Mealy-style pattern detector separate from the main control states to minimize ambiguity on detection timing. Use a 4-bit shift register continuously shifting in the serial input data. Detect the pattern (1101) combinationally each cycle, and trigger a pattern_detected pulse only when in the SEARCH state to avoid retriggering.
+
+After pattern detection, move to the SHIFT state where a 2-bit counter runs from 0 to 3 to enable shift_ena for exactly 4 cycles.
+
+Then move to COUNT state, asserting counting output while waiting for done_counting input.
+
+After done_counting is asserted, move to DONE state asserting done output, then wait for ack input to return to SEARCH.
+
+All outputs are registered (synchronous) from state registers to avoid glitches.
+
+This design separates pattern detection logic from FSM states cleanly and uses counters with precise bounds to control the exact cycle counts, providing clear, timing-accurate output assertions with synchronous reset and positive-edge clocking.

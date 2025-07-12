@@ -1,0 +1,12 @@
+To improve the PPA metrics of the existing 2-bit binary encoded FSM, I will switch to one-hot encoding for the states. One-hot encoding uses one flip-flop per state, resulting in simpler next-state combinational logic (just gates selecting next states), which often leads to better timing (WNS, TNS) and can reduce dynamic power due to simpler transitions and fewer glitches in combinational logic.
+
+Implementation details:
+- Use 4 flip-flops, each representing one state (A, B, C, D).
+- Implement next-state logic as simple combinational assignments from current states and input, avoiding a case statement.
+- Output logic remains simple: output = 1 only when in state D.
+- Synchronous active-high reset sets FSM to state A only (sets state A flip-flop high, others low).
+- Use non-blocking assignments in sequential logic for safe RTL behavior.
+
+This approach typically increases area slightly due to more flip-flops (4 vs 2), but given the FSM is only 4 states, this overhead is minimal. The benefit is significantly simplified combinational logic, improving timing and potentially power due to less complex logic cones. This balances overall PPA improvement.
+
+This one-hot FSM design is a classic trade-off, and for small FSMs it is often favored for high-performance and robust implementations.

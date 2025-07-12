@@ -1,0 +1,40 @@
+Since FPGAs typically only support flip-flops triggered on one clock edge, we can emulate dual-edge triggering by sampling the input on both edges. One common approach is to use two flip-flops in a master-slave style or use two flip-flops triggered on opposite edges (one on posedge clk, one on negedge clk), then combine their outputs.
+
+Here, to create a dual-edge triggered flip-flop, we can instantiate two registers:
+- One triggered on posedge clk storing the input d.
+- One triggered on negedge clk storing the input d.
+
+Then, combine these two stored values to produce the output q. Since q must change on both edges, q can be assigned to one of these registers depending on the clock edge.
+
+However, since q is a single output, and we cannot directly detect the clock edge inside the combinational logic, a better approach is to create a register triggered on posedge clk that stores the previous value of the posedge register and the negedge register. Then we use a multiplexer to select between these two.
+
+Alternatively, we can use a toggle flip-flop approach or a Gray code approach.
+
+A simpler method is:
+- Have two flip-flops: ff_pos triggered on posedge clk and ff_neg on negedge clk, both capturing d.
+- Generate q by XORing ff_pos and ff_neg: this toggles q on both edges (dual-edge triggered flip-flop characteristic).
+
+But since the user wants a flip-flop storing d sampled on both edges, better to generate q as the OR or AND of both registers, depending on desired behavior.
+
+For a simple dual-edge triggered flip-flop:
+- On both posedge and negedge of clk, q captures d.
+- Using two flip-flops as described, then combine: q = ff_pos or ff_neg.
+
+Therefore, implementation is:
+- Register ff_pos capturing d on posedge clk.
+- Register ff_neg capturing d on negedge clk.
+- q = ff_pos | ff_neg (or just output either register)
+
+This approach effectively samples d on both edges and outputs it.
+
+Alternatively, we can combine these registers into one using a clock enable and a doubled clock, but since the requirement is to use a normal clock, two flip-flops triggered on opposite edges are better.
+
+Because some synthesis tools may not support negedge triggered flip-flops, one practical method is to generate the negative edge by inverting the clock and triggering a flip-flop on posedge of inverted clock.
+
+Hence, the code will use:
+- ff_pos: posedge clk
+- ff_neg: posedge clk_inv (clk inverted)
+
+Output q = ff_pos | ff_neg
+
+This will emulate dual-edge triggering.

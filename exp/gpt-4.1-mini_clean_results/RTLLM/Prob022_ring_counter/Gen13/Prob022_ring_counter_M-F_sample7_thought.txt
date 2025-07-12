@@ -1,0 +1,9 @@
+The previous approach assigned the output `out` by shifting a constant 1 by the variable `position`, which the simulation environment doesn't support as an entire vector assignment. To address this, instead of using a shift operation, generate the one-hot `out` vector using explicit bitwise assignments.
+
+Specifically, use a combinational always block with a `case` statement that sets `out` to a one-hot vector depending on the value of `position`. This avoids variable shifts or direct vector slice assignments and works reliably across all simulators and synthesis tools.
+
+The internal logic remains unchanged:
+- `position` is a 3-bit register cycling from 0 to 7, updated synchronously on the clock with asynchronous reset.
+- The `out` output is combinationally decoded from `position` using a case statement, setting exactly one bit high in `out`.
+
+This solution addresses the elaboration failure caused by unsupported vector shifts in the previous code while keeping the design simple, clear, and synthesis-friendly.

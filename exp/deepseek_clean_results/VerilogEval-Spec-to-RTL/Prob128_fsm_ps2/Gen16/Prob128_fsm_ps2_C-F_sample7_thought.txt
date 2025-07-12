@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. State Management: Use a simple 2-bit counter to track message bytes (0-2) for minimal area
+2. Timing Optimization: Register the done signal one cycle after counter reaches 2 for better timing
+3. Power Optimization: Only update counter when needed (either starting a message or continuing one)
+4. Reset Handling: Clear synchronous reset for reliable initialization
+5. Logic Simplification: Direct state transitions without intermediate signals
+
+Key Improvements:
+- Single always block for clean sequential logic
+- Registered done signal for better timing closure
+- Efficient counter enable using OR of current state and start condition
+- Minimal state encoding (2 bits)
+- Clear reset behavior

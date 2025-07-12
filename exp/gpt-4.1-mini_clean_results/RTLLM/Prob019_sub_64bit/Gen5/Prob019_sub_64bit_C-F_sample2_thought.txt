@@ -1,0 +1,15 @@
+Fuse the strengths of both examples by using the concise and clear subtract operator from Example 2 for simplicity and minimal area, but replace the direct subtraction operator with a more explicit two's complement adder approach to improve timing and synthesis friendliness, inspired by the CLA in Example 1.
+
+Specifically:
+- Perform subtraction as A + (~B + 1) using a 64-bit ripple carry adder (RCA) for a good balance of area and timing (CLA is faster but larger; ripple carry is simpler).
+- Implement overflow detection exactly as the minimal, correct expression from both examples: overflow = (A_sign != B_sign) && (result_sign != A_sign).
+- This fusion yields:
+  * Clear, minimal overflow logic.
+  * Better synthesis predictability and potential optimization (because subtraction operator can be inferred differently across tools).
+  * Moderate complexity adder which can be optimized or replaced easily by hierarchical adder if needed.
+  
+Thus, the module is modular, synthesizable, minimal in area and power, and maintains clear overflow detection logic, suitable for high-precision arithmetic.
+
+The 64-bit ripple carry adder is instantiated internally, facilitating future replacements with CLA or other adders without changing the interface or overflow detection.
+
+This balances clarity, correctness, area, and performance better than either example alone.

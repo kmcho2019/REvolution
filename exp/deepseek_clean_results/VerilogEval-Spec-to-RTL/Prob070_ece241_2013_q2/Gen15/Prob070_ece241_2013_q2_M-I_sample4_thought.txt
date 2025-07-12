@@ -1,0 +1,24 @@
+Improved design strategy:
+
+1. For out_sop (Sum of Products):
+   - Directly implement the required minterms (2,7,15) without relying on don't-cares since they don't help in minimization
+   - 2: 0010 (~a & ~b & c & ~d)
+   - 7: 0111 (~a & b & c & d)
+   - 15: 1111 (a & b & c & d)
+   - Combine terms where possible: (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+   - Final optimized form: (~a & c & (~b & ~d | b & d)) | (a & b & c & d)
+
+2. For out_pos (Product of Sums):
+   - Identify all maxterms that must output 0 (0,1,4,5,6,9,10,13,14)
+   - Group maxterms to find common patterns:
+     - 0:0000, 1:0001 → (a|b|c)
+     - 4:0100, 5:0101, 6:0110 → (a|~b|c)
+     - 9:1001, 10:1010 → (~a|b|~d)
+     - 13:1101, 14:1110 → (~a|~b|d)
+   - Final optimized form: (a|b|c) & (a|~b|c) & (~a|b|~d) & (~a|~b|d)
+
+3. Key improvements:
+   - Correct implementation matching all specified input conditions
+   - Proper handling of don't-care conditions (not used since they don't help)
+   - Minimal logic implementation for both SOP and POS forms
+   - Clear separation of required true and false cases

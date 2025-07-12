@@ -1,0 +1,16 @@
+Combine the hierarchical modularity and fast carry lookahead of Example 1 with the clearer segmentation and simple arithmetic style of Example 2 for a balanced, efficient 64-bit subtractor.
+
+Fusion strategy:
+- Divide the 64-bit operands into four 16-bit segments, improving manageability and potentially aiding timing closure and scalability.
+- Within each 16-bit segment, implement an 8-bit carry-lookahead subtractor pair (two cascaded 8-bit CLA blocks) to speed up carry/borrow propagation locally. This is a hierarchical approach that speeds up borrow propagation within each 16-bit block.
+- Chain the four 16-bit blocks using a borrow ripple to keep the interface simple but reduce the long carry chain into four shorter fast blocks.
+- Maintain the use of two's complement subtraction (A + ~B + 1) inside each 8-bit CLA subtractor.
+- Keep overflow detection logic at the top level as a simple and reliable expression comparing sign bits of inputs and result.
+- This design gains:
+  - Faster local 8-bit CLA carry chains inside each 16-bit block.
+  - Lower latency borrow chain across four 16-bit blocks instead of eight smaller 8-bit blocks, reducing carry propagation stages.
+  - Better modularity for reuse and debugging.
+  - Clear arithmetic style that synthesis tools handle well.
+  - A better tradeoff between area, timing, and power than a single monolithic CLA or pure ripple borrow chains.
+  
+This fusion balances speed, modularity, and synthesis friendliness while preserving clear overflow detection semantics.

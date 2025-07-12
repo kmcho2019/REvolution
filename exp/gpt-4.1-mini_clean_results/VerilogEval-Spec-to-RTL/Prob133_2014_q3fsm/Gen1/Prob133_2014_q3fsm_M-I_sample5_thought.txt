@@ -1,0 +1,19 @@
+To correct the timing of the output z, we separate the counting of the w inputs and the assertion of z into two sequential phases.
+
+We maintain the two states A and B. In state B, we count w=1 over three cycles using a cycle_count and w_count registers. After the third cycle (cycle_count == 3), we store whether z should be asserted in a temporary register (z_next), but do not assign z yet. On the next clock cycle (when cycle_count resets to 0), we assign z <= z_next, so that z is asserted exactly one clock cycle after finishing the 3-sample window, as required.
+
+This introduces a one-cycle pipeline delay on output z after every three cycles, meeting the problem specification exactly.
+
+We keep z asserted for only one cycle after the 3-cycle window, then reset z to zero as we begin the next window.
+
+In state A, z is held at 0, and counters cleared.
+
+This design uses minimal states, maintains synchronous reset, and ensures the output timing matches the spec precisely.
+
+Summary:
+- State A waits for s=1.
+- State B samples w for 3 cycles, counting w=1 occurrences.
+- After 3rd sample, determine if z=1 in next cycle (if exactly two w=1).
+- Assert z for one cycle, then clear z.
+- Repeat sampling in cycles of three.
+- Reset synchronous and active high.

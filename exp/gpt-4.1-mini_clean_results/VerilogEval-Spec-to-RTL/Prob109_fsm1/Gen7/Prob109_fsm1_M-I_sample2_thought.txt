@@ -1,0 +1,8 @@
+To improve the PPA of the existing FSM, we focus on simplifying next state logic by using direct Boolean expressions instead of a case statement to reduce logic depth, which can help improve timing. Additionally, we keep the asynchronous reset as requested but use synchronous reset internally to ease timing and minimize asynchronous set/reset timing complications—this is done by synchronizing the async reset into the clock domain with a reset synchronizer. This hybrid approach preserves asynchronous reset behavior externally but makes internal FSM reset synchronous, enhancing timing closure and reducing hold violations.
+
+Also, since the output directly reflects the state, we implement it as a continuous assignment from the state register to reduce toggle register load, potentially lowering power. The single-bit state encoding is already optimal for area and power.
+
+Summary of improvements:
+- Convert asynchronous reset to a synchronized reset internally.
+- Replace case statement with Boolean expressions for next state logic.
+- Use continuous assignment for output instead of combinational always block.

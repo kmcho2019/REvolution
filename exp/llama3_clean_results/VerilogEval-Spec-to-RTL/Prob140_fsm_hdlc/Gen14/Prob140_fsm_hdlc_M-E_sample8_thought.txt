@@ -1,0 +1,7 @@
+To implement a novel architectural idea for the HDLC framing module, we can utilize a combination of a counter and a shift register. The counter will track the number of consecutive ones, and the shift register will help identify the specific bit patterns required for flag detection and error handling.
+
+The shift register will be 8 bits wide, allowing it to capture the relevant bit patterns (01111110 for flag and 01111111 for error). The counter will be used to track the number of consecutive ones, which will help in identifying the discard condition (5 consecutive ones followed by a zero).
+
+When the shift register captures the flag pattern (01111110), it will assert the flag signal. If it captures 7 or more consecutive ones (01111111...), it will assert the error signal. For the discard condition, when the counter reaches 5 (indicating 5 consecutive ones), it will prepare to assert the discard signal if the next bit is a zero.
+
+This approach simplifies the state machine logic and makes the design more modular and easier to understand. It also reduces the number of states needed, potentially making the design more efficient in terms of area and power consumption.

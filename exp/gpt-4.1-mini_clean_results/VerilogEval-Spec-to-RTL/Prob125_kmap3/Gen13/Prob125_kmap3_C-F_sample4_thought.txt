@@ -1,0 +1,23 @@
+Fuse the strengths of both prior solutions: the minimal and clean Boolean expression from Example 2 with the clarity and structured factorization of intermediate terms from Example 1, but eliminate redundancies for optimal area and power.
+
+From Example 2, the simplified logic is:
+    out = (c & (a | ~b)) | (a & ~c)
+
+Notice that (a & ~c) is already covered in (a | ~b) when combined with c, so we can try to rewrite to minimize overlapping terms.
+
+Rewrite the expression step-by-step:
+
+1. out = (c & (a | ~b)) | (a & ~c)
+2. = (c & a) | (c & ~b) | (a & ~c)
+
+Here, terms are distinct and minimal: three AND terms ORed together.
+
+This is optimal according to the Karnaugh map and covers all required minterms.
+
+Implementation strategy:
+
+- Define intermediate wires for each product term for readability and potential reuse.
+- Avoid redundant terms.
+- Ignore input d as it is don't-care.
+- The code clearly shows how output depends on inputs and can be easily optimized by synthesis tools.
+- This approach combines clarity, minimal logic, and avoids the LUT's indexing overhead.

@@ -1,0 +1,14 @@
+To improve robustness and avoid issues with sampling counters on falling edges (which can cause timing and metastability problems), the design can be refactored to use purely synchronous logic on the rising edge. We emulate the half-cycle delayed clock phase by deriving div_clk_b from the counter value incremented by half the count period (i.e., a phase-shifted count), instead of sampling the count on the falling edge.
+
+Specifically:
+- Keep a single counter `cnt` running from 0 to 6 (7 counts).
+- Generate div_clk_a high for counts 0 to 3 (4 cycles), low otherwise.
+- Generate div_clk_b from a phase-shifted count, calculated by `(cnt + 4) % 7`.
+  This effectively shifts the waveform by half the total period (3.5 cycles).
+- Since 3.5 is the division factor, adding 4 shifts roughly half the cycle (4 counts out of 7).
+- Both div_clk_a and div_clk_b signals are combinationally derived from the count values on the rising edge clock domain, avoiding any asynchronous or falling edge sampling.
+- The output clock is the OR of div_clk_a and div_clk_b.
+- Use synchronous reset only on the rising edge.
+- This approach is fully synchronous, glitch-free, and synthesizable on typical FPGAs.
+
+This phase-shift via count offset avoids the need to sample on the falling edge while preserving the desired fractional division with balanced duty cycle.

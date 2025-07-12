@@ -1,0 +1,14 @@
+Here's a novel hierarchical approach using a divide-and-conquer strategy:
+
+1. Instead of processing all 512 bits in parallel, we'll divide the problem into 64 segments of 8 bits each
+2. Each segment will have its own local Rule 90 computation unit
+3. Boundary conditions between segments are handled by propagating the edge bits to adjacent segments
+4. This creates a hierarchical structure that's more scalable and potentially better for synthesis
+5. The load operation remains straightforward by directly assigning to the segments
+6. The design naturally handles the global boundary conditions (q[-1] and q[512] = 0)
+
+Key advantages:
+- More scalable for large state vectors
+- Potentially better timing due to localized computation
+- Regular structure that's synthesis-friendly
+- Easier to pipeline if needed

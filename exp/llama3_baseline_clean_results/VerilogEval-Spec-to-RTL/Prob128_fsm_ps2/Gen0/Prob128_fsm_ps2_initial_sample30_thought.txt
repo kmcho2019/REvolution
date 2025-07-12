@@ -1,0 +1,9 @@
+To solve this problem, we will design a finite state machine (FSM) that runs in a sequential manner, utilizing the system clock and reset signals. The FSM will have states to track whether it has found the first byte of a message (with in[3]=1) and then count the subsequent bytes until it has received three bytes, at which point it signals that a message has been received (done). 
+
+Our FSM will have four states:
+1. IDLE: Initial state, waiting for a byte with in[3]=1.
+2. MSG_BYTE_1: First byte of the message received.
+3. MSG_BYTE_2: Second byte of the message received.
+4. MSG_DONE: Third byte of the message received, signal done.
+
+We will use the reset signal to return the FSM to the IDLE state.

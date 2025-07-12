@@ -1,0 +1,15 @@
+1. The module needs outputs Y1 and Y3 (not Y2 and Y4)
+2. From the state machine description:
+   - Y1 is active in states E and F (y[4] and y[5])
+   - Y3 is active when:
+     * In state A and w=1 (stays in A)
+     * In state B and w=1 (goes to D)
+     * In state C and w=1 (goes to D)
+     * In state D and w=1 (goes to A)
+     * In state E and w=1 (goes to D)
+     * In state F and w=1 (goes to D)
+3. Simplified logic:
+   - Y1 is simply OR of y[4] and y[5]
+   - Y3 is active when w=1 and not in state D (since D with w=1 goes to A)
+   - But looking closer, Y3 is active when next state will be D or A
+   - For one-hot encoding, can directly use the state bits

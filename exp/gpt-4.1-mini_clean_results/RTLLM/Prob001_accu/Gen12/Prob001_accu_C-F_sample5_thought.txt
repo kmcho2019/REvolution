@@ -1,0 +1,10 @@
+Fuse the straightforward counting and accumulation approach from Example 1 with the enable gating strategy from Example 2 to reduce unnecessary toggling and thus save dynamic power.  
+Specifically:  
+- Use a single always block synchronous to clk and active-low reset.  
+- Introduce a local enable signal to gate accumulator and count updates only when valid_in is high.  
+- Accumulate data_in whenever valid_in is high, increment count accordingly.  
+- When count reaches 3 (on the 4th valid input), output the accumulated sum (including current data_in), pulse valid_out for one cycle, and reset accumulator and count.  
+- Keep non-blocking assignments consistent for synthesis friendliness and clarity.  
+- This maintains minimal area and straightforward timing paths but gains power efficiency by avoiding unnecessary toggling when valid_in is low.  
+- The output valid_out pulses exactly one cycle per 4 inputs, meeting the spec.  
+This fusion strategy combines minimal complexity, good timing, and improved power efficiency without complicating control or datapath.

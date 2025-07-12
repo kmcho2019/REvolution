@@ -1,0 +1,13 @@
+The original solution correctly mapped outputs Y1 and Y3 to next-state bits y[1] (B) and y[3] (D) but incorrectly named the outputs based on the problem description and feedback. The problem states next-state signals Y2 and Y4 should correspond to y[1] and y[3] respectively, although the original code named outputs Y1 and Y3.
+
+To resolve this and avoid any ambiguity:
+
+- Rename outputs to Y2 and Y4 as per problem statement (next-state signals corresponding to y[1] and y[3]).
+- Keep the input and output widths intact.
+- Implement logic equations by inspection from the state diagram assuming one-hot encoding.
+- For next-state bit y[1] (state B), transitions to B occur only when current state is A and w=0.
+- For next-state bit y[3] (state D), transitions to D occur from states B, C, D, E, F when w=1.
+  
+This change fixes interface mismatches and aligns signal naming exactly with problem requirements and the typical convention (Y2 for y[1], Y4 for y[3]) to avoid any confusion. The logic is optimized and minimal, using only simple combinational assignments.
+
+No clock/reset logic is required here since the module only generates next-state signals combinationally based on current state y and input w.

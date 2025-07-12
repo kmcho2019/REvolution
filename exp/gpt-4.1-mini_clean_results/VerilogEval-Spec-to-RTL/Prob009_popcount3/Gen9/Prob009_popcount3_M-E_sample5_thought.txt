@@ -1,0 +1,14 @@
+An alternative approach to compute the 3-bit population count is to use a simple lookup-table (LUT)-based design. Instead of deriving the output by logic expressions, the input 3-bit vector is treated as an index to a small combinational ROM that outputs the 2-bit count directly.
+
+This approach uses a case statement or combinational read-only logic to map each of the 8 input combinations (0 to 7) to their population counts (0 to 3). It is straightforward, synthesizable, and easy to extend for larger widths.
+
+Advantages:
+- Clear, direct implementation with no gate-level logic optimization needed.
+- Can be easily modified or extended to more bits by increasing the LUT size.
+- The synthesis tool will optimize the case statement into minimal logic.
+
+Disadvantages:
+- May consume slightly more resources for very small inputs compared to direct logic, but negligible here.
+- Slightly longer combinational path if not optimized, but for 3 bits the depth is minimal.
+
+This demonstrates a different architectural approach focusing on LUT-based decoding rather than pure combinational logic expressions.

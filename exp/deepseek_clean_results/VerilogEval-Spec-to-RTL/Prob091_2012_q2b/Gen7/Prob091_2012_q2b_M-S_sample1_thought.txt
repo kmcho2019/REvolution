@@ -1,0 +1,12 @@
+The current implementation can be further simplified by leveraging the one-hot encoding property more effectively. Since only one state bit is active at a time in one-hot encoding, we can make these observations:
+
+1. For Y1 (next state for y[1]): It only becomes active when in state A (y[0]) and input w=1. This is already optimally implemented as y[0] & w.
+
+2. For Y3 (next state for y[3]): It activates when transitioning to state D. From the state machine:
+   - From B (y[1]) with w=0
+   - From C (y[2]) with w=0
+   - From E (y[4]) with w=0
+   - From F (y[5]) with w=0
+   Since only one y[i] can be active, we can express this as (~w) & (y[1] | y[2] | y[4] | y[5]). But due to one-hot, this is equivalent to (~w) & (~y[0] & ~y[3]).
+
+The simplest implementation combines these insights while maintaining correctness.

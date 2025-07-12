@@ -1,0 +1,7 @@
+The original bug was caused by declaring `out` as a single bit but using vector inputs `a` and `b` in a bitwise operation, leading to width mismatch and synthesis errors.
+
+To fix this while retaining a single-bit output, we must clarify how to select which bit from `a` or `b` drives `out`. Typically, a 2-to-1 mux with 8-bit inputs and a single-bit output should select one bit from `a` or `b` based on some index. Since no bit index input is given, the assumption is the output should be the selected bit from the least significant bit (bit 0) of either `a` or `b`.
+
+Therefore, a cleaner way is to explicitly select bit 0 of `a` or bit 0 of `b` based on `sel`. We can implement this using a simple continuous assignment with a ternary operator: `assign out = sel ? b[0] : a[0];`.
+
+This keeps `out` as a single-bit output, matches the input widths, avoids bitwise AND/OR on vectors with single-bit `sel`, and clarifies mux behavior. It also uses a different style (direct bit selection with ternary) rather than bitwise operations, making the design clear and concise.

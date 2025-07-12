@@ -1,0 +1,5 @@
+To further optimize for power and area while maintaining the same functionality, replace the equality operator (==) with an explicit bitwise XNOR followed by a reduction AND. This avoids any synthesis ambiguity and directly maps to minimal logic gates (XNOR and AND), which can slightly reduce area and power in some synthesis flows.
+
+This approach may reduce unnecessary logic inferred by the synthesis tool from the equality operator, allowing for finer control and potentially better PPA metrics in very tight designs.
+
+Thus, implement z as the reduction AND of the bitwise XNOR of A and B: z = & ~(A ^ B);

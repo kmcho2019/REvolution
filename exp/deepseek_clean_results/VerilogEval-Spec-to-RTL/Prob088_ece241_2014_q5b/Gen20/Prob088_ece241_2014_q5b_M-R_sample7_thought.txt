@@ -1,0 +1,23 @@
+Refactoring Approach:
+1. State Representation:
+   - Keep one-hot encoding but represent states as a 2-bit vector for more compact coding
+   - Use parameter constants for state values to improve readability
+
+2. State Transition Logic:
+   - Move state transition logic to continuous assignments (assign statements)
+   - Compute next state values combinationally before the register
+   - This makes the state machine structure more explicit and separates combinational/sequential logic
+
+3. Output Logic:
+   - Maintain the same Mealy output behavior but express it directly in terms of current state and input
+   - Keep output purely combinational
+
+4. Reset and Clocking:
+   - Still use async reset but now with a vector state register
+   - Single always block for sequential logic with clear reset condition
+
+Key Benefits:
+- More explicit separation of combinational and sequential logic
+- Vector state representation is more scalable for larger FSMs
+- Parameters make state values self-documenting
+- Same functionality but with clearer structure

@@ -1,0 +1,18 @@
+module TopModule(
+    input  [3:0] a,
+    input  [3:0] b,
+    input  [3:0] c,
+    input  [3:0] d,
+    input  [3:0] e,
+    output [3:0] q
+);
+
+wire [3:0] sel;
+assign sel = (c[3:2] == 2'b00) ? (c[1:0] == 2'b00 ? b :
+                                  (c[1:0] == 2'b01 ? e :
+                                   (c[1:0] == 2'b10 ? a : d))) :
+                                  4'b1111;
+
+assign q = sel;
+
+endmodule

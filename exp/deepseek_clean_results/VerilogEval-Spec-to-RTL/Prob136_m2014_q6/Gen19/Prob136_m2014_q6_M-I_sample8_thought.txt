@@ -1,0 +1,20 @@
+To optimize this solution, I'll focus on improving timing closure while maintaining power efficiency. The key insights from the PPA metrics are:
+
+1. **Timing Improvement**:
+   - The negative WNS (-0.17ns) indicates timing paths are close to violating constraints
+   - The critical path is in the combinational next-state logic
+   - Solution: Register the next-state computation to break the critical path
+
+2. **Power Optimization**:
+   - Current power is already good (0.00222W)
+   - Can maintain this by keeping Gray coding and adding clock gating for stable states
+
+3. **Area Consideration**:
+   - Current area (22.0 um²) is excellent
+   - Will maintain this by keeping efficient state encoding
+
+Key improvements:
+1. Pipelined next-state computation with registered intermediate value
+2. Maintain Gray coding for power efficiency
+3. Add clock gating for state register when state is stable (E with w=0)
+4. Keep output logic as simple continuous assignment

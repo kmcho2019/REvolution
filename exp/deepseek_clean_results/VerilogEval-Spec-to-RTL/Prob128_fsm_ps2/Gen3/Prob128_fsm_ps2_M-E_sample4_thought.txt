@@ -1,0 +1,5 @@
+Instead of using explicit states, we can implement a counter that tracks how many bytes we've received in the current message. The key insights are:
+1. When in[3]=1, we reset the counter to 1 (start of new message)
+2. Otherwise, we increment the counter if it's not zero
+3. When the counter reaches 3, we assert 'done' and reset the counter
+This approach eliminates explicit state transitions and reduces the logic to a simple counter with conditional increment/reset. The counter itself implicitly represents our state.

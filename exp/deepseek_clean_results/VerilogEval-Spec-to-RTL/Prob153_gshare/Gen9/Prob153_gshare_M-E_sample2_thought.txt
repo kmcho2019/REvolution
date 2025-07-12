@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+1. Speculative History Tracking: Maintain both committed and speculative GHR states to handle concurrent predict/train scenarios more efficiently
+2. Delayed PHT Updates: Buffer training requests for one cycle to simplify timing and reduce critical path
+3. Dual-Ported PHT: Use separate read/write ports for prediction and training to avoid conflicts
+4. Early Prediction: Compute prediction index in previous cycle to reduce critical path
+5. Optimized Counter Update: Use simpler saturation logic with bitwise operations
+
+Key Benefits:
+- Eliminates timing conflicts between predict/train operations
+- Reduces critical path by precomputing prediction index
+- Simplifies PHT update logic with delayed writes
+- Maintains high prediction accuracy with speculative history

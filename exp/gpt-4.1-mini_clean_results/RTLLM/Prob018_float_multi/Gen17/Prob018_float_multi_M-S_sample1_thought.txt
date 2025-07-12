@@ -1,0 +1,13 @@
+Simplify the float_multi module by implementing a single-cycle sequential process with a small multi-cycle FSM driven by a 3-bit counter, performing each major step per cycle: input extraction and special case detection, multiplication and exponent addition, normalization and rounding, and final output assignment.
+
+Keep all internal signals as regs and use a single always @(posedge clk) block, reset synchronously.
+
+Avoid pipelining; instead, perform stepwise sequential operations based on the counter. This reduces code complexity and resource usage at the cost of increased latency (4 cycles).
+
+Maintain full IEEE-754 compliance: special case handling (NaN, infinity, zero), normalization, rounding to nearest even, exponent biasing, and overflow/underflow treatment.
+
+Use straightforward combinational logic inside the sequential steps, and non-blocking assignments throughout for clarity.
+
+Stick to the original requested signals and naming, but reduce number of internal pipeline stages and complexity.
+
+This approach results in simpler code and easier understanding while preserving correct functionality.

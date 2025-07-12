@@ -1,0 +1,15 @@
+To fix the code, we need to address two main issues:
+1. Replace the $past() function with explicit state tracking for the walking direction before falling
+2. Correct the fall counter comparison to use >= 20 instead of > 20
+
+The solution involves:
+- Adding a register to track the walking direction (left or right) before entering FALL state
+- Using this register to determine the return state after falling
+- Modifying the fall counter comparison to properly handle the 20-cycle threshold
+- Maintaining all other state transition logic as originally designed
+
+The state machine will now properly:
+- Remember the walking direction when falling starts
+- Return to the correct walking direction after falling if not splattered
+- Splatter only after exactly 20+ cycles of falling
+- Handle all other transitions according to the specification

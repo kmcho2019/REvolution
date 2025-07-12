@@ -1,0 +1,21 @@
+Implement the fixed-point subtractor by treating the inputs as signed two's complement values and performing direct signed subtraction: c = a - b.
+
+Then, adjust the result to enforce the zero sign bit rule explicitly.
+
+Since the inputs and outputs are two's complement fixed-point numbers, the subtraction operation directly corresponds to fixed-point subtraction with precision Q.
+
+Key steps:
+1. Declare inputs and outputs as signed types to enable native signed arithmetic.
+2. Perform subtraction with a signed arithmetic operator directly.
+3. Check if result is zero; if so, explicitly set the sign bit to zero (force positive zero).
+4. Store the subtraction result in an internal signed register `res` (to comply with internal register usage).
+5. Assign the final result with sign bit correction to the output.
+
+This approach leverages the Verilog signed data types and operators for efficient and synthesis-friendly implementation, minimizing manual sign/magnitude manipulations.
+
+It also simplifies the logic, leading to better PPA characteristics: 
+- Performance improved by eliminating magnitude comparison and sign handling.
+- Area reduced by using direct arithmetic operations.
+- Power lowered due to fewer combinational gates.
+
+This method fulfills all requirements, including precision handling, sign management, zero sign enforcement, and internal register usage.

@@ -1,0 +1,25 @@
+Here's a novel approach using a shift register-based state machine implementation:
+
+1. **Core Idea**: Instead of traditional state encoding, use a 6-bit shift register where each bit represents a state (one-hot encoding). This eliminates decoding logic and enables very fast state transitions.
+
+2. **State Representation**:
+   - Each state is represented by a single bit in the shift register
+   - The order is: A(bit0), B(bit1), C(bit2), D(bit3), E(bit4), F(bit5)
+
+3. **Transition Logic**:
+   - Implement state transitions as simple shift operations with conditional masking
+   - Use parallel load for reset condition
+   - Output z is simply the OR of states E and F bits
+
+4. **Advantages**:
+   - Extremely fast state transitions (single cycle)
+   - No complex decoding logic
+   - Simple output generation
+   - Naturally glitch-free outputs
+   - Easy to modify/expand state machine
+
+5. **Optimizations**:
+   - Minimal combinatorial logic between registers
+   - Direct output from state bits
+   - Efficient reset handling
+   - All transitions handled in parallel

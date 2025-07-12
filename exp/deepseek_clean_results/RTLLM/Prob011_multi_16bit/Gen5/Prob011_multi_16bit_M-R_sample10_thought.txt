@@ -1,0 +1,13 @@
+The refactored design maintains the same shift-and-add multiplication algorithm but improves structure and efficiency by:
+1. Using a state machine with explicit states (IDLE, LOAD, CALC, DONE) for clearer control flow
+2. Moving combinational logic to continuous assignments where possible
+3. Simplifying the counter logic to only count needed cycles (0-16)
+4. Pre-computing shifted versions of the multiplier to avoid variable shift operations
+5. Using a more efficient done flag generation
+
+Key improvements:
+- State machine makes control flow more explicit and maintainable
+- Continuous assignments reduce unnecessary registers
+- Fixed 16-cycle operation eliminates need for 17th cycle
+- Pre-shifted multiplier values reduce critical path delay
+- Simplified done flag logic

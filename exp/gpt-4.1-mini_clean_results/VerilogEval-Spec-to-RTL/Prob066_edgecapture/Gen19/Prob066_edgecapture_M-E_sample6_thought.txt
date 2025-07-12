@@ -1,0 +1,9 @@
+Instead of comparing the current input to a registered previous input vector, I will implement a bitwise falling edge detector by explicitly storing a 32-bit register of the last input and detecting bits transitioning from 1 to 0. Upon detecting a falling edge bit, I will set the corresponding bit in an output latch register that retains the event until a synchronous reset clears it.
+
+To avoid initialization ambiguity at reset and prevent false edge detections on the first clock cycle, I will use a "valid" register that tracks whether the previous input has been loaded. Before the previous input is valid, no falling edge detection will occur.
+
+This approach cleanly separates edge detection and output latching, guarantees no false detection right after reset, and clearly implements the functional requirements.
+
+All sequential logic is clocked on the positive clock edge with synchronous reset. The design should synthesize efficiently and behave predictably in all corner cases.
+
+No clock gating or power optimizations are applied here, focusing on clarity and correctness.

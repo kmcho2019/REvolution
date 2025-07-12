@@ -1,0 +1,17 @@
+Here's a novel architectural approach for the MAC unit:
+
+1. **Pipelined Multiplier-Accumulator**: Split the operation into two pipeline stages to improve timing:
+   - Stage 1: Register inputs and perform multiplication
+   - Stage 2: Perform accumulation and register output
+
+2. **Input Buffering**: Register inputs to prevent glitches from propagating through combinational logic
+
+3. **Early Reset Propagation**: Reset both pipeline stages simultaneously for clean state initialization
+
+4. **Explicit Pipeline Registers**: Clearly separate the multiplier and accumulator stages for better synthesis optimization
+
+This approach provides:
+- Better timing closure due to reduced combinatorial paths
+- Higher maximum clock frequency
+- Clear separation of operations for synthesis tools
+- Maintains single-cycle throughput (with 2-cycle latency)

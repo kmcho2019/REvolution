@@ -1,0 +1,17 @@
+A novel approach is to implement the serial 2's complementer as a Moore machine with three states representing the process of forming the 2's complement:
+
+- IDLE: waiting for reset release (output zero, no valid processing)
+- PASS: before detecting the first '1' in the input stream, output the input bits directly (identity output)
+- INVERT: after detecting the first '1', output the bitwise inversion of subsequent input bits
+
+The output depends only on the current state, consistent with the Moore FSM definition:
+
+- In IDLE, output 0 (or a safe default since input is invalid)
+- In PASS, output 0 in IDLE, then when active, output the stored input bit (captured and registered at the clock edge)
+- In INVERT, output inverted stored input bit
+
+To ensure the output depends only on the state, input bit `x` is first registered on the clock edge and stored. The output `z` is assigned only based on the stored input and the current state, so it is stable during the clock cycle and changes synchronously on the clock edge.
+
+The asynchronous reset initializes the FSM to IDLE, ensuring the machine does not process input bits until reset is released.
+
+This approach cleanly separates input sampling, FSM state transitions, and output generation, satisfying a strict Moore FSM with registered outputs and inputs.

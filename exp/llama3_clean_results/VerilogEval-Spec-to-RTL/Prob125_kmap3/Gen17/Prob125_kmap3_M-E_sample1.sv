@@ -1,0 +1,25 @@
+module TopModule(
+    input  a,
+    input  b,
+    input  c,
+    input  d, // Don't-care input
+    output out
+);
+
+// Implementing the Karnaugh map using a lookup table (LUT) approach
+always @(*)
+begin
+    case ({a, b, c})
+        3'b000: out = 1'b0;
+        3'b001: out = 1'b1;
+        3'b010: out = 1'b1;
+        3'b011: out = 1'b1;
+        3'b100: out = 1'b1;
+        3'b101: out = 1'b1;
+        3'b110: out = 1'b1;
+        3'b111: out = 1'b1;
+        default: out = 1'b0; // This should not occur, but included for completeness
+    endcase
+end
+
+endmodule

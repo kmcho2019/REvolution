@@ -1,0 +1,10 @@
+I will refactor the design to use a multi-stage carry chain encoded by intermediate signals, moving the BCD increment and carry logic outside the clocked always block to combinational logic. Then the clocked block simply registers the next value. This separates combinational digit increment and carry generation from synchronous state update, which can improve timing by reducing logic inside the clock edge. The enables are driven by the carry signals combinationally. This approach retains the single 16-bit register storage but implements increment and carry propagation in combinational logic before the register update, making the sequential logic path simpler and potentially reducing critical path length.
+
+Key points:
+- Define wires for next digit values and carry outs from incrementing each digit.
+- Calculate carry chain from ones to thousands combinationally.
+- Drive ena signals from these carry signals.
+- Use a single clocked always block to update the register with the next values.
+- Keep a synchronous reset to clear the counter.
+- Avoid function calls inside the clocked block.
+This structure results in a cleaner datapath separation and potentially better timing behavior.

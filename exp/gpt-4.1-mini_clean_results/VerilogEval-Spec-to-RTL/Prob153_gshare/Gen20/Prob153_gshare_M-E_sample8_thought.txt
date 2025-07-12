@@ -1,0 +1,23 @@
+I will implement the gshare branch predictor without pipelining the prediction path. Instead, I will make the following design choices for clear timing and correctness:
+
+- Maintain a 7-bit global history register (GHR) updated synchronously on clock edges.
+
+- Prediction output (`predict_taken` and `predict_history`) is combinationally generated from the current GHR and PHT content (using `predict_pc ^ ghr` as index) and valid only when `predict_valid` is high.
+
+- The GHR update happens at the clock edge immediately following the prediction: if `predict_valid` was high in the *previous* cycle, GHR shifts in the predicted bit from that cycle.
+
+- Training input updates happen at the clock edge when `train_valid` is asserted.
+
+- On a training misprediction (`train_mispredicted`=1), the GHR is restored synchronously to the `train_history` provided, overriding the prediction-based update. This implements recovery on mispredict flush.
+
+- If training and prediction occur in the same cycle, training takes precedence on GHR update and PHT update.
+
+- Since prediction reads the current GHR and PHT state before updates occur at clock edge, the prediction logic correctly sees pre-update state.
+
+- Initialize PHT to weakly taken (2'b10) on asynchronous reset.
+
+This design avoids pipelining prediction and GHR update, making the timing straightforward and ensuring no race conditions between train and predict updating the GHR: training flush has higher priority at clock edge, otherwise prediction updates. The outputs always reflect current state before update.
+
+This approach is simpler and directly adheres to the timing described: prediction output is combinational from current state, and GHR updates happen synchronously with priority for training mispredict recovery.
+
+Overall, this guarantees correct predictor behavior with clear update precedence and clean interface timing.

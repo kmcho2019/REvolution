@@ -1,0 +1,19 @@
+To implement a simplified radix-2 divider on 8-bit signed or unsigned integers, we will use a sequential approach. The module will be designed to operate synchronously with the provided clock signal. It will have an internal state machine that handles the division process. The division process starts when a valid operation request is detected, and it involves iteratively subtracting the divisor from the dividend and shifting the result. The quotient and remainder are updated accordingly. The design supports both signed and unsigned division operations by handling the sign bit separately.
+
+The key components of the design include:
+- A state machine that controls the division process
+- A shift register (SR) to store the intermediate results
+- A counter (cnt) to keep track of the number of iterations
+- A signal (start_cnt) to indicate the start of the division process
+- A multiplexer to select the result based on the carry-out of the subtraction
+- A signal (NEG_DIVISOR) to store the negated absolute value of the divisor
+- A signal (res_valid) to indicate when the result is valid
+
+The division process involves the following steps:
+1. Save the inputs (dividend and divisor) when a valid operation request is detected.
+2. Initialize the shift register (SR) with the absolute value of the dividend shifted left by one bit.
+3. Set NEG_DIVISOR to the negated absolute value of the divisor.
+4. Set the counter (cnt) to 1 and start_cnt to 1 to begin the division process.
+5. If the counter (cnt) reaches 8, the division is complete, and the result is updated accordingly.
+6. Otherwise, the counter (cnt) is incremented, and the shift register (SR) is updated based on the subtraction result.
+7. The result validity (res_valid) is managed based on the reset signal, the counter, and whether the result has been consumed.

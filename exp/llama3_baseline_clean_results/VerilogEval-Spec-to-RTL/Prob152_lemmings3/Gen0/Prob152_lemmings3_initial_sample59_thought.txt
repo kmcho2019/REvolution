@@ -1,0 +1,7 @@
+To implement the Lemmings' finite state machine, we can use a Moore state machine with four states: walking left, walking right, falling, and digging. We will use two bits to represent these states. We will also use two additional bits to keep track of the original walking direction when the Lemming is falling or digging, so that it can resume walking in the same direction when it hits the ground again.
+
+When the Lemming is walking left or right, it will switch directions if it hits an obstacle. If it hits both obstacles at the same time, it will still switch directions. When the ground disappears, the Lemming will fall and say "aaah!". When the ground reappears, the Lemming will resume walking in the same direction as before the fall.
+
+When the Lemming is told to dig (dig=1) and it is currently walking on ground, it will start digging and continue until it reaches the other side (ground=0). At that point, it will fall and then continue walking in its original direction once it hits the ground again.
+
+We will use a positive edge triggered asynchronous reset (areset) to reset the Lemming machine to walk left. All sequential logic will be triggered on the positive edge of the clock.

@@ -1,0 +1,34 @@
+Refactor the update logic to cleanly and correctly implement update priority and timing:
+
+1. On reset, properly initialize PHT and global_history.
+
+2. Prediction reads PHT and global_history combinationally, before clock edge.
+
+3. On clock edge:
+
+   - If train_valid:
+     - Update PHT entry indexed by train_pc ^ train_history.
+     - If train_mispredicted: restore global_history to train_history (training takes precedence).
+     - Else update global_history with predicted taken (if predict_valid).
+   
+   - Else if only predict_valid (no training):
+     - Update global_history with predicted taken.
+
+4. For PHT update, do not read PHT entry twice in always block (could lead to undefined behavior).
+   Instead, use a separate combinational read of train PHT entry before clock and store it in a register updated on clock.
+
+5. Use a local integer variable declared inside the always block for reset loop to ensure simulator compatibility.
+
+6. This structure cleanly ensures that:
+
+   - Prediction always reads PHT before training updates it.
+
+   - Training updates PHT at clock edge.
+
+   - Training update to global_history (restore) has highest priority.
+
+   - Prediction update to global_history happens only if no training misprediction.
+
+7. Make outputs directly combinational from current PHT and global_history.
+
+This will fix functional correctness issues and produce stable, predictable outputs.

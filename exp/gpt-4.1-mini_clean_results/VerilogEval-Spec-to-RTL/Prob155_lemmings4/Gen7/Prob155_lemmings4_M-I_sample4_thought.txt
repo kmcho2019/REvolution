@@ -1,0 +1,13 @@
+To improve the design for better PPA (Timing, Power, Area), focus on reducing combinational logic complexity and switching activity without changing functionality.
+
+Key improvements:
+- Simplify bump handling by computing a single 'bump' signal and direction toggle condition once, reducing duplicated logic.
+- Replace the saturating increment of fall_timer with a conditional increment without saturation logic delay by limiting counter maximum logically in next_fall_timer assignment.
+- Since fall_timer only increments in FALL state, gate its increment explicitly and reset to zero elsewhere to reduce switching.
+- Use non-blocking assignments consistently for clarity and synthesis friendliness.
+- Add a single always_comb block for bump logic to simplify next_state logic.
+- Keep asynchronous reset as is, since it's required.
+- Keep outputs as Moore outputs derived from mode and direction to keep glitch-free outputs.
+- Overall, simplify next-state combinational logic by factoring out common assignments and intermediate signals to reduce critical path.
+
+This should slightly improve timing slack and reduce power by less toggling and simpler logic, while keeping area minimal.

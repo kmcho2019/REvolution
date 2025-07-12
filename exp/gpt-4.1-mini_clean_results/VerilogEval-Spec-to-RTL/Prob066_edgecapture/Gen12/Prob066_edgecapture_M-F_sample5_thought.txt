@@ -1,0 +1,15 @@
+The original design correctly detects falling edges by comparing the previous input sample to the current input, storing the falling-edge bits in `out` until reset. The feedback suggests that the mismatch issues might arise from asynchronous input `in` not being synchronized to `clk`, causing sampling glitches or metastability, or from initial conditions immediately after reset.
+
+To fix this:
+
+1. Synchronize the asynchronous input `in` into the clock domain using a two-stage synchronizer. This removes metastability and ensures stable sampling of `in`.
+
+2. Update `prev_in` with the synchronized input, ensuring consistent edge detection.
+
+3. Detect falling edges using `(prev_in & ~sync_in)` on synchronized inputs only.
+
+4. Keep the rest of the logic unchanged, with synchronous reset clearing `out` and `prev_in`.
+
+This approach improves robustness to asynchronous inputs and eliminates glitches due to metastability or sampling race conditions, which are common causes for mismatches in simulation.
+
+Note: If `in` is guaranteed synchronous to `clk`, the synchronizer can be omitted. But since the feedback hints at potential asynchronous issues, adding synchronization is prudent.

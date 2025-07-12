@@ -1,0 +1,5 @@
+To refactor the barrel shifter, I will remove the dependency on the external `mux2X1` module and instead implement the multiplexing directly with ternary conditional operators. This simplifies the design by eliminating multiple submodule instantiations and potential port mismatch issues.
+
+The design will still perform three stages of rotate-right shifts by 4, 2, and 1 bit, controlled respectively by `ctrl[2]`, `ctrl[1]`, and `ctrl[0]`. Each stage is implemented by calculating a rotated version of the current input and using a simple assign statement with a conditional operator to select between the rotated and unrotated data.
+
+This approach is fully combinational, concise, easy to understand, and synthesizable. It also resolves any module port mismatch or simulation elaboration errors caused by missing or incompatible `mux2X1` modules.

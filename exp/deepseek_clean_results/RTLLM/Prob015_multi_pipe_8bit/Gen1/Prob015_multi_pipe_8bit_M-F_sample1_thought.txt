@@ -1,0 +1,15 @@
+To fix the pipelined 8-bit multiplier, we need to properly align the data flow with the enable signals through each pipeline stage. The key improvements are:
+
+1. **Proper Pipeline Stages**: Implement a clear 4-stage pipeline where each stage has its own registered data and enable signal:
+   - Stage 0: Input registration and partial product generation
+   - Stage 1: First level of partial product reduction (8→4)
+   - Stage 2: Second level of reduction (4→2)
+   - Stage 3: Final addition and output
+
+2. **Enable Signal Alignment**: The enable signal must propagate through the pipeline exactly matching the data flow, with one enable register per pipeline stage.
+
+3. **Registered Partial Products**: Generate and register partial products in Stage 0, then use them in Stage 1.
+
+4. **Correct Timing**: Ensure each computation stage uses registered values from the previous stage, with no combinational paths between stages.
+
+5. **Reset Synchronization**: Maintain proper reset behavior for all pipeline registers.

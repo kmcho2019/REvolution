@@ -1,0 +1,21 @@
+I will refactor the original design by splitting the functionality into multiple always blocks and some combinational assign statements to improve clarity and modularity, while keeping the 3-cycle operation controlled by a cycle counter. 
+
+Specifically:
+
+1. Use a synchronous FSM with a counter to sequence through the steps as before.
+
+2. Separate extraction of input fields and special flags into a combinational block (assign).
+
+3. Use always @(posedge clk) blocks for sequential parts: loading inputs and intermediate registers at each cycle.
+
+4. Compute multiplication and exponent addition in a separate sequential stage.
+
+5. Perform normalization and rounding calculations combinationally just before the last cycle.
+
+6. Use the last sequential cycle to finalize the output considering special cases and rounding results.
+
+This refactoring will make the data flow clearer, separate combinational and sequential logic better, and keep the behavior and latency identical to the original. It also facilitates easier debugging and potential pipelining or optimizations later.
+
+All signals are registered for timing consistency, but the separation into smaller always blocks and assign statements improves maintainability and code readability.
+
+The IEEE 754 handling, rounding, normalization, and special cases remain identical in functionality.

@@ -1,0 +1,13 @@
+To simplify the clock implementation while maintaining functionality:
+1. Use separate always blocks for each counter (ss, mm, hh) to flatten the logic and reduce nesting
+2. Simplify hour counting by using a single 4-bit register for hours (1-12) instead of separate digits
+3. Use a simple toggle for PM indicator when hour rolls over from 11 to 12
+4. Reset all counters synchronously with highest priority
+5. Only update counters when enabled (ena)
+6. Maintain BCD format for all outputs by using modulus operations
+
+Key simplifications:
+- Flattened counter logic reduces critical path
+- Single hour register simplifies hour counting
+- Clear state transitions for AM/PM toggle
+- Minimal logic for each counter update

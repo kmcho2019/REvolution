@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Use separate always blocks for each counter (from Example 2) for better timing closure
+   - Implement direct BCD counting for all digits (from Example 2) to avoid conversion logic
+   - Simplify rollover detection by using packed BCD registers (from Example 1)
+
+2. Power Optimization:
+   - Gate all counter updates with 'ena' signal (from Example 1)
+   - Keep PM toggle logic that only updates on hour changes (from Example 1)
+   - Use minimal bit widths for counters (from Example 2)
+
+3. Area Optimization:
+   - Use packed BCD registers for all counters (from Example 1)
+   - Implement hour counter with direct BCD counting (from Example 2)
+   - Share common BCD increment pattern between seconds/minutes
+
+Key Improvements:
+- Direct BCD counting for all digits eliminates conversion logic
+- Separate always blocks for each counter improve timing
+- Minimal bit widths reduce area
+- Efficient PM toggle logic reduces switching
+- Clean reset priority and enable gating

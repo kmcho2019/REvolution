@@ -1,0 +1,21 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. **Performance Optimization**:
+   - Replace the sequential accumulation with a pipelined approach using a 2-bit counter
+   - This breaks the long combinational adder chain into single-cycle operations
+   - Use carry-save adder technique for the accumulation to reduce critical path
+
+2. **Power Optimization**:
+   - Add clock gating for the accumulator register when valid_in is low
+   - Use explicit power-aware coding with enable signals
+
+3. **Area Optimization**:
+   - Replace the state machine with a simple counter to reduce logic
+   - Use a shared register for both accumulation and output
+   - Optimize bit widths where possible
+
+Key changes:
+- Simplified control logic using a counter
+- Pipelined accumulation with registered intermediate results
+- Explicit clock gating for power savings
+- Reduced state machine complexity

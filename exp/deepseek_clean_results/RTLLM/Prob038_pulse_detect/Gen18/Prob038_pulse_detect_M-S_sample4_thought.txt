@@ -1,0 +1,27 @@
+Simplified Approach: Edge Detection with State Tracking
+
+1. Core Concept:
+   - Instead of tracking all 3 bits, just track the essential transitions
+   - Use a 1-bit register to remember if we've seen the rising edge (0->1)
+   - Output pulse when we detect falling edge (1->0) after a rising edge
+
+2. Advantages:
+   - Reduced state tracking (1 bit instead of 3)
+   - Same functionality with less hardware
+   - Clear and straightforward logic
+   - Still fully synchronous and glitch-free
+
+3. Implementation Details:
+   - Single 'seen_rise' register tracks if we've seen a 0->1 transition
+   - Output pulses when we see 1->0 after a rise
+   - Reset clears all state
+
+4. Edge Cases Handling:
+   - Properly handles continuous input streams
+   - No false positives during initialization
+   - Clear separation between edge detection and output
+
+5. Performance:
+   - Same 3-cycle detection latency
+   - Even simpler combinational logic
+   - Lower power due to reduced switching

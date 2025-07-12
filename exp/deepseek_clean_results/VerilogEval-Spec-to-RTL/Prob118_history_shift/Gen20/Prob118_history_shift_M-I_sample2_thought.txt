@@ -1,0 +1,20 @@
+To improve the PPA metrics while maintaining functionality:
+
+1. Timing Optimization:
+   - Simplify the concatenation operations by using a single shift operation instead of splitting into segments
+   - Remove the intermediate reg_enable signal to reduce combinational path depth
+   - Make the conditions mutually exclusive to prevent unnecessary logic evaluation
+
+2. Power Optimization:
+   - Only update the register when necessary (predict_valid OR train_mispredicted)
+   - Remove redundant clock gating logic that might be causing extra power consumption
+
+3. Area Optimization:
+   - Use simpler shift operations that synthesis tools can optimize better
+   - Remove unnecessary signal splitting to reduce multiplexer complexity
+
+The improved version should:
+- Maintain correct functionality with misprediction priority
+- Reduce critical path delay by simplifying the update logic
+- Lower power consumption by minimizing unnecessary updates
+- Potentially reduce area through simpler operations

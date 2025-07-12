@@ -1,0 +1,15 @@
+To create a superior FSM design, I will fuse the clarity and compactness of the binary state encoding (3 bits, using typedef enum for readability) from Example 2 with the simplicity and explicitness of the output logic from Example 1, which uses a simple combinational check for output z based on state equality rather than case statements. This combination keeps the code clean and efficient.
+
+Additionally, I will:
+- Keep the explicit combinational next-state logic with clean if-else for clarity.
+- Use non-blocking assignments only for sequential logic and blocking for combinational.
+- Maintain default state in next_state to avoid inferred latches.
+- Define state encoding with typedef enum for readability and structured synthesis.
+- Implement output z as combinational logic that is easy to optimize by synthesis tools.
+- Add comments for clarity.
+
+This fusion aims for a balance of readability, synthesis friendliness, and clean output logic, likely helping synthesis tools to infer minimal and fast logic, while the FSM remains easily understandable and modifiable.
+
+The output z will be high only when the current state is E or F, expressed as (state == E) || (state == F), avoiding a separate case statement.
+
+Overall, this keeps the area low (3-bit state), logic simple, and code very maintainable.

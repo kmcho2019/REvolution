@@ -1,0 +1,15 @@
+The feedback highlights several issues that need addressing:
+
+1. The pulse detection logic needs to properly handle the 3-cycle case (010 pattern) without trying to be overly generic. We'll remove the parameterization since the problem specifically requires 3-cycle detection.
+
+2. The history register needs to properly track the last two samples (2 bits) to detect the 010 pattern.
+
+3. The output should be generated immediately when the pattern is detected, without an extra register stage delay.
+
+4. We'll implement a clear state machine with these states:
+   - IDLE: Waiting for first 0
+   - GOT_0: Received first 0, waiting for 1
+   - GOT_1: Received 1, waiting for final 0
+   - PULSE: Pattern complete (output 1 for one cycle)
+
+This ensures robust detection and matches the exact timing requirements.

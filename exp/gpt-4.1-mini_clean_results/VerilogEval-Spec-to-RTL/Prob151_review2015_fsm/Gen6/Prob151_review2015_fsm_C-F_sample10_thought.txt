@@ -1,0 +1,10 @@
+Fuse the compact binary-encoded FSM from Example 1 with the clear, modular synchronous logic style and output assignments from Example 2.
+
+- Use binary-encoded states (3 bits) as in Example 1 for lower area and power than one-hot encoding.
+- Keep the explicit synchronous always block for state and shift_count updates, avoiding mixed styles.
+- Implement next_state logic combinationally with a clear case statement on current state.
+- Generate outputs using continuous assignments (assign) to ensure transparent, glitch-free output signals.
+- Retain the pattern detection FSM states that progressively detect "1101" without a separate shift register, enabling overlapping pattern recognition.
+- Use a simple 2-bit shift_count counter incremented only in SHIFT state with synchronous reset.
+- Ensure synchronous reset and all logic triggered on the positive clock edge as per spec.
+- This fusion balances clarity, compactness, low toggle count, and performance, leveraging low flip-flop count from Example 1 and output clarity from Example 2.

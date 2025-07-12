@@ -1,0 +1,7 @@
+Add a `timescale directive for proper time unit and precision, which is critical for correct delay behavior in simulation. Keep the initial block to set clk=0 at time 0. Use a clock generation process with an always block and delay-based toggling every PERIOD/2 time units to produce a stable square wave.
+
+This satisfies the problem requirement exactly, ensures simulation correctness, and avoids race conditions by clean separation of initialization and toggling.
+
+No synchronous reset or input clock is needed, as the generator is free-running. This approach is widely used and fully compatible with typical testbenches expecting a free-running clock.
+
+The added `timescale directive is the minimal fix to ensure correct timing behavior and pass testbenches.

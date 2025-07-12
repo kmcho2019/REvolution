@@ -1,0 +1,10 @@
+Improve the existing radix-2 divider by strictly following the original problem's operational sequence and control signals, including the handling of start and counting signals.  
+Avoid using a multi-state FSM; instead, use explicit start_cnt and cnt registers as per specification.  
+Implement the shift register SR as 17 bits: upper 9 bits for remainder and lower 8 bits for quotient and a carry bit, closely emulating the classical restoring division.  
+Calculate NEG_DIVISOR as negated absolute divisor magnitude, then perform subtraction at each cycle.  
+Update SR depending on the borrow from the subtraction, shifting left and appending the quotient bit.  
+At division completion (when cnt reaches 8), clear start_cnt and cnt, update SR holding final remainder and quotient.  
+Sign correct quotient and remainder if operation is signed, then output result with res_valid.  
+Synchronize all state and counters with clk and rst as specified, and manage res_valid to indicate when result is ready.  
+Use only in-module registers for all storage; no in-block variable declarations.  
+This approach explicitly implements the algorithm as requested with well-defined control signals and state variables, providing clarity and correctness per the original instructions.

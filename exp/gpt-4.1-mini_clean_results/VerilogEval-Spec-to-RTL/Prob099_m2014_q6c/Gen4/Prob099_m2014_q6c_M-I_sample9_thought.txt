@@ -1,0 +1,16 @@
+The previous solution correctly implements the next-state logic for Y2 and Y4 based on the one-hot encoded FSM, but it uses multiple partial assignments combined via OR which can be simplified for better clarity and potentially better synthesis results.
+
+Improvement strategy:
+- Directly derive minimal Boolean expressions for Y2 (next y[1]) and Y4 (next y[3]) by inspecting transitions from the current state bits and input w.
+- Use combinational expressions that sum all conditions activating those next states instead of incremental OR assignments.
+- This reduces the number of intermediate wires and may improve PPA by giving the synthesizer clearer expressions.
+- Also, rename outputs to match the original problem statement exactly (Y1 and Y3 for y[1] and y[3]) because the user interface specifies outputs Y1 and Y3, not Y2 and Y4.
+- The problem states outputs are Y1 and Y3 (next-state bits for y[1] and y[3]), so the previous example's outputs Y2 and Y4 should be corrected to Y1 and Y3.
+
+Final outputs:
+- Y1 = next_y[1] (next state B)
+- Y3 = next_y[3] (next state D)
+
+After fixing output names and combining logic, the module will be clean, with no partial assignments, and directly gives next state bits for B and D as outputs.
+
+This fully satisfies the problem, matches user-specified port names, and improves code clarity.

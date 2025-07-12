@@ -1,0 +1,6 @@
+Refactor the FSM and counter logic by separating state transitions and counter update clearly in two sequential always blocks.  
+Use a synchronous process for the state transitions triggered when the counter reaches zero.  
+Implement the countdown counter in another synchronous process that updates every clock cycle.  
+In the green state, when a pass_request is detected and the remaining counter is above 10, shorten the count to 10 but only once per green cycle by using a flag register to avoid repeatedly resetting the counter.  
+Drive outputs combinationally based on state, no need for extra output registers.  
+This approach avoids combinational loops and counter update conflicts, improving robustness and simulation correctness.

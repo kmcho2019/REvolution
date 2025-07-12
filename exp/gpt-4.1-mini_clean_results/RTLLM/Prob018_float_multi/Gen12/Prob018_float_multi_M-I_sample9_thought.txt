@@ -1,0 +1,19 @@
+To improve the original float_multi design for better PPA (performance, power, area), we will implement the following optimizations:
+
+1. **Pipelining the multiplication**: Split the heavy 24x24 multiplier into two stages to reduce critical path and improve max frequency. The original single-cycle multiplication in CALC leads to a long combinational path. Introducing an intermediate pipeline register to hold product and exponent sum will shorten the critical path.
+
+2. **Register intermediate rounding and normalization**: Perform normalization and rounding in a separate cycle after multiplication, further balancing combinational delay across cycles.
+
+3. **Use non-blocking assignments consistently** in sequential blocks to improve synthesis and avoid simulation mismatches.
+
+4. **Add an enable signal and simple input latching** to avoid redundant recalculations if inputs do not change, thereby reducing toggling (power).
+
+5. **Keep special case detection in the first stage** and propagate flags downstream to simplify and avoid recomputing.
+
+6. **Maintain clear state machine with 4 pipeline stages**: IDLE (input latch and special case), MUL (mantissa multiply and exponent sum), NORM (normalization and rounding), DONE (assemble final output).
+
+7. **Optimize rounding logic to avoid unnecessary bit-extended arithmetic by careful signal widths.**
+
+This 4-stage pipeline will improve clock frequency by dividing combinational logic over multiple clock cycles, reduce power by enabling transitions only when needed, and keep area overhead minimal by only adding pipeline registers. The overall latency increases to 4 cycles, which is acceptable for a floating-point multiplier.
+
+The result is a better balanced design, suitable for higher frequency and lower power, without significant area increase.

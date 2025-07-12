@@ -1,0 +1,15 @@
+To implement the unsigned 16-bit multiplier, we need to consider several key aspects: 
+1. Control logic for the shift count register (i), 
+2. Generation of the multiplication completion flag (done_r), 
+3. Shift and accumulate operation based on the multiplicand (ain) and multiplier (bin), 
+4. And finally, assignment of the product output (yout).
+
+We will utilize a finite state machine approach to manage the multiplication process. 
+When the start signal is active, the module begins the multiplication operation, 
+and the multiplicand and multiplier are stored in the respective registers.
+The shift count register (i) is incremented at each positive edge of the clock signal until it reaches 16, 
+indicating the completion of the multiplication operation. 
+The multiplication completion flag (done_r) is set high when the shift count register (i) equals 16 
+and reset low when it equals 17.
+The shift and accumulate operation is performed based on the bit values of the multiplicand register (areg), 
+and the product register (yout_r) accumulates the shifted value of the multiplier register (breg) accordingly.

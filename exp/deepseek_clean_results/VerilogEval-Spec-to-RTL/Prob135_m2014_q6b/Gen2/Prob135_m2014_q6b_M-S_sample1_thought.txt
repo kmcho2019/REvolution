@@ -1,0 +1,21 @@
+To simplify the next-state logic for y[1], we need to consider only the transitions where y[1] changes to 1 in the next state. Looking at the state machine:
+
+1. y[1] becomes 1 when:
+   - From A (000) to B (001) on w=0 (but y[1] stays 0)
+   - From B (001) to C (010) on w=0 (y[1] becomes 1)
+   - From C (010) to D (011) on w=1 (y[1] stays 1)
+   - From D (011) to F (101) on w=0 (y[1] becomes 0)
+   - From E (100) to D (011) on w=1 (y[1] becomes 1)
+   - From F (101) to C (010) on w=0 (y[1] becomes 1)
+
+2. Only two cases actually set y[1] to 1 in next state:
+   - B->C (001->010) when w=0
+   - E->D (100->011) when w=1
+   - F->C (101->010) when w=0
+
+3. Using state encodings:
+   - B: 001 → ~y[2] & ~y[1] & y[0]
+   - E: 100 → y[2] & ~y[1] & ~y[0]
+   - F: 101 → y[2] & ~y[1] & y[0]
+
+This gives us a minimal implementation focusing only on transitions that set y[1] to 1.

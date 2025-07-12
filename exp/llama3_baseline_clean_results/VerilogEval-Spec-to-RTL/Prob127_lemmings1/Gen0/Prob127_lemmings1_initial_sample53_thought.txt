@@ -1,0 +1,5 @@
+To implement the TopModule with the specified behavior, we can use a Moore state machine with two states: walking left and walking right. The state machine will have two inputs (bump_left and bump_right) and two outputs (walk_left and walk_right). The next state logic will be based on the current state and the inputs. If the Lemming is walking left and bump_left is 1, it will switch to walking right. If it's walking right and bump_right is 1, it will switch to walking left. If both bump_left and bump_right are 1, it will still switch directions. The output logic will simply reflect the current state.
+
+We will use an enum to define the states, and a case statement to implement the next state logic and the output logic. The state will be stored in a reg variable, and the next state will be computed in a always_comb block. The state will be updated in a always_ff block on the positive edge of the clock.
+
+The areset input will be used to asynchronously reset the state machine to the walking left state.

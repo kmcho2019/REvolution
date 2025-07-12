@@ -1,0 +1,12 @@
+The refactored design maintains the same shift-and-add algorithm but implements it with these improvements:
+1. Uses a 4-bit counter (since we only need 0-16 states)
+2. Separates the control logic into a clean state machine with IDLE, WORKING, and DONE states
+3. Uses continuous assignments for outputs where possible
+4. Pre-computes all possible shifted versions of the multiplier to avoid variable shift operations
+5. Simplifies done flag generation using state transitions
+
+Key changes:
+- State machine replaces counter-based control
+- Barrel shifter implementation for constant-time shift selection
+- Output assignments moved to continuous assignments
+- More efficient done flag generation

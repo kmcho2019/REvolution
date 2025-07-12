@@ -1,0 +1,7 @@
+To create a novel architectural idea for the Lemmings' state machine, we can utilize a hierarchical state machine approach, dividing the machine into two layers: a top-level state machine handling the overall Lemmings' states (walking, falling, digging) and a sub-state machine for managing the walking direction. This separation allows for a cleaner and more modular design, potentially simplifying the combinational logic and improving maintainability.
+
+The top-level state machine will determine whether the Lemming is walking, falling, or digging, based on inputs like ground and dig. The sub-state machine, active when the top-level state is walking, will manage the walking direction (left or right) based on bump_left and bump_right inputs.
+
+Additionally, to optimize for power and area, we will consider using clock gating for the sub-state machine, enabling it only when necessary (i.e., when the Lemming is walking). This approach can reduce switching activity and hence power consumption.
+
+By structuring the design in this hierarchical manner, we aim to achieve a more efficient, scalable, and maintainable implementation that meets the PPA metrics requirements.

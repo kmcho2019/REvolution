@@ -1,0 +1,24 @@
+The refactored implementation maintains the Radix-4 Booth algorithm but improves structure and clarity:
+
+1. State Machine Approach: 
+   - Use explicit states (IDLE, CALC, DONE) for better control flow
+   - State transitions clearly show the multiplication phases
+
+2. Simplified Counter Logic:
+   - 2-bit counter (iter_ctr) tracks Radix-4 iterations (4 needed for 8 bits)
+   - Removes complex cycle counting
+
+3. Cleaner Arithmetic:
+   - Separate Booth encoding logic into a function
+   - Use consistent shift operations with proper sign extension
+
+4. Output Generation:
+   - Ready signal tied directly to state
+   - Product register updates synchronously
+
+Key Improvements:
+- Clear state machine makes timing explicit
+- Proper iteration counting (4 for 8 bits)
+- Maintains correct sign extension throughout
+- Booth encoding handled via function for clarity
+- Ready signal directly reflects completion state

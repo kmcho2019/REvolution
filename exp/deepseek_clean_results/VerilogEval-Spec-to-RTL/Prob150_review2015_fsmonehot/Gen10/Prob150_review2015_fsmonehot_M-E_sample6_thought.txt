@@ -1,0 +1,22 @@
+Novel Architecture Idea:
+1. Hierarchical State Encoding:
+   - Instead of pure one-hot, use a hybrid encoding where sequential states (B0-B3) share common bits
+   - This reduces the number of unique state bits needed while maintaining one-hot benefits for critical paths
+
+2. Output Pre-Computation:
+   - Compute outputs one cycle early when possible (especially for shift_ena)
+   - This allows better timing slack by moving output logic off the critical path
+
+3. State Grouping:
+   - Group states with similar transition conditions to minimize decode logic
+   - Use common intermediate signals for state groups (S-family, B-family)
+
+4. Early Transition Evaluation:
+   - Pre-compute transition conditions for faster state switching
+   - Use these to simplify next-state logic
+
+Key Benefits:
+- Reduced state register bits (from 10 to 7)
+- Better timing through output pipelining
+- Lower power from reduced switching activity
+- Maintains one-hot benefits where needed

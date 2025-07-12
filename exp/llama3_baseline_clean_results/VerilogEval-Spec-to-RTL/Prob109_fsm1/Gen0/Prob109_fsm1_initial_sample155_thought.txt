@@ -1,0 +1,13 @@
+To implement the Moore machine, we first need to identify the states and their corresponding next states based on the input. The machine has two states, A and B. We can represent these states using a 1-bit signal, where state A is represented by 0 and state B is represented by 1. The output of the machine is the current state.
+
+We will use a simple if-else statement inside an always block to describe the state transition logic. The always block should be sensitive to the clock and the asynchronous reset signal. 
+
+When the reset signal is high, the machine should asynchronously reset into state B. This can be achieved by using an initial block to set the reset value of the state register. However, since we are designing a synchronous digital circuit, it is more common to use the areset signal in the always block.
+
+The next state logic can be described as follows:
+- If the current state is B and the input is 0, the next state should be A.
+- If the current state is B and the input is 1, the next state should be B.
+- If the current state is A and the input is 0, the next state should be B.
+- If the current state is A and the input is 1, the next state should be A.
+
+This logic can be implemented using if-else statements. The output should be the current state.

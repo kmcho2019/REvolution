@@ -1,0 +1,12 @@
+Refactor the FSM and pattern detection by:
+
+- Combining pattern detection and FSM in a single always_ff block for tighter timing alignment.
+- Use a 4-bit shift register to detect the pattern "1101" synchronously every clock.
+- When the pattern is detected, immediately transition FSM from IDLE to SHIFT state.
+- Use a shift counter to enable `shift_ena` for exactly 4 cycles during SHIFT.
+- Then move to COUNTING state asserting `counting` until `done_counting` is asserted.
+- Then move to DONE asserting `done` until `ack` is asserted.
+- On synchronous reset, FSM resets to IDLE and outputs clear.
+- All outputs are registered inside sequential logic.
+- Use an enumerated type for states for clarity.
+- This refactor merges pattern detection and FSM state update for better synchronization and cleaner timing.

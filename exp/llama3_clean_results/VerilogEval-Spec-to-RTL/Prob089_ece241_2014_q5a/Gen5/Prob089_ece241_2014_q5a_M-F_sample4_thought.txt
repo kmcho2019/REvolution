@@ -1,0 +1,11 @@
+To address the issues mentioned in the feedback, we need to revise the logic for performing the 2's complement conversion. The key insight is that the conversion should start from the least significant bit, regardless of its value, and involve both inverting the bits and adding 1. 
+
+The approach can be simplified by considering the process of 2's complement conversion in binary numbers. It involves two steps: inverting all bits and then adding 1 to the inverted result. However, in the context of a serial input where bits are received one at a time, we can achieve the equivalent by maintaining a flag to indicate whether we have seen the first '1' and then inverting all subsequent bits. When the first '1' is encountered, we know that all previous bits were part of the sign extension (all zeros in the case of a positive number or all ones in the case of a negative number), so we can start the conversion process.
+
+The corrected approach involves two main steps: 
+1. Tracking the first '1' encountered to determine when to start the conversion.
+2. Implementing the conversion logic by inverting bits after the first '1' is seen and handling the addition of 1 by propagating a 'carry' signal.
+
+This process ensures that the 2's complement conversion is accurately performed on the input sequence, regardless of its length or the position of the first '1'.
+
+For PPA optimization, minimizing the number of flip-flops and gates while maintaining the required functionality is essential. The revised logic should ensure that the design operates within the required timing constraints and consumes minimal power and area.

@@ -1,0 +1,9 @@
+I will refactor the design by replacing the ripple-carry structure of chained FullAdder modules with a purely combinational behavioral addition using the '+' operator. This will simplify the code significantly, relying on the synthesis tool to implement an efficient adder structure internally. 
+
+I will:
+- Use a single addition of the two 8-bit inputs cast to signed values to produce a 9-bit result.
+- Extract the 8 LSBs as sum output.
+- Derive overflow by checking the sign overflow condition: overflow occurs if the sign bits of inputs are the same but the sign of the sum differs.
+- This method keeps the core addition and overflow detection intact but uses concise and clear code, which synthesis tools optimize well.
+
+This approach reduces explicit wiring, removes the need for a separate full adder module and generate block, and likely improves timing and area by enabling the synthesis tool to infer an optimized adder.

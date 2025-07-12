@@ -1,0 +1,10 @@
+The problem describes a finite state machine that controls a motor based on inputs x and y, and produces outputs f and g. To implement this FSM, we can use a series of if-else statements and a state variable to keep track of the current state. We will start by defining an enumeration for the states, and then use a case statement to determine the next state and output values based on the current state and input values. We will also need to handle the reset condition and the clock edge.
+
+We can break down the FSM into several states:
+- State A: Initial state when reset is asserted. When reset is de-asserted, move to state B.
+- State B: Set output f to 1 for one clock cycle, then move to state C.
+- State C: Monitor input x for the sequence 1, 0, 1. If the sequence is detected, move to state D.
+- State D: Set output g to 1 and monitor input y. If y is 1 within two clock cycles, stay in state D. If y is not 1 within two clock cycles, move to state E.
+- State E: Set output g to 0 permanently.
+
+We will use a counter to keep track of the number of clock cycles since the start of state D.

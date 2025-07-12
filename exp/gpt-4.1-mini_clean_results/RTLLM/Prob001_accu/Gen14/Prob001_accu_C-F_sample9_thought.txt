@@ -1,0 +1,12 @@
+Fuse the clear and minimal counting and accumulation logic from Example 1 with the enable-driven accumulation update and output timing optimization from Example 2. Specifically:
+
+- Keep the straightforward single always block triggered on clk with synchronous active-low reset.
+- Use valid_in as an enable signal to update accumulator and counter only when valid_in is high, minimizing toggling power.
+- Output the sum only on the 4th valid input (count == 3), using the accumulator plus current data_in to avoid double addition in the same cycle.
+- Generate a valid_out pulse for only one cycle coinciding with the output.
+- Reset accumulator and counter immediately after outputting the sum to prepare for next accumulation.
+- Use non-blocking assignments to ensure proper sequential logic behavior.
+- Keep the data_out register updated only when 4 inputs are accumulated to avoid glitches.
+- This approach combines clarity, low toggle power, minimal logic, and reduced critical path with clean control signals.
+
+This fusion yields a compact, clean, efficient design minimizing unnecessary toggling, with straightforward PPA-optimized logic that meets the problem requirements exactly.

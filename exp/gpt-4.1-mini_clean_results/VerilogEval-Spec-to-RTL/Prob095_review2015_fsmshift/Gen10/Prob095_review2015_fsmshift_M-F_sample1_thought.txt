@@ -1,0 +1,15 @@
+The main issue is that the current code asserts `shift_ena` immediately during the reset cycle, whereas the feedback suggests `shift_ena` should be asserted for 4 cycles starting *after* the synchronous reset is released, not during it.
+
+To fix this, the module should do the following:
+
+- On synchronous active-high reset, initialize a 3-bit counter to 4 but do not assert `shift_ena` during the reset cycle itself (set it low).
+- Once reset is deasserted, if the counter is non-zero, assert `shift_ena` and decrement the counter on each clock cycle.
+- When the counter reaches zero, keep `shift_ena` deasserted indefinitely until the next reset.
+  
+This ensures a clean 4-cycle `shift_ena` pulse immediately *after* reset is released, matching the expected timing.
+
+Additionally, since the problem states that the pattern detection logic is outside the scope and this module only needs to handle reset-triggered enable, no extra pattern-detection logic is added.
+
+This approach aligns with the synchronous reset behavior and testbench expectations, eliminating timing mismatches and asserting `shift_ena` for exactly 4 cycles after reset.
+
+Non-blocking assignments are used for proper sequential semantics.

@@ -1,0 +1,12 @@
+To implement the given Karnaugh map using a 4-to-1 multiplexer and minimal 2-to-1 multiplexers, we need to analyze the K-map and determine the logic for each mux_in output. The K-map shows that:
+
+- For ab=00 (mux_in[0]): The output is 1 when cd=01,11,10 (i.e., when c=1 or d=1 but not both)
+- For ab=01 (mux_in[1]): Always 0
+- For ab=11 (mux_in[2]): The output is 1 when cd=11
+- For ab=10 (mux_in[3]): The output is 1 when cd=00 or cd=11 or cd=10 (i.e., when c=d or d=0)
+
+We can implement these conditions using 2-to-1 multiplexers as follows:
+- mux_in[0]: Use a 2-to-1 mux to select between d and c based on c XOR d
+- mux_in[1]: Hardwired to 0
+- mux_in[2]: c AND d
+- mux_in[3]: Use a 2-to-1 mux to select between 1 and d based on c

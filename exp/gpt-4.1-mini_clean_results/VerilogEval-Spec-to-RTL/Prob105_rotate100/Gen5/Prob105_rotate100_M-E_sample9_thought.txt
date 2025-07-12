@@ -1,0 +1,12 @@
+Implement the 100-bit rotator using a register array and perform rotation by shifting indices explicitly in the always block to mimic circular shifts without using concatenation. This approach indexes bits for left and right rotations by calculating the source bit position using modulo arithmetic, which can be expressed as conditional indexing due to Verilog's non-modulo support for indices.
+
+On load, simply assign the input data to the register. On rotation, build the next state bitwise in a for-loop iterating over each bit position, picking the appropriate rotated source bit:
+
+- For right rotation, bit i takes value from bit (i+1) mod 100.
+- For left rotation, bit i takes value from bit (i-1 + 100) mod 100 (to avoid negative index).
+
+No rotation occurs when ena=00 or 11. This loop-based indexing explicitly models rotation logic and provides structural clarity, potentially helping synthesis tools optimize datapath differently from concatenation.
+
+Because rotation is done bitwise inside a clocked always block, it is fully synchronous and respects timing constraints. The register q is updated only once per clock edge, keeping it a simple synchronous design.
+
+This solution differs by avoiding direct concatenation and instead calculating each rotated bit individually, offering an alternative clear and explicit rotation mechanism which can be more adaptable for parameterization or extension to other rotation sizes.

@@ -1,0 +1,9 @@
+I will implement the FSM using one-hot encoding for states instead of binary encoding. This often leads to simpler combinational next-state logic and can potentially reduce critical path delay in FPGAs or certain ASIC libraries. 
+
+The state register will be a 6-bit one-hot encoded register, where only one bit is high at any time representing states A-F. Reset will synchronously set the A bit. The state flip-flops and next-state combinational logic will be separated as requested.
+
+The next-state logic will be implemented using combinational logic with explicit signal assignments for each next-state bit based on current state bits and input w.
+
+For the output z, since only E and F produce z=1, z will be driven by OR of E and F state bits using a continuous assignment.
+
+This architecture favors simpler next-state decoding at the expense of wider state register and possibly larger area, but it is a different approach from the binary-encoded solution.

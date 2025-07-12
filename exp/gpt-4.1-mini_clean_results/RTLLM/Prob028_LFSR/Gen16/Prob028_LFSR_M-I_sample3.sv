@@ -1,0 +1,18 @@
+module LFSR #(
+    parameter SEED = 4'b0001  // Non-zero initial state to avoid lock-up
+)(
+    input  wire       clk,
+    input  wire       rst,
+    output reg  [3:0] out
+);
+
+wire feedback = ~(out[3] ^ out[2]);  // Inverted XOR of MSB and 2nd MSB
+
+always @(posedge clk) begin
+    if (rst)
+        out <= SEED;
+    else
+        out <= {out[2:0], feedback};
+end
+
+endmodule

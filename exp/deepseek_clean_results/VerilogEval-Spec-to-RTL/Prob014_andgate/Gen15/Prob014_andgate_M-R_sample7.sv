@@ -1,0 +1,5 @@
+module TopModule(input a, input b, output reg out);
+    always @(a or b) begin
+        out = a & b;
+    end
+endmodule

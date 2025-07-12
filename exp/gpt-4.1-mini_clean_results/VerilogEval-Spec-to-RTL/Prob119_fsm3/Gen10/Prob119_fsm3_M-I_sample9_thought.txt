@@ -1,0 +1,10 @@
+To optimize the existing design for better PPA (timing, power, and area), we can maintain the asynchronous reset as required but slightly simplify the FSM logic to reduce combinational complexity:
+
+- Use a single always_comb block for next_state logic with if-else instead of a case statement to potentially reduce LUT usage and logic depth.
+- Encode the output as a registered signal instead of combinational assignment, which can reduce glitches and dynamic switching on output signals.
+- Keep the Moore output logic simple by deriving output directly from state bits without an explicit equality check.
+- Avoid the default case, as the state encoding covers all possible values, reducing unnecessary logic.
+- Use blocking assignments in the combinational block and non-blocking in sequential for coding clarity.
+- Overall, minor logic simplification can reduce power and area slightly while keeping timing robust.
+
+This approach preserves asynchronous reset behavior and functionality, while targeting marginal improvements in the critical path and power through simpler logic and registered outputs.

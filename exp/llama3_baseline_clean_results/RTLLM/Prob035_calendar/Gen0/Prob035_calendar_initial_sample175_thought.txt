@@ -1,0 +1,7 @@
+To create a perpetual calendar module in Verilog, we need to implement the logic described in the problem statement. This involves using three always blocks to update the seconds, minutes, and hours based on the clock signal and reset signal. Each block will handle the respective time unit (seconds, minutes, hours) and perform the necessary actions when the reset signal is active or when the time unit wraps around to its maximum value.
+
+The first always block will handle the seconds, incrementing it every clock cycle unless the reset signal is active or the seconds value reaches 59, at which point it wraps around to 0. The second always block will handle the minutes, only changing when the seconds value wraps around (i.e., when seconds equals 59), and resetting or wrapping around as necessary. The third always block will handle the hours, changing only when both minutes and seconds wrap around (i.e., when both are 59), and resetting or wrapping around as necessary.
+
+We will use non-blocking assignments (<=) to update the values within the always blocks to avoid race conditions and ensure the module behaves predictably.
+
+The module will be named "calendar" and will have input ports for the clock signal (CLK) and the active-high reset signal (RST), and output ports for the hours, minutes, and seconds.

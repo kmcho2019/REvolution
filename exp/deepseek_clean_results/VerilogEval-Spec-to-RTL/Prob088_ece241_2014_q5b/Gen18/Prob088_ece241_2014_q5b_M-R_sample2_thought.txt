@@ -1,0 +1,20 @@
+Refactoring Strategy:
+1. State Representation:
+   - Keep the one-hot encoding but represent states as individual wires instead of a vector
+   - This makes the state transitions more explicit and potentially easier to optimize
+
+2. Logic Implementation:
+   - Replace the always block with continuous assignments for state transitions
+   - Use direct wire assignments for both state and output logic
+   - Maintain the same Mealy machine behavior but with purely combinational logic
+
+3. Structural Changes:
+   - Eliminate the sequential always block by modeling state registers as feedback paths
+   - Use a single always block only for the asynchronous reset
+   - This approach may reduce timing paths by making state transitions more direct
+
+Key Benefits:
+1. More explicit state transition logic
+2. Potential for better synthesis optimization due to direct wire assignments
+3. Maintains same functionality while offering a different structural perspective
+4. Still meets all original requirements (one-hot, Mealy, async reset)

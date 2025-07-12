@@ -1,0 +1,7 @@
+The original implementation uses a case statement on the full 4-bit input 'c' to select among inputs or a constant output. However, since only the values 0 to 3 correspond to specific outputs and all other values map to 4'hF, we can optimize by using only the two least significant bits (c[1:0]) to select among the four inputs and then override the output with 4'hF if c >= 4 (i.e., c[3:2] != 0).
+
+This approach reduces the logic complexity and can lead to slight area and power improvements, as the synthesizer can infer a smaller multiplexer and a simple comparator for c >= 4.
+
+Also, replacing the always block with a continuous assignment expression (combinational logic) further reduces register inference and can improve synthesis optimization, slightly improving performance and power.
+
+Overall, this small restructuring is expected to retain functional correctness while slightly improving PPA.

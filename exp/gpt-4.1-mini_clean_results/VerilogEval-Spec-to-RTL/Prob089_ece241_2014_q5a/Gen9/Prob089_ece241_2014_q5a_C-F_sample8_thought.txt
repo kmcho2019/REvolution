@@ -1,0 +1,14 @@
+Fuse the clean, minimal state/input registering from Example 2 with the explicitly defined Moore output bit from Example 1 to maintain clear Moore FSM semantics and stable outputs. 
+
+- Keep asynchronous reset and positive edge clocked state register.
+- Register input x to x_reg at each clock cycle after reset.
+- Define two states: S0 (COPY) and S1 (INVERT).
+- Use a registered state signal and a combinational next_state logic based on registered x_reg and current state.
+- Determine a Moore output_bit purely from state, separate from x_reg.
+- Compute output z as XOR of x_reg and output_bit in a synchronous output register (updated on clock).
+- This fusion guarantees:
+  - Output z is a stable Moore output (depends only on state and registered input).
+  - Input is registered to avoid direct input in next_state and output logic, improving timing and synchronizing input.
+  - Next state and output_bit logic is combinational and clean.
+  - Asynchronous reset initializes FSM state and output cleanly.
+- This approach blends Example 2’s registered input strategy with Example 1’s clear Moore output encoding, improving timing, clarity, and synthesis friendliness.

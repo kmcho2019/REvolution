@@ -1,0 +1,16 @@
+Create a superior FSM by combining the clarity and modularity of explicit state encoding and descriptive signals from Example 2 with the succinctness and slight optimization from Example 1.
+
+Key fusion elements:
+- Use a single 2-bit state register with named localparams for all four states (walking/falling × direction).
+- Derive clear named wires (falling, direction) from state bits for readability.
+- Implement combinational next-state logic in one always @(*) block with clear priority and minimal redundant assignments.
+- Only define and use signals that contribute to logic, eliminating unused signals from Example 1.
+- Maintain asynchronous reset to initialize to WALK_LEFT.
+- Keep Moore outputs directly derived from state bits for glitch-free outputs.
+- Handle bumps only when walking and on ground, ignoring bumps during falling or transitions.
+- Preserve walking direction across falls, and resume same direction after falling ends.
+- Optimize condition ordering for clarity and synthesis friendliness.
+- Use non-blocking assignments in sequential logic with asynchronous reset.
+- Add comments that explain state encoding and logic clearly for maintainability.
+
+This fusion yields a clean, efficient, and well-structured FSM that balances readability, synthesis optimization, and exact functional behavior required by the problem, delivering a superior, production-grade design.

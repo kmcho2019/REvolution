@@ -1,0 +1,7 @@
+To implement the Lemming behavior, I propose a hierarchical finite state machine (FSM) architecture. The top-level FSM will manage the overall states of the Lemming, including walking, falling, and splattered. A separate sub-FSM will handle the walking state and its transitions, including bumping and digging. This approach allows for a more modular and maintainable design.
+
+The top-level FSM will have four states: IDLE, WALKING, FALLING, and SPLATTERED. The WALKING state will be further decomposed into a sub-FSM with two states: WALKING_LEFT and WALKING_RIGHT. This sub-FSM will handle the transitions between walking left and right, as well as the digging state.
+
+The falling state will have a counter to track the number of clock cycles the Lemming has been falling. If the Lemming hits the ground after falling for more than 20 clock cycles, it will transition to the SPLATTERED state.
+
+The digging state will be handled by the walking sub-FSM, which will transition to a DIGGING state when the dig input is high and the Lemming is on the ground. The digging state will continue until the ground disappears, at which point the Lemming will fall.

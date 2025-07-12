@@ -1,0 +1,9 @@
+To refactor the existing right_shifter module, we can leverage the use of a continuous assignment statement combined with a clocked always block to achieve the same functionality. The current implementation uses an always block to handle the right shift operation and update the output register `q` on every rising edge of the clock.
+
+However, we can refactor this design by using a continuous assignment statement to compute the next state of `q` and then use a clocked always block to store this value. This approach allows us to separate the logic into two distinct parts: one for computing the next state and another for storing this state.
+
+We can use the `assign` statement to define a continuous assignment that computes the next state of `q`. This logic takes the current state of `q` and the input signal `d` as inputs and produces the next state of `q` as output.
+
+Then, we can use a clocked always block with a non-blocking assignment to update the value of `q` on every rising edge of the clock. This can be achieved using an always block with a sensitivity list that includes the posedge of the clock signal.
+
+The refactored design maintains the same functionality as the original but with a different structure, which can potentially lead to improvements in terms of area and power due to the simpler and more modular logic.

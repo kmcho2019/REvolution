@@ -1,0 +1,18 @@
+Refactor the original single-cycle synchronous always block into a multi-cycle pipelined design controlled by a simple 3-bit cycle counter.  
+This approach splits the multiplication into sequential stages across multiple clock cycles:
+- Cycle 0: Extract and register inputs (sign, exponent, mantissa), detect special cases.
+- Cycle 1: Perform 24x24 mantissa multiplication and exponent addition.
+- Cycle 2: Normalize the product and prepare rounding bits.
+- Cycle 3: Apply rounding and adjust exponent accordingly.
+- Cycle 4: Handle overflow/underflow and finalize output.
+
+Using a cycle counter allows smaller combinational logic per cycle, reducing critical path delay and improving timing and power.  
+All intermediate values are stored in registers, making each stage simple and registers synchronize data.  
+Special case flags are processed early and propagated.  
+Reset synchronously clears counter and outputs.  
+This multi-cycle approach trades latency for better performance, power, and area.  
+
+The module uses the internal signals as registers as requested, with a 3-bit cycle counter.  
+Output `z` is valid and updated at the end of cycle 4.  
+
+This pipeline-like design closely follows the requested internal signals for clarity.

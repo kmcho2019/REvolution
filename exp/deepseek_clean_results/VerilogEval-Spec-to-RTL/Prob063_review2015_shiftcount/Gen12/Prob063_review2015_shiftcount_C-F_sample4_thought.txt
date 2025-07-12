@@ -1,0 +1,21 @@
+Fusion strategy combining the best aspects of both examples while addressing PPA concerns:
+
+1. Timing Optimization:
+   - Maintain the clean priority structure from Example 1 (shift has priority)
+   - Use the efficient decrement implementation from Example 2 (addition of 4'b1111)
+   - This provides better timing than subtraction while keeping the same functionality
+
+2. Power Optimization:
+   - Keep the implicit clock gating (no else clause) as both examples do
+   - The synthesis tool will optimize this better than explicit gating
+
+3. Area Optimization:
+   - Use minimal operations (concatenation for shift, simple add for decrement)
+   - Avoid redundant logic by not having an else clause
+   - Let synthesis tools optimize the arithmetic operations
+
+Key improvements:
+- Clear priority handling (shift over count)
+- More efficient arithmetic operation for decrement
+- Clean, minimal code that's highly synthesis-friendly
+- Better timing characteristics than either original example

@@ -1,0 +1,11 @@
+Combine the modular next-state logic and clear FSM state definitions from Example 1 with the power-saving register enable gating and single-block sequential logic style of Example 2. Use a typedef enum for better readability and maintainability (from Example 1), but implement all sequential logic in a single always block to minimize clock domain crossings and improve timing predictability (from Example 2).
+
+Enable the bit counter and shift register updates only in RECEIVE state to reduce unnecessary toggling (from both examples), but reset shift_reg only on reset and transition into IDLE to avoid continuous reset toggling in IDLE (improving power).
+
+Keep the done signal asserted only for one cycle upon correctly detecting the stop bit (from Example 1), clearing it each clock cycle (from Example 2) to reduce glitches.
+
+Keep a dedicated ERROR_WAIT (RECOVER) state to wait for a correct stop bit before next reception, reducing false detections.
+
+Shift in bits LSB first by shifting right and placing new bit into MSB (same as both examples), which matches the specified serial order.
+
+This fusion maximizes code clarity with typedef and modular next state logic, minimizes power through enable gating and reduced resets, and keeps the FSM simple for minimal area and good timing.

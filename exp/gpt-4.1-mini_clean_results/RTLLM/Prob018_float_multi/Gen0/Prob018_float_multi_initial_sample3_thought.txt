@@ -1,0 +1,6 @@
+Implement a pipelined sequential floating-point multiplier that uses a 3-cycle state machine to extract input fields, handle special cases, multiply mantissas, normalize and round the result, and generate the IEEE-754 output. 
+- Cycle 0: Reset or load inputs, extract sign, exponent, mantissa, detect special cases (zero, inf, NaN).
+- Cycle 1: Multiply mantissas with implicit leading 1, add exponents (bias adjusted), combine signs.
+- Cycle 2: Normalize the product, extract rounding bits (guard, round, sticky), apply rounding, handle overflow/underflow, assemble output.
+Use extended exponent width to prevent overflow during intermediate calculations. Account for special inputs with priority: NaN > Inf > zero > normal.
+Output registered at the end of the process.

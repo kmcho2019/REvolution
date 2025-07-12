@@ -1,0 +1,17 @@
+I'll implement a BCD adder using a pre-computed lookup table approach that:
+1. Combines all inputs (A, B, Cin) into a single 9-bit address (4+4+1)
+2. Uses a ROM to store pre-computed correct BCD sums and carry values
+3. Eliminates arithmetic operations during runtime
+4. Provides deterministic timing (single lookup delay)
+5. Scales efficiently for multiple digits (by replicating the LUT)
+
+Advantages:
+- Constant-time operation regardless of input values
+- No arithmetic carry propagation delay
+- Easily pipelinable
+- Power-efficient (only one memory access per operation)
+- Correct by construction (values pre-verified)
+
+The ROM contains 512 entries (2^9 possible inputs) with pre-calculated:
+- Corrected 4-bit BCD sum
+- 1-bit carry out

@@ -1,0 +1,11 @@
+Refactor the 16-bit combinational divider to remove the two always blocks and implement it purely with continuous assignments and a generate block. 
+
+The original design used two always blocks: one for registering inputs (which is redundant in pure combinational logic) and one for division logic. By removing the always blocks, we reduce register overhead and enable clearer combinational data flow.
+
+The division uses an iterative shift-subtract algorithm over 16 steps. We'll implement this with wires inside a generate loop that successively computes remainders and quotient bits, preserving the logic but using only assign statements.
+
+The quotient bits are assigned from MSB to LSB directly in the generate loop, avoiding separate quotient assembly.
+
+The remainder is stored as 8-bit wide wires and zero-extended to 16 bits for output.
+
+This structure simplifies the design, reduces unnecessary registers, improves readability, and keeps the original combinational functionality.

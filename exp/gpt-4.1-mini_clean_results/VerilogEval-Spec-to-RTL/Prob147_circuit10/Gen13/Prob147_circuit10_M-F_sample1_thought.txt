@@ -1,0 +1,27 @@
+Analyze the waveform carefully to deduce the next state and output logic as functions of the current state, and inputs a and b.
+
+Observations from the waveform:
+- Initially, state = 0 after some cycles.
+- When b=1 and a=0 at clk posedge, state often toggles or resets to 0.
+- At times, with b=1 and a=1, state switches to 1 or toggles.
+- When b=0, state holds its previous value.
+- Output q mostly matches the state except for some cycles when b=1, then q changes to a or toggles.
+
+From the waveform patterns:
+- The state only changes on posedge clk.
+- The state update logic is:
+  * if b==1 then state_next = a XOR state
+  * else state_next = state
+
+- The output q is combinationally:
+  * if b==1 then q = a
+  * else q = state
+
+This matches the patterns seen: when b=1, q reflects input a; state toggles if a differs from current state. When b=0, state holds and q equals state.
+
+Implement this by:
+- Sequential always block for state update on clk posedge
+- Combinational logic for q
+- Initialize state to 0 at start (using an initial block) to avoid unknown state
+
+This approach will fit the waveform patterns and correct the behavior.

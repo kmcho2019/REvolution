@@ -1,0 +1,11 @@
+The previous implementation correctly handles sign and magnitude manually but is not synthesis-friendly due to manual sign/magnitude extraction and recomposition, partial width signed operations, and separate combinational always blocks.
+
+Improvement strategy:
+
+- Declare inputs and output as signed vectors (`input signed [N-1:0] a, b; output signed [N-1:0] c;`). Since the inputs are two's complement fixed-point numbers, signed arithmetic will handle sign and magnitude automatically and correctly.
+- Perform the subtraction directly as `signed c = a - b;`. This simplifies design and synthesis, as synthesis tools are optimized for two's complement arithmetic.
+- Handle the zero-result sign bit explicitly by checking if the result is zero and forcing the sign bit to 0. This can be done by clearing the MSB if the value is zero.
+- Maintain precision as all signals are N-bit two's complement fixed-point numbers.
+- Remove manual magnitude calculations and sign handling.
+- Use combinational logic only (assign statements) for output.
+- This approach leverages the language's built-in signed arithmetic capabilities, simplifying design, improving synthesis friendliness, and reducing logic area and power.

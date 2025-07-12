@@ -1,0 +1,8 @@
+The approach to designing the fixed_point_adder module involves determining the operation type (addition or subtraction) based on the MSBs of the input operands, performing the arithmetic operation while handling overflow, and maintaining the specified precision. The fixed-point representation allows for Q fractional bits and (N-Q) integer bits, with the most significant bit (MSB) indicating the sign. The internal register 'res' stores the result, which is then assigned to the output 'c'.
+
+To handle the operation:
+1. Check the MSBs of 'a' and 'b' to decide between addition and subtraction.
+2. For addition (same signs), add the absolute values and copy the sign from 'a' or 'b'.
+3. For subtraction (different signs), compare the absolute values to determine the larger one and perform the subtraction. The sign of the result depends on which operand is larger.
+4. Ensure the result stays within the N-bit range to prevent overflow.
+5. Assign the result to the output 'c'.

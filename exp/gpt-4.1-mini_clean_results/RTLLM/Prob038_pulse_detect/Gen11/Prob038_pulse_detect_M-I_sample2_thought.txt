@@ -1,0 +1,16 @@
+To optimize the existing pulse_detect FSM for better performance, power, and area (PPA), we can use one-hot state encoding which can reduce combinational path delay and potentially improve timing on FPGA implementations. 
+
+Also, we simplify the next_state logic using a straightforward case, and keep data_out generation synchronous and glitch-free by registering it in the clocked always block.
+
+The FSM states correspond to waiting for 0, waiting for 1, and waiting for 0 to complete the pulse, so we encode them as one-hot signals for fast decoding.
+
+This also simplifies the combinational logic because each state is a single bit, potentially reducing LUT counts.
+
+We retain synchronous reset to keep timing clean and predictable.
+
+Output data_out is asserted for a single cycle at the precise moment when the pulse (0→1→0) completes.
+
+Thus, the key improvements are:
+- One-hot FSM encoding for potentially faster and simpler logic.
+- Clean, synchronous output generation.
+- Maintain synchronous reset and FSM structure for robust operation.

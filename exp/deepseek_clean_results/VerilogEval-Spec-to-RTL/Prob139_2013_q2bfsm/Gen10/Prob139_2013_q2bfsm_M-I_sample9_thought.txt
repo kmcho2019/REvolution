@@ -1,0 +1,13 @@
+Here's an improved solution that addresses the timing and logic issues:
+
+1. **Correct Sequence Detection**: The shift register now properly detects the '101' sequence by checking the pattern one cycle after the third bit is shifted in. This ensures we observe three full clock cycles.
+
+2. **Accurate y Monitoring**: The y monitoring now starts precisely when g is first set to 1, and properly checks y for exactly two cycles. A separate state (WAIT_Y) handles this monitoring phase explicitly.
+
+3. **Clear State Transitions**: The state machine now has distinct states for each phase (RESET, PULSE_F, MONITOR_X, WAIT_Y, FINAL), making the logic flow clearer.
+
+4. **Proper Output Timing**: The f output pulses for exactly one cycle after reset, and g timing is precisely controlled according to specifications.
+
+5. **Simpler Timer Logic**: The timer is now a simple counter that's more straightforward to understand and verify.
+
+This solution strictly follows the problem requirements while maintaining clean, modular design.

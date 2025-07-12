@@ -1,0 +1,27 @@
+The main fix is to align the GHR used for prediction indexing, prediction history output, and GHR update so all reference the same GHR snapshot within the cycle:
+
+- Introduce a combinational wire "predict_index" computed using the current GHR (speculative GHR before update) XOR predict_pc. This ensures the prediction uses the latest speculative GHR.
+
+- Output predict_taken and predict_history combinationally using the current GHR and PHT indexed by predict_pc XOR ghr.
+
+- Register the GHR used for prediction history output (predict_history_reg) at the *same cycle* predict_valid is asserted so that predict_history output matches exactly the GHR used for that prediction.
+
+- Update the GHR at clock edge based on the prediction taken bit *from the same index used for prediction* (predict_index) and with the correct priority:
+
+  1. If training valid & mispredicted: recover GHR to train_history (priority).
+
+  2. Else if predict_valid: shift in predicted bit from PHT at predict_index.
+
+  3. Else keep GHR.
+
+- Update the PHT entry on training valid using train_pc XOR train_history, saturating the counter per train_taken.
+
+- When prediction and training happen in the same cycle targeting the same PHT index, prediction outputs the PHT state before training update as per spec, so combinational read from PHT is valid before the update.
+
+- On asynchronous reset, initialize GHR and PHT entries properly.
+
+This approach ensures prediction outputs and history outputs are consistent and that GHR updates correctly reflect prediction or recovery from misprediction with the correct precedence.
+
+All PHT reads are combinational from reg array. Registers updated only on clock edge.
+
+This fixes the timing mismatch and aligns signals as required by the spec and feedback.

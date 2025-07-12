@@ -1,0 +1,4 @@
+The current solution is functionally correct but can be optimized for better PPA (Power, Performance, Area) metrics. The ternary operator (`?:`) introduces unnecessary multiplexer logic for the sign extension. Instead, we can use the replication operator (`{24{in[7]}}`) directly, which is more efficient in hardware as it simply replicates the sign bit without additional logic. This change will:
+1. Reduce power by eliminating the multiplexer structure
+2. Improve area by removing redundant logic gates
+3. Maintain the same performance (timing) since the critical path remains minimal

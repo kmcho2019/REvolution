@@ -1,0 +1,9 @@
+Implement the 0-to-999 counter using a linear feedback shift register (LFSR)-inspired approach with a small binary-coded decimal (BCD)-like two-stage counter: a hundreds digit (0-9) and a units digit (0-9). This separate decimal digit approach can reduce the comparison complexity since counting to 999 is naturally decimal-based.
+
+- Use two 4-bit registers: hundreds and units, each counting from 0 to 9.
+- On each clock, increment units; if units == 9, reset units to 0 and increment hundreds.
+- If hundreds == 9 and units == 9, then next state resets both to 0.
+- Combine hundreds and units into one 10-bit output q by (hundreds * 10 + units).
+- Use synchronous active-high reset to reset both digits to zero.
+- This approach decomposes counting into decimal digit increments, potentially reducing adder size and simplifying max count detection.
+- Final q concatenation: q = hundreds*10 + units (implemented as multiplication-free addition since 10 = 8 + 2).

@@ -1,0 +1,16 @@
+Refactoring Strategy:
+1. State Representation: Maintain the same two states (LEFT/RIGHT) but encode them as explicit parameters for clarity
+2. Transition Logic: Replace the always block with continuous assignments using ternary operators for state transitions
+3. Output Logic: Keep direct assignments but make them dependent on the next state rather than current state
+4. Reset Handling: Implement asynchronous reset using a mux at the state input
+5. Key Changes:
+   - Use continuous assignments instead of procedural blocks
+   - Compute next state combinational logic explicitly
+   - State register is now implicit in the continuous assignment
+   - Outputs are still purely combinational but based on next state
+
+Benefits:
+- More dataflow-oriented style
+- Eliminates procedural blocks entirely
+- Same functionality with different implementation style
+- Maintains all original PPA characteristics

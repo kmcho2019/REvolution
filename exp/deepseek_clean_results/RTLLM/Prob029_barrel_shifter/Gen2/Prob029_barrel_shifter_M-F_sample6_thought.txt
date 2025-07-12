@@ -1,0 +1,17 @@
+The feedback indicates the original implementation had issues with correct rotation direction and handling of combined shifts. Here's the improved approach:
+
+1. Clarify rotation direction: We'll implement a right rotation (bits move to the right, with overflow wrapping to the left) as this is the most common convention.
+
+2. Fix the staged shifting logic:
+   - Each stage should properly handle its specific shift amount
+   - Combined shifts (multiple control bits set) should work correctly by chaining the shifts
+   - The 4-2-1 stage order is correct, but we need to ensure proper bit selection
+
+3. Verification points:
+   - ctrl=3'b000: no shift
+   - ctrl=3'b001: 1-bit right rotation
+   - ctrl=3'b010: 2-bit right rotation
+   - ctrl=3'b100: 4-bit right rotation
+   - Combinations (e.g., 3'b011 = 3-bit rotation) should work correctly
+
+The corrected implementation maintains the staged approach but ensures proper bit selection and rotation in all cases.

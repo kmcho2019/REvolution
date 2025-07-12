@@ -1,0 +1,7 @@
+The previous design is well-structured and meets the functional requirements. To enhance clarity and possibly improve timing, I will implement the FSM with one-hot state encoding as suggested. One-hot encoding simplifies state decoding logic and can yield better synthesis results on some tools, especially if the FSM grows in complexity. It also improves readability by associating each state with a dedicated bit.
+
+The states remain the same conceptually: IDLE (waiting for data_in==1), WAIT_HIGH (detected rising edge, expecting data_in still high), WAIT_LOW (detected high, waiting for falling edge back to 0). The pulse ends when the FSM leaves WAIT_LOW upon data_in==0.
+
+The combinational logic will determine next_state based on current state and data_in; sequential logic will update the current state and produce data_out synchronously at the clock edge. The data_out will be asserted for one cycle immediately after detecting the pulse end condition (falling edge of data_in from 1 to 0 during WAIT_LOW).
+
+This fix adheres to the previous feedback, improves FSM state encoding, and maintains clean separation of combinational and sequential logic blocks, preserving functional correctness and clarity.

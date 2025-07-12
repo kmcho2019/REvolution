@@ -1,0 +1,16 @@
+To optimize the existing correct Rule 110 512-cell implementation for better PPA metrics, we will focus on improving timing (tns, wns) and power while controlling area overhead.
+
+Improvement strategy:
+1. Introduce pipelining by splitting the combinational next state calculation into two pipeline stages:
+   - Stage 1: Compute neighborhood bits extraction in a register (pipeline register).
+   - Stage 2: Compute the next state function from those pipeline-registered neighborhoods.
+   
+   This reduces the combinational logic depth in a single clock cycle and improves timing closure by breaking the long combinational path.
+
+2. Use a registered extended state vector with zero padding to reduce fanout and transitions on `ext_q`.
+3. Use local wires for neighborhoods per pipeline stage to reduce glitching and power.
+4. Maintain synchronous load on input data with priority.
+5. This pipeline doubles latency by one clock cycle, but does not affect steady state throughput as the cellular automaton updates every cycle.
+6. The pipeline registers can be implemented as 514-bit and 512-bit registers respectively.
+
+This strategy optimizes timing by cutting combinational logic depth nearly in half and reduces power by minimizing glitches on intermediate signals while slightly increasing area due to pipeline registers, which is an acceptable tradeoff for timing and power gains.

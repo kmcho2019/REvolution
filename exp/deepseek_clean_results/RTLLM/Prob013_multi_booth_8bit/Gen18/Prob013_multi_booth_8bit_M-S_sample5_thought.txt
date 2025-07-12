@@ -1,0 +1,25 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Key Simplifications:
+   - Remove early zero detection to reduce control complexity
+   - Use direct bit selection instead of pre-computed indices
+   - Single arithmetic path with multiplexed operations
+   - Simplified state machine with only necessary registers
+
+2. Core Improvements:
+   - Reduced register width where possible (5-bit counter instead of separate state)
+   - Combined Booth encoding and arithmetic into single case statement
+   - Eliminated redundant pre-computation logic
+   - Simplified reset logic with direct initialization
+
+3. Maintained Functionality:
+   - Still processes 2 bits per cycle (Radix-4)
+   - Preserves correct 16-bit arithmetic
+   - Keeps synchronous reset behavior
+   - Maintains ready signal functionality
+
+4. Implementation Approach:
+   - Single always block for all sequential logic
+   - Direct bit selection from multiplier
+   - Simple counter for iteration control
+   - Minimal register set (only essential state elements)

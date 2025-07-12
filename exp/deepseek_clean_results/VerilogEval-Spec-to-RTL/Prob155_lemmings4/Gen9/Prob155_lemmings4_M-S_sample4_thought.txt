@@ -1,0 +1,29 @@
+Simplified Lemming State Machine:
+
+1. Core States:
+   - Only 3 active states: WALK, DIG, FALL (SPLAT is terminal)
+   - Direction tracked separately from state
+
+2. Priority Handling:
+   - Fall when ground=0 (highest priority)
+   - Dig when ground=1 and dig=1 (medium priority)
+   - Direction change when walking (lowest priority)
+
+3. Fall Counter:
+   - Counts cycles in FALL state
+   - Splatters if >20 cycles when ground returns
+   - Resets when not falling
+
+4. Simplified Bump Logic:
+   - Any bump changes direction (priority to left if both)
+   - Ignored during DIG/FALL states
+
+5. Output Logic:
+   - Direct mapping from state and direction
+   - SPLAT state zeros all outputs
+
+Key Simplifications:
+- Reduced to essential states
+- Clear priority ordering
+- Minimal conditional logic
+- Maintains all specified behavior

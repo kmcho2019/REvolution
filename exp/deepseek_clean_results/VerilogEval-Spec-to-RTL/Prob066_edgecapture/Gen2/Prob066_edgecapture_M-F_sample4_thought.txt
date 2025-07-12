@@ -1,0 +1,20 @@
+The feedback highlights two critical issues that need to be addressed:
+
+1. **Proper Edge Detection**: We need to accurately detect 1->0 transitions by comparing the current input with the properly delayed previous input. This requires:
+   - First storing the current input in a register
+   - Then using this stored value in the next cycle for comparison
+
+2. **Correct State Maintenance**: The output should:
+   - Set bits when a true falling edge is detected (prev=1, curr=0)
+   - Maintain these bits set until reset
+   - Not set bits for any other condition
+
+Solution Approach:
+1. Use a two-stage pipeline:
+   - Stage 1: Store current input in prev_in register
+   - Stage 2: Use prev_in to detect transitions
+2. Implement proper edge detection logic:
+   - Only set output bits when prev_in=1 and current in=0
+3. Maintain state until reset:
+   - Once a bit is set in out, it stays set until reset
+4. All operations synchronized to clock edge with proper reset

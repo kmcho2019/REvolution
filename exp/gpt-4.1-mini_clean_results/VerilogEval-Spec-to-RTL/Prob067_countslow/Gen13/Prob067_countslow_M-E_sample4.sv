@@ -1,0 +1,29 @@
+module TopModule (
+    input clk,
+    input reset,
+    input slowena,
+    output reg [3:0] q
+);
+
+// Internal enable pulse generated on the rising edge of slowena
+reg slowena_d;
+wire count_en;
+
+always @(posedge clk) begin
+    slowena_d <= slowena;
+end
+
+assign count_en = slowena & ~slowena_d;
+
+always @(posedge clk) begin
+    if (reset)
+        q <= 4'd0;
+    else if (count_en) begin
+        if (q == 4'd9)
+            q <= 4'd0;
+        else
+            q <= q + 4'd1;
+    end
+end
+
+endmodule

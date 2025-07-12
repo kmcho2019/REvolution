@@ -1,0 +1,5 @@
+Use a single FSM state variable and a 2-bit counter to track the sampling cycles. Since the FSM only has two states (A and B), encode them as 1-bit, with A=0 and B=1. Use a 2-bit counter to count samples (0 to 2), and a 2-bit accumulator for w count.
+
+Update w_count and sample_count only in state B synchronously, and assert z in the cycle immediately after the 3rd sample based on the accumulated count + current w. When reset or in state A, clear counters and output z.
+
+This approach reduces complexity by consolidating logic into one always block, removing separate next_state logic by combining state transitions with synchronous logic, and minimizing conditional assignments for counters and output.

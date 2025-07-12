@@ -1,0 +1,11 @@
+To improve PPA, reduce combinational complexity and potential critical paths in the FSM next-state logic by using one-hot state encoding instead of binary encoding. This simplifies next-state decoding and may improve timing at the cost of minor area increase, which is acceptable given the small state count.
+
+Implement the shift counter as a 3-bit counter counting from 0 to 3, explicitly comparing the counter to '3' to determine SHIFT completion. This makes timing more predictable and synthesis friendlier.
+
+Minimize logic toggling in the SEARCH states by slightly restructuring next-state logic to reduce comparisons and conditions.
+
+Keep outputs purely combinational (Moore FSM style) based on current state, ensuring glitch-free outputs.
+
+Maintain synchronous active-high reset and positive-edge clocking.
+
+Overall, the one-hot FSM encoding reduces combinational logic depth, thus improving WNS and potentially power by simpler gating logic. The shift counter counting style helps synthesis tools optimize the counter better. This balances timing and power while keeping area low enough for this small FSM.

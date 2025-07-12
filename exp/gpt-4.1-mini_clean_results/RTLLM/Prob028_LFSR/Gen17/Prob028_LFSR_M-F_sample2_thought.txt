@@ -1,0 +1,12 @@
+To fix the design according to the original problem statement:
+
+- Keep the LFSR shifting left and inserting feedback at LSB.
+- Calculate feedback as the inversion of XOR of the two most significant bits (out[3] and out[2]) as specified.
+- On reset, initialize the register to zero as originally stated.
+- Use synchronous reset only (reset inside posedge clk block), matching the specification ("if reset is high, initialize to zero").
+- Correct the feedback calculation and shifting direction to match the specification, i.e., shift left: {out[2:0], feedback}.
+- Since the feedback is inverted XOR of bits [3] and [2], compute it as feedback = ~(out[3] ^ out[2]).
+
+This approach aligns the feedback, shifting direction, and reset behavior exactly with the problem description and avoids the prior confusion and testbench errors related to signal widths by clarifying that the module ports are consistent as before.
+
+No asynchronous reset is implemented, only synchronous active-high reset, initializing the output to zero.

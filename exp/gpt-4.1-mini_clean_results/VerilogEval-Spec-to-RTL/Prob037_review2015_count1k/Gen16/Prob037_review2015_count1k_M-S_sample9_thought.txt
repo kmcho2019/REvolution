@@ -1,0 +1,9 @@
+Simplify the counter logic by directly using a synchronous reset and an increment with wraparound on overflow without an explicit comparator. Since counting from 0 to 999 fits into 10 bits, simply increment the counter and reset it to zero when it reaches 999 using a simple equality check. This reduces comparator complexity to a single equality check rather than a less-than comparison.
+
+The synchronous reset remains active high and triggers on the positive clock edge. The design is clean and minimal, with straightforward arithmetic and minimal logic, keeping the functionality unchanged.
+
+Summary:
+- Use equality check q == 999 to reset the counter.
+- Increment counter each clock cycle if not at max count.
+- Active-high synchronous reset.
+- Maintain 10-bit output.

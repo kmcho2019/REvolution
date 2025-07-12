@@ -1,0 +1,13 @@
+The original solution correctly implements the 4-bit LFSR with an appropriate non-zero seed on reset to avoid lock-up, and the feedback logic is as specified (inverted XOR of bits 3 and 2). To improve PPA (performance, power, area) while maintaining functional correctness, we can:
+
+1. Use a wire for the feedback calculation outside the always block to keep combinational logic explicit and potentially enable better synthesis optimization.
+
+2. Declare the output `out` as `reg` since it's assigned in an always block.
+
+3. Use synchronous reset as required.
+
+4. Make sure the reset value is a parameter for easy configurability.
+
+5. Keep the code clean and easily synthesizable, with no unnecessary concatenations or operations.
+
+These changes help synthesize a smaller, faster LFSR with clear logic and easy tuning, without affecting functionality.

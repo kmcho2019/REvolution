@@ -1,0 +1,8 @@
+Refactor the design by removing the explicit DFF module and implementing the four-stage shift register using a single always block with a 4-bit register. This approach maintains the core functionality but uses a vector register to represent the shift register stages instead of individual DFF instances.
+
+Specifically:
+- Use a 4-bit reg to hold the state of the shift register.
+- On each positive clock edge, synchronously reset the register to 0 if resetn is low.
+- Otherwise, shift in the input bit into the LSB, shifting existing bits toward the MSB.
+- Assign the output as the MSB of the shift register.
+- This approach simplifies code by using a vector register and a single always block while preserving synchronous active-low reset semantics.

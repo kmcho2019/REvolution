@@ -1,0 +1,21 @@
+Here's a novel approach using a multiplexer-based implementation that leverages the don't-care conditions more aggressively:
+
+1. Observation:
+   - The output is 1 in most cases when a=1 (except cd=00)
+   - When a=0, the output depends on b and c
+   - This suggests a hierarchical decision structure
+
+2. New Architecture:
+   - Use a as the primary selector for a 2:1 mux
+   - When a=1, output is 1 (simplifying many cases)
+   - When a=0, use a secondary mux based on b and c
+   - This reduces the logic complexity by exploiting the don't-cares more effectively
+
+3. Benefits:
+   - Potentially better timing as the critical path is through just two mux levels
+   - Clear hierarchical structure that might map well to FPGA LUTs
+   - More explicit handling of don't-care conditions
+
+4. Implementation:
+   - First mux selects between 1 (when a=1) and a secondary expression
+   - Secondary expression is (~b & c) which covers all required cases when a=0

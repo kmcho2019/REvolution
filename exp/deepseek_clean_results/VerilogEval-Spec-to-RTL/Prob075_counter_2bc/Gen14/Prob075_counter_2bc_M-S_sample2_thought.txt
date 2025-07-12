@@ -1,0 +1,12 @@
+Simplified Design Idea:
+1. Remove explicit state encoding (localparams) since we're only dealing with 4 states that are naturally represented by 2 bits
+2. Eliminate the separate next_state register and combine state transition logic directly in the sequential block
+3. Use simple arithmetic with saturation checks instead of case statements for more compact logic
+4. Maintain asynchronous reset to 2'b01 (weakly not-taken)
+5. Keep the train_valid gating to prevent unnecessary state updates
+
+Key Simplifications:
+- Removed redundant state encoding parameters
+- Eliminated separate combinational block by moving logic to sequential block
+- Replaced case statement with arithmetic operations
+- Reduced total lines of code while maintaining same functionality

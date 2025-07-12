@@ -1,0 +1,11 @@
+To implement the TopModule, we need to analyze the sensor inputs and determine the water level. Based on the water level, we need to control the nominal flow rate (fr0, fr1, fr2) and the supplemental flow rate (dfr). We can use a state machine to keep track of the previous sensor state and the current sensor state. The state machine will be reset to the "low" state when the reset signal is asserted. In this state, all four outputs (fr0, fr1, fr2, dfr) will be asserted.
+
+We will define the states as follows:
+- LOW: No sensors are asserted, and all flow rates are at maximum.
+- LOW_MID: Sensor s[0] is asserted, and nominal flow rate is at fr0 and fr1.
+- MID_HIGH: Sensors s[0] and s[1] are asserted, and nominal flow rate is at fr0.
+- HIGH: All sensors are asserted, and nominal flow rate is zero.
+
+When the state machine transitions from a lower state to a higher state, the supplemental flow rate (dfr) should be asserted to increase the flow rate. When the state machine transitions from a higher state to a lower state, the supplemental flow rate (dfr) should be deasserted to decrease the flow rate.
+
+We will use a combination of combinational logic and sequential logic to implement the state machine.

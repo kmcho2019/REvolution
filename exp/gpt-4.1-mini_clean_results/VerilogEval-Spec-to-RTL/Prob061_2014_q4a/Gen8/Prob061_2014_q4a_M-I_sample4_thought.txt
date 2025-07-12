@@ -1,0 +1,7 @@
+The original design is already quite optimal in terms of logic simplicity and clarity. However, to optimize for PPA, a common technique is to reduce switching activity and thus power by minimizing unnecessary updates to the register. Here, the register Q only updates when L or E is asserted. We can explicitly code the retain condition with an else clause to ensure the synthesis tools do not infer unnecessary toggling or glitches.
+
+In addition, explicitly keeping Q unchanged when neither L nor E is asserted could help reduce toggling and improve power and timing slightly by preventing glitch propagation through the mux. This makes the behavior more explicit and may help synthesis tools with optimizations like clock gating or mux merging.
+
+Also, adding a synchronous reset could be considered if the spec allows, but since no reset port is given, we'll focus on minimal logic changes. Using a single always block with nonblocking assignments is still the best practice.
+
+Therefore, the improvement is to explicitly hold Q's value when no load or shift enable signals are asserted, helping reduce unnecessary toggling and potentially improving power and timing while keeping the logic minimal.

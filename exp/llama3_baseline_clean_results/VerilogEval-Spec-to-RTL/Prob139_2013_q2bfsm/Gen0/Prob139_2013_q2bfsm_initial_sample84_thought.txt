@@ -1,0 +1,8 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that adheres to the specified behavior. The FSM will have several states to track its progress: 
+1. State A (initial state): stays here as long as resetn is low, then moves to State B on the next clock edge after resetn goes high.
+2. State B: sets output f to 1 for one clock cycle.
+3. State C: waits for the sequence x = 1, 0, 1 in three consecutive clock cycles, then moves to State D and sets output g to 1.
+4. State D: monitors input y for at most two clock cycles. If y = 1 within these cycles, stays in State D with g = 1; otherwise, moves to State E with g = 0.
+5. State E: stays here with g = 0 until reset.
+
+We'll use an enumerated type to represent these states and a counter to keep track of the number of clock cycles spent in certain states.

@@ -1,0 +1,22 @@
+From analyzing the waveform, it appears that the output 'q' reflects the combinational output based on the current inputs 'a', 'b', and the stored 'state', whereas 'state' stores the previous value of 'q' (i.e., the registered output). This means that the output 'q' is combinational and depends on 'a', 'b', and 'state', while 'state' is updated every clock cycle to hold 'q'.
+
+By carefully observing transitions:
+
+- When b=0 and a=0, q = 0 regardless of state
+- When b=1 and a=0, q = 1 when state=0, q=0 when state=1 (q toggles state)
+- When b=0 and a=1, q = 1 when state=1, q=0 when state=0 (q is state & a)
+- When b=1 and a=1, q = 0 when state=0, q=1 when state=1 (q toggles state)
+
+A simpler way is to write the combinational logic for q as:
+
+q = (b & ~state) | (a & state);
+
+Then, on positive clock edge, update state <= q.
+
+This matches the waveform where q depends combinationally on state, a, b, and state is updated to q on clock edges.
+
+Hence, implementing q as combinational logic function of state, a, and b, and updating state on clk's positive edge to q will match the simulation.
+
+We also make sure to initialize state to 0 for simulation.
+
+This fixes the previously incorrect next_state logic which tried to combine with XOR and OR without proper interpretation.

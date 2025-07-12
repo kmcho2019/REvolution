@@ -1,0 +1,12 @@
+Implement a simple FSM with clearly separated states matching the specification steps: 
+- STATE_A: reset state (f=0, g=0)
+- STATE_B: one-cycle pulse f=1 immediately after resetn deassertion
+- STATE_C: monitor x input to detect pattern 1,0,1 over 3 consecutive cycles using a 3-bit shift register
+- STATE_D: one-cycle pulse g=1 after detecting pattern
+- STATE_E: monitor y input for up to 2 cycles while holding g=1; if y=1 detected, move to permanent g=1 state; else after 2 cycles move to permanent g=0
+- STATE_F: permanent g=1
+- STATE_G: permanent g=0
+
+Use synchronous active-low reset to initialize all registers and FSM state. Shift in x samples only in STATE_C. For y timer, count from 0 up to 1 to monitor exactly 2 cycles in STATE_E.
+
+Outputs are Moore type depending only on current state, ensuring correct timing of f and g pulses. This design is simple, clean, and fully meets the specification.

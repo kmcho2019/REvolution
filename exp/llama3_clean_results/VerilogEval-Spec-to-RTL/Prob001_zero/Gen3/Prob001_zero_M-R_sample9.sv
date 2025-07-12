@@ -1,0 +1,7 @@
+module TopModule (
+    output reg zero
+);
+always @(*) begin
+    zero = 0;
+end
+endmodule

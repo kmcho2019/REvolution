@@ -1,0 +1,15 @@
+Novel Architecture: Circular Stack Buffer with Predictive Flags
+1. Circular Stack Pointer: Use a 3-bit pointer (0-7 range) for 4 entries, allowing natural wrap-around without conditional checks
+2. Predictive Flag Logic: Generate EMPTY/FULL flags one cycle early based on next operation type
+3. Dual-Phase Operation: Separate the push/pop operations into two phases (address phase and data phase) for better timing
+4. Memory Optimization: Implement the stack as a shift register with pointer-based access to reduce multiplexer complexity
+5. Power Gating: Only enable memory writes during valid push operations to save power
+6. Early Output: Compute dataOut combinationally from the current stack top for reduced latency
+
+Key Advantages:
+1. Simplified pointer arithmetic with automatic wrap-around
+2. Early flag generation improves timing closure
+3. Two-phase operation breaks critical path
+4. Shift register implementation reduces area
+5. Power-efficient with gated writes
+6. Combinational output provides immediate data availability

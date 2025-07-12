@@ -1,0 +1,11 @@
+To implement the TopModule, we need to consider the functionality of each input signal and how they interact with each other. 
+
+1. areset: Asynchronous positive edge triggered reset will be handled using an initial block or a separate always block to reset the register whenever areset goes high, regardless of the clock.
+
+2. load and ena: Since both are synchronous and active high, they will be handled in the same always block where the clock edge is detected. The priority of load over ena will be implemented using a simple if-else statement.
+
+3. data: The 4-bit data input will be used when load is asserted high.
+
+4. q: The 4-bit output will reflect the current state of the shift register.
+
+We will use two always blocks: one for the asynchronous reset and another for the synchronous operations (load and shift).

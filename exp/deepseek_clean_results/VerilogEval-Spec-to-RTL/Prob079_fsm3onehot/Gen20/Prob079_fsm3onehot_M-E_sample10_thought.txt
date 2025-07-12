@@ -1,0 +1,19 @@
+Novel Architectural Idea: Bit-Sliced State Transition Logic
+
+Instead of treating each state bit independently, we can implement a bit-sliced approach that:
+1. First identifies the current state using priority encoding (though we know it's one-hot)
+2. Then uses a compact case-like structure to determine next state
+3. Leverages the fact that only one state bit is active at a time to simplify logic
+
+Key Innovations:
+- Uses a hierarchical decision structure that mimics a multiplexer
+- Explicitly shows the state transition relationships
+- Minimizes redundant logic by sharing common conditions
+- Maintains one-hot properties through careful bit assignments
+- Output logic remains trivial (state[3])
+
+Advantages:
+- More readable and maintainable structure
+- Clear mapping to state transition table
+- Potentially better for synthesis tools to optimize
+- Easier to modify if state transitions change

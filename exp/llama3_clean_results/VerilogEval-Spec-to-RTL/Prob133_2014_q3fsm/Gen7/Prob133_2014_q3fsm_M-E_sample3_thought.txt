@@ -1,0 +1,9 @@
+To implement the finite state machine (FSM) with a novel architectural idea, we can utilize a counter-based approach. The FSM will use two counters: one to track the number of consecutive clock cycles and another to count the occurrences of 'w' within a window of three clock cycles. This approach simplifies the logic and reduces the number of states required.
+
+When in state A, the FSM remains in this state as long as 's' is 0. Once 's' becomes 1, the FSM transitions to state B. In state B, the FSM uses the counters to track the number of 'w' occurrences within a window of three clock cycles. If 'w' occurs exactly twice within this window, the FSM sets 'z' to 1 in the next clock cycle. The counters are reset after each window of three clock cycles, allowing the FSM to continuously check 'w' occurrences.
+
+This approach introduces a delay between the time the 'w' occurrences are counted and the time 'z' is set, ensuring that 'z' is set in the following clock cycle after the count of 'w' occurrences equals 2. The counters are also reset after each window of three clock cycles, allowing the FSM to handle the case when the shift register is fully populated with 'w' values.
+
+The use of counters simplifies the code, making it more readable and easier to understand. This approach also ensures that the FSM correctly handles the examination of 'w' over a sliding window of three clock cycles, thus addressing the functionality issues in the original implementation.
+
+In terms of Power, Performance, and Area (PPA) optimization, this approach reduces the number of states in the finite state machine, optimizes the counter implementation, and minimizes the number of logic gates required to implement the functionality.

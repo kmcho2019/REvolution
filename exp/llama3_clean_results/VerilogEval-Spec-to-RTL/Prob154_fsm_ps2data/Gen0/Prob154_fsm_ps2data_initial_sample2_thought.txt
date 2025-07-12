@@ -1,0 +1,13 @@
+The problem requires a finite state machine (FSM) to be implemented in Verilog. The FSM will search for message boundaries in a given input byte stream. It will discard bytes until it sees one with in[3] = 1, assume that as the first byte of a message, and signal the receipt of a message once all three bytes have been received. The FSM should signal 'done' in the cycle immediately after the third byte of each message was successfully received. The module should also output the 24-bit (3 byte) message whenever a packet is received. 
+
+To solve this problem, we will use a simple Mealy machine with four states: Idle, Byte1, Byte2, and Done. We will use two internal registers: out_bytes to store the 24-bit message and byte_count to keep track of the current byte. 
+
+In the Idle state, we check if the current input byte has in[3] = 1. If it does, we move to the Byte1 state, otherwise we stay in the Idle state. 
+
+In the Byte1 state, we store the current input byte in out_bytes[23:16], increment the byte_count, and move to the Byte2 state.
+
+In the Byte2 state, we store the current input byte in out_bytes[15:8], increment the byte_count, and move to the Done state.
+
+In the Done state, we store the current input byte in out_bytes[7:0], set the done signal to 1, and reset the byte_count. 
+
+We also need to handle the reset signal. When the reset signal is active high, we reset the FSM to the Idle state, reset the byte_count to 0, and set the done signal to 0.

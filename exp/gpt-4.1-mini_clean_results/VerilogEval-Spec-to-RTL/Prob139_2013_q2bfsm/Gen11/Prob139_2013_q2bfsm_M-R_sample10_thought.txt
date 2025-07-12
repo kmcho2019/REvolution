@@ -1,0 +1,18 @@
+Refactor the FSM with a one-hot style state encoding and split logic clearly between state registers and combinational next state. Use an explicit shift register updated before pattern detection, checking the pattern on the updated shift register. Adjust y monitoring counter to count up to 2 full cycles before deciding timeout. 
+
+Use synchronous always block for state and registers with synchronous active low reset.
+
+Outputs f and g are Moore outputs, derived solely from the current state.
+
+Implement a separate combinational block for next state and next register values, improving clarity.
+
+Structure states as:
+- IDLE: wait for reset release
+- F_PULSE: assert f=1 for one cycle after reset release
+- PATTERN_WAIT: shift in x and monitor pattern 101
+- G_PULSE: assert g=1 for one cycle after pattern detection
+- Y_MONITOR: maintain g=1 and monitor y for up to 2 cycles (counter from 0 to 2)
+- G_ON_PERM: g=1 permanently
+- G_OFF_PERM: g=0 permanently
+
+This approach clearly sequences outputs and internal counters, avoids off-by-one errors in counting, and ensures pattern detection uses the updated shift register, ensuring proper timing and correctness.

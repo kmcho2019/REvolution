@@ -1,0 +1,19 @@
+Design an 8-bit unsigned multiplier using a 5-stage pipeline focusing on a bit-serial partial product accumulation approach to reduce combinational complexity per stage.  
+Key ideas:  
+- Pipeline the enable signal through 5 stages to track data validity, mul_en_out derived from the final stage.  
+- Inputs (mul_a, mul_b) are registered only when mul_en_in is asserted.  
+- Instead of generating all partial products at once, generate one partial product per cycle (bit-serial multiplication of multiplier bits).  
+- Each pipeline stage accumulates partial product for a single multiplier bit shifted accordingly and adds it to the sum passed along the pipeline.  
+- The sum register is carried forward across stages, accumulating the product incrementally over 8 cycles total (with first 3 cycles for pipeline filling and last 2 for output validity alignment).  
+- Pipeline stages:  
+  1) Input register stage  
+  2-5) Partial product generation and accumulation stages, each adding 2 multiplier bits’ contributions.  
+- The multiplier bits are processed two bits per stage (except the last stage with fewer bits), reducing pipeline stages from 8 to 5 and balancing latency and throughput.  
+- On each stage, the partial sum is registered and passed to the next pipeline stage for further accumulation.  
+- Output product is the final partial sum once all multiplier bits have been processed.  
+- This approach minimizes the combinational complexity per stage and eases addition logic, while still providing pipelined operation and throughput of one multiplication per cycle after latency.  
+- Active-low asynchronous reset clears all pipeline registers.  
+- Output zero is provided when mul_en_out is low, ensuring no invalid data is presented.  
+- mul_en_out is delayed accordingly to reflect data validity after the full pipeline.
+
+Overall, this bit-serial partial-product accumulation pipeline balances resource usage, timing, and clarity with a simple and scalable structure.

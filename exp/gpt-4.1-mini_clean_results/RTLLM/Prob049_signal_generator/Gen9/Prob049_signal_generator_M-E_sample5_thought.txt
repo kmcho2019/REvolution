@@ -1,0 +1,17 @@
+Alternative approach using a direction signal derived combinationally and a single always block:
+
+Instead of explicitly storing the state (increment/decrement) in a separate register, maintain only the "wave" register and use a combinational signal "direction" that flips when wave reaches boundaries 0 or 31.
+
+Implementation details:
+- Use a 1-bit "direction" register internally to indicate increment (0) or decrement (1) mode.
+- On reset, initialize wave to 0 and direction to increment (0).
+- On each clock edge:
+  - If direction == 0 (increment), wave increments by 1 until it reaches 31.
+  - When wave == 31, direction changes to decrement (1).
+  - If direction == 1 (decrement), wave decrements by 1 until it reaches 0.
+  - When wave == 0, direction changes to increment (0).
+- This approach reduces state storage and explicitly shows the direction logic.
+- Using a single always block simplifies timing and logic synthesis.
+- The output wave directly reflects the triangle waveform cycling between 0 and 31.
+
+This design provides a simple, clean, and efficient triangle wave generator without a case statement, relying on direction bit and boundary checking for control.

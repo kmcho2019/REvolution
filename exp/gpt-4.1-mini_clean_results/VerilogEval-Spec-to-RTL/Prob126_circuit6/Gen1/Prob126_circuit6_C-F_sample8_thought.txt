@@ -1,0 +1,11 @@
+Both examples implement the same combinational lookup from the 3-bit input `a` to a fixed 16-bit output `q` using a case statement. This approach is optimal given the fixed arbitrary mappings and small input space (8 entries). To fuse the best ideas:
+
+- Use a clear, well-indented case statement for readability and maintainability.
+- Include a default case assigning zero, guarding against X or undefined inputs.
+- Use a combinational always block with non-blocking assignments to emphasize combinational semantics and avoid any accidental latching (although blocking is usual here, using blocking `=` is also acceptable).
+- Keep the interface and implementation minimal and clean.
+- Comment the LUT contents for clarity and future maintainability.
+- The design is fully combinational with zero timing cost and minimal area/power.
+- No unnecessary complexity added; synthesis tools will infer a small ROM or LUT.
+
+This fusion preserves clarity, correctness, and efficiency while improving readability and robustness.

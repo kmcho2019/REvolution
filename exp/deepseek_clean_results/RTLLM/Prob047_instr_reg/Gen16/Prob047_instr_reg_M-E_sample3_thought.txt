@@ -1,0 +1,15 @@
+Novel Architecture: Pipelined Instruction Register with Validity Flags
+1. Dual-stage pipeline: First stage captures input, second stage holds outputs for better timing
+2. Validity flags for each register (valid_p1, valid_p2) to track when data is actually updated
+3. Output gating: Only drive outputs when corresponding validity flag is set
+4. Reset synchronization: Properly synchronize reset to avoid metastability
+5. Power optimization: Clock gating based on fetch signals
+6. Error detection: Detect invalid fetch combinations (both bits set)
+
+Key Innovations:
+- Pipeline stage improves timing closure by separating capture and output
+- Validity flags prevent propagating stale data
+- Output gating reduces unnecessary toggling
+- Synchronized reset for better reliability
+- Clock gating reduces dynamic power
+- Error detection adds robustness

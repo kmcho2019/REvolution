@@ -1,0 +1,7 @@
+The key simplification comes from recognizing that we don't need to track the full state progression - we only need to count to 3. We can use a 2-bit counter that:
+1. Resets to 0
+2. Starts counting when in[3]=1 is detected
+3. Wraps around after reaching 2 (since we count 0,1,2 for 3 bytes)
+4. Outputs 'done' when counter wraps from 2 to 0
+
+This eliminates the need for explicit state transitions and shift operations, reducing the logic to a simple counter with wrap-around behavior. The done signal is simply the AND of the counter being 2 and the clock edge.

@@ -1,0 +1,26 @@
+Each mux_in bit corresponds to a fixed column (ab) of the K-map indexed by c and d. To implement each column's function using only 2-to-1 muxes with selectors c or d, we directly decode each 2-bit input (cd) with a 2-level mux tree.
+
+For each mux_in bit, consider which variable (c or d) to use as the first-level selector to minimize muxes:
+
+- mux_in[0] (ab=00): values for cd=00->0,01->1,11->1,10->1  
+  Using c as selector:  
+  - c=0: d=0->0, d=1->1  
+  - c=1: d=0->1, d=1->1  
+  So mux_in[0] = c ? 1 : d
+
+- mux_in[1] (ab=01): all zeros  
+  Simply assign 0.
+
+- mux_in[2] (ab=11): cd=00->0,01->0,11->1,10->0  
+  Using c as selector:  
+  - c=0: d=0->0, d=1->0  
+  - c=1: d=0->0, d=1->1  
+  So mux_in[2] = c ? d : 0
+
+- mux_in[3] (ab=10): cd=00->1,01->0,11->1,10->1  
+  Using d as selector:  
+  - d=0: c=0->1, c=1->1  
+  - d=1: c=0->0, c=1->1  
+  So mux_in[3] = d ? c : 1
+
+This approach uses minimal muxes and only simple mux assignments with selectors c or d, and constants 0 and 1. It's simpler, clearer, and correctly implements the K-map functions.

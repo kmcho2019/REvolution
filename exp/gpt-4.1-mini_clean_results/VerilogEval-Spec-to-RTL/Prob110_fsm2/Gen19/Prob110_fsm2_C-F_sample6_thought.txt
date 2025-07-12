@@ -1,0 +1,5 @@
+I will combine the best aspects of both examples: keep the asynchronous active-high reset from Example 1 for compliance with the spec and better responsiveness, but drive the output `out` as a purely combinational signal derived directly from the registered state, avoiding registering the output in the combinational always block as in Example 2. This reduces latency and glitches on `out` since it's directly tied to stable registered state.
+
+I will keep the next_state logic combinational in a separate always @(*) block using a case statement for clarity and simplicity. State encoding will remain one bit for minimal area and power.
+
+This fusion yields a clean, simple, glitch-free Moore FSM with asynchronous reset, minimal latency on output, and clear code separation for ease of understanding and synthesis optimization.

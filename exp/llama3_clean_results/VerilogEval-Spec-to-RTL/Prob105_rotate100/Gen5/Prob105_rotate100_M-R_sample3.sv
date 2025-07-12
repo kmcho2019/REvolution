@@ -1,0 +1,30 @@
+module TopModule(
+    input               clk,
+    input               load,
+    input      [1:0]    ena,
+    input      [99:0]   data,
+    output reg [99:0]   q
+);
+
+reg [99:0] q_reg;
+reg [99:0] q_rot_right;
+reg [99:0] q_rot_left;
+
+assign q_rot_right = {q_reg[0], q_reg[99:1]}; // Rotate right by one bit
+assign q_rot_left  = {q_reg[98:0], q_reg[99]}; // Rotate left by one bit
+
+always @(posedge clk) begin
+    if (load) begin
+        q_reg <= data;
+    end else begin
+        case (ena)
+            2'b01: q_reg <= q_rot_right; // Rotate right by one bit
+            2'b10: q_reg <= q_rot_left;  // Rotate left by one bit
+            default: q_reg <= q_reg;     // No rotation
+        endcase
+    end
+end
+
+assign q = q_reg;
+
+endmodule

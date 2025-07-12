@@ -1,0 +1,9 @@
+To better reflect the sequential behavior observed in the waveform while keeping the core idea of a two-stage sampling of the input 'a', we can implement the design as a finite state machine with explicit state registers and combinational output logic. This avoids simultaneous updates causing confusion and aligns output 'p' and 'q' directly with internal state registers updated at clock edges.
+
+We will:
+
+- Use two internal state registers `state_p` and `state_q`, updated synchronously at every rising edge of the clock.
+- Assign outputs `p` and `q` as direct continuous assignments from `state_p` and `state_q`, removing them from the clocked block to reflect their stable outputs at all times.
+- Initialize `state_p` and `state_q` to 'x' to match the initial unknown values in the waveform.
+- On each rising clock edge, update `state_q` with previous `state_p`, and `state_p` with the current input `a`. 
+- This structure models the shift-register behavior but clarifies state and output assignments and might resolve confusion about update timing.

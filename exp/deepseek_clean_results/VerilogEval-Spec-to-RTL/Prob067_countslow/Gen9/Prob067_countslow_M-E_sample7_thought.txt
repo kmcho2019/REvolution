@@ -1,0 +1,16 @@
+Novel Hybrid Encoding Approach:
+1. Use a 4-bit binary counter for states 0-7 (efficient storage)
+2. Switch to one-hot encoding for states 8 and 9 (simpler overflow detection)
+3. Implement a state machine that:
+   - Uses binary counting for 0-7 (3 LSBs)
+   - Sets a dedicated MSB for states 8 and 9
+   - Detects overflow by checking when binary count would exceed 9
+4. Advantages:
+   - Reduced comparison logic for overflow (only need to check when binary count is 8)
+   - Maintains small area (only 4 bits total)
+   - Simplifies wrap-around condition
+   - Lower power than pure binary for states 8-9 (fewer bit toggles)
+5. Key innovation:
+   - Hybrid encoding automatically handles the decade wrap-around
+   - No need for complex comparison logic
+   - Natural progression from binary to one-hot at higher counts

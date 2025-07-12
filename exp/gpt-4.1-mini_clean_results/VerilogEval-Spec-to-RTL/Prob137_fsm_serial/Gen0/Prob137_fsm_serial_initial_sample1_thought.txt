@@ -1,0 +1,9 @@
+I will implement a finite state machine with the following states: IDLE, RECEIVE (to collect 8 data bits), STOP_WAIT (waiting for a valid stop bit after 8 data bits). 
+
+- IDLE: Wait for start bit (0). The line is idle high (1). When start bit detected (in=0), transition to RECEIVE.
+- RECEIVE: Shift in data bits (LSB first), count bits received. After 8 bits, transition to STOP_WAIT.
+- STOP_WAIT: Check if stop bit (1) is present. If yes, assert done for one cycle and return to IDLE. If no, stay in STOP_WAIT until stop bit is detected.
+  
+Reset brings the FSM to IDLE. The done signal is asserted for one clock cycle when a byte is received successfully with valid stop bit. The actual data bits are not output or stored as the problem does not specify that.
+
+All sequential logic triggered on posedge clk, reset is synchronous active-high.

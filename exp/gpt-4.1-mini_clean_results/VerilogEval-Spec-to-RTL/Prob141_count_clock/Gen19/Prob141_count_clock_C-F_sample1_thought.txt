@@ -1,0 +1,11 @@
+To create a superior 12-hour clock design, fuse the modular clarity and enable gating of Example 1 with the single synchronous always block and explicit rollover signals of Example 2 while further optimizing power and timing by:
+
+- Keeping a binary hour counter internally (1–12) for area efficiency and simplicity, converting it combinationally to BCD only when hour changes to reduce toggling.
+- Implementing second and minute counters as separate BCD digits, with combinational next-state logic gated by ena to minimize switching and combinational complexity.
+- Using one synchronous always block to update all counters and pm with reset highest priority, avoiding nested if-else inside the clocked block by precomputing increment and rollover signals combinationally.
+- Enabling registers to update only when necessary (on enable or reset) to reduce unnecessary toggling.
+- Updating output registers only when their values change to reduce switching, thus minimizing power.
+- Toggling pm only on hour rollover from 11 to 12, as in examples.
+- Using a small combinational function to convert binary hour to BCD only when hour changes, registering the BCD output to avoid continuous toggling on hh outputs.
+  
+This fusion leads to a clean, efficient, power-conscious design with minimal combinational path depth, fewer toggles, and clear modular structure, benefiting timing, power, and area.

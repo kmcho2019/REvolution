@@ -1,0 +1,13 @@
+The waveform shows q = 1 whenever b or c is 1, independent of a and d.
+
+Both examples correctly implement q = b OR c by structurally instantiating an OrGate2 module. This preserves modular hierarchy and clarity, which is beneficial for maintainability and debugging.
+
+However, the feedback notes that the module instantiation adds minor overhead in area and power. Flattening the design to a simple continuous assignment (assign q = b | c;) inside TopModule would minimize power, area, and complexity, while retaining clear intent.
+
+Therefore, the fusion strategy is:
+- Retain the clear and simple logic expression q = b | c directly in TopModule without an extra module.
+- This reduces hierarchy and overhead.
+- Ignore inputs a and d since they don't affect output.
+- Resulting in a minimal, clean, and efficient combinational design that perfectly matches the waveform.
+
+This approach fuses the correctness and clarity of the structural examples with the power and area efficiency of the flat assign style.

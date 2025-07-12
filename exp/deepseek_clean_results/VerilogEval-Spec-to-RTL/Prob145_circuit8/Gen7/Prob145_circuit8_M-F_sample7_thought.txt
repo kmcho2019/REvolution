@@ -1,0 +1,18 @@
+After carefully analyzing the feedback and waveform patterns, here's the corrected design approach:
+
+1. 'p' behavior:
+   - Should be a positive-edge triggered flip-flop
+   - Takes the value of 'a' only at positive clock edges
+   - Maintains this value until the next positive clock edge
+   - This explains why p changes only at clock edges (e.g., 90ns, 100ns)
+
+2. 'q' behavior:
+   - Should be a negative-edge triggered flip-flop
+   - Simply follows the value of 'p' but updates on negative edges
+   - This creates a one-half cycle delay from p to q
+
+Key corrections:
+1. Make 'p' properly edge-sensitive to clock (positive edge)
+2. Remove any combinational behavior - make both outputs purely sequential
+3. Ensure 'q' updates only on negative edges while tracking 'p'
+4. The state is inherently maintained by the flip-flop nature of the registers

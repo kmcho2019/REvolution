@@ -1,0 +1,49 @@
+module div_16bit (
+    input  wire [15:0] A,
+    input  wire [7:0]  B,
+    output reg  [15:0] result,
+    output reg  [15:0] odd
+);
+
+    reg [15:0] a_reg;
+    reg [7:0]  b_reg;
+
+    integer i;
+    reg [7:0] remainder;
+    reg [15:0] quotient;
+
+    // Latch inputs combinationally as requested
+    always @(*) begin
+        a_reg = A;
+        b_reg = B;
+    end
+
+    // Combinational division logic
+    always @(*) begin
+        quotient = 16'b0;
+        remainder = 8'b0;
+
+        if (b_reg == 0) begin
+            // Division by zero: outputs zero quotient and remainder
+            quotient = 16'b0;
+            remainder = 8'b0;
+        end else begin
+            // Perform bit-by-bit division
+            for (i = 15; i >= 0; i = i - 1) begin
+                // Shift remainder left by 1 and bring in the next dividend bit
+                remainder = {remainder[6:0], a_reg[i]};
+                // Compare remainder with divisor
+                if (remainder >= b_reg) begin
+                    remainder = remainder - b_reg;
+                    quotient[i] = 1'b1;
+                end else begin
+                    quotient[i] = 1'b0;
+                end
+            end
+        end
+
+        result = quotient;
+        odd = {8'b0, remainder}; // Zero-extend remainder to 16 bits
+    end
+
+endmodule

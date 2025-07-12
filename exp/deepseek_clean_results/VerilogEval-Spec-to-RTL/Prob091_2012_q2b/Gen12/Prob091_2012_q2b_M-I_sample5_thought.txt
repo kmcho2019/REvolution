@@ -1,0 +1,24 @@
+Improvement Strategy:
+1. **Y1 Optimization**: The current AND gate implementation is already optimal for the A→B transition (y[0] & w). No further optimization needed.
+
+2. **Y3 Optimization**:
+   - Current NOR implementation (~(y[0] | y[3])) is good but can be slightly improved
+   - Observe that D state (y[3]) is entered when:
+     * In B (y[1]) and w=0
+     * In C (y[2]) and w=0
+     * In E (y[4]) and w=0
+     * In F (y[5]) and w=0
+   - Can be expressed as: ~w & (y[1] | y[2] | y[4] | y[5])
+   - This replaces the NOR with an OR of fewer terms
+
+3. **Power Reduction**:
+   - The new OR implementation will have lower switching activity
+   - Fewer gates in the critical path
+
+4. **Area Consideration**:
+   - The new implementation uses one OR gate instead of NOR
+   - May result in slightly better area due to simpler gate structure
+
+5. **Maintainability**:
+   - Keep clear documentation of state transitions
+   - Explicitly show the one-hot encoding assumption

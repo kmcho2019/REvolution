@@ -1,0 +1,9 @@
+Simplify the popcount by removing recursion and the specialized 17-bit module, and instead implement a flat, iterative tree of adders that sum groups of bits in a balanced manner.
+
+Approach:
+- Split the 255-bit input into 32 groups of 8 bits (total 256 bits), zero-padding the last bit.
+- Use a flat array to count the number of set bits in each 8-bit group via a simple popcount8 module.
+- Then iteratively sum the 32 partial sums in a balanced binary tree structure until a single 8-bit output remains.
+- This keeps the design combinational and simple, with clear stages and no recursion or parameterization.
+- The output is 8 bits, sufficient to count up to 255 ones.
+This approach trades some slight zero-padding for simplicity, clarity, and easier verification.

@@ -1,0 +1,9 @@
+To optimize the 100-bit rotator for better power and timing, implement rotation using a 2-stage barrel shifter approach by conditionally selecting between the current register and its one-bit rotated versions. This splits the rotation into minimal multiplexing logic, which can reduce the critical path compared to a direct concatenation on all bits.
+
+Add an enable gating signal internally to update the register only when load is asserted or ena indicates rotation (01 or 10), preventing unnecessary toggling and reducing power consumption.
+
+Keep a single always block with synchronous reset (not specified but could be added if desired) for clarity and maintainability. Use a generate block or combinational logic to compute rotated data before the clocked assignment.
+
+This approach trades slight increase in logic for rotation with improved timing by reducing the fanout and mux fan-in per bit and lowers dynamic power by avoiding register updates when no load/rotate is active.
+
+No change in interface or functionality. Comments added for clarity.

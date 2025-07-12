@@ -1,0 +1,13 @@
+To optimize the FSM for better Power, Performance, and Area (PPA), I will:
+
+1. Use one-hot encoding for the FSM states. Since there are only 10 states, one-hot encoding simplifies next-state logic and potentially reduces logic depth, which can improve timing.
+
+2. Replace the large combinational case statement with more straightforward logic that counts consecutive ones up to 6 and detects conditions for disc, flag, and err states.
+
+3. Implement outputs as registered signals inside the synchronous always block to reduce glitches and switching activity, improving power.
+
+4. Combine disc/flag/err output flags with the state transitions to use fewer combinational signals.
+
+5. Keep synchronous reset and positive edge clock triggering.
+
+This approach reduces combinational complexity by exploiting one-hot encoding and simple counters, reducing critical path delay and switching power while maintaining a clean Moore FSM design.

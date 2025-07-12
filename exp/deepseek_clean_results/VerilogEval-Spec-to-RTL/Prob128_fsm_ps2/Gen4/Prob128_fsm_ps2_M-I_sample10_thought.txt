@@ -1,0 +1,12 @@
+To optimize the design for better PPA metrics, I'll implement these improvements:
+1. Register the input bit in[3] to break timing paths and improve performance
+2. Gate the counter increment to reduce unnecessary switching power
+3. Use one-hot encoding for the state machine to potentially reduce area and improve timing
+4. Early register the done signal to meet timing better
+5. Simplify reset logic by removing it if not strictly required (assuming synchronous reset is acceptable)
+
+The key changes are:
+- Adding an input register stage
+- Converting to one-hot state encoding (4 states: IDLE, BYTE1, BYTE2, BYTE3)
+- Gating state transitions with valid conditions
+- Early registering the done signal

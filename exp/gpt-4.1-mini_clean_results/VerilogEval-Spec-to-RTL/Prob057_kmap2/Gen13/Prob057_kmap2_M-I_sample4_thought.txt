@@ -1,0 +1,28 @@
+To optimize for power, performance, and area (PPA), minimize the logic by identifying prime implicants from the Karnaugh map and expressing the output as a sum of products with fewer terms and literals. This reduces the gate count and switching activity. 
+
+From the K-map, derive the minimal sum-of-products expression:
+out = (~c & ~d & (~a | ~b)) + (~c & d & ~b) + (c & ~d & ~a) + (c & d & (a | b))
+
+We can factor terms to reduce literals:
+
+1. (~c & ~d & (~a | ~b)) = ~c & ~d & (~a + ~b)
+2. (~c & d & ~b)
+3. (c & ~d & ~a)
+4. (c & d & (a + b))
+
+Rewrite as:
+
+out = (~c & ~d & ~a) + (~c & ~d & ~b) + (~c & d & ~b) + (c & ~d & ~a) + (c & d & a) + (c & d & b)
+
+Group terms sharing literals:
+
+- Terms with ~c & ~d: (~a + ~b)
+- Term with ~c & d & ~b
+- Term with c & ~d & ~a
+- Terms with c & d & (a + b)
+
+This approach results in 6 product terms, but many literals are shared.
+
+The solution will implement this simplified sum-of-products expression using continuous assignment with AND/OR operations without intermediate wires, ensuring low gate count and minimal critical path.
+
+This leads to a clear, minimal, and efficient logic implementation.

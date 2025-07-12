@@ -1,0 +1,15 @@
+To develop a novel architectural idea for the Lemmings problem, we can approach it by considering the Lemming's behavior as a combination of several parallel processes:
+
+1. **Direction Control**: This process determines whether the Lemming is walking left or right. It responds to bump_left and bump_right signals, inverting the direction upon receiving either.
+
+2. **Ground Detection**: This process monitors the ground signal and triggers the fall state when the ground disappears. It also manages the transition from falling back to walking when the ground reappears.
+
+3. **Digging Control**: This module oversees the digging action. It starts digging when dig is asserted and the Lemming is on the ground, continuing until the ground disappears, at which point it falls. It ignores dig assertions when not on the ground or when already falling.
+
+4. **State Management**: This central control unit manages the overall state of the Lemming, integrating inputs from the direction control, ground detection, and digging control modules to determine the current state (walking, falling, or digging).
+
+By decomposing the problem into these parallel processes, we can design a more modular and scalable architecture that is easier to understand, modify, and optimize.
+
+The key insight is to use a combination of sequential logic (for state management and direction control) and combinational logic (for ground detection and digging control) to achieve the desired behavior.
+
+This approach allows for a cleaner and more maintainable design, where each module has a single responsibility, making it easier to test and debug the system.

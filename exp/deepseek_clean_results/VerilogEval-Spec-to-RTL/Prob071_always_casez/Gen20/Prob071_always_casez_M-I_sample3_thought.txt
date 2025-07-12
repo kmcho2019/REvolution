@@ -1,0 +1,12 @@
+To optimize the priority encoder further, I'll implement a casez-based approach that:
+1. Uses a single casez statement to prioritize bit detection from LSB to MSB
+2. Eliminates redundant comparisons by leveraging Verilog's built-in priority encoding
+3. Reduces logic depth by directly mapping input patterns to output positions
+4. Minimizes area by removing intermediate comparison logic
+5. Reduces power by avoiding unnecessary switching in unused logic branches
+
+This approach is more efficient because:
+- It directly encodes the priority behavior in a single construct
+- The synthesis tool can optimize the casez into efficient multiplexer logic
+- It removes the hierarchical splitting that caused redundant comparisons
+- The single case statement is easier for synthesis tools to optimize for PPA

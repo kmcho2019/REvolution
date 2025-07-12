@@ -1,0 +1,19 @@
+Refactored approach with corrected logic:
+
+1. Key observations from K-map:
+   - mux_in[2] needs to be 1 for both cd=11 and cd=10 cases (when either c or d is 1)
+   - This is actually an OR function (c | d), not AND
+   - mux_in[3] logic is correct in original implementation
+   - Other outputs remain unchanged
+
+2. Refactoring changes:
+   - Change mux_in[2] from AND to OR operation
+   - Keep all other logic identical
+   - Maintain same module interface
+   - Use only assign statements for cleaner combinational logic
+
+3. Verification:
+   - mux_in[0]: OR (matches cd=00→0, else 1)
+   - mux_in[1]: 0 (matches all cases)
+   - mux_in[2]: OR (matches 0 for cd=00,01 and 1 for cd=10,11)
+   - mux_in[3]: Conditional (matches all cases)

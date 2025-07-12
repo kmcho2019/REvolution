@@ -1,0 +1,17 @@
+The best fusion strategy merges the clean state and output control of Example 1 with the streamlined cycle and w counting logic of Example 2. 
+
+- Retain two FSM states (A and B) as in Example 1, where A waits for s=1 to enter B.
+- In state B, use a 2-bit cycle counter (0 to 2) and a 2-bit accumulator for w counts, like Example 2, which is simple and efficient.
+- Output z is asserted only in the cycle immediately after the 3rd sampling cycle, as in Example 1, to clearly separate sampling and output assertion. Example 2 asserts z in the cycle of the 3rd sample which can risk combinational complexity with input w.
+- Reset counters and output in state A only on state transitions to reduce unnecessary toggling (improving power over Example 1's clearing every cycle in state A).
+- Use non-blocking assignments consistently, and minimize redundant assignments to z by setting it only when needed.
+- Keep all logic synchronous with positive clock edge and synchronous reset.
+
+This fusion yields:
+- Minimal states (2 states)
+- Efficient counting and accumulation of w
+- Explicit cycle for output z after sampling window ends
+- Reduced toggling in idle state for power saving
+- Simple and clear FSM structure that synthesizes well with minimal area and good timing
+
+Overall, this design balances clarity, minimal resource use, and output timing robustness.

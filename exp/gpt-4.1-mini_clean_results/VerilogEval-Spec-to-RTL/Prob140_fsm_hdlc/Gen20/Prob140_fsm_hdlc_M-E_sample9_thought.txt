@@ -1,0 +1,37 @@
+I will implement the HDLC framing detection using an explicit 7-state Moore FSM, where each state represents the number of consecutive 1s seen so far (from 0 up to 6), plus an ERROR state for 7 or more ones.
+
+- The FSM starts at state S0 (zero consecutive 1s).
+- On input=1, the FSM transitions to the next state counting consecutive ones (S1, S2, ..., S6).
+- On input=0, the FSM resets to S0.
+- If input=1 in S6, transition to ERROR state (>=7 ones).
+- Outputs disc, flag, err depend only on the current state:
+  - disc is asserted in S5 when the next input is 0 (detected next cycle after seeing five 1s and a zero).
+  - flag is asserted in S6 when the next input is 0 (meaning exactly six ones and a zero, the flag pattern).
+  - err is asserted in the ERROR state and stays asserted until reset.
+- Outputs are registered and asserted for exactly one cycle after the pattern detection (Moore outputs).
+- Use synchronous active-high reset to go to S0 and clear outputs.
+
+This FSM approach explicitly represents the counting states with clear state transitions and decouples state transitions and output logic for clarity and synthesis friendliness. This design avoids saturating counters and uses straightforward state encoding with a small state machine.
+
+The FSM states:
+
+S0: 0 consecutive ones  
+S1: 1 consecutive one  
+S2: 2 consecutive ones  
+S3: 3 consecutive ones  
+S4: 4 consecutive ones  
+S5: 5 consecutive ones  
+S6: 6 consecutive ones  
+ERR: error state (7 or more consecutive ones)
+
+The state encoding uses 3 bits plus an extra error state (can encode error as 3'b111 for simplicity).
+
+The outputs:
+
+- disc = 1 when the FSM is in S5 and input=0 detected on next cycle (implemented by output assigned to S5, and disc asserted one cycle after input=0 following S5)
+- flag = 1 when FSM is in S6 and input=0 (meaning full flag 0 1111110 detected)
+- err = 1 when in ERR state
+
+This fully Moore design means outputs depend only on the current state (not inputs), so output logic registers the signal and asserts for one full clock cycle after detection.
+
+This clean state-based design is conceptually simple, easy to verify, and synthesizes efficiently.

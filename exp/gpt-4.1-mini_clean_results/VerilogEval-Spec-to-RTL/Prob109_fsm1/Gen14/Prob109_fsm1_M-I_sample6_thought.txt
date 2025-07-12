@@ -1,0 +1,10 @@
+The existing solution is already very compact and efficient: a single-bit state encoding, minimal XOR logic for next state, asynchronous reset, and Moore output driven directly from state. To further improve PPA (timing, power, and area), a slight refinement is to eliminate the combinational always block for output and instead drive output directly as a continuous assignment from state. This removes the need for output to be declared as reg, reducing register inference and logic. While this is a minor stylistic optimization, it can reduce inferred logic and power slightly by avoiding unnecessary registers or multiplexers for output.
+
+Additionally, we can rewrite the next-state logic with the same minimal expression, but expressed using bitwise operators for clarity, which some synthesis tools optimize better. No other structural change is beneficial given the problem constraints (two states, asynchronous reset).
+
+Summary of improvements:
+- Drive output as a wire with continuous assignment from state (Moore output depends only on state).
+- Keep minimal XOR-based next state logic and async reset.
+- Remove the combinational always block, making the code simpler and possibly reducing inferred logic.
+
+This yields a slightly cleaner, smaller, and potentially lower-power implementation without changing functionality or timing negatively.

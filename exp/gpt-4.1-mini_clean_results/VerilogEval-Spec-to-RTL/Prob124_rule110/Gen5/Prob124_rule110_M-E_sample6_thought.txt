@@ -1,0 +1,15 @@
+To implement the 512-cell Rule 110 cellular automaton in a novel way, we will avoid computing the next state fully combinationally for all cells simultaneously. Instead, we will use a small pipeline approach that processes the entire 512-bit state in chunks within a single clock cycle, using a shift-register based design to slide over the neighborhood window for each cell. 
+
+Here is the approach:
+
+1. Maintain the current state `q` in a 512-bit register.
+2. On each clock cycle when `load` is low, we will compute the next state in a streaming manner by shifting a 3-bit window over `q` bits, applying Rule 110's update function on each triple.
+3. Since combinational logic over 512 cells can be large, we will create a small finite state machine that iterates over 512 steps (cells) per clock cycle to update the entire `q` register in a pipelined fashion. However, this would take 512 cycles, violating the requirement to update all cells every clock.
+   
+To satisfy the requirement that the entire 512-cell state updates at every clock, we will implement a fully combinational logic but optimize the way neighborhoods are formed by concatenating zeros at boundaries to create a 514-bit extended vector (`ext_q = {0, q, 0}`), then compute next states using vector slicing inside a generate loop.
+
+The novelty is that instead of indexing `q` with conditional boundary checks per bit, we will create the extended vector first, then compute neighborhoods for all bits by slicing three consecutive bits from `ext_q`. This reduces complexity in boundary handling and can be more efficient for synthesis.
+
+Finally, use an always block triggered on the positive clock edge: if `load` is high, load input data into `q`, else update `q` with the computed next state vector.
+
+This approach is new compared to the classical direct neighbor indexing with boundary conditions, and it leverages vector slicing to handle boundary zero-padding cleanly and efficiently.

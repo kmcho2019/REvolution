@@ -1,0 +1,16 @@
+The previous design uses a right-shift based iterative multiplication with a single 32-bit product register holding the combined multiplier and accumulated sum. While functionally correct, it includes addition every cycle when product[0] is set, resulting in potentially unnecessary additions and causing a relatively long critical path.
+
+To improve PPA, I will implement the multiplication exactly as per the original specification: accumulate shifted multiplier values into a separate product register based on bits of the multiplicand. This means:
+
+- Maintain a 5-bit shift count register i, counting from 0 to 17.
+- On i=0, load multiplicand and multiplier into registers.
+- For i=1 to 16, check if the (i-1)-th bit of multiplicand is 1; if yes, add multiplier shifted by (i-1) to product.
+- The done signal is generated when i equals 16, cleared when i equals 17.
+- Reset logic clears registers and counters.
+- The design avoids unnecessary additions each cycle, only adds when multiplicand bit is set, reducing switching.
+- The add operation can be done in a clock cycle because the inputs and shifts are pre-determined.
+- Using separate registers (areg for multiplicand, breg for multiplier, yout_r for product) keeps the design modular and eases timing.
+- Done is asserted only at the end.
+- This approach follows the exact requirements, improving timing and power by limiting additions.
+
+This approach matches the original problem's instruction exactly and should yield a clean, robust, and efficient design.

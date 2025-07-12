@@ -1,0 +1,5 @@
+To refactor the design while keeping the same core functionality, we move the shift logic into a combinational function that computes the next value based on inputs, and then assign the output register synchronously. Instead of multiple intermediate wires and nested conditional operators, we use a combinational always block with a case statement on amount to clearly define each shift operation explicitly. This improves readability by centralizing shift logic, reduces the number of muxes synthesized by the tool, and avoids repeated condition checks for direction and amount.
+
+Additionally, we can replace the arithmetic right shifts done by concatenation with explicit code in the case branches for clarity. The output q remains a register updated on posedge clk, with synchronous load and enable. This structure is easier for synthesis tools to optimize because the case-based approach distinctly separates shift operations.
+
+This approach should preserve functionality while potentially improving timing due to simpler muxing and clearer shift operation assignments.

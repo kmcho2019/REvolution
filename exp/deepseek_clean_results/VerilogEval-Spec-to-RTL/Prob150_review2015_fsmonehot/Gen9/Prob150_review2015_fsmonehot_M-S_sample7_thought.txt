@@ -1,0 +1,17 @@
+Simplification Strategy:
+1. Output Logic Simplification:
+   - Since we're using one-hot encoding, outputs can directly map to specific state bits
+   - 'done' is only active in Wait state (state[9])
+   - 'counting' is only active in Count state (state[8])
+   - 'shift_ena' is active in B0-B3 states (state[4:7])
+
+2. Next State Logic Simplification:
+   - Each next state signal can be derived directly from current state and inputs
+   - Eliminate intermediate wires where possible
+   - Use simple AND-OR logic that maps clearly to the state diagram
+
+Key Improvements:
+- Remove all intermediate wire declarations
+- Directly assign outputs based on state bits
+- Simplify next-state logic to minimal AND-OR expressions
+- Maintain exact same functionality with cleaner implementation

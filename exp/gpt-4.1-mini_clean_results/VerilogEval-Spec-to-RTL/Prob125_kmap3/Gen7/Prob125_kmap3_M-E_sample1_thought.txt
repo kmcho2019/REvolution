@@ -1,0 +1,11 @@
+A different approach is to implement the function by explicitly encoding the K-map minterms and using a ROM-style lookup table to output the result. 
+
+We can combine the inputs 'a' and 'b' to form an address (2 bits), and 'c' and 'd' to form another 2-bit input. Since 'd' is don't-care, we can set it arbitrarily (e.g., zero) in the address.
+
+We then create a 4x4 ROM array indexed by {c,d} and {a,b} to get the output. Since 'd' is don't-care, we treat it as 0 in the address but assign outputs such that the don't-cares are taken as zeros.
+
+This approach uses a combinational ROM lookup to implement the function, making the logic structure different from direct combinational logic expressions or multiplexers.
+
+This also illustrates how to use LUT-based design or ROM-based design, useful in FPGA or certain ASIC flows.
+
+The output is selected directly from the ROM initialized with the K-map values, and the don't-cares set to 0 for simplicity.

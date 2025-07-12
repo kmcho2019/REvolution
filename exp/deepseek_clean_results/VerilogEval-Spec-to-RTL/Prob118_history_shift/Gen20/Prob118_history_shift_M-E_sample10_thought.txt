@@ -1,0 +1,11 @@
+Here's a novel approach using a circular buffer implementation for the history register, which offers several advantages:
+1. Eliminates the need for shifting operations by maintaining a head pointer
+2. Reduces power consumption by minimizing bit toggles (only one bit changes per update)
+3. Simplifies misprediction recovery by directly indexing the buffer
+4. Uses a separate write pointer for mispredictions to avoid temporary states
+
+Key features:
+- Circular buffer of 32 entries with head pointer tracking current position
+- Separate logic for normal prediction updates and misprediction recovery
+- Misprediction handling writes to the appropriate position without shifting
+- Asynchronous reset initializes all entries to 0

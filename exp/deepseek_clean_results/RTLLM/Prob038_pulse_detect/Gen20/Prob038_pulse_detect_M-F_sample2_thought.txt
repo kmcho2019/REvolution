@@ -1,0 +1,27 @@
+Corrected State Machine Implementation:
+
+1. Problem Analysis:
+   - Need to detect exactly 3-cycle sequence: 0->1->0
+   - Previous shift register approach failed because it didn't guarantee consecutive cycles
+   - Must track the exact progression through states
+
+2. Solution Approach:
+   - Implement explicit state machine with 4 states:
+     * IDLE: Waiting for first 0
+     * GOT_0: Received first 0, waiting for 1
+     * GOT_1: Received 1 after 0, waiting for second 0
+     * PULSE: Complete 0-1-0 sequence detected
+   - Output pulses only when reaching PULSE state
+   - Reset to IDLE on any deviation from expected sequence
+
+3. Key Improvements:
+   - Guaranteed to detect only exact 3-cycle sequences
+   - Clear state transitions based on input
+   - Proper handling of all possible input sequences
+   - Simple and reliable output generation
+
+4. Verification Points:
+   - Correct detection of 010 pattern
+   - No false positives for other patterns
+   - Proper reset behavior
+   - Handles back-to-back pulses correctly

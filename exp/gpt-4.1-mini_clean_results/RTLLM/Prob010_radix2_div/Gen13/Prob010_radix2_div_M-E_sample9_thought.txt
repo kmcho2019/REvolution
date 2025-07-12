@@ -1,0 +1,26 @@
+Implement a fully synchronous iterative radix-2 divider with a simple FSM controlling the division process over 8 cycles. The design supports both signed and unsigned division by first capturing and converting inputs to absolute values, performing division using restoring method with a 16-bit register holding remainder (upper 8 bits) and quotient (lower 8 bits). 
+
+At each cycle:
+- Shift remainder and quotient left by 1.
+- Subtract divisor_abs from remainder.
+- If remainder >= divisor_abs, set the current quotient bit to 1 and update remainder; else quotient bit is 0 and remainder restored.
+
+After 8 iterations, apply sign correction to quotient and remainder if signed division was selected.
+
+Key features:
+- One FSM state machine: IDLE, BUSY, DONE.
+- All registers updated synchronously on posedge clk.
+- The sign and absolute value are handled at start of operation.
+- Result ready indicated by res_valid signal.
+- result[15:8] = remainder, result[7:0] = quotient.
+- The division starts on opn_valid high and res_valid low.
+- Reset is synchronous active-high.
+
+This new approach:
+- Uses a separate sign and absolute input capture stage.
+- Has a clean combinational logic for subtraction and shift.
+- Uses a 16-bit register for remainder+quotient concatenation.
+- Handles sign correction after division completes.
+- Is easy to synthesize and verify.
+
+This is a standard restoring division architecture simplified and clear.

@@ -1,0 +1,14 @@
+To implement the TopModule, we need to handle the state transitions and outputs based on the given state machine description. The key points are:
+
+1. The state machine uses one-hot encoding, so each state corresponds to a single bit in the 10-bit state vector.
+2. The input state can be a combination of multiple states (multiple bits set), so we need to handle all possible active states.
+3. For each active state in the current state vector, we need to:
+   - Determine the next state based on the input 'in'
+   - Set the appropriate bit in next_state
+   - Determine the outputs (out1, out2) which are only non-zero in specific states (S7, S8, S9)
+
+The implementation will:
+- Use a case statement to check each possible state bit
+- For each active state, compute the transitions based on 'in'
+- Combine all possible next states into next_state
+- Combine all possible outputs into out1 and out2

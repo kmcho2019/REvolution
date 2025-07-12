@@ -1,0 +1,21 @@
+To provide a fresh architectural approach, I will separate concerns more explicitly and store direction as its own state variable, distinct from the behavior state (walking left/right, falling, digging, splattered).
+
+I will use two separate state variables:
+- A "mode" state indicating what the Lemming is doing: WALK, FALL, DIG, SPLATTERED.
+- A direction bit indicating left (0) or right (1).
+
+This clean separation clarifies logic:
+- Direction changes only when walking and bumped.
+- Direction is preserved during fall and dig.
+- On fall landing, direction is preserved.
+- Dig is only entered if on ground and walking.
+- Fall has highest precedence, then dig, then bump.
+- Splattered occurs on landing if fall duration exceeded 20 cycles.
+
+I will implement the FSM with synchronous reset (reset asserted asynchronously, synchronous clear). The mode and direction are updated each cycle based on inputs, ground, bumps, dig, and fall count.
+
+The outputs are Moore style from mode and direction.
+
+Fall counter increments only in FALL mode, resets otherwise.
+
+This approach improves clarity, maintainability, and correctness by distinctly tracking direction separately and focusing mode on current activity.

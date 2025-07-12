@@ -1,0 +1,11 @@
+Fuse both designs by combining explicit FSM state encoding with minimized output toggling and clear separation of combinational and sequential logic:
+
+- Use a 2-bit FSM with states WAIT_SYNC, BYTE2, BYTE3.
+- Keep next_state combinational for clarity and maintainability.
+- Update out_bytes only when capturing each byte to reduce unnecessary toggling.
+- Drive done high for exactly one cycle immediately after receiving the third byte (BYTE3 state).
+- Hold outputs stable otherwise (don't-care allowed).
+- Implement synchronous active-high reset.
+- Maintain output byte order with the first detected byte in bits [23:16].
+- Use nonblocking assignments consistently for sequential logic.
+- This approach optimizes power by gating updates, improves timing by simplifying combinational logic, and preserves code clarity and functionality.

@@ -1,0 +1,11 @@
+To simplify the design, I will eliminate the modular 64-bit block structure and instead implement the entire 512-bit Rule 90 logic in a single module. This avoids complexity from multiple instances and boundary signal wiring. Since each bit's next state depends only on its immediate neighbors, I can compute all next states with simple combinational logic in one always block. The left and right boundaries are fixed as zero, so indexing can handle boundary conditions naturally.
+
+The entire state q is stored in a single 512-bit register. On each clock edge, if load is asserted, q is loaded from input data; otherwise, q is updated to the next state computed as XOR of the left and right neighbors, where out-of-range neighbors are zero. This design is straightforward, fully synchronous, and easy to understand and maintain.
+
+While this loses modularity, it greatly reduces code complexity and structural overhead while maintaining functionality exactly.
+
+This approach:
+- Has a single always block handling all 512 bits at once.
+- Uses simple boundary checks to assign zero neighbors.
+- Avoids generate loops and extra modules.
+- Keeps the interface and behavior exactly the same as specified.

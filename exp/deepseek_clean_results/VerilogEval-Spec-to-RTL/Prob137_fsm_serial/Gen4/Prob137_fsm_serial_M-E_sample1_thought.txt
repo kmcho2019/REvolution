@@ -1,0 +1,10 @@
+Here's a novel approach using a shift register and counter-based design without explicit state encoding. The key ideas are:
+1. Use a 10-bit shift register to capture the entire frame (start + 8 data + stop bits)
+2. Track frame position with a counter that resets after each complete frame
+3. Validate the frame when counter reaches 10:
+   - Start bit (bit 0) must be 0
+   - Stop bit (bit 9) must be 1
+4. Only assert 'done' when a valid frame is detected
+5. Reset synchronously clears all registers
+
+This approach eliminates explicit state machine logic by leveraging the shift register and counter position to implicitly track the protocol phases. It's more compact and reduces control logic overhead.

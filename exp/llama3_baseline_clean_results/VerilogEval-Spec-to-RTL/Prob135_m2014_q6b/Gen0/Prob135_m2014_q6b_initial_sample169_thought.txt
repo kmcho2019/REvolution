@@ -1,0 +1,15 @@
+To implement the next-state logic for y[1] in the given FSM, we need to analyze the state transitions and find the conditions that set y[1] to 1. We can see that y[1] is set to 1 when the current state is B (y = 001), C (y = 010), E (y = 100), or F (y = 101), and the input w is either 0 or 1 for certain states. However, we only need to focus on the transitions where y[1] changes. Based on the given state machine, we can derive the following conditions for y[1] to be set to 1: 
+- When the current state is A (y = 000) and w is 1, the next state is A (y = 000), so y[1] remains 0.
+- When the current state is A (y = 000) and w is 0, the next state is B (y = 001), so y[1] is set to 1.
+- When the current state is B (y = 001) and w is 0, the next state is C (y = 010), so y[1] is set to 1.
+- When the current state is B (y = 001) and w is 1, the next state is D (y = 011), so y[1] is set to 1.
+- When the current state is C (y = 010) and w is 0, the next state is E (y = 100), so y[1] is set to 1.
+- When the current state is C (y = 010) and w is 1, the next state is D (y = 011), so y[1] is set to 1.
+- When the current state is D (y = 011) and w is 0, the next state is F (y = 101), so y[1] is set to 1.
+- When the current state is D (y = 011) and w is 1, the next state is A (y = 000), so y[1] is set to 0.
+- When the current state is E (y = 100) and w is 0, the next state is E (y = 100), so y[1] is set to 1.
+- When the current state is E (y = 100) and w is 1, the next state is D (y = 011), so y[1] is set to 1.
+- When the current state is F (y = 101) and w is 0, the next state is C (y = 010), so y[1] is set to 1.
+- When the current state is F (y = 101) and w is 1, the next state is D (y = 011), so y[1] is set to 1.
+Therefore, we can implement the next-state logic for y[1] using the following equation: y[1] = (y[0] & ~y[1] & ~w) | (~y[0] & y[1] & ~w) | (~y[0] & ~y[1] & w) | (y[0] & y[1] & ~w).
+The output Y1 is directly assigned the value of y[1].

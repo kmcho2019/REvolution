@@ -1,0 +1,11 @@
+I will implement a 16-bit unsigned multiplier using a classic shift-and-add algorithm controlled by an explicit counter and registers, but differing from the previous example by:
+
+- Using a left-shift of the accumulator and right-shift of the multiplier each cycle.
+- Adding the multiplicand to an accumulator when the LSB of the multiplier is 1.
+- Using synchronous reset and synchronous start-triggered load of inputs.
+- Keeping the counting and done signaling strictly controlled by the counter reaching 16.
+- The done flag is registered and cleared on reset or after completion.
+- This approach is a textbook shift-and-add multiplier with the multiplicand and accumulator shifted left together, the multiplier shifted right, accumulating the partial sum in the product register.
+- The pipeline has no FSM; control relies on counter and start signal to begin the operation.
+- This method minimizes combinational critical path per cycle by separating addition and shifting operations clearly.
+- The output is updated every cycle with the current product.

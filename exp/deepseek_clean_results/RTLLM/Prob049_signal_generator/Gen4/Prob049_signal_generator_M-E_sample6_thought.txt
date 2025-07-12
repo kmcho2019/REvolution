@@ -1,0 +1,17 @@
+Here's a novel approach using a bidirectional counter with boundary detection:
+
+1. Instead of using a separate state variable, we'll use the MSB of an extended 6-bit counter to implicitly track direction
+2. The 6-bit counter (count) will range from 0 to 63, where:
+   - 0-31 represents upward counting phase (triangle wave rising)
+   - 32-63 represents downward counting phase (triangle wave falling)
+3. The actual wave output is derived by either:
+   - Taking lower 5 bits directly during upward phase
+   - Taking inverted lower 5 bits during downward phase
+4. Boundary conditions are automatically handled by the counter wrap-around
+5. Reset initializes the counter to 0
+
+Key advantages:
+- No explicit direction or state variable needed
+- Boundary detection is implicit in counter overflow
+- Single arithmetic operation for counting
+- Wave generation uses simple bit selection and inversion

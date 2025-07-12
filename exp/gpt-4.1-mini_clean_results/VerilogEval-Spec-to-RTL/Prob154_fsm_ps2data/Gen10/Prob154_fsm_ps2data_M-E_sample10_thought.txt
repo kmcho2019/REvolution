@@ -1,0 +1,9 @@
+Use an explicit two-state FSM: IDLE and READING.  
+- In IDLE, scan input bytes until a byte with in[3]=1 is found; latch this byte as byte1 and transition to READING with a byte counter set to 1.  
+- In READING, shift incoming bytes into a 24-bit shift register to hold the message. Each new byte shifts the previous bytes left by 8 bits. Increment the counter.  
+- Once the counter reaches 3 (meaning three bytes have been received including the start byte), assert done and output the 24-bit message formed by the shift register.  
+- On done, reset back to IDLE to look for the next message start.  
+- Implement synchronous reset active high.  
+- Shift register approach simplifies byte storage by using a single register for the entire message, reducing area.  
+- The FSM logic and data path updates happen synchronously on clk posedge, done is asserted for exactly one clock cycle immediately after receiving the third byte.  
+- This architecture enables straightforward state control and compact data storage with low switching when idle.

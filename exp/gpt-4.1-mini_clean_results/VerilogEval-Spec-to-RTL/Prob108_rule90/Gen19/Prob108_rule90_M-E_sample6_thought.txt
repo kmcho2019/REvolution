@@ -1,0 +1,20 @@
+I will implement the 512-cell Rule 90 automaton as a single 512-bit shift register with combinational logic calculating the next state for all cells simultaneously. Instead of breaking the design into blocks, I will use bitwise operations on the entire 512-bit vector to compute the next state in one step.
+
+Specifically, since the next state of each cell is the XOR of its two neighbors, we can compute the next state vector by XOR-ing the vector shifted left by 1 (with zero padded on the right) and the vector shifted right by 1 (with zero padded on the left).
+
+This approach leverages Verilog's ability to do vector shifts and bitwise operations efficiently, resulting in a simple, compact design that updates the entire state in parallel each clock cycle.
+
+The load signal loads the input data directly into the state register; otherwise, the state is updated according to Rule 90.
+
+Boundary cells are naturally zero-padded by shifts as the shifted vectors introduce zeros at the edges.
+
+This design is minimal and elegant: just one register and combinational next state logic for the whole vector, no modular decomposition, reducing complexity and possibly improving synthesis quality.
+
+Advantages:
+- Very compact code and hardware.
+- No need for multiple block instances or boundary wiring.
+- Natural handling of boundary zero padding via shifts.
+- Full parallelism with minimal combinational logic (one vector XOR).
+- Clean synchronous logic with simple clocking and load.
+
+This design trades modularity for compactness and conceptual simplicity.

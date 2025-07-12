@@ -1,0 +1,30 @@
+To implement the state transition and output logic of the Moore state machine, we first need to decode the current state to determine which state we are in. We then use this decoded state along with the input `in` to determine the next state. Since this is a Moore machine, the output depends only on the current state.
+
+We will use the one-hot encoding provided to generate the next state and output logic. For the next state logic, we will create equations for each bit of the `next_state` based on the current state (`state`) and the input (`in`). For the output logic, we will use the current state to directly determine the output `out`.
+
+Given the one-hot encoding:
+- A = 4'b0001
+- B = 4'b0010
+- C = 4'b0100
+- D = 4'b1000
+
+And the state transition table:
+- A (4'b0001) -> A (in=0), B (in=1)
+- B (4'b0010) -> C (in=0), B (in=1)
+- C (4'b0100) -> A (in=0), D (in=1)
+- D (4'b1000) -> C (in=0), B (in=1)
+
+With output:
+- A, B, C output 0
+- D output 1
+
+We can derive the logic equations by inspection:
+- For the next state:
+  - Next state bit 0 (A) is set if current state is A and in=0, or if current state is C and in=0.
+  - Next state bit 1 (B) is set if current state is A and in=1, or if current state is B and in=1, or if current state is D and in=1, or if current state is D and in=0.
+  - Next state bit 2 (C) is set if current state is B and in=0, or if current state is D and in=0, or if current state is C and in=1.
+  - Next state bit 3 (D) is set if current state is C and in=1.
+- For the output:
+  - out is 1 if current state is D.
+
+These logic equations can then be directly implemented in Verilog.

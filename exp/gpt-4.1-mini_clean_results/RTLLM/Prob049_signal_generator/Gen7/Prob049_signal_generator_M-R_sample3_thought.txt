@@ -1,0 +1,19 @@
+Refactoring idea:
+
+Instead of using a single always block with a case statement to control both the state and wave registers, separate the state machine logic from the waveform update logic for improved clarity.
+
+1. Implement the "state" register as a 1-bit register updated on posedge clk or negedge rst_n. It holds the direction: 0 for increment, 1 for decrement.
+
+2. Implement "wave" register updated synchronously, but calculate its next value combinationally before assignment, depending on the current state and current wave value.
+
+3. Use an always block for state update and another always block for wave update.
+
+4. This separation helps with modular reasoning, might help synthesis tools identify state and data logic better, and improves readability.
+
+5. Use if-else for state transitions (rather than case), as only two states exist.
+
+6. Avoid redundant assignments: when wave reaches boundary, hold it for one cycle before switching direction.
+
+7. The reset remains asynchronous active-low.
+
+This refactoring maintains the exact functionality but structures the code into two clear sequential always blocks, improving maintainability and clarity without changing behavior.

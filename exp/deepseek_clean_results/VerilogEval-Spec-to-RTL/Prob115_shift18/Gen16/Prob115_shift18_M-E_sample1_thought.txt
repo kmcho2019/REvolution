@@ -1,0 +1,27 @@
+Novel Barrel Shifter Architecture:
+1. **Pre-computed Shift Options**:
+   - Compute all 4 possible shift operations in parallel
+   - Use dedicated paths for each shift amount/direction
+   - Implement arithmetic right shifts with sign extension masks
+
+2. **Optimized Sign Extension**:
+   - Generate sign extension masks only for right shifts
+   - Share sign bit replication logic between 1-bit and 8-bit right shifts
+   - Use bitwise OR with sign mask for efficient arithmetic right shift
+
+3. **Priority Encoder**:
+   - Implement a compact priority encoder for shift selection
+   - Combine load and enable signals efficiently
+   - Minimize control logic depth
+
+4. **Power Gating**:
+   - Use enable signal to gate shift computations
+   - Only activate the selected shift path
+   - Reduce dynamic power consumption
+
+Key Innovations:
+- Barrel shifter with parallel shift paths
+- Shared sign extension mask generation
+- Compact priority selection
+- Power-gated shift computations
+- Optimized arithmetic right shift implementation

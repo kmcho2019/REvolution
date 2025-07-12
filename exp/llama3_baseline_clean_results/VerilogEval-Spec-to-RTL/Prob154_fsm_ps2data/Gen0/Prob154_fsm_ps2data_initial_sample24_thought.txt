@@ -1,0 +1,7 @@
+To solve this problem, we will implement a finite state machine (FSM) with the following states: IDLE, BYTE1, BYTE2, and DONE. 
+- The IDLE state is the initial state where we discard bytes until we see one with in[3]=1. 
+- When we see a byte with in[3]=1, we move to the BYTE1 state and store this byte in out_bytes[23:16].
+- In the BYTE1 state, we wait for the next byte and store it in out_bytes[15:8].
+- In the BYTE2 state, we wait for the next byte and store it in out_bytes[7:0].
+- After receiving the third byte, we move to the DONE state and assert the done signal.
+- We will also implement a reset signal that resets the FSM to the IDLE state.

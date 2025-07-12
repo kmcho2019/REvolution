@@ -1,0 +1,9 @@
+Implement the serial-to-parallel converter using a single always block triggered on the clock edge with synchronous reset, incorporating both the shift register and the counter in one block to simplify control logic.
+
+The shift register loads the incoming serial bit at the MSB position and shifts previous bits down to LSB on each valid input. A 4-bit counter increments on each valid input and resets after reaching 8.
+
+When the counter reaches 8 (i.e., after 8 valid bits received), the parallel output register is loaded from the shift register and dout_valid is asserted for exactly one cycle.
+
+This approach reduces the number of always blocks and uses a single registered output to hold parallel data, emphasizing simplicity and resource efficiency. The counter counts from 0 to 7, outputting valid on the 8th bit.
+
+Non-blocking assignments maintain synchronous behavior and data coherence.

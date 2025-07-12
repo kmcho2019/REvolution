@@ -1,0 +1,13 @@
+Refactor the TopModule by removing the explicit popcount8 submodule and directly implementing the 8-bit population count as inline generate assignments within TopModule. This flattens the hierarchy, reducing module instantiations, and keeps the structure fully combinational using only continuous assignments. For each 8-bit chunk (including the last 7-bit chunk padded with zero), compute the 4-bit popcount by summing bits pairwise, explicitly in TopModule with generate loops.
+
+Then, use the same balanced adder tree to sum these partial counts to get the final 8-bit result, also implemented using generate loops. This inline expansion avoids the overhead of separate module instantiations and can improve synthesis optimizations.
+
+Advantages:
+- Flattens the design hierarchy by inlining the 8-bit popcount logic.
+- Maintains modular and scalable structure with generate loops.
+- Uses only assign statements and wires, no always blocks.
+- Balanced adder tree remains for timing efficiency.
+- Padding of last 7-bit chunk done inline.
+- Eliminates a small module instantiation, potentially improving area and timing.
+
+This approach keeps the core design idea (partition input, partial popcount, balanced summation) but with a different structural style focusing on inline logic and generate constructs.

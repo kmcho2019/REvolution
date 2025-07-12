@@ -1,0 +1,27 @@
+Here's the corrected approach addressing all feedback points:
+
+1. **Initial Pulse Fix**:
+   - Add a dedicated state for the f=1 pulse that lasts exactly one cycle
+   - Transition to MONITOR_X only after completing the pulse
+
+2. **Permanent g Handling**:
+   - Remove the g_permanent register and handle permanence directly in the state machine
+   - Once g is set permanently (either 1 or 0), stay in a terminal state until reset
+
+3. **Timeout Logic**:
+   - Only increment timeout counter if y=0
+   - Exit monitoring immediately if y=1 is detected
+
+4. **State Machine Simplification**:
+   - Add terminal states for permanent g=1 (DONE_G1) and g=0 (DONE_G0)
+   - Remove unnecessary transitions back to MONITOR_X
+
+5. **Clear State Transitions**:
+   - Each state has well-defined transitions based on conditions
+   - Terminal states only exit on reset
+
+Key improvements:
+- Strict one-cycle initial pulse
+- Proper permanent output handling
+- Correct timeout counting
+- Clear terminal state behavior

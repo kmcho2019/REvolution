@@ -1,0 +1,13 @@
+To improve the PPA of the decade counter counting from 1 to 10 with synchronous reset to 1, the main focus will be on simplifying the logic that detects the terminal count (decimal 10) and minimizing switching activity:
+
+1. Replace the bitwise detection of 10 (q[3] & ~q[2] & q[1] & ~q[0]) with a simple equality comparator (q == 4'd10). This often maps better to hardware (e.g., LUTs or dedicated comparators), potentially reducing area and improving power.
+
+2. Add an enable signal that disables counting (holds count stable) when reset is asserted or when the count reached 10 and is about to wrap. This reduces unnecessary toggling in the counter register, lowering dynamic power.
+
+3. Keep the synchronous reset logic simple by combining it with enable in the sequential block to avoid extra logic in combinational paths.
+
+4. Use minimal combinational logic for next state: if reset asserted, set 1; else if count is 10, wrap to 1; else increment by 1.
+
+5. Since 4-bit addition is inexpensive, keep the increment logic straightforward.
+
+This approach keeps the design simple and synchronous while reducing unnecessary toggling and simplifying combinational detection logic, leading to improved power and possibly area and timing.

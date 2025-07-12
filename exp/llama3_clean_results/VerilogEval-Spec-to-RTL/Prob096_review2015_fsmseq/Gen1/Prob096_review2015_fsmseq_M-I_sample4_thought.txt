@@ -1,0 +1,7 @@
+To improve the existing solution, we need to address the issues identified in the feedback and analysis. The primary concern is the incorrect implementation of the finite-state machine, specifically in handling the sequence detection and the transition to the "Shift" state. 
+
+Upon detecting the sequence "1101", the state machine should immediately transition to the "Shift" state, regardless of the next bit, and set 'start_shifting' to 1. This means that once the state machine reaches the "Seen 1101" state (state 4), it should transition to the "Shift" state (state 5) without any further conditions. 
+
+Additionally, the transition logic in the "Seen 11" state (state 2) needs correction. Currently, it checks for '~data' (0) to transition to the "Seen 110" state (state 3), which is incorrect for the sequence "1101". The correct logic should check for 'data' being 0 to proceed with the sequence.
+
+Lastly, to optimize for better PPA (Power, Performance, Area), we should ensure that the state machine is implemented with minimal logic, reducing the number of states or simplifying the transition logic where possible, without compromising the functionality.

@@ -1,0 +1,9 @@
+To optimize the Johnson counter implementation based on the PPA metrics:
+1. Timing Improvement: The negative WNS indicates timing violations. We'll pipeline the next-state calculation by splitting it into two stages (32-bit shifts each) to reduce the critical path.
+2. Power Optimization: Add an enable signal to prevent unnecessary state transitions when the counter isn't being used.
+3. Area Consideration: Maintain the current area-efficient approach since the 64-bit register is fundamental to the design.
+
+The improved version will:
+- Use a 2-stage pipelined shift operation
+- Include an enable signal for power gating
+- Maintain the same functionality but with better timing characteristics

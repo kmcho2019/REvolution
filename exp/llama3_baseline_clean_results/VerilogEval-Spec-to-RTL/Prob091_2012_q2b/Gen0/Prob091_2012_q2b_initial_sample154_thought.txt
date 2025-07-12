@@ -1,0 +1,5 @@
+To implement the state output logic for the given finite-state machine, we need to derive the next state logic for each flip-flop based on the current state and input. Since we are using a one-hot encoding, each state is represented by a single '1' in the 6-bit vector y. We can then use the current state and input w to determine the next state. 
+
+For Y1, which corresponds to state B (000010), we need to determine when to set the next state to B. From the state transition diagram, we can see that state A (000001) transitions to B when w = 1, and state D (001000) transitions to B when w = 1. Therefore, the next state logic for Y1 can be derived as y[0] & w | y[3] & w.
+
+For Y3, which corresponds to state D (001000), we need to determine when to set the next state to D. From the state transition diagram, we can see that state B (000010) transitions to D when w = 0, state C (000100) transitions to D when w = 0, state E (010000) transitions to D when w = 0, and state D (001000) transitions to A when w = 0, but we are considering the next state logic for D. Therefore, the next state logic for Y3 can be derived as y[1] & ~w | y[2] & ~w | y[4] & ~w.

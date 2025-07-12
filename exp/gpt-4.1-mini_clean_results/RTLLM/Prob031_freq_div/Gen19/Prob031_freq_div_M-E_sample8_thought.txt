@@ -1,0 +1,18 @@
+Use a single counter clocked by the input 100MHz clock that increments every cycle. The counter resets at the least common multiple (LCM) of the three clock periods in terms of input clock cycles. By comparing the counter against calculated toggle points, toggle each output clock exactly when needed to produce the desired frequencies.
+
+Specifically:
+- CLK_50 toggles every 1 input clock cycle (divide by 2).
+- CLK_10 toggles every 5 input clock cycles (divide by 10).
+- CLK_1 toggles every 50 input clock cycles (divide by 100).
+
+The LCM of toggling intervals is 50 cycles, so the counter will count from 0 to 49, then wrap. On reaching each toggle point (multiples of toggle intervals), the corresponding clock toggles.
+
+This approach uses a single counter, simplifying hardware and making toggle events synchronous to a single counter, improving timing and minimizing logic duplication.
+
+Advantages:
+- Only one counter required.
+- Toggle logic based on counter value comparisons.
+- Reduced resource usage and possibly better timing.
+- Easier to modify toggle intervals centrally.
+
+The reset synchronously sets all outputs to 0 and counter to 0.

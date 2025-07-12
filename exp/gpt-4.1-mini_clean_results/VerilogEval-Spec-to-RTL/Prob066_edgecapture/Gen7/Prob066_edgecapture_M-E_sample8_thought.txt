@@ -1,0 +1,16 @@
+Instead of storing the entire previous input vector and detecting falling edges directly from it, I will implement a per-bit "edge detector" register that captures the first detected falling edge for each bit and holds that state until reset.
+
+The idea:
+- Maintain a register, `edge_latched`, that tracks which bits have seen a falling edge (1->0).
+- On each clock, detect the falling edges by comparing current input to previous input stored in `prev_in`.
+- For bits where prev_in was 1 and current input is 0, set `edge_latched` bit to 1.
+- Once set, `edge_latched` bits remain set until reset.
+- Use a synchronous, active-high reset to clear both `prev_in` and `edge_latched`.
+- Output `edge_latched` as the module output.
+
+This method separates the edge detection logic from the latching logic explicitly, making it clearer and ensuring correct capture without relying on initialization assumptions. It also explicitly captures only the falling edges, and latches the detected bits indefinitely until reset.
+
+This approach guarantees:
+- Falling edges are detected only when the input bit transitions from 1 to 0 between clock cycles.
+- The output stays latched until reset.
+- Synchronous reset clears all state.

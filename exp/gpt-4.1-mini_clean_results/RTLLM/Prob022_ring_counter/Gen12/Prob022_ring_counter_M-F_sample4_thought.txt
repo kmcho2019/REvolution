@@ -1,0 +1,5 @@
+To avoid the tool's limitation with assigning the entire output vector in a combinational always block, I will keep 'out' as a registered output assigned only inside the sequential always block on the clock edge. Instead of using a separate combinational block for decoding, I will store the one-hot output directly in 'out' and update it by rotating the single '1' bit on each clock edge. 
+
+On reset, 'out' is initialized with only the LSB set. On each clock tick, the output is rotated left by one bit, wrapping around automatically due to the fixed width. This approach eliminates the need for a separate position register and a combinational case statement, assigns 'out' only inside a single sequential block, and stays fully compatible with the tool's restrictions.
+
+Thus, the state is directly the output vector, which shifts cyclically. This is a clean and straightforward solution for an 8-bit ring counter.

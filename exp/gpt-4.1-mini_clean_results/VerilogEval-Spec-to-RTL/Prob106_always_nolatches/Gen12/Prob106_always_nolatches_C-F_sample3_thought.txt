@@ -1,0 +1,14 @@
+I will fuse the strengths of both previous examples by using a single always_comb (always @*) block with a case statement on the lower byte of the scancode after confirming the upper byte is 8'hE0. This approach groups all output assignments in one place, ensuring mutual exclusivity, zero latch risk, and clean combinational logic.
+
+To further optimize power and reduce unnecessary toggling, I will check if the outputs actually need to change before assigning them, i.e., only update outputs when scancode changes. This can be done by holding previous outputs in internal regs and updating outputs only when the decoded direction differs, but since the problem scope is simple, this can be omitted to keep clarity.
+
+Instead, I will ensure the default output assignments are made once before the case, and avoid redundant resets inside the case's default. Also, I will make outputs one-hot signals asserted by case arms, enhancing area and synthesis optimization.
+
+This design combines:
+- Clarity and maintainability via a case statement
+- Efficient prefix check (upper byte == 8'hE0) once
+- Mutual exclusivity of outputs naturally enforced
+- Clean, zero-latch combinational logic with reg outputs assigned in one always block
+- Minimized redundant assignments to reduce power
+
+Overall, this is a clean, efficient, and power-aware combinational decoder for the four arrow keys.

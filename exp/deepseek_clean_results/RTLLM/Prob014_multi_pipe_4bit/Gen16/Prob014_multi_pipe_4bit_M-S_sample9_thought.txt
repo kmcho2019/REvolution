@@ -1,0 +1,23 @@
+Simplified 4-bit Pipelined Multiplier Design:
+
+Key Simplifications:
+1. **Direct Partial Product Generation**: Eliminate conditional generation for simplicity (small area impact for 4-bit)
+2. **Single Pipeline Stage**: Use just one register stage to store intermediate sums
+3. **Simplified Reset Logic**: Maintain only essential reset functionality
+4. **Straightforward Addition**: Use simple sequential addition rather than tree structure
+5. **Reduced Register Count**: Minimize intermediate storage while maintaining pipeline
+
+Operation Flow:
+1. First Cycle:
+   - Generate all partial products (shifted versions of multiplicand)
+   - Sum first two partial products (pp0 + pp1)
+   - Register intermediate sum
+
+2. Second Cycle:
+   - Add remaining partial products (pp2 + pp3)
+   - Combine with previous sum
+   - Output final result
+
+Reset Behavior:
+- Clear all registers synchronously
+- Simple and effective reset implementation

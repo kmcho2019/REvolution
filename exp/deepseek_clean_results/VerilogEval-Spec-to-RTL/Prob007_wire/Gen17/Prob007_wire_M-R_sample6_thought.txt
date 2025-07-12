@@ -1,0 +1,11 @@
+The original implementation uses a continuous assignment (assign statement) which is already the most efficient way to implement a wire connection in Verilog. For refactoring purposes, we can demonstrate an alternative structural implementation that achieves the same functionality but uses different Verilog constructs. Here we'll use:
+
+1. An always block with sensitivity to the input
+2. A reg type for the output (though functionally identical to wire in this case)
+3. Explicit blocking assignment
+
+This demonstrates that the same wire behavior can be implemented using procedural assignment, though it's less optimal for this simple case. The key differences are:
+- Uses procedural assignment instead of continuous assignment
+- Requires reg type declaration for the output
+- Still maintains zero-delay behavior
+- Functionally identical but slightly more verbose

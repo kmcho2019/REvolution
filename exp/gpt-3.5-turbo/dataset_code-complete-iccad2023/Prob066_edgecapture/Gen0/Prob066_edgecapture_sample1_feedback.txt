@@ -1,5 +1,0 @@
-The main issue in the code is within the always block. The variable `in_delayed` is correctly capturing the input delayed by one clock cycle. However, the for loop iterating over each bit of the 32-bit vector is comparing the current input `in` with the delayed input `in_delayed`, instead of comparing `in` in the current clock cycle with `in_delayed` in the previous clock cycle. This incorrect comparison logic is causing false triggers for capturing the change from 1 to 0.
-
-Additionally, the reset condition inside the for loop should be outside to ensure that all bits are reset simultaneously. As it stands now, only one bit at a time will be reset based on the value of `reset`.
-
-These issues lead to incorrect behavior and mismatches in the simulation results.

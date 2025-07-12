@@ -1,0 +1,15 @@
+The problem can be solved by implementing a Moore-type finite state machine (FSM) in Verilog. The FSM will have states to track the number of consecutive 1s received and to identify the three sequences specified. 
+
+We can define the following states:
+- S0: Reset state or no consecutive 1s
+- S1: One consecutive 1 received
+- S2: Two consecutive 1s received
+- S3: Three consecutive 1s received
+- S4: Four consecutive 1s received
+- S5: Five consecutive 1s received
+- S6: Six consecutive 1s received (potential flag)
+- S7: Seven or more consecutive 1s (error)
+
+Transitions between states will be based on the input 'in'. We will also have output logic to assert 'disc', 'flag', and 'err' based on the current state and input.
+
+When the FSM is in S5 and receives a '0', it should assert 'disc' to indicate that the '0' should be discarded. When the FSM is in S6 and receives a '0', it should assert 'flag' to indicate the start or end of a frame. If the FSM is in S7, it should assert 'err' to indicate an error.

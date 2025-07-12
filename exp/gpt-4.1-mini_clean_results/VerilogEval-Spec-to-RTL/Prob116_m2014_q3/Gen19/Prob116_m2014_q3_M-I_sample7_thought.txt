@@ -1,0 +1,36 @@
+The original solution uses Gray-to-binary decoding and a case statement with 16 entries. However, the Karnaugh map is already provided with Gray-coded rows and columns, and the inputs correspond directly to the Gray-coded addresses.
+
+Since don't-care values allow flexibility, I can simplify the logic by directly expressing `f` as a Boolean function of inputs `x[3:0]` without Gray decoding, thus eliminating XOR gates and the case statement. This will reduce logic depth and area.
+
+I'll analyze the Karnaugh map directly with the given input ordering (x[3]=x4, x[2]=x3, x[1]=x2, x[0]=x1) and use the map to extract a minimal Sum-of-Products (SOP) expression in terms of `x[3:0]` as Gray-coded variables.
+
+Mapping Karnaugh map positions to inputs:
+
+Rows (x3 x4): x3 = x[2], x4 = x[3]
+Cols (x1 x2): x1 = x[0], x2 = x[1]
+
+From the Karnaugh map:
+
+                x1x2
+  x3x4  00  01  11  10
+  00    d    0    d    d
+  01    0    d    1    0
+  11    1    1    d    d
+  10    1    1    0    d
+
+Where 'd' can be 0 or 1 for optimization.
+
+By careful inspection and choosing don't cares as convenient, the minimal expression derived is:
+
+f = (~x4 &  x3 &  x2)  // row=01, col=11 → f=1 (x4=0, x3=1, x2=1)
+  | ( x4 & ~x3 & ~x2)  // row=10, col=00 → f=1 (x4=1, x3=0, x2=0)
+  | ( x4 & ~x3 &  x2)  // row=10, col=01 → f=1 (x4=1, x3=0, x2=1)
+  | ( x4 &  x3 & ~x2)  // row=11, col=00 → f=1 (x4=1, x3=1, x2=0)
+  | ( x4 &  x3 &  x2)  // row=11, col=01 → f=1 (x4=1, x3=1, x2=1)
+  | (~x4 &  x3 & ~x2 & ~x1); // row=01, col=10 → f=1 (x4=0,x3=1,x2=0,x1=0)
+
+This covers all 1s in the map and assigns don't-cares as 0 or 1 to simplify.
+
+Implementing this logic directly with AND/OR gates removes the need for Gray-to-binary conversion and case statements, reducing area and power.
+
+This direct combinational SOP expression leads to minimal logic depth and gate count, improving PPA metrics.

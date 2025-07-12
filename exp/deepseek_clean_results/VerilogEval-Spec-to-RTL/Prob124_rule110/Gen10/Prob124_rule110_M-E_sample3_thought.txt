@@ -1,0 +1,13 @@
+The key innovation in this solution is a shift-register based neighbor access pattern combined with pipelined computation:
+
+1. **Shift-Register Neighbor Access**: Instead of calculating neighbors for each bit individually, we'll use a 3-stage shift register to naturally provide the left, center, and right values for each computation. This eliminates boundary condition checks and reduces logic.
+
+2. **Pipelined Computation**: We'll split the Rule 110 computation into two pipeline stages:
+   - Stage 1: Compute (center XOR right) and (center OR right)
+   - Stage 2: Combine with left neighbor using the remaining logic
+
+3. **Circular Boundary Handling**: By treating the array as circular (connecting first and last elements), we eliminate special boundary logic while maintaining correct behavior (since Rule 110 boundaries are typically zero anyway).
+
+4. **Parallel Processing**: The pipelined approach allows higher clock speeds while maintaining throughput of one complete update per cycle.
+
+This architecture reduces critical path delay, minimizes redundant computations, and provides more balanced pipeline stages.

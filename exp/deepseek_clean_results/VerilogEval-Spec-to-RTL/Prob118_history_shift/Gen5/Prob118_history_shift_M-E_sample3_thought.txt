@@ -1,0 +1,7 @@
+The new architecture employs:
+1. Dual history registers (main and speculative) to separate prediction updates from training updates
+2. The speculative register handles ongoing predictions while the main register holds confirmed history
+3. On misprediction, we roll back by combining the main history with actual branch outcome
+4. This reduces critical path by separating prediction and training paths
+5. The design naturally handles concurrent predict/update cases without priority logic
+6. Asynchronous reset initializes both registers

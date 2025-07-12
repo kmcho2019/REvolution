@@ -1,0 +1,10 @@
+Fuse the best ideas from both examples by:
+1. Keeping explicit, separate push_en and pop_en signals for clarity and mutual exclusivity.
+2. Precompute push_addr and pop_addr combinationally to simplify addressing.
+3. Use a single always_ff block for synchronous updates of SP, stack_mem, and dataOut.
+4. Update dataOut only on pop operations to minimize switching.
+5. Update SP only when an operation is valid (push or pop) to reduce toggling and power.
+6. Initialize stack_mem to zero on reset using a for-loop.
+7. Assign EMPTY and FULL flags combinationally from SP for fast, simple logic.
+8. Avoid clearing memory on pop for power saving.
+This fusion balances clarity, performance, power efficiency, and synthesis quality, resulting in an easy-to-understand and optimized LIFO buffer implementation.

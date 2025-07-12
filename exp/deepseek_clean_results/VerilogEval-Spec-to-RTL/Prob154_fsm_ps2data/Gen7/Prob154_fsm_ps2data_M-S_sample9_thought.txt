@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. State Machine: Use a 2-bit state register to track message collection progress (IDLE, BYTE1, BYTE2)
+2. Data Collection: Store each incoming byte directly into its position in the output register when received
+3. Output Control: Only update out_bytes when actually storing bytes and assert done immediately after third byte
+4. Reset Handling: Synchronous reset clears state and outputs
+5. Power Optimization: Only update registers when necessary (during state transitions)
+
+Key Simplifications:
+- Remove redundant default assignments
+- Direct byte storage without shifting
+- Minimal state transitions
+- Output remains don't-care when not done
+- Clear state machine logic with no unnecessary operations

@@ -1,0 +1,18 @@
+Fusion Strategy:
+1. Combine the parallel bitwise comparison from Example 1 with the hierarchical priority encoding from Example 2
+2. Optimize the equality check to be performed in a single operation (like Example 1) rather than chained ANDs
+3. Implement the magnitude comparison using a hybrid approach:
+   - Use parallel bit-greater signals (Example 1)
+   - Apply hierarchical priority only when needed (Example 2)
+4. Key improvements:
+   - Single-cycle equality check reduces critical path
+   - Parallel bit-greater calculation enables faster magnitude comparison
+   - Hierarchical priority only applied to ambiguous cases
+   - Maintain mutual exclusion by construction
+   - Reduced switching activity compared to pure hierarchical approach
+
+The new design will:
+1. Calculate equality in parallel for all bits (A == B)
+2. Compute bitwise greater signals in parallel (A & ~B)
+3. Apply hierarchical priority only when higher bits are equal
+4. Use optimized output logic that combines both approaches

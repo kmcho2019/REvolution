@@ -1,0 +1,22 @@
+To correctly implement the Karnaugh map, we need to analyze each output mux_in[x] based on the cd inputs for each ab case:
+
+1. mux_in[0] (ab=00):
+   - Should be 1 only when cd=10 (0 otherwise)
+   - This is exactly when c=1 and d=0
+
+2. mux_in[1] (ab=01):
+   - Always 0 (matches K-map)
+
+3. mux_in[2] (ab=11):
+   - Should be 1 when cd=00 or 11
+   - This is when c equals d (XNOR)
+
+4. mux_in[3] (ab=10):
+   - Should be 1 when cd=00,11,10
+   - This is when d=0 or (c=1 and d=1)
+
+Refactoring approach:
+1. Use direct assign statements for clarity
+2. Implement each output independently based on its truth table
+3. Use minimal logic expressions that match the K-map exactly
+4. Keep the 4-to-1 mux interface intact

@@ -1,0 +1,15 @@
+Novel Architectural Idea: Pipelined Rule 90 with Clock Gating
+1. Instead of computing all 512 bits in one cycle, process them in 64-bit chunks over 8 cycles (512/64)
+2. Implement a 2-stage pipeline:
+   - Stage 1: Compute next state for current 64-bit chunk
+   - Stage 2: Register the computed chunk
+3. Add clock gating to reduce power when load is inactive
+4. Use circular boundary handling by rotating the first and last bits
+5. Maintain the same interface but internally process data in chunks
+6. Add a ready signal to indicate when full computation is complete
+
+Benefits:
+- Significantly reduces critical path by processing smaller chunks
+- Lower power consumption due to clock gating and reduced switching
+- Better timing closure with pipelined approach
+- Maintains same functionality with slightly increased latency

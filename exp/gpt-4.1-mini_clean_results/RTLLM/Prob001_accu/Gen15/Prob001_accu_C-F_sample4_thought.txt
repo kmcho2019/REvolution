@@ -1,0 +1,14 @@
+Fusion strategy for an enhanced accumulator module:
+
+1. Maintain synchronous active-low reset for reliability and standard practice.
+2. Use a combinational wire `acc_next` to compute the next accumulator value, improving timing clarity.
+3. Update accumulator and count registers only when `valid_in` is asserted to reduce unnecessary toggling and dynamic power.
+4. Use a 2-bit counter counting from 0 to 3 for simplicity and minimal resource use.
+5. When the counter hits 3 and a valid input arrives, output the sum of the accumulated data plus current input in `data_out`.
+6. Generate a one-cycle `valid_out` pulse synchronous to the output event.
+7. Immediately reset accumulator and counter after output, enabling prompt readiness for the next batch.
+8. Initialize all outputs and registers properly under reset.
+9. Add comments for clarity and maintenance.
+10. The design remains clean, low-power, timing friendly, and area efficient by combining power gating ideas and clear combinational logic.
+
+This fusion leverages power saving by updating registers only on valid input, uses a clear combinational addition step, and maintains minimal and synchronous control logic with precise output timing.

@@ -1,0 +1,19 @@
+Improved 3.5x fractional divider design:
+
+1. Core Issues Addressed:
+   - Fixed phase alignment by properly implementing half-cycle delay
+   - Corrected duty cycle imbalance through precise edge control
+   - Maintained exact 3.5x division ratio with proper timing
+
+2. Key Improvements:
+   - Separate counter thresholds for rising and falling edges
+   - True half-cycle phase shift using negedge sampling
+   - Optimized logic for better timing closure
+   - Clear state transitions for reliable operation
+
+3. Implementation Strategy:
+   - Use counter to track 7 states (0-6)
+   - Generate base clock with 4-cycle high, 3-cycle low
+   - Create phase-shifted version by sampling counter at negedge
+   - Combine clocks with OR operation for final output
+   - Ensure clean transitions during reset

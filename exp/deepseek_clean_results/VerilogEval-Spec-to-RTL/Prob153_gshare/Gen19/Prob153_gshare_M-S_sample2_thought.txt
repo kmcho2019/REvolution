@@ -1,0 +1,13 @@
+To simplify the gshare branch predictor while maintaining functionality:
+1. Remove the generate block for PHT updates and use a single always block for updates
+2. Combine prediction and training index calculations into one XOR operation
+3. Simplify GHR update logic by using a single conditional expression
+4. Remove unnecessary intermediate wires for next_pht values
+5. Initialize PHT to weakly taken (2'b01) on reset for better initial prediction accuracy
+6. Maintain same timing behavior with PHT updates on next cycle
+
+Key simplifications:
+- Eliminated generate block complexity
+- Reduced number of intermediate signals
+- Simplified control flow for GHR updates
+- Maintained same prediction accuracy with simpler structure

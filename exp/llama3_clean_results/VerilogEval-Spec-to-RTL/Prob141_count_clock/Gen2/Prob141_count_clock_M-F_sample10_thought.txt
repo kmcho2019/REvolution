@@ -1,0 +1,9 @@
+To address the functional errors in the provided Verilog code, we need to focus on three main areas: the reset functionality, the conversion of internal counters to BCD for output, and the logic determining the AM/PM indicator. 
+
+First, the reset functionality should set all internal counters ('seconds', 'minutes', 'hours') and output signals ('hh', 'mm', 'ss', 'pm') to their initial states, representing "12:00:00 AM". This includes correctly resetting 'hours' to 0 (since 0 represents 12 AM in a 12-hour format) and ensuring 'pm' is set to 0 (AM).
+
+Second, the conversion of internal counters to BCD for output signals ('hh', 'mm', 'ss') needs to be accurate. Since the counters are designed to handle BCD encoding directly, we should ensure that the values are correctly represented in BCD format without unnecessary bit manipulations.
+
+Lastly, the AM/PM logic must be corrected. The PM indicator should be set when the 'hours' counter is between 6 and 11 (inclusive), representing the hours from 6 AM to 11 AM, and it should toggle at 12 (noon) and midnight. However, considering the internal 'hours' counter runs from 0 to 11, we should adjust the logic to correctly reflect AM/PM based on the hour.
+
+By addressing these areas, we can ensure the Verilog module functions as intended, accurately displaying time in a 12-hour format with AM/PM indicator.

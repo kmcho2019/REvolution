@@ -1,0 +1,23 @@
+To correct and optimize the implementation:
+
+1. For out_sop (Sum-of-Products):
+   - Strictly implement only the required true cases (2,7,15)
+   - Don't include any don't-care conditions in the output
+   - Minimize using Karnaugh map techniques:
+     * 2 (0010): ~a & b & ~c & d
+     * 7 (0111): ~a & b & c & d
+     * 15 (1111): a & b & c & d
+   - Can combine terms 7 and 15 using b & c & d (since a is don't-care between them)
+
+2. For out_pos (Product-of-Sums):
+   - Identify all false cases (0,1,4,5,6,9,10,13,14)
+   - Convert each to a sum term by inverting the bits
+   - Combine using AND operations
+   - Minimize by finding common literals in sum terms
+   - Example: Many false cases share ~a or ~d in their sum terms
+
+3. Key improvements:
+   - Strict adherence to specified truth table
+   - Proper handling of don't-care conditions
+   - More efficient logic minimization
+   - Clear separation between SOP and POS implementations

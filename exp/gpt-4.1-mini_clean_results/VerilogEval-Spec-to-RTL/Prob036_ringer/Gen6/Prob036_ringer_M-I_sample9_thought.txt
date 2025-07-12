@@ -1,0 +1,16 @@
+The original implementation is already minimal, using a concise conditional assignment with a concatenation to produce mutually exclusive outputs. Since the PPA metrics are very good with zero timing slack and low power/area, there is limited room for improvement in logic complexity.
+
+However, an alternative style uses explicit boolean expressions for ringer and motor outputs, which may make synthesis tools generate even simpler gates (AND, NOT) instead of a conditional operator. This might marginally improve area and power by avoiding multiplexers in the hardware implementation of the ternary operator.
+
+The new approach:
+- ringer is high only when ring=1 and vibrate_mode=0.
+- motor is high only when ring=1 and vibrate_mode=1.
+- Both outputs default to 0 when ring=0.
+
+This yields straightforward AND/NOT logic:
+  ringer = ring & ~vibrate_mode;
+  motor = ring & vibrate_mode;
+
+This is logically equivalent, simpler, and can yield minimal gate count in synthesis.
+
+Hence, the improvement strategy is to replace the conditional operator with boolean AND/NOT expressions to potentially reduce gate count and improve area and power while maintaining the same functionality and timing.

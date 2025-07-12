@@ -1,0 +1,23 @@
+Implement the TopModule so that the 4 inputs to the 4-to-1 mux (mux_in[3:0]) are functions of c and d only, corresponding to the Karnaugh map columns for ab=00,01,11,10 respectively.
+
+We use only 2-to-1 multiplexers (mux2) to implement all logic, including inverters, AND, and OR, as allowed.
+
+From the K-map columns:
+
+- For ab=00 (mux_in[0]): outputs are {0,1,1,1} for cd={00,01,11,10}
+  This is function: mux_in[0] = c + d
+  Implement OR as: OR(a,b) = NOT(AND(NOT a, NOT b))
+  So, first invert c and d, then AND them, then invert result.
+
+- For ab=01 (mux_in[1]): all zeros → assign 0 directly.
+
+- For ab=11 (mux_in[2]): outputs {0,0,1,0} for cd
+  This is c AND d.
+  Implement AND with mux2: sel=c; in0=0; in1=d
+
+- For ab=10 (mux_in[3]): outputs {1,0,1,1} for cd
+  Observing the pattern: mux_in[3] = mux2(sel=d, in0=1, in1=c)
+
+Implement a 2-to-1 mux module, use it for inverters, AND, OR as above, then combine results into mux_in[3:0].
+
+This design uses minimal mux2 instances and meets the K-map functions exactly without extra gates or complexity.

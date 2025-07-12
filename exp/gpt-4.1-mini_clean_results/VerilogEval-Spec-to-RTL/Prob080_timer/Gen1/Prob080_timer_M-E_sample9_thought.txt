@@ -1,0 +1,25 @@
+Implement the countdown timer using a simple shift-register approach that uses only one D flip-flop explicitly by encoding the count state in a 10-bit shift register. On load, the shift register is loaded with a 1 followed by the count-1 zeros, so the timer counts down by shifting this register right each clock cycle. When the register reaches all zeros, the terminal count is asserted.
+
+Specifically:
+
+- On load=1, if data>0, load a shift register with a '1' in the MSB and the rest zeros, shifted according to data to represent the count. For example, a 10-bit shift register where a single '1' shifts right every clock represents the countdown.
+
+- On each clock when load=0 and the shift register is non-zero, shift right by 1 bit.
+
+- When shift register is zero, assert tc.
+
+This uses a single D flip-flop explicitly as the serial shift register element and encodes the countdown position.
+
+Because data is 10 bits, we can load the shift register as:
+- shift_reg = 1 << (data - 1) if data != 0
+- shift_reg = 0 if data==0
+
+This approach represents a countdown as the '1' shifting from MSB to LSB, and once it shifts out (shift_reg=0), timer has timed out.
+
+This method adheres to using a single D flip-flop cell in hardware to implement the shift register (serial shift register), as the problem hints at, while counting down a 10-bit number.
+
+The output tc is high when shift register is zero (countdown done).
+
+Note: When data=0, timer immediately times out (tc=1).
+
+This is a novel approach compared to a parallel down-counter.

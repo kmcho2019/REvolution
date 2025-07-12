@@ -1,0 +1,9 @@
+To improve PPA, I will merge the output register into the state register block to reduce sequential logic stages and improve timing. Instead of a separate always block for output z, I'll compute z directly in the state register block based on the registered inversion_bit and input x, capturing the output in the same clock cycle.
+
+However, since the output is Moore-type (depends only on state), and input x changes each cycle, we can't directly use x inside the state register block without violating Moore FSM principles. To keep Moore FSM correctness, I'll register x in a separate register (x_d) each cycle, then compute output z = x_d ^ inversion_bit in the same always block. This ensures output depends only on registered signals (state and x_d), not directly on asynchronous input.
+
+By registering x input first, the output logic uses only registered signals, preserving synchronous design and reducing critical path. This also reduces the number of flip-flops clocked separately and could improve timing slightly by collapsing two always blocks into one.
+
+Additionally, I'll keep the asynchronous reset only in the state register block and remove it from output register for clean reset behavior.
+
+This combined approach maintains Moore FSM semantics, keeps asynchronous reset on state and inversion_bit, and reduces sequential logic stages, potentially improving timing and power without adding complexity or area.

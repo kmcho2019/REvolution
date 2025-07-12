@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. State Machine Structure: Adopt the explicit state machine from Example 1 (IDLE, LOAD, CALC, DONE) for clearer control flow and better timing.
+2. Counter Optimization: Use a 4-bit counter (0-15) from Example 1 instead of 5-bit (0-16) from Example 2 for area efficiency.
+3. Shift Implementation: Keep the barrel shifter approach from Example 1 but optimize power by only calculating shifts when needed.
+4. Power Management: Add conditional operations to reduce unnecessary switching activity (from Example 2 feedback).
+5. Output Handling: Use continuous assignments for outputs as in Example 1 for simpler code structure.
+6. Timing Optimization: Pre-compute shifted versions of breg in parallel to break up the critical path.
+
+The fused design combines the best aspects while addressing the PPA issues:
+- Better timing through parallel shift computation
+- Lower power through conditional operations
+- Smaller area through optimized counter
+- Clearer control through state machine

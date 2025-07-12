@@ -1,0 +1,7 @@
+Implement the ROM using a case statement within an always @(*) combinational block instead of an array. This removes the reg array and replaces it with explicit data assignments per address. This approach is very synthesis-friendly and results in logic optimized directly to a multiplexer tree by synthesis tools.
+
+The 16-bit output dout is declared as reg since it's assigned inside an always block. The ROM contents for addresses 0 to 3 are specified as constants within the case statement; other addresses default to zero. This method makes the ROM contents very explicit and easy to modify or extend.
+
+This approach is beneficial when the ROM size is small or when targeting technologies where case-based logic leads to optimized LUT packing rather than memory block inference. It also makes it clear what data is assigned for each address without needing an initial block.
+
+Overall, this design trades off compactness of memory declaration for explicit, direct combinational logic implementation of ROM content.

@@ -1,0 +1,14 @@
+Refactor the floating-point multiplier by replacing the multi-stage sequential pipeline registers with a combination of combinational logic and a single state machine controlling the operation cycle. The internal operations (extracting sign, exponent, mantissa, handling special cases, normalization, multiplication, rounding) will be organized into separate combinational blocks executed in sequence across multiple clock cycles, driven by an explicit counter state machine. This approach avoids deep pipelining registers and combines more logic in each cycle but keeps the sequential process clear and controlled by the counter.
+
+Key points in the refactoring:
+- Use a 3-bit counter to move through defined operation states (extract, multiply, normalize & round, output).
+- Use combinational assignments (assign and always @*) for internal computations that depend on inputs or intermediate results.
+- Registers only hold the results between states and the final output.
+- Separate special case detection into a combinational block at the beginning.
+- Handle normalization and rounding as combinational logic activated during the normalization state.
+- Maintain the same signal names and widths as requested.
+- Manage sticky bit with reduction operators in combinational logic.
+- Final output is registered synchronously at the output state.
+- Overall, the design becomes more of a sequential state machine with combinational datapath, improving readability and simplifying the pipeline stages by explicit state control.
+
+This refactoring preserves IEEE-754 compliance and functionality while providing a clear structure using an FSM approach with a 3-bit cycle counter and combinational datapath logic, reducing pipeline registers, and using assign statements where practical.

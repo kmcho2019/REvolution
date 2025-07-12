@@ -1,0 +1,27 @@
+Fix timing alignment issues by delaying the transition out of reset by one clock cycle after resetn is deasserted before asserting f=1 for one cycle. This means adding an intermediate state after reset release that waits one cycle before asserting f=1.
+
+Also, fix y_count increment timing: start counting y cycles from zero on entering S_MONITOR_Y, then increment y_count at the *next* clock cycles, not immediately at entry. This avoids off-by-one timing errors in monitoring y.
+
+Adjust state transitions accordingly:
+- S_RESET: stays until resetn=1.
+- S_WAIT_AFTER_RESET: wait one cycle after reset release, outputs f=0.
+- S_F_PULSE: assert f=1 for one cycle.
+- S_WAIT_G: wait for pattern detection pulse on x.
+- S_MONITOR_Y: assert g=1, monitor y for up to two cycles.
+- S_G0_PERM: g=0 forever until reset.
+
+Also, ensure outputs f and g are registered and assigned properly each cycle.
+
+This provides correct sequencing:
+- FSM holds in reset during resetn=0.
+- When resetn=1, wait one cycle (S_WAIT_AFTER_RESET).
+- Then output f=1 for one cycle (S_F_PULSE).
+- Then wait for 101 pattern detection on x.
+- On pattern detection, assert g=1 (S_MONITOR_Y).
+- Monitor y for up to two cycles.
+- If y=1 within 2 cycles, keep g=1 forever.
+- Else, g=0 forever until reset.
+
+SequenceDetector101 module remains the same.
+
+This fixes the main timing mismatches highlighted in the feedback.

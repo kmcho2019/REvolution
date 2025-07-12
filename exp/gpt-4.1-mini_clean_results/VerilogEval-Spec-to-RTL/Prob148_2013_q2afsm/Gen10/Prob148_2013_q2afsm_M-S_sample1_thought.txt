@@ -1,0 +1,12 @@
+Simplify the FSM by using a 2-bit binary encoding for the four states: A, B, C, and D. This reduces the state register size from 3 bits to 2 bits, minimizing flip-flops and simplifying logic. We will assign state codes as follows:
+
+- A = 2'b00 (idle, no grant)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+The next state logic prioritizes requests in state A by checking r[0], then r[1], then r[2]. In grant states B, C, or D, the FSM stays in that state if the corresponding request remains asserted; otherwise, it returns to state A.
+
+Output grants g are assigned combinationally based on the current state.
+
+This design uses fewer registers, simpler state logic, and still meets all functional requirements with synchronous active-low reset and positive clock edge triggering.

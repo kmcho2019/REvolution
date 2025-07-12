@@ -1,0 +1,9 @@
+Implement the FSM using a single always block triggered by clk to model a registered state holding the current FSM state internally. Decode the next state and output z from the registered current state and input x using combinational logic within this block.
+
+Output Y0 will be driven from the least significant bit of the registered next state. This approach encapsulates the state register and FSM next state/output logic tightly together, resulting in a conventional Moore FSM style with registered outputs derived directly from state transitions.
+
+This design stores the state internally rather than receiving it as input, improving encapsulation and making the module self-contained. The input y is used as the initial state loading input on reset (when clk is low on first run) or could be used to asynchronously set initial state, but here we assume the FSM starts from y input and then runs forward internally.
+
+This internal state register and synchronous update model is a common, synthesizable FSM implementation style that enables easier timing and power optimizations by synthesis tools. Output z is derived combinationally from current state, and Y0 reflects the next state's LSB synchronized on clk.
+
+This design is different from the pure combinational next state design and provides a fully synchronous FSM with registered state, suitable for sequential logic integration.

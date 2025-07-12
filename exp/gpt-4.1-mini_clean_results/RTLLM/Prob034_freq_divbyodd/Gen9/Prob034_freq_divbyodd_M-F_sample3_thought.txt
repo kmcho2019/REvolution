@@ -1,0 +1,15 @@
+The main issue in the provided code is toggling clk_div1 and clk_div2 twice per NUM_DIV cycle (once at the half count and once at the full count), which causes the divided clock outputs to toggle too frequently, breaking the correct division ratio and waveform.
+
+To fix this:
+
+- Each clk_div (clk_div1 on posedge clk and clk_div2 on negedge clk) should toggle only once per full count cycle (i.e., when the corresponding counter reaches NUM_DIV - 1).
+
+- The counters cnt1 and cnt2 count modulo NUM_DIV separately on posedge and negedge clk, respectively.
+
+- The OR of clk_div1 and clk_div2 produces the final output clk_div, effectively dividing the frequency by the odd number NUM_DIV while improving the duty cycle.
+
+- This approach ensures that toggling happens once per full counting cycle per clock edge domain, yielding the correct frequency division and clean output waveform.
+
+- Reset logic remains unchanged, initializing counters and clk_div registers to zero.
+
+This fix respects the original approach but removes the extra toggling at the half count, thereby correcting the frequency and duty cycle of the divided output.

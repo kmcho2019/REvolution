@@ -1,0 +1,9 @@
+I will implement the FSM with explicit states representing both the direction and mode combined, eliminating separate direction and mode registers. The FSM will have six states: WALK_LEFT, WALK_RIGHT, DIG_LEFT, DIG_RIGHT, FALL_LEFT, FALL_RIGHT, plus a SPLAT state. This encoding simplifies state transitions by embedding direction in the state itself, removing direction as a separate bit. 
+
+The fall timer will be a 5-bit saturating counter starting at zero and incrementing only in falling states, resetting to zero whenever not falling. The asynchronous reset initializes to WALK_LEFT. 
+
+The next state logic prioritizes falling (if ground=0), then digging (if dig=1 and on ground), then switching walking direction upon bump(s). While falling or digging, bumps and dig input are ignored.
+
+Moore outputs are decoded from states, activating walk_left, walk_right, digging, or aaah accordingly. Upon splatting, all outputs go to zero.
+
+This approach reduces registers and combines direction and mode states in one register for clarity and potentially simpler next-state logic.

@@ -1,0 +1,10 @@
+From the truth table, q is high only when either a or b is 1 AND either c or d is 1. The original implementation used q = (a | b) & (c | d). 
+
+A novel approach is to implement the same logic using multiplexers instead of direct Boolean operators. For example, use a 2-to-1 multiplexer to select between inputs based on other inputs, ultimately deriving q. This architectural style can sometimes offer different implementation tradeoffs (for instance, optimized in certain FPGA or ASIC libraries).
+
+Specifically, implement:
+- First compute ab_or = a | b by using a 2:1 mux: output = select ? 1 : b; select = a.
+- Similarly compute cd_or = c | d using the same approach.
+- Then q = ab_or & cd_or, implemented by a 2:1 mux with one input 0 and the other cd_or, selected by ab_or.
+
+This replaces direct OR and AND gates with mux-based logic, demonstrating a different architecture that might map differently in hardware for PPA tradeoffs.

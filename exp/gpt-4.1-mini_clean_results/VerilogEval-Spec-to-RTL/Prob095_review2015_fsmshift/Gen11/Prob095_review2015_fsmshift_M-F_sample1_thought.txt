@@ -1,0 +1,11 @@
+The feedback points out that using SystemVerilog features like typedef enum and logic types can cause compilation issues in a Verilog-2001 environment. To fix this, I will replace the enum states with simple parameter definitions and use reg for state variables.
+
+I will:
+- Define state constants using `localparam`
+- Use reg type variables for current_state and next_state
+- Replace enum-style assignments with integer state encoding and simple assignments
+- Ensure synchronous reset sets the state to ENABLE and count to 4
+- On each clock cycle in ENABLE, decrement count until zero, then move to IDLE and keep shift_ena low indefinitely
+- Maintain shift_ena as combinational output derived from current_state
+
+This approach is fully compatible with Verilog-2001, avoiding SystemVerilog-specific types while preserving the FSM functionality and synchronous reset behavior.

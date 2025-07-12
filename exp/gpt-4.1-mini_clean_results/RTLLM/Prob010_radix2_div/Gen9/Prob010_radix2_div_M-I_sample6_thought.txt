@@ -1,0 +1,15 @@
+The original code's algorithm is correct, but it contains syntax errors due to improper declaration of variables inside always blocks, mixing blocking and non-blocking assignments, and unclear combinational and sequential logic separation.
+
+Improvement strategy:
+1. Declare all necessary temporary variables (e.g., sum, final_quotient, final_remainder) at the module level.
+2. Use separate always blocks for combinational logic (calculating subtraction result) and sequential logic (register updates on clock edge).
+3. Use consistent non-blocking assignments (<=) for sequential registers inside always @(posedge clk) blocks.
+4. Handle the division step over multiple clock cycles: at each cycle, shift and subtract, then update the quotient bit.
+5. Correct sign restoration outside the main loop, once division completes.
+6. Ensure no procedural declaration inside always blocks.
+7. Improve clarity by introducing an FSM with states IDLE and DIVIDE.
+8. Use an explicit 17-bit SR register with MSB remainder bits and lower bits for quotient.
+9. Align neg_divisor to remainder bits for subtraction.
+10. Manage res_valid output correctly to indicate result availability.
+
+This clean separation, proper variable scoping, and consistent coding style ensures syntax correctness, easier synthesis, and better maintainability while preserving the radix-2 division algorithm.

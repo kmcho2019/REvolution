@@ -1,0 +1,8 @@
+The FSM outputs Y1 and Y3 are simply next state inputs for states B (y[1]) and D (y[3]). According to the transitions:
+
+- Y1 (for B) = y[0] & w (from A to B when w=1)
+- Y3 (for D) = ~w & (y[1] | y[2] | y[4] | y[5]) (from B,C,E,F to D when w=0)
+
+Given one-hot encoding, we can express y[1] | y[2] | y[4] | y[5] as (y[1] | y[2] | y[4] | y[5]) directly without using De Morgan transformations or optimization. This makes the expression simple and clear.
+
+The simplification comes from removing module hierarchy and declaring the outputs directly in TopModule with simple continuous assignments. This reduces code complexity without changing functionality.

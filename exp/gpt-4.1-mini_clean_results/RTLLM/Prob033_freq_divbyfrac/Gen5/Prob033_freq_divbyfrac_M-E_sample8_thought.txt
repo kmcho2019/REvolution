@@ -1,0 +1,7 @@
+Implement a fractional frequency divider by 3.5x using two separate clock dividers running on opposite edges of the input clock to achieve half-cycle phase resolution. 
+
+Use a 3-bit counter that increments on the positive edge of the input clock to generate a primary divided clock (clk_div1) with uneven high/low intervals: 4 cycles high and 3 cycles low over 7 clock cycles total. Then, use another 3-bit counter that increments on the negative edge of the input clock to generate a second divided clock (clk_div2), phase-shifted by half a clock cycle relative to clk_div1, with complementary high/low timing (3 cycles high, 4 cycles low).
+
+Finally, combine these two clocks with an OR gate to produce the fractional divided clock output (clk_div). This approach yields a more uniform output frequency with reduced duty cycle distortion, because the OR of the two uneven clocks produces a stable 3.5 division with balanced timing.
+
+All counters and clocks are reset synchronously on the asynchronous active-low reset. Using separate always blocks triggered on posedge and negedge of clk keeps the design clean and synthesizable. This dual-edge clocking and combining technique implements fractional frequency division cleanly without requiring high-frequency clocks or complex PLLs.

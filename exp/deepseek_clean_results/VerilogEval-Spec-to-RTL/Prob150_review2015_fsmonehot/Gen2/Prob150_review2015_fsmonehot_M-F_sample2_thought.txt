@@ -1,0 +1,13 @@
+To fix the issues identified in the feedback, we need to:
+1. Correct S1_next to properly handle all transitions to/from S11 state, including the self-loop when d=1
+2. Ensure Count_next properly maintains the Count state until done_counting=1
+3. Make Wait_next correctly persist until ack=1
+4. Remove unused intermediate signals (S11_next, S110_next, etc.) that were causing warnings
+5. Maintain all correct output logic (done, counting, shift_ena) which were working properly
+6. Ensure all state transitions exactly match the state diagram specifications
+
+The key improvements will be:
+- Precise S1_next logic covering all cases
+- Proper Count_next behavior including persistence
+- Correct Wait_next transition conditions
+- Cleaner code without unused signals

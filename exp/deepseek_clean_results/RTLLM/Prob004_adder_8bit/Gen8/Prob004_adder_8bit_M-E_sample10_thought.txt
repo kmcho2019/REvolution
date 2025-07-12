@@ -1,0 +1,15 @@
+Novel Architecture: Carry-Select Adder with 2-bit Blocks
+Key Innovations:
+1. Hybrid approach combining ripple-carry and carry-select techniques
+2. Divide 8-bit addition into four 2-bit blocks
+3. Each block computes two possible sums in parallel (assuming carry=0 and carry=1)
+4. Use actual carry from previous stage to select correct sum
+5. Benefits:
+   - Reduces critical path compared to pure ripple-carry
+   - Maintains reasonable area overhead
+   - Better timing than pure ripple-carry while simpler than full carry-lookahead
+   - Naturally pipelinable structure
+Implementation Details:
+- First block is conventional ripple-carry (bits 0-1)
+- Subsequent blocks perform carry-select (bits 2-7)
+- Final carry chain uses multiplexers for carry propagation

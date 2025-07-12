@@ -1,0 +1,13 @@
+Use a simple 2-bit state machine to track the pulse "0->1->0" sequence.  
+States:  
+- S0: Waiting for first 0  
+- S1: Got first 0, waiting for 1  
+- S2: Got 1, waiting for final 0 (pulse completion)  
+
+At each clock, based on `data_in`, transition states accordingly.  
+Assert `data_out = 1` exactly when the pulse is detected (on the last zero of the pattern), for one clock cycle.  
+Reset clears state and output.  
+
+This simple FSM ensures output is asserted in the same cycle the pulse completes, and handles stable inputs naturally.  
+No extra fallback branches needed since `data_in` is 1-bit.  
+No typedef, just simple `localparam` for clarity and minimal code.

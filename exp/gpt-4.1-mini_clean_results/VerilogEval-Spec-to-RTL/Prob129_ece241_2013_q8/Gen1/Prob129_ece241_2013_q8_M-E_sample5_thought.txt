@@ -1,0 +1,12 @@
+Implement a 3-state Mealy FSM for sequence "101" detection with states representing the sequence progress, but encode the FSM states as one-hot for potentially simpler combinational logic. Use three state bits to represent each state distinctly: S0=001, S1=010, S2=100.
+
+Transitions:
+- S0 (only S0 bit set): if x=1, go to S1; else stay in S0.
+- S1 (only S1 bit set): if x=0, go to S2; else stay in S1.
+- S2 (only S2 bit set): if x=1, output z=1 (sequence detected), go to S1; else go to S0.
+
+The output z is Mealy-type, combinational depending on current state and input.
+
+Use an asynchronous negative edge reset (aresetn) to initialize the FSM state to S0 (001). Sequential logic is triggered on the clock's positive edge.
+
+This design uses explicit one-hot state encoding using a 3-bit reg to reduce decode logic and enable easier synthesis in some technologies.

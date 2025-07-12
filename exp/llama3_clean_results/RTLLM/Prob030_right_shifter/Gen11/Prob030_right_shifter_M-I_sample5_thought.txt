@@ -1,0 +1,14 @@
+To improve the existing right_shifter module, we should focus on optimizing its Power, Performance, and Area (PPA) metrics. Given the current implementation and its PPA metrics, we can identify a few potential areas for improvement. 
+
+For Performance (Timing), the current use of non-blocking assignment within an always block is suitable for synchronous designs. However, we can consider optimizing the input signal 'd' to minimize unnecessary switching activity. 
+
+For Power optimization, reducing the switching activity within the module can help lower power consumption. The current implementation already minimizes the number of bits that change in 'q' during each update by only shifting and inserting one new bit per cycle. Nonetheless, we can further optimize power consumption by ensuring that the input 'd' does not switch unnecessarily.
+
+Regarding Area, the module's current implementation is quite straightforward and area-efficient, using a single 8-bit register 'q'. The logic for shifting and inserting the new bit is relatively simple and does not introduce significant area overhead. However, we can explore alternative implementations that might reduce area, such as using dedicated shift registers or other specialized hardware, depending on the specific technology and library being used.
+
+Our improvement strategy will include:
+1. Maintaining the current synchronous design approach using an always block triggered by the posedge of the clock.
+2. Optimizing the input signal 'd' to minimize unnecessary switching activity.
+3. Ensuring that the implementation does not introduce significant area overhead.
+
+Given the current PPA metrics, our primary focus will be on optimizing power consumption while maintaining or improving performance and area efficiency.

@@ -1,0 +1,17 @@
+Improvement Strategy:
+1. Timing Optimization: The negative WNS (-0.14ns) suggests timing violations. We can optimize the critical path by:
+   - Simplifying the next_state_B logic by recognizing it's just ~next_state_A (since it's one-hot)
+   - Moving output logic to be registered to break the combinational path
+
+2. Power Optimization: 
+   - Keep one-hot encoding but reduce switching activity by making state transitions more deterministic
+   - Use state_B directly for output to minimize logic
+
+3. Area Optimization:
+   - Maintain current one-hot encoding as it's optimal for this small state machine
+   - Simplify logic expressions where possible
+
+Key Changes:
+1. Simplify next_state_B to be ~next_state_A (one-hot property)
+2. Register the output to improve timing
+3. Optimize state transition logic

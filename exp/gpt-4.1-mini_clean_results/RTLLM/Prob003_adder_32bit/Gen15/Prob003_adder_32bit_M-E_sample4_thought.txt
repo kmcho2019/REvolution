@@ -1,0 +1,24 @@
+Design a 32-bit carry-lookahead adder using a hierarchical three-level structure with eight 4-bit CLA modules combined via a 8-bit CLA to manage block carries efficiently. Each 4-bit CLA calculates the sum of 4-bit subwords and outputs block propagate and generate signals.
+
+The architecture is:
+
+- Level 0: Eight 4-bit CLA blocks, each taking 4-bit slices of A and B and an input carry, outputting 4-bit sums and block propagate/generate.
+- Level 1: An 8-bit CLA block takes the eight block propagate/generate signals from the 4-bit CLAs as operands to compute the carry-in for each 4-bit block in parallel, drastically reducing carry propagation delay.
+- Level 2: A single top-level CLA computes the carry between 8-bit blocks, but since we only have 8 blocks, the level-1 CLA does this directly by treating block P and G signals as bits of operands.
+
+Here, we implement two distinct CLA blocks:
+
+- cla_4bit: Basic 4-bit CLA that computes sums and block P/G.
+- cla_8bit: An 8-bit CLA used to compute carry signals between the 4-bit blocks, operating on the P/G outputs of the 4-bit blocks.
+
+The top module instantiates eight 4-bit CLAs and one 8-bit CLA for carry-lookahead of block carries. The initial carry-in is zero.
+
+This multi-level hierarchy significantly reduces the carry propagation delay compared to a flat or two-level CLA, since the critical path is logarithmic in the number of bits (32) instead of linear or two-stage.
+
+The inputs and outputs use 1-based indexing [32:1] as required. Internal signals use zero-based indexing for clarity. Mapping between these is clean and uses wiring only.
+
+This approach is scalable and modular, and the use of small 4-bit CLA blocks allows for efficient and fast carry-lookahead generation with moderate hardware overhead. Using an 8-bit CLA for block carry computation balances logic complexity and delay.
+
+This design also introduces explicit block-level P/G interface, allowing further hierarchical extensions if desired.
+
+The final sum and carry-out are produced accordingly.

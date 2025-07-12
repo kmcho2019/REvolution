@@ -1,0 +1,9 @@
+The solution can be simplified by re-evaluating the condition for determining the 'dfr' signal. Instead of checking each bit of the sensor state individually, we can compare the entire sensor state to determine if the water level has increased. Additionally, the logic for determining the output signals 'fr2', 'fr1', and 'fr0' can be simplified by using a single case statement with a binary encoding for the sensor states.
+
+Firstly, we should update the 'prev_s' register before using it to determine the 'dfr' signal. This ensures that we are comparing the current sensor state with the previous sensor state.
+
+Then, we can compare the current and previous sensor states to determine if the water level has increased. If the current sensor state is greater than the previous sensor state, we set 'dfr' to 1.
+
+For the output signals 'fr2', 'fr1', and 'fr0', we can use a case statement with a binary encoding for the sensor states. The binary encoding is based on the number of sensors that are asserted. If no sensors are asserted, all three output signals are high. If one sensor is asserted, only 'fr0' is high. If two sensors are asserted, 'fr0' and 'fr1' are high. If all three sensors are asserted, none of the output signals are high.
+
+Finally, we can reset the 'dfr' and output signals to their default values when the 'reset' signal is high.

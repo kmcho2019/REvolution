@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. **Performance (Timing):**
+   - Adopt the simplified next_state logic from Example 1 (using ~x & state_A for next_state_A)
+   - Implement state_B as sticky (state_B | (state_A & x)) to minimize logic depth
+   - Keep the efficient output logic (z = state_A ? x : ~x) from both examples
+
+2. **Power:**
+   - Use the OR-based sticky implementation for state_B to minimize unnecessary transitions
+   - Maintain the output logic that only depends on current state and input
+   - Add a condition to prevent unnecessary switching in state_B when x changes
+
+3. **Area:**
+   - Keep the minimal one-hot encoding with two flip-flops
+   - Simplify the combinational logic by combining the best aspects of both examples
+   - Use direct register assignments instead of separate DFF modules
+
+Key Improvements:
+- Combines the clear state transition logic of Example 1 with the sticky state_B implementation
+- Maintains the optimal output logic that requires minimal gates
+- Adds power optimization by preventing unnecessary state_B transitions
+- Uses simpler always block implementation for better readability and area
+- Preserves asynchronous reset functionality

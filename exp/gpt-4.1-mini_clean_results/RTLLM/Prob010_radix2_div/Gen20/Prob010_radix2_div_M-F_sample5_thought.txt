@@ -1,0 +1,28 @@
+To fix the radix-2 divider module based on the given feedback:
+
+1. Remove the `res_ready` handshake signal, since it was not specified in the problem description, and manage `res_valid` internally based on operation progress and reset.
+
+2. Refactor the FSM and counter logic to ensure proper initialization and transitions:
+   - Clear the counter and set it to 1 when starting a new operation.
+   - Transition from IDLE to RUN only on `opn_valid` and `res_valid` low.
+   - After 8 iterations in RUN state, transition to DONE state.
+
+3. Update `shift_reg` atomically in one nonblocking assignment per clock cycle during RUN:
+   - Perform the left shift first.
+   - Then compute the trial subtraction using the shifted remainder.
+   - Based on the subtraction sign, update `shift_reg` accordingly.
+   - Avoid partial bit assignments to `shift_reg`; instead, assign the entire updated value at once.
+
+4. Maintain separate registers for input storage, absolute values, and sign flags.
+
+5. Perform sign correction and division-by-zero handling entirely in the sequential block at the DONE state.
+
+6. Assign the 16-bit output `result` only inside a sequential block to avoid combinational loops or latches.
+
+7. Reset all relevant registers on `rst`.
+
+This approach avoids partial assignments, handles sign and division by zero robustly, and matches the problem specification, including output format and control signals.
+
+The module is fully synchronous, with clean state transitions, and supports signed and unsigned division for 8-bit operands, producing a 16-bit combined remainder and quotient result.
+
+Note: The division algorithm here is a classic restoring division with a 17-bit shift register: upper 9 bits for remainder and lower 8 bits for quotient, iterating 8 times per division.

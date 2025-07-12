@@ -1,0 +1,19 @@
+The original design shares single instances of modules A and B, which already reduces area by avoiding duplication. To improve PPA further, we can analyze the logic:
+
+- Modules A and B outputs depend only on x and y.
+- OR and AND of A and B outputs are fed into XOR to produce z.
+- Using Boolean algebra:
+  Let A = (x ^ y) & x
+  Let B = ~(x ^ y)
+
+  The final z = (A | B) ^ (A & B) = A XOR B (since (p | q) ^ (p & q) = p ^ q)
+
+So, z = A ^ B = ((x ^ y) & x) ^ ~(x ^ y)
+
+This means the entire top-level logic can be implemented without instantiating multiple modules by expressing z directly in terms of x and y.
+
+By implementing this reduced Boolean expression, we remove all module instantiations and gates except the final expression, minimizing area and power with reduced combinational depth (one XOR, one AND, and one NOT).
+
+This keeps the same functionality but improves PPA significantly.
+
+We can still keep Modules A and B as reference, but in the top module, implement the optimized direct logic expression for z.

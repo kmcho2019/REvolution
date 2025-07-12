@@ -1,0 +1,11 @@
+To fix the timing misalignment between the counter and toggling events on positive and negative edges, the counter update and toggle conditions must be carefully synchronized. The core issue is that `cnt` updates only on posedge clk, but the negedge logic uses the same `cnt` value, causing incorrect toggling times.
+
+Improvement strategy:
+1. Use a synchronous reset to avoid asynchronous glitches and ensure stable state transitions.
+2. Update the counter at the posedge of `clk`, but generate delayed toggle signals by sampling or registering the counter value so that the negedge logic has a stable count reference.
+3. Instead of using the raw `cnt` value on the negative edge, register a delayed version of the counter on posedge so the negedge logic toggles `clk_int_delayed` at appropriate times.
+4. Generate the toggling signals precisely on clock edges with well-aligned conditions: `clk_int` toggles at cnt=0 and 4 on posedge clk; `clk_int_delayed` toggles at cnt=3 and 6 on negedge clk, referencing the stable count.
+5. This alignment ensures half-clock period shifted toggles without glitching or mis-timing.
+6. The final `clk_div` output remains the OR of the two phase-shifted clocks to achieve the 3.5x division with balanced duty cycle.
+
+This approach guarantees correct phase relationships and duty cycle by synchronizing toggling events and properly aligning them to clock edges.

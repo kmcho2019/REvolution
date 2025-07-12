@@ -1,0 +1,7 @@
+To improve the existing TopModule for better Power, Performance, and Area (PPA), we can eliminate the intermediate wire and implement the mux inside the clocked always block. This allows synthesis tools to infer a single mux + flip-flop element without extra routing for the mux output wire, reducing area and potentially power due to less logic toggling. It also keeps timing tight because the mux decision and register update happen together on the clock edge.
+
+Additionally, declaring the output as a reg type and driving it directly inside the always @(posedge clk) block is straightforward and aligns with synthesis expectations.
+
+No explicit reset is added since it's not in the problem spec, preserving functional equivalence.
+
+This approach merges mux and flip-flop into a single always block, optimizing for minimal combinational logic and flip-flop integration.

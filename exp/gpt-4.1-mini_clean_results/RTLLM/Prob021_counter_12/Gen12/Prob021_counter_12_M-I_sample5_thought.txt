@@ -1,0 +1,11 @@
+The original design is functionally correct and power-conscious by gating counting with valid_count. To optimize for better PPA without changing functionality:
+
+- Replace the bitwise terminal_count detection with a direct equality check (out == 4'd11). Modern synthesis tools efficiently implement equality comparison, which may yield simpler or faster logic than the explicit bitwise AND. This can marginally improve performance and area.
+
+- The reset is already synchronous, which is good for timing closure.
+
+- Keep the count enable gated by valid_count as-is for power efficiency.
+
+- Avoid additional clock gating at RTL since it often requires special design handling; rely on valid_count gating instead.
+
+This approach keeps the design simple and clean while potentially improving synthesis quality with a more straightforward terminal count condition.

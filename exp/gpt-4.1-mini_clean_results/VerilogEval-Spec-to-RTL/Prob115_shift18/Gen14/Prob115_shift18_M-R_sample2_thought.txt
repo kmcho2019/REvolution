@@ -1,0 +1,11 @@
+Refactor the design by separating the shift register state update logic into a combinational next-state signal and using a single always block for the register update. Instead of computing all shifted versions separately upfront, compute the shift amount as a signed integer (positive for left shift, negative for arithmetic right shift), then perform a single shift operation accordingly. This uses a signed shift approach and sign-extends the input for right shifts in a unified manner, reducing the number of separate intermediate signals and mux stages.
+
+This approach centralizes the shift operation in one step, improving readability and potentially allowing synthesis tools to better optimize the shifter as a single barrel shifter with a signed shift amount. It keeps the synchronous load and enable controls, and holds state otherwise.
+
+Use an intermediate signed integer to represent the shift offset:
+- Positive for left shifts (1 or 8)
+- Negative for right arithmetic shifts (-1 or -8)
+
+Then use an arithmetic shift operator with sign extension for right shifts, and left shifts directly.
+
+This reduces duplication, simplifies control logic, and can help reduce power by minimizing the amount of combinational logic active on each clock cycle.

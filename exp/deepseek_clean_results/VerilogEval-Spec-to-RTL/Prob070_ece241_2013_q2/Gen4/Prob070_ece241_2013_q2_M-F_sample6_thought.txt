@@ -1,0 +1,27 @@
+To fix the implementation, I'll:
+1. Re-examine the truth table carefully, separating:
+   - Output 1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 cases: 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), 14 (1110)
+   - Don't care cases: 3,8,11,12
+
+2. For out_sop (Sum of Products):
+   - Only implement the minterms where output is 1
+   - All other cases (including don't cares) will default to 0
+   - Keep the original correct minterms: (~a & b & ~c & ~d), (~a & b & c & d), (a & b & c & d)
+
+3. For out_pos (Product of Sums):
+   - Identify all maxterms where output must be 0
+   - Create OR terms for each maxterm using complemented inputs
+   - Simplify where possible using don't cares
+   - New terms will cover all 0-output cases:
+     * (a | b | c | d) for 0
+     * (a | b | c | ~d) for 1
+     * (a | ~b | c | d) for 4
+     * (a | ~b | c | ~d) for 5
+     * (a | ~b | ~c | d) for 6
+     * (~a | b | c | d) for 9
+     * (~a | b | c | ~d) for 10
+     * (~a | ~b | c | d) for 13
+     * (~a | ~b | ~c | d) for 14
+
+4. Verify both forms now correctly implement the specified behavior

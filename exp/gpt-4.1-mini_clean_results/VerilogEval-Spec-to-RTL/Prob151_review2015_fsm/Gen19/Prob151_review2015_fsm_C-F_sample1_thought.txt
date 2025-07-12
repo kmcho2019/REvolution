@@ -1,0 +1,14 @@
+Fuse the clarity, explicit separation of combinational and sequential logic, and Moore output style of Example 2 with the optimized toggling reduction approach of Example 1 by:
+
+- Updating the 4-bit shift counter only during the SHIFT state to minimize toggling power.
+- Encoding the FSM states with binary coding and meaningful localparams for clarity and compactness.
+- Leveraging the embedded pattern detection states (SEARCH0 to SEARCH3) that inherently track pattern progress without extra shift registers, thus reducing complexity and toggling.
+- Implementing next state and next shift counter combinational logic separately from sequential updates, improving readability and synthesis results.
+- Generating outputs purely from the current state (Moore outputs) to avoid glitches.
+- Using non-blocking assignments in sequential logic to ensure proper timing.
+- Including synchronous active-high reset to initialize FSM to start detecting pattern.
+- Carefully handling overlapping pattern detection by staying in SEARCH2 when data=1 to catch consecutive patterns.
+
+This fusion balances minimal toggling (power), straightforward logic (performance), and small register count (area). The 4-bit shift counter from Example 1 is preferred over 2-bit to precisely count 4 cycles (0..3) and reduce complexity in comparisons. This ensures exactly 4 shift cycles as required.
+
+The result is a robust, clean FSM with optimized PPA characteristics suitable for synthesizable RTL.

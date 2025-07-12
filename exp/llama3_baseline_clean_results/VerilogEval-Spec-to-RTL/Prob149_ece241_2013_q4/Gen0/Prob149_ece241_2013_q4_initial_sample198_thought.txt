@@ -1,0 +1,11 @@
+To solve this problem, we can design a state machine in the TopModule that responds to the input sensor levels and determines the output flow rates accordingly. We will use the input sensor levels to determine the current state of the water level and then use this state to determine the output flow rates. We will also include logic to handle the case where the sensor change indicates that the previous level was lower than the current level, and the Supplemental flow valve should be opened.
+
+We will use an always block to handle the synchronous reset and to update the state of the module on each clock cycle. We will use a case statement to determine the output flow rates based on the current state of the water level.
+
+The module will have the following states:
+- Above s[2]: All sensors asserted, no flow rate.
+- Between s[2] and s[1]: Sensors s[0] and s[1] asserted, nominal flow rate is fr0.
+- Between s[1] and s[0]: Sensor s[0] asserted, nominal flow rate is fr0 and fr1.
+- Below s[0]: No sensors asserted, maximum flow rate (fr0, fr1, fr2).
+
+We will also use a variable to keep track of the previous sensor level, so we can determine if the sensor change indicates that the previous level was lower than the current level.

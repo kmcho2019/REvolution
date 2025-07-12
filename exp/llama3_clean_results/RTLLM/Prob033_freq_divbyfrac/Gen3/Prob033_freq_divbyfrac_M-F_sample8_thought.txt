@@ -1,0 +1,11 @@
+To address the issues mentioned in the feedback, we need to modify the counter logic, intermediate clock generation, and phase-shifting. The key is to correctly implement the 3.5x frequency division by dividing the input clock into 7 cycles, generating two uneven clock periods (4 cycles and 3 cycles), and then phase-shifting these clocks by half a clock period to produce the final fractional divided clock output.
+
+First, we will correct the counter logic to ensure it accurately tracks the 7 clock cycles required for 3.5x division. We will use a 3-bit counter to cycle through these 7 clock cycles, resetting it when it reaches the 7th cycle.
+
+Next, we will implement the generation of intermediate clocks based on the corrected counter value. We will generate `clk_div_int1` (4 cycles) and `clk_div_int2` (3 cycles) using simpler conditions that accurately reflect the required clock periods.
+
+Then, we will phase-shift these clocks by half a clock period to produce `clk_div_phase1` and `clk_div_phase2`. This will involve setting `clk_div_phase1` high during the first 4 cycles (but delayed by half a cycle) and setting `clk_div_phase2` high during the next 3 cycles (but advanced by half a cycle).
+
+Finally, we will generate the final fractional divided clock output `clk_div` by logically OR-ing `clk_div_phase1` and `clk_div_phase2`. This ensures that the divided clock signal has a uniform period, achieving the desired 3.5x frequency division.
+
+We will also ensure that all signals are properly reset and updated to avoid any malfunction.

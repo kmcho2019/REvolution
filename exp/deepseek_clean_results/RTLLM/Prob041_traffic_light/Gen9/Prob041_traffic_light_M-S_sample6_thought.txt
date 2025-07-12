@@ -1,0 +1,13 @@
+I'll simplify the traffic light controller with these key changes:
+1. Use binary state encoding (2 bits) instead of one-hot since we only have 4 states
+2. Remove unnecessary IDLE state since we immediately transition to RED
+3. Combine all timing parameters into a single parameter block
+4. Simplify the pedestrian request logic by removing the MIN_GREEN parameter and hardcoding the value
+5. Make output assignments directly from state bits where possible
+6. Remove redundant default case since state is fully specified
+
+The simplifications maintain all functionality while reducing:
+- State machine complexity (2 bits vs 3)
+- Parameter overhead
+- Logic for state decoding
+- Unnecessary conditional checks

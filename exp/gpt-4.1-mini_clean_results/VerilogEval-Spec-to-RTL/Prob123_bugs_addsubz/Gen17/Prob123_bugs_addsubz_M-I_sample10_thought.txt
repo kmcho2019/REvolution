@@ -1,0 +1,10 @@
+To improve the original ripple-carry adder-based solution for better PPA while maintaining correctness:
+
+- Replace the ripple carry adder with the built-in Verilog addition operator using a 9-bit wide sum to internally handle carry-out cleanly and use two's complement subtraction by conditional inversion and adding do_sub.
+- Using the built-in '+' operator allows synthesis tools to infer optimized carry-lookahead or other fast adder architectures, improving the delay (better WNS and TNS).
+- Keep the logic purely combinational with assign statements for clarity and best synthesis results.
+- The zero flag is computed by a simple reduction NOR on the 8-bit output sum.
+- This approach reduces the explicit carry propagation logic in the RTL, enabling better synthesis optimizations for performance and power.
+- Area should stay comparable or better due to simpler RTL and possible adder optimizations by synthesis tools.
+
+Overall, this change improves performance by enabling better adder inference, simplifies the design, and reduces logic levels without changing functionality.

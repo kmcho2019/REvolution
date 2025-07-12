@@ -1,0 +1,10 @@
+Implement the radix-2 division using a sequential algorithm controlled by a counter and synchronous datapath without an explicit FSM.  
+On opn_valid, latch dividend and divisor, handle signed inputs by converting to magnitude and recording signs.  
+Use a 17-bit shift register SR that initially holds (dividend magnitude shifted left by 1 bit), with the lower 8 bits as quotient bits to be determined and the upper 9 bits as remainder bits.  
+Negate divisor magnitude to create NEG_DIVISOR for efficient subtraction.  
+Each clock cycle, shift SR left by 1, add NEG_DIVISOR to the remainder portion, and check for borrow (carry out).  
+If no borrow, accept subtraction and set the LSB of quotient to 1; otherwise restore previous remainder and set quotient bit to 0.  
+Repeat for 8 cycles, then adjust quotient and remainder sign if signed mode is enabled based on input signs.  
+Output concatenates remainder and quotient (each 8 bits).  
+Use synchronous reset and output res_valid when division is complete.  
+This approach avoids local variable declarations inside procedural blocks, carefully manages registers, and supports signed/unsigned division.

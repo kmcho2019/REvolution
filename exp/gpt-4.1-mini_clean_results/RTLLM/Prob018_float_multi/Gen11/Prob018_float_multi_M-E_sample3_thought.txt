@@ -1,0 +1,16 @@
+This new design implements a fully combinational IEEE-754 single-precision floating-point multiplier that completes multiplication in one clock cycle but uses a registered handshake interface to indicate when inputs are captured and output is valid.
+
+Instead of a multi-cycle FSM, it uses purely combinational logic for extracting fields, special case detection, mantissa multiplication, normalization, rounding, and packing results. The inputs are latched on a start signal (implicit here as always valid on clk), and outputs are updated each cycle based on inputs.
+
+Key novel points:
+- The design explicitly calculates sticky bit by OR-reducing all lower bits below round bit from the 48-bit mantissa product.
+- Normalization uses combinational checks of product's MSBs, shifting mantissa accordingly and adjusting exponent.
+- Round-to-nearest-even rounding is carefully implemented using guard, round, and sticky bits.
+- Special cases (NaN, Inf, zero, denormals) are prioritized using combinational logic without FSM states.
+- The entire datapath is pipelined only by registering inputs and outputs; no multi-cycle control FSM is needed.
+- This design favors throughput (one cycle latency) and simplicity in control at the expense of potentially longer combinational paths, suitable for small to medium clock frequencies.
+- Exponent addition and bias adjustment done combinationally.
+- Denormals are handled explicitly: mantissa without implicit leading 1 if exponent is zero.
+- Overflow and underflow produce Infinity and zero accordingly.
+
+This approach differs from the previous sequential FSM approach by being fully combinational in logic between input and output registers and using simple control for input/output register staging, enabling a clean, pipeline-friendly structure without multi-cycle complexity.

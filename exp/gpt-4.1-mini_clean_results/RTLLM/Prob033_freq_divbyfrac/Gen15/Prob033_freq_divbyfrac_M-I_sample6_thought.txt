@@ -1,0 +1,22 @@
+The main problem with the previous approach is the incorrect generation and synchronization of the half-cycle delayed clock phase (`clk_neg`), resulting in timing misalignment and glitches. To correctly produce a fractional division by 3.5, the clock must alternate between 4 and 3 input clock cycles high and low, and then combine two clock phases shifted by half a clock period.
+
+Improvement strategy:
+
+1. **Remove sampling on negedge clk to avoid asynchronous domain crossing and metastability**.
+
+2. **Use both edges of the input clock (posedge and negedge) inside a single always block sensitive to both edges**:
+   - Implement a counter that increments on posedge clk.
+   - On posedge clk, generate a 'clk_pos' which is high for 4 cycles (cnt=0..3) and low for 3 cycles (4..6).
+   - On negedge clk, generate a phase-shifted version 'clk_neg' which is high for 3.5 cycles delayed by half input clock cycle relative to 'clk_pos'.
+   
+3. **Use two counters or a state machine to produce the two phases**:
+   - One counter running on posedge clk for clk_pos.
+   - Another logic triggered on negedge clk for clk_neg (phase shifted half clock period).
+   
+4. **No asynchronous reset sampling; use synchronous reset in posedge clk domain and asynchronous reset only for registers triggered by negedge clk** (or preferably a synchronous reset to avoid metastability).
+
+5. **Combine the two phases with an OR gate to produce a clock with an average period of 7 input clock cycles but with half-integer division (3.5x).**
+
+This approach generates two complementary clock phases, each active for different counts of clock cycles, carefully shifted by half clock periods, achieving smooth fractional division without glitches or metastability.
+
+The code below implements this logic with separate counters for posedge and negedge clk domains and a combinational OR to produce `clk_div`.

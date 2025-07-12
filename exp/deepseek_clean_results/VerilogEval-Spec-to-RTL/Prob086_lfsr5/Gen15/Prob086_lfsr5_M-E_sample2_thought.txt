@@ -1,0 +1,9 @@
+Here's a novel approach using a parallel computation technique for the LFSR:
+1. Instead of using sequential bit operations, we'll compute all next state bits in parallel
+2. Create a dedicated XOR network that calculates each bit's next value simultaneously
+3. Use a mask pattern to identify tap positions (5'b10100 for taps at 5 and 3)
+4. The feedback is computed once and applied to all tap positions
+5. This approach may offer better timing characteristics as the XOR operations are parallelized
+6. Reset still initializes to 5'b00001
+
+The key innovation is using a bitmask to identify tap positions and computing the feedback term once for all taps, rather than handling each tap position separately. This could potentially reduce critical path delay in some implementations.

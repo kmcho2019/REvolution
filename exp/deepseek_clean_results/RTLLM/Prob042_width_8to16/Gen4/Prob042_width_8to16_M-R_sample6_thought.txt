@@ -1,0 +1,15 @@
+Here's a refactored implementation that maintains the same functionality but improves synthesis quality:
+
+1. Instead of using a 16-bit accumulator, we'll use an 8-bit register to store just the first byte
+2. Eliminate the shift operation completely - we only need to store one byte at a time
+3. Use a simple state machine with just 1 bit (has_first_byte) to track progress
+4. Generate outputs directly in the combinational logic when conditions are met
+5. Keep all sequential elements in a single always block for better synthesis
+6. Use non-blocking assignments consistently for all sequential elements
+
+Key improvements:
+- Reduced register usage (8 bits instead of 16)
+- No wasted shifting operations
+- Clearer state tracking
+- More predictable synthesis results
+- Same timing behavior as original

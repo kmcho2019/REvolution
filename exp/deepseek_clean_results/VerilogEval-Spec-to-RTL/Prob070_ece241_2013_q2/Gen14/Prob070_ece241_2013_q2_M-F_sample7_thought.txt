@@ -1,0 +1,19 @@
+Optimized design strategy considering don't-care conditions:
+
+1. For out_sop (Sum of Products):
+   - Identify minterms (2,7,15) that must output 1
+   - Utilize don't-care conditions (3,8,11,12) to minimize the expression
+   - Combine terms where possible to reduce logic gates
+   - Result: ~a&c&~d (covers 2 and 3) | b&c&d (covers 7 and 15)
+
+2. For out_pos (Product of Sums):
+   - Identify maxterms (0,1,4,5,6,9,10,13,14) that must output 0
+   - Utilize don't-care conditions to simplify product terms
+   - Group terms to minimize literals
+   - Result: (a|b|c) & (a|c|d) & (a|~b|~c) & (~a|b|~d) & (~a|~b|d)
+
+3. Key improvements:
+   - Both forms now properly utilize don't-care conditions
+   - Reduced number of terms and literals in both implementations
+   - More efficient logic implementation while maintaining correct functionality
+   - Better handling of unspecified input conditions

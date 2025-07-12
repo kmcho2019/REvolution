@@ -1,0 +1,12 @@
+Implement the triangle wave generator using a single signed 6-bit counter that increments or decrements, and use overflow/underflow detection to toggle direction.
+
+1. Use a signed 6-bit register (range: -32 to 31) to hold the waveform count.
+2. The 5-bit output wave is assigned from the absolute value of this signed counter, effectively creating a triangle shape between 0 and 31.
+3. Use a direction bit to determine whether to increment or decrement the signed counter.
+4. On reset, initialize count to 0 and direction to increment.
+5. Each clock cycle, count is updated by adding +1 or -1 based on direction.
+6. When count reaches +31, direction flips to decrement; when count reaches 0, direction flips to increment.
+7. This approach removes the need for separate increment/decrement logic on wave output; the wave is just abs(count).
+8. It also eliminates the explicit boundary checks on wave itself and uses signed arithmetic for natural wrap-around detection.
+9. The waveform is smooth and continuous, avoiding saturation "holds" at boundaries.
+10. All logic is in a single sequential always block for simplicity and synthesis friendliness.

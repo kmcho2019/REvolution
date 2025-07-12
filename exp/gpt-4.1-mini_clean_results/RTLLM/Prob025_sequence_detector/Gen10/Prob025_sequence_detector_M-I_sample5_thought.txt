@@ -1,0 +1,11 @@
+The provided design is functionally correct, using a synchronous active-low reset and a clear FSM structure to detect the sequence 1001. To optimize for better power, performance, and area (PPA), we can reduce the state encoding bits and simplify the state transitions by minimizing redundant transitions. Since the sequence has four bits, we can encode the FSM states using only 3 bits (already done) but we can further optimize the logic by using one-hot encoding to simplify the next state logic, which can lead to faster transitions at the expense of area; however, since there are only 5 states, one-hot encoding is efficient and synthesizers optimize it well.
+
+Additionally, to reduce glitches and improve timing, registering the output signal `sequence_detected` instead of combinationally asserting it could help, although this slightly adds latency. Since the problem description does not forbid it, I will keep the output registered. The synchronous reset remains active low. The reset input name will be kept as `reset_n` to maintain consistency.
+
+Finally, I'll include comments to clarify state meanings and transitions to improve maintainability.
+
+Overall, the changes are:
+- Use one-hot encoding for the FSM states for simplified combinational logic.
+- Register the `sequence_detected` output signal.
+- Keep active-low synchronous reset for simplicity.
+- Clear comments for FSM states and transitions.

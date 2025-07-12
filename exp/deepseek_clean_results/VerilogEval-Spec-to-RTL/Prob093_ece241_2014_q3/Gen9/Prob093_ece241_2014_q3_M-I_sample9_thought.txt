@@ -1,0 +1,29 @@
+To correctly implement the Karnaugh map using multiplexers, we need to carefully analyze each output (mux_in[3:0]) based on the cd inputs for each ab case. Here's the improved strategy:
+
+1. For mux_in[0] (ab=00):
+   - 0 when cd=00
+   - 1 when cd=01,11,10
+   - This can be implemented as OR(c,d)
+
+2. For mux_in[1] (ab=01):
+   - Always 0 as per K-map
+   - Direct assignment to 0
+
+3. For mux_in[2] (ab=11):
+   - 1 only when cd=11
+   - Implement as AND(c,d)
+
+4. For mux_in[3] (ab=10):
+   - 1 when cd=00,11,10
+   - 0 when cd=01
+   - This is equivalent to NOT(d) when c=0, and d when c=1
+   - Can be implemented with a 2-to-1 mux selecting between ~d and d based on c
+
+This implementation uses:
+- One OR gate for mux_in[0]
+- One AND gate for mux_in[2]
+- One 2-to-1 mux for mux_in[3]
+- One NOT gate (for d) in mux_in[3]
+- No additional gates needed
+
+This matches all cases in the K-map exactly while using minimal hardware.

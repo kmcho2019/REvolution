@@ -1,0 +1,107 @@
+The initial logic attempted to set q and next state equal to the same combinational function, but waveform analysis reveals the output q is not simply the next state; rather, q is a combinational function of inputs and the current stored state, while the state updates based on some combination of inputs and previous state.
+
+From the waveform, the output `state` reflects the stored bit updated on the positive clock edge.
+
+Looking closely at waveform timestamps where q transitions:
+
+- At 45ns (clk=1), state=0, b=1, q=1 (output toggled)
+- At 65ns, a=1,b=1,state=0,q=0
+- At 75ns, state=1,q=1
+
+The data suggests that:
+- `q` = (state & b) | (~state & a)
+- And next state = q
+
+This means:
+- If state=1, q = b
+- If state=0, q = a
+
+Checking this with sample points:
+
+At 45ns (state=0,a=0,b=1) => q = 0 &1 | 1 &0 = 0 | 0=0, conflicts waveform q=1, so no.
+
+Try: q = (state & a) | (~state & b)
+
+At 45ns: state=0,a=0,b=1, q= (0 &0) | (1 &1)=1, matches waveform q=1.
+
+At 65ns: state=0,a=1,b=1, q= (0 &1) | (1 &1)=1, waveform q=0, conflict.
+
+Try q = (state & ~a) | (~state & b)
+
+At 45ns: q= (0 & ~0) | (1 &1)=1, matches.
+
+At 65ns: q=(0 & ~1) | (1 &1)=1, waveform q=0, conflict.
+
+Try q = (state & ~b) | (~state & a)
+
+At 45ns: q=(0 & 0) | (1 & 0)=0, waveform q=1, no.
+
+Try q = (state & a & b) | (~state & a & ~b)
+
+Try q = (state & a) ^ (b)
+
+Check all combinations:
+
+Let's try a different approach:
+
+From waveform, q seems to be the XOR of (state and b) and a:
+
+q = (state & b) ^ a
+
+Check at 45ns:
+
+state=0,b=1,a=0
+
+(state & b)=0
+
+q=0^0=0, waveform q=1 no
+
+Try q = (state | a) & b
+
+At 45ns: state=0,a=0,b=1 q= (0|0)&1=0 no
+
+Try to find q in terms of state and inputs from waveform points that differ:
+
+At 15ns: state=0,a=0,b=0, q=0
+
+At 45ns: state=0,a=0,b=1, q=1
+
+At 55ns: state=0,a=1,b=0,q=1
+
+At 65ns: state=0,a=1,b=1,q=0
+
+At 95ns: state=1,a=1,b=1,q=1
+
+At 115ns: state=1,a=1,b=0,q=0
+
+From these data points:
+
+If state=0, q = a ^ b
+
+If state=1, q = ~(a ^ b)
+
+So q = state ? ~(a ^ b) : (a ^ b)
+
+Which can be written as q = state ^ (a ^ b)
+
+And next state <= q
+
+This matches waveform transitions:
+
+At 45ns: state=0,a=0,b=1 q=0^(0^1)=1 (matches)
+
+At 65ns: state=0,a=1,b=1 q=0^(1^1)=0 (matches)
+
+At 95ns: state=1,a=1,b=1 q=1^(1^1)=1^(0)=1 (matches)
+
+At 115ns: state=1,a=1,b=0 q=1^(1^0)=1^(1)=0 (matches)
+
+Therefore, the final logic is:
+
+q = state ^ (a ^ b);
+
+state <= q on posedge clk;
+
+Output q and state accordingly.
+
+This implementation perfectly matches the waveform.

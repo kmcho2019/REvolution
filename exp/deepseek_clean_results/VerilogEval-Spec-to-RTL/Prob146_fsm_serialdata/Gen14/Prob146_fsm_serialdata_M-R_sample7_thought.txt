@@ -1,0 +1,13 @@
+I'll refactor the solution with these key changes:
+1. Use binary encoding for the FSM states (2 bits instead of 4) to reduce area and power
+2. Combine the shift register and bit counter into a single operation
+3. Remove the explicit ERROR state since the spec allows waiting for stop bit
+4. Use continuous assignments for outputs where possible
+5. Simplify the state machine to 3 states (IDLE, RECEIVE, STOP)
+6. Make done signal purely combinational for better timing
+
+The refactored version maintains the same functionality but should have better PPA characteristics due to:
+- Reduced state encoding bits
+- Simplified state transitions
+- More efficient shift operation
+- Cleaner output generation

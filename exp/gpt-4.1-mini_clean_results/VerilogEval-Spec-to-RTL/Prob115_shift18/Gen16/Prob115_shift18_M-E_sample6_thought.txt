@@ -1,0 +1,24 @@
+Implement the shift register using a staged shifting approach that breaks down the shift operation into two steps: first shift by 8 bits if needed, then shift by 1 bit if needed. This reduces the complexity of large multiplexers and avoids implementing multiple wide shifters in parallel.
+
+The direction and amount signals control these two stages:
+- If shifting left:
+  - First shift left by 8 bits if amount[0] == 1
+  - Then shift left by 1 bit if amount[0] == 0
+- If shifting right (arithmetic):
+  - First shift right by 8 bits if amount[0] == 1
+  - Then shift right by 1 bit if amount[0] == 0
+
+To support shifting by 1 or 8 bits in either direction, we use two combinational stages, each capable of shifting by 1 bit or by 8 bits (or by zero in one stage), controlled by amount[0].
+
+The approach:
+- Compute an intermediate shifted value after the 8-bit shift stage (either shift by 8 or no shift).
+- Then compute the final shifted value after the 1-bit shift stage.
+- Select direction once before applying shifts, and apply shifts accordingly.
+
+This reduces wide multiplexing since each stage only chooses between "no shift" or "shift by 8" or "shift by 1" and the direction mux is simple.
+
+This method also simplifies arithmetic right shift by replicating MSB bits at each stage. For left shifts, zero-fill is used.
+
+The synchronous process updates the register on clk rising edge, with priority on load, then enable shift.
+
+This design leverages staged shifting to reduce logic complexity and mux fanout, likely improving timing and area while maintaining functional correctness.

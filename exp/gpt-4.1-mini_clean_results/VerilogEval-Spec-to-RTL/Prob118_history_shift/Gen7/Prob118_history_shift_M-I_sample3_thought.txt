@@ -1,0 +1,17 @@
+To improve PPA, especially timing and power, I will implement a clock enable (ce) style update rather than gating logic outside the register. This allows synthesis tools to infer a clock enable for the flip-flops, potentially improving timing and power by minimizing unnecessary toggling inside the flip-flops.
+
+I will fix the mispredicted_history concatenation to use the entire 32-bit train_history with train_taken appended on the least significant bit, then truncate or shift as necessary because predict_history is 32-bit wide. The problem states that the rollback history is the 32-bit history before the mispredicted branch concatenated with the actual branch result, but since predict_history is 32-bit, we must shift the train_history by 1 bit left and insert train_taken as LSB.
+
+Therefore, the corrected rollback should be {train_history[30:0], train_taken} to produce a 32-bit result that appends the actual branch result.
+
+I will combine this with the clock enable approach, remove the extra combinational mux for next_history outside the always block, and move the logic inside the always block, simplifying it to minimize combinational depth before the register.
+
+This keeps functionality the same, improves timing by explicit clock enable signaling, and reduces dynamic power by limiting state changes to necessary cycles.
+
+Finally, maintain asynchronous reset and priority of misprediction over prediction.
+
+Summary:
+- Use a clock enable style flip-flop update.
+- Fix rollback history concatenation to correctly represent rollback state.
+- Keep asynchronous reset.
+- Minimize combinational mux outside the flip-flop to reduce glitching.

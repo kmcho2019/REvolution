@@ -1,0 +1,14 @@
+To fuse the strengths of both examples, I will implement the TopModule as a purely combinational module using a direct assign statement for the AND function, which reduces gate count, power, and area. This is the simplest, most efficient solution since the logic is trivial.
+
+At the same time, to preserve modularity and reusability from the examples, I will include a separate AndGate module that also uses a direct assign for clarity and minimal delay, allowing easy reuse and clear hierarchy when needed.
+
+The TopModule will instantiate the AndGate module, keeping modularity and clarity, but internally the AndGate uses the simplest behavioral assign expression (assign y = a & b;) to optimize power and area.
+
+This approach:
+- Combines modular hierarchy with minimal logic complexity
+- Uses behavioral assign for minimal gate usage and power
+- Avoids unnecessary structural NAND gate chaining
+- Keeps the design clean, readable, and synthesis-friendly
+- Ensures zero timing overhead and minimal power/area
+
+Thus, the fusion strategy is a clear, modular, and minimal gate count design by directly using the AND operator in the submodule, and top-level clean instantiation for hierarchy.

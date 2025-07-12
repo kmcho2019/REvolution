@@ -1,0 +1,7 @@
+To refactor the given Verilog code, we will aim to maintain the same functionality but with a different structure. One potential approach is to eliminate the separate modules for `StateBNext` and `StateDNext` and instead, directly implement the logic for `Y1` and `Y3` within the `TopModule`. This can be achieved using `assign` statements for combinational logic, which is suitable since the next state logic for `Y1` and `Y3` does not depend on any sequential elements or clocks. By doing so, we can potentially simplify the design and reduce the number of modules, making the code more concise.
+
+The logic for `Y1` can be directly assigned based on the condition that it should be high when the current state is `A` (indicated by `y[0]`) and the input `w` is high. 
+
+For `Y3`, it should be high when the current state is not `A`, `B`, or `E` (since those states are represented by bits that do not correspond to `y[3]`), and the input `w` is low. This can be represented by checking the states `C`, `D`, or `F` (indicated by `y[2]`, `y[4]`, or `y[5]`) and the condition `~w`.
+
+By directly implementing these conditions within the `TopModule`, we can maintain the functionality while simplifying the overall design structure.

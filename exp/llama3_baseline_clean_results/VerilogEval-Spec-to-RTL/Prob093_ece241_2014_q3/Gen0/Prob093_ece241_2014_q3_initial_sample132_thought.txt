@@ -1,0 +1,20 @@
+To implement the given Karnaugh map using a 4-to-1 multiplexer and as few 2-to-1 multiplexers as possible, we can first identify the values for each of the multiplexer inputs (mux_in) based on the K-map. 
+
+Given the K-map:
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+For each row in the K-map, we need to determine the corresponding value for mux_in based on the 'ab' inputs of the 4-to-1 multiplexer.
+
+1. For ab = 00, the input to the multiplexer comes from the row where cd = 00, which means c = 0 and d = 0. From the K-map, we can see that the output for cd = 00 and any value of ab is 0, so mux_in[0] = 0.
+2. For ab = 01, we need an input that corresponds to the row where c = 0 and d = 1 (since that's where the '1' appears for ab = 01 in the table), so we use a 2-to-1 multiplexer with c and d as inputs and select c when 'b' is 0 and d when 'b' is 1, but looking closely, the value when ab=01 is always 0 for any cd, so mux_in[1] = 0.
+3. For ab = 11, this corresponds to the row where c = 1 and d = 1, so mux_in[3] = 1.
+4. For ab = 10, we see the output for c = 1 and d = 0, so mux_in[2] = 1.
+
+This realization means we don't need any additional 2-to-1 multiplexers for the direct inputs because our initial analysis aimed at minimizing additional logic, but the K-map simplification directly feeds into the 4-to-1 multiplexer without needing them for the described function.
+
+Thus, the implementation of the TopModule in Verilog directly assigns these values based on the K-map analysis.

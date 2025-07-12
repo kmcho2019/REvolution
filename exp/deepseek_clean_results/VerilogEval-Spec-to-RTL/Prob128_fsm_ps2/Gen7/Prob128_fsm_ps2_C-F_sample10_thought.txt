@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. State Encoding: Maintain the efficient 2-bit counter approach from both examples for minimal area
+2. Timing Optimization: Keep the direct 'done' assignment in sequential block (Example 1) for clean timing
+3. Power Optimization: Add an enable signal to reduce counter switching when idle (Example 2 suggestion)
+4. Logic Simplification: Use bit checks (cnt[1] && !cnt[0]) instead of comparator for marginal area savings
+5. Reset Handling: Keep synchronous reset with streamlined initialization
+
+Key Improvements:
+- Added 'en' signal to gate counter updates only during message reception
+- Simplified state comparison logic using bit checks
+- Maintained single always block structure
+- Reduced unnecessary counter toggling in idle state
+- Preserved immediate done signaling after third byte

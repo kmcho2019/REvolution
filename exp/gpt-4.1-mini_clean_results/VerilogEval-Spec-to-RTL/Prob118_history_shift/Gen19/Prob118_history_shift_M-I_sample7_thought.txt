@@ -1,0 +1,15 @@
+To improve the existing solution's PPA metrics, I will incorporate clock gating by using the update_enable signal to gate the clock of the predict_history register. This will reduce dynamic power consumption by preventing unnecessary toggling of the register when neither misprediction nor prediction updates occur. Clock gating typically improves power substantially with minimal impact on performance if implemented carefully.
+
+Additionally, I will simplify the combinational next_history logic slightly to use a more straightforward multiplexer with minimal concatenations to help synthesis tools map it efficiently.
+
+To enable clock gating without introducing glitches, I will instantiate an internal gated clock using an enable signal synchronized to the main clock. Since this is a small, single-register design, the gating can be safely done by leveraging the enable signal as a clock enable in the always block instead of actual clock gating cells, avoiding clock domain crossing or glitch risks.
+
+Thus, the revised approach will:
+- Use a clock enable (update_enable) inside the always block instead of direct clock gating to keep timing clean.
+- Keep the asynchronous reset as requested.
+- Use straightforward combinational logic for next_history.
+- This approach reduces unnecessary register toggling, helping both power and possibly area slightly by reducing toggles on internal nets.
+
+No functional changes: misprediction rollback still has priority, then prediction update, else hold.
+
+This will maintain performance while improving power and area slightly due to less switching activity.

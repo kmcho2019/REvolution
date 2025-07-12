@@ -1,0 +1,7 @@
+To refactor the given code while maintaining the core functionality of a D flip-flop with an asynchronous reset, we can utilize a different structure that potentially optimizes the Power, Performance, and Area (PPA) metrics. The original code uses an `always` block with a posedge condition for both the clock and the asynchronous reset. 
+
+A refactored approach involves separating the asynchronous reset logic from the clocked logic to potentially reduce unnecessary switching activity. Instead of using an `always` block that checks for both the clock edge and the reset condition, we can use a separate `always` block for the asynchronous reset and another for the clocked logic. This separation can help in optimizing the design by allowing synthesis tools to recognize and optimize the distinct logic paths more effectively.
+
+Another potential optimization is to ensure that the clocked logic is as straightforward as possible, allowing the synthesis tool to recognize and map it to the most efficient hardware structure available on the target device. Given the simplicity of the D flip-flop logic, we focus on maintaining a clear and minimalistic implementation that is easy for synthesis tools to optimize.
+
+In the refactored code, we maintain the use of an `always` block for the sequential logic but separate the reset logic to ensure it is immediately effective without being dependent on the clock. This separation does not alter the functionality but can affect how synthesis tools optimize the design, potentially leading to improvements in the PPA metrics.

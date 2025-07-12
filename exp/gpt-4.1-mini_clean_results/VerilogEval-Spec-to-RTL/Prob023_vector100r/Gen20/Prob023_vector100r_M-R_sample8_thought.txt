@@ -1,0 +1,8 @@
+Refactor the design to perform the 100-bit reversal directly by continuous assignments without instantiating submodules or using functions. This removes any logic overhead associated with function calls and multiple module instances, resulting in purely combinational wiring that simply connects each output bit to the corresponding reversed input bit.
+
+This approach greatly simplifies the design by:
+- Eliminating the BitRevN module.
+- Avoiding any loops inside modules; instead using a generate-for loop with direct bit indexing.
+- Directly assigning `out[i] = in[99 - i]` for all bits `i` in 0 to 99.
+
+This maintains the original functionality and modularity in a straightforward manner, while improving area, power, and performance by using only wiring connections.

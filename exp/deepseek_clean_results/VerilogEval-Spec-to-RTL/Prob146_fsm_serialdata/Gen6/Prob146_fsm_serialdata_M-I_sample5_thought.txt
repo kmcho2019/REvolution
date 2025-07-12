@@ -1,0 +1,22 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. Performance:
+- Change shift direction to left-shift to reduce critical path
+- Register next_state logic to break timing paths
+- Simplify state machine by merging ERROR state into IDLE
+
+2. Power:
+- Add enable signals to reduce unnecessary register toggles
+- Make done signal a one-cycle pulse instead of maintained high
+- Only update shift register when in RECEIVE state
+
+3. Area:
+- Reduce state encoding to 2 states (IDLE and RECEIVE)
+- Simplify bit counter logic
+- Remove redundant ERROR state
+
+The improved FSM will:
+- Use IDLE state to wait for start bit and handle stop bit verification
+- Use RECEIVE state to collect 8 data bits
+- Generate done as a one-cycle pulse when stop bit is valid
+- Immediately return to IDLE if stop bit is invalid (no separate ERROR state)

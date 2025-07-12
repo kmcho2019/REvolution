@@ -1,0 +1,11 @@
+The existing solution is functionally correct and minimal, but using continuous assignments directly for combinational outputs can be improved further by explicitly declaring outputs as wires instead of regs, clarifying intent and enabling better synthesis optimizations. Also, using explicit output types (`output wire`) avoids unnecessary inference of registers. Additionally, naming consistency and formatting can slightly improve readability. 
+
+From a PPA perspective, the design already has minimal logic and area. To further reduce power, using continuous assignments ensures no latches and minimal switching. The logic is minimal (just AND and NOT gates). There's no clock or sequential logic to optimize.
+
+Thus, the improvement strategy is to:
+- Change output reg declarations to output wire
+- Use assign statements consistently
+- Remove unnecessary parentheses for readability
+- Keep logic identical for minimal area and power
+
+This also clarifies the code style and may help synthesis tools generate slightly more optimized hardware, albeit improvements will be marginal.

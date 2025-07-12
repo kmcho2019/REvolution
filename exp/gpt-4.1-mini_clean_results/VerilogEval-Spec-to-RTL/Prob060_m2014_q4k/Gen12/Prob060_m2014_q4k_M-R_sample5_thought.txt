@@ -1,0 +1,10 @@
+Refactor the design by explicitly implementing each D flip-flop stage as a separate always block inside the TopModule, instead of using a vector shift register. This approach breaks down the shift register into four distinct flip-flops connected in series. Each flip-flop uses synchronous active-low reset on the positive clock edge. The output is taken from the last flip-flop.
+
+This structure:
+- Removes the ShiftReg submodule and integrates the logic fully inside TopModule.
+- Uses multiple always blocks, one per flip-flop stage, showing a more manual shift register implementation.
+- Keeps synchronous active-low reset.
+- Demonstrates another common style of shift register design using scalar registers and assign for output.
+- Maintains the same functionality and interface.
+
+This approach provides clarity in flip-flop instantiation and can be useful for explicit pipeline stage control or when adding stage-specific logic in the future.

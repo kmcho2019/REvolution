@@ -1,0 +1,7 @@
+A simpler approach is to treat the entire 32-bit register as shifting right by one on each clock, feeding back the LSB (q[0]) to the MSB, and XOR the feedback only on the tapped bits (22, 2, and 1). Since the tap at bit 32 (MSB) always gets the feedback directly, we just insert the feedback there.
+
+This can be done succinctly by shifting q right by one, then XOR'ing the tapped bits with the feedback. Using a combinational wire to generate the next state bits simplifies the always block and keeps the code easy to understand and maintain.
+
+On reset, q initializes to 32'h1 synchronously as required.
+
+This implementation minimizes explicit bit slicing and is straightforward for synthesis tools while preserving correct Galois LFSR behavior with specified taps.

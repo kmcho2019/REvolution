@@ -1,0 +1,8 @@
+To implement the TopModule, we will design a finite state machine (FSM) with several states to control the motor. The FSM will have the following states:
+- State A: Initial state, asserted when resetn is low. In this state, both f and g are 0.
+- State B: Transient state, asserted when resetn is high and the FSM is transitioning out of State A. In this state, f is set to 1 for one clock cycle.
+- State C: Monitoring state, asserted after State B. In this state, the FSM monitors the x input and waits for the sequence 1, 0, 1.
+- State D: Transitional state, asserted after the x sequence is detected. In this state, g is set to 1.
+- State E: Final state, asserted after State D. In this state, the FSM monitors the y input and maintains g = 1 if y becomes 1 within two clock cycles, otherwise g is set to 0 permanently.
+
+We will use a counter to keep track of the clock cycles and detect the sequence of x and y inputs.

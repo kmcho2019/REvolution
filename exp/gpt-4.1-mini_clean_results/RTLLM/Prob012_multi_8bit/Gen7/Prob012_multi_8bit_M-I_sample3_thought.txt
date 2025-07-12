@@ -1,0 +1,11 @@
+To optimize the existing 8-bit shift-and-add multiplier for better power and area without sacrificing correctness, we can switch from a fully combinational balanced adder tree to a sequential shift-and-add implementation.
+
+This sequential approach uses a simple FSM or counter to iterate over each bit of multiplier B, conditionally adding the multiplicand A shifted appropriately to an accumulator register. It requires fewer hardware resources since only one adder and some registers are needed rather than multiple wide adders and large partial product arrays.
+
+Though it increases latency (8 clock cycles), it reduces combinational logic complexity and power due to less parallel switching. The design is straightforward and synthesizes efficiently for smaller area and power footprints.
+
+This change is beneficial if throughput is not the highest priority and the design can operate under a clock. The module will include a clock and start input to initiate multiplication and a done signal to indicate completion. 
+
+If pure combinational logic with zero latency is a must, the previous solution is fine. However, the prompt suggests shift-and-add logic which naturally maps well to a sequential implementation.
+
+Below is the improved code: an 8-bit multiplier module with inputs A, B, a start signal, a clock, and synchronous reset. The output product is valid when done goes high. This approach optimizes power and area by reusing one adder and sequentially accumulating partial sums.

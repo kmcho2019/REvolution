@@ -1,0 +1,26 @@
+The FSM starts in state A waiting for s=1 to transition to state B. In state B, we count the number of w=1 inputs over exactly the next three clock cycles after the transition. Only after completing these three cycles do we output z=1 if exactly two of the three w's were 1, otherwise z=0. The output z is asserted for one cycle, one cycle after the 3-cycle window.
+
+To achieve this with minimal states and simple logic, the approach is:
+
+- In state A: wait for s=1 to start counting, z=0.
+- On detecting s=1, move to state B and start counting w=1s from the *next* cycle.
+- In state B: keep a cycle counter from 0 to 2 to count the three sampling cycles.
+- For each of the three cycles, accumulate count of w=1.
+- After the third sample, in the *next* cycle (cycle_cnt==3), output z=1 if count_w == 2, else 0.
+- Then reset the counters and start the next 3-cycle window immediately.
+
+This requires:
+- Extending cycle counter to count from 0 to 3 (4 states) where 0,1,2 are sampling w, and 3 is outputting z.
+- On cycle_cnt==3, output z based on count_w, reset counters and repeat.
+
+We keep two states (A and B) but a wider cycle counter to differentiate sampling and output cycles. The cycle counter and count_w are registers.
+
+Synchronous reset initializes everything to state A and zeros counters and output.
+
+This scheme cleanly separates sampling and output, producing z exactly one cycle after the three w samples, per spec.
+
+Also, avoid declaring regs inside always block — keep all regs declared at module level.
+
+This clean separation avoids off-by-one errors and aligns with the problem statement precisely.
+
+The final output z is registered and updated only on clock edges.

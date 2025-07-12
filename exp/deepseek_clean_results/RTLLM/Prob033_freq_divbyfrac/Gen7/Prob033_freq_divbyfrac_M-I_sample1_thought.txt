@@ -1,0 +1,30 @@
+Improved Solution for 3.5x Fractional Division:
+
+1. **Precise Phase Alignment**:
+   - Use separate counters for primary and secondary phases
+   - Secondary phase counter runs half-cycle ahead to create proper offset
+
+2. **Duty Cycle Correction**:
+   - Primary phase: 4 cycles high (0-3), 3 cycles low (4-6)
+   - Secondary phase: 3 cycles high (0-2), 4 cycles low (3-6)
+   - This creates perfect 50% duty cycle when combined
+
+3. **Synchronized Reset**:
+   - Ensure both counters reset to same initial state
+   - Clear all registers on active-low reset
+
+4. **Optimized Edge Handling**:
+   - Primary phase uses posedge clock
+   - Secondary phase uses negedge clock with adjusted counter
+   - Eliminates race conditions between phases
+
+5. **Efficient Combination**:
+   - Simple OR operation maintains correct pulse distribution
+   - No overlapping pulses in final output
+
+Key Improvements:
+- Separate counters ensure precise phase relationship
+- Adjusted counting thresholds for perfect duty cycle
+- Guaranteed synchronization between phases
+- Clean startup behavior
+- Robust edge-sensitive timing

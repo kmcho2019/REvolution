@@ -1,0 +1,7 @@
+Refactor the module to use continuous assignments and wire-based combinational logic instead of a single always block with blocking assignments. The key idea is to implement the two's complement subtraction by conditionally inverting `b` and adding the carry-in `do_sub` using the `+` operator directly, which is synthesis-friendly for modern tools and simpler. Then, derive the zero flag from the output using a reduction NOR on the wire. Finally, register the outputs with a combinational always block or directly drive `out` and `result_is_zero` as wires (or outputs assigned via continuous assignment).
+
+This approach removes explicit ripple carry logic and loop constructs, improves clarity, and leverages the synthesizer's built-in arithmetic and optimization. It also fixes the zero flag by computing it over the final output explicitly.
+
+The module interface remains the same, with `out` and `result_is_zero` as `reg` types updated combinationally.
+
+This refactor simplifies the implementation while preserving correct functionality and synthesis friendliness.

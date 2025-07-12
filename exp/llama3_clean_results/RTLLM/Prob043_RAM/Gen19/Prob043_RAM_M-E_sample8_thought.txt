@@ -1,0 +1,13 @@
+To create a novel solution, let's rethink the traditional RAM architecture. Instead of using a single array for both read and write operations, we can implement a dual-port RAM using two separate arrays: one for writing data and another for reading data. This approach allows for simultaneous read and write operations without conflicts.
+
+The write array will be responsible for storing the written data, and the read array will be updated periodically to reflect the changes made in the write array. This periodic update can be triggered by a specific signal or can be done at regular intervals.
+
+To further optimize this design, we can incorporate a handshake mechanism between the write and read arrays. When new data is written to the write array, a flag is set indicating that the read array needs to be updated. The read array then updates its contents from the write array, and the flag is cleared.
+
+This novel architecture provides several benefits, including improved performance due to the ability to handle simultaneous read and write operations, and reduced power consumption as only one array is being accessed at a time.
+
+In terms of implementation, we will define two separate reg arrays, one for writing and one for reading. We will use a flag to indicate when the read array needs to be updated. The update of the read array will be triggered by the write enable signal, ensuring that the read array always reflects the latest written data.
+
+The clock-gating mechanism will be simplified by directly assigning the result of the write enable or read enable signal to the clock-gated signal, reducing timing overhead.
+
+Additionally, to optimize the reset logic, we will use a loop to reset all memory locations in both arrays to zero, minimizing the area and power impact of the reset logic.

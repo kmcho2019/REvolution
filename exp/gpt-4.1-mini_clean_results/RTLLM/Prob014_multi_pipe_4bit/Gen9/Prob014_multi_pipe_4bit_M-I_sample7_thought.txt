@@ -1,0 +1,21 @@
+The original design correctly implements a pipelined 4-bit multiplier using two stages of registers: one stage for partial product registers and a second stage for summing partial products. However, it introduces a third stage register to register the final sum, leading to an extra pipeline stage than requested. The problem statement requires **two levels of registers** to store intermediate values and control the multiplication process, not three.
+
+To improve and correct this:
+
+1. **Remove the third pipeline stage** (final_sum register). The output `mul_out` should be assigned directly from the sum of the second stage registers `sum_low + sum_high`. This way, we have exactly two levels of pipeline registers:
+    - Level 1: partial product registers (`pp_reg`)
+    - Level 2: sum registers (`sum_low`, `sum_high`)
+
+2. **Assign `mul_out` synchronously in the same clock edge as `sum_low` and `sum_high` update**, using non-blocking assignment. This means that the final addition is combinational from two registered inputs and the output is registered in `mul_out` without any extra pipeline register.
+
+3. **Pipeline latency will be two clock cycles** from inputs to output, consistent with two levels of registers.
+
+4. **Keep zero-extension of `mul_a` as before**, matching the problem requirement.
+
+5. **Maintain asynchronous active-low reset**, clearing all registers and output on reset.
+
+This yields an efficient and functionally correct pipelined 4-bit multiplier with exactly two pipeline stages.
+
+This approach simplifies the pipeline and avoids unintended extra latency, improving functional correctness while matching the specification precisely.
+
+---

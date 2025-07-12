@@ -1,0 +1,10 @@
+Refactoring the solution, I will maintain the same one-hot encoding and Moore FSM logic, but organize it by defining explicit current state and next state signals as individual wires, then create next state assignments separately for each state bit. The next state output signals (S_next, S1_next, etc.) will be directly wired from the corresponding next state bits. Outputs will remain Moore-style, derived directly from current states.
+
+This approach:
+- Explicitly defines the entire next state vector as 10 bits, enabling direct mapping of next states for all bits.
+- Improves clarity by defining the full next state vector, making it easier to verify the correctness of each transition.
+- Uses assign statements for full combinational logic.
+- Derives output signals from current state bits.
+- Provides an alternative structure to the original without changing the core logic.
+
+This structure also makes extending or modifying the FSM easier, as all next states are centralized in a single wire vector.

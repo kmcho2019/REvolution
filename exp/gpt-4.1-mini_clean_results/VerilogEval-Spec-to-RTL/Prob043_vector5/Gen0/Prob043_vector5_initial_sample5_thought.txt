@@ -1,0 +1,8 @@
+The output is a 25-bit vector representing all pairwise equality comparisons among the inputs a, b, c, d, e.
+Each bit out[i] corresponds to the equality of a particular pair (first input vs second input).
+Since there are 5 inputs, there are 25 comparisons (5x5).
+We can order the output bits by rows, for example, bits [24:20] compare 'a' with each input (a,b,c,d,e),
+then bits [19:15] compare 'b' with each input, and so on, until bits [4:0] compare 'e' with each input.
+Each bit is set to 1 if the two bits compared are equal, 0 otherwise.
+We can implement this by defining a 5x5 array and flatten it into out[24:0].
+For each pair (x,y), out bit = ~(x ^ y) (XNOR).

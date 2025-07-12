@@ -1,0 +1,7 @@
+To design the TopModule, we will use a hierarchical approach with separate counters for hours, minutes, and seconds. Each counter will be implemented as a BCD counter with two digits (8 bits). We will also include a PM/AM indicator that is updated based on the hour value. The counters will be clocked by the fast-running clk signal and will increment only when the ena signal is asserted. The reset signal will be used to reset the clock to "12:00 AM" whenever it is asserted.
+
+Here's the high-level design:
+- The seconds counter will increment once per second (when ena is asserted) and will reset to 00 when it reaches 59.
+- The minutes counter will increment once per minute (when the seconds counter wraps around) and will reset to 00 when it reaches 59.
+- The hours counter will increment once per hour (when the minutes counter wraps around) and will wrap around to 01 when it reaches 12, also updating the PM/AM indicator.
+- The PM/AM indicator will be set based on the hour value, with 12-11 PM and 12 AM being the only 12-hour values.

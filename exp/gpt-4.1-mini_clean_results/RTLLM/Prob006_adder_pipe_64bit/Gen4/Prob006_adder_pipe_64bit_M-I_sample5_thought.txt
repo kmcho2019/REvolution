@@ -1,0 +1,21 @@
+The original design is functionally correct in implementing an 8-stage 8-bit pipelined ripple carry adder, but it has a few issues:
+
+1. The output assembly of the sum pieces concatenates the sum pieces in reverse order, causing the output bits to be mismatched.
+2. The pipeline registers for the operands are unnecessarily stored for all stages upfront at the same time, rather than being shifted in the pipeline to reduce resource usage and align timing correctly.
+3. The carry and enable signals are updated within the same clock cycle using a mix of combinational and sequential logic, which can cause race conditions.
+4. The design can be improved for better pipeline flow by shifting operands and carry registers stage by stage, and computing the stage addition in combinational logic before registering results, ensuring clean timing and data synchronization.
+5. Output enable and result should be valid only when the pipeline latency (8 cycles) has passed after input enable.
+6. The carry-in to stage 0 should be zero at all times.
+
+Improvement strategy:
+
+- Implement the pipeline registers as stage-by-stage shift registers for operands, carry-in, sum, and enable signals.
+- Each pipeline stage computes its sum and carry-out combinationally from the registered operands and carry-in.
+- The sum and carry-out are registered at the next clock cycle to become the next stage's input.
+- Store each stage's 8-bit sum in pipeline registers to assemble the final 64-bit sum.
+- Properly align output enable signal to assert only when the final stage sum is valid.
+- Correctly concatenate the sum chunks in the output result, ensuring that stage 0 sums bits [7:0], stage 1 sums bits [15:8], etc., up to stage 7 sums bits [63:56], and the final carry-out is the MSB of the 65-bit result.
+
+This clean pipelined design improves timing, removes potential race conditions, and correctly aligns data for output. It is practical for synthesis and suitable for clocked FPGA or ASIC implementations.
+
+The final code is fully synchronous, handles reset correctly, and provides a valid output enable signal when the result is ready.

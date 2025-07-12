@@ -1,0 +1,8 @@
+I'll refactor the Moore FSM implementation with these changes:
+1. Remove clock gating to simplify the design (modern synthesis tools handle power optimization well)
+2. Use continuous assignments for next-state logic instead of always blocks
+3. Combine state register and output logic into a single always block
+4. Keep the same state encoding (A=00, B=01, C=10, D=11)
+5. Maintain synchronous reset functionality
+
+This approach simplifies the design while maintaining the same functionality. The continuous assignments make the next-state logic more explicit and potentially easier for synthesis tools to optimize. The single always block for sequential logic reduces the number of procedural blocks while keeping the synchronous behavior clear.

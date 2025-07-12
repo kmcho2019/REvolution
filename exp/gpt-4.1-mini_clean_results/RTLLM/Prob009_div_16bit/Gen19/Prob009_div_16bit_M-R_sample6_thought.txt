@@ -1,0 +1,7 @@
+Refactor the original fully combinational divider by replacing the generate-for loop with a single always_comb block that explicitly iterates through the division steps using a procedural for loop. This keeps the division logic combinational but moves from multiple parallel assignments to a sequential procedural approach for better readability and easier modification.
+
+The inputs A and B are latched into registers a_reg and b_reg using a combinational always block (to satisfy the requirement of two always blocks). Then, the division logic is implemented in a second always_comb block which iterates over the dividend bits from MSB to LSB, performing the shift-subtract operations step-by-step, updating quotient bits and remainder register accordingly.
+
+This approach still ensures purely combinational behavior, but the division process is described sequentially in code, which can be more intuitive to some engineers while maintaining the problem requirements.
+
+Outputs are assigned from the computed quotient and remainder registers at the end of the combinational logic.

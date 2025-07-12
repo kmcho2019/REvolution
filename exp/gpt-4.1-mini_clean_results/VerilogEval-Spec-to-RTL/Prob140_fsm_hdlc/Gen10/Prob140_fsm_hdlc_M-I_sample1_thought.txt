@@ -1,0 +1,32 @@
+To optimize the FSM for better PPA, especially timing and power, I will use one-hot encoding for the states representing counts 0 to 7, which simplifies equality comparisons and speeds up output detection. The next-state logic will be combinational logic that shifts a '1' along the one-hot register on input=1, resetting to state 0 on input=0.
+
+Outputs (disc, flag, err) become direct checks of active states, eliminating comparators. This reduces critical path and logic transitions.
+
+Additionally, outputs are only asserted for one cycle after detection, held in registers as before. This approach reduces combinational logic delay and switching power while maintaining area efficiency.
+
+The one-hot encoding states are:
+
+- s0: zero consecutive ones (reset state)
+- s1: 1 consecutive one
+- s2: 2 consecutive ones
+- s3: 3 consecutive ones
+- s4: 4 consecutive ones
+- s5: 5 consecutive ones
+- s6: 6 consecutive ones
+- s7: 7 or more consecutive ones (error state)
+
+Transitions:
+- On 'in' = 0: go to s0 (zero ones)
+- On 'in' = 1: shift the one-hot bit up by one; if already s7, stay s7.
+
+Outputs after clock edge (Moore FSM):
+
+- disc: asserted when previous state was s5 and input=0 (detect 5 ones followed by zero)
+- flag: asserted when previous state was s6 and input=0 (detect 6 ones followed by zero)
+- err: asserted when new state is s7 (7 or more ones)
+
+This design simplifies equality checks to single-bit tests, speeds up output generation, and can reduce power due to less toggling in combinational logic.
+
+The synchronous reset is maintained.
+
+This should improve timing slack (less logic depth in next state and outputs) and slightly reduce power, with minimal area increase due to 8-bit one-hot register instead of 3-bit binary counter.

@@ -1,0 +1,5 @@
+Simplify the 32-bit carry-lookahead adder by using two 16-bit CLA blocks as before but remove the explicit hierarchical block propagate/generate signals and instead directly connect the carry-out of the lower block as the carry-in for the upper block. Within each 16-bit CLA block, use straightforward carry-lookahead logic computing per-bit propagate/generate and carries without an explicit block generate output. This reduces complexity and code size while maintaining correct and efficient carry-lookahead functionality.
+
+The module uses zero-based indexing internally, maps the 1-based external interface accordingly, and the top module instantiates two 16-bit CLA blocks. The carry-in of the lower 16-bit block is zero, and the carry-in of the upper 16-bit block is the carry-out from the lower block. This avoids the hierarchical block P/G calculation step and simplifies the design while still achieving carry-lookahead performance within each 16-bit block.
+
+This approach reduces logic and code complexity, is easier to maintain, and still outperforms ripple carry adders by parallelizing carry calculations inside each 16-bit CLA block.

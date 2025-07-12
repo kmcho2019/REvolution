@@ -1,0 +1,7 @@
+To solve this problem, we will use a one-hot encoding for the state machine. The current state is represented by a 10-bit vector `state` where each bit corresponds to a particular state. The next state is determined by the current state and the inputs `d`, `done_counting`, and `ack`. We will use combinational logic to determine the next state and the output signals.
+
+First, we will decode the current state and determine the next state based on the inputs. Then, we will generate the output signals `done`, `counting`, and `shift_ena` based on the current state. Finally, we will generate the signals `B3_next`, `S_next`, `S1_next`, `Count_next`, and `Wait_next` to indicate the next state.
+
+The state transition logic can be derived by inspection of the state machine diagram. For example, if the current state is `S` and `d` is 1, the next state is `S1`. If the current state is `S1` and `d` is 0, the next state is `S`. We will use this approach to derive the next state for all possible combinations of current state and inputs.
+
+The output logic can also be derived by inspection of the state machine diagram. For example, the output `shift_ena` is 1 when the current state is `B0`, `B1`, `B2`, or `B3`. The output `counting` is 1 when the current state is `Count`. The output `done` is 1 when the current state is `Wait`.

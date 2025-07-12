@@ -1,0 +1,12 @@
+To improve the PPA of the original LIFObuffer design, the focus is on minimizing switching activity and simplifying control logic:
+
+1. Remove the subtraction operation (SP - 1) for push_addr by reworking stack pointer usage so push address is simply SP after decrement.
+2. Introduce a synchronous update scheme where SP is updated first, then data is written/read at SP, removing combinational address calculations.
+3. Pipeline dataOut update to next cycle after pop to reduce combinational fanout and improve timing.
+4. Implement clock gating on stack memory write to prevent unnecessary toggling when no push occurs.
+5. Keep the pop operation from reading memory during no pop to avoid spurious reads.
+6. Use a single always_ff block with non-blocking assignments to ensure proper timing.
+7. Initialize the stack memory on reset via loop.
+8. Keep EMPTY and FULL flags combinational for quick update.
+
+This reduces arithmetic complexity by turning (SP - 1) address into a simpler direct index, gates writes to the memory to save power, and registers dataOut to reduce critical path delay, thereby improving timing and reducing power and area overhead.

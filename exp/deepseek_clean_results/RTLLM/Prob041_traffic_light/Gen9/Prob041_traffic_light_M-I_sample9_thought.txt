@@ -1,0 +1,21 @@
+To optimize the traffic light controller for better PPA metrics, I'll implement the following improvements:
+
+1. **Power Optimization**:
+   - Add counter enable logic to only decrement when needed (not during state transitions)
+   - Register the outputs to reduce glitches and switching activity
+
+2. **Area Optimization**:
+   - Use one-hot encoding for states (3 bits) which simplifies decoding logic
+   - Optimize counter width based on maximum count value (60 needs 6 bits)
+
+3. **Performance Optimization**:
+   - Simplify state transition conditions by separating them from counter logic
+   - Use parallel comparisons for state transitions
+   - Add early termination for counter when pedestrian request is active
+
+The improved design will:
+- Maintain all original functionality
+- Reduce power consumption by minimizing unnecessary switching
+- Potentially reduce area through optimized state encoding
+- Improve timing by simplifying critical path logic
+- Keep the same timing requirements (60 green, 5 yellow, 10 red)

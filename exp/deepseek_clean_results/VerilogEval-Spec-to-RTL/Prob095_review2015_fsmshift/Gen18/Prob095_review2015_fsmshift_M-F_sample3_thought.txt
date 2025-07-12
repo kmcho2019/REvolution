@@ -1,0 +1,18 @@
+Revised approach to meet exact 4-cycle enable requirement after reset:
+1. Key insight: Reset cycle should not count as an enabled cycle
+2. Solution: Add an explicit INIT state that handles the reset condition
+3. New state sequence:
+   - INIT: Handles reset condition (shift_ena = 0)
+   - CYCLE1: First enabled cycle
+   - CYCLE2: Second enabled cycle
+   - CYCLE3: Third enabled cycle
+   - CYCLE4: Fourth enabled cycle
+   - DONE: Final state (shift_ena = 0)
+4. Reset behavior:
+   - Immediately enters INIT state (shift_ena low)
+   - Progresses through CYCLE1-4 (shift_ena high)
+   - Locks in DONE state until next reset
+5. Benefits:
+   - Clear separation between reset handling and enable cycles
+   - Exactly 4 cycles of shift_ena after reset
+   - Reset cycle doesn't count toward enable count

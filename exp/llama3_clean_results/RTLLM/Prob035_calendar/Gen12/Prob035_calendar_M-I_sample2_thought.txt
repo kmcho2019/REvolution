@@ -1,0 +1,20 @@
+The given solution is already functionally correct, and it has a good baseline performance. However, there are opportunities for optimization to improve its Power, Performance, and Area (PPA) metrics. 
+
+To improve the performance (timing), we will simplify the conditional statements within the always block. Instead of checking all conditions sequentially, we can use a more parallel approach by checking the reset condition first, then checking the maximum values of `Secs`, `Mins`, and `Hours` in parallel. This will reduce the critical path delay.
+
+For power optimization, we can use clock gating to reduce the switching activity in the `Secs`, `Mins`, and `Hours` registers. However, since we are already using non-blocking assignments, the power consumption is relatively low.
+
+To optimize the area usage, we can keep the current implementation with a single always block, as it is already area-efficient. However, we can further optimize the logic by removing unnecessary conditional statements and using more compact state machine encodings.
+
+Additionally, we can consider using a Gray code counter to reduce the switching activity and power consumption. However, since the counters are already designed to wrap around when they reach their maximum values, we can simplify the logic and avoid using a Gray code counter.
+
+Our improvement strategy involves:
+
+1. Simplifying the conditional statements within the always block to reduce the critical path delay.
+2. Keeping the current implementation with a single always block to optimize area usage.
+3. Removing unnecessary conditional statements and using more compact state machine encodings.
+4. Avoiding the use of a Gray code counter due to the existing wrap-around logic.
+
+By implementing these strategies, we can improve the PPA metrics of the given solution.
+
+Looking at the PPA metrics, we can see that the timing performance is already good, with an effective clock period of 0.4 ns. However, there is room for improvement in power consumption (0.0117 W) and area usage (183.0 um^2). Our goal is to optimize the design to reduce power consumption and area usage while maintaining good timing performance.

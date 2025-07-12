@@ -1,0 +1,12 @@
+Simplified Design Approach:
+1. State Tracking: Use a simple 2-bit counter to track message bytes (0-2)
+2. Message Start: Only start counting when in[3]=1 (first byte)
+3. Done Signal: Assert done when counter reaches 2 (third byte received)
+4. Reset: Synchronous reset to clear counter and done signal
+5. Minimal Logic: Remove unnecessary enable signals and use direct counter checks
+
+Key Simplifications:
+- Eliminate cnt_en logic by directly checking in[3] when counter is 0
+- Simplify done generation to only depend on counter value
+- Reduce state transitions to simple increment/wrap logic
+- Maintain same functionality with fewer operations

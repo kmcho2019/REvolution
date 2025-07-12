@@ -1,0 +1,25 @@
+Fusion Strategy:
+1. State Encoding: Combine the Gray code benefits from both examples (minimal transitions) with direct output bit mapping. Use the following encoding:
+   - A: 000 (z=0)
+   - B: 001 (z=0)
+   - C: 011 (z=0)
+   - D: 010 (z=0)
+   - E: 110 (z=1)
+   - F: 111 (z=1)
+   This maintains single-bit transitions for common paths while keeping output logic simple (MSB indicates z).
+
+2. Architecture: Use the clean two-block separation (combinational next_state + sequential state) with case-based state transition logic for better readability and synthesis.
+
+3. Output Logic: Keep the most efficient approach where z is simply the MSB of the state register.
+
+4. Reset Handling: Maintain synchronous reset in the state register block.
+
+5. Robustness: Include default case handling while optimizing state transitions.
+
+Key Improvements:
+- Optimized state encoding for minimal transitions (Gray-like)
+- Simple output logic (direct bit assignment)
+- Clear separation of combinational and sequential logic
+- Balanced timing paths through case statement
+- All state transitions require ≤2 bit flips
+- Output z requires no additional logic

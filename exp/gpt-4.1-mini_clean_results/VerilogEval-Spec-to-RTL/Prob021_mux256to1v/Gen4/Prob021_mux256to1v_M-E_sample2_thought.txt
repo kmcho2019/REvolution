@@ -1,0 +1,5 @@
+Instead of indexing a 2D packed array, I will implement the 256-to-1 4-bit mux using a hierarchical mux tree structure. First, group the 1024-bit input into 64 blocks of 16 bits (each containing four 4-bit words). Then use the top 6 bits of sel to select one 16-bit block. Next, use the bottom 2 bits of sel to select one 4-bit word inside that 16-bit block.
+
+This approach reduces the complexity of the selection logic by breaking it into two stages: a 64-to-1 mux for 16-bit blocks (handled as a decoder + selected block extraction) and a 4-to-1 mux to choose the final 4-bit word within the selected block.
+
+This modular structure can improve synthesis optimization and may allow easier pipelining or parallelism, offering a different design perspective compared to a flat large multiplexer.

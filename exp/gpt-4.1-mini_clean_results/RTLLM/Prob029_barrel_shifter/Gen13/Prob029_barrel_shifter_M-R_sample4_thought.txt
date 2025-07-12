@@ -1,0 +1,5 @@
+To avoid naming conflicts from multiple `mux2X1` declarations in the environment and maintain the same logical functionality, we remove the explicit `mux2X1` module entirely. Instead, we implement the barrel shifter stages directly using conditional (ternary) operators in continuous `assign` statements. This keeps the design purely combinational and functionally identical to the original mux-based structure, but without extra submodules that could collide in the compilation scope.
+
+Each stage performs the rotate-by-4, rotate-by-2, and rotate-by-1 operations respectively by selecting between the unshifted and shifted bit of the previous stage based on the corresponding control bit. This approach is more straightforward and less prone to naming conflicts, while preserving modular indexing with wrap-around.
+
+The result is a clean, hierarchical, and fully combinational 8-bit barrel shifter with three shift stages controlled by `ctrl[2:0]`, rotating the input bits by up to 7 positions.

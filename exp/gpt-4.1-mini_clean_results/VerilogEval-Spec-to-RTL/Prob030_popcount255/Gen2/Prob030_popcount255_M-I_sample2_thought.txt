@@ -1,0 +1,7 @@
+To improve PPA, especially timing and area, explicitly implement the 17-bit population count (popcount17) using a balanced tree of smaller population count modules rather than a for-loop summation in an always block. This allows synthesis tools to better optimize the logic. For popcount17, split into smaller chunks (e.g., 4 groups of 4 bits plus 1 extra bit), use small parallel popcount4 modules for each 4-bit group, then sum their outputs hierarchically with small adders. This creates a balanced and fully combinational parallel structure without sequential loops, improving timing and possibly area.
+
+At the top level, keep the hierarchical adder tree summing the 15 partial counts, but switch all partial counts to 6-bit wires (max 17) and use 8-bit widths in summations to avoid zero-padding.
+
+Overall, this restructuring explicitly creates parallel adders and tree summation, which synthesis tools handle better, reducing logic depth and improving timing and area. Power can also benefit from the reduced critical path and more localized switching.
+
+This approach maintains functional correctness and output width, producing an 8-bit final count for 255 bits input.

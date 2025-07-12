@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Replace the sequential flag logic with purely combinational assignments for EMPTY/FULL to improve timing
+2. Use a one-hot encoded stack pointer for simpler pointer arithmetic and better timing
+3. Implement memory writes using parallel assignments with enable conditions
+4. Move output data assignment to combinational logic for better timing
+5. Simplify reset logic to only initialize essential state
+6. Remove redundant initial block since synthesis tools handle initialization
+
+Key Improvements:
+- One-hot SP eliminates arithmetic operations, improving timing
+- Combinational flags remove sequential dependencies
+- Parallel memory assignments reduce critical path
+- Cleaner separation of control and data paths
+- More efficient reset implementation

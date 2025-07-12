@@ -1,0 +1,36 @@
+The waveform suggests that p and q form a 2-bit state machine updated at each rising clock edge, with initial state (p,q) = 00 after the first clock edge. The input 'a' affects state transitions.
+
+Observing the waveforms:
+
+- Initially, p=0, q=0 for several clock cycles.
+- At some clock edges when 'a' is 1, p becomes 1 while q remains 0.
+- Later, at a certain clock edge, q becomes 1, and then stays at 1 with q=1 and p toggling with input 'a'.
+- When q=1, p follows 'a' but with some holding behavior.
+
+This suggests a two-bit state machine with states encoding (q,p), with q representing a more persistent state bit and p toggling based on 'a'.
+
+Let's interpret (q,p) as a 2-bit state variable:
+
+- State 00: Idle or initial state.
+- State 01: p=1, q=0 - partial set state.
+- State 11: q=1, p=1 - final set state.
+- State 10: q=1, p=0 - intermediate state.
+
+Analyzing transitions based on 'a':
+
+- From 00, if 'a' is 1 at rising clock, move to 01.
+- From 01, if 'a' is 1, move to 11; if 'a' is 0, back to 00.
+- From 11, if 'a' is 0, move to 10; if 'a' is 1, stay at 11.
+- From 10, if 'a' is 1, move to 11; else stay at 10.
+
+Outputs p and q directly correspond to state bits.
+
+This can be coded as a state machine with 2-bit state registers p and q. Initial state 00 at reset.
+
+Since there's no reset input, we initialize at first posedge clock by setting state to 00.
+
+This architecture follows the waveform transitions cleanly and is easy to maintain.
+
+Implementation will use a 2-bit reg 'state' = {q,p}, updated on posedge clock, initialized at first clock to 2'b00, and state transitions as per above.
+
+Outputs are p=state[0], q=state[1].

@@ -1,0 +1,11 @@
+To improve the provided Verilog code, we will focus on optimizing it for better Power, Performance, and Area (PPA) metrics. The first step is to correct the existing issues with the out_bytes output. 
+
+Upon examining the code, it seems that the issue lies in the update of the out_bytes signal. The out_bytes signal is only updated when the done signal is asserted, but the shift_register is also being updated in the same cycle. This could cause the out_bytes signal to have incorrect values.
+
+To correct this issue, we will update the out_bytes signal only when the done signal is asserted, and we will do this by assigning the value of the shift_register to the out_bytes signal in the same cycle when the done signal is asserted.
+
+To optimize the design for PPA metrics, we will reduce the number of times the shift_register is updated. We will only update the shift_register when a new byte is received, and not when the done signal is asserted.
+
+Additionally, we will use a more efficient data structure, such as a 3-byte array, to store the incoming bytes. This could reduce the area and power consumption of the design.
+
+In terms of performance, we will reduce the number of combinational logic levels by using a more efficient state machine encoding. We will also pipeline the design to improve its performance.

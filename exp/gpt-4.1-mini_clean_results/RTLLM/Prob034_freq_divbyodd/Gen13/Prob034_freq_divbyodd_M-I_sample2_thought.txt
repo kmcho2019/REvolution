@@ -1,0 +1,19 @@
+To correctly implement the frequency divider by an odd number using two counters and two clock dividers (one triggered on the positive edge and one on the negative edge), I will:
+
+- Implement two counters: cnt1 increments on the positive edge of `clk`, cnt2 increments on the negative edge of `clk`.
+
+- Both counters count from 0 up to NUM_DIV-1 and wrap around.
+
+- When cnt1 reaches half the division count (floor(NUM_DIV/2)), toggle clk_div1.
+
+- Similarly, when cnt2 reaches half the division count, toggle clk_div2.
+
+- Combine clk_div1 and clk_div2 by OR to form the output clock clk_div, which results in correct toggling on both edges.
+
+- The reset (active low) asynchronously initializes the counters and the divided clocks.
+
+- Include a compile-time check to ensure NUM_DIV is odd.
+
+- This approach leverages both edges of the input clock to create a clean frequency division by an odd number, producing an output clock with a near 50% duty cycle and correct frequency.
+
+This meets the problem requirements exactly, resolving glitch and alignment issues in prior approaches by strictly separating the positive and negative edge logic with dedicated counters and clock toggles.

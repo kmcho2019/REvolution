@@ -1,0 +1,6 @@
+The bug in the original implementation is that it performs bitwise operations between a single-bit 'sel' and 8-bit inputs 'a' and 'b', then ORs the results, but assigns to a single-bit 'out'. This will only give us the LSB of the operation. We need to properly select between the 8-bit inputs and output an 8-bit result.
+
+The fix involves:
+1. Making the output 8-bit to match the inputs
+2. Using a proper 2-to-1 mux operation for each bit
+3. Using the conditional operator for cleaner code

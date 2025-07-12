@@ -1,0 +1,7 @@
+Refactor the design to use a state machine approach for clarity and explicit control. The state is the 3-bit q register. When 'a' is 1, q is forced to 4. When 'a' is 0, q increments modulo 7 in a cyclical sequence: 4,5,6,0,1,2,3 and then back to 4.
+
+Using an always block triggered on clk's rising edge, update q according to the current a input and current q state, explicitly handling wrap-around with conditional logic instead of relying on implicit overflow.
+
+This approach clearly encodes the counting cycle seen in the waveform and ensures q holds 4 when a=1, and cycles through 4..6,0..3 when a=0.
+
+Initial q state remains unknown (x) at simulation start, matching the waveform.

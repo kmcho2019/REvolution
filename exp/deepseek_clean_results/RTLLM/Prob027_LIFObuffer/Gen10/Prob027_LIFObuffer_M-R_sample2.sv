@@ -1,0 +1,55 @@
+module LIFObuffer (
+    input wire [3:0] dataIn,
+    input wire RW,
+    input wire EN,
+    input wire Rst,
+    input wire Clk,
+    output wire EMPTY,
+    output wire FULL,
+    output reg [3:0] dataOut
+);
+
+    // Stack memory (4 entries, each 4 bits)
+    reg [3:0] stack_mem [0:3];
+    
+    // One-hot stack pointer (5 states: 00001=empty, 10000=full)
+    reg [4:0] SP;
+
+    // Combinational flag logic
+    assign EMPTY = (SP == 5'b00001);
+    assign FULL = (SP == 5'b10000);
+
+    always @(posedge Clk) begin
+        if (Rst) begin
+            // Reset condition: clear stack and set SP to empty
+            SP <= 5'b00001;
+            dataOut <= 4'b0;
+            // Parallel memory initialization
+            stack_mem[0] <= 4'b0;
+            stack_mem[1] <= 4'b0;
+            stack_mem[2] <= 4'b0;
+            stack_mem[3] <= 4'b0;
+        end
+        else if (EN) begin
+            if (!RW && !FULL) begin
+                // Write operation (push)
+                case (SP)
+                    5'b00001: begin stack_mem[3] <= dataIn; SP <= 5'b00010; end
+                    5'b00010: begin stack_mem[2] <= dataIn; SP <= 5'b00100; end
+                    5'b00100: begin stack_mem[1] <= dataIn; SP <= 5'b01000; end
+                    5'b01000: begin stack_mem[0] <= dataIn; SP <= 5'b10000; end
+                endcase
+            end
+            else if (RW && !EMPTY) begin
+                // Read operation (pop)
+                case (SP)
+                    5'b00010: begin dataOut <= stack_mem[3]; SP <= 5'b00001; end
+                    5'b00100: begin dataOut <= stack_mem[2]; SP <= 5'b00010; end
+                    5'b01000: begin dataOut <= stack_mem[1]; SP <= 5'b00100; end
+                    5'b10000: begin dataOut <= stack_mem[0]; SP <= 5'b01000; end
+                endcase
+            end
+        end
+    end
+
+endmodule

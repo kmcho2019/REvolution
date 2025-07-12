@@ -1,0 +1,55 @@
+The original solution provides a correct and reasonably optimized next-state logic for y[1] by explicitly covering the necessary state transitions with minimal terms. To improve PPA (performance, power, and area) further, I will:
+
+- Explore Boolean factoring to reduce the number of logic gates and inputs to each gate, which can reduce gate count and switching activity.
+- Simplify the expression for next_y1 by factoring out common terms and merging conditions to minimize the number of literal inversions and AND gates.
+- Keep the combinational assignment to avoid flip-flop overhead and maintain low latency.
+- The output Y1 is directly assigned to y[1], as required.
+
+By factoring common terms and restructuring the logic, the resulting implementation will have fewer gates, lower switching, and thus better power and area characteristics without impacting timing.
+
+Specifically, observe:
+
+next_y1 = B | (C & w) | (E & w) | F  
+with  
+B = ~y2 & ~y1 & y0  
+C = ~y2 & y1 & ~y0  
+E = y2 & ~y1 & ~y0  
+F = y2 & ~y1 & y0
+
+Note E and F differ only by y0, so (E | F) = y2 & ~y1  
+Hence,  
+next_y1 = B | (C & w) | (E & w) | F  
+         = B | (C & w) | (y2 & ~y1 & w) | F  
+But since F = y2 & ~y1 & y0, it’s covered in the last term.
+
+Combine B and F terms:
+
+next_y1 = ( ~y2 & ~y1 & y0 ) | ( ~y2 & y1 & ~y0 & w ) | ( y2 & ~y1 & ( y0 | w ) )
+
+Factor further:
+
+next_y1 = ~y2 & ( ( ~y1 & y0 ) | ( y1 & ~y0 & w ) ) | y2 & ~y1 & ( y0 | w )
+
+Inside first bracket, note (~y1 & y0) and (y1 & ~y0 & w):
+
+This can be seen as a mux: when ~y2=1:
+
+if y1=0: next_y1 = y0
+
+if y1=1: next_y1 = ~y0 & w
+
+So, next_y1 = ~y2 & mux(y1, (~y0 & w), y0) | y2 & ~y1 & (y0 | w)
+
+This is minimal and uses fewer AND and OR gates.
+
+Implementing this mux logic will reduce logic depth and gate count.
+
+Hence, the final expression:
+
+next_y1 = (~y2 & ( (~y1 & y0) | ( y1 & ~y0 & w ) )) | (y2 & ~y1 & ( y0 | w ))
+
+Implement this in Verilog using combinational assignments with minimal intermediate wires.
+
+This should improve PPA by reducing gate count and switching.
+
+Output Y1 is assigned directly to y[1].

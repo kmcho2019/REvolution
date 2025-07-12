@@ -1,0 +1,11 @@
+Instead of encoding levels as numbers, explicitly represent the water level states as distinct states in a state machine: BELOW_S0, BETWEEN_S1_S0, BETWEEN_S2_S1, ABOVE_S2. Store both the current and previous states in registers. On each clock cycle, update the previous state before updating the current state by decoding sensor inputs combinationally.
+
+Determine whether the level rose by comparing previous and current states in state order (from low to high). This ordering is explicit via a function that maps state to an ordinal rank, preventing misuse of numeric encoding.
+
+The supplemental valve (dfr) is asserted only if the level rose since last state (previous < current).
+
+Nominal flows are combinationally driven based on current state according to the provided truth table.
+
+A synchronous reset sets both current and previous states to BELOW_S0 and opens all flow valves.
+
+This approach cleanly separates state from numeric values and uses explicit comparisons by state rank, eliminating confusion and ensuring correct dfr detection.

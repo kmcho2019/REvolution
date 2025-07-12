@@ -1,0 +1,19 @@
+Refactored 3.5x fractional divider design:
+
+1. Structural Changes:
+   - Replaced sequential logic with combinational assignments where possible
+   - Simplified state tracking using modular arithmetic
+   - Eliminated intermediate registers for phase shift by using direct negedge sampling
+
+2. Key Improvements:
+   - Phase shift now correctly implemented with single negedge flip-flop
+   - Counter logic simplified using continuous assignment
+   - Base clock generation moved to combinational logic
+   - Clear separation of clock domains (posedge/negedge)
+
+3. Implementation Strategy:
+   - Maintain 7-state counter but track with wire + assignment
+   - Generate base clock directly from counter value
+   - Create phase shift by sampling base clock at negedge
+   - Combine clocks with OR operation (unchanged)
+   - All reset logic consolidated at top level

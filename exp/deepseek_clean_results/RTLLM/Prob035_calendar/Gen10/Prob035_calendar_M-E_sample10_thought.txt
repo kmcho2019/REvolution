@@ -1,0 +1,12 @@
+Instead of using separate counters for seconds, minutes, and hours, we can implement a single 17-bit counter that increments every second. The total seconds count is then converted to hours, minutes, and seconds through division/modulo operations. This approach:
+1. Uses only one counter instead of three, reducing flip-flop usage
+2. Eliminates cascaded rollover logic that creates timing paths
+3. Simplifies reset handling to a single operation
+4. Makes the design more scalable for future extensions
+5. Allows easy addition of day counters if needed
+6. Uses efficient division by constants (60 and 24) optimized by synthesis tools
+
+The conversion from total seconds to HH:MM:SS is done through:
+- Hours = total_seconds / 3600
+- Minutes = (total_seconds % 3600) / 60
+- Seconds = total_seconds % 60

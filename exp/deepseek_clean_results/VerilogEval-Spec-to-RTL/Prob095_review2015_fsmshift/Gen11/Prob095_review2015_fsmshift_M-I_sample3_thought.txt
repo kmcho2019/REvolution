@@ -1,0 +1,10 @@
+Improved solution with accurate 4-cycle counting:
+1. Maintain the 2-state FSM (IDLE/ACTIVE) but adjust the cycle counting logic
+2. Initialize cycle_count to 0 on reset (first cycle is count 0)
+3. Keep shift_ena active while in ACTIVE state (cycles 0-3)
+4. Transition to IDLE after exactly 4 cycles (when cycle_count reaches 3)
+5. Use a 2-bit counter to track cycles (0-3)
+6. This ensures shift_ena is high for exactly 4 cycles (0 through 3) after reset
+7. Simplified state transition logic by removing unnecessary case statement
+8. Clear synchronous reset behavior with immediate activation
+9. Optimized for minimal hardware (2-bit counter + 1-bit state)

@@ -1,0 +1,27 @@
+Fuse the strengths of both examples by creating a well-balanced 3-stage pipeline that improves timing and power efficiency:
+
+1. Input Stage:
+   - Sample inputs and input enable signal into registers.
+   - Use a 4-bit enable pipeline for precise tracking through pipeline stages, reducing glitch propagation.
+   
+2. Partial Product Generation Stage:
+   - Generate 8 partial products by bitwise AND and shift of multiplicand with multiplier bits.
+   - Store partial products in registers to break long combinational paths and reduce switching.
+   
+3. Partial Sum Calculation Stage:
+   - Instead of summing all 8 partial products in a single large combinational block, pipeline the addition in two steps:
+     a) Sum partial_products[0..3] into sum_lower
+     b) Sum partial_products[4..7] into sum_upper
+   - Then sum sum_lower and sum_upper in the final pipeline register.
+   - This approach creates a balanced adder tree split across two pipeline registers, improving max frequency.
+   
+4. Output Stage:
+   - Output the final sum registered in the last pipeline stage.
+   - The output enable is derived from the MSB of the enable pipeline.
+   - Output product is gated by the output enable, else zero.
+
+This design reduces the critical path of the addition by splitting it over pipeline stages, lowers switching by registering partial products and sums, and maintains proper enable signal tracking through a 4-stage enable pipeline. The pipeline depth (4 cycles latency) strikes a good balance between throughput, latency, and timing.
+
+Code implements synchronous reset (active-low), clean staging of signals, and uses generate for partial product generation. Overall, it fuses the clarity and reduced combinational complexity of Example 1 with the enable pipelining strategy and partial product registration seen in both examples.
+
+This pipeline architecture should improve PPA metrics by balancing combinational delay, area, and power dissipation while keeping clear, maintainable RTL structure.

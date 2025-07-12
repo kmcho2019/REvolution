@@ -1,0 +1,20 @@
+To improve the given fixed-point adder design for better performance, power, and area (PPA), I propose the following enhancements:
+
+1. **Avoid redundant absolute value calculations:**  
+   Compute absolute values only when the signs differ. When signs are equal, simply add directly.
+
+2. **Simplify conditional logic and reuse computed values:**  
+   Precompute absolute values once and use in both comparison and subtraction branches as needed.
+
+3. **Merge always blocks and avoid unnecessary registers:**  
+   Use combinational logic with minimal registers, assigning the output directly to reduce latency.
+
+4. **Handle zero results explicitly when signs differ and magnitudes are equal:**  
+   Output zero in this case.
+
+5. **Leverage two's complement properties to simplify sign handling:**  
+   Subtraction inherently yields the correct sign, so explicitly setting the MSB is not needed beyond two's complement arithmetic.
+
+6. **Parameterization remains to maintain flexibility for different Q and N values.**
+
+This results in a clear, efficient, and synthesizable fixed-point adder that correctly handles addition and subtraction with fixed precision and sign.

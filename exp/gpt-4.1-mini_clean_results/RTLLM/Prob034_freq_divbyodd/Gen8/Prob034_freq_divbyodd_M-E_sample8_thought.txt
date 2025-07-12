@@ -1,0 +1,11 @@
+To achieve an odd frequency division, a clean and well-defined approach is to generate a divided clock with a nearly 50% duty cycle by carefully generating pulses on both edges of the input clock.
+
+My idea is to use a single up-counter running on the positive edge of the input clock that counts modulo NUM_DIV. When the count reaches the midpoint (HALF_COUNT), toggle the output clock signal. The output clock toggles also when the counter wraps around (resets to zero). This ensures exactly two toggles per NUM_DIV input clock cycles, yielding a frequency division by NUM_DIV.
+
+Since NUM_DIV is odd, toggling the output clock at these two points (count == 0 and count == HALF_COUNT) guarantees a ~50% duty cycle.
+
+This method uses a single clock domain, eliminating the complexities of separate posedge and negedge domains and synchronization issues.
+
+Reset initializes the counter and output clock low.
+
+This design is simple, glitch-free, and functionally correct for any odd divisor >=3.

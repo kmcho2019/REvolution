@@ -1,0 +1,19 @@
+Refactoring the original design to adhere strictly to the requirement of using two counters (cnt1 and cnt2) and two divided clocks (clk_div1 and clk_div2) for positive and negative clock edges respectively, I will implement the following:
+
+1. Use two counters, cnt1 and cnt2, both counting modulo NUM_DIV, but triggered on opposite clock edges:
+   - cnt1 increments on the positive edge of clk.
+   - cnt2 increments on the negative edge of clk.
+
+2. Both counters toggle their respective divided clocks (clk_div1, clk_div2) when their count reaches half of NUM_DIV (integer division floor of NUM_DIV/2).
+
+3. The outputs clk_div1 and clk_div2 are both registers, toggled individually by their counters.
+
+4. The final output clk_div is assigned as the logical OR of clk_div1 and clk_div2, effectively combining toggling from both edges, ensuring a nearly 50% duty cycle for odd divisors.
+
+5. Use synchronous reset (active low rst_n) to initialize all counters and outputs.
+
+This approach respects the original requirement of dual counters for edges and ensures clean 50% duty cycle output clock divided by an odd number. Using separate always blocks for positive and negative edges simplifies design clarity, and the final output is an OR of the two divided clocks.
+
+No complex mid-cycle toggling is needed; toggles occur exactly when counters reach half the divide count, guaranteeing correct frequency and duty cycle.
+
+I will avoid any combinational assignments that rely on signals changing within the same clock cycle, ensuring glitch-free outputs.

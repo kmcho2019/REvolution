@@ -1,0 +1,17 @@
+Here's a novel approach using a shift register implementation for the state machine:
+
+1. **Shift Register Concept**: Instead of traditional state encoding, use a 2-bit shift register where the current state is represented by the MSB. This allows state transitions to be implemented as simple shift operations.
+
+2. **Transition Logic**: 
+   - For state B (MSB=1), shift left with 'in' as new LSB (1 stays in B, 0 moves to A)
+   - For state A (MSB=0), shift right with 'in' as new MSB (1 stays in A, 0 moves to B)
+
+3. **Output Logic**: The output is simply the MSB of the shift register, which directly represents the current state.
+
+4. **Advantages**:
+   - Unique implementation using shift operations instead of conventional state transitions
+   - Output is directly tapped from the register with no additional logic
+   - Reset initializes to '11' (state B)
+   - Minimal combinational logic (just muxing for shift direction)
+
+This approach provides an alternative perspective on state machine implementation while maintaining all functional requirements.

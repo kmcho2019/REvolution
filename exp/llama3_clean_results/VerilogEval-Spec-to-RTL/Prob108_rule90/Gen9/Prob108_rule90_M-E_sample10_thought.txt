@@ -1,0 +1,12 @@
+To create a novel architectural solution for the Rule 90 cellular automaton, we can leverage the concept of systolic arrays. A systolic array is a network of processors that rhythmically compute and pass data through the system in a wave-like manner. This architecture is particularly well-suited for problems that have a strong spatial locality and regular, linear dependencies between computations, such as the Rule 90 automaton.
+
+The main idea behind this approach is to break down the 512-cell system into smaller, identical processing elements (PEs), each responsible for calculating the next state of a single cell based on its neighbors. By arranging these PEs in a linear array and connecting them in a systolic manner, we can efficiently compute the next state of all cells in parallel, leveraging the spatial locality of the problem to reduce the complexity of the combinational logic.
+
+Each PE will receive the current states of its left and right neighbors (or the boundary conditions for the edge PEs), compute the XOR of these states to determine the next state of its cell, and then pass this next state to its neighbors for the next computation. This process can be pipelined, allowing for a high throughput and efficient utilization of resources.
+
+The benefits of this systolic array approach include:
+1. **Scalability**: The design can be easily scaled up or down by adding or removing PEs, making it flexible for different sizes of cellular automata.
+2. **Parallelism**: By computing the next states of all cells in parallel, the design can achieve high throughput.
+3. **Efficient Resource Utilization**: The systolic array architecture can lead to more efficient use of resources, as each PE only needs to perform a simple XOR operation and communicate with its immediate neighbors.
+
+Overall, the systolic array approach offers a novel and efficient way to implement the Rule 90 cellular automaton, leveraging the inherent parallelism and spatial locality of the problem to achieve high performance and efficient resource utilization.

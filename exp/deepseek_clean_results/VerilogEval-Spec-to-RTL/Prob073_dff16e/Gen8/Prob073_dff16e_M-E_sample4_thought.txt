@@ -1,0 +1,8 @@
+The new architecture implements a unified 16-bit register with conditional write logic at the bit level, while maintaining byte-level control. Key features:
+1. Uses a single always block for all 16 flip-flops to enable better synthesis optimization
+2. Implements byte enables through bitwise masking of the input data
+3. Employs a conditional assignment pattern that clearly shows the reset priority
+4. Uses concatenation to maintain clean code structure while avoiding hierarchy
+5. Allows potential for synthesis tools to optimize clock enable logic across all bits
+
+The design merges the byte enable logic directly into the flip-flop assignments, creating a more compact implementation while preserving the same functionality. The synchronous reset remains active for all bits regardless of byte enables.

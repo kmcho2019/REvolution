@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Use single clock domain (like Example 1) but with simpler logic (like Example 2)
+   - Keep the down-counter approach from Example 2 for simpler terminal count detection
+   - Remove clock gating complexity from Example 1 while maintaining freq=0 handling
+
+2. Power Optimization:
+   - Implement efficient freq=0 handling without clock gating (better than both examples)
+   - Use direct output toggling without intermediate flags (like Example 2)
+   - Maintain full 8-bit counter to avoid truncation logic (unlike Example 2)
+
+3. Area Optimization:
+   - Single always block design (like Example 1)
+   - Minimal registers (only count and wave_out)
+   - No redundant logic for freq=0 case (better than Example 1)
+
+Key Improvements:
+- Combines Example 1's full frequency range with Example 2's efficient down-counter
+- Eliminates clock gating complexity while maintaining power efficiency
+- Simplifies freq=0 handling with direct assignment
+- Uses single always block for cleaner implementation

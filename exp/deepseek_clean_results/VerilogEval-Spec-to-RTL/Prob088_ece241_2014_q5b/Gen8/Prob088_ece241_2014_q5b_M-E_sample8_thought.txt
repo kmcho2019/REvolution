@@ -1,0 +1,18 @@
+Novel Architecture Idea:
+1. **Shift Register Concept:**
+   - Instead of traditional state registers, use a 2-bit shift register where the MSB represents state_B and LSB represents state_A
+   - This allows state transitions to be implemented as simple shift operations
+
+2. **Edge Detection Logic:**
+   - Detect the first '1' in the input stream (x) to trigger the state transition
+   - Once in state_B (MSB set), maintain it indefinitely
+
+3. **Output Generation:**
+   - z is simply the XOR of current x with the MSB of the shift register
+   - This eliminates the need for separate state comparison logic
+
+Key Advantages:
+- State transitions become simple shift operations
+- Reduced combinational logic complexity
+- Natural one-hot encoding through shift register positions
+- Asynchronous reset cleanly initializes to state A (01)

@@ -1,0 +1,7 @@
+Fuse the modular clarity and power efficiency of separate always blocks from Example 1 with the simplicity and single-clock-edge synchronous reset approach from Example 2 to produce a superior design.
+
+- Use three always blocks for Secs, Mins, and Hours counters triggered on the positive edge of CLK only, employing synchronous active-high reset. This avoids asynchronous reset paths and potential metastability issues.
+- Employ enable signals for minutes and hours increments, derived synchronously from the current counters’ terminal counts (Secs == 59, Mins == 59), to minimize unnecessary toggling and power consumption in the higher order counters.
+- Use nonblocking assignments for proper sequential behavior.
+- Keep bit widths minimal but sufficient (Hours 5 bits, Mins and Secs 6 bits).
+- This fusion maintains modularity for easier timing closure and scalability, synchronous resets for better reliability and timing, and enable gating for power efficiency.

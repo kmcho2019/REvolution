@@ -1,0 +1,20 @@
+Refactor the divider to use a dedicated combinational function that implements the long division algorithm bit-by-bit, from the MSB of the dividend down to the LSB, matching the divisor width with the remainder width.
+
+Instead of two always blocks and intermediate registers, write a single combinational always block that calls a function `divide` returning both quotient and remainder.
+
+This function:
+- Takes the 16-bit dividend and 8-bit divisor,
+- Iterates from the MSB to LSB of the dividend,
+- At each step, shifts the remainder left by 1 bit and shifts in the current dividend bit,
+- Compares remainder and divisor, subtracts if possible, and sets corresponding quotient bit,
+- Returns final quotient (16-bit) and remainder (8-bit).
+
+This approach cleanly separates logic, avoids input latching, and uses a proper division method matching the specification.
+
+Outputs are reg and assigned inside the always block from the function outputs.
+
+Also handle division by zero by outputting zero quotient and remainder.
+
+The output remainder is zero-extended to 16 bits as required.
+
+This refactoring clarifies design intent, isolates division logic, and improves code readability and correctness.

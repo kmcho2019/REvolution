@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by implementing a synchronous, low-power design with a single always block: count up only when freq != 0 to reduce toggling and power, and toggle wave_out exactly when count reaches freq-1 for correct timing and 50% duty cycle output. This maintains the explicit toggle logic and synchronous reset from Example 1 (for clean and predictable startup) while avoiding combinational output logic from Example 2 (to minimize glitches and improve timing). 
+
+Key features of the fusion:
+1. Single always block on posedge clk with synchronous active-high reset for count and wave_out.
+2. Count increments only when freq != 0 (enable), else resets to zero, reducing switching.
+3. When count reaches freq-1, wave_out toggles and count resets to zero.
+4. Stable wave_out output when freq=0, avoiding unnecessary toggling.
+5. Straightforward comparator (count == freq-1) for toggle flag to simplify timing.
+6. Clear, compact, power-efficient design with minimal logic.
+
+This fusion ensures a well-balanced PPA profile: good timing from simple logic and synchronous toggling, low power by gating counting/toggling on freq, and minimal area with a single counter and flip-flop. It also guarantees a clean 50% duty cycle square wave with frequency inversely proportional to freq.

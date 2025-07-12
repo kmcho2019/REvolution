@@ -1,0 +1,8 @@
+Refactor the TopModule by separating the 2:1 multiplexer from the flip-flop. Instead of a single always block with a mux inside, implement the mux as a continuous assignment (combinational logic), and instantiate a simple D flip-flop module that takes the mux output as its D input. This clarifies the design by splitting mux and flip-flop, makes the data path explicit, and can help reduce confusion or mismatches due to implicit mux inside the always block.
+
+The interface stays the same: inputs clk, L, q_in, r_in and output Q. Internally:
+
+- Implement a wire mux_out = (L) ? r_in : q_in;
+- Instantiate a simple D flip-flop with clk and D = mux_out that updates Q on posedge clk.
+
+This modularizes the design cleanly while preserving the original behavior.

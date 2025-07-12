@@ -1,0 +1,21 @@
+To fix the issues:
+
+1. Introduce a "predict_history_reg" register that captures the current GHR value at the time of prediction request (when predict_valid is high). This ensures predict_history output reflects the global history used to generate the prediction, matching the problem's timing requirements.
+
+2. The outputs predict_taken and predict_history are based on this registered predict_history_reg and the PHT entry indexed by predict_pc XOR predict_history_reg, reflecting the PHT state before any training updates in the same cycle.
+
+3. For GHR update priority on posedge clk:
+   - If training valid and mispredicted: recover GHR to train_history (highest priority).
+   - Else if training valid (not mispredicted): update PHT entry indexed by train_pc XOR train_history. Do NOT update GHR here.
+   - Else if prediction valid and no concurrent training misprediction: update GHR by shifting in predicted bit from PHT indexed by predict_pc XOR current GHR. This extends speculative history.
+   - Else keep GHR unchanged.
+
+4. This respects the precedence that training misprediction recovery overrides any prediction updates to GHR.
+
+5. The PHT is asynchronously read based on the respective indexes:
+   - For prediction: predict_pc XOR predict_history_reg (captured history), ensuring prediction sees old PHT state before training update.
+   - For training: train_pc XOR train_history.
+
+6. On reset, initialize PHT entries to weakly not taken (2'b01), GHR and predict_history_reg to zero.
+
+This solution aligns the outputs with the time of prediction, correctly prioritizes GHR updates, and complies with the spec and timing diagram.

@@ -1,0 +1,8 @@
+To address the issue with the original code, we will modify the approach to utilize a timing control statement within the always block, eliminating the need for the non-standard $global_clock. The main concept involves using an always block with a delay to increment a counter at regular intervals. When the counter reaches half of the specified period, the output clock signal will be toggled. This approach decouples the clock generation from any external clock signals, allowing the module to generate a periodic clock signal based on the PERIOD parameter.
+
+The new design involves:
+1. **Removing the dependency on $global_clock**: Replace the $global_clock with a timing control statement to increment the counter at every time unit.
+2. **Using a delay in the always block**: Implement a delay within the always block to create a periodic increment of the counter.
+3. **Toggling the output clock**: Toggle the output clock signal based on the counter's value reaching half of the specified period.
+
+By utilizing a timing control statement and eliminating the dependency on $global_clock, we can create a self-sustaining clock generator module that produces a periodic clock signal with the desired frequency.

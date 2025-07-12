@@ -1,0 +1,13 @@
+To improve the PPA of the 8-bit CLA adder, I will implement a hierarchical carry lookahead approach by grouping the 8 bits into two 4-bit groups. Each 4-bit group computes its own propagate and generate signals and a group propagate/generate output. Then the top-level logic computes the carry into the second group directly from these group signals, enabling parallel computation and reducing carry-chain length from 8 to 2 stages.
+
+This reduces the critical path delay and logic depth compared to the flat 8-bit CLA with a chain of 8 carry computations. It also lowers gate count by reusing group-level signals and reduces power by limiting logic toggling and glitches.
+
+The plan:
+- Divide the 8-bit adder into two 4-bit CLA blocks.
+- Compute group propagate and generate signals for each 4-bit block.
+- Compute carry into second group using group propagate/generate signals.
+- Compute final carries inside each group in parallel.
+- Compute sum bits by XORing propagate and carry-in.
+- Calculate overflow using XOR of carry into and carry out of MSB.
+
+This hierarchical CLA structure optimizes delay and potentially area and power without changing functional behavior.

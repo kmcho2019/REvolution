@@ -1,0 +1,7 @@
+The original FSM is correct and uses a compact 2-bit encoding for states with a synchronous active-low reset. To optimize for PPA, I will focus on reducing output glitches and possibly slightly improving power by registering the grant outputs. Registering outputs reduces glitches and switching power on outputs, which can be beneficial especially if the outputs drive other synchronous logic.
+
+Additionally, the state encoding is already minimal, so no changes there. The priority logic is concise and direct, which is efficient for area and performance.
+
+Thus, the main improvement is to register the output `g` instead of purely combinational assignment. This adds a slight pipeline stage but reduces glitching on the outputs, improving power and signal integrity at minimal area and timing cost.
+
+The overall structure remains separate always blocks for next state and state register, and one always block for output register. This follows best practice and maintains clear FSM design.

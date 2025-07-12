@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Timing Optimization: Replace the 5-bit comparator (binary_sum > 9) with a more efficient 4-bit range check using bitwise operations. This reduces logic depth.
+2. Power Optimization: Merge the correction detection logic into a single expression to minimize switching activity.
+3. Area Optimization: Use a single 4-bit adder for both initial sum and correction by conditionally adding 6, eliminating the need for separate adders.
+4. Carry Logic Simplification: Combine the carry detection from both the initial addition and correction phase into a single expression.
+
+The improved design will:
+- Use a 4-bit sum and separate carry detection
+- Implement the >9 check as (sum[3] & (sum[2] | sum[1]))
+- Perform correction with a single adder using a muxed input
+- Generate carry in a more optimized way

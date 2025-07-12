@@ -1,0 +1,9 @@
+To simplify the solution, we can leverage the inherent modularity of the carry-lookahead adder (CLA) architecture. The current design uses a hierarchical approach, which is beneficial for understanding and maintenance but might not be the most efficient in terms of logic utilization and performance. 
+
+The first step is to maintain the use of 4-bit CLA blocks (cla_4bit) as the basic building blocks, due to their simplicity and efficiency in implementing the carry-lookahead logic. 
+
+Next, we can simplify the cla_16bit module by ensuring it properly chains the 4-bit blocks to efficiently propagate the carry signal. This step involves ensuring that each 4-bit block's output carry is correctly fed into the next block's input carry, thus maintaining the correct arithmetic operation.
+
+For the top-level 32-bit adder (adder_32bit), we use two instances of the cla_16bit module. The carry-out from the first 16-bit block is used as the carry-in for the second 16-bit block, ensuring that the carry is properly propagated across the entire 32-bit addition.
+
+By focusing on the clarity and simplicity of the carry propagation and ensuring that all modules are correctly interconnected, we can maintain the functionality of the adder while potentially reducing complexity and improving PPA metrics.

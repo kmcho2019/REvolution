@@ -1,0 +1,30 @@
+The original FSM solution is functionally correct but can be optimized to improve power, area, and timing. The main opportunity for improvement is to eliminate the explicit tracking of the previous input (`prev_in`) and reduce the complexity of output logic. We can achieve this by including the current input `in` as part of the FSM state or using the FSM state alone to detect conditions, thus removing the need for an extra register (`prev_in`), which saves one flip-flop and reduces switching activity.
+
+Specifically, we can expand the FSM to include states that represent the history of the last bit (or capture the "zero after 5 or 6 ones" transitions) so the outputs (disc, flag, err) can be generated purely from the state. This makes outputs depend only on the current state, consistent with the Moore machine model, and avoids combinational logic involving `in` and `prev_in`.
+
+Additionally, we can use a one-hot or binary encoding for states to reduce glitching and improve timing. However, since there are only 8 states, binary encoding is simple enough.
+
+In the new FSM:
+- States S0 to S6 represent counts of consecutive 1s as before.
+- Add extra "output" states that are transient and produce the `disc` or `flag` outputs for exactly one clock cycle before returning to S0.
+- The error state S7 remains as is.
+- On input zero after 5 ones, transition to a DISC state that asserts `disc=1` for one cycle.
+- On input zero after 6 ones, transition to a FLAG state that asserts `flag=1` for one cycle.
+- On 7 or more ones, transition to error state S7.
+
+This approach makes outputs directly dependent on the state without extra input history registers. Outputs are asserted for exactly one cycle, immediately upon entering the corresponding state.
+
+The FSM transition and output states are:
+
+- S0..S6: count consecutive ones
+- DISC: output disc=1, then go to S0
+- FLAG: output flag=1, then go to S0
+- S7: err=1
+
+This new state machine reduces flip-flops from 4 to 3 bits for state plus no `prev_in`, simplifies output logic, reduces toggling, and tightens timing since output logic is only a function of the state.
+
+Synchronous reset to S0 remains.
+
+This solution simplifies the output logic, reduces registers, improves timing by less combinational logic, and should reduce power and area.
+
+Below is the improved implementation.

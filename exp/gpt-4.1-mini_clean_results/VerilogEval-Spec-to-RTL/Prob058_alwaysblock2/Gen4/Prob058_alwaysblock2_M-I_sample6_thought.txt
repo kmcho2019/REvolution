@@ -1,0 +1,7 @@
+To optimize the solution for performance and area, remove the always_comb block since it adds unnecessary logic duplication and potential slight delay compared to a direct continuous assignment. The assign statement alone suffices for combinational output `out_assign`. Keeping only one combinational driver reduces logic resources and routing complexity.
+
+The `out_always_comb` port can be driven by a continuous assignment as well (declared as wire), removing the need for a reg and an always_comb block. This change simplifies the design, reduces combinational path delay, and minimizes gate count.
+
+The sequential block remains unchanged to preserve the clocked delayed output. This reduces the overall combinational logic to a single continuous assignment (shared XOR), improving synthesis quality and reducing area.
+
+This approach trades minimal coding style clarity (no always_comb usage) for simpler, cleaner, and more optimal synthesis results suitable for tiny combinational logic like XOR, while fully satisfying the problem constraints.

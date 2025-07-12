@@ -1,0 +1,22 @@
+After carefully analyzing the waveform and the issues in the previous solution, here's the improved approach:
+
+1. Key Observations:
+   - p follows 'a' only on rising clock edges when q=0
+   - q becomes 1 in the cycle after p was 1 (seen at 115ns)
+   - q resets to 0 when 'a' is high during clock low phase (seen at 175ns)
+   - p remains 0 when q=1 regardless of 'a' input
+
+2. Improvement Strategy:
+   - Simplify to a pure synchronous design (no async logic)
+   - Use two flip-flops to track state:
+     - p_ff: stores p value
+     - q_ff: stores q value
+   - Implement clear conditions:
+     - q sets when p was 1 in previous cycle
+     - q clears when 'a' is high during clock low phase
+   - Ensure proper initialization matching waveform
+
+3. State Transitions:
+   - p updates to 'a' when q=0 and on rising clock edge
+   - q updates based on previous p value and current 'a' during low phase
+   - All transitions happen synchronously to avoid timing issues

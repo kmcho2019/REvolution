@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Critical Path Optimization: The negative WNS indicates timing issues in the large 100-bit mux. We'll break this into smaller chunks.
+2. Power Optimization: Add clock gating for idle states (ena=2'b00/2'b11) to reduce dynamic power.
+3. Area Optimization: Use a more efficient barrel shifter structure that shares logic between left/right rotations.
+4. Maintainability: Keep the clear separation of control signals while improving the datapath structure.
+
+Key Changes:
+1. Replace the large mux with a pipelined approach using intermediate registers
+2. Implement clock gating for idle states
+3. Use a more efficient rotation implementation that shares common logic
+4. Maintain the same interface and functionality while improving PPA

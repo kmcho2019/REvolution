@@ -1,0 +1,28 @@
+Fusion Strategy:
+1. State Machine Approach:
+   - Use a 4-state FSM to track sequence progress (more efficient than shift register)
+   - States represent partial matches: IDLE, GOT1, GOT11, GOT110
+
+2. Power Optimization:
+   - Freeze state transitions once sequence is found (similar to Example 1)
+   - Avoid unnecessary state updates after detection
+
+3. Timing Optimization:
+   - Simple state transitions with minimal combinational logic
+   - Next state logic depends only on current state and input bit
+
+4. Area Optimization:
+   - Only 2 state bits needed (4 states)
+   - No shift registers required
+   - Single 'found' register for output control
+
+5. Functionality:
+   - Clear synchronous reset behavior
+   - Maintain output until reset
+   - Efficient sequence detection (1101)
+
+Key Advantages:
+- More efficient than shift register approach (fewer registers)
+- Clear state progression for debugging
+- Optimal power consumption (no unnecessary transitions)
+- Minimal combinational logic for better timing

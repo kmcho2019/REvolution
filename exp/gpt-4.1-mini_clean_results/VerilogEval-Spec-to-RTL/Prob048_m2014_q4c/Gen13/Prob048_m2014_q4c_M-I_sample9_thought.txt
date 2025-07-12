@@ -1,0 +1,14 @@
+The original design is already minimal and clean for implementing a synchronous reset D flip-flop. The performance is optimal due to the simple logic, and the area is minimal. Power could be improved slightly by preventing unnecessary toggling on the output when reset is held high for multiple clock cycles.
+
+One common low-power technique is to use an enable signal that only updates the flip-flop output when the data input or reset differs from the current output. This avoids redundant toggling (and associated dynamic power) on the output register when values remain unchanged.
+
+To do this, we can add a conditional assignment inside the clocked block that only changes q when necessary:
+
+- If reset is active and q != 0, assign q <= 0
+- Else if reset is not active and q != d, assign q <= d
+
+This keeps the functionality the same but may reduce switching activity on q and consequently dynamic power.
+
+No changes to the interface or synchronous reset behavior; just a conditional update inside the clocked always block.
+
+This optimization is small but relevant for power without area or timing penalties.

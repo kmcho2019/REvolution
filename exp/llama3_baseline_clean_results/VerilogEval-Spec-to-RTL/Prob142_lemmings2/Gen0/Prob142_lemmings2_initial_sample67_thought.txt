@@ -1,0 +1,11 @@
+To implement the Moore state machine for the Lemmings behavior, we will define three states: WALK_LEFT, WALK_RIGHT, and FALL. We will use a variable 'state' to keep track of the current state. 
+
+Initially, the state will be set to WALK_LEFT when the areset signal is asserted. 
+
+In the WALK_LEFT state, the Lemming will walk left, and the walk_left signal will be asserted. If the Lemming is bumped on the left (bump_left is 1), it will transition to the WALK_RIGHT state. If it is bumped on the right (bump_right is 1), it will stay in the WALK_LEFT state. If the ground is removed (ground is 0), the Lemming will transition to the FALL state.
+
+In the WALK_RIGHT state, the Lemming will walk right, and the walk_right signal will be asserted. If the Lemming is bumped on the left (bump_left is 1), it will stay in the WALK_RIGHT state. If it is bumped on the right (bump_right is 1), it will transition to the WALK_LEFT state. If the ground is removed (ground is 0), the Lemming will transition to the FALL state.
+
+In the FALL state, the Lemming will say "aaah!", and the aaah signal will be asserted. If the ground reappears (ground is 1), the Lemming will transition back to the previous walking state (either WALK_LEFT or WALK_RIGHT).
+
+We will use a variable 'prev_state' to keep track of the previous walking state before the Lemming falls, so that we can transition back to the correct state when the ground reappears.

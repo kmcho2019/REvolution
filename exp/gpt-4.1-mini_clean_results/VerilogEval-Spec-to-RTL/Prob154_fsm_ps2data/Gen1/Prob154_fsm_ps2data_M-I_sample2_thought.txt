@@ -1,0 +1,9 @@
+Fix the FSM design by separating combinational and sequential logic:
+- Use a combinational always block to calculate next_state based on current state and inputs.
+- Use a sequential always block to update state, registers, done, and outputs on the clock edge.
+Align done assertion and output timing to the cycle immediately after receiving the third byte:
+- Capture input bytes on receiving them.
+- Assert done and output concatenated message one cycle after the third byte is captured.
+This ensures done and out_bytes are valid together as specified.
+Maintain synchronous active-high reset.
+Use minimal registers to store the three bytes for output.

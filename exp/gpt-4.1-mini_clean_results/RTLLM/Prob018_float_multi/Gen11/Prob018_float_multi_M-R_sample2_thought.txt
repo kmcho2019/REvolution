@@ -1,0 +1,17 @@
+I will refactor the design by implementing the multiplication as a multi-cycle sequential process controlled by a small state machine with the 3-bit counter. This aligns with the original request mentioning internal signals like `counter`, and explicitly registers intermediate results over cycles:
+
+- Cycle 0: Reset or idle, extract input fields (sign, exponent, mantissa).
+- Cycle 1: Detect special cases, and start mantissa multiplication.
+- Cycle 2: Normalize mantissa product and calculate preliminary exponent.
+- Cycle 3: Perform rounding, final exponent adjustment, and prepare output.
+- Final cycle: Output the result.
+
+This approach breaks the long combinational path into stages, potentially improving timing and facilitating debug. The output register `z` updates only after calculation completes. The internal signals (`counter`, `a_mantissa`, `b_mantissa`, etc.) are registers updated sequentially per clock.
+
+By following a stateful design:
+- The `counter` manages sequencing.
+- Internal regs hold intermediate values across cycles.
+- Rounding bits are computed and stored.
+- Special cases are handled on relevant cycles.
+
+This approach better matches the initial specification and gives a clear, stepwise floating-point multiplier design with pipeline-like sequencing over several clocks, improving timing and clarity.

@@ -1,0 +1,7 @@
+Use a simple shift register that shifts left on each valid input bit, inserting the new serial bit at the LSB. This accumulates bits such that the first received bit ends in MSB position and last in LSB, matching the problem requirement.
+
+Use a 3-bit counter (since 3 bits count to 7) to track the number of bits received. When it reaches 7, the 8th bit is being received, so latch the shift register to output and assert dout_valid for one cycle.
+
+Reset the counter and outputs synchronously on active-low reset.
+
+This single always block approach keeps the design clean and meets all specifications with minimal logic.

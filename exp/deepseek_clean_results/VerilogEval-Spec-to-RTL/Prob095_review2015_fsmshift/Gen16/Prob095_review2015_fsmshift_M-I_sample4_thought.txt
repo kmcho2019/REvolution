@@ -1,0 +1,13 @@
+Improvement strategy:
+1. Use a 3-bit counter to properly count 4 cycles (0-3)
+2. Maintain shift_ena for exactly 4 cycles by checking counter < 4
+3. After 4 cycles, hold the counter at its maximum value (4) to permanently disable shift_ena
+4. Reset behavior:
+   - Set counter to 0
+   - Count up to 4 (inclusive)
+   - Hold at 4 (which disables shift_ena permanently)
+5. Benefits:
+   - Correctly implements the 4-cycle enable window
+   - Prevents any further enabling after initial 4 cycles
+   - Simple and clear state control
+   - Minimal hardware overhead

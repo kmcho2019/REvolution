@@ -1,0 +1,11 @@
+To implement the finite state machine (FSM) for identifying correctly received bytes in a serial communication protocol, we can design a module with several states: idle, start_bit, data_bits, and stop_bit. 
+
+- The FSM starts in the idle state, waiting for a start bit (0).
+- Once a start bit is detected, it transitions to the start_bit state and begins counting the data bits.
+- It then moves to the data_bits state, where it waits for 8 data bits to be received, storing them in a register.
+- After receiving the 8th data bit, it transitions to the stop_bit state, checking for the stop bit (1).
+- If the stop bit is correct, it asserts the done signal for one clock cycle and then returns to the idle state.
+- If the stop bit is incorrect, it stays in the stop_bit state until a stop bit (1) is received, then returns to the idle state.
+- The FSM also includes a synchronous reset that, when active high, resets the FSM to the idle state.
+
+The data bits are stored in a register, and the done signal is asserted when a complete byte is correctly received.

@@ -1,0 +1,13 @@
+To improve PPA, I will simplify the next_state logic into a minimal, clear boolean expression that covers all bump cases and holds state otherwise, eliminating unnecessary terms. Specifically, next_state should be:
+
+- If bumped both sides: toggle state
+- Else if bumped left only: walk right (1)
+- Else if bumped right only: walk left (0)
+- Else hold current state
+
+This can be expressed as:
+next_state = (bump_left ^ bump_right) ? bump_left : (bump_left & bump_right) ? ~state : state;
+
+This concise conditional reduces gate levels and eases synthesis optimization. I will implement this with a ternary operator for clarity and efficiency. The outputs remain the same. Also, I keep the asynchronous positive edge reset and positive clock edge update.
+
+This optimization reduces combinational logic depth and potential glitches, slightly improving performance and power, while area remains minimal.

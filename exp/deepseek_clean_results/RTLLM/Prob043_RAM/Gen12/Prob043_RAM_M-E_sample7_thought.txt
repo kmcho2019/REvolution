@@ -1,0 +1,16 @@
+Novel Architecture: Bank-Switched Dual-Port RAM
+1. Split the memory into two identical banks (Bank A and Bank B)
+2. Alternate write operations between banks on each clock cycle
+3. Read operations always access the opposite bank from the current write bank
+4. Benefits:
+   - Eliminates read/write conflicts by physical separation
+   - Maintains single-cycle access for both read and write
+   - Simple arbitration via bank switching
+   - Naturally implements write-through behavior
+   - Power efficient (only one bank active per operation)
+5. Features:
+   - Automatic bank switching on writes
+   - Read data always comes from non-writing bank
+   - Reset clears both banks
+   - Output zeros when not reading
+   - No address decoding needed for conflict resolution

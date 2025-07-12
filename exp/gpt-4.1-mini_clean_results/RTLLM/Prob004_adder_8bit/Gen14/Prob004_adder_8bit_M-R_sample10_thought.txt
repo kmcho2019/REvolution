@@ -1,0 +1,12 @@
+Refactor the 8-bit adder code by fully unrolling the full adder logic in the top module without using a separate full adder submodule. Instead, implement each bit's sum and carry-out using continuous assignments and explicit propagate/generate logic per bit, wiring the carry chain as ripple carry but written clearly with assign statements in a generate loop. This reduces hierarchy and emphasizes direct combinational logic for sum and carry signals with bitwise assignments.
+
+This approach retains the multiple bit-level adder concept since each bit's sum and carry-out are computed individually but avoids module instantiation by encoding full adder logic explicitly. The carry signals ripple from LSB to MSB in a straightforward structural style, using continuous assignments for full combinational clarity and simplicity.
+
+Key points:
+- No submodules, all logic in one module.
+- Uses generate loop for compact code.
+- Explicit carries chained as ripple carry with assign.
+- Combines propagate/generate internally in each bit's assignments.
+- Produces sum and cout as required.
+
+This change makes the design structurally simpler and easier for synthesis tools to optimize while preserving the conceptual modularity by per-bit separate logic blocks.

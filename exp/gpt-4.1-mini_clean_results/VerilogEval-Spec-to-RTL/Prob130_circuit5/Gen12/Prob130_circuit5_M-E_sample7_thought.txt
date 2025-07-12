@@ -1,0 +1,5 @@
+An alternative design is to use a lookup table (LUT) style implementation by storing the candidate inputs in an array indexed by 'c', and then output the selected element. Since c ranges from 0 to 15, but only c=0..3 map to inputs b, e, a, d respectively, and all other c values output 4'hF, we can create a small memory-like constant array of 16 elements where each element is the corresponding 4-bit vector.
+
+This approach leverages a combinational memory-like construct (using a Verilog 'reg' array and continuous assignment) to simplify selection logic to an indexed array read, which clearly conveys the intended functionality. It also avoids multiple equality comparisons and multiple bitwise AND operations. The constant table is synthesized as pure combinational logic (multiplexer) by synthesis tools.
+
+This method is particularly scalable if in the future the mapping changes or if more inputs need to be mapped to different c values.

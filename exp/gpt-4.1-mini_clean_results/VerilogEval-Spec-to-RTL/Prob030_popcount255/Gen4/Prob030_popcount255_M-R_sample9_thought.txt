@@ -1,0 +1,7 @@
+Refactor the design by replacing the hierarchical popcount4 and popcount17 modules with a fully parallel tree-based popcount17 implementation using explicit bitwise summations and adders without instantiating separate popcount4 modules. This removes the generate loop for popcount4 blocks inside popcount17, implementing popcount17 directly with sums of 4-bit groups via inline adders to reduce module hierarchy and improve clarity.
+
+For the TopModule summation, replace the multi-level generate loops with explicit wire arrays and a generic function that reduces any array of values using a balanced binary adder tree recursively, leveraging a localparam function for scalability and better readability. This replaces the handcrafted multi-level sums with a parameterized adder-tree function.
+
+All summations remain combinational assigns, no always blocks are introduced to keep it purely combinational as before.
+
+This refactor simplifies the hierarchy by removing nested modules, improves readability with a reusable adder tree reduction function, and keeps the same modular concept of summing 17-bit groups and then summing the partial results in a balanced way.

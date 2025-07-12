@@ -1,0 +1,12 @@
+To simplify the solution while maintaining functionality:
+1. Remove the enum typedef since we can directly use binary states
+2. Simplify the state machine to just track byte count (0-2) instead of named states
+3. Combine the shift register and counter into a single register that counts bytes and stores data
+4. Remove the separate always_comb for outputs since they can be directly assigned
+5. Eliminate unnecessary 'x' assignments by only updating out_bytes when done is true
+
+Key optimizations:
+- Use a 2-bit counter for byte tracking (0=waiting, 1=first byte, 2=second byte)
+- Shift register updates only when capturing bytes (not every cycle)
+- Direct output assignments reduce logic complexity
+- Fewer registers and simpler control logic

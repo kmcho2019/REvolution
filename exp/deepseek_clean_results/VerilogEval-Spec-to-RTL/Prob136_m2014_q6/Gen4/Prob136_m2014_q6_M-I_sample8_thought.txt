@@ -1,0 +1,14 @@
+To further optimize the design for better PPA metrics, particularly focusing on timing (WNS) and power:
+
+1. **State Encoding Optimization:** Switch to one-hot encoding (6 bits for 6 states) which typically improves timing by simplifying the state decoding logic, though at a small area cost. This is justified given our current negative WNS.
+
+2. **Output Logic Optimization:** Maintain the simple output logic but ensure it's synthesized efficiently with the new encoding.
+
+3. **Timing Improvement:** One-hot encoding reduces fan-out on state bits and simplifies the next-state logic, which should help with timing closure.
+
+4. **Power Consideration:** Despite increased state register bits, the simpler decoding logic may offset power consumption. We'll also add clock gating for stable states (E and F).
+
+5. **Reset Handling:** Maintain synchronous reset for consistency.
+
+New state encoding (one-hot):
+A: 000001, B: 000010, C: 000100, D: 001000, E: 010000, F: 100000

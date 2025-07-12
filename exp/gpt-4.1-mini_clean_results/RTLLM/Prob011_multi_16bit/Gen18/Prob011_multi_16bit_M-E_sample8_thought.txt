@@ -1,0 +1,19 @@
+New Architectural Idea:
+
+Instead of incrementing a shift count and performing shifts on both multiplicand and multiplier, use a dedicated 16-bit counter that counts from 0 to 15 to process each bit of the multiplier (bin) directly without shifting it. On each cycle:
+
+- The multiplicand (ain) is left-shifted according to the current bit position of the multiplier.
+- The bit at the current index of the multiplier is checked.
+- If that bit is set, the shifted multiplicand is added to the running sum (product register).
+- When all bits have been processed (count = 16), assert done.
+
+This approach avoids shifting the multiplier and multiplicand registers continuously; instead, the multiplier remains static, the multiplicand is shifted on the fly (via a wire shift), and the product register accumulates accordingly. The counter guides which bit of the multiplier is currently processed. This shift-on-demand technique simplifies datapath by reducing shifting registers and can be clearer and more intuitive.
+
+Control signals:
+
+- When `start` asserted and not busy, capture inputs and start counting.
+- Count from 0 to 16, accumulating product on bits set.
+- Output done flag when count reaches 16.
+- Reset clears all registers.
+
+This design cleanly separates control, uses only one counter, no shift registers for multiplicand or multiplier, and calculates shifts combinationally. This can improve timing by reducing register shifting overhead and simplifying data movement.

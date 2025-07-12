@@ -1,0 +1,18 @@
+Novel Architecture Idea: Split Counter with Parallel Counting
+1. Instead of a single 10-bit counter, split into two parallel counters:
+   - A 3-bit counter for hundreds (0-9)
+   - A 7-bit counter for tens/units (0-99)
+2. Benefits:
+   - Reduced comparator complexity (compare 3 bits and 7 bits separately)
+   - Lower power consumption as only one counter increments most cycles
+   - Faster terminal count detection (parallel comparisons)
+   - More efficient reset handling
+3. Operation:
+   - The 7-bit counter increments every cycle
+   - When 7-bit counter reaches 99, it resets and hundreds counter increments
+   - Terminal count when hundreds=9 and tens/units=99
+   - All counters reset synchronously
+4. Advantages over previous solution:
+   - Smaller comparators (3-bit and 7-bit vs 10-bit)
+   - Less frequent toggling of hundreds counter
+   - Clearer separation of digit positions

@@ -1,0 +1,15 @@
+The given solution correctly implements the Karnaugh map with the expression (a | (~b & c)). To optimize further for PPA:
+
+1. **Performance**: The current implementation already has minimal gate delays (1 NOT, 1 AND, 1 OR). No further optimization needed.
+
+2. **Power**: We can eliminate the register output since this is pure combinational logic, saving power from unnecessary register toggling.
+
+3. **Area**: The expression is already minimal. However, we can use a continuous assignment instead of procedural blocks to potentially allow better synthesis optimization.
+
+4. **Don't-care utilization**: The current solution optimally uses don't-cares to simplify to (a | (~b & c)).
+
+The improved version will:
+- Use continuous assignment for combinational logic
+- Remove unnecessary reg declaration
+- Maintain the same optimal logic expression
+- Keep all original functionality while being more synthesis-friendly

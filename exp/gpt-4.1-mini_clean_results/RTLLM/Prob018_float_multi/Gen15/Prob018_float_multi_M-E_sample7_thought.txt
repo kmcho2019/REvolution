@@ -1,0 +1,19 @@
+Implement a 3-stage sequential IEEE-754 single-precision floating-point multiplier using a finite state machine and internal registers to pipeline the operation over multiple clock cycles, controlled by a 3-bit counter.
+
+Stages:
+
+1. **Stage 0 (counter=0)**: On reset, clear internal registers. On next clock, extract inputs (sign, exponent, mantissa), handle special cases preliminarily (flag NaN, Inf, zero), prepare mantissas (including denormal handling), and start multiplication.
+
+2. **Stage 1 (counter=1)**: Complete mantissa multiplication (24x24 bits) with a dedicated register for the product. Sum exponents, adjust for bias, and normalize the product by checking the MSB. Shift mantissa if necessary and adjust exponent accordingly.
+
+3. **Stage 2 (counter=2)**: Perform rounding to nearest even using guard, round, and sticky bits extracted from the product. Adjust mantissa and exponent if rounding causes overflow. Handle exponent overflow or underflow, finalize special cases (propagate NaN, handle zero*inf etc.), and assemble the IEEE-754 result.
+
+The final result is loaded into the output register `z` at the end of stage 2. The output register holds the result until the next multiplication starts.
+
+This multi-cycle approach reduces the combinational path in any single cycle, allowing higher clock frequency at the expense of increased latency. The pipeline can be extended for higher throughput if desired.
+
+The `counter` registers the operation stage, and input `a` and `b` must remain stable during the operation cycle.
+
+This architecture uses internal state and registers (`a_sign`, `b_sign`, `a_exponent`, etc.) to hold intermediate results and control flow.
+
+The design handles all IEEE-754 special cases explicitly and performs rounding as per IEEE-754 round-to-nearest-even rules.

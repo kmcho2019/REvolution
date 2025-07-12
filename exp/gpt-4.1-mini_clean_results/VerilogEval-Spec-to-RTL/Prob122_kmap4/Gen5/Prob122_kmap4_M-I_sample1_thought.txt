@@ -1,0 +1,15 @@
+The original implementation realizes the 4-input parity function by explicitly computing two intermediate XORs and then XORing them to get the output. This results in a two-stage XOR tree with two intermediate wires, which is clear and modular.
+
+For further PPA optimization on such a small combinational logic:
+
+- Area: Using intermediate wires does not increase area post-synthesis, but removing them can slightly simplify RTL code and potentially enable simpler netlist.
+
+- Performance: The logic depth of XOR gates is minimal (two XORs in series) and cannot be improved, since output depends on all four inputs.
+
+- Power: Minimal logic and no redundant switching, so no meaningful improvement expected.
+
+Thus, to gain some minor improvements in code simplicity and possibly synthesis efficiency, we can remove the intermediate wires and directly assign the XOR of all inputs in one line, i.e., out = a ^ b ^ c ^ d.
+
+This removes intermediate signals and slightly reduces code complexity without impacting logical function or PPA metrics.
+
+Hence, the optimization strategy is to minimize RTL complexity by direct assignment while preserving the minimal XOR logic.

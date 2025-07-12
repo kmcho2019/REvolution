@@ -1,0 +1,9 @@
+The provided Verilog code has a few issues with handling the reset signal and the state machine's behavior. To fix the code, we need to ensure that the shift_ena signal is asserted for exactly 4 clock cycles after the reset signal is asserted, and then remains low until the next reset.
+
+We can achieve this by using a counter that starts counting from 0 when the reset signal is asserted and the FSM is in the SHIFTING state. The shift_ena signal should be asserted as long as the counter is less than 4.
+
+Additionally, we need to ensure that the FSM remains in the IDLE state and keeps shift_ena low when the reset signal is deasserted. We can achieve this by adding an additional condition to the IDLE state that checks if the reset signal is low.
+
+To improve the design, we can also consider using a more robust reset handling mechanism, such as a synchronous reset, to ensure that the FSM returns to a known state after reset.
+
+In terms of PPA optimization, the current design is relatively simple, and we can focus on ensuring that the code is functional and correct. However, we can also consider minimizing the number of flip-flops and combinational logic to reduce area and power consumption.

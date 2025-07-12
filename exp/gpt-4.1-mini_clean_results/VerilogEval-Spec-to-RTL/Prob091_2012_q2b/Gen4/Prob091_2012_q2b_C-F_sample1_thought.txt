@@ -1,0 +1,11 @@
+Both example solutions derive the same minimal and correct combinational logic for outputs Y1 and Y3 based on the FSM transitions and one-hot state encoding. They correctly identify the transitions into states B (Y1) and D (Y3) and represent them with simple AND-OR expressions.
+
+The fusion strategy is to maintain this optimal minimal logic while emphasizing clarity and robustness by using consistent bitwise operations and explicit negations. The key points are:
+- Y1 is the input to flip-flop y[1], and it should be high when the FSM transitions from A to B on w=1 (y[0] & w).
+- Y3 is the input to flip-flop y[3], and it is high when transitioning to D from states B, C, E, or F with w=0; this is implemented as (y[1] | y[2] | y[4] | y[5]) & ~w.
+
+Both examples are functionally identical and efficient, so the "superior" solution will combine the best style aspects—explicit parenthesis for clarity, consistent use of bitwise negation (~w), and clear formatting.
+
+No logic minimization or restructuring is necessary since the current solution is already minimal.
+
+The final module is clean, minimal, and ready for synthesis and verification.

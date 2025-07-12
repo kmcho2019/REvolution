@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Replace sequential logic with combinational assignments where possible
+2. Use continuous assignments for clock generation to simplify the design
+3. Maintain the same division ratios but implement them differently
+4. Use smaller counters by counting half-periods (toggle on count match)
+5. Combine reset logic into a single block for better optimization
+6. Use bit-width exact counters to minimize hardware usage
+
+Key changes:
+- CLK_50 implemented with simple XOR gate instead of flip-flop
+- CLK_10 and CLK_1 use half-period counting (count to N/2-1)
+- Single always block for all counters
+- Output clocks generated through continuous assignments

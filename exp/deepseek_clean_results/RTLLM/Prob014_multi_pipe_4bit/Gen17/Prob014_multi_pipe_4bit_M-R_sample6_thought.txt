@@ -1,0 +1,25 @@
+Refactored Architecture: Two-Stage Pipeline Multiplier with Explicit Partial Products
+
+Key Improvements:
+1. **True Two-Stage Pipeline**: Strict separation of partial product generation (stage 1) and accumulation (stage 2)
+2. **Explicit Partial Products**: Generate all partial products simultaneously using bitwise AND and shifts
+3. **Registered Accumulation**: Intermediate sums are properly registered between stages
+4. **Simplified Control**: Eliminates complex state machine in favor of direct pipeline registers
+5. **Clear Data Flow**: Each pipeline stage has well-defined inputs/outputs
+
+Operation Flow:
+1. First Stage (Cycle 1):
+   - Generate all 4 partial products in parallel
+   - Register partial products and multiplier LSBs
+   - First level of reduction (sum pairs of partial products)
+
+2. Second Stage (Cycle 2):
+   - Final accumulation of intermediate sums
+   - Output registered result
+
+Advantages:
+- Maintains original bit-serial concept but with proper pipelining
+- Clear separation of combinational and registered logic
+- Easier timing closure
+- More predictable latency (2 cycles)
+- Better matches testbench expectations

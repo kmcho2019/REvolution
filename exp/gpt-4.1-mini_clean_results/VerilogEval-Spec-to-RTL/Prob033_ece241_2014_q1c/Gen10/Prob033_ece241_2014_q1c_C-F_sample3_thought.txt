@@ -1,0 +1,15 @@
+Fuse the hierarchical modularity and clarity of the 4-bit ripple carry adders from Example 1 with the efficient carry-lookahead style propagate/generate logic and clean sum calculation from Example 2. The idea is:
+
+1. Implement a reusable 4-bit adder module that internally computes propagate and generate signals for each bit, computes carries using carry-lookahead logic inside the 4-bit block, and outputs the 4-bit sum and the block carry-out.
+
+2. In the top module, instantiate two of these 4-bit adders for the lower and upper 4-bit halves.
+
+3. Chain the carry-out of the lower 4-bit adder as the carry-in to the upper 4-bit adder.
+
+4. This approach limits carry-lookahead complexity to 4 bits per block, giving a balanced performance gain over full ripple carry without full 8-bit carry-lookahead complexity.
+
+5. Compute the 8-bit sum by concatenating the sums of the two blocks.
+
+6. For overflow detection, use the standard signed overflow condition: overflow = carry into MSB ^ carry out of MSB, which can be extracted from the upper 4-bit adder.
+
+This design achieves modularity, good performance by localized carry-lookahead, clean and efficient sum and carry computations, and accurate overflow detection, combining the best of both examples.

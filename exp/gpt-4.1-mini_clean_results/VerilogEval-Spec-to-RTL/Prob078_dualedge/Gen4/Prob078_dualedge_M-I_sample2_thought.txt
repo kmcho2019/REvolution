@@ -1,0 +1,7 @@
+To optimize the dual-edge triggered flip-flop implementation, we reduce power and area by replacing the output-level mux with a transparent latch. This latch, enabled by the clock level, selects data from either the positive-edge or negative-edge triggered flip-flop. Unlike a continuous mux that toggles output based on the clock level (causing potential glitches and switching power), the latch holds stable data during clock phases, minimizing output glitches and dynamic power.
+
+This approach retains the functional equivalence but with potentially less glitching and lower switching power at the output stage, improving power efficiency without increasing area.
+
+We merge the posedge and negedge FFs into one generic EdgeFF module instantiated twice for clarity. The latch is enabled by clk (high) and disabled when clk is low, capturing q_pos during clk=1, and passing q_neg during clk=0 (since latch is transparent only when clk=1).
+
+Overall, the design maintains clarity and modularity while reducing output mux toggling, helping power and potentially improving signal integrity.

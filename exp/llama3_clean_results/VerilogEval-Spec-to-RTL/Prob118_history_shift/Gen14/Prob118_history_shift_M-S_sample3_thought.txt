@@ -1,0 +1,9 @@
+The existing solution implements a 32-bit global history shift register with support for rolling back state in response to a pipeline flush caused by a branch misprediction. To simplify this solution while maintaining functionality, we can focus on the sequential logic and combinational logic parts. 
+
+Given that the combinational logic is already quite straightforward and simple, the main simplification can be achieved by ensuring that the logic is correctly prioritized and that the sequential update logic is straightforward.
+
+One potential simplification is to directly use the conditional operator (`?:`) to select the next state of the history register within the `always` block, thus potentially eliminating the need for an explicit `next_history` wire and its associated `assign` statement. This approach streamlines the code, reducing the number of lines and making the logic more direct.
+
+Additionally, ensuring that the logic for handling mispredictions and predictions is correctly prioritized is crucial. The existing solution does this by checking for `train_mispredicted` first, which is correct because a misprediction should override any prediction made in the same cycle.
+
+By simplifying the logic and ensuring that the priorities are correctly implemented, we can maintain the functionality of the module while potentially reducing its complexity and improving readability.

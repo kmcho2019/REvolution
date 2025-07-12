@@ -1,0 +1,8 @@
+To solve this problem, we will design a finite state machine (FSM) with the following states:
+- IDLE: Wait for the start bit (0) to be detected.
+- START: Wait for one clock cycle after detecting the start bit.
+- DATA: Receive the 8 data bits, storing them in a register. The data is sent least significant bit first.
+- STOP: Verify that the stop bit is 1. If it is, the byte has been received correctly and we can assert the 'done' signal.
+- ERROR: If the stop bit is not 1 when expected, enter this state and wait for a stop bit (1) before returning to the IDLE state.
+
+We will use a 3-bit state register to encode the four states, a 3-bit counter to keep track of the current data bit, and an 8-bit register to store the received data.

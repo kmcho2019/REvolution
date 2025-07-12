@@ -1,0 +1,15 @@
+Use a simple FSM with four states: SEARCH (looking for pattern 1101), LOAD_DELAY (shift in 4 bits MSB first), COUNT (count timer), and WAIT_ACK (assert done, wait for ack). 
+
+In SEARCH, shift in data bits into a 4-bit pattern register and check for pattern 1101. When matched, move to LOAD_DELAY.
+
+In LOAD_DELAY, shift in 4 bits MSB first into delay register by shifting left and inserting each bit at LSB. After 4 bits are loaded, initialize counters and move to COUNT.
+
+In COUNT, use two counters: a 12-bit cycle counter counts 0-999, and a 4-bit remaining count initialized to delay. Decrement the remaining count every 1000 cycles. The count output shows the current remaining count during COUNT, else zero or don't-care. 
+
+When the remaining count reaches zero and 1000 cycles of the last step are done, move to WAIT_ACK.
+
+In WAIT_ACK, assert done=1 and wait for ack=1, then reset to SEARCH.
+
+All registers update on positive clock edge with synchronous reset.
+
+This simplified FSM avoids unnecessary signals and aligns shift direction for MSB-first delay input, fixes counting off-by-one by decrementing remaining count immediately after 1000 cycles, and ensures outputs are correct and stable.

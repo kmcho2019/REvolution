@@ -1,0 +1,7 @@
+An alternative implementation is to express the logic using De Morgan's laws and NAND gates only. The logic q = (a OR b) AND (c OR d) can be rewritten as q = NOT ( (NOT (a OR b)) OR (NOT (c OR d)) ). This means q = NAND of (NOT (a OR b)) and (NOT (c OR d)).
+
+Implementing this, first compute na_b = ~(a | b), nc_d = ~(c | d), then q = ~(na_b | nc_d).
+
+This uses only NAND and NOR style gates, which can be beneficial for certain standard cell libraries and might reduce delay or power depending on the target technology.
+
+This design maintains purely combinational logic with minimal depth (3 levels) and uses inverters implicitly via NAND/NOR, trading off slightly more gates for potential benefits in optimization.

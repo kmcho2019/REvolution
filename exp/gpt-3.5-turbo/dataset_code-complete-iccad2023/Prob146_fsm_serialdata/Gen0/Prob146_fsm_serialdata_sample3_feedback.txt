@@ -1,7 +1,0 @@
-1. The module is not properly synchronizing its state transitions with the clock signal. This leads to unexpected state changes and incorrect behavior in the FSM. Specifically, the transition from `RECEIVE_DATA` to `STOP_BIT` is premature and not correctly synchronized with the arrival of all data bits. This can be seen in the incorrect assignment of `next_state` in the `RECEIVE_DATA` state.
-
-2. The implementation does not effectively handle the reception of data bits and does not wait for all 8 data bits to be received before moving to the stop bit check. This is evident in the incorrect manipulation of `out_byte` where the new bit is directly assigned without considering the position of the data bit.
-
-3. The FSM does not wait for the start bit after detecting the stop bit. This can potentially cause the FSM to start incorrectly. The transitions between states are also not accurately defined, leading to incorrect behavior in the FSM.
-
-Overall, the issues lie in incorrect state transitions, premature state changes, and incorrect handling of data bits, which result in the high number of mismatches observed in the simulation log.

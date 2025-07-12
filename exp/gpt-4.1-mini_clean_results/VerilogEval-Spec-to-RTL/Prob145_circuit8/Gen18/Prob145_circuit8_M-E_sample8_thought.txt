@@ -1,0 +1,14 @@
+The waveform suggests that the outputs `p` and `q` represent two sequential bits holding state that update synchronously on the rising edge of `clock`. Initially, outputs are undefined, then from the first rising edge onwards, the outputs settle into a stable 2-bit state that evolves according to input `a` and previous states.
+
+Observing key waveform points:
+- `p` goes high only on rising edges when `a` is high and under certain internal conditions.
+- `q` remains low while `p` transitions happen, then later `q` also goes high and stays high, indicating state retention.
+- When `p` is high, `q` sometimes matches or holds prior values, hinting that `q` is a stored bit delayed by one cycle compared to `p`.
+- At the falling edge of the clock, no output changes occur, implying a single-edge clocked circuit.
+
+A good abstraction is a 2-bit shift register with some gating:
+- At each rising clock edge, `p` is loaded with the current `a`.
+- At the same rising edge, `q` captures the previous `p`.
+- This makes `q` a delayed version of `p` by one clock cycle.
+
+To reflect the waveform's `q` holding longer and `p` toggling with input, the circuit can be modeled as a two-stage shift register:

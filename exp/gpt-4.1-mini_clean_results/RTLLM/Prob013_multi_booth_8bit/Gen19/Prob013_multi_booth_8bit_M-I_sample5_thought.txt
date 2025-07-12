@@ -1,0 +1,17 @@
+To improve the original implementation of an 8-bit Radix-4 Booth multiplier, the key is to properly implement the Radix-4 Booth algorithm, which processes two multiplier bits per cycle, thus halving the number of cycles required (from 16 to 8 iterations). This significantly improves performance (timing) and reduces power by reducing switching activity.
+
+Improvement strategy:
+- Implement a genuine Radix-4 Booth algorithm by encoding the multiplier bits in overlapping groups of 3 (including an appended zero bit), extracting two bits per cycle.
+- Use a 5-bit counter but count up to 8 iterations (since each iteration processes 2 bits).
+- The multiplicand is sign-extended to 17 bits to cover the partial product shifts.
+- The product register is extended to 17 bits internally to accommodate intermediate sums and shifts, then trimmed to 16 bits at output.
+- Use signed arithmetic for correct signed multiplication.
+- Shift the product right by 2 bits each cycle (radix-4 shifts the partial product).
+- Generate the partial product based on the Booth recode (0, +1, -1, +2, -2).
+- On reset, initialize registers with sign-extended inputs and zero counters.
+- Set ready (rdy) high when multiplication is done after 8 iterations.
+- The design uses synchronous reset on clock edge.
+- This reduces the number of cycles, cutting power and timing demands.
+- The encoding logic is combinational and simple, preserving area efficiency.
+
+This approach satisfies the requirement of an 8-bit Radix-4 Booth multiplier with synchronous operation and ready signal, improves timing by halving cycles and reduces power by fewer state transitions.

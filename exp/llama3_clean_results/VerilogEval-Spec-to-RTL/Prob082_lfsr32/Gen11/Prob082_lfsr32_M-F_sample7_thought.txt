@@ -1,0 +1,7 @@
+To fix the code, we first need to correctly interpret the tap positions in a 0-indexed system. The tap positions given as 32, 22, 2, and 1 correspond to positions 31, 21, 1, and 0 in the code. We need to implement the Galois LFSR's next state logic by shifting the register right and then XORing the bits at the tapped positions with the outgoing bit to form the new most significant bit.
+
+The outgoing bit is the least significant bit (LSB), which is q[0]. The tapped bits are at positions 31, 21, 1, and 0, but the LSB (q[0]) should not be included in the XOR operation as it is used as one of the inputs to the XOR. Instead, we should include q[31], q[21], and q[1] in the XOR operation.
+
+We can simplify the XOR operation by using a temporary variable to store the result of the XOR operation between the tapped bits and then shifting the register right and filling the MSB with the result of the XOR operation.
+
+Overall, the corrected solution should correctly implement the Galois LFSR with the specified tap positions and should produce the expected output.

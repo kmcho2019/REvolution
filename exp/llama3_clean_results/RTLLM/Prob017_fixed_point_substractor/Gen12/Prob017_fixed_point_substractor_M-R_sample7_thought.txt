@@ -1,0 +1,9 @@
+To refactor the provided Verilog code for the fixed-point subtractor, we aim to maintain the core functionality while improving its structure and potentially its synthesizability. The original code uses a combination of `always` blocks to separate the integer and fractional parts of the inputs and to perform the subtraction. However, this approach can be simplified and made more efficient by leveraging Verilog's built-in features for handling arithmetic operations.
+
+A key refactoring idea is to utilize continuous assignments (`assign`) for simple operations such as separating the integer and fractional parts of the inputs, as these do not require the procedural assignment of `always` blocks. Additionally, we can maintain the use of `always` blocks for the subtraction logic, as it involves conditional statements that are best handled procedurally.
+
+Another improvement involves explicitly handling the sign bit of the result when the subtraction yields a zero value, ensuring the output's sign bit is correctly set to zero in such cases.
+
+Finally, the testbench can be refined to include a more comprehensive set of test cases to cover various scenarios, including same sign and different sign subtractions, as well as edge cases like zero inputs.
+
+By implementing these changes, the refactored code aims to be more concise, efficient, and easier to understand, while ensuring that the core functionality of the fixed-point subtractor remains intact.

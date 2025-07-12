@@ -1,0 +1,10 @@
+My novel approach implements a self-contained, edge-triggered unit with built-in feedback capability. Instead of just being a simple loadable flip-flop, each TopModule instance will:
+
+1. Include its own XOR gate for feedback operations
+2. Have a configurable bit position (parameterized)
+3. Generate its own feedback term when in shift mode
+4. Still maintain the basic load functionality
+
+This makes each instance more intelligent and reduces the wiring complexity in the full_module. The key innovation is that each flip-flop "knows" its role in the feedback network. The full_module would simply need to chain these together appropriately.
+
+The parameter 'POS' determines the bit position (0=LSB, 2=MSB) and controls the feedback logic. The MSB (POS=2) uses XOR feedback, while others just pass their state.

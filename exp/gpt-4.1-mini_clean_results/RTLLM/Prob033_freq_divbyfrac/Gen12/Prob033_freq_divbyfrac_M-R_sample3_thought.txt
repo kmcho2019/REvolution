@@ -1,0 +1,7 @@
+Refactor the fractional frequency divider by keeping a single modulo-7 counter driven synchronously by the posedge clock. Instead of using separate counters or negedge triggers, produce two clock waveforms (`clk_a` and `clk_b`) directly from combinational logic that decodes the counter and a phase-shifted version of the counter. 
+
+`clk_a` will be high for 4 counts and low for 3 counts (0 to 3 high, 4 to 6 low). For the half-cycle phase shift needed to implement a fractional divide-by-3.5, shift the counter by 3 counts modulo 7 (equivalent to half the 7-count period) to produce `clk_b`. This shift corresponds to approximately half a source clock period phase shift in the modulo-7 domain. 
+
+Finally, generate the fractional clock output by OR'ing these two waveforms (`clk_div = clk_a | clk_b`). This approach uses only synchronous logic and combinational decoding of the counter, avoiding multiple always blocks and reliance on negedge triggers, improving timing predictability. This also aligns better with the requirement to OR the phase-shifted signals, ensuring a uniform fractional clock output.
+
+The design is simple, fully synchronous except for combinational outputs, and cleanly expresses the fractional division by 3.5 with duty cycle balancing via double-edge-like phase shift approximation.

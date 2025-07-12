@@ -1,0 +1,5 @@
+The approach taken here is to use a different architectural idea for the finite state machine, focusing on the sequential nature of the problem. The novel idea is to implement a counter-based state machine that counts the number of bytes received after detecting the first byte of a message (indicated by in[3]=1). This approach simplifies the state transitions and ensures that the 'done' signal is asserted after the third byte of each message.
+
+The state machine will have two main states: IDLE and COUNTING. In the IDLE state, the FSM waits for a byte with in[3]=1. Once such a byte is detected, it transitions to the COUNTING state and starts a counter. The counter increments with each byte received. When the counter reaches 2 (indicating the third byte has been received), the FSM asserts the 'done' signal and transitions back to the IDLE state, resetting the counter.
+
+This counter-based approach ensures a straightforward and efficient implementation, leveraging the sequential nature of the input byte stream and the condition that defines the start of a message.

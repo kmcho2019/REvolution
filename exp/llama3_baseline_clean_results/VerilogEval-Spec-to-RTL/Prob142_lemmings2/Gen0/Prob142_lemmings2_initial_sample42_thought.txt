@@ -1,0 +1,14 @@
+To model the Lemming's behavior, we can use a Moore state machine with four states: 
+- Walking Left (WL)
+- Walking Right (WR)
+- Falling (F)
+- No Operation/Transition (NO)
+
+The state transitions will be based on the input signals. 
+- Initially, the Lemming is in the Walking Left state (WL) when areset is high.
+- If the Lemming is walking and hits an obstacle (bump_left or bump_right), it will switch directions.
+- If the Lemming is walking and the ground disappears (ground = 0), it will transition to the Falling state (F).
+- If the Lemming is falling and the ground reappears (ground = 1), it will transition back to its previous walking state (WL or WR).
+- The output signals walk_left, walk_right, and aaah will be determined by the current state.
+
+We can use a 2-bit binary encoded state register to represent the four states.

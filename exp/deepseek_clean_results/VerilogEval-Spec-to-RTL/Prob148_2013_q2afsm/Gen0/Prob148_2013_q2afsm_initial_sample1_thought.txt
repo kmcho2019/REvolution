@@ -1,0 +1,15 @@
+To implement this FSM, we'll follow these steps:
+1. Define states A, B, C, D with binary encoding
+2. Create sequential logic for state transitions with synchronous reset
+3. Implement combinational logic for next state transitions based on current state and inputs
+4. Output logic will be combinational based on current state (g0=1 in B, g1=1 in C, g2=1 in D)
+5. Handle priority system where r0 has highest priority, then r1, then r2
+
+The state transitions will be:
+- Stay in A if no requests
+- Go to B if r0=1 (highest priority)
+- Go to C if r1=1 and r0=0
+- Go to D if r2=1 and r0,r1=0
+- From B: stay if r0=1, else return to A
+- From C: stay if r1=1, else return to A
+- From D: stay if r2=1, else return to A (though diagram doesn't show D transitions)

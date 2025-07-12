@@ -1,0 +1,9 @@
+I will implement a 4-digit BCD counter using a single 16-bit binary counter that increments on every clock cycle, and then convert its binary value to BCD digits using the Double Dabble (Shift-and-Add-3) algorithm in a combinational block. This approach reduces the complexity of sequential logic and keeps the counting simple and fast as a 16-bit binary counter increments naturally without conditional logic.
+
+To generate the enable signals for each upper BCD digit, I will detect when the lower digit rolls over from 9 to 0 by comparing their values in the previous and current cycles using registered versions of each BCD digit. These enables indicate when the higher digits should be incremented in a ripple carry style, matching the problem statement.
+
+The synchronous reset will initialize the binary counter to zero. The clocked logic only increments the binary counter, while the BCD conversion and enables are purely combinational or use registered digits for edge detection.
+
+This architecture separates counting and BCD encoding, allowing higher clock rates due to the simple binary counter, and ensures a single point of increment, avoiding multiple conditional increments. It also clearly derives enable signals by tracking digit rollovers from 9 to 0 by comparing digit values over clock cycles.
+
+The design keeps the 16-bit BCD output updated every cycle and outputs the enable signals for digits 3:1 indicating the moments they should be incremented on the next clock.

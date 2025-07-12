@@ -1,0 +1,5 @@
+The original solution is already minimal in logic and expresses the function f = (~x3 & x2) | (x3 & x1), which perfectly matches the truth table. To optimize PPA (performance, power, and area), we can consider that the expression is a 2-to-1 multiplexer controlled by x3, selecting between x2 and x1. Using the ternary operator (mux style) might better map to hardware multiplexers in synthesis tools, potentially improving area and power slightly by eliminating explicit AND gates and OR gates and leveraging an efficient mux primitive in the target technology.
+
+Therefore, I will implement the same logic using a conditional operator to express f = x3 ? x1 : x2.
+
+This style can lead to a better PPA footprint on most ASIC/FPGA synthesis flows without changing the functional behavior.

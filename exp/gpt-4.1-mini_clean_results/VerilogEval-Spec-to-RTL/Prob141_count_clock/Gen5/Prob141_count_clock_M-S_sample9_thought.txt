@@ -1,0 +1,7 @@
+Simplify by implementing the counters as straightforward binary counters with range limits, and directly update PM on the hour wrap-around from 11 to 12. Instead of converting binary to BCD via division/modulo, explicitly calculate tens and units digits using simple subtractive logic and bitwise operations suitable for synthesis. This avoids division/modulo operators and reduces combinational complexity.
+
+Since hours are from 1-12, minutes and seconds from 0-59, tens digit can be obtained by comparing and subtracting multiples of 10. This logic uses simple conditions and arithmetic, making it lightweight.
+
+All sequential logic stays in a single always block triggered on clk with synchronous reset and enabled incrementing on ena. Outputs hh, mm, ss are combinational from the binary counters.
+
+This approach maintains clear logic, minimizes combinational complexity, and improves synthesizability and performance without complex division/modulo operations.

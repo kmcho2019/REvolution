@@ -1,0 +1,32 @@
+Improved Approach:
+
+1. Truth Table Analysis:
+   - Output=1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output=0 cases: 0,1,4,5,6,9,10,13,14
+   - Don't-cares: 3,8,11,12
+
+2. SOP Simplification:
+   - For 2: ~a & ~b & c & ~d
+   - For 7: ~a & b & c & d
+   - For 15: a & b & c & d
+   - These are already minimal terms, no further simplification possible
+
+3. POS Simplification:
+   - For false cases (output=0), we need to ensure the output is 0
+   - Create maxterms for all false cases:
+     - 0: a|b|c|d
+     - 1: a|b|c|~d
+     - 4: a|~b|c|d
+     - 5: a|~b|c|~d
+     - 6: a|~b|~c|d
+     - 9: ~a|b|c|~d
+     - 10: ~a|b|~c|d
+     - 13: ~a|~b|c|~d
+     - 14: ~a|~b|~c|d
+   - After simplification using Boolean algebra, we get:
+     (a | b | c) & (a | c | d) & (a | ~b | c) & (~a | b | c) & (~a | c | d)
+
+4. Implementation:
+   - Keep original SOP as it's already minimal
+   - Implement simplified POS with fewer terms while maintaining correctness
+   - Both forms will now correctly implement the truth table

@@ -1,0 +1,12 @@
+This design implements a parallel-prefix multiplier using a Wallace tree structure for improved performance. The key innovations are:
+1. Uses a 4:2 compressor tree to reduce partial products efficiently
+2. Implements carry-save addition throughout the tree to minimize critical path
+3. Processes all bits in parallel rather than sequentially
+4. Uses pipelining for better timing closure
+5. Generates done signal combinatorially when start is high
+
+The multiplier works by:
+1. Generating all 16x16 partial products in parallel
+2. Reducing them through 4:2 compressor stages
+3. Final addition with carry-propagate adder
+4. Output stabilization after one clock cycle

@@ -1,0 +1,11 @@
+To simplify, maintain only one register `capture` that stores which bits have seen a falling edge (1 to 0) transition. Also keep a `prev_in` register to hold the previous input value. On each clock edge (with synchronous reset):
+
+- Detect falling edges as `prev_in & ~in`.
+- Update `capture` by ORing it with detected falling edges to latch them.
+- Update `prev_in` with the current input.
+
+Finally, assign the output `out` directly from `capture`.
+
+This approach uses only two registers (`prev_in` and `capture`) and a combinational assignment for output. It avoids updating the output inside the clocked process separately, thus preventing glitches. Initializing `prev_in` on reset avoids false detection on the first clock cycle.
+
+This is a minimal and clear solution that meets the requirements.

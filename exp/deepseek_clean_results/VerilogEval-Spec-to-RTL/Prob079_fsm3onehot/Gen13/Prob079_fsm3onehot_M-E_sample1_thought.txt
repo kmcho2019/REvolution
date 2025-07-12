@@ -1,0 +1,15 @@
+Novel Architectural Idea:
+1. Leverage priority encoder concept for state transitions:
+   - Instead of computing each next_state bit independently, use a priority-based approach that naturally fits one-hot encoding
+   - Create a 4-bit intermediate signal that encodes the current state and input combination
+   - Use this intermediate signal to drive the next state with minimal logic
+
+2. Optimized output generation:
+   - Exploit the fact that output is only high in state D by using a simple AND between the state bit and a constant
+   - This eliminates any additional logic for output generation
+
+3. Key advantages:
+   - Reduced gate count by sharing common input conditions
+   - More balanced logic paths for better timing
+   - Clearer relationship between current state and next state
+   - Maintains all benefits of one-hot encoding

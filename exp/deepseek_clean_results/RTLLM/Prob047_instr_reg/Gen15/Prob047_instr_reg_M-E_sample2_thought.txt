@@ -1,0 +1,25 @@
+Novel Architecture: Dual-Phase Registered Output with Output Isolation
+
+Key Innovations:
+1. Dual-Phase Registering:
+   - Split the register update and output phases into separate clock edges
+   - Update registers on rising edge, update outputs on falling edge
+   - This reduces output switching power and improves timing by separating input/output paths
+
+2. Output Isolation:
+   - Add output enable logic that only updates outputs when needed
+   - Reduces unnecessary toggling of downstream logic
+
+3. Optimized Fetch Handling:
+   - Use a single always block with priority encoding
+   - Eliminates parallel condition checks for cleaner synthesis
+
+4. Power Gating:
+   - Implement register-level power gating instead of clock gating
+   - More precise control over power domains
+
+Benefits:
+- Improved timing by separating input/output paths
+- Reduced power through output isolation
+- Smaller area by consolidating control logic
+- Better clock tree quality by avoiding clock gating

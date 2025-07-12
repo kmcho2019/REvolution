@@ -1,0 +1,19 @@
+To implement the 12-hour clock with counters for hours, minutes, and seconds, 
+we will create separate counters for each time component. These counters 
+will be clocked by the fast-running 'clk' and will increment based on the 
+'ena' signal, which represents a one-second pulse. 
+
+The counters will be designed as follows:
+- The seconds counter will increment on every 'ena' pulse, wrapping around 
+  to 0 after reaching 59.
+- The minutes counter will increment every 60 seconds (i.e., when the seconds 
+  counter wraps around to 0), also wrapping around to 0 after reaching 59.
+- The hours counter will increment every 3600 seconds (i.e., when both minutes 
+  and seconds counters wrap around to 0), wrapping around to 1 after reaching 12.
+
+To handle AM/PM, we will use the hours counter value. If the hours value is 
+greater than or equal to 12, we assert 'pm', otherwise, we assert 'am'. 
+
+We also need to handle the reset condition. On the positive edge of 'clk', if 
+'reset' is high, we reset all counters to their initial values, which corresponds 
+to "12:00 AM".

@@ -1,0 +1,12 @@
+Fuse the two examples by adopting the clear SP semantics and concise combinational enables from Example 2, combined with the careful dataOut update and power-aware behavior of Example 1:
+
+- Use SP counting the number of stored elements (0 to 4), where 0=empty, 4=full, which is intuitive and consistent.
+- Define push and pop enables combinationally using EN, RW, and SP status to simplify control and separate concerns.
+- Use separate push and pop addresses computed combinationally to cleanly index stack_mem without complex timing.
+- Update stack_mem only on push, and do not clear locations on pop to minimize toggling.
+- Update dataOut only on pop (read), holding its value otherwise.
+- Clear stack_mem and reset SP and dataOut on reset for deterministic startup.
+- Keep EMPTY and FULL flags combinationally assigned for immediate external awareness.
+- Implement all sequential updates in a single always_ff block with non-blocking assignments for simulation-synthesis consistency.
+- Include a for-loop for memory reset for elegance and scalability.
+- This fusion leads to a clear, modular, efficient design with straightforward timing and good power characteristics.

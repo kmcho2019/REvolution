@@ -1,0 +1,5 @@
+The one-hot state machine next state logic can be simplified by directly OR-ing the appropriate state bits with the input conditions without grouping intermediate signals, as the original grouping for next_state[0] does not reduce complexity much and adds redundancy. Also, the next_state[0] assignment can be simplified to a single OR with zero_in instead of two separate terms ANDed with zero_in.
+
+For the outputs, unify the approach by using masks and reduction ORs for both outputs to keep the code consistent and concise. This makes the code easier to read and maintain.
+
+The resulting design is a clean, straightforward combinational logic implementation that preserves the behavior of multiple active states and the one-hot encoding, while reducing logic duplication and unnecessary intermediate signals.

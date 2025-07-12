@@ -1,0 +1,24 @@
+Fix the code by implementing these changes:
+
+1. **Delay Bit Shifting MSB First:**  
+   Reverse the delay shift direction so the first bit received becomes the MSB. On each new delay bit, shift delay left and put incoming bit at LSB, but since bits arrive MSB first, we load delay from MSB down to LSB, effectively shift left and insert bit at LSB is correct if we start from zero.
+
+2. **Consolidate Counting Logic:**  
+   Use a single always block in COUNT state to decrement a 10-bit cycle counter from 999 down to 0 for each 1000 cycles, decrement the segment counter when cycle_counter reaches 0. Decrement the master counter every clock as well. Ensure all counter updates happen in one sequential block to avoid race conditions.
+
+3. **Initialize Counters on State Change:**  
+   On entering COUNT state, initialize `master_counter = (delay + 1)*1000`, `segment_counter = delay`, and `cycle_counter = 999` (start counting first cycle).
+
+4. **Count Output Reflects Segment Counter:**  
+   While counting, output count = segment_counter. segment_counter counts down from delay to 0 in steps of 1 every 1000 cycles.
+
+5. **Correct FSM transitions and outputs:**  
+   Assert `counting` only during COUNT state. Assert `done` only in WAIT_ACK. In other states, `count` is set to 0 (don't care). Make synchronous reset clear all counters and registers and return to IDLE.
+
+6. **Pattern Detection:**  
+   Keep a 4-bit shift register that shifts left by one bit with each data sample, placing newest bit at LSB, so pattern 1101 corresponds to bits[3:0] == 4'b1101. Once pattern detected, move directly to LOAD_DELAY state to load 4 bits.
+
+7. **In LOAD_DELAY, shift in bits MSB first:**  
+   Since the first bit received is the MSB of delay, shift delay left by one and insert new bit at LSB for each of the 4 bits.
+
+Overall, restructuring the code to have a clean, single always @(posedge clk) block for counters and FSM updates to avoid races, and fix delay shift ordering solves the problem.

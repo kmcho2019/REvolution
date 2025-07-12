@@ -1,0 +1,12 @@
+Improvement Strategy:
+1. **Timing Optimization**: Pipeline the multiplier to break the critical path. Split the 32x32 multiplication into two stages (partial products generation and final addition).
+2. **Power Optimization**: Add clock gating when inputs are zero to reduce unnecessary switching activity.
+3. **Area Optimization**: Use Booth encoding for the multiplier to reduce area while maintaining performance.
+4. **Precision Handling**: Maintain full 64-bit accumulation internally to prevent overflow, then truncate to 32-bit output only when needed.
+
+Key Changes:
+- Two-stage pipelined multiplier
+- Clock gating logic
+- Booth encoded multiplier
+- 64-bit internal accumulator with 32-bit output
+- Registered inputs for better timing

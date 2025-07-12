@@ -1,0 +1,7 @@
+Redefine TopModule as a load-enabled D flip-flop with an explicit internal 2:1 multiplexer. The multiplexer selects between r_in and q_in based on L, producing the D input of the flip-flop. This means TopModule contains both the mux and the flip-flop.
+
+To properly support full_module's functionality, q_in should be the combinational feedback input, and r_in should be the loaded data. The TopModule encapsulates the mux and flip-flop together, thus relieving the parent module from mux logic.
+
+This approach cleanly separates the mux and flip-flop stages inside TopModule, making the submodule reusable and hierarchical. It also aligns with the problem's requirement that TopModule includes both the mux and flip-flop.
+
+The output Q is the stored value. Using nonblocking assignments in the flip-flop always block and continuous assignment for mux output yields a clear, synthesizable design.

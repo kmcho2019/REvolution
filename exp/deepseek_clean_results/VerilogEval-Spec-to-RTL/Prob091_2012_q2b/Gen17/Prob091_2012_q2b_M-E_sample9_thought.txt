@@ -1,0 +1,15 @@
+Novel Architectural Idea:
+1. **Lookup Table (LUT) Approach**: Instead of deriving Y1 and Y3 through combinational logic, we'll use the current state (y) and input (w) to index into predefined truth tables. This approach leverages the one-hot encoding property to simplify the logic.
+
+2. **Parallel Output Calculation**: Calculate Y1 and Y3 simultaneously by treating them as independent functions of the current state and input. This avoids any dependency between outputs.
+
+3. **State Transition Pattern Matching**: For each output, we'll match specific state transition patterns where the flip-flop should be set (1) or reset (0).
+
+4. **Optimized Encoding**: Since we're using one-hot encoding, we can directly use bitwise operations on the state vector to detect transitions.
+
+Key Insights:
+- Y1 (y[1] input) is only set when transitioning from A (y[0]) to B with w=1
+- Y3 (y[3] input) is set when:
+  - Transitioning from B (y[1]) to D with w=0
+  - Transitioning from C (y[2]) to D with w=0
+  - Transitioning from F (y[5]) to D with w=0

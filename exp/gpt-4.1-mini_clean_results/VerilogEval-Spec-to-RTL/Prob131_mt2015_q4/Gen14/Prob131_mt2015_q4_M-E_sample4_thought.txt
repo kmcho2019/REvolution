@@ -1,0 +1,18 @@
+Instead of directly implementing the problem by instantiating two separate A and B modules twice and then combining their outputs, we can refactor the design by using internal signals to compute the needed intermediate values once and reusing them smartly.
+
+Since A implements z = (x ^ y) & x and B produces outputs given in the waveform (observing B's output matches ~((x&y) | (~x&~y)) for some complex pattern), we can interpret B's logic as z = ~((x & y) | (~x & ~y)) = x ^ y (inverted output), but from the waveform B's output doesn't directly equal to ~xor or any simple function; so we keep B as a black box module.
+
+The architectural novelty is: instantiate the two A modules with inputs (x, y), capturing their outputs as a_out1 and a_out2; similarly instantiate two B modules, producing b_out1 and b_out2.
+
+Then instead of simple OR and AND gates on these outputs, introduce two 2:1 multiplexers controlled by x and y to select combinations of A and B outputs. For example, one mux outputs either a_out1 or b_out1 based on x, the other mux outputs either a_out2 or b_out2 based on y.
+
+Finally, XOR the outputs of these two multiplexers to produce z.
+
+This approach:
+
+- Uses the same number of A and B submodules, meeting the problem requirement.
+- Adds controlled selection (via multiplexers) which can help improve flexibility and potentially power, by gating unused outputs dynamically.
+- Exploits inputs x and y as controls for multiplexers, potentially reducing simultaneous switching.
+- Breaks the symmetry of OR and AND gating, allowing more diverse output patterns and better mapping to different applications.
+
+This design maintains full combinational logic, uses all four submodules, and outputs the final z by XORing the mux outputs. It is a novel structural approach using multiplexers instead of fixed OR/AND gates after the submodules.

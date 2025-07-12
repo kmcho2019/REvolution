@@ -1,0 +1,9 @@
+Simplify the FSM by splitting the state and direction into separate registers to reduce combinational complexity. Use a 2-bit state encoding for walking, falling, digging, and splatting, and a separate direction bit for left/right. This makes state transition logic clearer and outputs easier to derive. 
+
+Use a 5-bit fall_count for counting fall duration with saturating increment only while falling. Use an asynchronous reset to initialize to walking left and zero fall_count.
+
+Prioritize conditions with simple if-else cascading to maintain fall > dig > bump priority. Bump changes direction only when walking on ground. Fall and dig ignore bumps.
+
+Derive outputs in a straightforward Moore style from state and direction.
+
+This approach reduces complexity by separating concerns, simplifying next-state logic, and output logic, making code easier to understand and verify, while preserving all original behaviors and priorities.

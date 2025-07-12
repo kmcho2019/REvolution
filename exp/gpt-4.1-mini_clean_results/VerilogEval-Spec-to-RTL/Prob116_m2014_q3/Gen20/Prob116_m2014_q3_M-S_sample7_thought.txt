@@ -1,0 +1,12 @@
+Because the inputs x are Gray-coded, the function can be implemented by first converting the Gray-coded inputs x[3:0] into their binary equivalents and then mapping the result to the function value. However, to simplify and reduce complexity, we can implement the function directly by decoding the inputs with XOR gates and expressing f as a purely combinational continuous assignment, eliminating the need for a reg or always block.
+
+By analyzing the Karnaugh map and given the Gray-to-binary decoding:
+
+- row = {x3, x3 ^ x4}
+- col = {x1, x1 ^ x2}
+
+We combine these bits to identify which input patterns yield f=1.
+
+Instead of a large case statement, we can express f as a sum of products using these decoded bits or directly from the input bits and their XORs.
+
+This simplification yields a straightforward combinational assignment that is easy to understand, synthesize, and optimizes area and power by removing explicit case constructs and registers.

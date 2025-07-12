@@ -1,0 +1,7 @@
+A novel approach would be to use a logarithmic priority encoder that reduces the comparison depth from O(n) to O(log n). We can divide the 8-bit input into hierarchical groups and use parallel comparisons to determine the highest priority set bit. This implementation uses a binary search-like approach to locate the first set bit, which could potentially offer better timing characteristics in synthesized hardware.
+
+The design works as follows:
+1. First, check if any of the lower 4 bits are set (bits 0-3)
+2. If yes, further narrow down within the lower 4 bits using similar grouping
+3. If no, check the upper 4 bits (bits 4-7) and narrow down similarly
+4. This creates a balanced decision tree with only 3 levels of logic (log2(8))

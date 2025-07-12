@@ -1,0 +1,10 @@
+I will implement the decade counter using a modulus-10 ring counter approach. Instead of incrementing a binary count, I'll use a 4-bit one-hot encoded counter where only one bit is set at a time, and it rotates through 10 states by shifting a single '1' bit.
+
+To map the one-hot code to a binary output (q), I'll create a simple combinational decoder within the always block or by combinational logic. Because the output q needs to be binary counting from 0 to 9, I will keep track of the position of the '1' in the ring counter and use that as q. The ring counter provides simple next-state logic (rotate left by 1, reset to first position on reset), and the binary conversion is straightforward.
+
+This approach is novel compared to traditional binary counters:  
+- The internal state is one-hot, simplifying state transitions and possibly improving timing for next-state logic.  
+- The output q is derived by decoding the position of the hot bit, ensuring correct binary count from 0 to 9.  
+- Synchronous reset sets the ring counter to the initial state corresponding to q=0.
+
+This design trades a bit of area for potentially better timing and power due to simpler combinational next-state logic.

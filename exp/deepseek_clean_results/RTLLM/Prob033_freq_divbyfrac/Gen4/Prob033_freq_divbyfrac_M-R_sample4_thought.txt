@@ -1,0 +1,31 @@
+Refactored solution with improved timing and structure:
+
+1. **Simplified State Machine**:
+   - Use a 3-bit counter to track 7 states (0-6) for 3.5x division
+   - Eliminate next_state logic by directly incrementing counter
+   - Reset to state 0 for consistent startup
+
+2. **Direct Phase Generation**:
+   - Phase A (4-clock high) generated when counter < 4
+   - Phase B (3-clock high) generated when counter >=4 with negedge trigger
+   - Both phases use simple comparison logic instead of case statements
+
+3. **Improved Edge Alignment**:
+   - Phase A updates on posedge only
+   - Phase B updates on negedge only but follows same counter value
+   - Proper 180° phase shift maintained by counter alignment
+
+4. **Output Combination**:
+   - Clean OR operation of both phases
+   - No intermediate registers needed for output
+
+5. **Reset Handling**:
+   - Clear counter and phases synchronously
+   - Output starts low after reset
+   - First cycle begins correctly when reset released
+
+Key improvements:
+- More straightforward counter implementation
+- Clearer phase duration control
+- Better edge alignment through counter sharing
+- Reduced logic complexity

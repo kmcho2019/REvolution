@@ -1,0 +1,7 @@
+The issue in the original code lies in the way the sequence detection is handled and the output is set. Once the sequence 1101 is detected, the code stops updating the shift register, which can lead to incorrect behavior. To fix this, we can simplify the logic by removing the `seq_found` register and setting the `start_shifting` output directly based on the sequence detection.
+
+We will use a shift register to store the last four bits of the input stream. When the sequence 1101 is detected, we will set `start_shifting` to 1 and keep it high until the reset condition is met. This can be achieved by adding a separate condition to check if the sequence has already been found, and if so, keep `start_shifting` high.
+
+To optimize the code for PPA metrics, we will use non-blocking assignments to avoid any potential timing issues. Additionally, we will reduce the number of registers used by removing the `seq_found` register and directly controlling the `start_shifting` output.
+
+The reset mechanism will be properly synchronized with the clock to avoid metastability issues. The code will be designed to meet the timing requirements, and non-blocking assignments will be used where necessary to avoid any potential issues.

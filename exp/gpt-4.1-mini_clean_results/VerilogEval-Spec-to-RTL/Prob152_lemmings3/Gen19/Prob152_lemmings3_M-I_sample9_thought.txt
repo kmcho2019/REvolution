@@ -1,0 +1,17 @@
+To improve PPA (timing, power, and area), the primary target is simplifying the next-state combinational logic and minimizing the number of bits toggling unnecessarily. I will:
+
+1. Remove the digging bit from the main state encoding and encode it as an additional mode instead of a separate bit. This reduces the state bits from 3 to 2, by combining walking/digging into a single mode, and fall as another mode. That is, mode=0 means walking (includes digging or not), mode=1 means falling. We differentiate digging by an internal flag.
+
+2. Implement a 2-bit state encoding: direction (left/right) and mode (walk/fall). Digging will be indicated by a separate register that only sets when ground=1, mode=walk, and dig=1, and clears when ground=0 (start falling).
+
+3. This splits state and digging, thus reducing the toggle coupling and logic complexity.
+
+4. The next-state logic will have flat conditions with explicit priorities: first falling (ground=0), then digging, else direction change if bumped.
+
+5. The outputs will derive from these simplified state bits and the digging register, making output logic simpler and potentially reducing switching.
+
+6. Also, using non-blocking assignments in sequential logic, and blocking assignments in combinational logic for clarity.
+
+7. This approach reduces state bits, which can improve area and power, and simplified logic levels can improve timing.
+
+This approach maintains a Moore FSM (outputs depend only on registered state and digging register) with asynchronous reset setting walking left and no digging.

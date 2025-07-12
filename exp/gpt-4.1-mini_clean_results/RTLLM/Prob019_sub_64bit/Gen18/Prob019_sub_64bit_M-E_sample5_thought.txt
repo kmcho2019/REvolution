@@ -1,0 +1,13 @@
+Implement a 64-bit subtractor using a carry-select adder (CSA) approach to improve timing by reducing carry propagation delay. The subtractor computes A - B by adding A and two's complement of B (i.e., ~B + 1).
+
+Key points of this new design:
+
+- Split the 64-bit operands into four 16-bit blocks.
+- For each 16-bit block (except the least significant), precompute two sums in parallel: one assuming carry-in = 0, another assuming carry-in = 1.
+- Select the correct sum and carry-out for each block based on the actual carry from the previous block.
+- The first 16-bit block performs normal addition with carry-in = 1 (due to two's complement subtraction).
+- This carry-select structure significantly reduces the critical path compared to ripple-carry.
+- Overflow detection remains standard for signed subtraction: overflow occurs if sign(A) ≠ sign(B) and sign(result) ≠ sign(A).
+- The design is fully combinational and modular.
+
+This approach balances area and power reasonably while boosting performance by parallelizing carry assumptions and using simple multiplexers for carry selection.

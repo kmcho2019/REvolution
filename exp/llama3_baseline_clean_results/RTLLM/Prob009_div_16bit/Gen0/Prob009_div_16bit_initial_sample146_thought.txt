@@ -1,0 +1,9 @@
+To implement a 16-bit divider module in combinational logic, we will use a sequential division process where we compare the higher bits of the dividend with the divisor and update the quotient and remainder accordingly. We will use two always blocks, one for updating the input registers and another for performing the division operation.
+
+In the first always block, we will update the values of two registers, `a_reg` and `b_reg`, with the values of `A` and `B` respectively. 
+
+In the second always block, we will perform the division operation. We will extract the higher bits of `a_reg`, matching the bit width of `b_reg`, compare these bits with `b_reg`, and update the quotient and remainder accordingly. We will then concatenate the remainder with the highest remaining 1-bit of `a_reg` and repeat the process until all bits of `a_reg` are processed.
+
+We will use a temporary variable `temp_a` to store the remaining bits of `a_reg` after each comparison and update. We will also use another temporary variable `temp_result` to store the quotient.
+
+After the division operation is complete, we will assign the final value of `temp_result` to the output port `result` and the final value of `temp_a` to the output port `odd`.

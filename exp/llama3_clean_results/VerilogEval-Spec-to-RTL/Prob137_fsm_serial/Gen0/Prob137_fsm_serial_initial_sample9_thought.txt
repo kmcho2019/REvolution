@@ -1,0 +1,8 @@
+To implement the finite state machine (FSM) for receiving bytes from a serial stream, we will use the following states:
+- IDLE: The initial state, waiting for the start bit (0) to be received.
+- START: The state after a start bit is detected, preparing to receive data bits.
+- DATA: The state where the FSM is receiving the 8 data bits.
+- STOP: The state where the FSM verifies the stop bit (1) after receiving the data bits.
+- ERROR: The state entered when the stop bit is expected but not received; it will wait for a stop bit before attempting to receive the next byte again.
+
+The FSM will transition between these states based on the received bits and clock edges. Upon successful reception of a byte (start bit, 8 data bits, and stop bit), the 'done' output will be asserted for one clock cycle.

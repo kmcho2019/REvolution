@@ -1,0 +1,23 @@
+Novel Architecture Idea: State Machine with Delayed Comparison
+
+Key Concepts:
+1. Instead of using a shift register, implement a state machine that tracks partial matches
+2. Add a 1-cycle delay in the comparison to break timing paths
+3. Use a 'pending' state to handle the final bit comparison separately
+4. Optimize power by freezing state transitions after detection
+5. Maintain minimal area with only 3 state bits (4 states + detection flag)
+
+Advantages:
+- Better timing characteristics due to pipelined comparison
+- Lower switching activity since only state transitions occur (no shift register updates)
+- Clear state progression that's easy to verify
+- Immediate response to reset
+- No unnecessary bit storage beyond what's needed for matching
+
+State Encoding:
+- IDLE: Waiting for first '1'
+- GOT1: Received first '1'
+- GOT11: Received '11'
+- GOT110: Received '110'
+- PENDING: Waiting to check final bit (1-cycle delay)
+- FOUND: Sequence detected

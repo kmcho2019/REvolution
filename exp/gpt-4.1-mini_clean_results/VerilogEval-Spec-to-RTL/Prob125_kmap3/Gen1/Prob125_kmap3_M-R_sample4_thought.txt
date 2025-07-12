@@ -1,0 +1,13 @@
+To correctly implement the Karnaugh map, we must carefully map the inputs to the K-map positions using the provided ab and cd orderings: columns are ab=01,00,10,11 and rows are cd=00,01,11,10. The "d" input is a don't-care in the function, meaning output values for those entries can be assigned arbitrarily to simplify logic.
+
+We'll explicitly encode the logic by writing out the conditions under which output=1 based on the given map, treating don't-care cells as 0 or 1 to optimize the logic.
+
+To avoid confusion with orderings, let's define variables to represent inputs directly, then create an always_comb or continuous assign statement that matches each output=1 condition.
+
+We will implement the logic using a `case` statement inside an always block or use a combinational assignment that matches the specified input patterns. This is simpler and less error-prone than prematurely minimizing the function.
+
+Because d is don't-care for the function, we can ignore it in the logic (treat as irrelevant), or we can assign output arbitrarily for the don't-care input combinations.
+
+This direct approach ensures exact match with the K-map output and handles don't-cares properly. Finally, output the result.
+
+Below is a refactored implementation using a `case` statement with concatenated inputs.

@@ -1,0 +1,16 @@
+To create a superior dual-edge triggered flip-flop design, we fuse the strengths of both examples:
+
+- Both use two flip-flops triggered on opposite edges, ensuring functional correctness.
+- Both examples use a clock-level controlled output selection between the two flip-flops' outputs.
+- Example 1 employs a transparent latch as a functional mux replacement, reducing glitches, switching activity, and power compared to a purely combinational mux.
+- Example 2 notes the drawbacks of combinational muxing on clock signal and suggests a transparent latch for better timing and power.
+
+Our fusion strategy:
+- Use two flip-flops: one positive edge-triggered, one negative edge-triggered.
+- Replace the combinational mux on output with an explicit clock-level controlled transparent latch, allowing the output to hold stable values and reducing glitching.
+- Implement the latch with a level-sensitive clock gating style: latch is transparent when clk=1 to sample q_pos, and transparent when clk=0 to sample q_neg.
+- This latch-based muxing reduces power and glitching on output compared to a purely combinational mux.
+- To avoid combinational logic using the clock directly (which can cause glitches), use an explicit latch with clock-level enable.
+- Keep code synthesis-friendly and straightforward.
+
+This approach leverages the reliability of flip-flops, the glitch-free advantages of latches, and the intuitive dual-edge behavior, improving PPA without increasing complexity or requiring clock frequency changes.

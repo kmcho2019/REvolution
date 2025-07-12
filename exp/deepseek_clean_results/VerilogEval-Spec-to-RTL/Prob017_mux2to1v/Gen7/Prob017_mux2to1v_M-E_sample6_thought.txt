@@ -1,0 +1,10 @@
+Instead of implementing 100 individual 2:1 muxes, we can:
+1. Divide the 100-bit input into smaller groups (e.g., 10 groups of 10 bits)
+2. Use a hierarchical mux structure where:
+   - First level selects between groups using a single sel signal
+   - Second level selects within each group
+3. This approach may offer:
+   - Better power efficiency by reducing sel signal fanout
+   - Potential area savings through shared control logic
+   - More balanced timing paths
+4. The grouping factor (10 bits) can be parameterized for flexibility

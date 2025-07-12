@@ -1,0 +1,9 @@
+To fix the FSM, implement a fully synchronous reset triggered on the clock edge to avoid asynchronous reset issues. Separate the output signals from the current state and explicitly register the f output pulse immediately after reset release by detecting the resetn de-assertion event synchronized on clk. Use a small flag to generate the one-cycle f pulse in the clock cycle immediately following resetn de-assertion, independently from the FSM state to ensure precise timing.
+
+For the pattern detector (x=1,0,1), use a classic 4-state sequence detector that strictly tracks the matched prefix length and restarts or progresses accordingly on each clock cycle, avoiding state "stalls" and handling repeated inputs properly. This ensures the pattern is recognized on exactly three consecutive clock cycles without overlap.
+
+For g and monitoring y: upon pattern detection, enter a state where g=1 and start a 2-cycle countdown tracked with a counter. Sample y synchronously; if y=1 is detected within these two cycles, stay in the g=1 state permanently. If not, transition to a g=0 permanent state. Count cycles explicitly to avoid off-by-one errors.
+
+All outputs (f and g) are registered synchronously on clk, assigned based on a combination of FSM state and specific logic flags, ensuring stable output timing. Reset state is S_A with f=0 and g=0.
+
+This design cleanly separates reset pulse detection, pattern detection, and y monitoring phases, all synchronized with clk and resetn active low synchronous reset, thus fixing timing and logic mismatch issues.

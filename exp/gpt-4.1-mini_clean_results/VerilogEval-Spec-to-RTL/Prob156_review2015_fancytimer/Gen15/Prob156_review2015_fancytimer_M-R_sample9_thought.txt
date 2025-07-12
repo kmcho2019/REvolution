@@ -1,0 +1,19 @@
+Refactor the design into a cleaner and more modular style with clear separation of concerns:
+
+1. Use a dedicated pattern detector module or logic to continuously track the last 4 bits on data input only in SEARCH state, shifting MSB first.
+
+2. Use a single synchronous always block for state and registers updates, but isolate combinational next state logic in a separate always_comb block for clarity and to avoid multiple assignments.
+
+3. Implement a shift register and counter to load the 4 delay bits only after pattern detected, counting the 4 bits precisely.
+
+4. Implement counting as nested counters: a 4-bit "tick_count" counts down from delay to 0 inclusive, and a 10-bit "cycle_count" counts 0 to 999.
+
+5. Output `count` is assigned directly from tick_count only during COUNTING; otherwise, it's 'x' or zero as don't care.
+
+6. When counting reaches 0 and cycle_count finishes, move to DONE_WAIT, assert done and wait for ack.
+
+7. Ignore data input except in SEARCH and LOAD_DELAY states.
+
+8. Use synchronous reset active-high, with no conflicting assignments to counters.
+
+This refactor clarifies the FSM, avoids subtle bugs with multiple assignments, and aligns count output and timing exactly with the specification.

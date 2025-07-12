@@ -1,0 +1,17 @@
+Optimization strategy based on PPA metrics:
+1. Eliminate shadow_history register to reduce area and power:
+   - Instead of storing pre-prediction state, compute rollback value directly from current_history
+   - For mispredictions, we can reconstruct the correct history by:
+     a) Right-shifting current_history to undo the incorrect prediction
+     b) Then concatenating with actual train_taken
+2. Simplify priority logic:
+   - Make misprediction handling clearly dominant
+   - Use ternary operator for cleaner priority encoding
+3. Reduce switching activity:
+   - Only update registers when necessary (predict_valid or train_mispredicted)
+4. Maintain same functionality:
+   - Still handle async reset
+   - Same output behavior
+   - Correct priority between concurrent events
+
+This reduces area by 32 registers and lowers power by eliminating unnecessary shadow updates.

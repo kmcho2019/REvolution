@@ -1,0 +1,14 @@
+Implement a Radix-4 Booth multiplier by processing two bits of the multiplier at a time, but the provided specification actually describes a simpler approach: it treats the multiplier as a 16-bit register and processes bit by bit, accumulating the multiplicand shifted accordingly when the multiplier bit is 1. The multiplicand and multiplier are sign-extended to 16 bits. On reset, the multiplicand and multiplier registers are loaded. On each clock cycle, if counter < 16, the multiplicand is shifted left by 1, and if the multiplier bit at the current counter is 1, the product accumulates the multiplicand. Once done (counter == 16), ready is asserted.
+
+Since the specification indicates a 5-bit counter counting up to 16 and that the multiplicand register is left-shifted by 1 each cycle, and the product accumulates multiplicand when multiplier bit at ctr is 1, the implementation is closer to a straightforward shift-and-add multiplication rather than a full Radix-4 Booth algorithm. But we will adhere strictly to the spec.
+
+Hence, the module:
+- On reset: multiplicand <= sign-extended b, multiplier <= sign-extended a, product <= 0, counter <= 0, rdy <= 0
+- On clock:
+  - If ctr < 16:
+    - If multiplier[ctr] == 1, p += multiplicand
+    - multiplicand <<= 1
+    - ctr++
+  - Else rdy <= 1
+
+The outputs p and rdy updated accordingly.

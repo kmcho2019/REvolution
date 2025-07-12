@@ -1,0 +1,11 @@
+Use a Moore FSM with distinct states for: searching for pattern 1101, loading a 4-bit delay, counting the delay in 1000-cycle blocks, signaling done, and waiting for ack. 
+
+- Pattern detection uses a 4-bit shift register updated every clock in the IDLE state; when it matches 1101, transition to LOAD_DELAY.
+- In LOAD_DELAY, shift in 4 bits MSB first into delay register using a counter; after 4 bits, move to COUNT.
+- In COUNT state, implement a cycle_counter counting 0 to 999 (1000 cycles), and a segment_counter counting down from delay+1 to 0.
+- The output count is the current remaining segments minus one, changing every 1000 cycles.
+- When both counters finish, move to DONE state, assert done output, and wait for ack signal.
+- Upon ack, go back to IDLE and start detecting pattern again.
+- All logic is synchronous on posedge clk with synchronous reset.
+- During counting and done states, the pattern detection is disabled.
+- Outputs counting and done are mutually exclusive, count is valid only during counting.

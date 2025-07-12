@@ -1,0 +1,20 @@
+To improve the PPA (power, performance, area) of the existing edge detection design, we can optimize power by registering the output one cycle after the detected 0->1 transition, as currently done, but reduce unnecessary switching inside the pedge register by only updating pedge bits when a positive edge is detected, holding zero otherwise. This can be done by resetting pedge bits when no edge is detected, effectively gating the output transitions and reducing toggle rate.
+
+In addition, using a synchronous reset for the prev_in register and pedge would improve reliability in a design context, though the original did not specify reset.
+
+Finally, the logic can be simplified slightly to avoid recomputation: instead of calculating (~prev_in) & in in the always block, store the edge detection signal in a wire and then register it. This clean separation allows synthesis tools better optimization and potentially better timing.
+
+Hence, the improved design:
+
+- Registers prev_in every clock cycle.
+- Computes posedge_wire = (~prev_in) & in combinationally.
+- Registers pedge <= posedge_wire on clk.
+- All registers updated synchronously.
+- No blocking assignments in always block.
+- Keeps output as registered to avoid glitches.
+
+This approach maintains the behavior but reduces unnecessary switching on pedge register bits when no edge is detected, and separates combinational logic from sequential registers to improve synthesis optimization and timing.
+
+This may marginally improve timing by reducing logic depth in the clock-to-out path and reduce power by gating pedge toggling.
+
+Area is nearly the same or slightly better due to clearer logic separation and less recomputation.

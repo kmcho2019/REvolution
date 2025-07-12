@@ -1,0 +1,19 @@
+Here's a novel approach using a shift register implementation with clever encoding:
+
+1. Key Idea:
+   - Instead of traditional state encoding, use a 2-bit shift register where:
+     * '01' represents OFF state
+     * '10' represents ON state
+   - This provides built-in error detection (invalid states '00' and '11' automatically correct to valid states)
+   - State transitions are implemented through shift operations with conditional inversion
+
+2. Advantages:
+   - Inherent fault tolerance - invalid states naturally converge to valid ones
+   - Simple transition logic using shift operations
+   - Output is directly derived from the MSB of the shift register
+   - Reset initializes to '01' (OFF state)
+
+3. Operation:
+   - OFF (01): j=1 shifts to 10 (ON), j=0 maintains 01
+   - ON (10): k=1 shifts to 01 (OFF), k=0 maintains 10
+   - Any invalid state (00/11) will self-correct in 1-2 cycles

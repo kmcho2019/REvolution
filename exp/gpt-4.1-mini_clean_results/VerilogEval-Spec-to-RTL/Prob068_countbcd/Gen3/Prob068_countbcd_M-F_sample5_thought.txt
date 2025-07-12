@@ -1,0 +1,27 @@
+The key fix is to correctly generate the `ena` signals so that each bit goes high exactly when the corresponding upper digit increments, not merely when the previous digit rolls over.
+
+To do this, after computing the next state of each digit synchronously, compare the next value to the current value. If the digit increments (i.e., next value is current + 1 modulo 10), then assert its corresponding `ena` bit.
+
+Because the digits are encoded as BCD (0-9), and roll over to zero after 9, the increment condition for each digit can be detected by comparing if the next digit value is different and `ena` should be high only on increments (not resets).
+
+Concretely:
+
+- `ena[0]` is high if tens digit increments, i.e., `tens_n` != `tens` (and the increment was triggered by `carry_ones_n`)
+- Similarly for `ena[1]` for hundreds digit increment
+- Similarly for `ena[2]` for thousands digit increment
+
+However, since we already have `carry_ones_n`, `carry_tens_n`, `carry_hundreds_n` as indicators of digit rollover, we can define `ena[i]` signals as the increments of digits 1 to 3 as follows:
+
+- `ena[0] = carry_ones_n` (tens increments)
+- `ena[1] = carry_tens_n` (hundreds increments)
+- `ena[2] = carry_hundreds_n` (thousands increments)
+
+But the feedback indicates this is wrong because carry signals represent rollover events of previous digits, not the increments of the digits themselves.
+
+Instead, we should define `ena` bits by detecting when the digit value changes from a non-9 to the next number, i.e., whenever the digit increments.
+
+But increments of the upper digits occur only when the previous digit rolled over; the digit either increments by 1 or resets to zero.
+
+Therefore, `ena` for each digit should be high whenever the digit's next state differs from the current state due to an increment (i.e., incrementing from 0-9), ignoring resets from 9->0 since that's a rollover not an increment.
+
+Thus, the exact condition for `ena` for digit `i` is:

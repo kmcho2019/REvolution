@@ -1,0 +1,19 @@
+Analyzing the waveform carefully, it appears that 'p' and 'q' form a two-bit state machine updating only on the rising edge of the clock. The output 'p' updates to 1 only when the input 'a' is 1 at the clock's rising edge, and 'p' goes back to 0 when 'a' is 0. The output 'q' holds the previous value of 'p' (one clock cycle delayed).
+
+In other words:
+- At each rising edge, 'p' is set directly to the input 'a'.
+- At each rising edge, 'q' is updated to the previous 'p' value.
+
+This is a typical two-stage shift register with input 'a' shifting into 'p', and 'p' shifting into 'q'. Both registers update synchronously on the rising clock edge, avoiding dual-edge complexity and timing mismatches.
+
+This approach matches the waveform:
+- Initially outputs are unknown.
+- At first clock rising edge, p=0 (since a=0), q undefined (can initialize to 0).
+- When 'a' becomes 1 at rising edge, p=1, q gets old p value.
+- On falling clock edges, outputs hold steady, which fits synchronous design.
+
+This design uses a single clock edge for state updates ensuring clean, predictable timing and aligns with the waveform pattern perfectly.
+
+Thus, the improved design is a 2-bit shift register clocked on posedge clock:
+- p <= a;
+- q <= p;

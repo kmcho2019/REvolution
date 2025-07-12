@@ -1,0 +1,9 @@
+Fuse the best of both designs by using three separate always blocks for seconds, minutes, and hours counters, each triggered by the clock and reset signals. This approach breaks the combinational chain of nested if-else conditions seen in single-block designs, thus improving timing by reducing critical path length.
+
+To optimize power and avoid unnecessary toggling of minutes and hours counters, introduce enable signals for minutes and hours increments derived from the seconds and minutes counters respectively. Minutes only update when seconds roll over from 59 to 0, and hours only update when both minutes and seconds roll over from 59 to 0. This selective update approach reduces unnecessary toggling and switching activity in minutes and hours registers, thereby saving power.
+
+All counters reset to zero on the active-high reset signal. Use nonblocking assignments to ensure proper sequential updates and consistent timing behavior.
+
+For area efficiency, keep Hours as 5 bits (0-23) and Minutes/Seconds as 6 bits (0-59) as before. Using separate always blocks also makes the logic easier to pipeline or modify for further optimization.
+
+Overall, this fusion retains clean modularity, reduces critical path delay, and minimizes unnecessary register switching, leading to better performance and power efficiency while maintaining area efficiency.

@@ -1,0 +1,7 @@
+To implement the TopModule, we need to create a 32-bit global history shift register. 
+This register should be updated based on the predict_valid and train_mispredicted signals.
+When predict_valid is high, we shift in the predict_taken value from the LSB side.
+When train_mispredicted is high, we load the register with the train_history concatenated with train_taken.
+We also need to handle the case where both predict_valid and train_mispredicted are high at the same time, 
+in which case the misprediction takes precedence. 
+The areset signal should asynchronously reset the history register to zero on the positive edge.

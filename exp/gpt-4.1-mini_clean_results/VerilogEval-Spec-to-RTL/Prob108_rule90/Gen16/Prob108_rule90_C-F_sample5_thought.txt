@@ -1,0 +1,12 @@
+Fuse the strengths of both examples by implementing the Rule 90 512-cell system as eight 64-bit blocks. Each block computes next states via XOR of neighbors, with explicit boundary signals passed between blocks and zero padding at the edges.
+
+Enhance power efficiency by gating register updates with a local clock-enable signal that is asserted only if the block is loading or the state changes, minimizing unnecessary switching.
+
+Improve clarity, synthesis friendliness, and maintainability by:
+- Computing next_state signals using explicit wires per bit with clear boundary selection.
+- Using nonblocking assignments in sequential logic to avoid race conditions.
+- Generating boundary connections with concise generate loops.
+- Flattening block outputs to the final 512-bit output.
+- Minimizing logic depth by direct XOR of neighbors and avoiding additional logic layers.
+  
+This fusion combines modularity, power optimization via clock gating, clear boundary handling, and synthesis-friendly code structure, resulting in a clean, efficient, and scalable Rule 90 cellular automaton implementation.

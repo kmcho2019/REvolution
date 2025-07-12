@@ -1,0 +1,17 @@
+To fix the timing and phase misalignment issues with the two counters and toggling signals, we can restructure the design by making the toggle points strictly synchronized and edge-aligned using counters and combinational logic.
+
+Key improvements:
+
+1. Use two counters cnt_pos and cnt_neg, each counting from 0 to NUM_DIV-1 on posedge and negedge respectively, synchronized by reset.
+
+2. Instead of toggling clk_div1 and clk_div2 in an always block, generate them combinationally as level signals that go high when the counter is less than or equal to HALF and low otherwise. This creates a pulse of length HALF+1 counts per half cycle.
+
+3. The final clk_div is the OR of these two level signals, producing a combined waveform that toggles at both half period intervals and approximates a 50% duty cycle.
+
+4. This approach avoids glitches caused by asynchronous toggles and provides stable outputs that follow the counters precisely.
+
+5. Maintain the active low reset logic and odd divisor check as before.
+
+This design effectively implements a clock divider by an odd number NUM_DIV by producing a clock with period NUM_DIV input clocks, generated from the overlap of two complementary duty-cycle adjusted signals derived from posedge and negedge counters. Using combinational assignments for clk_div1 and clk_div2 avoids edge timing issues and glitches from toggling flip-flops.
+
+The refactoring keeps the core idea of two counters counting posedge and negedge clock cycles but replaces toggled flip-flops with combinational level signals derived from counters, improving timing and waveform correctness.

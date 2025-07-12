@@ -1,0 +1,14 @@
+To optimize the original design for better timing and cleaner code, we can precompute the next state in a combinational manner before registering it on the clock edge. This approach reduces the number of individual bit assignments and potential timing overhead. Also, expressing the feedback and shift operation as a single vector assignment can improve clarity and synthesis friendliness. The feedback bit is the XOR of q[0] with zero (the output bit itself), so for Galois configuration, only certain bits get XORed with q[0].
+
+In the 5-bit Galois LFSR with taps at bit positions 5 and 3 (1-based), the bits are zero-based indexed as q[4] and q[2]. Each clock cycle, bits shift right by one, but tapped bits get XORed with the feedback bit q[0]. The feedback bit is q[0] before shifting.
+
+The next state bits are assigned as follows:
+- q[0] <= q[1]
+- q[1] <= q[2]
+- q[2] <= q[3] ^ q[0]
+- q[3] <= q[4]
+- q[4] <= q[0] (feedback applied)
+
+Implementing this as a single vector assignment reduces logic fanout and critical path.
+
+Reset remains synchronous and active high, setting q to 5'b00001 as required.

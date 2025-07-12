@@ -1,0 +1,12 @@
+Novel Architecture Idea: State Machine with Early Termination
+1. Instead of using a shift register, implement a Mealy-style FSM that tracks the sequence progress
+2. Each state represents how many correct bits have been matched so far
+3. Include an early termination optimization: if we see a '0' when expecting the third '1' in the sequence (state S3), we can immediately reset to S0 since the pattern can't be completed
+4. The FSM transitions are optimized to minimize state transitions and comparisons
+5. Output is asserted immediately upon pattern detection and latched until reset
+
+Key Advantages:
+- More efficient state representation than shift register (only needs 3 bits)
+- Early termination reduces unnecessary state transitions
+- Clear, explicit state machine makes timing paths predictable
+- Lower power consumption due to reduced switching activity

@@ -1,0 +1,31 @@
+I will simplify the design by clearly structuring the FSM with four states: SEARCH, DELAY_LOAD, COUNT, and WAIT_ACK. The key points are:
+
+1. **Pattern Detection (1101) MSB-first:**  
+   Use a 4-bit shift register shifting left each cycle, input bit into LSB, so oldest bit is MSB and newest is LSB.  
+   Pattern "1101" binary is 4'b1101, which matches MSB-first order when shifting in serial data left-to-right with newest bit at LSB. This makes it easy to compare the pattern.
+
+2. **Delay Loading:**  
+   After detecting the start pattern, shift in 4 bits MSB-first into delay_reg similarly by shifting left and inserting new data bit at LSB. Count the bits loaded.
+
+3. **Counting:**  
+   We count `(delay + 1) * 1000` cycles.  
+   Implement a 10-bit cycle counter counting from 0 to 999 for 1000 cycles, and a 4-bit tick counter counting down from delay to 0.  
+   The output `count` shows the current tick value (starting at delay, counting down to 0), stable for 1000 cycles each.  
+   When cycle_counter reaches 999, decrement tick counter if not zero.
+
+4. **State transitions:**  
+   - From SEARCH to DELAY_LOAD on detecting pattern.  
+   - From DELAY_LOAD to COUNT after 4 bits loaded.  
+   - From COUNT to WAIT_ACK after finishing counting all ticks.  
+   - From WAIT_ACK to SEARCH on ack.
+
+5. **Output signals:**  
+   - `counting` is high only in COUNT state.  
+   - `done` is high only in WAIT_ACK.  
+   - `count` is valid only in COUNT; otherwise 0.
+
+6. **Synchronous reset** initializes everything.
+
+This approach uses left shift with LSB input for pattern/delay detection which matches MSB-first input sequence as bits come serially, is simpler to implement and easier to verify correct pattern detection. Counter logic is straightforward with clear stable `count` output.
+
+This simplification keeps the design functionally correct, easier to understand, and easier to verify.

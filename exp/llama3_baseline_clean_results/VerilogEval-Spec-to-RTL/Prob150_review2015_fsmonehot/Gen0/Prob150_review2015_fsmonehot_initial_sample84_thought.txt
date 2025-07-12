@@ -1,0 +1,13 @@
+To implement the state machine, we will first define the next-state logic equations and output logic equations based on the given state machine diagram and one-hot encoding. The next-state logic will be derived by checking the current state and input conditions to determine the next state. The output logic will be derived based on the current state. We will then write the Verilog code to implement these logic equations.
+
+The next-state logic equations can be derived as follows:
+- S_next is asserted when the current state is S and d=0, or when the current state is S1 and d=0, or when the current state is S110 and d=0, or when the current state is Wait and ack=1.
+- S1_next is asserted when the current state is S and d=1.
+- Count_next is asserted when the current state is B3.
+- Wait_next is asserted when the current state is Count and done_counting=1.
+- B3_next is asserted when the current state is B2.
+
+The output logic equations can be derived as follows:
+- done is asserted when the current state is Wait.
+- counting is asserted when the current state is Count.
+- shift_ena is asserted when the current state is B0, B1, B2, or B3.

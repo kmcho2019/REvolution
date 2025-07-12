@@ -1,0 +1,9 @@
+Simplify the fixed-point adder by directly performing two's complement addition since fixed-point numbers in two's complement format can be added directly without separately handling sign and magnitude. To ensure the result fits within N bits and maintain fixed precision Q, perform the addition with one extra bit for overflow detection, then truncate the result to N bits. 
+
+This eliminates the need for explicit sign and magnitude extraction, subtraction, and conditional sign assignments, simplifying the design significantly.
+
+Overflow can be detected by checking if the carry into and out of the sign bit differ (signed overflow), but since the problem states overflow is managed internally by observing the MSB, we rely on the natural truncation of two's complement addition.
+
+The output `c` is assigned the lower N bits of the sum, and an internal register `res` stores the result combinationally.
+
+This approach is the standard and efficient method for fixed-point addition in hardware.

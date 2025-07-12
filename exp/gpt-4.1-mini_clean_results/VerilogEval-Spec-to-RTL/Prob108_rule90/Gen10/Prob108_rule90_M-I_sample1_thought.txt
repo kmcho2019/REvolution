@@ -1,0 +1,15 @@
+To improve PPA while maintaining correctness, I will focus on reducing switching activity and simplifying logic interconnect without adding complex gating or pipeline stages that increase area or delay.
+
+Key improvements:
+
+1. Introduce a clock enable signal inside each 64-bit block that activates the state update only when load is high or the next state differs from the current state. This reduces unnecessary toggling and dynamic power when the automaton reaches stable or repetitive states, which is common for Rule 90.
+
+2. To avoid expensive 64-bit comparator logic inside the always block critical path, implement the comparator as a separate combinational signal before the clock edge. This can be a simple XOR-OR reduction, indicating if next_state != q_out, gating the register update. This comparator is a light logic overhead compared to gating the entire register.
+
+3. Avoid generating left_bounds and right_bounds using separate wires; instead, directly connect neighbors to reduce wiring nets and logic. This simplifies synthesis and routing.
+
+4. Use nonblocking assignments consistently.
+
+This approach trades a small area increase from the comparator and clock enable for a potentially significant power reduction, especially after initial transients when state changes reduce.
+
+Overall, this yields a lower average toggling rate, improved power consumption, and potentially better timing due to reduced unnecessary register toggling.

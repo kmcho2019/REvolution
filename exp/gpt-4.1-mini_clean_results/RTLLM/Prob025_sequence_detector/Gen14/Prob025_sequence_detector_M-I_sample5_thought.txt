@@ -1,0 +1,24 @@
+The original FSM uses a 3-bit binary encoding with states from 0 to 4, and combinational logic for next state decoding. While area is minimal, timing could be improved by switching to a one-hot state encoding, which simplifies next-state logic to simple AND/OR operations, reducing combinational depth and potentially improving maximum frequency (WNS improved). Also, the sequence_detected output is generated in the clocked always block, causing it to be asserted one cycle after the sequence is detected; this could be preserved since it is synchronous and glitch-free.
+
+For power, one-hot encoding increases flip-flops but reduces combinational complexity, often a good tradeoff for timing. We keep synchronous active-low reset as in the original design for consistent reset timing.
+
+Additional code improvements include:
+- Adding meaningful comments for maintainability.
+- Using nonblocking assignments consistently.
+- Explicitly defining the output register reset value to 0.
+
+This approach targets improved timing (better WNS) at a marginal area increase and low power impact.
+
+The FSM next state transitions remain unchanged in logic but mapped to one-hot states:
+States: IDLE=5'b00001, S1=5'b00010, S2=5'b00100, S3=5'b01000, S4=5'b10000.
+
+Transitions with data_in:
+- IDLE: if data_in==1, go to S1; else stay in IDLE
+- S1: if data_in==0, S2; else S1 (repeat)
+- S2: if data_in==0, S3; else IDLE
+- S3: if data_in==1, S4; else IDLE
+- S4: if data_in==1, S1; else IDLE (overlap handling)
+
+sequence_detected asserted when current state is S4.
+
+We implement this as a registered one-hot FSM with combinational next state logic.

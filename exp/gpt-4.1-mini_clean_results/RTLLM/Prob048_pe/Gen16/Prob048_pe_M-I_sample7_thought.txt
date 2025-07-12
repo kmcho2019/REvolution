@@ -1,0 +1,18 @@
+To improve PPA (power, performance, area) based on the prior solution and metrics, the main bottleneck is the full 32x32 multiplier and the wide 33-bit adder on the critical path, causing negative timing slack (WNS) and relatively high power and area.
+
+Improvement Strategy:
+1. Use a registered multiplier output: pipeline the multiplication result by registering the product at clk to reduce combinational delay per cycle. This breaks the critical path and improves maximum clock frequency (reduces negative WNS).
+
+2. Perform addition in the next cycle with registered product: create a 2-stage pipeline—multiplication stage followed by accumulation stage. This reduces the critical path length by splitting multiplication and addition into separate clock cycles.
+
+3. Accept one cycle latency in accumulation which is typically acceptable in MAC operations.
+
+4. Keep accumulator register and output register separate for stable timing and glitch reduction.
+
+5. Remove overflow saturation for now to simplify logic and improve timing. Saturation logic adds complexity and delays; if overflow is critical, consider a later, separate stage.
+
+6. Use synchronous active-high reset as before.
+
+This 2-stage pipeline yields better timing due to reduced combinational path length, lowering power due to reduced glitching and switching in long combinational paths, and may also reduce area due to simpler adder logic per stage. The tradeoff is a one-cycle latency in accumulation result update.
+
+Overall, this pipeline approach is standard for high-speed MAC units and significantly improves timing slack and power with minimal area increase.

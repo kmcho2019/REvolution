@@ -1,0 +1,10 @@
+Simplified approach using a 2-bit counter with clearer state control:
+1. Maintain the 2-bit counter but add a 'done' flag to track completion
+2. When reset, initialize counter to 0 and done to 0
+3. For first 4 cycles after reset (counter < 3), increment counter and assert shift_ena
+4. After 4 cycles, set done flag and keep shift_ena low
+5. Benefits:
+   - Clear separation of initialization and counting phases
+   - Explicit done condition prevents any unwanted re-enabling
+   - Still uses minimal hardware (2-bit counter + 1-bit flag)
+   - Easier to understand state transitions

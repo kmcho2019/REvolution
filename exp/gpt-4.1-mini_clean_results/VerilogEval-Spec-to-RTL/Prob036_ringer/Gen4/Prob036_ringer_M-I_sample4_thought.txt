@@ -1,0 +1,19 @@
+The original design is already minimal and optimal for the given functionality, using only two simple combinational expressions. To further improve PPA (power, performance, area), we can:
+
+- Combine the outputs into a single one-hot encoded bus internally to ensure mutual exclusivity by design, then split to outputs. This doesn't reduce gate count but emphasizes exclusivity.
+- Use 'wire' declarations explicitly to guide synthesis tools.
+- Add `default_nettype none` to avoid unintended implicit nets, improving robustness.
+- Inline logic succinctly without negations where possible.
+- Although the current logic is minimal, explicitly using case statement or a small combinational block could allow synthesis tools to better optimize mutual exclusivity, but it's often unnecessary for such trivial logic.
+
+Given the minimality of the original code and its excellent PPA, our best strategy is to keep it as simple and clear as possible, with added style improvements to help tool synthesis and code clarity.
+
+Therefore, I will:
+- Add `default_nettype none`.
+- Explicitly declare outputs as wires.
+- Use continuous assignments as before.
+- Add comments for clarity.
+
+This ensures the code is robust and synthesis-friendly without changing logic or increasing area/power.
+
+No significant PPA gains are expected beyond the original design, but this is the cleanest, most maintainable solution.

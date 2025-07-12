@@ -1,0 +1,7 @@
+The RAM module will utilize two always blocks to handle the write and read operations separately. The first always block will be responsible for handling the reset and write operations. When the reset signal is asserted (i.e., rst_n is 0), all memory locations in the RAM array will be cleared to 0. If the write enable signal (write_en) is active, the data (write_data) will be written to the RAM array at the specified address (write_addr) on the positive edge of the clock signal. 
+
+The second always block will handle the read operation. On the positive edge of the clock signal, if the read enable signal (read_en) is active, the data at the specified address (read_addr) in the RAM array will be assigned to the read_data register. If the read enable signal is not active, the read_data register will be cleared to 0. 
+
+The RAM array will be defined as a reg with the specified width and depth. The parameters WIDTH and DEPTH will be used to define the size of the RAM array.
+
+Note: The write_addr and read_addr should be of the correct width to accurately address the 8 locations in the RAM array.

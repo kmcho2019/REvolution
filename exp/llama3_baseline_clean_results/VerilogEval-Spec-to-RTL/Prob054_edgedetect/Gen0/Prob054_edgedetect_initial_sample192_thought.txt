@@ -1,0 +1,10 @@
+To solve this problem, we need to create a module named TopModule that takes an 8-bit input vector `in` and a clock signal `clk`, and produces an 8-bit output vector `pedge` where each bit corresponds to the positive edge detection of the respective input bit. We can achieve this by using a combination of registers to store the previous state of the input vector and a comparison logic to detect the transition from 0 to 1.
+
+Here's the step-by-step thought process:
+
+1. Store the current input vector in a register at each clock cycle.
+2. Compare the current input vector with the previous input vector (stored in the register).
+3. If a bit in the current input vector is 1 and the corresponding bit in the previous input vector is 0, it means a positive edge has been detected, so set the corresponding output bit to 1.
+4. The output bits should be set the cycle after a 0 to 1 transition occurs, so we need to register the output as well.
+
+We will use two 8-bit registers: `prev_in` to store the previous input vector and `prev_out` is not necessary as the output is computed every clock cycle. The comparison and output logic will be implemented using simple bitwise operations.

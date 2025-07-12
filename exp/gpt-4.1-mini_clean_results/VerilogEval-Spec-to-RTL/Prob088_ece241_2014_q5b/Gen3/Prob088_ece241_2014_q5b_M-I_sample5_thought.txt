@@ -1,0 +1,13 @@
+The original design uses binary encoding with a single flip-flop for two states, which is already area and power efficient. However, the specification explicitly requests a one-hot encoding of the FSM states, which means using two state bits with only one active at a time.
+
+To comply strictly with the problem's requirement and maintain asynchronous active-high reset, I will implement the one-hot FSM with two state flip-flops, resetting asynchronously to state A (state vector 2'b01). 
+
+For better power and timing:
+- Use nonblocking assignments consistently in sequential always blocks.
+- Use combinational logic optimized for output z.
+- Keep the asynchronous reset as specified.
+- Maintain clarity and simplicity for efficient synthesis.
+
+This ensures the FSM is strictly one-hot encoded, meets reset behavior, and preserves minimal logic complexity for good PPA.
+
+This is a corrective improvement enforcing the problem constraints while keeping the design simple and synthesizable.

@@ -1,0 +1,8 @@
+To improve PPA (Performance, Power, Area) for the 64-bit subtractor with overflow detection:
+
+- Replace the ripple borrow subtractor chain with a single combinational 64-bit subtraction using Verilog's native subtraction operator. This will allow synthesis tools to use optimized carry-lookahead logic or built-in fast subtractors, improving timing and area.
+- Implement the overflow detection logic similarly by checking sign bits: overflow occurs if A and B have different signs, and the result's sign differs from A.
+- This approach reduces the number of instantiated modules (less area), cuts down on wiring complexity, and typically yields better timing due to efficient carry chain synthesis.
+- The power consumption is expected to decrease due to reduced gate count and shorter critical paths.
+
+The code will be clean, with no explicit borrow chain, relying on synthesis optimizations for best results.

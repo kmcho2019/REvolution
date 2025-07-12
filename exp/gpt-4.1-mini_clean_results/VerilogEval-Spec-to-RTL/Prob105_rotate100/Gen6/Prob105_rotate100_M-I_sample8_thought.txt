@@ -1,0 +1,12 @@
+To optimize the 100-bit rotator for better performance, power, and area (PPA), replace the bitwise loop rotation with vector concatenation operations that synthesize into efficient multiplexers and barrel shifter style logic. This reduces the combinational path by avoiding large loops and conditional indexing.
+
+Specifically:
+
+- For rotate left by 1: q <= {q[98:0], q[99]};
+- For rotate right by 1: q <= {q[0], q[99:1]};
+- For load, simply assign data.
+- For no rotation, hold q.
+
+Additionally, avoid redundant assignments by using clock enable logic: only update q when load is asserted or ena is 01 or 10, reducing switching and improving power.
+
+This approach keeps the synchronous behavior while producing simpler and smaller logic for rotation, enhancing max frequency and reducing power. It also avoids the integer loop and improves readability and synthesizability.

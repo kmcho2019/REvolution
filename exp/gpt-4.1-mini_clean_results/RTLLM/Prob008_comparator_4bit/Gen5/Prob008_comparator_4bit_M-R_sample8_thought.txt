@@ -1,0 +1,5 @@
+Refactor the 4-bit comparator by explicitly instantiating four 1-bit full subtractors that perform bitwise subtraction with borrow propagation, making the design modular and clear. Each 1-bit subtractor outputs a difference bit and a borrow out, calculated using combinational logic.
+
+Use bitwise XNOR reduction directly to determine equality of A and B. Then, use the borrow output of the most significant bit subtractor to decide the less-than condition. Finally, outputs are assigned in a mutually exclusive manner.
+
+This approach improves readability by modularizing the subtractor logic, separating concerns, and avoiding generate blocks. It leverages continuous assignments throughout without always blocks, aligning with combinational logic principles.

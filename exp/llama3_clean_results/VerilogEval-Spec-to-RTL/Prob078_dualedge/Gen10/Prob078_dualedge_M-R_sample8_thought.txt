@@ -1,0 +1,7 @@
+The provided code can be refactored to use a single `always` block instead of two separate blocks for the positive-edge and negative-edge triggered flip-flops. We can achieve this by using a single `always` block that is sensitive to both the positive and negative edges of the clock signal, and then use conditional statements to update the output `q` based on the current clock edge.
+
+Additionally, instead of using two separate registers `q_pos` and `q_neg` to store the outputs of the positive-edge and negative-edge triggered flip-flops, we can use a single register `q` and update it directly based on the clock edge. This will simplify the code and reduce the number of registers used.
+
+To further simplify the code, we can eliminate the need for the `assign` statement by directly assigning the value of `d` to `q` based on the clock edge.
+
+However, since the sensitivity list in Verilog does not support both positive and negative edges of a signal, we will use a workaround by checking the previous state of the clock signal to determine the current edge.

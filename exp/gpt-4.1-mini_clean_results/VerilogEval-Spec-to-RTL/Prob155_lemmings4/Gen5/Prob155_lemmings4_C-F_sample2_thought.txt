@@ -1,0 +1,15 @@
+Fuse the clarity and explicit bump direction logic from Example 1 with the simpler FSM structure and encoding from Example 2. Use a 2-bit mode/state encoding with a separate direction bit (0=left, 1=right) for clear state separation and minimal complexity.
+
+From Example 1, keep the explicit conditional bump logic handling all three cases distinctly, ensuring correctness and exact behavior per spec. From Example 2, keep the direction as a separate reg, the 5-bit fall timer saturating at 31, and the asynchronous reset.
+
+Maintain the fall > dig > bump priority from Example 1 with clean and explicit next-state logic from Example 2 for readability and correctness.
+
+Ensure the fall timer increments only while falling, saturates at 31, and triggers splatter if over 20 when hitting ground.
+
+Use Moore outputs, derived from current mode and direction, for glitch-free outputs.
+
+Combine the explicitness of the bump logic from Example 1 and the minimal FSM states, direction-as-data encoding, and neat saturation logic from Example 2.
+
+Also, factor out common assignments to reduce redundant combinational logic.
+
+This fusion yields a well-structured, fully correct FSM with clean, minimal, and easy-to-read Verilog matching all problem requirements, optimizing clarity, correctness, and power.

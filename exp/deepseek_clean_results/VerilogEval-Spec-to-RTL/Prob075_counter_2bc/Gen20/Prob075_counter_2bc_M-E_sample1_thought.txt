@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. Represent the 2-bit counter as a 4-state FSM with explicit state transitions
+2. Use priority encoding for state transitions to simplify logic
+3. Implement saturation using state transition conditions rather than arithmetic
+4. Optimize power by gating state transitions only when train_valid is active
+5. Use one-hot encoding for state representation to potentially simplify decode logic
+6. Implement reset to weakly not-taken (01) by setting appropriate initial state
+
+Key Features:
+- Explicit state machine representation for clarity
+- Priority-based transition logic (train_valid has highest priority)
+- No arithmetic operations - pure state transitions
+- One-hot state encoding for potential power/performance benefits
+- Minimal combinational logic between flip-flops

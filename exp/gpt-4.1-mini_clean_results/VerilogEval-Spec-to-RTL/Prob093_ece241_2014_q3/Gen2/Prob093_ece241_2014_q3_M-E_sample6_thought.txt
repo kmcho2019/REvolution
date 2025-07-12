@@ -1,0 +1,17 @@
+Use the 4-to-1 multiplexer selector inputs 'a' and 'b' externally and implement each mux_in[i] as a function of inputs c and d only inside TopModule. For each mux_in[i], write the logic as nested 2-to-1 multiplexers controlled by c and d only, representing each K-map column exactly.
+
+The idea is to use purely 2-to-1 multiplexers (implemented with ternary conditional operators) to reconstruct each column function from c and d, with no other logic gates. This respects the requirement to use only multiplexers.
+
+Each mux_in[i] corresponds to fixed ab, so mux_in[0] for ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, and mux_in[3] for ab=10.
+
+For each mux_in[i], implement the function f_i(c,d) by expressing the output for each cd combination (00, 01, 11, 10). Each 4-entry truth table can be realized as:
+
+f_i = mux(sel=d, in0 = mux(sel=c, in0=val_00, in1=val_10), in1 = mux(sel=c, in0=val_01, in1=val_11))
+
+Here, we select d first, then inside select c, and val_xx are 0 or 1 constants from the K-map.
+
+This universal structure guarantees a clean 2-to-1 mux decomposition of each function using only c and d as selectors, no other logic.
+
+Finally, output the 4 mux_in bits accordingly.
+
+This approach is systematic, minimal (only 1 four-input mux external to TopModule, the rest 2-to-1 muxes implemented as conditional assignments), and guaranteed correct to the K-map.

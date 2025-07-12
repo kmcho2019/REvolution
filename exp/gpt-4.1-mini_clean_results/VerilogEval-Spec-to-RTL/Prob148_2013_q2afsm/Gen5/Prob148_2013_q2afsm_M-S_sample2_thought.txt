@@ -1,0 +1,13 @@
+The original solution uses one-hot encoding with a 3-bit register, including an all-zero idle state. To simplify the design, encode the FSM states in 2 bits since there are only 4 states (A, B, C, D), reducing state register size from 3 to 2 bits.
+
+Assign state codes as:
+- A = 2'b00 (idle)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+Next-state logic becomes simple priority checks in idle state, and in grant states, remain granted if request persists, else return to idle.
+
+Output g can be assigned combinationally based on current state: g[0]=1 only in B, g[1]=1 only in C, g[2]=1 only in D.
+
+This approach reduces the number of flip-flops and makes output logic straightforward, while keeping the FSM behavior and synchronous active-low reset intact.

@@ -1,0 +1,11 @@
+Implement a 4-bit unsigned multiplier with a two-stage pipeline where:
+
+- Stage 1 computes all partial products concurrently as usual.
+- Stage 1 registers store each individual partial product separately.
+- Stage 2 adds these registered partial products sequentially using a balanced adder tree pipeline:
+  - First half sums partial products 0 and 1, and partial products 2 and 3 in parallel registers.
+  - Then final adder sums these two intermediate sums producing the final product output.
+- This approach ensures intermediate partial products are fully registered before addition, isolating combinational logic across pipeline stages, improving timing and testability.
+- The input multiplicand is zero-extended upfront for uniform width.
+- The design uses non-blocking assignments with asynchronous active-low reset.
+- Pipeline registers explicitly store intermediate sums, providing data stability and aligning with the two-level register pipeline requirement.

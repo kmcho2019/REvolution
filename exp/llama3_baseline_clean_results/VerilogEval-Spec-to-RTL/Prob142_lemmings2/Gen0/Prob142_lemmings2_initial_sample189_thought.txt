@@ -1,0 +1,9 @@
+To implement the Lemmings' behavior as a Moore state machine, we first need to identify the states and transitions. The states can be defined as walking left, walking right, and falling. The transitions between these states will be based on the inputs provided. 
+
+When the Lemming is walking left or right, it will switch direction if it hits an obstacle (either `bump_left` or `bump_right` is high). If `ground` is low, the Lemming will start falling and say "aaah!", and when `ground` becomes high again, it will resume walking in the same direction it was before falling. 
+
+We can use a two-bit state variable to represent the three states (walking left, walking right, and falling), with the third state encoded as a distinct value. 
+
+We'll use a reset condition (`areset`) to asynchronously reset the state machine to walk left. All state transitions are synchronous with respect to the positive edge of the clock (`clk`).
+
+For the implementation, we'll first define the state encoding, then describe the state transitions based on the inputs, and finally implement the output logic.

@@ -1,0 +1,10 @@
+To optimize the existing 4-bit BCD adder for better power and area efficiency while maintaining performance, I will eliminate the second full adder that always computes corrected_sum by using a mux-based approach. Instead of adding 6 unconditionally and selecting the output, the correction addition will be performed only when overflow is true. This avoids unnecessary switching in the correction adder and saves power.
+
+Additionally, the overflow detection logic will be slightly simplified to minimize gate count. The common condition for BCD overflow can be checked as:
+- raw_sum > 9, which can be detected by raw_sum[4] (carry from bit3) OR raw_sum[3] & (raw_sum[2] | raw_sum[1]) as before. This is already minimal but can be implemented with fewer gates by rearranging.
+
+The addition of correction 6 is implemented via a simple 5-bit adder, but now only enabled when overflow is asserted by using a 5-bit mux to select between raw_sum and raw_sum+6.
+
+This reduces dynamic power (due to gating) and area (less logic switching), while the critical path stays mostly the same. Cout still comes from the carry out of the correction addition.
+
+This approach balances power savings, area, and performance.

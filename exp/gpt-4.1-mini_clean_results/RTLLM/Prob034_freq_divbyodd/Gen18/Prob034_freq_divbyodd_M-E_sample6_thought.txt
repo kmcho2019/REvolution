@@ -1,0 +1,13 @@
+I will implement the frequency divider by an odd number NUM_DIV using a single counter and a two-stage toggle flip-flop approach to generate a 50% duty cycle output clock as closely as possible.
+
+Key ideas:
+- Use a single counter counting from 0 to NUM_DIV-1 on the positive edge.
+- Generate two toggle signals (tog1 and tog2) that toggle at specific counter values corresponding to the approximate half and full cycle points, shifted to generate both edges of the divided clock.
+- tog1 toggles at count == 0, tog2 toggles at count == HALF_DIV (integer division).
+- The divided clock clk_div is produced by XOR-ing tog1 and tog2, yielding an output clock at (input clock frequency) / NUM_DIV.
+- This approach creates a 50% duty cycle approximation for odd dividers by using complementary toggling signals.
+- Reset is asynchronous active low, initializing counters and toggles.
+- Use parameter validation to ensure NUM_DIV is odd.
+- Counter width computed with $clog2.
+- The output clk_div is generated combinationally from toggles, ensuring glitch-free behavior.
+- This architecture is novel compared to the example by using toggling flip-flops and XOR to generate the output clock.

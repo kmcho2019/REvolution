@@ -1,0 +1,9 @@
+The original solution is already very efficient, with minimal logic and no sequential elements, so PPA improvements are naturally limited. However, one possible improvement to reduce switching power and area is to explicitly declare the output as wire and keep the assignment continuous. Since the concatenation operation uses a replication operator, synthesis tools may generate minimal logic, but explicitly specifying the output as wire confirms that no register is inferred, possibly improving clarity and synthesis results.
+
+In addition, the sign bit replication is essential; there is no simpler way to do it. To minimize power further, the design could be enhanced with a power gating or clock gating approach, but those are out of scope here due to the problem constraints.
+
+Hence, the best optimization is to use a continuous assignment with an output declared as wire (already done) and ensuring no unnecessary constructs are present.
+
+Optionally, to further help synthesis tools, a localparam sign_bit replicated once and then used for concatenation could be used, but this likely has no effect on PPA.
+
+Therefore, I will provide a clean, minimal, and idiomatic version of the code consistent with the original but slightly cleaner by explicitly declaring output as wire and adding comments for clarity.

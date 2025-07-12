@@ -1,0 +1,19 @@
+Analyze the waveform to identify the behavior of p and q over time relative to clock and input a.
+
+From the waveform:
+- Outputs are undefined at time 0 (typical for uninitialized registers).
+- On clock rising edges with a=1, p updates to 1, otherwise p remains or resets to 0 on some conditions.
+- q seems to represent a delayed or latched version of p, but only sets to 1 after a certain sequence (around 115ns) and remains set while p toggles.
+- Between clock cycles and changes in input a, p responds strongly to the input a when clock is high, but q updates at falling clock edges or after some delay.
+
+This suggests a two-bit state machine, where p tracks whether a has been set during the clock high phase, and q captures the previous value of p but updated on the falling edge of the clock.
+
+To implement this cleanly:
+- Use two flip-flops p and q.
+- Update p synchronously on the rising edge of clock: p <= a | (p & ~q);
+- Update q synchronously on the falling edge of clock: q <= p;
+- Initialize p and q to zero.
+
+This approach uses both edges of the clock to capture the sequential logic and better matches the waveform timing: p updates with input a on rising clock edges; q latches the value of p on falling clock edges, producing the delayed behavior seen in the waveform.
+
+This dual-edge sequential design is a novel approach to replicate the observed waveforms faithfully.

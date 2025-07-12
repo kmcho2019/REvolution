@@ -1,0 +1,12 @@
+Simplify the radix-2 division implementation by clearly separating combinational and sequential logic, avoiding illegal in-block variable declarations, and using module-level registers for intermediate values.
+
+Key points:
+- Use a 9-bit shift register (SR) holding remainder (upper bits) and quotient bits (lower bits).
+- On starting a valid operation, latch absolute values and compute negated divisor once.
+- Iteratively perform subtraction and shift operations over 8 cycles.
+- Determine quotient bits based on borrow/carry from subtraction.
+- After completion, adjust quotient and remainder signs if signed division.
+- Handle division by zero by outputting zero result immediately.
+- Use synchronous reset and a simple busy/res_valid protocol.
+
+This approach reduces complexity, eliminates illegal Verilog constructs, and maintains full radix-2 division functionality with sign support.

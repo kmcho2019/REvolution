@@ -1,0 +1,23 @@
+The previous code correctly implements a 64-bit pipelined ripple carry adder without parameters. The feedback indicates that the testbench or environment tries to instantiate the module with parameters (`DATA_WIDTH` and `STG_WIDTH`) which are not declared in the original design, causing elaboration errors.
+
+To fix this and improve reusability, the module should be parameterized with:
+
+- `DATA_WIDTH` for the operand and sum bit widths (default 64)
+- `STG_WIDTH` for pipeline stages (default equal to `DATA_WIDTH`)
+
+This parameterization allows the module to be instantiated flexibly and aligns with typical testbench expectations.
+
+Implementation adjustments:
+
+1. Add `parameter DATA_WIDTH = 64` and `parameter STG_WIDTH = DATA_WIDTH` to the module.
+2. Replace all hardcoded 64 with `DATA_WIDTH`.
+3. Replace all hardcoded 64 in pipeline registers with `STG_WIDTH`.
+4. Input operands and sum pipeline widths adjust accordingly.
+5. The sum output width becomes `DATA_WIDTH + 1`.
+6. The carry pipeline length is `STG_WIDTH + 1`.
+7. Keep behavior and pipelining logic intact, just generalized.
+8. Keep synchronous active-low reset.
+
+This fix resolves the elaboration errors and matches the testbench expectations, allowing for successful compilation and testing.
+
+Latency remains `STG_WIDTH` cycles, throughput one addition per cycle.

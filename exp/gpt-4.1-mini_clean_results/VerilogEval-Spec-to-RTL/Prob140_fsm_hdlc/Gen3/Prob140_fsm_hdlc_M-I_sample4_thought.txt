@@ -1,0 +1,13 @@
+To address the err output timing mismatch, modify the FSM and output logic so that err asserts starting exactly one cycle *after* detecting 7 or more consecutive ones, consistent with the Moore machine output timing. The current design asserts err when the FSM state is S7, meaning err is asserted after the state update on the clock edge. However, the error condition is detected during transition from S6 to S7 upon input=1; thus err should be asserted starting the *next* cycle.
+
+To implement this precisely, introduce an explicit error-flag register that captures detection of the 7th consecutive one at the clock edge and holds err asserted until the FSM leaves the error state. This separates err assertion from the pure state, removing ambiguity from combinational err_w logic.
+
+Keep the disc and flag output logic unchanged because their timing is already correct (asserted one cycle after detection).
+
+This approach ensures:
+- err is asserted one full cycle after detecting 7 consecutive ones, matching problem spec
+- err stays asserted as long as the FSM remains in error state
+- FSM state encoding remains simple and only tracks consecutive one counts
+- outputs are pure Moore type, driven by registered signals
+
+This small change simplifies timing and removes potential glitches or race conditions on err signal, improving correctness while maintaining PPA efficiency.
